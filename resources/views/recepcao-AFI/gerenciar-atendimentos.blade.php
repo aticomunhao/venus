@@ -1,0 +1,96 @@
+@extends('layouts.app')
+
+@section('title') Gerenciar Atendimentos @endsection
+
+@section('content')
+<?php
+//echo "<meta HTTP-EQUIV='refresh' CONTENT='30;URL=gerenciar-atendimentos'>";
+?>
+<div class="container-xxl";>
+    <div class="col-12">
+        <div class="row justify-content-center">
+            <div>
+                <form action="{{route('atedex')}}" class="form-horizontal mt-4" method="GET" >
+                <div class="row">
+                    <div class="col-4">Assistido
+                        <input class="form-control" type="text" id="3" name="assist" value="">
+                    </div>
+                    <div class="col-2">Status atendimento
+                        <select class="form-select" id="4" name="status" type="number">
+                        <option value=" ">Todos</option>                            
+                        @foreach($status  as $statusa)
+                        <option value="{{$statusa->id}}">{{$statusa->descricao}}</option>
+                        @endforeach
+                        </select>
+                       
+                    </div>
+                        <div class="col"><br>
+                            <input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
+                            <a href="/gerenciar-atendimentos"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
+                    </form>
+                            <a href="/criar-atendimento"><input class="btn btn-success btn-sm me-md-2" type="button" autofocus value="Novo Atendimento &plus;"></a>
+                            
+                            <button type="button" value="" id="btnIncluirPessoa" class="btn btn-success btn-sm  waves-effect waves-light classIncluirPessoa" data-toggle="modal" data-target=".bs-example-modal-lg">Nova Pessoa +</button>
+
+                        </div>
+                </div>
+                <br>
+            </div style="text-align:right;">
+            <hr>
+            <div class="table">Total assistidos: {{$contar}}
+                <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
+                    <thead style="text-align: center;">
+                        <tr style="background-color: #d6e3ff; font-size:15px; color:#000000">
+                            <th class="col">Assistido</th>
+                            <th class="col">Representante</th>
+                            <th class="col">Horário chegada</th>
+                            <th class="col">AF preferido</th>
+                            <th class="col">Atendente</th>
+                            <th class="col">Tipo AF</th>
+                            <th class="col">Status</th>
+                            <th class="col">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size: 14px; color:#000000; text-align:center;">
+                        <tr>
+                        @foreach($lista as $listas)
+                            <td scope="" >{{$listas->nm_1}}</td>
+                            <td scope="" >{{$listas->nm_2}}</td>
+                            <td scope="" >{{$listas->dh_chegada}}</td>
+                            <td scope="" >{{$listas->nm_3}}</td>
+                            <td scope="" >{{$listas->nm_4}}</td>
+                            <td scope="" >{{$listas->tipo}}</td>
+                            <td scope="" >{{$listas->descricao}}</td>
+                            <td scope="">
+                                <a href="/cancelar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
+                                <a href="/desce-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-left-square" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/sobe-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-right-square" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/editar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/visualizar-atendimentos/{{$listas->idas}}"><button type="button" class="btn btn-outline-info btn-sm"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div class="d-flex justify-content-center">
+            {{$lista->withQueryString()->links()}}
+        </div>
+    </div>
+</div>
+@include('pessoal/popUp-incluir')
+
+@endsection
+
+@section('footerScript')
+            <!-- Required datatable js -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
+     
+          
+            <!-- Datatable init js -->
+            <script src="{{ URL::asset('/js/pages/cadastrar-pessoa.init.js')}}"></script>        
+
+            <!--botão toggle-->
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
+
+@endsection
