@@ -77,7 +77,7 @@
         </div>
     </div>
 </div>
-@include('pessoal/popUp-incluir')
+@include('recepcao-AFI/listaatend-pop')
 
 @endsection
 
