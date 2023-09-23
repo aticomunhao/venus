@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', [App\Http\Controllers\Auth\LoginController::class, 'index'])->name('login');
+//Route::get('/', [App\Http\Controllers\Auth\LoginController::class, 'index'])->name('login');
 
 
 Auth::routes();
