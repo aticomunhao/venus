@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
     <!-- Scripts -->
-    @vite(['resources/js/app.js'])
+    @vite(['resources/js/app.css', 'resources/js/app.js'])
 </head>
 <body>
     <div id="app">
@@ -79,5 +79,10 @@
             @yield('content')
         </main>
     </div>
+     <!-- footerScript -->
+     @yield('footerScript')
+
+<!-- App js 
+<script src="{{ URL::asset('/js/app.min.js')}}"></script> -->
 </body>
 </html>

@@ -13,15 +13,14 @@ use Illuminate\Support\Facades\Auth;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-//Route::get('/', [App\Http\Controllers\Auth\LoginController::class, 'index'])->name('login');
 
+Route::get('/', function(){
+    return view('/auth/login');
+});
 
 Auth::routes();
 
-
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-
 
 // Rota e dados gerenciados pelos controllers:
 Route::get('/gerenciar-atendimentos', [App\Http\Controllers\GerenciarAtendimentoController::class, 'index'])->name('atedex');
@@ -33,6 +32,7 @@ Route::get('/desce-status/{ida}', [App\Http\Controllers\GerenciarAtendimentoCont
 Route::get('/editar-atendimento/{ida}', [App\Http\Controllers\GerenciarAtendimentoController::class, 'edit'])->name('ateedi');
 Route::post('/grava-atualizacao/{ida}', [App\Http\Controllers\GerenciarAtendimentoController::class, 'altera'])->name('atealt');
 Route::get('/visualizar-atendimentos/{idas}', [App\Http\Controllers\GerenciarAtendimentoController::class, 'visual'])->name('atevis');
+Route::put('/atendente-atualizar/{ida}', [App\Http\Controllers\GerenciarAtendimentoController::class, 'salvaatend'])->name('salate');
 
 
 // Atendentes

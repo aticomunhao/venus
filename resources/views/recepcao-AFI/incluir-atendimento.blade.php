@@ -24,7 +24,7 @@
                             <select class="form-select" id="1" name="assist" required="required">
                                 <option value=""></option>
                                 @foreach($lista as $listas)
-                                <option value="{{$listas->id}}">{{$listas->nome_completo}}</option>
+                                <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -32,7 +32,7 @@
                             <select class="form-select" id="2" name="repres" >
                                 <option value=""></option>
                                 @foreach($lista as $listas)
-                                <option value="{{$listas->id}}">{{$listas->nome_completo}}</option>
+                                <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
                                 @endforeach
                             </select>
                         </div>     
@@ -50,8 +50,8 @@
                         <div class="col">AFI preferido
                             <select class="form-select" id="5" name="afi_p" >
                                 <option value=""></option>
-                                @foreach($lista as $listas)
-                                <option value="{{$listas->id_pessoa}}">{{$listas->nome_completo}}</option>
+                                @foreach($afi as $afis)
+                                <option value="{{$afis->idatt}}">{{$afis->nm_1}}</option>
                                 @endforeach
                             </select>
                         </div>

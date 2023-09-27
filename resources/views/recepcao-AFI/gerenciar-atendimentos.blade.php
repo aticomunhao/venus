@@ -41,6 +41,7 @@
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                     <thead style="text-align: center;">
                         <tr style="background-color: #d6e3ff; font-size:15px; color:#000000">
+                            <th class="col">Nr</th>
                             <th class="col">Assistido</th>
                             <th class="col">Representante</th>
                             <th class="col">Horário chegada</th>
@@ -54,6 +55,7 @@
                     <tbody style="font-size: 14px; color:#000000; text-align:center;">
                         <tr>
                         @foreach($lista as $listas)
+                            <td scope="" >{{$listas->ida}}</td>
                             <td scope="" >{{$listas->nm_1}}</td>
                             <td scope="" >{{$listas->nm_2}}</td>
                             <td scope="" >{{$listas->dh_chegada}}</td>
@@ -64,6 +66,8 @@
                             <td scope="">
                                 <a href="/cancelar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
                                 <a href="/desce-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-left-square" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <button class="btn btn-outline-warning btn-sm" style="font-size: 1rem; color:#000;" type="button" id="" data-bs-toggle="modal" data-bs-target="#atendimento{{$listas->ida}}"><i class="bi bi-person" style="font-size: 1rem; color:#000;"></i></button>
+                                @include('recepcao-AFI.popUp-alterar')
                                 <a href="/sobe-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-right-square" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/editar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/visualizar-atendimentos/{{$listas->idas}}"><button type="button" class="btn btn-outline-info btn-sm"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
@@ -77,20 +81,12 @@
         </div>
     </div>
 </div>
-@include('recepcao-AFI/listaatend-pop')
+
+
 
 @endsection
 
-@section('footerScript')
-            <!-- Required datatable js -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
-     
-          
-            <!-- Datatable init js -->
-            <script src="{{ URL::asset('/js/pages/cadastrar-pessoa.init.js')}}"></script>        
+@section('footerScript')  
 
-            <!--botão toggle-->
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
 
 @endsection
