@@ -34,6 +34,7 @@
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/gerenciar-atendimentos">Recepção Atendimento Fraterno</a></li>
                         <li><a class="dropdown-item" href="#">Recepção Geral</a></li>
+                        <li><a class="dropdown-item" href="#">Gerenciar Atendentes</a></li>
                     </ul>
                 </div> 
                     <!-- Right Side Of Navbar -->

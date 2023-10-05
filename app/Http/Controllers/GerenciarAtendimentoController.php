@@ -14,6 +14,8 @@ class GerenciarAtendimentoController extends Controller
     
     public function index(Request $request){
 
+        $data = date("d/m/Y");
+        
         $atende = DB::select("select
         p.id as idatt, 
         p.nome_completo as nm_1,
@@ -35,9 +37,16 @@ class GerenciarAtendimentoController extends Controller
                     ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id') 
                     ->leftjoin('atendentes AS a', 'p4.id', 'a.id_pessoa');
                    
+        $data_inicio=$request->dt_ini;
+        
         $assistido = $request->assist;
 
         $situacao = $request->status;
+
+
+        if ($request->dt_ini){
+            $lista->where('at.dh_chegada', '>=', $request->dt_ini);
+        }
 
         if ($request->assist){
             $lista->where('p1.nome_completo', 'like', "%$request->assist%");
@@ -46,10 +55,11 @@ class GerenciarAtendimentoController extends Controller
         if ($request->status){
             $lista->where('at.status_atendimento', $request->status);
         }
+       
 
+        $lista = $lista->orderBy('at.id', 'ASC', 'at.status', 'ASC')->paginate(50);
+        
         $contar = $lista->count('at.id');
-
-        $lista = $lista->orderBy('at.id', 'DESC')->paginate(50);
 
         $status = DB::select("select
         s.id, 
@@ -58,7 +68,7 @@ class GerenciarAtendimentoController extends Controller
         "); 
 
 
-        return view ('/recepcao-AFI/gerenciar-atendimentos', compact('lista', 'status', 'contar', 'atende'));
+        return view ('/recepcao-AFI/gerenciar-atendimentos', compact('lista', 'status', 'contar', 'atende', 'data'));
 
 
     }

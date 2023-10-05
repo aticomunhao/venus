@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\GerenciarAtendimentoController;
+use App\Http\Controllers\AtendenteController;
+use App\Http\Controllers\PessoaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,29 +25,30 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// Rota e dados gerenciados pelos controllers:
-Route::get('/gerenciar-atendimentos', [App\Http\Controllers\GerenciarAtendimentoController::class, 'index'])->name('atedex');
-Route::get('/criar-atendimento', [App\Http\Controllers\GerenciarAtendimentoController::class, 'create'])->name('atecre');
-Route::post('/novo-atendimento', [App\Http\Controllers\GerenciarAtendimentoController::class, 'store'])->name('atetore');
-Route::get('/cancelar-atendimento/{ida}', [App\Http\Controllers\GerenciarAtendimentoController::class, 'cancelar'])->name('atecan');
-Route::get('/sobe-status/{ida}', [App\Http\Controllers\GerenciarAtendimentoController::class, 'sobeStatus'])->name('atess');
-Route::get('/desce-status/{ida}', [App\Http\Controllers\GerenciarAtendimentoController::class, 'desceStatus'])->name('ateds');
-Route::get('/editar-atendimento/{ida}', [App\Http\Controllers\GerenciarAtendimentoController::class, 'edit'])->name('ateedi');
-Route::post('/grava-atualizacao/{ida}', [App\Http\Controllers\GerenciarAtendimentoController::class, 'altera'])->name('atealt');
-Route::get('/visualizar-atendimentos/{idas}', [App\Http\Controllers\GerenciarAtendimentoController::class, 'visual'])->name('atevis');
-Route::put('/atendente-atualizar/{ida}', [App\Http\Controllers\GerenciarAtendimentoController::class, 'salvaatend'])->name('salate');
+// Rotas go Gerenciar Atendimentos:
+Route::get('/gerenciar-atendimentos', [GerenciarAtendimentoController::class, 'index'])->name('atedex');
+Route::get('/criar-atendimento', [GerenciarAtendimentoController::class, 'create'])->name('atecre');
+Route::post('/novo-atendimento', [GerenciarAtendimentoController::class, 'store'])->name('atetore');
+Route::get('/cancelar-atendimento/{ida}', [GerenciarAtendimentoController::class, 'cancelar'])->name('atecan');
+Route::get('/sobe-status/{ida}', [GerenciarAtendimentoController::class, 'sobeStatus'])->name('atess');
+Route::get('/desce-status/{ida}', [GerenciarAtendimentoController::class, 'desceStatus'])->name('ateds');
+Route::get('/editar-atendimento/{ida}', [GerenciarAtendimentoController::class, 'edit'])->name('ateedi');
+Route::post('/grava-atualizacao/{ida}', [GerenciarAtendimentoController::class, 'altera'])->name('atealt');
+Route::get('/visualizar-atendimentos/{idas}', [GerenciarAtendimentoController::class, 'visual'])->name('atevis');
+Route::put('/atendente-atualizar/{ida}', [GerenciarAtendimentoController::class, 'salvaatend'])->name('salate');
 
 
 // Atendentes
-Route::get('/gerenciar-atendentes', [App\Http\Controllers\AtendenteController::class, 'index']);
-Route::get('/novo-atendente', [App\Http\Controllers\AtendenteController::class, 'novo']);
-Route::post('/tester', [App\Http\Controllers\AtendenteController::class, 'tester']);
+Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index']);
+Route::get('/novo-atendente', [AtendenteController::class, 'novo']);
+Route::post('/tester', [AtendenteController::class, 'tester']);
 
 
-Route::get('/visualizar-atendendes/{id}', [App\Http\Controllers\AtendenteController::class, 'show_detalhes_atendente'])->name('show_atendente');
+Route::get('/visualizar-atendendes/{id}', [AtendenteController::class, 'show_detalhes_atendente'])->name('show_atendente');
 
 
 
 // Pessoas
-Route::get('/gerenciar-pessoas', [App\Http\Controllers\PessoaController::class, 'index']);
-Route::get('/criar-pessoa', [App\Http\Controllers\PessoaController::class, 'create'])->name('pescre');
+Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
+Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
+Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name('pesdes');
