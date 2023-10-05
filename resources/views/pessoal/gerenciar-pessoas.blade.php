@@ -39,7 +39,7 @@
             <div class="table">
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                     <thead style="text-align: center;">
-                        <tr style="background-color: #d6e3ff; font-size:15px; color:#000000">
+                        <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             <th class="col">NOME</th>
                             <th class="col">CPF</th>
                             <th class="col">NASCIMENTO</th>

@@ -15,13 +15,13 @@
                 <form action="{{route('atedex')}}" class="form-horizontal mt-4" method="GET" >
                 <div class="row">
                     <div class ="col-2">Data início
-                        <input class="form-control" type="date" id="" name="dt_ini" value="">
+                        <input class="form-control" type="date" id="" name="dt_ini" value="{{$data_inicio}}">
                     </div>
                     <div class="col">Assistido
-                        <input class="form-control" type="text" id="3" name="assist" value="">
+                        <input class="form-control" type="text" id="3" name="assist" value="{{$assistido}}">
                     </div>
                     <div class="col-2">Status atendimento
-                        <select class="form-select" id="4" name="status" type="number">
+                        <select class="form-select" id="4" name="status" value="{{$situacao}}" type="number">
                             <option value="">Todos</option>
                             <option value="1">Aguardando Atendimento</option>
                             <option value="2">Analisando</option>                            
@@ -46,16 +46,16 @@
             <div class="table">Total assistidos: {{$contar}}
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                     <thead style="text-align: center;">
-                        <tr style="background-color: #d6e3ff; font-size:15px; color:#000000">
+                        <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             <th class="col">Nr</th>
-                            <th class="col">Assistido</th>
-                            <th class="col">Representante</th>
-                            <th class="col">Horário chegada</th>
-                            <th class="col">AF preferido</th>
-                            <th class="col">Atendente</th>
-                            <th class="col">Tipo AF</th>
-                            <th class="col">Status</th>
-                            <th class="col">Ações</th>
+                            <th class="col">ASSISTIDO</th>
+                            <th class="col">REPRESENTANTE</th>
+                            <th class="col">HORÁRIO CHEGADA</th>
+                            <th class="col">AF PREFERIDO</th>
+                            <th class="col">ATENDENTE</th>
+                            <th class="col">TIPO AF</th>
+                            <th class="col">STATUS</th>
+                            <th class="col">AÇÕES</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 14px; color:#000000; text-align:center;">

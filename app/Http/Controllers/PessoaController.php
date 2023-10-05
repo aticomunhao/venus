@@ -149,9 +149,9 @@ class PessoaController extends Controller
      */
     public function destroy($idp)
     {
-        $today = Carbon::today()->format('Y-m-d');
+        $data = date("Y-m-d H:i:s");
 
-        $pessoa = DB::table('pessoas')->select('nome_completo')->where('id', $idp);
+        $pessoa = DB::table('pessoas')->select('nome_completo')->where('id', $idp)->get();
         
         $funcionario = DB::table('funcionarios')
         ->where('id_pessoa', $idp)
@@ -175,14 +175,17 @@ class PessoaController extends Controller
 
         }else{
 
-            DB::delete('delete from pessoas where id = ?', [$idp]);
-
+            //dd($pessoa);
             DB::table('historico')->insert([
                 'id_usuario' => 1,
-                'data' => $today,
+                'data' => $data,
                 'fato' => "Excluiu pessoa",
                 'pessoa' => $pessoa
             ]);
+
+            DB::delete('delete from pessoas where id = ?', [$idp]);
+
+            
 
             app('flasher')->addSuccess('O cadastro da pessoa foi excluido com sucesso.');
             
