@@ -20,7 +20,6 @@ class GerenciarAtendimentoController extends Controller
             'status_atendimento' => 6
         ]);
         
-        //dd($data);
 
         $atende = DB::select("select
         p.id as idatt, 
@@ -371,18 +370,12 @@ class GerenciarAtendimentoController extends Controller
 
         $atendente = $request->atendente;
 
-        if ($request->atendente){
-            $sit_afi->where('a.id_atendente', '=', $request->atendente);
 
             app('flasher')->addWarning('O atendente está ocupado.');        
             return redirect ('/gerenciar-atendimentos');
         }
         elseif ($sta_at == 1){
 
-            DB::table('atendimentos AS a')->where('id', '=', $ida)->update([
-                'status_atendimento' => 3,
-                'id_atendente' => $request->input('atendente')
-            ]);
 
         }
         elseif ($sta_at == 2){
@@ -408,11 +401,8 @@ class GerenciarAtendimentoController extends Controller
             return redirect ('/gerenciar-atendimentos');
         }
 
-            app('flasher')->addSuccess('O status foi alterado e o atendente incluído.');        
-            return redirect ('/gerenciar-atendimentos');
-
-
+        app('flasher')->addSuccess('O status foi alterado e o atendente incluído.');        
+        return redirect ('/gerenciar-atendimentos');
     }
-
 
 }
