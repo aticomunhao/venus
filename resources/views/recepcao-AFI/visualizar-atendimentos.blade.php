@@ -15,7 +15,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <legend style="color:red; font-size:14px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Histórico de atendimentos</legend>
+                    <legend style="color:red; font-size:14px; font-family:Tahoma">Histórico de atendimentos</legend>
                     <fieldset class="border rounded border-secondary p-4">
                     <div class="form-group row">
                         <div class="col">

@@ -73,10 +73,10 @@
                                 <a href="/cancelar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
                                 <a href="/desce-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-left-square" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <button class="btn btn-outline-warning btn-sm" style="font-size: 1rem; color:#000;" type="button" id="" data-bs-toggle="modal" data-bs-target="#atendimento{{$listas->ida}}"><i class="bi bi-person" style="font-size: 1rem; color:#000;"></i></button>
-                                @include('recepcao-AFI.popUp-alterar')
+                                @include('recepcao-AFI.popUp-sel-atendente')
                                 <a href="/sobe-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-right-square" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/editar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/visualizar-atendimentos/{{$listas->idas}}"><button type="button" class="btn btn-outline-info btn-sm"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/visualizar-atendimentos/{{$listas->idas}}"><button type="button" class="btn btn-outline-primary btn-sm"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
                             </td>
                         </tr>
                         @endforeach
