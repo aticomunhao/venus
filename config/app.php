@@ -194,6 +194,11 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        /*
+         * Valida mask...
+         */
+        
+        LaravelLegends\PtBrValidator\ValidatorProvider::class,
 
     ],
 

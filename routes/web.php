@@ -1,11 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\GerenciarAtendimentoController;
 use App\Http\Controllers\AtendenteController;
 use App\Http\Controllers\AtendimentoFraternoController;
 use App\Http\Controllers\PessoaController;
+use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,3 +57,8 @@ Route::get('/visualizar-atendendes/{id}', [AtendenteController::class, 'show_det
 Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
 Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
 Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name('pesdes');
+
+
+// testando?cpf=valor_invalido
+
+

@@ -14,22 +14,15 @@ class GerenciarAtendimentoController extends Controller
     
     public function index(Request $request){
 
-        $now = Carbon::now()->format('Y-m-d H-mm-ss');
-        
-        $dataref = DB::select("select dh_chegada from atendimentos");
+        $now =  Carbon::now()->format('Y-m-d h:m:s');
 
-        $sit = DB::select("select status_atendimento from atendimentos");
-
-        //dd($dataref, $now, $sit);
-
-        if ($dataref < $now && $sit < 5){
-
-                DB::table('atendimentos AS at')->update([
-                    'status_atendimento' => 6
-                    ]);
-
-        }
-    
+        DB::table('atendimentos')
+        ->where('status_atendimento', '<', 5)
+        ->where('dh_chegada', '<', $now)
+        ->update([
+            'status_atendimento' => 6
+        ]);  
+         
     
         $atende = DB::select("select
             p.id as idatt, 
