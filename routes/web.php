@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\GerenciarAtendimentoController;
 use App\Http\Controllers\AtendenteController;
+use App\Http\Controllers\AtendimentoFraternoController;
 use App\Http\Controllers\PessoaController;
 
 /*
@@ -25,7 +26,7 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// Rotas go Gerenciar Atendimentos:
+// Rotas da Recepão DAO:
 Route::get('/gerenciar-atendimentos', [GerenciarAtendimentoController::class, 'index'])->name('atedex');
 Route::get('/criar-atendimento', [GerenciarAtendimentoController::class, 'create'])->name('atecre');
 Route::post('/novo-atendimento', [GerenciarAtendimentoController::class, 'store'])->name('atetore');
@@ -37,6 +38,8 @@ Route::post('/grava-atualizacao/{ida}', [GerenciarAtendimentoController::class, 
 Route::get('/visualizar-atendimentos/{idas}', [GerenciarAtendimentoController::class, 'visual'])->name('atevis');
 Route::put('/atendente-atualizar/{ida}', [GerenciarAtendimentoController::class, 'salvaatend'])->name('salate');
 
+//Rotas do Atendimento Fraterno:
+Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name('afidex');
 
 // Atendentes
 Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index']);

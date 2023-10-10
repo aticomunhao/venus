@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>@yield('title')</title><!--{{ config('app.name', 'Laravel') }}-->
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -35,6 +35,7 @@
                         <li><a class="dropdown-item" href="/gerenciar-atendimentos">Recepção Atendimento Fraterno</a></li>
                         <li><a class="dropdown-item" href="#">Recepção Geral</a></li>
                         <li><a class="dropdown-item" href="#">Gerenciar Atendentes</a></li>
+                        <li><a class="dropdown-item" href="/atendendo">Atender o assistido</a></li>
                     </ul>
                 </div> 
                     <!-- Right Side Of Navbar -->
