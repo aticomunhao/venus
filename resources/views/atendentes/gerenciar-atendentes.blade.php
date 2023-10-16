@@ -2,14 +2,18 @@
 
 @section('title', 'Gerenciar Atendentes')
 
+@if (session('msg'))
+   <p class="msg">{{ session('msg') }}</p>
+@endif
+
 @section('content')
 
 
 <div class="container p-5 my-5 border ">
-{{-- Teste de Banco @dump($atendentes) --}}
+{{-- Teste de Banco: @dump($atendentes->toArray()) --}}
 
 
-    <div class="row">
+<div class="row">
         {{--Titulo Gerenciar Atendentes --}}
         <div class="col-8">
             <h1 class="display-4 p-2">Gerenciar Atendendes</h1>
@@ -18,19 +22,23 @@
         {{-- botão Novo + --}}
         <div class="col-2 offset-2"> {{-- float-end --}}
             <div class="text-right">
-              <a href="novo-atendente" class="btn btn-success">Novo +</a>
+              <a href="{{route('novo-atendente')}}" class="btn btn-success">Novo +</a>
             </div>
         </div>
 
-        <hr>
+        <hr class="m-0 p-0">
         {{-- Perplexity --}}
         <div class="row">
 
             {{-- Search Bar --}}
             <div class="col-6 my-3">
-                <form class="d-flex" method="GET" action="/gerenciar-atendentes" >
+                <form class="d-flex" action="/gerenciar-atendentes" method="GET">
+                    {{--<form class="d-flex" action="{{route('gerenciar-atendentes/', $request->search)}}" method="GET"> --}}
                     @csrf
-                    <input class="form-control me-2" type="search" id="query" name="query" placeholder="Nome / CPF / Grupo">
+                    <input class="form-control me-2" type="search" id="query" name="query"
+                        @if ($search) value="Buscando por {{$search}}"
+                        @else placeholder=" Nome / Grupo " @endif >
+
                     <label for="query"></label>
                     <button class="btn btn-outline-success" type="submit">Procurar</button>
                 </form>
@@ -82,11 +90,17 @@
 
             {{-- Corpo Tabela --}}
             <tbody>
+
                 @foreach ($atendentes as $atendente)
                     <tr>
 
-                        <td> {{ $atendente->nome_completo }}</td>
-                        <td> {{ $atendente->nome_grupo }} </td>
+                        <td> {{ $atendente->pessoa->nome_completo }}</td>
+                        <td> @if ($atendente->grupo != null)
+                                {{ $atendente->grupo->nome }}
+                            @else
+                                "Sem Grupo"
+                            @endif
+                        </td>
                         <td class="text-center"> {{ $atendente->status_atendente ? 'Ativo' : 'Inativo' }}</td>
 
 

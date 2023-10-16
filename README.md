@@ -1,4 +1,4 @@
-## Sobre Apolo
+## Sobre Venus
 
 Apolo é a aplicação de atendentes da Comunhao Espirita de Brasília.
 

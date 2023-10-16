@@ -3,23 +3,24 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\GerenciarAtendimentoController;
+
+// Controllers
 use App\Http\Controllers\AtendenteController;
+use App\Http\Controllers\TesteController;
+use App\Http\Controllers\GerenciarAtendimentoController;
 use App\Http\Controllers\AtendimentoFraternoController;
 use App\Http\Controllers\PessoaController;
-use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
+
+// Validadores
+use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
+
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 Auth::routes();
 
@@ -38,14 +39,11 @@ Route::name('usuario')->middleware('validaUsuario')->group(function () {
     Route::get('/usuario/alterar/{id}', [UsuarioController::class, 'edit']);
     Route::put('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
     Route::get('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
-    
+
   });
 
 Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
 Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
-
-
-
 
 
 
@@ -66,15 +64,25 @@ Route::put('/atendente-atualizar/{ida}', [GerenciarAtendimentoController::class,
 //Rotas do Atendimento Fraterno:
 Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name('afidex');
 
+
+
+/*
+|--------------------------------------------------------------------------
+| Alexandre Routes
+|--------------------------------------------------------------------------
+*/
+
 // Atendentes
-Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index']);
-Route::get('/novo-atendente', [AtendenteController::class, 'novo']);
-Route::post('/tester', [AtendenteController::class, 'tester']);
+Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('gerenciar-atendentes'); // Exibe todos atendentes
+Route::get('/gerenciar-atendende/{id}', [AtendenteController::class, 'show'])->name('gerenciar-atendente_show'); // Exibir detalhes?
+Route::get('/novo-atendente', [AtendenteController::class, 'create'])->name('novo-atendente'); // Select de pessoas -> atendentes.
+Route::post('/inserir-atendente', [AtendenteController::class, 'RequestTest'])->name('inserir_atendente');
 
-
+// Atendentes Misc/Testes
 Route::get('/visualizar-atendendes/{id}', [AtendenteController::class, 'show_detalhes_atendente'])->name('show_atendente');
 
-
+// Debugger
+Route::get('/tester', [TesteController::class, 'index'])->name('tester');
 
 // Pessoas
 Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');

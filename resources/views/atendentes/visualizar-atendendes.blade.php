@@ -3,7 +3,11 @@
 @section('head')
 
 @section('title', 'Visualizar Atendentes')
-    
+
+@if (session('msg'))
+   <p class="msg">{{ session('msg') }}</p>
+@endif
+
 @section('content')
 
 <div class="container p-5 my-5 border ">

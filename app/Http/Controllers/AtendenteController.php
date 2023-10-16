@@ -6,80 +6,58 @@ use App\Models\Atendente;
 use App\Models\Grupo;
 use App\Models\Pessoa;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class AtendenteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Apresenta todos Atendentes na pro usuario
     public function index()
     {
-
-        //  $atendentes = Atendente::all();
-        $grupos  = Grupo::all();
-        $pessoas = Pessoa::all();
-
         //search:
         $search = request('query'); // é query porquê é o name do Form da Search
 
         if ($search) { // se há pesquisa execute, se não, prossiga com o metodo antigo
 
-            $atendentes = Atendente::where([
-                ['id_pessoa', 'like', '%'.$search.'%']
-                // Vai buscar o pessoa, busca do tipo like (valor n exato), o % faz parte do like
-                // % => qualquer coisa antes e depois do $search
-
-
-            ])->get();
+            $atendentes = Atendente::whereHas('pessoa', function ($query) use ($search)
+            {
+                $query->where('nome_completo', 'like', '%' . $search . '%');
+            })->get();
 
         } else {
             $atendentes = Atendente::all();
-
-        $atendentes = DB::select("SELECT
-        p.nome_completo,
-        g.nome as nome_grupo,
-        a.status_atendente
-
-
-        FROM atendentes a
-        LEFT JOIN pessoas p ON a.id_pessoa = p.id
-        LEFT JOIN grupos g on a.id_grupo = g.id
-
-
-        "); // metodo query
         }
 
+        $grupos = Grupo::all();
 
 
-        // $pessoas = DB::select("select * from pessoa");
-        // dd($atendentes);
+        return view ('/atendentes/gerenciar-atendentes', compact('atendentes', 'grupos', 'search'));
 
-        return view ('/atendentes/gerenciar-atendentes', compact('atendentes', 'grupos', 'pessoas', 'search'));
-
-    }
-
-    public function tester(Request $request){
-
-        return view ('/tester', compact('request'));
-    }
-
-    public function novo()
-    {
-        $pessoas = Pessoa::all();
-        $atententes = Atendente::all();
-
-        return view ('/atendentes.novo-atendente', compact('pessoas','atententes'));
     }
 
     /*
      * Show the form for creating a new resource.
      */
-
     public function create()
     {
-        //
+
+        //search:
+        $search = request('query'); // é query porquê é o name do Form da Search
+/*
+        if ($search) { // se há pesquisa execute, se não, prossiga com o metodo antigo
+
+            $pessoas = Pessoa::where('nome_completo', 'like', '%' . $search . '%')
+            ->get();
+
+        } else {
+            $pessoas = Pessoa::all();
+        }
+        */
+
+        $pessoas = Pessoa::all();
+
+
+
+        return view ('/atendentes.novo-atendente', compact('pessoas', 'search'));
     }
 
 
@@ -87,11 +65,33 @@ class AtendenteController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {
+        /*
 
-    //    $novoAtendenteData = $request->request->get('request');
+        // Find an existing pessoa instance
+        $pessoa = Pessoa::find($request);
 
+        // Create a new atendente instance
+        $atendente = new Atendente;
+        $atendente->name = 'John Doe';
+        $atendente->email = 'john@example.com';
 
-        return redirect('/');
+        // Link the atendente to the pessoa
+        $pessoa->atendente()->save($atendente);
+
+        // Save the atendente to the database
+        $atendente->save();
+
+        $novoAtendente = $atendente->pessoa->nome_completo;
+
+        return redirect('/')->with('msg', ' Atendente '.$novoAtendente.' foi adicionado com sucesso ');
+        */
+
+    }
+
+    public function RequestTest(Request $request)
+    {
+
+        return view('requestTeste', $request);
 
     }
 

@@ -16,17 +16,26 @@
 
         <!-- Scripts -->
         @vite(['resources/js/app.css', 'resources/js/app.js'])
+
+        <!-- CSS da aplicação -->
+        <link rel="stylesheet" href="\css\styles.css">
+
+
+        <!-- CSS da aplicação -->
+        <script src="/js/scripts.js"></script>
+
     </head>
         <body>
-
 
             @include('layouts/sidebar')
 
             @yield('content')
-            
-                <!-- footerScript -->
+
+            <!-- footerScript -->
             @yield('footerScript')
 
-
+            <!-- App js
+            <script src="{{ URL::asset('/js/app.min.js')}}"></script> -->
         </body>
+        
 </html>
