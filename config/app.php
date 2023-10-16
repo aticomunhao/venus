@@ -69,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'America/Sao_paulo',
 
     /*
     |--------------------------------------------------------------------------
@@ -194,6 +194,11 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        /*
+         * Valida mask...
+         */
+        
+        LaravelLegends\PtBrValidator\ValidatorProvider::class,
 
     ],
 

@@ -22,7 +22,7 @@
                     <div class="form-group row">
                         <div class="col">Nome do assistido
                             <select class="form-select" id="1" name="assist" required="required">
-                                <option value="{{$result[0]->id}}">{{$result[0]->nm_1}}</option>
+                                <option value="{{$result[0]->idas}}">{{$result[0]->nm_1}}</option>
                                 @foreach($lista as $listas)
                                 <option value="{{$listas->id}}">{{$listas->nome_completo}}</option>
                                 @endforeach
@@ -30,7 +30,7 @@
                         </div>
                         <div class="col">Nome do representante
                             <select class="form-select" id="2" name="repres" >
-                                <option value="{{$result[0]->id}}">{{$result[0]->nm_2}}</option>
+                                <option value="{{$result[0]->idr}}">{{$result[0]->nm_2}}</option>
                                 @foreach($lista as $listas)
                                 <option value="{{$listas->id}}">{{$listas->nome_completo}}</option>
                                 @endforeach
@@ -49,9 +49,9 @@
                         </div>         
                         <div class="col">AFI preferido
                             <select class="form-select" id="5" name="afi_p" >
-                                <option value="{{$result[0]->idp}}">{{$result[0]->nm_3}}</option>
+                                <option value="{{$result[0]->iap}}">{{$result[0]->nm_3}}</option>
                                 @foreach($afi as $afis)
-                                <option value="{{$afis->idafi}}">{{$afis->nm_afi}}</option>
+                                <option value="{{$afis->iaf}}">{{$afis->nm_afi}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -68,10 +68,10 @@
                 </div>
                 <div class="row">
                         <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-atendimentos" style="font-weight:bold;" role="button">Cancelar</a>
+                            <a class="btn btn-danger" href="/gerenciar-atendimentos"  role="button">Cancelar</a>
                         </div>
                         <div class="d-grid gap-2 col-4 mx-auto" >
-                            <button type="submit" class="btn btn-info" style="color:#fff; font-weight:bold;">Confirmar</button>
+                            <button type="submit" class="btn btn-primary" >Confirmar</button>
                         </div>
                         </form>
                         

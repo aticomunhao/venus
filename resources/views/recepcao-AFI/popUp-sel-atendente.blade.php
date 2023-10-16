@@ -35,7 +35,7 @@
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
                     </div>
                     <div class="col" style="text-align: left;">
-                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Confirmar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Confirmar</button>
                     </div>
                 </form>
                 </div>

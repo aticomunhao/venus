@@ -6,31 +6,37 @@
 <?php
 //echo "<meta HTTP-EQUIV='refresh' CONTENT='30;URL=gerenciar-atendimentos'>";
 ?>
-<div class="container-xxl";>
+
+<div class="container-fluid";>
+<h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ATENDIMENTOS</h4>
     <div class="col-12">
         <div class="row justify-content-center">
             <div>
                 <form action="{{route('atedex')}}" class="form-horizontal mt-4" method="GET" >
                 <div class="row">
-                    <div class="col-4">Assistido
-                        <input class="form-control" type="text" id="3" name="assist" value="">
+                    <div class ="col-2">Data início
+                        <input class="form-control" type="date" id="" name="dt_ini" value="{{$data_inicio}}">
+                    </div>
+                    <div class="col">Assistido
+                        <input class="form-control" type="text" id="3" name="assist" value="{{$assistido}}">
                     </div>
                     <div class="col-2">Status atendimento
-                        <select class="form-select" id="4" name="status" type="number">
-                        <option value=" ">Todos</option>                            
-                        @foreach($status  as $statusa)
-                        <option value="{{$statusa->id}}">{{$statusa->descricao}}</option>
-                        @endforeach
-                        </select>
-                       
+                        <select class="form-select" id="4" name="status" value="{{$situacao}}" type="number">
+                            <option value="">Todos</option>
+                            <option value="1">Aguardando Atendimento</option>
+                            <option value="2">Analisando</option>                            
+                            <option value="3">Aguardando assistido</option>                            
+                            <option value="4">Em atendimento</option>                            
+                            <option value="5">Finalizado</option>                            
+                            <option value="6">Cancelado</option>                        
+                        </select>                       
                     </div>
                         <div class="col"><br>
                             <input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
                             <a href="/gerenciar-atendimentos"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
                     </form>
                             <a href="/criar-atendimento"><input class="btn btn-success btn-sm me-md-2" type="button" autofocus value="Novo Atendimento &plus;"></a>
-                            
-                            <button type="button" value="" id="btnIncluirPessoa" class="btn btn-success btn-sm  waves-effect waves-light classIncluirPessoa" data-toggle="modal" data-target=".bs-example-modal-lg">Nova Pessoa +</button>
+                            <a href="/gerenciar-pessoas"><input class="btn btn-success btn-sm me-md-2" type="button" value="Gerenciar Pessoas"></a>
 
                         </div>
                 </div>
@@ -40,16 +46,16 @@
             <div class="table">Total assistidos: {{$contar}}
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                     <thead style="text-align: center;">
-                        <tr style="background-color: #d6e3ff; font-size:15px; color:#000000">
+                        <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             <th class="col">Nr</th>
-                            <th class="col">Assistido</th>
-                            <th class="col">Representante</th>
-                            <th class="col">Horário chegada</th>
-                            <th class="col">AF preferido</th>
-                            <th class="col">Atendente</th>
-                            <th class="col">Tipo AF</th>
-                            <th class="col">Status</th>
-                            <th class="col">Ações</th>
+                            <th class="col">ASSISTIDO</th>
+                            <th class="col">REPRESENTANTE</th>
+                            <th class="col">HORÁRIO CHEGADA</th>
+                            <th class="col">AF PREFERIDO</th>
+                            <th class="col">ATENDENTE</th>
+                            <th class="col">TIPO AF</th>
+                            <th class="col">STATUS</th>
+                            <th class="col">AÇÕES</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 14px; color:#000000; text-align:center;">
@@ -58,7 +64,7 @@
                             <td scope="" >{{$listas->ida}}</td>
                             <td scope="" >{{$listas->nm_1}}</td>
                             <td scope="" >{{$listas->nm_2}}</td>
-                            <td scope="" >{{$listas->dh_chegada}}</td>
+                            <td scope="" >{{date( 'd/m/Y H:i:s', strtotime($listas->dh_chegada))}}</td>
                             <td scope="" >{{$listas->nm_3}}</td>
                             <td scope="" >{{$listas->nm_4}}</td>
                             <td scope="" >{{$listas->tipo}}</td>
@@ -67,10 +73,10 @@
                                 <a href="/cancelar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
                                 <a href="/desce-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-left-square" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <button class="btn btn-outline-warning btn-sm" style="font-size: 1rem; color:#000;" type="button" id="" data-bs-toggle="modal" data-bs-target="#atendimento{{$listas->ida}}"><i class="bi bi-person" style="font-size: 1rem; color:#000;"></i></button>
-                                @include('recepcao-AFI.popUp-alterar')
+                                @include('recepcao-AFI.popUp-sel-atendente')
                                 <a href="/sobe-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-right-square" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/editar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/visualizar-atendimentos/{{$listas->idas}}"><button type="button" class="btn btn-outline-info btn-sm"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/visualizar-atendimentos/{{$listas->idas}}"><button type="button" class="btn btn-outline-primary btn-sm"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
                             </td>
                         </tr>
                         @endforeach
