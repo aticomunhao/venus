@@ -113,10 +113,10 @@ class PessoaController extends Controller
 
         $pessoa = DB::table('pessoas')->max('id');
 
-        DB::table('historico')->insert([
+        DB::table('historico_venus')->insert([
             'id_usuario' => 1,
             'data' => $today,
-            'fato' => "Incluiu Pessoa",
+            'fato' => 1,
             'pessoa' => $request->input('nome') 
         ]);
 
@@ -195,7 +195,7 @@ class PessoaController extends Controller
             DB::table('historico')->insert([
                 'id_usuario' => 1,
                 'data' => $data,
-                'fato' => "Excluiu pessoa",
+                'fato' => 1,
                 'pessoa' => $pessoa
             ]);
 

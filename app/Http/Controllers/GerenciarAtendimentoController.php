@@ -35,7 +35,7 @@ class GerenciarAtendimentoController extends Controller
             ");
 
         $lista = DB::table('atendimentos AS at')
-                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo as nm_2', 'at.id_atendente_pref', 'p3.nome_completo as nm_3', 'at.id_atendente', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tx.tipo', 'pa.nome', 'att.id as idatt' )
+                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref', 'p3.nome_completo as nm_3', 'at.id_atendente', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tx.tipo', 'pa.nome', 'att.id as idatt' )
                     ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id')
                     ->leftJoin('pessoas AS p', 'att.id_pessoa', 'p.id')
@@ -66,7 +66,7 @@ class GerenciarAtendimentoController extends Controller
         }
        
 
-        $lista = $lista->orderBy('at.status_atendimento', 'ASC', 'at.dh_chegada', 'ASC')->paginate(50);
+        $lista = $lista->orderBy('at.status_atendimento', 'ASC' )->orderBy('at.dh_chegada', 'ASC')->paginate(50);
         
         $contar = $lista->count('at.id');
 
@@ -145,6 +145,13 @@ class GerenciarAtendimentoController extends Controller
         'pref_tipo_atendente'=>$request->input('tipo_afi'),
         'status_atendimento'=> 1
        ]);
+
+       DB::table('historico_venus')->insert([
+        'id_usuario' => 1,
+        'data' => $dt_hora,
+        'fato' => 5,
+        'pessoa' => $request->input('assist')
+    ]);
               
 
         app('flasher')->addSuccess('O cadastro do atendimento foi realizado com sucesso.');
@@ -280,7 +287,7 @@ class GerenciarAtendimentoController extends Controller
 
         $result = DB::table('atendimentos AS at')
                     ->where('at.id', $ida)                  
-                    ->select('at.id AS ida', 'p1.id', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente as idaf', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tp.nome',  'at.parentesco', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo')
+                    ->select('at.id AS ida', 'p1.id as idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente as idaf', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tp.nome',  'at.parentesco', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo')
                     ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')                                     
                     ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id')
                     ->leftJoin('pessoas AS p', 'att.id_pessoa', 'p.id')

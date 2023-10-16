@@ -8,6 +8,8 @@ use App\Http\Controllers\AtendenteController;
 use App\Http\Controllers\AtendimentoFraternoController;
 use App\Http\Controllers\PessoaController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
+use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,12 +21,33 @@ use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-Route::get('/', function(){
-    return view('/auth/login');
-});
-
 Auth::routes();
+
+Route::get('/logout', 'LexaAdmin@logout');
+
+Route::get('/', [LoginController::class, 'index']);
+Route::any('/login/valida', [LoginController::class, 'validaUserLogado'])->name('home.post');
+Route::any('/login/home', [LoginController::class, 'valida']);
+
+Route::name('usuario')->middleware('validaUsuario')->group(function () {
+    Route::get('gerenciar-usuario', [UsuarioController::class, 'index']);
+    Route::get('usuario-incluir', [UsuarioController::class, 'create']);
+    Route::get('cadastrar-usuarios/configurar/{id}', [UsuarioController::class, 'configurarUsuario']);
+    Route::post('/cad-usuario/inserir', [UsuarioController::class, 'store']);
+    Route::get('/usuario/excluir/{id}', [UsuarioController::class, 'destroy']);
+    Route::get('/usuario/alterar/{id}', [UsuarioController::class, 'edit']);
+    Route::put('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
+    Route::get('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
+    
+  });
+
+Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
+Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
+
+
+
+
+
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
