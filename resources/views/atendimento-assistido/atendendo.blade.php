@@ -52,12 +52,13 @@
                                 </tr>
                             </thead>
                             <tbody style="font-size: 14px; color:#000000; text-align:center;">
-                                <tr>
-                                    <td scope="{{$lista->nm_1}}"></td>
-                                    <td scope="" ></td>
-                                    <td scope="" ></td>
-                                    <td scope="" ></td>
-                                    <td scope="" ></td>
+                            @foreach($assistido as $assistidos)    
+                            <tr>
+                                    <td scope="">{{$assistidos->nm_1}}</td>
+                                    <td scope="" >{{$assistidos->nm_2}}</td>
+                                    <td scope="" >{{$assistidos->dh_chegada}}</td>
+                                    <td scope="" >{{$assistidos->tipo}}</td>
+                                    <td scope="" >{{$assistidos->descricao}}</td>
                                     <td scope="">
                                         <a href="/historico-assistido"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
                                         <a href="/iniciar-atendimento"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-left-square" style="font-size: 1rem; color:#000;"></i></button></a>
@@ -68,6 +69,7 @@
                                         
                                     </td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

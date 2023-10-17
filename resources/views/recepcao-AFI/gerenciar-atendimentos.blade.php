@@ -17,10 +17,10 @@
                     <div class ="col-2">Data início
                         <input class="form-control" type="date" id="" name="dt_ini" value="{{$data_inicio}}">
                     </div>
-                    <div class="col">Assistido
+                    <div class="col-2">Assistido
                         <input class="form-control" type="text" id="3" name="assist" value="{{$assistido}}">
                     </div>
-                    <div class="col-2">Status atendimento
+                    <div class="col-1">Status
                         <select class="form-select" id="4" name="status" value="{{$situacao}}" type="number">
                             <option value="">Todos</option>
                             <option value="1">Aguardando Atendimento</option>
