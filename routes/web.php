@@ -6,6 +6,7 @@ use App\Http\Controllers\GerenciarAtendimentoController;
 use App\Http\Controllers\AtendenteController;
 use App\Http\Controllers\AtendimentoFraternoController;
 use App\Http\Controllers\PessoaController;
+use App\Http\Controllers\FatosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,3 +56,14 @@ Route::get('/visualizar-atendendes/{id}', [AtendenteController::class, 'show_det
 Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
 Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
 Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name('pesdes');
+
+
+// Fato
+//Route::post('/Gerenciarm', [PessoaController::class, 'create'])->ID('pesdex');
+Route::get('/gerenciar-fatos', [FatosController::class, 'index'])->name('');
+Route::get('/editar-fatos/{id}', [FatosController::class, 'edit'])->name('');
+Route::get('/incluir-atendimento{id}', [FatosController::class, 'incluir'])->name('');
+
+
+
+

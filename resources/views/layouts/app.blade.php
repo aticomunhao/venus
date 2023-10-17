@@ -36,6 +36,8 @@
                         <li><a class="dropdown-item" href="#">Recepção Geral</a></li>
                         <li><a class="dropdown-item" href="#">Gerenciar Atendentes</a></li>
                         <li><a class="dropdown-item" href="/atendendo">Atender o assistido</a></li>
+                        <li><a class="dropdown-item" href="/fato">Atender o assistido</a></li>
+
                     </ul>
                 </div> 
                     <!-- Right Side Of Navbar -->

@@ -194,10 +194,6 @@ class PessoaController extends Controller
 
 
 
-    }
-
-
-    
-        
+    }  
     }
 }
