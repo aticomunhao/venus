@@ -28,50 +28,51 @@ class AtendimentoFraternoController extends Controller
                                   //  ->leftJoin('tipo_dia AS td', 'g.id_dia_semana', 'td.id')
                                //     ->get();
 
-        //dd($atendente);
+       // dd($pref_att);
 
         $now = Carbon::now()->format('Y-m-d');
 
 
-        $atendido = DB::select("select 
-                        at.id AS ida,
-                        p1.id AS idas,
+        $assistido = DB::select("select 
+                        at.id  ida,
+                        p1.id  idas,
                         p1.ddd,
                         p1.celular, 
                         at.dh_chegada,
                         at.dh_inicio,
                         at.dh_fim,
                         at.id_assistido,
-                        p1.nome_completo AS nm_1,
+                        p1.nome_completo nm_1,
                         at.id_representante,
-                        p2.nome_completo AS nm_2,
+                        p2.nome_completo nm_2,
                         at.id_atendente_pref,
-                        p3.nome_completo AS nm_3,
+                        p3.nome_completo nm_3,
                         at.id_atendente, 
-                        p4.nome_completo AS nm_4, 
+                        p4.nome_completo nm_4, 
                         at.pref_tipo_atendente, 
                         ts.descricao, 
                         tx.tipo,
-                        pa.nome,        
-                        max(at.dh_chegada)
-                        from atendimentos AS at                    
-                        leftjoin atendentes AS att on (at.id_atendente =  att.id_pessoa)
-                        leftjoin tipo_status_atendimento AS ts on (at.status_atendimento = ts.id)
-                        leftjoin pessoas AS p1 on (at.id_assistido, p1.id)
-                        leftjoin pessoas AS p2 on (at.id_representante = p2.id)
-                        leftjoin pessoas AS p3 on (at.id_atendente_pref, p3.id)
-                        leftjoin pessoas AS p4 on (at.id_atendente = p4.id)
-                        leftjoin tp_sexo AS tx on (at.pref_tipo_atendente = tx.id)
-                        leftJoin tp_parentesco AS pa on (at.parentesco = pa.id)
-                        where(at.status_atendimento = 1)
-                        where(at.id_atendente_pref = $atendente)                   
-                        where(at.pref_tipo_atendente = $pref_att)
+                        pa.nome
+                        from atendimentos at                    
+                        left join atendentes att on (at.id_atendente =  att.id_pessoa)
+                        left join tipo_status_atendimento ts on (at.status_atendimento = ts.id)
+                        left join pessoas p1 on (at.id_assistido = p1.id)
+                        left join pessoas p2 on (at.id_representante = p2.id)
+                        left join pessoas p3 on (at.id_atendente_pref = p3.id)
+                        left join pessoas p4 on (at.id_atendente = p4.id)
+                        left join tp_sexo tx on (at.pref_tipo_atendente = tx.id)
+                        left join tp_parentesco pa on (at.parentesco = pa.id)
+                        where(at.status_atendimento = 1)                        
+                        and at.dh_chegada = (select max(at.dh_chegada) from atendimentos at)
+                        and tx.id = $pref_att
+                        and at.pref_tipo_atendente = $atendente
+                        group by  at.id, p1.id, p2.nome_completo, p3.nome_completo, p4.nome_completo, ts.descricao, tx.tipo, pa.nome                        
                         ");
 
     
                     
-dd($atendido);
-        return view ('/atendimento-assistido/atendendo', compact('lista', 'atendente', 'now', 'nome'));
+//dd($assistido);
+        return view ('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome'));
 
     
     }
