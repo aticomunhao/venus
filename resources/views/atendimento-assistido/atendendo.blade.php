@@ -15,18 +15,18 @@
             <div class="card-body"> 
                 <div class="row">
                     <div class="col-2">Data               
-                        <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{date( 'd/m/Y' , strtotime ($lista[0]->dh_chegada))}}" type="text" name="data" id="">
+                        <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{date( 'd/m/Y' , strtotime ($now))}}" type="text" name="data" id="" disabled>
                     </div>   
                     <div class="col-3">Grupo
-                        <input class="form-control" style="text-align:left; font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{$grupo[0]->nomeg}}" name="nome" id="" type="text">
+                        <input class="form-control" style="text-align:left; font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="" name="nome" id="" type="text" disabled>
                     </div>
                 
                     <div class="col-2">Código Atendente                    
-                        <input class="form-control" style="font-weight:bold; background:#f3f3f3; color:#000;" type="text" name="id_atendene" id="" value="{{$lista[0]->id_atendente}}">
+                        <input class="form-control" style="font-weight:bold; background:#f3f3f3; color:#000;" type="text" name="id_atendene" id="" value="{{$atendente}}" disabled>
                     </div>
                                  
                     <div class="col-5">Nome do Atendete                   
-                        <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{$lista[0]->nm_4}}" name="nome_usuario" id="" type="text">
+                        <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{$nome}}" name="nome_usuario" id="" type="text" disabled>
                     </div>
                 </div>
             </div>
@@ -53,11 +53,11 @@
                             </thead>
                             <tbody style="font-size: 14px; color:#000000; text-align:center;">
                                 <tr>
-                                    <td scope="" >{{$lista[0]->nm_1}}</td>
-                                    <td scope="" >{{$lista[0]->nm_2}}</td>
-                                    <td scope="" >{{date( 'd/m/Y H:i:s', strtotime($lista[0]->dh_chegada))}}</td>
-                                    <td scope="" >{{$lista[0]->tipo}}</td>
-                                    <td scope="" >{{$lista[0]->descricao}}</td>
+                                    <td scope="{{$lista->nm_1}}"></td>
+                                    <td scope="" ></td>
+                                    <td scope="" ></td>
+                                    <td scope="" ></td>
+                                    <td scope="" ></td>
                                     <td scope="">
                                         <a href="/historico-assistido"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
                                         <a href="/iniciar-atendimento"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-left-square" style="font-size: 1rem; color:#000;"></i></button></a>

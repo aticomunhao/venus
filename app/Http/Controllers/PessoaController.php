@@ -6,6 +6,7 @@ use App\Models\Pessoa;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Filament\Support\RawJs;
 
 class PessoaController extends Controller
 {
@@ -72,6 +73,21 @@ class PessoaController extends Controller
 
         //dd($vercpf);
 
+        try{
+            $validated = $request->validate([
+                //'telefone' => 'required|telefone',
+                'cpf' => 'required|cpf',
+                //'cnpj' => 'required|cnpj',
+                // outras validações aqui
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            app('flasher')->addError('Este CPF não é válido');
+
+            return redirect()->back()->withInput();
+            //dd($e->errors());
+        }
+
         if ($vercpf > 0) {
 
 
@@ -97,11 +113,11 @@ class PessoaController extends Controller
 
         $pessoa = DB::table('pessoas')->max('id');
 
-        DB::table('historico')->insert([
+        DB::table('historico_venus')->insert([
             'id_usuario' => 1,
             'data' => $today,
-            'fato' => "Incluiu Pessoa",
-            'id_pessoa' => $request->input('nome') 
+            'fato' => 1,
+            'pessoa' => $request->input('nome') 
         ]);
 
 
@@ -179,7 +195,7 @@ class PessoaController extends Controller
             DB::table('historico')->insert([
                 'id_usuario' => 1,
                 'data' => $data,
-                'fato' => "Excluiu pessoa",
+                'fato' => 1,
                 'pessoa' => $pessoa
             ]);
 

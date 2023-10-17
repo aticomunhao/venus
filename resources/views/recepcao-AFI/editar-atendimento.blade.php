@@ -22,7 +22,7 @@
                     <div class="form-group row">
                         <div class="col">Nome do assistido
                             <select class="form-select" id="1" name="assist" required="required">
-                                <option value="{{$result[0]->id}}">{{$result[0]->nm_1}}</option>
+                                <option value="{{$result[0]->idas}}">{{$result[0]->nm_1}}</option>
                                 @foreach($lista as $listas)
                                 <option value="{{$listas->id}}">{{$listas->nome_completo}}</option>
                                 @endforeach
@@ -30,7 +30,7 @@
                         </div>
                         <div class="col">Nome do representante
                             <select class="form-select" id="2" name="repres" >
-                                <option value="{{$result[0]->id}}">{{$result[0]->nm_2}}</option>
+                                <option value="{{$result[0]->idr}}">{{$result[0]->nm_2}}</option>
                                 @foreach($lista as $listas)
                                 <option value="{{$listas->id}}">{{$listas->nome_completo}}</option>
                                 @endforeach

@@ -1,4 +1,4 @@
-## Sobre Apolo
+## Sobre Venus
 
 Apolo é a aplicação de atendentes da Comunhao Espirita de Brasília.
 
@@ -19,13 +19,28 @@ Quando Feito o Clone, alguns arquivos não estarão no projeto.
 DB_CONNECTION=pgsql
 DB_HOST=192.168.1.137
 DB_PORT=5432
-DB_DATABASE=pessoal
-DB_USERNAME=postgres
-DB_PASSWORD=scga2298
+DB_DATABASE=
+DB_USERNAME=
+DB_PASSWORD=
 
 A Aplicação Está com VITE ativado, para roda-la localmente é necessário:
  - Instalar NPM: no Terminal execute: npm install
  - Executar o NPM com Dev ou Build, no Terminal execute: npm run dev
+
+FLASH!
+ - composer require php-flasher/flasher-laravel
+
+ Uso:
+
+ - https://php-flasher.io/laravel/ (como instalar)
+
+ - flash()->addSuccess('Your payment has been accepted.');
+
+ - flash()->addError('There was an issue unlocking your account.');
+
+ - flash()->addWarning('Your account may not have been re-activated.');
+
+ - flash()->addInfo('Your account has been created, but requires verification.');
 
 ## Contribuição
 
