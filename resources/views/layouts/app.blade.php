@@ -17,13 +17,7 @@
         <!-- Scripts -->
         @vite(['resources/js/app.css', 'resources/js/app.js'])
 
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/gerenciar-atendimentos">Recepção Atendimento Fraterno</a></li>
-                        <li><a class="dropdown-item" href="#">Recepção Geral</a></li>
-                        <li><a class="dropdown-item" href="#">Gerenciar Atendentes</a></li>
-                        <li><a class="dropdown-item" href="/atendendo">Atender o assistido</a></li>
-                        <li><a class="dropdown-item" href="/fato">Atender o assistido</a></li>
-
+                   
 
     </head>
         <body>
