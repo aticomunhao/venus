@@ -17,8 +17,24 @@
         <!-- Scripts -->
         @vite(['resources/js/app.css', 'resources/js/app.js'])
 
-        <!-- CSS da aplicação -->
-        <link rel="stylesheet" href="\css\styles.css">
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/gerenciar-atendimentos">Recepção Atendimento Fraterno</a></li>
+                        <li><a class="dropdown-item" href="#">Recepção Geral</a></li>
+                        <li><a class="dropdown-item" href="#">Gerenciar Atendentes</a></li>
+                        <li><a class="dropdown-item" href="/atendendo">Atender o assistido</a></li>
+                        <li><a class="dropdown-item" href="/fato">Atender o assistido</a></li>
+
+                    </ul>
+                </div> 
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Authentication Links -->
+                        @guest
+                            @if (Route::has('login'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                </li>
+                            @endif
 
 
         <!-- CSS da aplicação -->

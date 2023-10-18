@@ -10,9 +10,9 @@ use App\Http\Controllers\TesteController;
 use App\Http\Controllers\GerenciarAtendimentoController;
 use App\Http\Controllers\AtendimentoFraternoController;
 use App\Http\Controllers\PessoaController;
+use App\Http\Controllers\FatosController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
-
 // Validadores
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 
@@ -92,6 +92,12 @@ Route::get('/tester', [TesteController::class, 'index'])->name('tester');
 
 
 
-// testando?cpf=valor_invalido
+// Fato
+//Route::post('/Gerenciarm', [PessoaController::class, 'create'])->ID('pesdex');
+Route::get('/gerenciar-fatos', [FatosController::class, 'index'])->name('');
+Route::get('/editar-fatos/{id}', [FatosController::class, 'edit'])->name('');
+Route::get('/incluir-atendimento{id}', [FatosController::class, 'incluir'])->name('');
+
+
 
 
