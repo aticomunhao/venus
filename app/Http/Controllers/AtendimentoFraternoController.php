@@ -28,7 +28,7 @@ class AtendimentoFraternoController extends Controller
                                   //  ->leftJoin('tipo_dia AS td', 'g.id_dia_semana', 'td.id')
                                //     ->get();
 
-       // dd($pref_att);
+        //dd($nome);
 
         $now = Carbon::now()->format('Y-m-d');
 
@@ -61,11 +61,11 @@ class AtendimentoFraternoController extends Controller
                         left join pessoas p3 on (at.id_atendente_pref = p3.id)
                         left join pessoas p4 on (at.id_atendente = p4.id)
                         left join tp_sexo tx on (at.pref_tipo_atendente = tx.id)
-                        left join tp_parentesco pa on (at.parentesco = pa.id)
-                        where(at.status_atendimento = 1)                        
-                        and at.dh_chegada = (select max(at.dh_chegada) from atendimentos at)
+                        left join tp_parentesco pa on (at.parentesco = pa.id)                                             
+                        where at.dh_chegada = (select MIN(at.dh_chegada) from atendimentos at where status_atendimento = 1)
                         and tx.id = $pref_att
-                        and at.pref_tipo_atendente = $atendente
+                        or at.pref_tipo_atendente = $atendente                        
+                        
                         group by  at.id, p1.id, p2.nome_completo, p3.nome_completo, p4.nome_completo, ts.descricao, tx.tipo, pa.nome                        
                         ");
 

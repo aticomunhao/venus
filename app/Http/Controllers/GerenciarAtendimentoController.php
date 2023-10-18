@@ -336,7 +336,7 @@ class GerenciarAtendimentoController extends Controller
                     ");                    
         
 
-        return view ('\recepcao-AFI/editar-atendimento', compact('result', 'sexo', 'pare', 'afi', 'lista'));
+        return view ('/recepcao-AFI/editar-atendimento', compact('result', 'sexo', 'pare', 'afi', 'lista'));
 
     }
 

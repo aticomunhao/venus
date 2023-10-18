@@ -12,6 +12,13 @@
                         <li><a class="dropdown-item" href="#">Gerenciar Atendentes</a></li>
                         <li><a class="dropdown-item" href="/atendendo">Atender o assistido</a></li>
                     </ul>
+                <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff;"> Administração</button> 
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar pessoas</a></li>
+                        <li><a class="dropdown-item" href="#">Recepção Geral</a></li>
+                        <li><a class="dropdown-item" href="#">Gerenciar Atendentes</a></li>
+                        <li><a class="dropdown-item" href="/atendendo">Atender o assistido</a></li>
+                    </ul>
             </div>
             <div class="dropdown"  >
                 <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff;">Logout</button>
