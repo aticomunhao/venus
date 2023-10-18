@@ -24,21 +24,6 @@
                         <li><a class="dropdown-item" href="/atendendo">Atender o assistido</a></li>
                         <li><a class="dropdown-item" href="/fato">Atender o assistido</a></li>
 
-                    </ul>
-                </div> 
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
-                        @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
-
-
-        <!-- CSS da aplicação -->
-        <script src="/js/scripts.js"></script>
 
     </head>
         <body>
