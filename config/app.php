@@ -199,6 +199,7 @@ return [
          */
         
         LaravelLegends\PtBrValidator\ValidatorProvider::class,
+    
 
     ],
 

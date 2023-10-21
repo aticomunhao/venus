@@ -87,14 +87,18 @@ Route::get('/tester', [TesteController::class, 'index'])->name('tester');
 // Pessoas
 Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
 Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
-Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name('pesdes');
+Route::get('/excluir-pessoa', [PessoaController::class, 'destroy'])->name('pesdes');
 
 
 // Fato
 //Route::post('/Gerenciarm', [PessoaController::class, 'create'])->ID('pesdex');
 Route::get('/gerenciar-fatos', [FatosController::class, 'index'])->name('');
 Route::get('/editar-fatos/{id}', [FatosController::class, 'edit'])->name('');
-Route::get('/incluir-atendimento{id}', [FatosController::class, 'incluir'])->name('');
+Route::post('/atualizar-fatos/{id}', [FatosController::class, 'update'])->name('');
+Route::any('/incluir-fatos', [FatosController::class, 'incluir']);
+Route::get('/criar-fatos', [FatosController::class, 'criar'])->name('');
+Route::any('/deletar-fatos/{id}', [FatosController::class, 'destroy'])->name('');
+
 
 
 

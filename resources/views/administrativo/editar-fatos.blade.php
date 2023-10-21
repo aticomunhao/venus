@@ -1,21 +1,27 @@
 @extends('layouts.app')
 
-@section('content') 
-<div classe="container">
+@section('content')
+    <div class="container">
+        <div class="col-3">
+            <div class="card">
+            </div>
+            <div class="card-body">
+                <br></br>
+                <h5 class="card-title">EDITAR</h5>
 
-        <div class="col" style="text-align: right">
 
-            <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">ID</th>
-                
-                    <th scope="col"></th>
-                    <th scope="col">editar</th>
-                </tr>
-            </thead>
-            <tbody>
-
-</div>
+                <div class="card-text">
+                <form class="form-horizontal mt-4" method="post" action="/atualizar-fatos/@foreach($lista as $item){{$item->id}}@endforeach">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label"></label>
+                        <input type="text" name="descricao" class="form-control" id="descricao" placeholder="" 
+                        value="@foreach($lista as $item){{$item->descricao}}@endforeach">
+                    </div>
+                </div>
+                    <button class="btn btn-primary" >Confirmar</a>
+                </form>
+            </div>
         </div>
+    </div>
 @endsection
