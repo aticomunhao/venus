@@ -96,6 +96,12 @@ Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre'
 Route::get('/excluir-pessoa', [PessoaController::class, 'destroy'])->name('pesdes');
 
 
+/*
+|--------------------------------------------------------------------------
+| David Routes
+|--------------------------------------------------------------------------
+*/
+
 // Fato
 //Route::post('/Gerenciarm', [PessoaController::class, 'create'])->ID('pesdex');
 Route::get('/gerenciar-fatos', [FatosController::class, 'index'])->name('');
