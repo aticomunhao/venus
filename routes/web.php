@@ -90,13 +90,10 @@ Route::get('/visualizar-atendendes/{id}', [AtendenteController::class, 'show_det
 // Debugger
 Route::get('/tester', [TesteController::class, 'index'])->name('tester');
 
-<<<<<<< HEAD
 // Pessoas
 Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
 Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
 Route::get('/excluir-pessoa', [PessoaController::class, 'destroy'])->name('pesdes');
-=======
->>>>>>> 6f0aee47df0578d8ac080ca648318a232f85ae81
 
 
 // Fato
