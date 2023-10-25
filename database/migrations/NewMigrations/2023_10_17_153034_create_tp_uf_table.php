@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('atendentes', function (Blueprint $table) {
+        Schema::create('tp_uf', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_pessoa')->nullable();
-            $table->unsignedBigInteger('status_atendente')->nullable();
+            $table->string('sigla',2)->nullable();
+            $table->string('extenso', 50)->nullable();
             $table->timestamps();
-            // $table->softDeletes();
         });
     }
 
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('atendentes');
+        Schema::dropIfExists('tp_uf');
     }
 };

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('atendentes', function (Blueprint $table) {
+        Schema::create('salas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_pessoa')->nullable();
-            $table->unsignedBigInteger('status_atendente')->nullable();
+            $table->unsignedBigInteger('numero')->nullable();
+            $table->unsignedBigInteger('nr_lugares')->nullable();
+            $table->text('localizacao')->nullable();
             $table->timestamps();
-            // $table->softDeletes();
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('atendentes');
+        Schema::dropIfExists('salas');
     }
 };

@@ -46,6 +46,7 @@ FLASH!
 
  - Moisés (Diretor de Produção e Banco de Dados)
  - Alexandre (Diretor e Programador de Sistema)
+ - David (Programador do Sistema)
 
 ## License
 

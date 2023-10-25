@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('atendentes', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('id_pessoa')->nullable();
-            $table->unsignedBigInteger('status_atendente')->nullable();
-            $table->timestamps();
-            // $table->softDeletes();
+        Schema::table('atendentes', function (Blueprint $table) {
+            //
+            $table->softDeletes();
         });
     }
 
@@ -25,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('atendentes');
+        Schema::table('atendentes', function (Blueprint $table) {
+            //
+            $table->dropSoftDeletes();
+        });
     }
 };
