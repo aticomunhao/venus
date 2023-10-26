@@ -46,6 +46,7 @@
                                     <th class="col">ASSISTIDO</th>
                                     <th class="col">REPRESENTANTE</th>
                                     <th class="col">HORÁRIO CHEGADA</th>
+                                    <th class="col">ATENDENTE PREFERIDO</th>
                                     <th class="col">TIPO AF</th>
                                     <th class="col">STATUS</th>
                                     <th class="col">AÇÕES</th>
@@ -57,6 +58,7 @@
                                     <td scope="">{{$assistidos->nm_1}}</td>
                                     <td scope="" >{{$assistidos->nm_2}}</td>
                                     <td scope="" >{{$assistidos->dh_chegada}}</td>
+                                    <td scope="" >{{$assistidos->nm_3}}</td>
                                     <td scope="" >{{$assistidos->tipo}}</td>
                                     <td scope="" >{{$assistidos->descricao}}</td>
                                     <td scope="">

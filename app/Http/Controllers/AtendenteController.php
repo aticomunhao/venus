@@ -18,10 +18,11 @@ class AtendenteController extends Controller
 
         if ($search) { // se há pesquisa execute, se não, prossiga com o metodo antigo
 
-            $atendentes = Atendente::whereHas('pessoa', function ($query) use ($search)
-            {
-                $query->where('nome_completo', 'like', '%' . $search . '%');
-            })->get();
+        $atendentes = Atendente::whereHas('pessoa', function ($query) use ($search)
+        {
+            $query->where('nome_completo', 'ilike','%'.$search.'%');
+        })->get();
+        dump($search,$atendentes);
 
         } else {
             $atendentes = Atendente::all();

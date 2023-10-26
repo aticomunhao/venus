@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('atendentes', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('id_pessoa')->nullable();
+            $table->unsignedBigInteger('status_atendente')->nullable();
             $table->timestamps();
+            // $table->softDeletes();
         });
     }
 

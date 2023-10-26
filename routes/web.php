@@ -85,6 +85,13 @@ Route::get('/gerenciar-atendende/{id}', [AtendenteController::class, 'show'])->n
 Route::get('/novo-atendente', [AtendenteController::class, 'create'])->name('novo-atendente'); // Select de pessoas -> atendentes.
 Route::post('/inserir-atendente', [AtendenteController::class, 'RequestTest'])->name('inserir_atendente');
 
+// Grupos
+Route::get('/gerenciar-grupos', [GrupoController::class, 'index']);
+Route::get('novo-grupo', [GrupoController::class,'create'])->name('novo-grupo');
+Route::post('incluir-grupo', [GrupoController::class,'store']);
+Route::post('editar-grupo', [GrupoController::class,'update']);
+Route::post('apagar-grupo', [GrupoController::class,'destroy']);
+
 // Atendentes Misc/Testes
 Route::get('/visualizar-atendendes/{id}', [AtendenteController::class, 'show_detalhes_atendente'])->name('show_atendente');
 
@@ -96,6 +103,17 @@ Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesd
 Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
 Route::get('/excluir-pessoa', [PessoaController::class, 'destroy'])->name('pesdes');
 
+/*
+|--------------------------------------------------------------------------
+| David Routes
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| David Routes
+|--------------------------------------------------------------------------
+*/
 
 // Fato
 //Route::post('/Gerenciarm', [PessoaController::class, 'create'])->ID('pesdex');
