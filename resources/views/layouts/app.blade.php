@@ -17,13 +17,6 @@
         <!-- Scripts -->
         @vite(['resources/js/app.css', 'resources/js/app.js'])
 
-<<<<<<< HEAD
-                
-        <!-- CSS da aplicação -->
-        <script src="/js/scripts.js"></script>
-=======
-                   
->>>>>>> 6f0aee47df0578d8ac080ca648318a232f85ae81
 
     </head>
         <body>
