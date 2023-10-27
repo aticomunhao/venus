@@ -8,7 +8,7 @@
           style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR SALAS
         </h4>
         <div class="col" style="text-align: right">
-          <a href="criar-sala" class="btn btn-success"id="name=" type="button">NOVO+</a>
+          <a href="criar-salas" class="btn btn-success"id="name=" type="button">NOVO+</a>
         </div>
         <br>   
         <br><br>

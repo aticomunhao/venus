@@ -21,7 +21,7 @@ class SalaController extends Controller
        
         //
 
-        return view('/salas/criar-sala');
+        return view('/salas/criar-salas');
         
 
 
@@ -40,6 +40,9 @@ class SalaController extends Controller
     {
         //
     }
+
+   
+    
 
     /**
      * Update the specified resource in storage.
