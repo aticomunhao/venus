@@ -13,7 +13,7 @@
 {{-- Teste de Banco: @dump($atendentes->toArray()) --}}
 
 
-<div class="row">
+    <div class="row">
         {{--Titulo Gerenciar Atendentes --}}
         <div class="col-8">
             <h1 class="display-4 p-2">Gerenciar Atendendes</h1>

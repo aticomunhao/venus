@@ -7,13 +7,9 @@
 <div class="container">
     <h1>    Essa é a Pagina de Teste    </h1>
     <div class="dataTesting">
-        <p> {{$atendente}}  </p>
-        <p> {{$pessoa}}     </p>
+                  {{-- <p> Pessoa : {{$user}} </p> --}}
+          {{-- <p> Atendente Nome: {{$atendente}}    </p> --}}
     </div>
-    @dump($atendente)
-    @dump($pessoa)
-
-
 
 
 

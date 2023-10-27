@@ -8,8 +8,6 @@
             <div class="card-body">
                 <br></br>
                 <h5 class="card-title">EDITAR</h5>
-
-
                 <div class="card-text">
                 <form class="form-horizontal mt-4" method="post" action="/atualizar-fatos/@foreach($lista as $item){{$item->id}}@endforeach">
                     @csrf

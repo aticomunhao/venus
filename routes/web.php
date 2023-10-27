@@ -13,6 +13,7 @@ use App\Http\Controllers\PessoaController;
 use App\Http\Controllers\FatosController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SalaController;
 // Validadores
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 
@@ -86,6 +87,13 @@ Route::get('/gerenciar-atendende/{id}', [AtendenteController::class, 'show'])->n
 Route::get('/novo-atendente', [AtendenteController::class, 'create'])->name('novo-atendente'); // Select de pessoas -> atendentes.
 Route::post('/inserir-atendente', [AtendenteController::class, 'RequestTest'])->name('inserir_atendente');
 
+// Grupos
+Route::get('/gerenciar-grupos', [GrupoController::class, 'index']);
+Route::get('novo-grupo', [GrupoController::class,'create'])->name('novo-grupo');
+Route::post('incluir-grupo', [GrupoController::class,'store']);
+Route::post('editar-grupo', [GrupoController::class,'update']);
+Route::post('apagar-grupo', [GrupoController::class,'destroy']);
+
 // Atendentes Misc/Testes
 Route::get('/visualizar-atendendes/{id}', [AtendenteController::class, 'show_detalhes_atendente'])->name('show_atendente');
 
@@ -97,6 +105,17 @@ Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesd
 Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
 Route::get('/excluir-pessoa', [PessoaController::class, 'destroy'])->name('pesdes');
 
+/*
+|--------------------------------------------------------------------------
+| David Routes
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| David Routes
+|--------------------------------------------------------------------------
+*/
 
 // Fato
 //Route::post('/Gerenciarm', [PessoaController::class, 'create'])->ID('pesdex');
@@ -106,6 +125,15 @@ Route::post('/atualizar-fatos/{id}', [FatosController::class, 'update'])->name('
 Route::any('/incluir-fatos', [FatosController::class, 'incluir']);
 Route::get('/criar-fatos', [FatosController::class, 'criar'])->name('');
 Route::any('/deletar-fatos/{id}', [FatosController::class, 'destroy'])->name('');
+
+//Salas
+Route::get('/gerenciar-salas', [SalaController::class, 'index'])->name('');
+Route::get('/editar-salas', [SalaController::class, 'criar'])->name('');
+Route::post('/atualizar-salas/{id}', [SalaController::class, 'update'])->name('');
+Route::any('/incluir-salas', [SalaController::class, 'incluir']);
+Route::get('/criar-salas', [SalaController::class, 'criar'])->name('');
+Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
+
 
 
 
