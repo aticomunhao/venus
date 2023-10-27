@@ -55,23 +55,21 @@
                             <tbody style="font-size: 14px; color:#000000; text-align:center;">
                             @foreach($assistido as $assistidos)    
                             <tr>
-                                    <td scope="">{{$assistidos->nm_1}}</td>
-                                    <td scope="" >{{$assistidos->nm_2}}</td>
-                                    <td scope="" >{{$assistidos->dh_chegada}}</td>
-                                    <td scope="" >{{$assistidos->nm_3}}</td>
-                                    <td scope="" >{{$assistidos->tipo}}</td>
-                                    <td scope="" >{{$assistidos->descricao}}</td>
-                                    <td scope="">
-                                        <a href="/historico-assistido"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
-                                        <a href="/iniciar-atendimento"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-left-square" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        
-                                        <a href="/encaminhamentos"><button type="button" class="btn btn-outline-primary btn-sm"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/registrar-historico"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-right-square" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/finalizar"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        
-                                    </td>
-                                </tr>
-                                @endforeach
+                                <td scope="">{{$assistidos->nm_1}}</td>
+                                <td scope="">{{$assistidos->nm_2}}</td>
+                                <td scope="">{{$assistidos->dh_chegada}}</td>
+                                <td scope="">{{$assistidos->nm_3}}</td>
+                                <td scope="">{{$assistidos->tipo}}</td>
+                                <td scope="">{{$assistidos->descricao}}</td>
+                                <td scope="">
+                                    <a href="/historico/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-primary btn-sm"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                                    <a href="/iniciar-atendimento"><button type="button" class="btn btn-outline-success btn-sm"><i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button></a>                                        
+                                    <a href="/encaminhamentos"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-right-square" style="font-size: 1rem; color:#000;"></i></button></a>
+                                    <a href="/anotacoes"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-right-square" style="font-size: 1rem; color:#000;"></i></button></a>
+                                    <a href="/finalizar"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>   
+                                </td>
+                            </tr>
+                            @endforeach
                             </tbody>
                         </table>
                     </div>

@@ -7,7 +7,7 @@
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>@yield('title')</title><!--{{ config('app.name', 'Laravel') }}-->
+        <title>@yield('title')</title>
 
         <!-- Fonts -->
         <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -15,11 +15,10 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
         <!-- Scripts -->
-        @vite(['resources/js/app.css', 'resources/js/app.js'])
+        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
                 
-        <!-- CSS da aplicação -->
-        <script src="/js/scripts.js"></script>
+
 
     </head>
         <body>

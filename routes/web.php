@@ -69,6 +69,8 @@ Route::put('/atendente-atualizar/{ida}', [GerenciarAtendimentoController::class,
 
 //Rotas do Atendimento Fraterno:
 Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name('afidex');
+Route::get('/historico/{idat}/{idas}', [AtendimentoFraternoController::class, 'history'])->name('afihis');
+Route::get('/iniciar/{idat}', [AtendimentoFraternoController::class, 'inicio'])->name('afiini');
 
 
 

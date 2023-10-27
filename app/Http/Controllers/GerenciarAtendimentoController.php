@@ -14,7 +14,7 @@ class GerenciarAtendimentoController extends Controller
     
     public function index(Request $request){
 
-        $now =  Carbon::now()->format('Y-m-d h:m:s');
+        $now =  Carbon::now()->format('Y-m-d');
 
         DB::table('atendimentos')
         ->where('status_atendimento', '<', 5)

@@ -11,21 +11,24 @@
                 <div class="btn-group">
                     <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff;">Atendimento Espírita</button> 
                         <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/atendendo">Atendimento Fraterno Individual</a></li>    
                             <li><a class="dropdown-item" href="/gerenciar-atendimentos">Recepção Atendimento Fraterno</a></li>
                             <li><a class="dropdown-item" href="#">Recepção Geral</a></li>
-                            <li><a class="dropdown-item" href="#">Gerenciar Atendentes</a></li>
-                            <li><a class="dropdown-item" href="/atendendo">Atender o assistido</a></li>
-                            
                         </ul>
+                </div>
+                <div class="btn-group">
+                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff;">Gerenciamento DAO</button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Gerenciar Atendentes</a></li> 
+                            <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>   
+                            <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>                          
+                            <li><a class="dropdown-item" href="/gerenciar-salas">Gerenciar Salas</a></li>
+                        </ul>                    
                 </div>                    
                 <div class="btn-group">
-                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff;">Administração</button>
+                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff;">Administração sistema</button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar pessoas</a></li>
-                            <li><a class="dropdown-item" href="#">Gerenciar Atendentes</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-fatos">Gerenciar Fatos</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-salas">Gerenciar Salas</a></li>
                         </ul>                    
                 </div>
                 <div class="btn-group">
