@@ -24,6 +24,12 @@
                         <th class="col">PROJETOR</th>
                         <th class="col">PC</th>
                         <th class="col">QUADRO</th>
+                        <th class="col">AR COND</th>
+                        <th class="col">VENTILADOR</th>
+                        <th class="col">SOM</th>
+                        <th class="col">TELA</th>
+                        <th class="col">CONTROLE</th>
+                        <th class="col">MESA</th>
                         <th class="col">AÇÕES</th>
                     </tr>
                         </a>
