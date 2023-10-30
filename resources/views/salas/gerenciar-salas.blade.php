@@ -2,8 +2,8 @@
 
 @section('content')
 <div class="container">
-  <br>
-    <div class="row" style="text-align:center;">
+  <br> 
+     <div class="row" style="text-align:center;">
         <h4 class="card-title col-10 " class="card-title"
           style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR SALAS
         </h4>
@@ -16,25 +16,40 @@
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                 <thead style="text-align: center;">
                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                        <th class="col">ID</th>
                         <th class="col">NOME</th>
                         <th class="col">NÚMERO</th>
                         <th class="col">NR_LUGARES</th>
                         <th class="col">LOCALIZAÇÃO</th>
-                        <th class="col">PROJETOR</th>
-                        <th class="col">PC</th>
-                        <th class="col">QUADRO</th>
-                        <th class="col">AR COND</th>
-                        <th class="col">VENTILADOR</th>
-                        <th class="col">SOM</th>
-                        <th class="col">TELA</th>
-                        <th class="col">CONTROLE</th>
-                        <th class="col">MESA</th>
-                        <th class="col">AÇÕES</th>
+                         <th class="col">AÇÕES</th>
                     </tr>
-                        </a>
-                    </td>
-                </tr>
+                </thead>
+                <tbody>
+                  @foreach ($salas as $sala)
+                  <tr>
+                    <td> {{$sala->nome}} </td>
+                    <td> {{$sala->numero}} </td>
+                    <td> {{$sala->nr_lugares}} </td>
+                      <td> {{$sala->localizacao}} </td>
+                     
+                      
+                        @include('salas.popUp-incluir')
+                    
+                      <td> <button  class="bi bi-plus-square" style="font-size: 1rem;" type="button"  col" id="" data-bs-toggle="modal" data-bs-target="#pessoa"></button>
+                      <a href="/editar-sala/" type="button"
+                        class="btn btn-outline-warning btn-sm"><i class="bi bi-pen"
+                            style="font-size: 1rem; color:#000;"></i>
+                </a>
+                <a href="/deletar-salas/{{$sala->id}}" type="button"
+                        class="btn btn-outline-danger btn-sm"><i
+                            class="bi bi-x-circle"
+                            style="font-size: 1rem; color:#000;"></i></td>
+                </a>
+            </td>                      
+                    @endforeach
+                
+                  </tr>
+                </tbody>
+                        
         </table>
       </div>
 </div>

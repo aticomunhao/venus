@@ -128,11 +128,12 @@ Route::any('/deletar-fatos/{id}', [FatosController::class, 'destroy'])->name('')
 
 //Salas
 Route::get('/gerenciar-salas', [SalaController::class, 'index'])->name('');
-Route::get('/editar-salas', [SalaController::class, 'criar'])->name('');
+Route::get('/editar-salas/{id}', [SalaController::class, 'edit'])->name('');
 Route::post('/atualizar-salas/{id}', [SalaController::class, 'update'])->name('');
-Route::post('/incluir-salas', [SalaController::class, 'incluir']);
 Route::get('/criar-salas', [SalaController::class, 'criar'])->name('');
+Route::any('/incluir-salas', [SalaController::class, 'store']);
 Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
+Route::any('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 
 
 
