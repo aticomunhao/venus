@@ -31,11 +31,11 @@
                     <td> {{$sala->nr_lugares}} </td>
                       <td> {{$sala->localizacao}} </td>
                      
-                      
-                        @include('salas.popUp-incluir')
+                    
+                      @include('salas.popUp-incluir')
                     
                       <td> <button  class="bi bi-plus-square" style="font-size: 1rem;" type="button"  col" id="" data-bs-toggle="modal" data-bs-target="#pessoa"></button>
-                      <a href="/editar-sala/" type="button"
+                      <a href="/editar-salas/{{$sala->id}}" type="button"
                         class="btn btn-outline-warning btn-sm"><i class="bi bi-pen"
                             style="font-size: 1rem; color:#000;"></i>
                 </a>

@@ -80,10 +80,10 @@ class SalaController extends Controller
      */
     public function edit( $id)
       {
-        DB::select("select * from sala where id = $id"); 
+        $sala = DB::select("select * from salas where id = $id"); 
             
-        
-            return view ('/editar-salas' , compact('lista'));
+    
+            return view ('salas/editar-salas' , compact('sala'));
 
           
 
