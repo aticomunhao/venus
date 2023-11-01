@@ -20,6 +20,14 @@
                     <legend style="color:red; font-size:15px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do assistido</legend>
                     <fieldset class="border rounded border-primary p-2">
                     <div class="form-group row">
+                    <div class="col-2">Tipo Prioridade
+                        <select class="form-select" id="" name="priori" required="required">
+                            <option value="{{$result[0]->prid}}">{{$result[0]->prdesc}}</option>
+                            @foreach($priori as $prioris)
+                            <option value="{{$prioris->prid}}">{{$prioris->prdesc}}</option>
+                            @endforeach
+                        </select>
+                        </div>       
                         <div class="col">Nome do assistido
                             <select class="form-select" id="1" name="assist" required="required">
                                 <option value="{{$result[0]->idas}}">{{$result[0]->nm_1}}</option>

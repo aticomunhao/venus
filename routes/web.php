@@ -71,7 +71,9 @@ Route::put('/atendente-atualizar/{ida}', [GerenciarAtendimentoController::class,
 //Rotas do Atendimento Fraterno:
 Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name('afidex');
 Route::get('/historico/{idat}/{idas}', [AtendimentoFraternoController::class, 'history'])->name('afihis');
-Route::get('/iniciar/{idat}', [AtendimentoFraternoController::class, 'inicio'])->name('afiini');
+Route::get('/fim-analise/{idat}', [AtendimentoFraternoController::class, 'fimanalise'])->name('afifna');
+Route::get('/iniciar-atendimento/{idat}', [AtendimentoFraternoController::class, 'inicio'])->name('afiini');
+Route::post('/gerar-encaminhamento/{idat}', [AtendimentoFraternoController::class, 'encaminha'])->name('afienc');
 
 
 

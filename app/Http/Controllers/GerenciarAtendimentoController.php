@@ -35,7 +35,7 @@ class GerenciarAtendimentoController extends Controller
             ");
 
         $lista = DB::table('atendimentos AS at')
-                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref', 'p3.nome_completo as nm_3', 'at.id_atendente', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tx.tipo', 'pa.nome', 'att.id as idatt' )
+                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref', 'p3.nome_completo as nm_3', 'at.id_atendente', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tx.tipo', 'pa.nome', 'att.id as idatt','at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla' )
                     ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id')
                     ->leftJoin('pessoas AS p', 'att.id_pessoa', 'p.id')
@@ -44,7 +44,8 @@ class GerenciarAtendimentoController extends Controller
                     ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
                     ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
                     ->leftjoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
-                    ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id');
+                    ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+                    ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id');
                    
         $data_inicio = $request->dt_ini;
         
@@ -66,7 +67,7 @@ class GerenciarAtendimentoController extends Controller
         }
        
 
-        $lista = $lista->orderBy('at.status_atendimento', 'ASC' )->orderBy('at.dh_chegada', 'ASC')->paginate(50);
+        $lista = $lista->orderBy('at.id_prioridade', 'ASC')->orderBy('at.status_atendimento', 'ASC')->orderBy('at.dh_chegada', 'ASC')->paginate(50);
         
         $contar = $lista->count('at.id');
 
@@ -97,6 +98,12 @@ class GerenciarAtendimentoController extends Controller
         group by pid, a.id_pessoa
         "); 
 
+        $priori = DB::select("select
+        pr.id as prid, 
+        pr.descricao as prdesc,
+        pr.sigla as prsigla
+        from tipo_prioridade pr
+        "); 
        //dd($lista);
 
         $afi = DB::select("select
@@ -124,7 +131,7 @@ class GerenciarAtendimentoController extends Controller
 
         //dd($lista);
 
-        return view ('/recepcao-AFI/incluir-atendimento', compact('afi', 'sexo', 'parentes', 'lista'));
+        return view ('/recepcao-AFI/incluir-atendimento', compact('afi', 'priori', 'sexo', 'parentes', 'lista'));
 
 
     }
@@ -143,6 +150,7 @@ class GerenciarAtendimentoController extends Controller
         'parentesco'=>$request->input('parent'),
         'id_atendente_pref'=>$request->input('afi_p'),
         'pref_tipo_atendente'=>$request->input('tipo_afi'),
+        'id_prioridade'=>$request->input('priori'),
         'status_atendimento'=> 1
        ]);
 
@@ -287,7 +295,7 @@ class GerenciarAtendimentoController extends Controller
 
         $result = DB::table('atendimentos AS at')
                     ->where('at.id', $ida)                  
-                    ->select('at.id AS ida', 'p1.id as idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente as idaf', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tp.nome',  'at.parentesco', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo')
+                    ->select('at.id AS ida', 'p1.id as idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente as idaf', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tp.nome',  'at.parentesco', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo', 'at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla' )
                     ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')                                     
                     ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id')
                     ->leftJoin('pessoas AS p', 'att.id_pessoa', 'p.id')
@@ -297,6 +305,7 @@ class GerenciarAtendimentoController extends Controller
                     ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
                     ->leftjoin('tp_sexo AS tpsx', 'at.pref_tipo_atendente', 'tpsx.id')
                     ->leftJoin('tp_parentesco AS tp', 'at.parentesco', 'tp.id')
+                    ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
                     ->get();
 
         $lista = DB::select("select
@@ -333,10 +342,17 @@ class GerenciarAtendimentoController extends Controller
                     id as idp,
                     nome 
                     from tp_parentesco
-                    ");                    
+                    ");
+                    
+        $priori = DB::select("select
+                    pr.id as prid, 
+                    pr.descricao as prdesc,
+                    pr.sigla as prsigla
+                    from tipo_prioridade pr
+                    "); 
         
 
-        return view ('/recepcao-AFI/editar-atendimento', compact('result', 'sexo', 'pare', 'afi', 'lista'));
+        return view ('/recepcao-AFI/editar-atendimento', compact('result', 'priori', 'sexo', 'pare', 'afi', 'lista'));
 
     }
 
@@ -349,7 +365,8 @@ class GerenciarAtendimentoController extends Controller
             'id_representante'=>$request->input('repres'),
             'parentesco'=>$request->input('parent'),
             'id_atendente_pref'=>$request->input('afi_p'),
-            'pref_tipo_atendente'=>$request->input('tipo_afi')
+            'pref_tipo_atendente'=>$request->input('tipo_afi'),
+            'id_prioridade'=>$request->input('priori')
  
         ]);
                

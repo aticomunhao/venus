@@ -43,11 +43,12 @@
                         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                             <thead style="text-align: center;">
                                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                                    <th class="col">ASSISTIDO</th>
-                                    <th class="col">REPRESENTANTE</th>
-                                    <th class="col">HORÁRIO CHEGADA</th>
                                     <th class="col">ATENDENTE PREFERIDO</th>
                                     <th class="col">TIPO AF</th>
+                                    <th class="col">HORÁRIO CHEGADA</th>
+                                    <th class="col">PRIOR</th>
+                                    <th class="col">ASSISTIDO</th>
+                                    <th class="col">REPRESENTANTE</th>
                                     <th class="col">STATUS</th>
                                     <th class="col">AÇÕES</th>
                                 </tr>
@@ -55,18 +56,20 @@
                             <tbody style="font-size: 14px; color:#000000; text-align:center;">
                             @foreach($assistido as $assistidos)    
                             <tr>
-                                <td scope="">{{$assistidos->nm_1}}</td>
-                                <td scope="">{{$assistidos->nm_2}}</td>
-                                <td scope="">{{$assistidos->dh_chegada}}</td>
                                 <td scope="">{{$assistidos->nm_3}}</td>
                                 <td scope="">{{$assistidos->tipo}}</td>
+                                <td scope="">{{date( 'H:m:s', strtotime($assistidos->dh_chegada))}}</td>
+                                <td scope="">{{$assistidos->prdesc}}</td>
+                                <td scope="">{{$assistidos->nm_1}}</td>
+                                <td scope="">{{$assistidos->nm_2}}</td> 
                                 <td scope="">{{$assistidos->descricao}}</td>
                                 <td scope="">
                                     <a href="/historico/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-primary btn-sm"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
-                                    <a href="/iniciar-atendimento"><button type="button" class="btn btn-outline-success btn-sm"><i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button></a>                                        
-                                    <a href="/encaminhamentos"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-right-square" style="font-size: 1rem; color:#000;"></i></button></a>
-                                    <a href="/anotacoes"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-right-square" style="font-size: 1rem; color:#000;"></i></button></a>
-                                    <a href="/finalizar"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>   
+                                    <a href="/fim-analise/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-bell" style="font-size: 1rem; color:#000;"></i></button></a>
+                                    <a href="/iniciar-atendimento/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-success btn-sm"><i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button></a>                                        
+                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#encaminhamento"><i class="bi bi-send-fill" style="font-size: 1rem; color:#000;"></i></button>
+                                    <a href="/anotacoes"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button></a>
+                                    <a href="/finalizar"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>   
                                 </td>
                             </tr>
                             @endforeach
@@ -77,6 +80,7 @@
             </div>
         </div>
     </div>
+    @include('atendimento-assistido.pop-up-encaminhar')
 
 
 

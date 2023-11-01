@@ -34,6 +34,7 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
+                                        <br>
 
                                     </div>
                                     <div class="form-group">
@@ -45,6 +46,7 @@
                                         </span>
                                         @enderror
                                     </div>
+                                    <br>
                                     <div class="form-group row mt-4">
                                         <div class="col-6">
                                             <!-- <div class="custom-control custom-checkbox">

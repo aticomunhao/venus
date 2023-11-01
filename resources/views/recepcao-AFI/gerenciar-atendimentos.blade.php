@@ -21,14 +21,11 @@
                         <input class="form-control" type="text" id="3" name="assist" value="{{$assistido}}">
                     </div>
                     <div class="col-1">Status
-                        <select class="form-select" id="4" name="status" value="{{$situacao}}" type="number">
-                            <option value="">Todos</option>
-                            <option value="1">Aguardando Atendimento</option>
-                            <option value="2">Analisando</option>                            
-                            <option value="3">Aguardando assistido</option>                            
-                            <option value="4">Em atendimento</option>                            
-                            <option value="5">Finalizado</option>                            
-                            <option value="6">Cancelado</option>                        
+                        <select class="form-select" id="4" name="status" type="number">
+                            <option value="{{$situacao}}"></option>
+                            @foreach ($status as $statusz)
+                            <option value="{{$statusz->id}}">{{$statusz->descricao}}</option>
+                            @endforeach               
                         </select>                       
                     </div>
                         <div class="col"><br>
@@ -48,12 +45,13 @@
                     <thead style="text-align: center;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             <th class="col">Nr</th>
-                            <th class="col">ASSISTIDO</th>
-                            <th class="col">REPRESENTANTE</th>
+                            <th class="col">AFI PREF</th>
+                            <th class="col">TIPO AFI</th>
                             <th class="col">HORÁRIO CHEGADA</th>
-                            <th class="col">AF PREFERIDO</th>
-                            <th class="col">ATENDENTE</th>
-                            <th class="col">TIPO AF</th>
+                            <th class="col">PRIOR</th>
+                            <th class="col">ASSISTIDO</th>
+                            <th class="col">REPRESENTANTE</th>                                                        
+                            <th class="col">ATENDENTE</th>                          
                             <th class="col">STATUS</th>
                             <th class="col">AÇÕES</th>
                         </tr>
@@ -62,12 +60,13 @@
                         <tr>
                         @foreach($lista as $listas)
                             <td scope="" >{{$listas->ida}}</td>
-                            <td scope="" >{{$listas->nm_1}}</td>
-                            <td scope="" >{{$listas->nm_2}}</td>
-                            <td scope="" >{{date( 'd/m/Y H:i:s', strtotime($listas->dh_chegada))}}</td>
                             <td scope="" >{{$listas->nm_3}}</td>
-                            <td scope="" >{{$listas->nm_4}}</td>
                             <td scope="" >{{$listas->tipo}}</td>
+                            <td scope="" >{{date( 'd/m/Y H:i:s', strtotime($listas->dh_chegada))}}</td>
+                            <td scope="" >{{$listas->prdesc}}</td>
+                            <td scope="" >{{$listas->nm_1}}</td>
+                            <td scope="" >{{$listas->nm_2}}</td>                                                        
+                            <td scope="" >{{$listas->nm_4}}</td>                            
                             <td scope="" >{{$listas->descricao}}</td>
                             <td scope="">
                                 <a href="/cancelar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
