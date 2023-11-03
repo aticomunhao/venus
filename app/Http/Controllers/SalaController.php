@@ -43,7 +43,6 @@ class SalaController extends Controller
 
      public function store(Request $request)
     {
-        //
         
      
         DB::table('salas')->insert([
@@ -63,21 +62,19 @@ class SalaController extends Controller
             'mesa'=>$request->input('mesa')
         ]);
 
-        //dd($data);
+        
 
         app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
 
    
 
-//        return view('salas/gerenciar-salas');
+
 
         
         return redirect('gerenciar-salas');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+   
     public function edit( $id)
       {
         $sala = DB::select("select * from salas where id = $id"); 
@@ -94,17 +91,13 @@ class SalaController extends Controller
    
     
 
-    /**
-     * Update the specified resource in storage.
-     */
+   
     public function update(Request $request, string $id)
     {
-        //
+        
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy($id)
     {
         $teste=session()->get('usuario');
@@ -117,8 +110,7 @@ class SalaController extends Controller
         
 
 
-        // if( $verifica == 0 ) {
-            // dd($verifica);
+      
             
             DB::table('historico_venus')->insert([
                 'id_usuario' => session()->get('usuario.id_usuario'),
@@ -134,12 +126,9 @@ class SalaController extends Controller
         app('flasher')->addSuccess('Excluido com sucesso.');
         return redirect('/gerenciar-salas');
 
-                // }
-            
-                // app('flasher')->addInfo('o fato não pode ser excluido pois existe a referência na tabela historico.');
 
-                // return redirect('/gerenciar-salas');
-                
+
+          
             
             }                
 

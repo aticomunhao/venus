@@ -18,7 +18,7 @@
                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                         <th class="col">NOME</th>
                         <th class="col">NÚMERO</th>
-                        <th class="col">NR_LUGARES</th>
+                        <th class="col">NÚMERO DE LUGARES</th>
                         <th class="col">LOCALIZAÇÃO</th>
                          <th class="col">AÇÕES</th>
                     </tr>
