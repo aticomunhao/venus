@@ -34,7 +34,7 @@ class AtendimentoFraternoController extends Controller
                     ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
                     ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')                                           
                     ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
-                    ->orderBy('at.id_prioridade', 'status_atendimento', 'asc', 'at.dh_chegada', 'asc')
+                    ->orderBy('status_atendimento', 'ASC', 'at.id_prioridade', 'ASC',  'at.dh_chegada', 'ASC')
                     ->get();        
 
                     //dd($pref_att);   

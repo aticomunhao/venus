@@ -67,7 +67,7 @@ class GerenciarAtendimentoController extends Controller
         }
        
 
-        $lista = $lista->orderBy('at.id_prioridade', 'ASC')->orderBy('at.status_atendimento', 'ASC')->orderBy('at.dh_chegada', 'ASC')->paginate(50);
+        $lista = $lista->orderBy('status_atendimento', 'ASC', 'at.id_prioridade', 'ASC',  'at.dh_chegada', 'ASC')->paginate(50);
         
         $contar = $lista->count('at.id');
 
