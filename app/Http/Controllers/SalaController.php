@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grupo;
+use App\Models\Sala;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -43,6 +44,7 @@ class SalaController extends Controller
 
      public function store(Request $request)
     {
+        //DD
         
      
         DB::table('salas')->insert([
@@ -50,31 +52,37 @@ class SalaController extends Controller
             'numero'=>$request->input('numero'),
             'nr_lugares'=>$request->input('nr_lugares'),
             'localizacao'=>$request->input('localizacao'),
-            'projetor'=>$request->input('projetor'),
-            'computador'=>$request->input('computador'),
-            'quadro'=>$request->input('quadro'),
-            'ar_condicionado'=>$request->input('ar_condicionado'),
-            'ventilador'=>$request->input('ventilador'),
-            'som'=>$request->input('som'),
-            'computador'=>$request->input('computador'),
-            'tela_projetor'=>$request->input('tela_projetor'),
-            'controle'=>$request->input('controle'),
-            'mesa'=>$request->input('mesa')
-        ]);
+            'tamanho_sala'=>$request->input('tamanho_sala'),
+            'projetor'=>$request->has('projetor')? 1:0,
+            'computador'=>$request->has('computador') ? 1:0,
+            'quadro'=>$request->has('quadro') ? 1:0,
+            'ar_condicionado' => $request->has('ar_condicionado') ? 1:0,
+            'ventilador'=>$request->has('ventilador') ?1:0,
+            'som'=>$request->has('som') ? 1:0,
+            'computador'=>$request->has('computador')? 1:0,
+            'tela_projetor'=>$request->has('tela_projetor')? 1:0,
+            'controle'=>$request->has('controle') ?1:0,
+            'luz_azul'=>$request->has('luz_azul')? 1:0,
+            'bebedouro'=>$request->has('bebedouro')? 1:0,
+            'armarios'=>$request->has('armarios')? 1:0
+            
+               ]);
 
-        
+        //dd($data);
 
         app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
 
    
 
-
+//        return view('salas/gerenciar-salas');
 
         
         return redirect('gerenciar-salas');
     }
 
-   
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit( $id)
       {
         $sala = DB::select("select * from salas where id = $id"); 
@@ -91,13 +99,43 @@ class SalaController extends Controller
    
     
 
-   
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, string $id)
-    {
-        
+        {
+            // Sala::findOrFail($request->id)->update([
+
+            Sala::findOrFail($request->id)->update([
+                'nome' => $request->nome,
+                'numero' => $request->numero,
+                'nr_lugares'=>$request->nr_lugares,
+                'localizacao'=>$request->localizacao,
+                'projetor'=>$request->projetor,
+                'quadro'=>$request->quadro,
+                'tela_projetor'=>$request->tela_projetor,
+                'ventilador'=>$request->ventilador,
+                'ar_condicionado' =>$request->ar_condicionado,
+                'computador'=>$request->computador,
+                'controle'=>$request->controle,
+                'som'=>$request->som,
+                'luz_azul'=>$request->luz_azul,
+                'bebedouro'=>$request->bebedouro,
+                'armarios'=>$request->armarios,
+                'tamanho_sala'=>$request->tamanho_sala
+
+
+                ]) ;
+
+                   
+               
+             return redirect ('gerenciar-salas');
+     
     }
 
-    
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy($id)
     {
         $teste=session()->get('usuario');
@@ -110,7 +148,8 @@ class SalaController extends Controller
         
 
 
-      
+        // if( $verifica == 0 ) {
+            // dd($verifica);
             
             DB::table('historico_venus')->insert([
                 'id_usuario' => session()->get('usuario.id_usuario'),
@@ -126,9 +165,12 @@ class SalaController extends Controller
         app('flasher')->addSuccess('Excluido com sucesso.');
         return redirect('/gerenciar-salas');
 
+                // }
+            
+                // app('flasher')->addInfo('o fato não pode ser excluido pois existe a referência na tabela historico.');
 
-
-          
+                // return redirect('/gerenciar-salas');
+                
             
             }                
 

@@ -17,10 +17,11 @@
                 <thead style="text-align: center;">
                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                         <th class="col">NOME</th>
-                        <th class="col">NÚMERO</th>
-                        <th class="col">NÚMERO DE LUGARES</th>
-                        <th class="col">LOCALIZAÇÃO</th>
-                         <th class="col">AÇÕES</th>
+                          <th class="col">NÚMERO</th>
+                          <th class="col">LOCALIZAÇÃO</th>
+                          <th class="col">TAMANHO DA SALA</th>
+                         <th class="col">NÚMERO DE LUGARES</th>
+                        <th class="col">AÇÕES</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,8 +29,10 @@
                   <tr>
                     <td> {{$sala->nome}} </td>
                     <td> {{$sala->numero}} </td>
+                    <td> {{$sala->localizacao}} </td>
+                    <td> {{$sala->tamanho_sala}} </td>
                     <td> {{$sala->nr_lugares}} </td>
-                      <td> {{$sala->localizacao}} </td>
+                     
                      
                     
                       @include('salas.popUp-incluir')

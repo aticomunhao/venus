@@ -11,11 +11,32 @@ class Sala extends Model
 {
     use HasFactory;
 
-    // PAI (envia para)
+    public $timestamps = false;
+    protected $fillable = [ 
+        'nome',
+        'numero',
+        'nr_lugares',
+        'localizacao',
+        'projetor',
+        'quadro',
+        'tela_projetor',
+        'ventilador',
+        'ar_condicionado',
+        'computador',
+        'controle',
+        'som',
+        'luz_azul',
+        'bebedouro',
+        'armarios',
+        'tamanho_sala'
+    ];
+
+
+        // PAI (envia para)
 
     // $table->foreign('id_sala')->references('id')->on('salas');
-    public function sala(): HasMany
+    public function grupo(): HasMany
     {
-        return $this->hasMany(Sala::class, 'id_sala');
+        return $this->hasMany(Grupo::class, 'id_sala');
     }
 }
