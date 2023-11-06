@@ -21,10 +21,10 @@ class PessoaController extends Controller
         $sexo = DB::select('select id, tipo from tp_sexo');
         
         $pessoa = DB::table('pessoas AS p')
-                    ->select('p.id AS idp', 'nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'email', 'ddd', 'celular', 'tpsp.id AS idtps', 'p.status', 'tpsp.status AS nmstatus')
+                    ->select('p.id AS idp', 'nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'email', 'ddd', 'celular', 'tpsp.id AS idtps', 'p.status', 'tpsp.status AS nmstatus', 'd.id as did', 'd.descricao as ddesc')
                     ->leftjoin('tipo_status_pessoa AS tpsp', 'p.status', 'tpsp.id')
-                    ->leftJoin('tp_sexo AS tps', 'p.sexo', 'tps.id');
-                    
+                    ->leftJoin('tp_sexo AS tps', 'p.sexo', 'tps.id')
+                    ->leftJoin('tp_ddd AS d', 'p.ddd', 'd.id');
                     
         $nome = $request->nome;   
                    
@@ -44,7 +44,7 @@ class PessoaController extends Controller
                 $pessoa->where('p.status', $request->status);
         }
         
-        $pessoa = $pessoa->orderBy('p.status','asc', 'p.nome_completo', 'asc')->paginate(50);
+        $pessoa = $pessoa->orderBy('p.status','asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
 
         //dd($pessoa);
         $stap = DB::select("select
@@ -59,6 +59,15 @@ class PessoaController extends Controller
 
         return view ('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo'));
 
+    }
+
+    public function store()
+    {
+        $ddd = DB::select('select id, descricao from tp_ddd');
+
+        $sexo = DB::select('select id, tipo from tp_sexo');
+
+        return view ('/pessoal/incluir-pessoa', compact('ddd', 'sexo'));
     }
 
     
@@ -88,7 +97,7 @@ class PessoaController extends Controller
             //dd($e->errors());
         }
 
-        if ($vercpf > 0) {
+        if ($vercpf > 1) {
 
 
             app('flasher')->addError('Existe outro cadastro usando este número de CPF');
@@ -128,41 +137,82 @@ class PessoaController extends Controller
         return redirect('/gerenciar-pessoas');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+  
+   
+
+    public function edit($idp)
     {
-        //
+        $ddd = DB::select('select id, descricao from tp_ddd');
+
+        $sexo = DB::select('select id, tipo from tp_sexo');
+
+        $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.sexo, p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
+        left join tp_sexo tps on (p.sexo = tps.id)
+        left join tp_ddd d on (p.ddd = d.id)
+        where p.id = $idp");
+
+        return view ('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd'));
+
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Pessoa $pessoa)
+    public function show()
     {
-        //git p
+
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Pessoa $pessoa)
+
+    public function update(Request $request, $idp)
     {
-        //
+        $today = Carbon::today()->format('Y-m-d');
+
+        $cpf = $request->cpf;
+
+        $vercpf = DB::table('pessoas')->where('cpf', $cpf)->count();
+
+
+        try{
+            $validated = $request->validate([
+                //'telefone' => 'required|telefone',
+                'cpf' => 'required|cpf',
+                //'cnpj' => 'required|cnpj',
+                // outras validações aqui
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            app('flasher')->addError('Este CPF não é válido');
+
+            return redirect()->back()->withInput();
+            //dd($e->errors());
+        }
+
+        if ($vercpf > 1) {
+
+
+            app('flasher')->addError('Existe outro cadastro usando este número de CPF');
+
+            return redirect()->back()->withInput();
+        }
+        else
+        {
+
+        DB::table('pessoas AS p')->where('p.id', $idp)->update([
+                'nome_completo' => $request->input('nome'),
+                'cpf' => $request->input('cpf'),
+                'dt_nascimento' => $request->input('dt_nasc'),
+                'sexo' => $request->input('sex'),
+                'ddd' => $request->input('ddd'),
+                'celular' => $request->input('celular'),
+                'email' => $request->input('email')
+        ]);
+
+        app('flasher')->addSuccess('O cadastro da pessoa foi alterado com sucesso');
+
+        return redirect('/gerenciar-pessoas');
+        }
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Pessoa $pessoa)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($idp)
     {
         $data = date("Y-m-d H:i:s");

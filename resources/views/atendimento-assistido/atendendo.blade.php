@@ -58,7 +58,7 @@
                             <tr>
                                 <td scope="">{{$assistidos->nm_3}}</td>
                                 <td scope="">{{$assistidos->tipo}}</td>
-                                <td scope="">{{date( 'H:m:s', strtotime($assistidos->dh_chegada))}}</td>
+                                <td scope="">{{date( 'Y/m/d H:m:s', strtotime($assistidos->dh_chegada))}}</td>
                                 <td scope="">{{$assistidos->prdesc}}</td>
                                 <td scope="">{{$assistidos->nm_1}}</td>
                                 <td scope="">{{$assistidos->nm_2}}</td> 

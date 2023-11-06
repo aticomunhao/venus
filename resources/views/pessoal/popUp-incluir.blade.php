@@ -7,25 +7,29 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal mt-4" method="POST" action="/criar-pessoa">
+                <form class="form-horizontal mt-4 needs-validation" novalidate method="POST" action="/criar-pessoa" >
                 @csrf
                 <div class="row">
-                    <div class="col-12" style="text-align:left;">Nome completo
-                        <input class="form-control" type="text" maxlength="45" oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="" name="nome" value="{{old('nome')}}" required="required" >
+                    <div class="col-12" style="text-align:left;">
+                    <label for="validationCustom01" class="form-label">Nombre</label>
+                        <input class="form-control" type="text" maxlength="45" oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="" name="nome" value="{{old('nome')}}" required>
+                        <div class="valid-feedback">
+      ¡Se ve bien!
+    </div>
                     </div>
                     <br>
                 </div><br>
                 <div class="row">
                     <div class="col" style="text-align:left;">CPF
-                        <input class="form-control" type="numeric" maxlength="11" placeholder="888.888.888-88"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" value="{{old('cpf')}}" id="" name="cpf" required="required" >
+                        <input class="form-control" type="numeric" maxlength="11" placeholder="888.888.888-88"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" value="{{old('cpf')}}" id="" name="cpf" required >
                     </div>
                     <div class="col" style="text-align:left;">Data nascimento
-                        <input class="form-control" type="date" id="" name="dt_na" value="{{old('dt_na')}}" required="required" >
+                        <input class="form-control" type="date" id="" name="dt_na" value="{{old('dt_na')}}" required >
                     </div>
                 </div><br>
                 <div class="row">
                     <div class="col" style="text-align:left;">Sexo
-                        <select class="form-select" id="" name="sex" required="required">
+                        <select class="form-select" id="" name="sex" required>
                             <option value=""></option>
                             <@foreach($sexo as $sexos)
                             <option @if (old ('sex') == $sexos->id) {{'selected="selected"'}} @endif value="{{ $sexos->id }}">{{$sexos->tipo}}</option>
@@ -33,7 +37,7 @@
                         </select>
                     </div>
                     <div class="col-2" style="text-align:left;">DDD
-                    <select class="form-select" id="" name="ddd" required="required">
+                    <select class="form-select" id="" name="ddd" required>
                                     <option value=""></option>
                                     <@foreach($ddd as $ddds)
                                     <option @if(old ('ddd') == $ddds->id) {{'selected="selected"'}} @endif value="{{ $ddds->id }}">{{$ddds->descricao}}</option>
@@ -41,12 +45,12 @@
                                 </select>
                     </div>
                     <div class="col" style="text-align:left;">Nr Celular
-                        <input class="form-control" maxlength="9" type="numeric" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" placeholder="Ex.: 99999-9999" value="{{old('celular')}}" id="" name="celular" required="required" >
+                        <input class="form-control" maxlength="9" type="numeric" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" placeholder="Ex.: 99999-9999" value="{{old('celular')}}" id="" name="celular" required >
                     </div>
                 </div><br>
                 <div class="row">
                     <div class="col" style="text-align:left;">email
-                        <input class="form-control" type="email" maxlength="45" id="" name="email" value="{{old('email')}}" required="required" >
+                        <input class="form-control" type="email" maxlength="45" id="" name="email" value="{{old('email')}}" required >
                     </div>
                 </div>
             </div>

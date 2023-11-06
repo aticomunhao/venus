@@ -20,7 +20,8 @@ class AtendimentoFraternoController extends Controller
 
         $nome = session()->get('usuario.nome');
 
-        $now = Carbon::now()->format('Y-m-d H:m:s');
+        //$now = Carbon::now()->format('Y-m-d H:m:s');
+        $now =  Carbon::now()->format('Y-m-d');
 
         $assistido = DB::table('atendimentos AS at')
                     ->select('at.id AS idat', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tx.tipo','pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla')
@@ -34,7 +35,9 @@ class AtendimentoFraternoController extends Controller
                     ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
                     ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')                                           
                     ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
-                    ->orderBy('status_atendimento', 'ASC', 'at.id_prioridade', 'ASC',  'at.dh_chegada', 'ASC')
+                    ->orderby('status_atendimento', 'ASC')
+                    ->orderBy( 'at.id_prioridade', 'ASC')
+                    ->orderby('at.dh_chegada', 'ASC')
                     ->get();        
 
                     //dd($pref_att);   
@@ -46,22 +49,6 @@ class AtendimentoFraternoController extends Controller
 
         public function history($idat, $idas)
         {
-
-            $atendente = session()->get('usuario.id_pessoa');
-
-            $sit = DB::table('atendimentos AS at')->where('at.id', $idat)->where('at.status_atendimento', 1)->count();
-            //
-
-            if ($sit = 1){
-                DB::table('atendimentos AS at')
-            ->where('status_atendimento', '=', 1)
-            ->where('at.id', $idat)
-            ->update([
-                'status_atendimento' => 2,
-                'id_atendente' => $atendente
-            ]);  
-            }
-
             $assistido = DB::table('atendimentos AS at')
             ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tx.tipo','pa.nome')
             ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id_pessoa')
@@ -76,6 +63,27 @@ class AtendimentoFraternoController extends Controller
             ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome')
             ->orderBy('at.dh_chegada', 'desc')
             ->get();
+
+            $atendente = session()->get('usuario.id_pessoa');
+
+            $sit = DB::table('atendimentos AS at')->where('at.id', $idat)->where('at.status_atendimento','>',0)->count();
+
+            if ($sit > 0){
+
+                app('flasher')->addError('Não é permitido atender dois assistidos ao mesmo tempo.');
+                
+            }else{
+                DB::table('atendimentos AS at')
+            ->where('status_atendimento', '=', 1)
+            ->where('at.id', $idat)
+            ->update([
+                'status_atendimento' => 2,
+                'id_atendente' => $atendente
+            ]);  
+            }
+
+
+           
 
             return view ('\atendimento-assistido\historico-assistido', compact('assistido', 'atendente'));
         }

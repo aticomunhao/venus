@@ -27,10 +27,10 @@
                     <div class="col"><br>
                         <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
                         <a href="/gerenciar-pessoas"><input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
-                    </form>                            
-                        <button class="btn btn-success btn-sm" style="font-size: 0.9rem; color:#FFF;  box-shadow: 1px 2px 5px #000000;" type="button" id="" data-bs-toggle="modal" data-bs-target="#pessoa">Nova Pessoa  &plus;</button>
+                    </form>
+                    <a href="/dados-pessoa"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;" type="button" value="Nova Pessoa"></a>                            
+                        
                     </div>
-                        @include('pessoal.popUp-incluir')
                 </div>
         </div>
 
@@ -59,7 +59,7 @@
                             <td scope="" >{{date( 'd/m/Y' , strtotime($pessoas->dt_nascimento))}}</td>
                             <td scope="" >{{$pessoas->tipo}}</td>
                             <td scope="" >{{$pessoas->email}}</td>
-                            <td scope="" >{{str_pad($pessoas->ddd, 2, "0", STR_PAD_LEFT)}}</td>
+                            <td scope="" >{{str_pad($pessoas->ddesc, 2, "0", STR_PAD_LEFT)}}</td>
                             <td scope="" >{{$pessoas->celular}}</td>
                             <td scope="" >{{$pessoas->nmstatus}}</td>
                             <td scope="">                                

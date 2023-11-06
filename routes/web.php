@@ -104,9 +104,11 @@ Route::get('/tester', [TesteController::class, 'index'])->name('tester');
 
 // Pessoas
 Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
+Route::get('/dados-pessoa', [PessoaController::class, 'store'])->name('pesdap');
 Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
 Route::get('/excluir-pessoa', [PessoaController::class, 'destroy'])->name('pesdes');
-
+Route::get('/editar-pessoa/{idp}', [PessoaController::class, 'edit'])->name('pesedt');
+Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name('pesexe');
 /*
 |--------------------------------------------------------------------------
 | David Routes

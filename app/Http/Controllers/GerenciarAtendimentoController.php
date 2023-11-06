@@ -67,7 +67,7 @@ class GerenciarAtendimentoController extends Controller
         }
        
 
-        $lista = $lista->orderBy('status_atendimento', 'ASC', 'at.id_prioridade', 'ASC',  'at.dh_chegada', 'ASC')->paginate(50);
+        $lista = $lista->orderby('status_atendimento', 'ASC')->orderBy( 'at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC')->paginate(50);
         
         $contar = $lista->count('at.id');
 
@@ -139,6 +139,20 @@ class GerenciarAtendimentoController extends Controller
     public function store(Request $request){
 
         $dt_hora = Carbon::now();
+
+        $assistido = $request->assist;
+
+        $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 5)->where('id_assistido', $assistido)->count();
+
+        //dd($resultado);
+        if ($resultado > 0){
+
+            app('flasher')->addError('Não é permitido duplicar o cadastro do assistido.');
+        
+            return redirect ('/gerenciar-atendimentos');
+
+        };
+
 
         //dd($dt_hora);
        DB::table('atendimentos AS atd')->insert([
@@ -393,7 +407,7 @@ class GerenciarAtendimentoController extends Controller
                     ->leftjoin('tp_sexo AS tpsx', 'at.pref_tipo_atendente', 'tpsx.id')
                     ->leftJoin('tp_parentesco AS tp', 'at.parentesco', 'tp.id')            
                     ->leftJoin('tp_ddd AS tdd', 'p1.ddd', 'tdd.id')
-                    ->orderBy('dh_chegada', 'ASC')
+                    ->orderBy('dh_chegada', 'DESC')
                     ->get();
 
         
