@@ -12,19 +12,19 @@
                 <div class="row">
                     <div class="row">
                         <div class="form-check form-check-inline">
-                            <input type="checkbox" value="5" name="ptd" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                            <input type="checkbox" name="ptd" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                             <label for="inlineCheckbox1" class="form-check-label">Passe Tratamento Desobessessivo - PTD</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input type="checkbox" value="6" name="pti" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                            <input type="checkbox" name="pti" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                             <label for="inlineCheckbox1" class="form-check-label">Passe Tratamento Intensivo - PTI</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input type="checkbox" value="4" name="afe" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                            <input type="checkbox" name="afe" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                             <label for="inlineCheckbox1" class="form-check-label">Atendentende Fraterno Específico - AFE</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input type="checkbox" value="9" name="pph" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                            <input type="checkbox" name="pph" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                             <label for="inlineCheckbox1" class="form-check-label">Palestra/Passe de Harmonização - PPH</label>
                         </div>
                     </div>                    

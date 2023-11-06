@@ -34,56 +34,108 @@
           <div class="row form-group">
             <div class="col">
               <label for="ar_condicionado">Ar-cond</label>
-              <input type="checkbox" name="ar_condicionado" value="{{$sala[0]->ar_condicionado}}" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
+              @if ($sala[0]->ar_condicionado = false) 
+              <input type="checkbox"  name="ar_condicionado"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
+              @elseif ($sala[0]->ar_condicionado = true)
+                <input type="checkbox" checked name="ar_condicionado" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
+              @endif
+
             </div>
             <div class="col">
               <label for="armarios">Armários</label>
-              <input type="checkbox" name="armarios" value="1" checked data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
+              @if ($sala[0]->armarios = false) 
+              <input type="checkbox"  name="armarios"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @elseif ($sala[0]->armarios = true)
+              <input type="checkbox"  checked name="armarios"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >            
+              @endif
             </div>
             <div class="col">
               <label for="bebedouro">Bebedouro</label>
-              <input type="checkbox" name="bebedouro" value="1" checked data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
+              @if ($sala[0]->bebedouro = false) 
+              <input type="checkbox"   name="bebedouro"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @elseif ($sala[0]->bebedouro = true)
+              <input type="checkbox"  checked name="bebedouro"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+               @endif
             </div>
             <div class="col">
               <label for="controle">Controle_proj</label>
-              <input type="checkbox" name="controle" value="1" checked data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
+              @if ($sala[0]->controle_projetor = false)
+              <input type="checkbox"  name="controle"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @elseif ($sala[0]->controle_projetor = true)
+              <input type="checkbox" checked name="controle"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >            
+              @endif
             </div>
             <div class="col-1">
               <label for="computador">PC</label>
-              <input type="checkbox" name="computador" value="1" checked data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
+              @if ($sala[0]->computador= false)
+              <input type="checkbox"  name="computador"  data-toggle="toggle" data-on="Sim" data-off="Não" data-onstyle="success" data-offstyle="danger" >
+              @elseif ($sala[0]->computador = true)
+              <input type="checkbox" checked name="computador"  data-toggle="toggle" data-on="Sim" data-off="Não" data-onstyle="success" data-offstyle="danger" >
+              @endif
             </div>
             <div class="col">
               <label for="projetor">Projetor</label>
-              <input type="checkbox" name="projetor" value="1" checked data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
+              @if ($sala[0]->projetor= false)
+              <input type="checkbox"  name="projetor"   data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @elseif ($sala[0]->projetor = true)           
+              <input type="checkbox" checked name="projetor"   data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >        
+              @endif
             </div>
             <div class="col">
               <label for="tela_projetor">Tela_proj</label>
-              <input type="checkbox" name="tela_projetor" value="1" checked data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
+              @if ($sala[0]->tela_projetor= false)
+              <input type="checkbox"  name="tela_projetor"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @elseif ($sala[0]->tela_projetor = true)  
+              <input type="checkbox" checked name="tela_projetor"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @endif
             </div>
             <div class="col">
               <label for="quadro">Quadro</label>
-              <input type="checkbox" name="quadro" value="1" checked data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
-            </div>
+              @if ($sala[0]->ar_condicionado = false)
+              <input type="checkbox"  name="quadro"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @elseif ($sala[0]->ar_condicionado = true)
+              <input type="checkbox" checked  name="quadro"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @endif
+              </div>            
             <div class="col">
-              <label for="som">Som</label>
-              <input type="checkbox" name="som" value="1" checked data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
-            </div>
-            
+            <label for="som">Som</label>
+            @if ($sala[0]->som = false)
+              <input type="checkbox" name="som"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @elseif ($sala[0]->som = true)
+              <input type="checkbox" checked name="som"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+            @endif
+            </div>            
             <div class="col">
               <label for="ventilador">Ventilador</label>
-              <input type="checkbox" name="ventilador" value="1" checked data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
+              @if ($sala[0]->ventilador= false)
+               <input type="checkbox" name="ventilador"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @elseif ($sala[0]->ventilador= true)
+               <input type="checkbox" checked name="ventilador"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @endif
             </div>
             <div class="col">
-              <label for="luz_azul">Luz azul</label>
-              <input type="checkbox" name="luz_azul" value="1" checked data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
+             <label for="luz_azul">Luz azul</label>
+              @if ($sala[0]->luz_azul= false)
+                <input type="checkbox"  name="luz_azul"   data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @elseif ($sala[0]->luz_azul= true)
+                <input type="checkbox" checked name="luz_azul"   data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
+              @endif
             </div>
-               </div>  
+          </div>
+               
           <div class="row justify-content-center">
               <div class="d-grid gap-2 col-4 mx-auto" >
               <br>
               <button class="btn btn-primary">Confirmar</button>
-              </div>
-              
+          </div>
+          <!--<script>
+           //function toggleOnByInput() {
+           //     $('#checked').prop('checked', true).change()
+          //    }
+           //   function toggleOffByInput() {
+          //      $('#checked').prop('checked', false).change()
+         //     }
+       //   </script>--> 
       
           
                 
