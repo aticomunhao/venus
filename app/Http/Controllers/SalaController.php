@@ -53,7 +53,7 @@ class SalaController extends Controller
             'nr_lugares'=>$request->input('nr_lugares'),
             'localizacao'=>$request->input('localizacao'),
             'tamanho_sala'=>$request->input('tamanho_sala'),
-            'projetor'=>$request->has('projetor')? 1:0,
+            'projetor'=>$request->input('projetor')? 1:0,
             'computador'=>$request->has('computador') ? 1:0,
             'quadro'=>$request->has('quadro') ? 1:0,
             'ar_condicionado' => $request->has('ar_condicionado') ? 1:0,
@@ -107,22 +107,22 @@ class SalaController extends Controller
             // Sala::findOrFail($request->id)->update([
 
             Sala::findOrFail($request->id)->update([
-                'nome' => $request->nome,
-                'numero' => $request->numero,
-                'nr_lugares'=>$request->nr_lugares,
-                'localizacao'=>$request->localizacao,
-                'projetor'=>$request->projetor,
-                'quadro'=>$request->quadro,
-                'tela_projetor'=>$request->tela_projetor,
-                'ventilador'=>$request->ventilador,
-                'ar_condicionado' =>$request->ar_condicionado,
-                'computador'=>$request->computador,
-                'controle'=>$request->controle,
-                'som'=>$request->som,
-                'luz_azul'=>$request->luz_azul,
-                'bebedouro'=>$request->bebedouro,
-                'armarios'=>$request->armarios,
-                'tamanho_sala'=>$request->tamanho_sala
+                'nome' => $request->input('nome'),
+                'numero' => $request->input('numero'),
+                'nr_lugares'=>$request->input('nr_lugares'),
+                'localizacao'=>$request->input('localizacao'),
+                'projetor'=>$request->input('projetor'),
+                'quadro'=>$request->input('quadro'),
+                'tela_projetor'=>$request->input('tela_projetor'),
+                'ventilador'=>$request->input('ventilador'),
+                'ar_condicionado' =>$request->input('ar_condicionado'),
+                'computador'=>$request->input('computador'),
+                'controle'=>$request->input('controle'),
+                'som'=>$request->input('som'),
+                'luz_azul'=>$request->input('luz_azul'),
+                'bebedouro'=>$request->input('bebedouro'),
+                'armarios'=>$request->input('armarios'),
+                'tamanho_sala'=>$request->input('tamanho_sala')
 
 
                 ]) ;

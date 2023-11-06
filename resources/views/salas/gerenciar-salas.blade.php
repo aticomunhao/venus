@@ -22,7 +22,7 @@
                           <th class="col">TAMANHO DA SALA</th>
                          <th class="col">NÚMERO DE LUGARES</th>
                         <th class="col">AÇÕES</th>
-                    </tr>
+                     </tr>
                 </thead>
                 <tbody>
                   @foreach ($salas as $sala)
