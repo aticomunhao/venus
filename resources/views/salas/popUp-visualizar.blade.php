@@ -10,60 +10,60 @@
 
             
             <div class="modal-body">
-                    {{-- <form class="form-horizontal" method="POST" action="/gerenciar-salas">
-                        @csrf --}}
+                    <form class="form-horizontal" method="POST" action="/gerenciar-salas">
+                        @csrf
                 </div>
                 <div class="form-group">
                     <div class="row justify-content-center m">
                         
                         <div class="col-1">Ar-cond
-                            <input type="checkbox" name="ar_condicionado" value="{{$sala->ar_condicionado}}" data-toggle="toggle" data-onlabel="Sim"
+                            <input type="checkbox" name="ar_condicionado" data-toggle="toggle" data-onlabel="Sim"
                                 data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
                               
                         </div>
 
                         <div class="col-1">Armários
-                            <input type="checkbox" name="armarios"  value="{{$sala->armarios}}"data-toggle="toggle" data-onlabel="Sim"
+                            <input type="checkbox" name="armarios"  data-toggle="toggle" data-onlabel="Sim"
                                 data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
                          </div>
 
                          <div class="col-1">Bebedouro
-                            <input type="checkbox" name="bebedouro"  value="{{$sala->bebedouro}}"data-toggle="toggle" data-onlabel="Sim"
+                            <input type="checkbox" name="bebedouro" data-toggle="toggle" data-onlabel="Sim"
                                 data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
                          </div>
 
                         <div class="col-1">Controle_proj
-                            <input type="checkbox" name= "controle"  value="{{$sala->controle}}" data-toggle="toggle" data-onlabel="Sim"
+                            <input type="checkbox" name= "controle"  data-toggle="toggle" data-onlabel="Sim"
                                 data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
                         </div>
                         <div class="col-1">PC
-                            <input type="checkbox" name= "computador"  value="{{$sala->computador}}" data-toggle="toggle" data-onlabel="Sim"
+                            <input type="checkbox" name= "computador" data-toggle="toggle" data-onlabel="Sim"
                                 data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
                         </div>
                         <div class="col-1">Projetor
-                            <input type="checkbox"name="projetor"  value="{{$sala->projetor}}" data-toggle="toggle" data-onlabel="Sim"
+                            <input type="checkbox"name="projetor"  data-toggle="toggle" data-onlabel="Sim"
                                 data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
                         </div>
                         <div class="col-1">Tela_proj
-                            <input type="checkbox" name="tela_projetor" value="{{$sala->tela_projetor}}"data-toggle="toggle" data-onlabel="Sim"
+                            <input type="checkbox" name="tela_projetor" data-toggle="toggle" data-onlabel="Sim"
                                 data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
                         </div>
                         <div class="col-1">Quadro
-                            <input type="checkbox" name= "quadro" value="{{$sala->quadro}}" data-toggle="toggle" data-onlabel="Sim"
+                            <input type="checkbox" name= "quadro"  data-toggle="toggle" data-onlabel="Sim"
                                 data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
                         </div>
                         <div class="col-1">Som
-                            <input type="checkbox" name="som"  value="{{$sala->som}}"data-toggle="toggle" data-onlabel="Sim"
+                            <input type="checkbox" name="som" data-toggle="toggle" data-onlabel="Sim"
                                 data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
                             </div>
                                 <div class="col-1">Luz azul
-                                    <input type="checkbox" name="luz_azul" value="{{$sala->luz_azul}}"data-toggle="toggle" data-onlabel="Sim"
+                                    <input type="checkbox" name="luz_azul"data-toggle="toggle" data-onlabel="Sim"
                                         data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
                                     </div>
                                        
                                                                 
                         <div class="col-1">Ventilador
-                            <input type="checkbox" name= "ventilador"  value="{{$sala->ventilador}}" data-toggle="toggle" data-onlabel="Sim"
+                            <input type="checkbox" name= "ventilador"   data-toggle="toggle" data-onlabel="Sim"
                                 data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
                         </div>
                         

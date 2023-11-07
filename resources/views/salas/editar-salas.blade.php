@@ -2,13 +2,22 @@
 
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
-<br>
-<div class="container">
-    <div class="card">
-     <h5 class="card-header">Editar</h5>
-        <div class="card-body">
-                   
-             <form class="form-horizontal mt-2" method="post" action="/atualizar-salas/{{$sala[0]->id}}">
+  <br>
+  <div class="container">
+    <div class="row justify-content-center">
+       <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+
+                  EDITAR SALA
+
+                </div>
+                <div class="card-body">
+                  <div class="container-fluid";>
+                       <div class="col-12">
+                            <div class="row justify-content-center">
+          
+                                <form class="form-horizontal mt-2" method="post" action="/atualizar-salas/{{$sala[0]->id}}">
             @csrf
             <div class="col">Nome 
               <input type="text" class="form-control" id="nome" name="nome" value="{{$sala[0]->nome}}">
@@ -21,7 +30,7 @@
                   <input type="text" class="form-control" id="localizacao" name="localizacao"value="{{$sala[0]->localizacao}}">
                 </div>
               <br>
-              <div class="col">Tamanho da sala
+              <div class="col">M² da sala
                 <input type="number" class="form-control" id="tamanho_sala" name="tamanho_sala"value="{{$sala[0]->tamanho_sala}}">
               </div>
               <br>
@@ -125,19 +134,15 @@
           </div>
                
           <div class="row justify-content-center">
-              <div class="d-grid gap-2 col-4 mx-auto" >
+            <div class="d-grid gap-1 col-4 mx-auto">
+              <br>
+              <a class="btn btn-danger" href="/gerenciar-salas" role="button">Cancelar</a>
+            </div>
+            <div class="d-grid gap-2 col-4 mx-auto" >
               <br>
               <button class="btn btn-primary">Confirmar</button>
-          </div>
-          <!--<script>
-           //function toggleOnByInput() {
-           //     $('#checked').prop('checked', true).change()
-          //    }
-           //   function toggleOffByInput() {
-          //      $('#checked').prop('checked', false).change()
-         //     }
-       //   </script>--> 
-      
+              </div>
+          
           
                 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
