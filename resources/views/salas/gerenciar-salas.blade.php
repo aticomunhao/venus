@@ -19,9 +19,11 @@
                         <th class="col">NOME</th>
                           <th class="col">NÚMERO</th>
                           <th class="col">LOCALIZAÇÃO</th>
-                          <th class="col">TAMANHO DA SALA</th>
+                          <th class="col">M² SALA</th>
                          <th class="col">NÚMERO DE LUGARES</th>
+                         <th class="col">STATUS</th>
                         <th class="col">AÇÕES</th>
+                       
                      </tr>
                 </thead>
                 <tbody>
@@ -32,12 +34,19 @@
                     <td> {{$sala->localizacao}} </td>
                     <td> {{$sala->tamanho_sala}} </td>
                     <td> {{$sala->nr_lugares}} </td>
-                     
-                     
+                    
+                    
+                    
                     
                       @include('salas.popUp-incluir')
-                    
-                      <td> <button  class="bi bi-plus-square" style="font-size: 1rem;" type="button"  col" id="" data-bs-toggle="modal" data-bs-target="#pessoa"></button>
+
+                      <td><input type="checkbox" checked data-toggle="toggle" data-onstyle="success"data-on="A" data-off="D"data-size="small">
+                     
+                                          
+                      <td> <a href="/popUp-incluir/ {{$sala->id}}"type="button"
+                        class="btn btn-outline-primary btn-sm"><i class="bi bi-search" 
+                        style="font-size: 1rem;color:#000;" data-bs-toggle="modal" data-bs-target="#pessoa"></i>
+                     </a>
                       <a href="/editar-salas/{{$sala->id}}" type="button"
                         class="btn btn-outline-warning btn-sm"><i class="bi bi-pen"
                             style="font-size: 1rem; color:#000;"></i>

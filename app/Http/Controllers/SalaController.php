@@ -21,13 +21,18 @@ class SalaController extends Controller
     }
 
     public function criar()
+ 
+     
+
     {
-        
+        $salas = db::select('select * from salas');
+
+
        
         //
+        return view('salas/criar-salas', compact('salas'));
 
-
-        return view('salas/criar-salas');
+        // return view('salas/criar-salas');
         
 
 
@@ -36,7 +41,11 @@ class SalaController extends Controller
      */
     public function show(string $id)
     {
-        return view('salas/gerenciar-salas');
+
+        $salas = db::select('select * from salas');
+
+
+        return view('salas/gerenciar-salas', compact('salas'));
         
         //
     }
@@ -120,7 +129,7 @@ class SalaController extends Controller
             $bebedouro = isset($request->bebedouro) ? 1 : 0;
             $armarios = isset($request->armarios) ? 1 : 0;
 
-    //dd($ar_condicionado);
+
             
             Sala::findOrFail($request->id)->update([
                 'nome' => $request->input('nome'),

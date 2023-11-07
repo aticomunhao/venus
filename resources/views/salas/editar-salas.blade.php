@@ -21,7 +21,7 @@
                   <input type="text" class="form-control" id="localizacao" name="localizacao"value="{{$sala[0]->localizacao}}">
                 </div>
               <br>
-              <div class="col">Tamanho da sala
+              <div class="col">M² da sala
                 <input type="number" class="form-control" id="tamanho_sala" name="tamanho_sala"value="{{$sala[0]->tamanho_sala}}">
               </div>
               <br>
@@ -125,10 +125,14 @@
           </div>
                
           <div class="row justify-content-center">
-              <div class="d-grid gap-2 col-4 mx-auto" >
+            <div class="d-grid gap-1 col-4 mx-auto">
+              <br>
+              <a class="btn btn-danger" href="/gerenciar-salas" role="button">Cancelar</a>
+            </div>
+            <div class="d-grid gap-2 col-4 mx-auto" >
               <br>
               <button class="btn btn-primary">Confirmar</button>
-          </div>
+              </div>
           <!--<script>
            //function toggleOnByInput() {
            //     $('#checked').prop('checked', true).change()

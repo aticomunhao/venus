@@ -34,7 +34,7 @@
                 <input type="" class="form-control" id="localizacao" name="localizacao" >
               </div>
               <br>
-              <div class="col">Tamanho da sala
+              <div class="col">M² da sala
                 <input type="number" class="form-control" id="tamanho_sala" name="tamanho_sala">
             </div>
             </div>
@@ -84,7 +84,7 @@
               <div class="col">
                 <label for="luz_azul">Luz azul</label>
                 <input type="checkbox" name="luz_azul" value="1" checked data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
-              </div>
+                             </div>
               
             <br>
             </div>  

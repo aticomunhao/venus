@@ -15,6 +15,7 @@
                 </div>
                 <div class="form-group">
                     <div class="row justify-content-center m">
+                        
                         <div class="col-1">Ar-cond
                             <input type="checkbox" name="ar_condicionado" value="{{$sala->ar_condicionado}}" data-toggle="toggle" data-onlabel="Sim"
                                 data-offlabel="Não" data-onstyle="success" data-offstyle="danger" checked>
