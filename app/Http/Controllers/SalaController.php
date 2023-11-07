@@ -106,6 +106,8 @@ class SalaController extends Controller
 
         {
             
+            
+
             $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
             $projetor = isset($request->projetor) ? 1 : 0;
             $quadro = isset($request->quadro) ? 1 : 0;
@@ -117,6 +119,8 @@ class SalaController extends Controller
             $luz_azul = isset($request->luz_azul) ? 1 : 0;
             $bebedouro = isset($request->bebedouro) ? 1 : 0;
             $armarios = isset($request->armarios) ? 1 : 0;
+
+    //dd($ar_condicionado);
             
             Sala::findOrFail($request->id)->update([
                 'nome' => $request->input('nome'),
