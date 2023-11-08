@@ -19,11 +19,7 @@
                         <th class="col">NOME</th>
                           <th class="col">NÚMERO</th>
                           <th class="col">LOCALIZAÇÃO</th>
-<<<<<<< HEAD
                           <th class="col">M² DA SALA</th>
-=======
-                          <th class="col">M² SALA</th>
->>>>>>> master
                          <th class="col">NÚMERO DE LUGARES</th>
                          <th class="col">STATUS</th>
                         <th class="col">AÇÕES</th>
@@ -39,23 +35,13 @@
                     <td> {{$sala->tamanho_sala}} </td>
                     <td> {{$sala->nr_lugares}} </td>
                     
-<<<<<<< HEAD
                                                           
-=======
-                    
-                    
-                    
->>>>>>> master
                       @include('salas.popUp-incluir')
 
                       <td><input type="checkbox" checked data-toggle="toggle" data-onstyle="success"data-on="A" data-off="D"data-size="small">
                      
                                           
-<<<<<<< HEAD
                       <td> <a href="/popUp-incluir/ "type="button"
-=======
-                      <td> <a href="/popUp-incluir/ {{$sala->id}}"type="button"
->>>>>>> master
                         class="btn btn-outline-primary btn-sm"><i class="bi bi-search" 
                         style="font-size: 1rem;color:#000;" data-bs-toggle="modal" data-bs-target="#pessoa"></i>
                      </a>
