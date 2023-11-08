@@ -142,7 +142,19 @@
               <br>
               <button class="btn btn-primary">Confirmar</button>
               </div>
+<<<<<<< HEAD
           
+=======
+          <!--<script>
+           //function toggleOnByInput() {
+           //     $('#checked').prop('checked', true).change()
+          //    }
+           //   function toggleOffByInput() {
+          //      $('#checked').prop('checked', false).change()
+         //     }
+       //   </script>--> 
+      
+>>>>>>> master
           
                 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>

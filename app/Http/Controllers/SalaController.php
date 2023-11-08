@@ -15,13 +15,47 @@ class SalaController extends Controller
 
             $salas = db::select('select * from salas');
     
+<<<<<<< HEAD
         
             return view('salas/gerenciar-salas' , compact('salas'));
+=======
+        return view('salas/gerenciar-salas' , compact('salas'));
+    
+    }
+
+    public function criar()
+ 
+     
+
+    {
+        $salas = db::select('select * from salas');
+
+
+       
+        //
+        return view('salas/criar-salas', compact('salas'));
+
+        // return view('salas/criar-salas');
+>>>>>>> master
         
         }
 
+<<<<<<< HEAD
         public function criar()
     
+=======
+
+        }    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+
+        $salas = db::select('select * from salas');
+
+
+        return view('salas/gerenciar-salas', compact('salas'));
+>>>>>>> master
         
 
         {
@@ -72,7 +106,11 @@ class SalaController extends Controller
             $bebedouro = isset($request->bebedouro) ? 1 : 0;
             $armarios = isset($request->armarios) ? 1 : 0;
 
+<<<<<<< HEAD
             // dd( isset($request->ar_condicionado), $ar_condicionado, $projetor, $computador);
+=======
+
+>>>>>>> master
             
         
             DB::table('salas')->insert([
