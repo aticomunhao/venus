@@ -8,7 +8,7 @@
           style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR SALAS
         </h4>
         <div class="col" style="text-align: right">
-          <a href="criar-salas" class="btn btn-success"id="name=" type="button">NOVO+</a>
+          <a href="/criar-salas" class="btn btn-success"id="name=" type="button">NOVO+</a>
         </div>
         <br>   
         <br><br>
@@ -20,7 +20,7 @@
                           <th class="col">NÚMERO</th>
                           <th class="col">LOCALIZAÇÃO</th>
                           <th class="col">M² DA SALA</th>
-                         <th class="col">NÚMERO DE LUGARES</th>
+                         <th class="col">NÚMERO DE CADEIRAS</th>
                          <th class="col">STATUS</th>
                         <th class="col">AÇÕES</th>
                        

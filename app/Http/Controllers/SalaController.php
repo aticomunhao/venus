@@ -15,6 +15,8 @@ class SalaController extends Controller
 
             $salas = db::select('select * from salas');
     
+            // $sala = $salas->orderBy('numero','asc')->orderBy('nome', 'asc')
+
         
             return view('salas/gerenciar-salas' , compact('salas'));
         
@@ -197,10 +199,11 @@ class SalaController extends Controller
                     
             
 
-
+                  
           
                 
                     DB::table('historico_venus')->insert([
+                       
                         'id_usuario' => session()->get('usuario.id_usuario'),
                         'data' => $data,
                         'fato' => 0
