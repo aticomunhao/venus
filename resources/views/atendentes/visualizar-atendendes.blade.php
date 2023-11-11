@@ -119,4 +119,3 @@
 
 <script src="{{ URL::asset('/js/pages/mascaras.init.js')}}"></script>
 
-@endsection

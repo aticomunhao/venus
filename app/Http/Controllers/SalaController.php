@@ -14,29 +14,28 @@ class SalaController extends Controller
         public function index() {
 
             $salas = db::select('select * from salas');
-    
+
+
             // $sala = $salas->orderBy('numero','asc')->orderBy('nome', 'asc')
 
-        
             return view('salas/gerenciar-salas' , compact('salas'));
-        
+
         }
 
         public function criar()
-    
-        
+
+
 
         {
             $salas = db::select('select * from salas');
 
 
-                
-                
+
             //
             return view('salas/criar-salas', compact('salas'));
 
-   
-            
+
+
 
 
             }    /**
@@ -45,21 +44,22 @@ class SalaController extends Controller
         public function show(string $id)
         {
 
-            $salas = db::select('select * from salas');
+            // $salas = db::select('select * from salas');
+            $salas = Sala::find($id);
 
 
             return view('salas/visualizar-salas', compact('salas'));
-            
+
             //
         }
 
 
         public function store(Request $request)
         {
-           
-            
-            
-            $ativo = isset($request->checked) ? 1 : 0; 
+
+
+
+            $ativo = isset($request->checked) ? 1 : 0;
             $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
 
 
@@ -73,16 +73,19 @@ class SalaController extends Controller
             $luz_azul = isset($request->luz_azul) ? 1 : 0;
             $bebedouro = isset($request->bebedouro) ? 1 : 0;
             $armarios = isset($request->armarios) ? 1 : 0;
+            $status_sala = isset($request->status_sala) ? 1 : 0;
+
+
 
             // dd( isset($request->ar_condicionado), $ar_condicionado, $projetor, $computador);
-            
-        
+
+
             DB::table('salas')->insert([
 
                 'nome' => $request->input('nome'),
                     'numero' => $request->input('numero'),
                     'nr_lugares'=>$request->input('nr_lugares'),
-                    'localizacao'=>$request->input('localizacao'),          
+                    'localizacao'=>$request->input('localizacao'),
                     'projetor'=>$projetor,
                     'quadro'=>$quadro,
                     'tela_projetor'=>$tela_projetor,
@@ -94,21 +97,22 @@ class SalaController extends Controller
                     'luz_azul'=> $luz_azul,
                     'bebedouro'=> $bebedouro,
                     'armarios'=> $armarios,
+                    'status_sala'=> $status_sala,
                     'tamanho_sala'=>$request->input('tamanho_sala')
                     ]) ;
-              
-                
-                
-              
 
-          
+
+
+
+
+
 
             app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
 
-    
 
 
-            
+
+
                 return redirect('gerenciar-salas');
         }
 
@@ -117,29 +121,29 @@ class SalaController extends Controller
          */
         public function edit( $id)
         {
-                 $sala = DB::select("select * from salas where id = $id"); 
-                
-        
+                 $sala = DB::select("select * from salas where id = $id");
+
+
                 return view ('salas/editar-salas' , compact('sala'));
 
-            
+
 
             }
 
-        
 
-    
-        
+
+
+
 
         /**
          * Update the specified resource in storage.
          */
         public function update(Request $request, string $id)
-     
-            { 
-           
 
-                    $ativo = isset($request->checked) ? 1 : 0; 
+            {
+
+
+                    $ativo = isset($request->checked) ? 1 : 0;
 
                     $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
                     $projetor = isset($request->projetor) ? 1 : 0;
@@ -152,6 +156,7 @@ class SalaController extends Controller
                     $luz_azul = isset($request->luz_azul) ? 1 : 0;
                     $bebedouro = isset($request->bebedouro) ? 1 : 0;
                     $armarios = isset($request->armarios) ? 1 : 0;
+                    $status_sala = isset($request->status_sala) ? 1 : 0;
 
                     // dd( isset($request->ar_condicionado), $ar_condicionado, $projetor, $computador);
 
@@ -159,12 +164,12 @@ class SalaController extends Controller
 
 
 
-                
+
                 Sala::findOrFail($request->id)->update([
                     'nome' => $request->input('nome'),
                     'numero' => $request->input('numero'),
                     'nr_lugares'=>$request->input('nr_lugares'),
-                    'localizacao'=>$request->input('localizacao'),          
+                    'localizacao'=>$request->input('localizacao'),
                     'projetor'=>$projetor,
                     'quadro'=>$quadro,
                     'tela_projetor'=>$tela_projetor,
@@ -176,13 +181,14 @@ class SalaController extends Controller
                     'luz_azul'=> $luz_azul,
                     'bebedouro'=> $bebedouro,
                     'armarios'=> $armarios,
+                    'status_sala'=> $status_sala,
                     'tamanho_sala'=>$request->input('tamanho_sala')
                     ]) ;
 
-                    
-                
+
+
                 return redirect ('gerenciar-salas');
-        
+
         }
 
         /**
@@ -191,35 +197,35 @@ class SalaController extends Controller
         public function destroy($id)
                 {
                     $teste=session()->get('usuario');
-                        
-                    $verifica=DB::table('historico_venus') -> where('fato',$id)->count('fato');
-                
-                
-                    $data = date("Y-m-d H:i:s");
-                    
-            
 
-                  
-          
-                
+                    $verifica=DB::table('historico_venus') -> where('fato',$id)->count('fato');
+
+
+                    $data = date("Y-m-d H:i:s");
+
+
+
+
+
+
                     DB::table('historico_venus')->insert([
-                       
+
                         'id_usuario' => session()->get('usuario.id_usuario'),
                         'data' => $data,
                         'fato' => 0
-                        
+
                 ]);
 
-                    
+
                     DB::table('salas')->where('id', $id)->delete();
 
 
                     app('flasher')->addSuccess('Excluido com sucesso.');
                     return redirect('/gerenciar-salas');
-     
-                    
-                
-                }                
 
-        
+
+
+                }
+
+
     }

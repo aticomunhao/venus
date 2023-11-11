@@ -137,7 +137,8 @@ Route::post('/atualizar-salas/{id}', [SalaController::class, 'update'])->name(''
 Route::get('/criar-salas', [SalaController::class, 'criar'])->name('');
 Route::post('/incluir-salas', [SalaController::class, 'store']);
 Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
-Route::any('/visualizar-salas}', [SalaController::class, 'show'])->name('');
+Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
+
 
 
 

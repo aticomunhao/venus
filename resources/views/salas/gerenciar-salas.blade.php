@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-  <br> 
+  <br>
      <div class="row" style="text-align:center;">
         <h4 class="card-title col-10 " class="card-title"
           style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR SALAS
@@ -10,7 +10,7 @@
         <div class="col" style="text-align: right">
           <a href="/criar-salas" class="btn btn-success"id="name=" type="button">NOVO+</a>
         </div>
-        <br>   
+        <br>
         <br><br>
         <div class="table">
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
@@ -23,7 +23,7 @@
                          <th class="col">NÚMERO DE CADEIRAS</th>
                          <th class="col">STATUS</th>
                         <th class="col">AÇÕES</th>
-                       
+
                      </tr>
                 </thead>
                 <tbody>
@@ -34,15 +34,17 @@
                     <td> {{$sala->localizacao}} </td>
                     <td> {{$sala->tamanho_sala}} </td>
                     <td> {{$sala->nr_lugares}} </td>
-                    
-                                                          
-                      @include('salas.popUp-incluir')
 
-                      <td><input type="checkbox" checked data-toggle="toggle" data-onstyle="success"data-on="A" data-off="D"data-size="small">
-                     
-                                          
-                      <td> <a href="/popUp-incluir/ "type="button"
-                        class="btn btn-outline-primary btn-sm"><i class="bi bi-search" 
+
+                    {{-- <td class="text-center"> {{ $sala->status_salas ? 'Ativo' : 'Inativo' }}</td> --}}
+
+                      {{-- @include('salas.popUp-incluir') --}}
+
+                      <td  class="text-center">{{$sala->status_sala ? 'Ativo' : 'Inativo' }}</td>
+
+
+                      <td> <a href="/visualizar-salas/{{$sala->id}} "type="button"
+                        class="btn btn-outline-primary btn-sm"><i class="bi bi-search"
                         style="font-size: 1rem;color:#000;" data-bs-toggle="modal" data-bs-target="#pessoa"></i>
                      </a>
                       <a href="/editar-salas/{{$sala->id}}" type="button"
@@ -54,12 +56,12 @@
                             class="bi bi-x-circle"
                             style="font-size: 1rem; color:#000;"></i></td>
                 </a>
-            </td>                      
+            </td>
                     @endforeach
-                
+
                   </tr>
                 </tbody>
-                        
+
         </table>
       </div>
 </div>

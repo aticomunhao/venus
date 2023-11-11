@@ -8,22 +8,35 @@
        <div class="col-12">
         <div class="card">
           <div class="card-header">
+            <div class="row">
 
-                  EDITAR SALA
+                <div class="col">
+                    EDITAR SALA
+                </div>
+
+                <div class="col-2 text-end offset-2"> <label for="status_sala">STATUS </label>
+                    <input type="checkbox"
+                    name="status_sala" style=text-align: right; "status_sala" data-toggle="toggle" data-onlabel="A"
+                    data-offlabel="D" data-onstyle="success" data-offstyle="">
+                 </div>
+
+            </div>
+
+
 
                 </div>
                 <div class="card-body">
                   <div class="container-fluid";>
                        <div class="col-12">
                             <div class="row justify-content-center">
-          
+
                                 <form class="form-horizontal mt-2" method="post" action="/atualizar-salas/{{$sala[0]->id}}">
             @csrf
-            <div class="col">Nome 
+            <div class="col">Nome
               <input type="text" class="form-control" id="nome" name="nome" value="{{$sala[0]->nome}}">
             </div>
             <br>
-              <div class="col">Número 
+              <div class="col">Número
                 <input type="number" class="form-control" id="numero" name="numero" value="{{$sala[0]->numero}}">
                 <br>
                 <div class="col">localização
@@ -38,13 +51,17 @@
               <input type="number" class="form-control" id="nr_lugares" name="nr_lugares" value="{{$sala[0]->nr_lugares}}">
           </div>
           <br>
-         
+          <div class="col">Status
+            <input type="text" class="form-control" id="status_sala" name="status_Sala" value="{{$sala[0]->status_sala}}">
+        </div>
+          <br>
+
           <br>
           <div class="row form-group">
             <div class="col">
               @foreach($sala as $salas)
               <label for="ar_condicionado">Ar-cond</label>
-              @if ($salas->ar_condicionado == 1) 
+              @if ($salas->ar_condicionado == 1)
               <input type="checkbox" checked name="ar_condicionado"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
               @elseif ($salas->ar_condicionado == 0)
                 <input type="checkbox"  name="ar_condicionado" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
@@ -52,15 +69,15 @@
             </div>
             <div class="col">
               <label for="armarios">Armários</label>
-              @if ($salas->armarios == 1) 
+              @if ($salas->armarios == 1)
               <input type="checkbox" checked  name="armarios"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
               @elseif ($salas->armarios == 0)
-              <input type="checkbox"   name="armarios"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >            
+              <input type="checkbox"   name="armarios"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
               @endif
             </div>
             <div class="col">
               <label for="bebedouro">Bebedouro</label>
-              @if ($salas->bebedouro == 1) 
+              @if ($salas->bebedouro == 1)
               <input type="checkbox" checked  name="bebedouro"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
               @elseif ($salas->bebedouro == 0)
               <input type="checkbox"   name="bebedouro"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
@@ -71,7 +88,7 @@
               @if ($salas->controle == 1)
               <input type="checkbox" checked name="controle"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
               @elseif ($salas->controle == 0)
-              <input type="checkbox"  name="controle"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >            
+              <input type="checkbox"  name="controle"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
               @endif
             </div>
             <div class="col-1">
@@ -86,8 +103,8 @@
               <label for="projetor">Projetor</label>
               @if ($salas->projetor == 1)
               <input type="checkbox" checked name="projetor"   data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
-              @elseif ($salas->projetor == 0)         
-              <input type="checkbox"  name="projetor"   data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >        
+              @elseif ($salas->projetor == 0)
+              <input type="checkbox"  name="projetor"   data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
               @endif
             </div>
             <div class="col">
@@ -105,7 +122,7 @@
               @elseif ($salas->quadro == 0)
               <input type="checkbox"   name="quadro"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
               @endif
-              </div>            
+              </div>
             <div class="col">
             <label for="som">Som</label>
             @if ($salas->som == 1)
@@ -113,7 +130,7 @@
               @elseif ($salas->som == 0)
               <input type="checkbox"  name="som"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" >
             @endif
-            </div>            
+            </div>
             <div class="col">
               <label for="ventilador">Ventilador</label>
               @if ($salas->ventilador == 1)
@@ -132,7 +149,7 @@
               @endforeach
             </div>
           </div>
-               
+
           <div class="row justify-content-center">
             <div class="d-grid gap-1 col-4 mx-auto">
               <br>
@@ -142,9 +159,9 @@
               <br>
               <button class="btn btn-primary">Confirmar</button>
               </div>
-          
-          
-                
+
+
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
-     
+
 @endsection
