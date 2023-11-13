@@ -73,7 +73,7 @@ Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name(
 Route::get('/historico/{idat}/{idas}', [AtendimentoFraternoController::class, 'history'])->name('afihis');
 Route::get('/fim-analise/{idat}', [AtendimentoFraternoController::class, 'fimanalise'])->name('afifna');
 Route::get('/iniciar-atendimento/{idat}', [AtendimentoFraternoController::class, 'inicio'])->name('afiini');
-Route::post('/gerar-encaminhamento/{idat}', [AtendimentoFraternoController::class, 'encaminha'])->name('afienc');
+Route::get('/gerar-encaminhamento/{idat}', [AtendimentoFraternoController::class, 'encaminha'])->name('afienc');
 
 
 

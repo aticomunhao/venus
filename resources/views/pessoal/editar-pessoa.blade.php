@@ -58,9 +58,9 @@
                                 </div>                            
                                 <div class="col-2" style="text-align:left;">Status
                                     <select class="form-select" id="" name="status" required="required">
-                                        <option value="{{$lista[0]->did}}">{{$lista[0]->ddesc}}</option>
-                                        <@foreach($ddd as $ddds)
-                                        <option @if(old ('ddd') == $ddds->id) {{'selected="selected"'}} @endif value="{{ $ddds->id }}">{{$ddds->descricao}}</option>
+                                        <option value="{{$status_p[0]->id}}">{{$status_p[0]->status}}</option>
+                                        <@foreach($status_p as $statp)
+                                        <option @if(old ('status_p') == $statp->id) {{'selected="selected"'}} @endif value="{{ $statp->id }}">{{$statp->status}}</option>
                                         @endforeach
                                     </select>
                                 </div>

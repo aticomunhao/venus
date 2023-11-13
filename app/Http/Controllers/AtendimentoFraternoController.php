@@ -139,6 +139,8 @@ class AtendimentoFraternoController extends Controller
 
         public function encaminha($idat)
         {
+
+            
             
         }
 

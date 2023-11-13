@@ -295,6 +295,8 @@ class GerenciarAtendimentoController extends Controller
 
     public function cancelar($ida){
 
+        dd(session());
+
             DB::table('atendimentos AS a')->where('id', '=', $ida)->update([
                 'status_atendimento' => 6
             ]);

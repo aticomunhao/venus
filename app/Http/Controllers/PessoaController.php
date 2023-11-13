@@ -123,9 +123,9 @@ class PessoaController extends Controller
         $pessoa = DB::table('pessoas')->max('id');
 
         DB::table('historico_venus')->insert([
-            'id_usuario' => 1,
+            'id_usuario' => session()->get('usuario.id_usuario'),
             'data' => $today,
-            'fato' => 1,
+            'fato' => 2,
             'pessoa' => $request->input('nome') 
         ]);
 
@@ -146,12 +146,14 @@ class PessoaController extends Controller
 
         $sexo = DB::select('select id, tipo from tp_sexo');
 
+        $status_p = DB::select('select id, status from tipo_status_pessoa');
+
         $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.sexo, p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
         left join tp_sexo tps on (p.sexo = tps.id)
         left join tp_ddd d on (p.ddd = d.id)
         where p.id = $idp");
 
-        return view ('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd'));
+        return view ('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p'));
 
     }
 
@@ -163,7 +165,7 @@ class PessoaController extends Controller
 
     public function update(Request $request, $idp)
     {
-        $today = Carbon::today()->format('Y-m-d');
+        $today = Carbon::today()->format('Y-m-d H:m:s');
 
         $cpf = $request->cpf;
 
@@ -202,8 +204,18 @@ class PessoaController extends Controller
                 'sexo' => $request->input('sex'),
                 'ddd' => $request->input('ddd'),
                 'celular' => $request->input('celular'),
-                'email' => $request->input('email')
+                'email' => $request->input('email'),
+                'status' => $request->input('status')
         ]);
+
+        //dd($pessoa);
+        DB::table('historico')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $today,
+            'fato' => 3,
+            'pessoa' => $idp
+        ]);
+
 
         app('flasher')->addSuccess('O cadastro da pessoa foi alterado com sucesso');
 
@@ -242,15 +254,14 @@ class PessoaController extends Controller
         }else{
 
             //dd($pessoa);
-            DB::table('historico')->insert([
-                'id_usuario' => 1,
-                'data' => $data,
-                'fato' => 1,
-                'pessoa' => $pessoa
-            ]);
+           DB::delete('delete from pessoas where id = ?', [$idp]);
 
-            DB::delete('delete from pessoas where id = ?', [$idp]);
-
+           DB::table('historico')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'fato' => 1,
+            'pessoa' => $pessoa
+        ]);
             
 
             app('flasher')->addSuccess('O cadastro da pessoa foi excluido com sucesso.');
