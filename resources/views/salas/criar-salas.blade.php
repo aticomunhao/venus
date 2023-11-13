@@ -18,17 +18,13 @@
                                 CADASTRAR SALA
                             </div>
 
-                            <div class="col-2 text-end offset-2"> <label for="status_sala">STATUS </label>
-                                <input type="checkbox"
-                                name="status_sala" style=text-align: right; "status_sala" data-toggle="toggle" data-onlabel="A"
-                                data-offlabel="D" data-onstyle="success" data-offstyle="">
-                             </div>
 
                         </div>
 
 
 
-                            </div>
+
+                    </div>
                     <div class="card-body">
                         <div class="container-fluid">
                             <div class="col-12">
@@ -36,6 +32,11 @@
 
                                     <form class="form-horizontal mt-2" method="post" action="/incluir-salas/">
                                         @csrf
+                                        <div class="col-1 text-end offset-11">Status <label for="status_sala"></label>
+                                            <input type="checkbox" name="status_sala" style=text-align:
+                                                right; "status_sala" data-toggle="toggle" data-onlabel="A"
+                                                data-offlabel="D" data-onstyle="success" data-offstyle="">
+                                        </div>
                                         <div class="col">Nome
                                             <input type="text" class="form-control" id="nome" name="nome">
                                         </div>
@@ -57,6 +58,7 @@
                                                 <input type="number" class="form-control" id="nr_lugares"
                                                     name="nr_lugares">
                                             </div>
+                                            <br>
                                             <br>
 
                                         </div>
@@ -131,18 +133,32 @@
                                             </div>
 
 
-                                            <div class="row justify-content-center">
-                                                <div class="d-grid gap-1 col-4 mx-auto">
-                                                    <br>
-                                                    <a class="btn btn-danger" href="/gerenciar-salas"
-                                                        role="button">Cancelar</a>
-                                                </div>
-                                                <div class="d-grid gap-2 col-4 mx-auto">
-                                                    <br>
-                                                    <button class="btn btn-primary">Confirmar</button>
-                                                </div>
+                                          <div class="row justify-content-center">
+            <div class="d-grid gap-1 col-4 mx-auto">
+              <br>
+              <a class="btn btn-danger" href="/gerenciar-salas" role="button">Cancelar</a>
+            </div>
+            <div class="d-grid gap-2 col-4 mx-auto" >
+              <br>
+              <button class="btn btn-primary">Confirmar</button>
+              </div>
+                                                 </div>
+                                            </div>
 
 
 
-                                                <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
-                                            @endsection
+                                 </div>
+
+
+                            </div>
+                         </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
+
+
+                                            <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
+                                        @endsection

@@ -12,7 +12,7 @@ class Sala extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $fillable = [ 
+    protected $fillable = [
         'nome',
         'numero',
         'nr_lugares',
@@ -28,7 +28,9 @@ class Sala extends Model
         'luz_azul',
         'bebedouro',
         'armarios',
-        'tamanho_sala'
+        'tamanho_sala',
+        'status_sala',
+        'id_finalidade'
     ];
 
 

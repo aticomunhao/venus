@@ -139,6 +139,16 @@ Route::post('/incluir-salas', [SalaController::class, 'store']);
 Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
 Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 
+//Méaiuns
+Route::get('/gerenciar-mediuns', [SalaController::class, 'index'])->name('');
+Route::get('/editar-mediuns/{id}', [SalaController::class, 'edit'])->name('');
+Route::post('/atualizar-mediuns/{id}', [SalaController::class, 'update'])->name('');
+Route::get('/criar-mediuns', [SalaController::class, 'criar'])->name('');
+Route::post('/incluir-mediuns', [SalaController::class, 'store']);
+Route::any('/deletar-mediuns/{id}', [SalaController::class, 'destroy'])->name('');
+Route::get('/visualizar-mediuns/{id}', [SalaController::class, 'show'])->name('');
+
+
 
 
 

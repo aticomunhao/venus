@@ -17,6 +17,7 @@
                 <thead style="text-align: center;">
                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                         <th class="col">NOME</th>
+                        <th class="col">TIPO DE SALA</th>
                           <th class="col">NÚMERO</th>
                           <th class="col">LOCALIZAÇÃO</th>
                           <th class="col">M² DA SALA</th>
@@ -30,6 +31,7 @@
                   @foreach ($salas as $sala)
                   <tr>
                     <td> {{$sala->nome}} </td>
+                    <td> {{$sala->id_finalidade}} </td>
                     <td> {{$sala->numero}} </td>
                     <td> {{$sala->localizacao}} </td>
                     <td> {{$sala->tamanho_sala}} </td>
@@ -52,7 +54,7 @@
                             style="font-size: 1rem; color:#000;"></i>
                 </a>
                 <a href="/deletar-salas/{{$sala->id}}" type="button"
-                        class="btn btn-outline-danger btn-sm"><i
+                        class="btn btn-outline-danger btn-sm"><il
                             class="bi bi-x-circle"
                             style="font-size: 1rem; color:#000;"></i></td>
                 </a>

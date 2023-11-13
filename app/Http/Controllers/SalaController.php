@@ -57,7 +57,7 @@ class SalaController extends Controller
         public function store(Request $request)
         {
 
-
+            // dd($request->all());
 
             $ativo = isset($request->checked) ? 1 : 0;
             $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
@@ -86,6 +86,7 @@ class SalaController extends Controller
                     'numero' => $request->input('numero'),
                     'nr_lugares'=>$request->input('nr_lugares'),
                     'localizacao'=>$request->input('localizacao'),
+                    'id_finalidade'=>$request->input('id_finalidade'),
                     'projetor'=>$projetor,
                     'quadro'=>$quadro,
                     'tela_projetor'=>$tela_projetor,
@@ -104,7 +105,7 @@ class SalaController extends Controller
 
 
 
-
+                    // dd(   $status_sala = isset($request->status_sala)) ;
 
 
             app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
@@ -142,27 +143,27 @@ class SalaController extends Controller
 
             {
 
+                $ativo = isset($request->checked) ? 1 : 0;
 
-                    $ativo = isset($request->checked) ? 1 : 0;
-
-                    $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
-                    $projetor = isset($request->projetor) ? 1 : 0;
-                    $quadro = isset($request->quadro) ? 1 : 0;
-                    $tela_projetor = isset($request->tela_projetor) ? 1 : 0;
-                    $ventilador = isset($request->ventilador) ? 1 : 0;
-                    $computador = isset($request->computador) ? 1 : 0;
-                    $controle = isset($request->controle) ? 1 : 0;
-                    $som = isset($request->som) ? 1 : 0;
-                    $luz_azul = isset($request->luz_azul) ? 1 : 0;
-                    $bebedouro = isset($request->bebedouro) ? 1 : 0;
-                    $armarios = isset($request->armarios) ? 1 : 0;
-                    $status_sala = isset($request->status_sala) ? 1 : 0;
-
-                    // dd( isset($request->ar_condicionado), $ar_condicionado, $projetor, $computador);
+                $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
+                $projetor = isset($request->projetor) ? 1 : 0;
+                $quadro = isset($request->quadro) ? 1 : 0;
+                $tela_projetor = isset($request->tela_projetor) ? 1 : 0;
+                $ventilador = isset($request->ventilador) ? 1 : 0;
+                $computador = isset($request->computador) ? 1 : 0;
+                $controle = isset($request->controle) ? 1 : 0;
+                $som = isset($request->som) ? 1 : 0;
+                $luz_azul = isset($request->luz_azul) ? 1 : 0;
+                $bebedouro = isset($request->bebedouro) ? 1 : 0;
+                $armarios = isset($request->armarios) ? 1 : 0;
+                // $status_sala = isset($request->status_sala) ? 1 : 0;
 
 
 
 
+
+
+                // dd($request->status_sala);
 
 
                 Sala::findOrFail($request->id)->update([
@@ -170,6 +171,7 @@ class SalaController extends Controller
                     'numero' => $request->input('numero'),
                     'nr_lugares'=>$request->input('nr_lugares'),
                     'localizacao'=>$request->input('localizacao'),
+                    'id_finalidade'=>$request->input('id_finalidade'),
                     'projetor'=>$projetor,
                     'quadro'=>$quadro,
                     'tela_projetor'=>$tela_projetor,
@@ -181,9 +183,10 @@ class SalaController extends Controller
                     'luz_azul'=> $luz_azul,
                     'bebedouro'=> $bebedouro,
                     'armarios'=> $armarios,
-                    'status_sala'=> $status_sala,
+                    'status_sala'=>$request->input('status_sala'),
                     'tamanho_sala'=>$request->input('tamanho_sala')
                     ]) ;
+
 
 
 
