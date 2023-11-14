@@ -29,11 +29,15 @@ class Sala extends Model
         'bebedouro',
         'armarios',
         'tamanho_sala',
-        'status_sala',
-        'id_finalidade'
+        'status_sala'
+
     ];
 
+    protected $fillable = [
+        'tipo_finalidade_sala'
+    ];
 
+    
         // PAI (envia para)
 
     // $table->foreign('id_sala')->references('id')->on('salas');

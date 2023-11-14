@@ -6,6 +6,7 @@ use App\Models\Grupo;
 use App\Models\Sala;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 use function Psy\debug;
 
@@ -13,7 +14,7 @@ class SalaController extends Controller
 {
         public function index() {
 
-            $salas = db::select('select * from salas');
+            $salas = db::select('select * from salas s');
 
 
             // $sala = $salas->orderBy('numero','asc')->orderBy('nome', 'asc')
@@ -28,11 +29,13 @@ class SalaController extends Controller
 
         {
             $salas = db::select('select * from salas');
+            $tipo_finalidade_sala=db::select('select * from tipo_finalidade_sala');
+
 
 
 
             //
-            return view('salas/criar-salas', compact('salas'));
+            return view('salas/criar-salas', compact('salas','tipo_finalidade_sala'));
 
 
 
@@ -86,7 +89,7 @@ class SalaController extends Controller
                     'numero' => $request->input('numero'),
                     'nr_lugares'=>$request->input('nr_lugares'),
                     'localizacao'=>$request->input('localizacao'),
-                    'id_finalidade'=>$request->input('id_finalidade'),
+                    'tipo_finalidade_sala'=>$request->input('tipo_finalidade_sala'),
                     'projetor'=>$projetor,
                     'quadro'=>$quadro,
                     'tela_projetor'=>$tela_projetor,
@@ -122,10 +125,16 @@ class SalaController extends Controller
          */
         public function edit( $id)
         {
+
+
+
                  $sala = DB::select("select * from salas where id = $id");
+                 $tipo_finalidade_sala= DB::select('select * from tipo_finalidade_sala');
+                 $tipos= DB::select("select * from salas where id=$localizacao");
 
 
-                return view ('salas/editar-salas' , compact('sala'));
+                 return view('salas/editar-salas', compact('sala','tipo_finalidade_sala'));
+                // return view ('salas/editar-salas' , compact('salas','tipo_finalidade_sala'));
 
 
 
@@ -163,15 +172,15 @@ class SalaController extends Controller
 
 
 
-                // dd($request->status_sala);
 
 
-                Sala::findOrFail($request->id)->update([
+
+                DB::table('salas')->insert([
                     'nome' => $request->input('nome'),
                     'numero' => $request->input('numero'),
                     'nr_lugares'=>$request->input('nr_lugares'),
                     'localizacao'=>$request->input('localizacao'),
-                    'id_finalidade'=>$request->input('id_finalidade'),
+                    'tipo_finalidade_sala'=>$request->input('tipo_finalidade_sala'),
                     'projetor'=>$projetor,
                     'quadro'=>$quadro,
                     'tela_projetor'=>$tela_projetor,
