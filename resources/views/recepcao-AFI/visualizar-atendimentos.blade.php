@@ -14,8 +14,15 @@
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card">
+            <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            HISTÓRICO DE ATENDIMENTOS                        
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body">
-                    <legend style="color:red; font-size:14px; font-family:Tahoma">Histórico de atendimentos</legend>
+                    <legend style="color:red; font-size:14px; font-family:Tahoma">Dados do assistido</legend>
                     <fieldset class="border rounded border-secondary p-4">
                     <div class="form-group row">
                         <div class="col">

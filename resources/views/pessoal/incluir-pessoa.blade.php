@@ -3,10 +3,16 @@
 @section('content')
 <br>
 <div class="container-fluid">
-<h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">INCLUIR PESSOA</h4>
     <div class="row justify-content-center">
         <div class="col-12">
-            <div class="card">
+            <div class="card">               
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            INCLUIR PESSOA
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body">
                     <form class="form-horizontal mt-4" method="POST" action="/criar-pessoa" >
                     @csrf

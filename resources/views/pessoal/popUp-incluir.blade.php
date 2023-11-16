@@ -11,11 +11,11 @@
                 @csrf
                 <div class="row">
                     <div class="col-12" style="text-align:left;">
-                    <label for="validationCustom01" class="form-label">Nombre</label>
+                    <label for="validationCustom01" class="form-label">nome</label>
                         <input class="form-control" type="text" maxlength="45" oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="" name="nome" value="{{old('nome')}}" required>
                         <div class="valid-feedback">
-      ¡Se ve bien!
-    </div>
+                            Está correto!
+                        </div>
                     </div>
                     <br>
                 </div><br>

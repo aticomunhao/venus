@@ -67,20 +67,27 @@
                                     <a href="/historico/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-primary btn-sm"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
                                     <a href="/fim-analise/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-bell" style="font-size: 1rem; color:#000;"></i></button></a>
                                     <a href="/iniciar-atendimento/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-success btn-sm"><i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button></a>                                        
-                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#encaminhamento"><i class="bi bi-send-fill" style="font-size: 1rem; color:#000;"></i></button>
+                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#tratamento{{$assistidos->idat}}"><i class="bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button>
+                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#entrevista{{$assistidos->idat}}"><i class="bi bi bi-mic" style="font-size: 1rem; color:#000;"></i></button>                                    
                                     <a href="/anotacoes"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button></a>
-                                    <a href="/finalizar"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>   
+                                    <a href="/finalizar"><button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Finalizar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>   
+                                    @include('atendimento-assistido.pop-up-enc_entrevista')
                                 </td>
+                                @include('atendimento-assistido.pop-up-enc_tratamento')
                             </tr>
                             @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                            </tbody>                         
+                        </table>                        
+                    </div>                    
                 </div>
             </div>
         </div>
-    </div>
-    @include('atendimento-assistido.pop-up-encaminhar')
+    </div>    
+</div>
+
+
+
+    
 
 
 

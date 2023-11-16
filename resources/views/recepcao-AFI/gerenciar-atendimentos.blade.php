@@ -51,7 +51,8 @@
                             <th class="col">PRIOR</th>
                             <th class="col">ASSISTIDO</th>
                             <th class="col">REPRESENTANTE</th>                                                        
-                            <th class="col">ATENDENTE</th>                          
+                            <th class="col">ATENDENTE</th>
+                            <th class="col">SALA</th>                           
                             <th class="col">STATUS</th>
                             <th class="col">AÇÕES</th>
                         </tr>
@@ -67,6 +68,7 @@
                             <td scope="" >{{$listas->nm_1}}</td>
                             <td scope="" >{{$listas->nm_2}}</td>                                                        
                             <td scope="" >{{$listas->nm_4}}</td>                            
+                            <td scope="" ></td>
                             <td scope="" >{{$listas->descricao}}</td>
                             <td scope="">                                
                                 <a href="/desce-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-left-square" style="font-size: 1rem; color:#000;"></i></button></a>

@@ -14,6 +14,13 @@
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card">
+            <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            INCLUIR ATENDIMENTO
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body">
                     <form class="form-horizontal mt-4" method="post" action="/novo-atendimento">
                         @csrf
