@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('content')
@@ -28,51 +29,53 @@
                             <div class="col-12">
                                 <div class="row justify-content-center">
 
-                                    <form class="form-horizontal mt-4" method="post" action="/atualizar-salas/{{ $sala[0]->id }}">
+                                    <form class="form-horizontal mt-4" method="post" action="/atualizar-salas/{{ $salas[0]->id }}">
                                         @csrf
                                         <div class="col-1 text-end offset-11">Status <label for="status_sala"></label>
                                             <input type="checkbox" name="status_sala" style=text-align: right;
                                                 data-toggle="toggle" data-onlabel="A" data-offlabel="D"
                                                 data-onstyle="success" data-offstyle="">
                                         </div>
-                                        <div class="col">Nome
-                                            <input type="text" class="form-control" id="nome" name="nome">
+                                        <div class="row">
+                                              <div class="col-8">Nome
+                                            <input type="text" value="{{$salaEditada->nome}}" class="form-control" id="nome" name="nome">
                                         </div>
                                         <br>
-                                        <div class="row">
+
                                             <div class="col">Finalidade sala
                                                 <select class= "form-select " aria-label=".form-select-lg example">
-                                                    <option selected></option>
 
-                                                    @foreach ($tipo_finalidade_sala as $tipo)
+                                                        @foreach ($tipo_finalidade_sala as $tipo)
                                                         <option value={{$tipo->id}}>{{$tipo->descricao}}</option>
                                                     @endforeach
-
-
                                                 </select>
                                                 <br>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                                 <div class="col">Número
-                                                    <input type="number" class="form-control" id="numero"
+                                                    <input type="number" value="{{$salaEditada->numero}}" class="form-control" id="numero"
                                                         name="numero">
                                                     <br>
                                                 </div>
+
                                                 <div class="col">Localização
                                                     <select class="form-select " aria-label=".form-select-lg example">
-                                                        <option selected></option>
 
-                                                     @foreach ($tipo as $tipos )
-                                                        <option value={{$tipos->id}}>{{$tipos->localizacao}}</option>
+
+                                                     @foreach ($salas as $sala )
+                                                        <option value={{$sala->id}}>{{$sala->localizacao}}</option>
                                                     @endforeach
                                                 </select>
                                                     <br>
-
+                                                    </div>
                                                     <div class="col">M² da sala
-                                                        <input type="number" class="form-control" id="tamanho_sala"
+                                                        <input type="number"value="{{$salaEditada->tamanho_sala}}" class="form-control" id="tamanho_sala"
                                                             name="tamanho_sala">
                                                     </div>
                                                     <br>
                                                     <div class="col">Número de lugares
-                                                        <input type="number" class="form-control" id="nr_lugares"
+                                                        <input type="number"value="{{$salaEditada->nr_lugares}}" class="form-control" id="nr_lugares"
                                                             name="nr_lugares" required>
 
                                                     </div>

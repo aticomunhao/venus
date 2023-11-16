@@ -28,32 +28,32 @@
                      </tr>
                 </thead>
                 <tbody>
-                  @foreach ($salas as $sala)
+                  @foreach ($sala as $salas)
                   <tr>
-                    <td> {{$sala->nome}} </td>
-                    <td> {{$sala->id_finalidade}} </td>
-                    <td> {{$sala->numero}} </td>
-                    <td> {{$sala->localizacao}} </td>
-                    <td> {{$sala->tamanho_sala}} </td>
-                    <td> {{$sala->nr_lugares}} </td>
+                    <td> {{$salas->nome}} </td>
+                     <td> {{$salas->descricao}} </td>
+                    <td> {{$salas->numero}} </td>
+                    <td> {{$salas->localizacao}} </td>
+                    <td> {{$salas->tamanho_sala}} </td>
+                    <td> {{$salas->nr_lugares}} </td>
 
 
                     {{-- <td class="text-center"> {{ $sala->status_salas ? 'Ativo' : 'Inativo' }}</td> --}}
 
                       {{-- @include('salas.popUp-incluir') --}}
 
-                      <td  class="text-center">{{$sala->status_sala ? 'Ativo' : 'Inativo' }}</td>
+                      <td  class="text-center">{{$salas->status_sala ? 'Ativo' : 'Inativo' }}</td>
 
 
-                      <td> <a href="/visualizar-salas/{{$sala->id}} "type="button"
+                      <td> <a href="/visualizar-salas/{{$salas->ids}} "type="button"
                         class="btn btn-outline-primary btn-sm"><i class="bi bi-search"
                         style="font-size: 1rem;color:#000;" data-bs-toggle="modal" data-bs-target="#pessoa"></i>
                      </a>
-                      <a href="/editar-salas/{{$sala->id}}" type="button"
+                      <a href="/editar-salas/{{$salas->ids}}" type="button"
                         class="btn btn-outline-warning btn-sm"><i class="bi bi-pen"
                             style="font-size: 1rem; color:#000;"></i>
                 </a>
-                <a href="/deletar-salas/{{$sala->id}}" type="button"
+                <a href="/deletar-salas/{{$salas->ids}}" type="button"
                         class="btn btn-outline-danger btn-sm"><il
                             class="bi bi-x-circle"
                             style="font-size: 1rem; color:#000;"></i></td>
