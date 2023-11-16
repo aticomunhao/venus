@@ -71,6 +71,8 @@ class AtendimentoFraternoController extends Controller
             if ($sit > 0){
 
                 app('flasher')->addError('Não é permitido atender dois assistidos ao mesmo tempo.');
+
+                return redirect('/atendendo');
                 
             }else{
                 DB::table('atendimentos AS at')
@@ -80,10 +82,7 @@ class AtendimentoFraternoController extends Controller
                 'status_atendimento' => 2,
                 'id_atendente' => $atendente
             ]);  
-            }
-
-
-           
+            }           
 
             return view ('\atendimento-assistido\historico-assistido', compact('assistido', 'atendente'));
         }
