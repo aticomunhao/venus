@@ -19,21 +19,22 @@
                 @csrf                
                 <div class="row">
                     <div class="form-check form-check-inline">
+                        <input type="checkbox" name="pph" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                        <label for="inlineCheckbox1" class="form-check-label">Palestra/Passe de Harmonização - PPH</label>
+                    </div>
+                    <div class="form-check form-check-inline">
                         <input type="checkbox" name="ptd" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                         <label for="inlineCheckbox1" class="form-check-label">Passe Tratamento Desobessessivo - PTD</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input type="checkbox" name="pti" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                        <label for="inlineCheckbox1" class="form-check-label">Passe Tratamento Intensivo - PTI</label>
+                        <label for="inlineCheckbox1" class="form-check-label">Passe Tratamento Integral - PTIg</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input type="checkbox" name="getrat" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                        <label for="inlineCheckbox1" class="form-check-label">Grupo de Estudo, Trabalho e Terapia  - GETRAT</label>
+                        <input type="checkbox" name="pti" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                        <label for="inlineCheckbox1" class="form-check-label">Passe Tratamento Intensivo - PTIs</label>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <input type="checkbox" name="pph" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                        <label for="inlineCheckbox1" class="form-check-label">Palestra/Passe de Harmonização - PPH</label>
-                    </div>
+                    
                 </div>
             </div>
                 <br>

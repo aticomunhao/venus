@@ -57,19 +57,19 @@
                             <th class="col">AÇÕES</th>
                         </tr>
                     </thead>
-                    <tbody style="font-size: 14px; color:#000000; text-align:center;">
+                    <tbody style="font-size: 14px; color:#000000; text-align: center;">
                         <tr>
                         @foreach($lista as $listas)
-                            <td scope="" >{{$listas->ida}}</td>
-                            <td scope="" >{{$listas->nm_3}}</td>
-                            <td scope="" >{{$listas->tipo}}</td>
-                            <td scope="" >{{date( 'd/m/Y H:i:s', strtotime($listas->dh_chegada))}}</td>
-                            <td scope="" >{{$listas->prdesc}}</td>
+                            <td scope="">{{$listas->ida}}</td>
+                            <td scope="">{{$listas->nm_3}}</td>
+                            <td scope="">{{$listas->tipo}}</td>
+                            <td scope="">{{date( 'd/m/Y H:i:s', strtotime($listas->dh_chegada))}}</td>
+                            <td scope="">{{$listas->prdesc}}</td>
                             <td scope="" >{{$listas->nm_1}}</td>
-                            <td scope="" >{{$listas->nm_2}}</td>                                                        
-                            <td scope="" >{{$listas->nm_4}}</td>                            
-                            <td scope="" ></td>
-                            <td scope="" >{{$listas->descricao}}</td>
+                            <td scope="">{{$listas->nm_2}}</td>                                                        
+                            <td scope="">{{$listas->nm_4}}</td>                            
+                            <td scope=""></td>
+                            <td scope="">{{$listas->descricao}}</td>
                             <td scope="">                                
                                 <a href="/desce-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-left-square" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <button class="btn btn-outline-warning btn-sm" style="font-size: 1rem; color:#000;" type="button" id="" data-bs-toggle="modal" data-bs-target="#atendimento{{$listas->ida}}"><i class="bi bi-person" style="font-size: 1rem; color:#000;"></i></button>
