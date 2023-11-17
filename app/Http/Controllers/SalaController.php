@@ -18,19 +18,20 @@ class SalaController extends Controller
                                 s.nome,
                                 s.id_finalidade,
                                 s.numero,
-                                s.localizacao,
+                                s.id_localizacao,
                                 s.tamanho_sala,
                                 s.nr_lugares,
                                 s.status_sala,
                                 ts.descricao
             from salas s
-            left join tipo_finalidade_sala ts on (s.id_finalidade = ts.id)'
+            left join tipo_finalidade_sala ts on (s.id_finalidade = ts.id)ORDER BY s.numero ASC; '
 
-            );
+        );
 
 
 
-            // dd($salas);
+
+            //  dd($sala);
 
             return view('salas/gerenciar-salas' , compact('sala'));
 
@@ -44,11 +45,22 @@ class SalaController extends Controller
             $salas = db::select('select * from salas');
             $tipo_finalidade_sala=db::select('select * from tipo_finalidade_sala');
 
+            $localizacao = DB::table('tipo_localizacao as tl')
+            ->leftJoin('salas AS s', 'tl.id', '=', 's.id_localizacao')->select('s.id AS ids','tl.nome', 'tl.sigla')->get();
+
+            // $localizacao = db::select('select s.id as ids,
+            // tl.nome,
+            // tl.sigla,
+            //  s.id_localizacao  from salas s  left join tipo_localizacao tl on
+            // (s.id_localizacao=tl.id)');
+
+
+
 
 
 
             //
-            return view('salas/criar-salas', compact('salas','tipo_finalidade_sala'));
+            return view('salas/criar-salas', compact('salas','tipo_finalidade_sala','localizacao'));
 
 
 

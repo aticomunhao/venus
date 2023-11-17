@@ -67,7 +67,7 @@
                                                         <option selected></option>
 
                                                      @foreach ($salas as $sala )
-                                                        <option value={{$sala->id}}>{{$sala->localizacao}}</option>
+                                                        <option value={{$sala->id}}>{{$sala->id_localizacao}}</option>
                                                     @endforeach
                                                 </select>
                                                     <br>

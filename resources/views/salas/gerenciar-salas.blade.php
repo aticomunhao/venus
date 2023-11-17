@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+
+<
 <div class="container">
   <br>
      <div class="row" style="text-align:center;">
@@ -8,10 +10,12 @@
           style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR SALAS
         </h4>
         <div class="col" style="text-align: right">
+
           <a href="/criar-salas" class="btn btn-success"id="name=" type="button">NOVO+</a>
         </div>
         <br>
         <br><br>
+
         <div class="table">
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                 <thead style="text-align: center;">
@@ -33,7 +37,7 @@
                     <td> {{$salas->nome}} </td>
                      <td> {{$salas->descricao}} </td>
                     <td> {{$salas->numero}} </td>
-                    <td> {{$salas->localizacao}} </td>
+                    <td> {{$salas->id_localizacao}} </td>
                     <td> {{$salas->tamanho_sala}} </td>
                     <td> {{$salas->nr_lugares}} </td>
 

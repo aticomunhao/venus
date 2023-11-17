@@ -28,7 +28,7 @@
                         <br>
                         <div class="col">
                             <label for="disabledTextInput" class="form-label">Localização:</label>
-                            <input type="text" id=""   value="{{$sala[0]->localizacao}}"   class="form-control" placeholder="Disabled input" disabled>
+                            <input type="text" id=""   value="{{$sala[0]->id_localizacao}}"   class="form-control" placeholder="Disabled input" disabled>
                         </div>
                         </div>
                         <br>
