@@ -15,25 +15,32 @@ class SalaController extends Controller
         public function index() {
 
             $sala = db::select('select s.id as ids,
-                                s.nome,
+                                s.nome as nome1,
                                 s.id_finalidade,
                                 s.numero,
                                 s.id_localizacao,
                                 s.tamanho_sala,
                                 s.nr_lugares,
                                 s.status_sala,
-                                ts.descricao
-            from salas s
-            left join tipo_finalidade_sala ts on (s.id_finalidade = ts.id)ORDER BY s.numero ASC; '
+                                ts.descricao,
+                                tl.nome as nome2
 
-        );
+            from salas s
+            left join tipo_finalidade_sala ts on (s.id_finalidade = ts.id)
+            left join tipo_localizacao as tl on (s.id_localizacao=tl.id)ORDER BY s.numero ASC');
+
+
+
+
+             $tipo_localizacao = DB::table('tipo_localizacao as tl')
+        ->leftJoin('salas AS s', 'tl.id', '=', 's.id_localizacao')->select('s.id AS ids','tl.nome', 'tl.sigla')->get();
 
 
 
 
             //  dd($sala);
 
-            return view('salas/gerenciar-salas' , compact('sala'));
+            return view('salas/gerenciar-salas' , compact('sala','tipo_localizacao'));
 
         }
 
@@ -45,8 +52,10 @@ class SalaController extends Controller
             $salas = db::select('select * from salas');
             $tipo_finalidade_sala=db::select('select * from tipo_finalidade_sala');
 
-            $localizacao = DB::table('tipo_localizacao as tl')
-            ->leftJoin('salas AS s', 'tl.id', '=', 's.id_localizacao')->select('s.id AS ids','tl.nome', 'tl.sigla')->get();
+            $tipo_localizacao = DB::table('tipo_localizacao as tl')
+          ->select('tl.id AS ids','tl.nome', 'tl.sigla')->get();
+
+
 
             // $localizacao = db::select('select s.id as ids,
             // tl.nome,
@@ -60,7 +69,7 @@ class SalaController extends Controller
 
 
             //
-            return view('salas/criar-salas', compact('salas','tipo_finalidade_sala','localizacao'));
+            return view('salas/criar-salas', compact('salas','tipo_finalidade_sala','tipo_localizacao'));
 
 
 
@@ -75,6 +84,8 @@ class SalaController extends Controller
 
             $sala = db::select('select * from salas');
             $tipo_finalidade_sala=db::select('select * from tipo_finalidade_sala');
+
+
 
 
 
@@ -115,7 +126,7 @@ class SalaController extends Controller
                 'nome' => $request->input('nome'),
                     'numero' => $request->input('numero'),
                     'nr_lugares'=>$request->input('nr_lugares'),
-                    'localizacao'=>$request->input('localizacao'),
+                    'id_localizacao'=>$request->input('id_localizacao'),
                     'id_finalidade'=>$request->input('tipo_sala'),
                     'projetor'=>$projetor,
                     'quadro'=>$quadro,
@@ -156,12 +167,17 @@ class SalaController extends Controller
            //dd($salaEditada);
             $salas = db::select('select * from salas');
             $tipo_finalidade_sala=db::select('select * from tipo_finalidade_sala');
+            $tipo_localizacao = DB::table('tipo_localizacao as tl')
+            ->leftJoin('salas AS s', 'tl.id', '=', 's.id_localizacao')->select('s.id AS ids','tl.nome', 'tl.sigla')->get();
+
+           
 
 
 
 
 
-            return view('salas/editar-salas', compact('salas','tipo_finalidade_sala','salaEditada'));
+
+            return view('salas/editar-salas', compact('salas','tipo_finalidade_sala','salaEditada','tipo_localizacao'));
 
 
 
@@ -208,7 +224,7 @@ class SalaController extends Controller
                     'nome' => $request->input('nome'),
                     'numero' => $request->input('numero'),
                     'nr_lugares'=>$request->input('nr_lugares'),
-                    'localizacao'=>$request->input('localizacao'),
+                    'id_localizacao'=>$request->input('id_localizacao'),
                     'id_finalidade'=>$request->input('id_finalidade'),
                     'projetor'=>$projetor,
                     'quadro'=>$quadro,

@@ -63,8 +63,8 @@
                                                     <select class="form-select " aria-label=".form-select-lg example">
 
 
-                                                     @foreach ($salas as $sala )
-                                                        <option value={{$sala->id}}>{{$sala->id_localizacao}}</option>
+                                                        @foreach ($tipo_localizacao as $localizacao )
+                                                        <option value={{$localizacao->ids}}>{{$localizacao->nome}}</option>
                                                     @endforeach
                                                 </select>
                                                     <br>

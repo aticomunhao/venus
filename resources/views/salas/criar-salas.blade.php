@@ -63,11 +63,11 @@
 
 
                                                 <div class="col">Localização
-                                                    <select class="form-select " aria-label=".form-select-lg example">
+                                                    <select class="form-select " name="id_localizacao" aria-label=".form-select-lg example">
                                                         <option selected></option>
 
-                                                     @foreach ($salas as $sala )
-                                                        <option value={{$sala->id}}>{{$sala->id_localizacao}}</option>
+                                                     @foreach ($tipo_localizacao as $localizacao )
+                                                        <option value={{$localizacao->ids}}>{{$localizacao->nome}}</option>
                                                     @endforeach
                                                 </select>
                                                     <br>

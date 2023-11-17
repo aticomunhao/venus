@@ -34,10 +34,10 @@
                 <tbody>
                   @foreach ($sala as $salas)
                   <tr>
-                    <td> {{$salas->nome}} </td>
+                    <td> {{$salas->nome1}} </td>
                      <td> {{$salas->descricao}} </td>
                     <td> {{$salas->numero}} </td>
-                    <td> {{$salas->id_localizacao}} </td>
+                    <td> {{$salas->nome2}} </td>
                     <td> {{$salas->tamanho_sala}} </td>
                     <td> {{$salas->nr_lugares}} </td>
 
@@ -58,7 +58,7 @@
                             style="font-size: 1rem; color:#000;"></i>
                 </a>
                 <a href="/deletar-salas/{{$salas->ids}}" type="button"
-                        class="btn btn-outline-danger btn-sm"><il
+                        class="btn btn-outline-danger btn-sm"><i
                             class="bi bi-x-circle"
                             style="font-size: 1rem; color:#000;"></i></td>
                 </a>
