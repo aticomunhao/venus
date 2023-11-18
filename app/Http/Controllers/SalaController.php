@@ -56,7 +56,7 @@ class SalaController extends Controller
           ->select('tl.id AS ids','tl.nome', 'tl.sigla')->get();
 
 
-
+            dd($tipo_localizacao);
             // $localizacao = db::select('select s.id as ids,
             // tl.nome,
             // tl.sigla,
@@ -81,18 +81,26 @@ class SalaController extends Controller
         public function show( $id)
         {
 
+            $salaEditada = DB::table('salas')->where('id',$id)->select('*')->first();
+
+
+
+
+
+
+
 
             $sala = db::select('select * from salas');
             $tipo_finalidade_sala=db::select('select * from tipo_finalidade_sala');
             $tipo_localizacao = DB::table('tipo_localizacao as tl')
             ->leftJoin('salas AS s', 'tl.id', '=', 's.id_localizacao')->select('s.id AS ids','tl.nome', 'tl.sigla')->get();
 
+            dd($sala);
 
 
 
 
-
-            return view('salas/visualizar-salas', compact('sala','tipo_localizacao','tipo_finalidade_sala'));
+            return view('salas/visualizar-salas', compact('sala','tipo_localizacao','tipo_finalidade_sala','salaEditada'));
 
             //
         }
@@ -223,7 +231,7 @@ class SalaController extends Controller
 
 
 
-                DB::table('salas')->insert([
+                DB::table('salas')->where('id', $id)->UPDATE([
                     'nome' => $request->input('nome'),
                     'numero' => $request->input('numero'),
                     'nr_lugares'=>$request->input('nr_lugares'),
