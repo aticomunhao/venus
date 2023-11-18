@@ -21,11 +21,11 @@
                 <thead style="text-align: center;">
                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                         <th class="col">NOME</th>
-                        <th class="col">TIPO DE SALA</th>
+                        <th class="col">FINALIDADE SALA</th>
                           <th class="col">NÚMERO</th>
                           <th class="col">LOCALIZAÇÃO</th>
                           <th class="col">M² DA SALA</th>
-                         <th class="col">NÚMERO DE CADEIRAS</th>
+                         <th class="col">NÚMERO DE LUGARES</th>
                          <th class="col">STATUS</th>
                         <th class="col">AÇÕES</th>
 

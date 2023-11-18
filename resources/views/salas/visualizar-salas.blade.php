@@ -15,10 +15,9 @@
                 </div>
                 <div class="card-body">
                   <div class="container-fluid";>
-                    <div class="col-1 text-end offset-11">Status <label for="status_sala"></label>
-                        <input type="checkbox" name="status_sala" style=text-align: right; "status_sala"
-                            data-toggle="toggle" data-onlabel="A" data-offlabel="D"
-                            data-onstyle="success" data-offstyle="">
+                    <div class="col-1 text-end offset-11"><label for="status_sala"></label>
+                        <input type="checkbox"  name="ar_condicionado" @checked($sala[0]->status_sala) data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger"placeholder="Disabled input" disabled>
+
                     </div>
                     <div class="row">
                             <div class="col-8">
@@ -26,27 +25,38 @@
                             <input type="text" id="" value="{{$sala[0]->nome}}" class="form-control" placeholder="Disabled input" disabled>
                         </div>
                         <br>
-                        <div class="col">
-                            <label for="disabledTextInput" class="form-label">Localização:</label>
-                            <input type="text" id=""   value="{{$sala[0]->id_localizacao}}"   class="form-control" placeholder="Disabled input" disabled>
-                        </div>
-                        </div>
-                        <br>
+                        <div class="col"> Localização
+                            <select class="form-select" name="id_localizacao" aria-label=".form-select-lg example" disabled>
+                              @foreach ($tipo_localizacao as $localizacao )
+                                <option value={{$localizacao->ids}}>{{$localizacao->nome}}</option>
+                              @endforeach
+                            </select>
+                            <br>
+                          </div>
                         <div class="row">
                         <div class="col">
-                            <label for="disabledTextInput" class="form-label">Número:</label>
+                            <label for="disabledTextInput" class="form-label">Número</label>
                             <input type="number" id="" value="{{$sala[0]->numero}}" class="form-control" placeholder="Disabled input" disabled>
 
+                     </div>
+
+                    <div class="col">Finalidade sala
+                        <select class= "form-select " aria-label=".form-select-lg example"disabled>
+
+                                @foreach ($tipo_finalidade_sala as $tipo)
+                                <option value={{$tipo->id}}>{{$tipo->descricao}}</option>
+                            @endforeach
+                        </select>
                         <br>
                     </div>
                         <br>
                         <div class="col">
-                            <label for="disabledTextInput" class="form-label">M² da sala:</label>
+                            <label for="disabledTextInput" class="form-label">M² da sala</label>
                             <input type="number" id=""   value="{{$sala[0]->tamanho_sala}}"   class="form-control" placeholder="Disabled input" disabled>
                         </div>
                         <br>
                         <div class="col">
-                            <label for="disabledTextInput" class="form-label">Número de cadeiras:</label>
+                            <label for="disabledTextInput" class="form-label">Número de lugares</label>
                             <input type="number" id=""  value="{{$sala[0]->nr_lugares}}"   class="form-control" placeholder="Disabled input" disabled>
                         </div>
                         </div>

@@ -31,10 +31,10 @@
 
                                     <form class="form-horizontal mt-4" method="post" action="/atualizar-salas/{{ $salas[0]->id }}">
                                         @csrf
-                                        <div class="col-1 text-end offset-11">Status <label for="status_sala"></label>
-                                            <input type="checkbox" name="status_sala" style=text-align: right;
-                                                data-toggle="toggle" data-onlabel="A" data-offlabel="D"
-                                                data-onstyle="success" data-offstyle="">
+                                        <div class="col-1 text-end offset-11"><label for="status_sala"></label>
+                                            <input type="checkbox"  name="ar_condicionado" @checked($salas[0]->status_sala) data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger"placeholder="Disabled input" disabled>
+
+                                        </div>
                                         </div>
                                         <div class="row">
                                               <div class="col-8">Nome
@@ -60,7 +60,7 @@
                                                 </div>
 
                                                 <div class="col">Localização
-                                                    <select class="form-select " aria-label=".form-select-lg example">
+                                                    <select class="form-select "name="id_localizacao" aria-label=".form-select-lg example">
 
 
                                                         @foreach ($tipo_localizacao as $localizacao )

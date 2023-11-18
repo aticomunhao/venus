@@ -84,12 +84,15 @@ class SalaController extends Controller
 
             $sala = db::select('select * from salas');
             $tipo_finalidade_sala=db::select('select * from tipo_finalidade_sala');
+            $tipo_localizacao = DB::table('tipo_localizacao as tl')
+            ->leftJoin('salas AS s', 'tl.id', '=', 's.id_localizacao')->select('s.id AS ids','tl.nome', 'tl.sigla')->get();
 
 
 
 
 
-            return view('salas/visualizar-salas', compact('sala'));
+
+            return view('salas/visualizar-salas', compact('sala','tipo_localizacao','tipo_finalidade_sala'));
 
             //
         }
@@ -170,7 +173,7 @@ class SalaController extends Controller
             $tipo_localizacao = DB::table('tipo_localizacao as tl')
             ->leftJoin('salas AS s', 'tl.id', '=', 's.id_localizacao')->select('s.id AS ids','tl.nome', 'tl.sigla')->get();
 
-           
+
 
 
 
