@@ -33,11 +33,8 @@ class Sala extends Model
 
     ];
 
-    protected $fillable = [
-        'tipo_finalidade_sala'
-    ];
-
     
+
         // PAI (envia para)
 
     // $table->foreign('id_sala')->references('id')->on('salas');

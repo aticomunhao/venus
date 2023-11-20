@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('content')
@@ -28,51 +29,53 @@
                             <div class="col-12">
                                 <div class="row justify-content-center">
 
-                                    <form class="form-horizontal mt-4" method="post" action="/atualizar-salas/{{ $sala[0]->id }}">
+                                    <form class="form-horizontal mt-4" method="post" action="/atualizar-salas/{{ $salas[0]giyt->id }}">
                                         @csrf
-                                        <div class="col-1 text-end offset-11">Status <label for="status_sala"></label>
-                                            <input type="checkbox" name="status_sala" style=text-align: right;
-                                                data-toggle="toggle" data-onlabel="A" data-offlabel="D"
-                                                data-onstyle="success" data-offstyle="">
+                                        <div class="col-1 text-end offset-11"><label for="status_sala"></label>
+                                            <input type="checkbox"  name="ar_condicionado" @checked($salaEditada->status_sala) data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger"placeholder="Disabled input">
+
                                         </div>
-                                        <div class="col">Nome
-                                            <input type="text" class="form-control" id="nome" name="nome">
+                                        </div>
+                                        <div class="row">
+                                              <div class="col-8"><label for="nome">Nome</label>
+                                            <input type="text" value="{{$salaEditada->nome}}" class="form-control" id="nome" name="nome">
                                         </div>
                                         <br>
-                                        <div class="row">
+
                                             <div class="col">Finalidade sala
                                                 <select class= "form-select " aria-label=".form-select-lg example">
-                                                    <option selected></option>
 
-                                                    @foreach ($tipo_finalidade_sala as $tipo)
+                                                        @foreach ($tipo_finalidade_sala as $tipo)
                                                         <option value={{$tipo->id}}>{{$tipo->descricao}}</option>
                                                     @endforeach
-
-
                                                 </select>
                                                 <br>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                                 <div class="col">Número
-                                                    <input type="number" class="form-control" id="numero"
+                                                    <input type="number" value="{{$salaEditada->numero}}" class="form-control" id="numero"
                                                         name="numero">
                                                     <br>
                                                 </div>
-                                                <div class="col">Localização
-                                                    <select class="form-select " aria-label=".form-select-lg example">
-                                                        <option selected></option>
 
-                                                     @foreach ($tipo as $tipos )
-                                                        <option value={{$tipos->id}}>{{$tipos->localizacao}}</option>
+                                                <div class="col">Localização
+                                                    <select class="form-select "name="id_localizacao" aria-label=".form-select-lg example">
+
+
+                                                        @foreach ($tipo_localizacao as $localizacao )
+                                                        <option value={{$localizacao->ids}}>{{$localizacao->nome}}</option>
                                                     @endforeach
                                                 </select>
                                                     <br>
-
+                                                    </div>
                                                     <div class="col">M² da sala
-                                                        <input type="number" class="form-control" id="tamanho_sala"
+                                                        <input type="number"value="{{$salaEditada->tamanho_sala}}" class="form-control" id="tamanho_sala"
                                                             name="tamanho_sala">
                                                     </div>
                                                     <br>
                                                     <div class="col">Número de lugares
-                                                        <input type="number" class="form-control" id="nr_lugares"
+                                                        <input type="number"value="{{$salaEditada->nr_lugares}}" class="form-control" id="nr_lugares"
                                                             name="nr_lugares" required>
 
                                                     </div>
@@ -83,89 +86,67 @@
                                                 <br>
 
                                                 <br>
-                                                <div class="row form-group">
+                                                <div class="row mt-4">
                                                     <div class="col">
-                                                        <label for="ar_condicionado">Ar-cond</label>
-                                                        <input type="checkbox" name="ar_condicionado" data-toggle="toggle"
-                                                            data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
-                                                            data-offstyle="danger">
+                                                    <label for="ar_condicionado">Ar-cond</label>
+                                                    <input type="checkbox"  name="ar_condicionado" @checked($salas[0]->ar_condicionado) data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger"placeholder="Disabled input">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="armarios">Armários</label>
+                                                    <input type="checkbox"   name="armarios" @checked($salas[0]->armarios)  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" placeholder="Disabled input">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="bebedouro">Bebedouro</label>
+                                                    <input type="checkbox"   name="bebedouro"  @checked($salas[0]->bebedouro) data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" placeholder="Disabled input">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="controle">Controle</label>
+                                                    <input type="checkbox"  name="controle"   @checked($salas[0]->controle) data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger"placeholder="Disabled input">
+                                                </div>
+                                                <div class="col-1">
+                                                    <label for="computador">PC</label>
+                                                    <input type="checkbox"  name="computador"   @checked($salas[0]->computador) data-toggle="toggle" data-on="Sim" data-off="Não" data-onstyle="success" data-offstyle="danger"placeholder="Disabled input" >
+                                                </div>
+                                                <div class="col">
+                                                    <label for="projetor">Projetor</label>
+                                                    <input type="checkbox"  name="projetor"   @checked($salas[0]->projetor)  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" placeholder="Disabled input">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="tela_projetor">Tela_proj</label>
+                                                    <input type="checkbox"  name="tela_projetor"  @checked($salas[0]->tela_projetor) data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" placeholder="Disabled input">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="quadro">Quadro</label>
+                                                    <input type="checkbox" @checked($salas[0]->quadro)  name="quadro"  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger"placeholder="Disabled input">
                                                     </div>
-                                                    <div class="col">
-                                                        <label for="armarios">Armários</label>
-                                                        <input type="checkbox" name="armarios" data-toggle="toggle"
-                                                            data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
-                                                            data-offstyle="danger">
-                                                    </div>
-                                                    <div class="col">
-                                                        <label for="bebedouro">Bebedouro</label>
-                                                        <input type="checkbox" name="bebedouro" data-toggle="toggle"
-                                                            data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
-                                                            data-offstyle="danger">
-                                                    </div>
-                                                    <div class="col">
-                                                        <label for="controle">Controle</label>
-                                                        <input type="checkbox" name="controle" data-toggle="toggle"
-                                                            data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
-                                                            data-offstyle="danger">
-                                                    </div>
-                                                    <div class="col-1">
-                                                        <label for="computador">PC</label>
-                                                        <input type="checkbox" name="computador" data-toggle="toggle"
-                                                            data-on="Sim" data-off="Não" data-onstyle="success"
-                                                            data-offstyle="danger">
-                                                    </div>
-                                                    <div class="col">
-                                                        <label for="projetor">Projetor</label>
-                                                        <input type="checkbox" name="projetor" data-toggle="toggle"
-                                                            data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
-                                                            data-offstyle="danger">
-                                                    </div>
-                                                    <div class="col">
-                                                        <label for="tela_projetor">Tela_proj</label>
-                                                        <input type="checkbox" name="tela_projetor" data-toggle="toggle"
-                                                            data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
-                                                            data-offstyle="danger">
-                                                    </div>
-                                                    <div class="col">
-                                                        <label for="quadro">Quadro</label>
-                                                        <input type="checkbox" name="quadro" data-toggle="toggle"
-                                                            data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
-                                                            data-offstyle="danger">
-                                                    </div>
-                                                    <div class="col">
-                                                        <label for="som">Som</label>
-                                                        <input type="checkbox" name="som" data-toggle="toggle"
-                                                            data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
-                                                            data-offstyle="danger">
-                                                    </div>
-                                                    <div class="col">
-                                                        <label for="ventilador">Ventilador</label>
-                                                        <input type="checkbox" name="ventilador" data-toggle="toggle"
-                                                            data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
-                                                            data-offstyle="danger">
-                                                    </div>
-                                                    <div class="col">
-                                                        <label for="luz_azul">Luz azul</label>
-                                                        <input type="checkbox" name="luz_azul" data-toggle="toggle"
-                                                            data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
-                                                            data-offstyle="danger">
-                                                    </div>
+                                                <div class="col">
+                                                <label for="som">Som</label>
+                                                    <input type="checkbox"  name="som"  @checked($salas[0]->som) data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger"placeholder="Disabled input">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="ventilador">Ventilador</label>
+                                                    <input type="checkbox"  name="ventilador" @checked($salas[0]->ventilador) data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger"placeholder="Disabled input">
+                                                </div>
+                                                <div class="col">
+                                                <label for="luz_azul">Luz azul</label>
+                                                    <input type="checkbox"  name="luz_azul"  @checked($salas[0]->luz_azul)  data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger"placeholder="Disabled input">
+                                                </div>
 
-
-                                                    <div class="row justify-content-center">
-                                                        <div class="d-grid gap-1 col-4 mx-auto">
-                                                            <br>
-                                                            <a class="btn btn-danger" href="/gerenciar-salas"
-                                                                role="button">Cancelar</a>
-                                                        </div>
-                                                        <div class="d-grid gap-2 col-4 mx-auto">
-                                                            <br>
-                                                            <button class="btn btn-primary">Confirmar</button>
-                                                        </div>
                                                     </div>
                                                 </div>
 
-
+                                                <div class="row justify-content-center">
+                                                    <div class="d-grid gap-1 col-4 mx-auto">
+                                                        <br>
+                                                        <a class="btn btn-danger" href="/gerenciar-salas"
+                                                            role="button">Cancelar</a>
+                                                    </div>
+                                                    <div class="d-grid gap-2 col-4 mx-auto">
+                                                        <br>
+                                                        <button class="btn btn-primary">Confirmar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                             </div>
 

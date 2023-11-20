@@ -35,15 +35,16 @@
                                                 data-toggle="toggle" data-onlabel="A" data-offlabel="D"
                                                 data-onstyle="success" data-offstyle="">
                                         </div>
-                                        <div class="col">Nome
+                                            <div class="row">
+                                        <div class="col-8">Nome
                                             <input type="text" class="form-control" id="nome" name="nome">
                                         </div>
                                         <br>
-                                        <div class="row">
-                                            <div class="col">Finalidade sala
-                                                <select class= "form-select " aria-label=".form-select-lg example">
-                                                    <option selected></option>
 
+                                            <div class="col">Finalidade sala
+                                                <select class= "form-select " aria-label=".form-select-lg example" name="tipo_sala">
+                                                    <option selected></option>
+                                                </div>
                                                     @foreach ($tipo_finalidade_sala as $tipo)
                                                         <option value={{$tipo->id}}>{{$tipo->descricao}}</option>
                                                     @endforeach
@@ -51,21 +52,28 @@
 
                                                 </select>
                                                 <br>
+                                            </div>
+                                                <br>
+                                         <div class="row">
                                                 <div class="col">Número
                                                     <input type="number" class="form-control" id="numero"
                                                         name="numero">
                                                     <br>
                                                 </div>
+
+
                                                 <div class="col">Localização
-                                                    <select class="form-select " aria-label=".form-select-lg example">
+                                                    <select class="form-select " name="id_localizacao" aria-label=".form-select-lg example">
                                                         <option selected></option>
 
-                                                     @foreach ($salas as $sala )
-                                                        <option value={{$sala->id}}>{{$sala->localizacao}}</option>
+                                                     @foreach ($tipo_localizacao as $localizacao )
+                                                        <option value={{$localizacao->ids}}>{{$localizacao->nome}}</option>
                                                     @endforeach
                                                 </select>
                                                     <br>
-
+                                                    <br
+                                            </div>
+                                             </div>
                                                     <div class="col">M² da sala
                                                         <input type="number" class="form-control" id="tamanho_sala"
                                                             name="tamanho_sala">
