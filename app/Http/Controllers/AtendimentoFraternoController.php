@@ -24,7 +24,7 @@ class AtendimentoFraternoController extends Controller
         $now =  Carbon::now()->format('Y-m-d');
 
         $assistido = DB::table('atendimentos AS at')
-                    ->select('at.id AS idat', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tx.tipo','pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla')
+                    ->select('at.id AS idat', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tx.tipo','pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento')
                     ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id_pessoa')
                     ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
@@ -33,7 +33,8 @@ class AtendimentoFraternoController extends Controller
                     ->leftJoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
                     ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
                     ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                    ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')                                           
+                    ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+                    ->where('at.status_atendimento', '<', 5 )                                          
                     ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
                     ->orderby('status_atendimento', 'ASC')
                     ->orderBy( 'at.id_prioridade', 'ASC')
@@ -50,7 +51,7 @@ class AtendimentoFraternoController extends Controller
         public function history($idat, $idas)
         {
             $assistido = DB::table('atendimentos AS at')
-            ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tx.tipo','pa.nome')
+            ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tx.tipo','pa.nome', 'at.status_atendimento')
             ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id_pessoa')
             ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
             ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
@@ -59,16 +60,18 @@ class AtendimentoFraternoController extends Controller
             ->leftJoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
             ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
             ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-            ->where('p1.id', $idas)                                     
+            ->where('p1.id', $idas)                                    
             ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome')
             ->orderBy('at.dh_chegada', 'desc')
             ->get();
 
             $atendente = session()->get('usuario.id_pessoa');
 
-            $sit = DB::table('atendimentos AS at')->where('at.id', $idat)->where('at.status_atendimento','>',0)->count();
+            
 
-            if ($sit > 0){
+            $sit = DB::table('atendimentos AS at')->where('at.id', $idat)->where('at.status_atendimento','<',0)->count();
+
+            if ($sit > 0 && $atendente <> 'at.id_atendente'){
 
                 app('flasher')->addError('Não é permitido atender dois assistidos ao mesmo tempo.');
 
@@ -83,7 +86,7 @@ class AtendimentoFraternoController extends Controller
                 'id_atendente' => $atendente
             ]);  
             }           
-
+//dd($assistido);
             return view ('\atendimento-assistido\historico-assistido', compact('assistido', 'atendente'));
         }
 

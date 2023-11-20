@@ -36,7 +36,7 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="{{$a++}}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{$b++}}" aria-expanded="false" aria-controls="flush-collapse{{$c++}}">
-                            {{date('d/m/Y H:m:s', strtotime($assistidos->dh_chegada))}}
+                            {{date('d/m/Y', strtotime($assistidos->dh_chegada))}}
                             </button>
                             </h2>
                             <div id="flush-collapse{{$d++}}" class="accordion-collapse collapse" aria-labelledby="{{$e++}}" data-bs-parent="#accordionFlushExample">
@@ -58,8 +58,8 @@
                                                 <td>{{$assistidos->nm_2}}</td>
                                                 <td>{{$assistidos->nome}}</td>
                                                 <td>{{$assistidos->nm_4}}</td>
-                                                <td>{{date('d/m/Y H:m:s', strtotime($assistidos->dh_inicio))}}</td>
-                                                <td>{{date('d/m/Y H:m:s', strtotime($assistidos->dh_fim))}}</td>
+                                                <td>{{$assistidos->dh_inicio}}</td>
+                                                <td>{{$assistidos->dh_fim}}</td>
                                                 <td>{{$assistidos->descricao}}</td>
                                             </tr>
                                         </tbody>
