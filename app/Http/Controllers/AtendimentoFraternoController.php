@@ -87,7 +87,7 @@ class AtendimentoFraternoController extends Controller
             ]);  
             }           
 //dd($assistido);
-            return view ('\atendimento-assistido\historico-assistido', compact('assistido', 'atendente'));
+            return view ('/atendimento-assistido/historico-assistido', compact('assistido', 'atendente'));
         }
 
         public function fimanalise($idat)
