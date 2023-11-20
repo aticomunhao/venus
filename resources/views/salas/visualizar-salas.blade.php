@@ -16,7 +16,7 @@
                     <div class="card-body">
                         <div class="container-fluid";>
                             <div class="col-1 text-end offset-11"><label for="status_sala"></label>
-                                <input type="checkbox" name="ar_condicionado" @checked($sala[0]->status_sala)
+                                <input type="checkbox" name="ar_condicionado" @checked($salaEditada->status_sala)
                                     data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
                                     data-offstyle="danger"placeholder="Disabled input" disabled>
 
@@ -72,76 +72,76 @@
                                 <div class="row mt-4">
                                     <div class="col">
                                         <label for="ar_condicionado">Ar-cond</label>
-                                        <input type="checkbox" name="ar_condicionado" @checked($sala[0]->ar_condicionado)
+                                        <input type="checkbox" name="ar_condicionado" @checked($salaEditada->ar_condicionado)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger"placeholder="Disabled input"
                                             disabled>
                                     </div>
                                     <div class="col">
                                         <label for="armarios">Armários</label>
-                                        <input type="checkbox" name="armarios" @checked($sala[0]->armarios)
+                                        <input type="checkbox" name="armarios" @checked($salaEditada->armarios)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
                                             disabled>
                                     </div>
                                     <div class="col">
                                         <label for="bebedouro">Bebedouro</label>
-                                        <input type="checkbox" name="bebedouro" @checked($sala[0]->bebedouro)
+                                        <input type="checkbox" name="bebedouro" @checked($salaEditada->bebedouro)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
                                             disabled>
                                     </div>
                                     <div class="col">
                                         <label for="controle">Controle</label>
-                                        <input type="checkbox" name="controle" @checked($sala[0]->controle)
+                                        <input type="checkbox" name="controle" @checked($salaEditada->controle)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger"placeholder="Disabled input"
                                             disabled>
                                     </div>
                                     <div class="col-1">
                                         <label for="computador">PC</label>
-                                        <input type="checkbox" name="computador" @checked($sala[0]->computador)
+                                        <input type="checkbox" name="computador" @checked($salaEditada->computador)
                                             data-toggle="toggle" data-on="Sim" data-off="Não" data-onstyle="success"
                                             data-offstyle="danger"placeholder="Disabled input" disabled>
                                     </div>
                                     <div class="col">
                                         <label for="projetor">Projetor</label>
-                                        <input type="checkbox" name="projetor" @checked($sala[0]->projetor)
+                                        <input type="checkbox" name="projetor" @checked($salaEditada->projetor)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
                                             disabled>
                                     </div>
                                     <div class="col">
                                         <label for="tela_projetor">Tela_proj</label>
-                                        <input type="checkbox" name="tela_projetor" @checked($sala[0]->tela_projetor)
+                                        <input type="checkbox" name="tela_projetor" @checked($salaEditada->tela_projetor)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
                                             disabled>
                                     </div>
                                     <div class="col">
                                         <label for="quadro">Quadro</label>
-                                        <input type="checkbox" @checked($sala[0]->quadro) name="quadro"
+                                        <input type="checkbox" @checked($salaEditada->quadro) name="quadro"
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger"placeholder="Disabled input"
                                             disabled>
                                     </div>
                                     <div class="col">
                                         <label for="som">Som</label>
-                                        <input type="checkbox" name="som" @checked($sala[0]->som)
+                                        <input type="checkbox" name="som" @checked($salaEditada->som)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger"placeholder="Disabled input"
                                             disabled>
                                     </div>
                                     <div class="col">
                                         <label for="ventilador">Ventilador</label>
-                                        <input type="checkbox" name="ventilador" @checked($sala[0]->ventilador)
+                                        <input type="checkbox" name="ventilador" @checked($salaEditada->ventilador)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger"placeholder="Disabled input"
                                             disabled>
                                     </div>
                                     <div class="col">
                                         <label for="luz_azul">Luz azul</label>
-                                        <input type="checkbox" name="luz_azul" @checked($sala[0]->luz_azul)
+                                        <input type="checkbox" name="luz_azul" @checked($salaEditada->luz_azul)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger"placeholder="Disabled input"
                                             disabled>

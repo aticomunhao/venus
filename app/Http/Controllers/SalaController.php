@@ -56,7 +56,7 @@ class SalaController extends Controller
           ->select('tl.id AS ids','tl.nome', 'tl.sigla')->get();
 
 
-            dd($tipo_localizacao);
+
             // $localizacao = db::select('select s.id as ids,
             // tl.nome,
             // tl.sigla,
@@ -95,7 +95,7 @@ class SalaController extends Controller
             $tipo_localizacao = DB::table('tipo_localizacao as tl')
             ->leftJoin('salas AS s', 'tl.id', '=', 's.id_localizacao')->select('s.id AS ids','tl.nome', 'tl.sigla')->get();
 
-            dd($sala);
+
 
 
 
@@ -109,7 +109,8 @@ class SalaController extends Controller
         public function store(Request $request)
         {
 
-            // dd($request->all());
+
+
 
             $ativo = isset($request->checked) ? 1 : 0;
             $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
@@ -175,11 +176,11 @@ class SalaController extends Controller
         public function edit( $id)
         {
             $salaEditada = DB::table('salas')->where('id',$id)->select('*')->first();
-           //dd($salaEditada);
+        //    dd($salaEditada);
+
             $salas = db::select('select * from salas');
             $tipo_finalidade_sala=db::select('select * from tipo_finalidade_sala');
-            $tipo_localizacao = DB::table('tipo_localizacao as tl')
-            ->leftJoin('salas AS s', 'tl.id', '=', 's.id_localizacao')->select('s.id AS ids','tl.nome', 'tl.sigla')->get();
+            $tipo_localizacao = DB::select('select * from tipo_localizacao');
 
 
 
@@ -226,7 +227,7 @@ class SalaController extends Controller
 
 
 
-
+              
 
 
 
