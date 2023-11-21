@@ -14,6 +14,7 @@ use App\Http\Controllers\FatosController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SalaController;
+use App\Http\Controllers\MediumController;
 // Validadores
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 
