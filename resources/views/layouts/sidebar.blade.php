@@ -9,9 +9,9 @@
                     </a>
                 </div>
                 <div class="btn-group">
-                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff;">Atendimento Espírita</button> 
+                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff;">Atendimento Espírita</button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/atendendo">Atendimento Fraterno Individual</a></li>    
+                            <li><a class="dropdown-item" href="/atendendo">Atendimento Fraterno Individual</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-atendimentos">Recepção Atendimento Fraterno</a></li>
                             <li><a class="dropdown-item" href="#">Recepção Geral</a></li>
                         </ul>
@@ -19,26 +19,26 @@
                 <div class="btn-group">
                     <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff;">Gerenciamento DAO</button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Gerenciar Atendente Fraterno</a></li> 
-                            <li><a class="dropdown-item" href="#">Gerenciar Atendente de Apoio</a></li> 
-                            <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>   
+                            <li><a class="dropdown-item" href="#">Gerenciar Atendente Fraterno</a></li>
+                            <li><a class="dropdown-item" href="#">Gerenciar Atendente de Apoio</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
-                        </ul>                    
+                        </ul>
                 </div>
                 <div class="btn-group">
                     <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff;">Gerenciamento DAE</button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Gerenciar Plantonistas</a></li> 
-                            <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>   
+                            <li><a class="dropdown-item" href="#">Gerenciar Plantonistas</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
-                        </ul>                    
-                </div>                                     
+                        </ul>
+                </div>
                 <div class="btn-group">
                     <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff;">Administração sistema</button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/gerenciar-fatos">Gerenciar Fatos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-salas">Gerenciar Salas</a></li>
-                        </ul>                    
+                        </ul>
                 </div>
                 <div class="btn-group">
                     <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#ffffff;">Logout</button>
@@ -50,7 +50,7 @@
                             </form>
                         </ul>
                 </div>
-            </div> 
+            </div>
         </div>
     </nav>
 </div>

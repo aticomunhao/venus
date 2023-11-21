@@ -56,7 +56,7 @@
                                          <div class="row">
                                                 <div class="col">Número
                                                     <input type="number" class="form-control" id="numero"
-                                                        name="numero" required value={{$salaEditada->numero}}>
+                                                        name="numero" min ="0"required value={{$salaEditada->numero}}>
                                                     <br>
                                                 </div>
 
@@ -75,13 +75,12 @@
                                              </div>
                                                     <div class="col">M² da sala
                                                         <input type="number" class="form-control" id="tamanho_sala"
-                                                            name="tamanho_sala" value={{$salaEditada->tamanho_sala}}>
+                                                            name="tamanho_sala" min ="0" value={{$salaEditada->tamanho_sala}}>
                                                     </div>
                                                     <br>
                                                     <div class="col">Número de lugares
                                                         <input type="number" class="form-control" id="nr_lugares"
-                                                            name="nr_lugares" required value={{$salaEditada->nr_lugares}}>
-
+                                                            name="nr_lugares" min ="0" required value={{$salaEditada->nr_lugares}}>
                                                     </div>
                                                     <br>
                                                     <br>

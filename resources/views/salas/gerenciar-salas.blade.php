@@ -2,7 +2,7 @@
 
 @section('content')
 
-<
+
 <div class="container">
   <br>
      <div class="row" style="text-align:center;">

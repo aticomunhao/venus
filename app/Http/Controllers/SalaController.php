@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Grupo;
 use App\Models\Sala;
+use Doctrine\DBAL\Driver\Mysqli\Exception\InvalidOption;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use Spatie\FlareClient\Http\Exceptions\InvalidData;
 
 use function Psy\debug;
 
@@ -27,7 +29,7 @@ class SalaController extends Controller
 
             from salas s
             left join tipo_finalidade_sala ts on (s.id_finalidade = ts.id)
-            left join tipo_localizacao as tl on (s.id_localizacao=tl.id)ORDER BY s.numero ASC');
+            left join tipo_localizacao as tl on (s.id_localizacao=tl.id)ORDER BY s.nome ASC');
 
 
 
@@ -45,9 +47,6 @@ class SalaController extends Controller
         }
 
         public function criar()
-
-
-
         {
             $salas = db::select('select * from salas');
             $tipo_finalidade_sala=db::select('select * from tipo_finalidade_sala');
@@ -56,12 +55,6 @@ class SalaController extends Controller
           ->select('tl.id AS ids','tl.nome', 'tl.sigla')->get();
 
 
-
-            // $localizacao = db::select('select s.id as ids,
-            // tl.nome,
-            // tl.sigla,
-            //  s.id_localizacao  from salas s  left join tipo_localizacao tl on
-            // (s.id_localizacao=tl.id)');
 
 
 
@@ -109,6 +102,13 @@ class SalaController extends Controller
         public function store(Request $request)
         {
 
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $salas,
+                'fato' => 23
+
+
+            ]);
 
 
 
@@ -129,8 +129,6 @@ class SalaController extends Controller
             $status_sala = isset($request->status_sala) ? 1 : 0;
 
 
-
-            // dd( isset($request->ar_condicionado), $ar_condicionado, $projetor, $computador);
 
 
             DB::table('salas')->insert([
@@ -153,6 +151,7 @@ class SalaController extends Controller
                     'armarios'=> $armarios,
                     'status_sala'=> $status_sala,
                     'tamanho_sala'=>$request->input('tamanho_sala')
+
                     ]) ;
 
 
@@ -181,9 +180,6 @@ class SalaController extends Controller
             $salas = db::select('select * from salas');
             $tipo_finalidade_sala=db::select('select * from tipo_finalidade_sala');
             $tipo_localizacao = DB::select('select * from tipo_localizacao');
-
-
-
 
 
 
@@ -227,7 +223,7 @@ class SalaController extends Controller
 
 
 
-              
+
 
 
 
@@ -255,7 +251,7 @@ class SalaController extends Controller
 
 
 
-
+                    app('flasher')->addSuccess("Alterado com Sucesso");
                 return redirect ('gerenciar-salas');
 
         }
@@ -265,6 +261,7 @@ class SalaController extends Controller
          */
         public function destroy($id)
                 {
+                    $ids=DB::table('salas')->select('nome')->where('id', $id)->get();
                     $teste=session()->get('usuario');
 
                     $verifica=DB::table('historico_venus') -> where('fato',$id)->count('fato');
@@ -281,7 +278,8 @@ class SalaController extends Controller
 
                         'id_usuario' => session()->get('usuario.id_usuario'),
                         'data' => $data,
-                        'fato' => 0
+                        'fato' => 0,
+                        'obs'=>$ids
 
                 ]);
 
@@ -289,7 +287,7 @@ class SalaController extends Controller
                     DB::table('salas')->where('id', $id)->delete();
 
 
-                    app('flasher')->addSuccess('Excluido com sucesso.');
+                    app('flasher')->addError('Excluido com sucesso.');
                     return redirect('/gerenciar-salas');
 
 
