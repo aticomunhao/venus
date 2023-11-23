@@ -25,7 +25,7 @@
                     </div>
                     <div class="card-body">
                         <div class="container-fluid">
-                            <div class="col-12">
+                            <div class="col">
                                 <div class="row justify-content-center">
 
                                     <form class="form-horizontal mt-2" method="post" action="/incluir-salas/">
@@ -36,7 +36,7 @@
                                                 data-onstyle="success" data-offstyle="">
                                         </div>
                                             <div class="row">
-                                        <div class="col-8">Nome
+                                        <div class="col">Nome
                                             <input type="text" class="form-control" id="nome" name="nome">
                                         </div>
                                         <br>

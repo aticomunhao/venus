@@ -40,7 +40,7 @@ class SalaController extends Controller
 
 
 
-            //  dd($sala);
+
 
             return view('salas/gerenciar-salas' , compact('sala','tipo_localizacao'));
 
@@ -75,12 +75,6 @@ class SalaController extends Controller
         {
 
             $salaEditada = DB::table('salas')->where('id',$id)->select('*')->first();
-
-
-
-
-
-
 
 
             $sala = db::select('select * from salas');
@@ -157,13 +151,12 @@ class SalaController extends Controller
 
 
 
-                    // dd(   $status_sala = isset($request->status_sala)) ;
 
 
             app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
 
 
-
+                
 
 
                 return redirect('gerenciar-salas');
@@ -175,8 +168,6 @@ class SalaController extends Controller
         public function edit( $id)
         {
             $salaEditada = DB::table('salas')->where('id',$id)->select('*')->first();
-        //    dd($salaEditada);
-
             $salas = db::select('select * from salas');
             $tipo_finalidade_sala=db::select('select * from tipo_finalidade_sala');
             $tipo_localizacao = DB::select('select * from tipo_localizacao');
@@ -218,7 +209,6 @@ class SalaController extends Controller
                 $luz_azul = isset($request->luz_azul) ? 1 : 0;
                 $bebedouro = isset($request->bebedouro) ? 1 : 0;
                 $armarios = isset($request->armarios) ? 1 : 0;
-                // $status_sala = isset($request->status_sala) ? 1 : 0;
 
 
 

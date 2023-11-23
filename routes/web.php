@@ -15,7 +15,6 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\MediumController;
-// Validadores
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 
 
@@ -142,13 +141,13 @@ Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
 Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 
 //Méaiuns
-Route::get('/gerenciar-mediuns', [SalaController::class, 'index'])->name('');
-Route::get('/editar-mediuns/{id}', [SalaController::class, 'edit'])->name('');
-Route::post('/atualizar-mediuns/{id}', [SalaController::class, 'update'])->name('');
-Route::get('/criar-mediuns', [SalaController::class, 'criar'])->name('');
-Route::post('/incluir-mediuns', [SalaController::class, 'store']);
-Route::any('/deletar-mediuns/{id}', [SalaController::class, 'destroy'])->name('');
-Route::get('/visualizar-mediuns/{id}', [SalaController::class, 'show'])->name('');
+Route::get('/gerenciar-mediuns', [MediumController::class, 'index'])->name('');
+Route::get('/editar-mediuns/{id}', [MediumController::class, 'edit'])->name('');
+Route::post('/atualizar-mediuns/{id}', [MediumController::class, 'update'])->name('');
+Route::get('/criar-mediuns', [MediumController::class, 'create'])->name('');
+Route::post('/incluir-mediuns', [MediumController::class, 'store']);
+Route::any('/deletar-mediuns/{id}', [MediumController::class, 'destroy'])->name('');
+Route::get('/visualizar-mediuns/{id}', [MediumController::class, 'show'])->name('');
 
 
 

@@ -49,13 +49,13 @@
                       <td  class="text-center">{{$salas->status_sala ? 'Ativo' : 'Inativo' }}</td>
 
 
-                      <td> <a href="/visualizar-salas/{{$salas->ids}} "type="button"
-                        class="btn btn-outline-primary btn-sm"><i class="bi bi-search"
-                        style="font-size: 1rem;color:#000;" data-bs-toggle="modal" data-bs-target="#pessoa"></i>
-                     </a>
-                      <a href="/editar-salas/{{$salas->ids}}" type="button"
+                      <td><a href="/editar-salas/{{$salas->ids}}" type="button"
                         class="btn btn-outline-warning btn-sm"><i class="bi bi-pen"
                             style="font-size: 1rem; color:#000;"></i>
+                        </a>
+                            <a href="/visualizar-salas/{{$salas->ids}} "type="button"
+                                class="btn btn-outline-primary btn-sm"><i class="bi bi-search"
+                                style="font-size: 1rem;color:#000;" data-bs-toggle="modal" data-bs-target="#pessoa"></i>
                 </a>
                 <a href="/deletar-salas/{{$salas->ids}}" type="button"
                         class="btn btn-outline-danger btn-sm"><i

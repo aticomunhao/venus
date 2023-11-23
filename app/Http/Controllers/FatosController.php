@@ -12,16 +12,16 @@ use Illuminate\Database\DBAL\TimestampType;
         public function index() {
 
             $lista = DB::select('select id, descricao from tipo_fato ORDER BY id ASC') ;
-        
+
 
             return view ('/administrativo/gerenciar-fatos' , compact('lista'));
         }
 
         public function edit($id) {
-        
-            $lista = DB::select("select * from tipo_fato where id = $id"); 
-            
-        
+
+            $lista = DB::select("select * from tipo_fato where id = $id");
+
+
             return view ('\administrativo\editar-fatos' , compact('lista'));
 
         }
@@ -31,24 +31,24 @@ use Illuminate\Database\DBAL\TimestampType;
         {
 
             Tipo_fato::findOrFail($request->id)->update([ 'descricao' => $request->descricao ]) ;
-    
-            return redirect('/gerenciar-fatos'); 
+
+            return redirect('/gerenciar-fatos');
 
         }
 
-        
+
         public function criar()
         {
             app('flasher')->addInfo('O cadastro do fato foi realizado com sucesso.');
             return view ('/administrativo/criar-fatos');
-    
-        
+
+
         }
 
             public function incluir(Request $request)
-            
+
         {
-        
+
 
             DB::table('tipo_fato')->insert([
                 'descricao' => $request->input('fato')
@@ -56,53 +56,53 @@ use Illuminate\Database\DBAL\TimestampType;
 
             app('flasher')->addInfo('O cadastro do fato foi realizado com sucesso.');
 
-        
+
 
             return redirect('/gerenciar-fatos');
         }
 
 
 
-        
+
             public function destroy( $id)
             {
                 $teste=session()->get('usuario');
-              
+
                 $verifica=DB::table('historico_venus') -> where('fato',$id)->count('fato');
-               
-               
+
+
                 $data = date("Y-m-d H:i:s");
-                
-                
+
+
 
 
                 if( $verifica == 0 ) {
                     // dd($verifica);
-                    
+
                     DB::table('historico_venus')->insert([
                         'id_usuario' => session()->get('usuario.id_usuario'),
                         'data' => $data,
                         'fato' => 6
-                        
+
                     ]);
-        
-                         
+
+
        DB::table('tipo_fato')->where('id', $id)->delete();
 
 
-       app('flasher')->addInfo('Excluido com sucesso.');
+       app('flasher')->addError('Excluido com sucesso.');
        return redirect('/gerenciar-fatos');
 
                 }
-              
+
                 app('flasher')->addInfo('o fato não pode ser excluido pois existe a referência na tabela historico.');
 
                 return redirect('/gerenciar-fatos');
-                 
-             
+
+
             }
 
-    
+
 
  }
 
@@ -111,5 +111,4 @@ use Illuminate\Database\DBAL\TimestampType;
 
 
 
-        
-        
+

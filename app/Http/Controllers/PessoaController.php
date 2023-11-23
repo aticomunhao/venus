@@ -19,15 +19,15 @@ class PessoaController extends Controller
         $ddd = DB::select('select id, descricao from tp_ddd');
 
         $sexo = DB::select('select id, tipo from tp_sexo');
-        
+
         $pessoa = DB::table('pessoas AS p')
                     ->select('p.id AS idp', 'nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'email', 'ddd', 'celular', 'tpsp.id AS idtps', 'p.status', 'tpsp.status AS nmstatus', 'd.id as did', 'd.descricao as ddesc')
                     ->leftjoin('tipo_status_pessoa AS tpsp', 'p.status', 'tpsp.id')
                     ->leftJoin('tp_sexo AS tps', 'p.sexo', 'tps.id')
                     ->leftJoin('tp_ddd AS d', 'p.ddd', 'd.id');
-                    
-        $nome = $request->nome;   
-                   
+
+        $nome = $request->nome;
+
         if ($request->nome) {
                 $pessoa->where('p.nome_completo', 'like', "%$request->nome%");
         }
@@ -37,13 +37,13 @@ class PessoaController extends Controller
         if ($request->cpf) {
                 $pessoa->where('p.cpf', $request->cpf);
         }
-        
-        $status = $request->status; 
+
+        $status = $request->status;
 
         if ($request->status) {
                 $pessoa->where('p.status', $request->status);
         }
-        
+
         $pessoa = $pessoa->orderBy('p.status','asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
 
         //dd($pessoa);
@@ -52,7 +52,7 @@ class PessoaController extends Controller
                         status
                         from tipo_status_pessoa t
                         ");
- 
+
         $soma = DB::table('pessoas')->count();
 
 
@@ -70,7 +70,7 @@ class PessoaController extends Controller
         return view ('/pessoal/incluir-pessoa', compact('ddd', 'sexo'));
     }
 
-    
+
     public function create(Request $request)
     {
 
@@ -108,7 +108,7 @@ class PessoaController extends Controller
         {
 
         DB::table('pessoas')->insert([
-                
+
             'nome_completo' => $request->input('nome'),
             'cpf' => $request->input('cpf'),
             'dt_nascimento' => $request->input('dt_na'),
@@ -126,7 +126,7 @@ class PessoaController extends Controller
             'id_usuario' => session()->get('usuario.id_usuario'),
             'data' => $today,
             'fato' => 2,
-            'pessoa' => $request->input('nome') 
+            'pessoa' => $request->input('nome')
         ]);
 
 
@@ -137,8 +137,8 @@ class PessoaController extends Controller
         return redirect('/gerenciar-pessoas');
     }
 
-  
-   
+
+
 
     public function edit($idp)
     {
@@ -230,7 +230,7 @@ class PessoaController extends Controller
         $data = date("Y-m-d H:i:s");
 
         $pessoa = DB::table('pessoas')->select('nome_completo')->where('id', $idp)->get();
-        
+
         $funcionario = DB::table('funcionarios')
         ->where('id_pessoa', $idp)
         ->count('id_pessoa');
@@ -238,16 +238,16 @@ class PessoaController extends Controller
         $assistido = DB::table('atendimentos')
         ->where('id_assistido', $idp)
         ->count('id_assistido');
-        
+
         //dd($assistido);
-        
-        if ($funcionario > 0){     
-                    
+
+        if ($funcionario > 0){
+
             app('flasher')->addError('Essa pessoa não pode ser excluída porque é um funcionário.');
             return redirect ('/gerenciar-pessoas');
-        
-        }if($assistido > 0){     
-                    
+
+        }if($assistido > 0){
+
                 app('flasher')->addError('Essa pessoa não pode ser excluída porque passou por atendimento.');
                 return redirect ('/gerenciar-pessoas');
 
@@ -262,15 +262,15 @@ class PessoaController extends Controller
             'fato' => 1,
             'pessoa' => $pessoa
         ]);
-            
+
 
             app('flasher')->addSuccess('O cadastro da pessoa foi excluido com sucesso.');
-            
+
             return redirect ('/gerenciar-pessoas');
 
 
 
 
-    }  
+    }
     }
 }

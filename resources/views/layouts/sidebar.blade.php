@@ -31,6 +31,7 @@
                             <li><a class="dropdown-item" href="#">Gerenciar Plantonistas</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-mediuns">Gerenciar Médiuns</a></li>
                         </ul>
                 </div>
                 <div class="btn-group">
