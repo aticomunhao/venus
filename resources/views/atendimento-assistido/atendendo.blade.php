@@ -32,8 +32,13 @@
             </div>
         </div>
         <br>
-        <div class="row" style="text-align:center;">
-            <a href="/meus-atendimentos"><input class="btn btn-success btn-sm me-md-2"  type="button" value="Meus atendimentos"></a>
+        <div class="row" style="text-align:right;">
+            <div class="col-6">
+                <a href="/meus-atendimentos"><input class="btn btn-info btn-sm me-md-2"  type="button" value="Meus atendimentos"></a>
+            </div>
+            <div class="col-6">
+            <a href="/atender"><input class="btn btn-success btn-sm me-md-2"  type="button" value="Atender agora"></a>
+            </div>
         </div>
         <br>
         <div class="card">
@@ -46,7 +51,7 @@
                                     <th class="col">ATENDENTE PREFERIDO</th>
                                     <th class="col">TIPO AF</th>
                                     <th class="col">HORÁRIO CHEGADA</th>
-                                    <th class="col">PRIOR</th>
+                                    <th class="col">PRIORIDADE</th>
                                     <th class="col">ASSISTIDO</th>
                                     <th class="col">REPRESENTANTE</th>
                                     <th class="col">STATUS</th>
@@ -54,7 +59,7 @@
                                 </tr>
                             </thead>
                             <tbody style="font-size: 14px; color:#000000; text-align:center;">
-                            @foreach($assistido as $assistidos)    
+                            @foreach($assistido as $assistidos)                               
                             <tr>
                                 <td scope="">{{$assistidos->nm_3}}</td>
                                 <td scope="">{{$assistidos->tipo}}</td>
@@ -64,29 +69,39 @@
                                 <td scope="">{{$assistidos->nm_2}}</td> 
                                 <td scope="">{{$assistidos->descricao}}</td>
                                 <td scope="">
-                                    <a href="/historico/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-primary btn-sm"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                                    <a href="/historico/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" id="#element" data-placement="top" title="Visualizar">
+<i class="bi bi-search" style="font-size: 1rem; color:#000;" ></i></button></a>
                                     <a href="/fim-analise/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-bell" style="font-size: 1rem; color:#000;"></i></button></a>
                                     <a href="/iniciar-atendimento/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-success btn-sm"><i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button></a>                                        
-                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#tratamento{{$assistidos->idat}}"><i class="bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button>
-                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#entrevista{{$assistidos->idat}}"><i class="bi bi bi-mic" style="font-size: 1rem; color:#000;"></i></button>                                    
-                                    <a href="/anotacoes"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button></a>
-                                    <a href="/finalizar"><button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Finalizar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>   
-                                    @include('atendimento-assistido.pop-up-enc_entrevista')
-                                </td>
+                                    <!--<a href="/tratar/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button></a>-->                                        
+                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#tratamento{{$assistidos->idat}}"><i class="bi bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button>                                                                        
+                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#entrevista{{$assistidos->idat}}"><i class="bi bi bi-mic" style="font-size: 1rem; color:#000;"></i></button>
+                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#anotacoes{{$assistidos->idat}}"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button></a>
+                                    <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#finalizar{{$assistidos->idat}}"><i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i></button>
                                 @include('atendimento-assistido.pop-up-enc_tratamento')
+                                @include('atendimento-assistido.pop-up-enc_entrevista')
+                                </td>
+                                @include('atendimento-assistido.pop-up-anotacoes')                               
                             </tr>
+                            @include('atendimento-assistido.pop-up-finalizar') 
                             @endforeach
                             </tbody>                         
-                        </table>                        
+                            
+                        </table>
+                                               
                     </div>                    
                 </div>
             </div>
         </div>
     </div>    
 </div>
+<!--style="pointer-events: none"-->
 
+<script>
 
+$('#element').tooltip('show')
 
+</script>
     
 
 

@@ -209,7 +209,7 @@ class PessoaController extends Controller
         ]);
 
         //dd($pessoa);
-        DB::table('historico')->insert([
+        DB::table('historico_venus')->insert([
             'id_usuario' => session()->get('usuario.id_usuario'),
             'data' => $today,
             'fato' => 3,

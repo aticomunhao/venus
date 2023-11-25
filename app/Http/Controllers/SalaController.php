@@ -124,6 +124,11 @@ class SalaController extends Controller
 
 
 
+<<<<<<< Updated upstream
+=======
+      
+
+>>>>>>> Stashed changes
 
             DB::table('salas')->insert([
 
@@ -213,7 +218,11 @@ class SalaController extends Controller
 
 
 
+<<<<<<< Updated upstream
 
+=======
+                dd($ar_condicionado, $projetor, $computador);
+>>>>>>> Stashed changes
 
 
 

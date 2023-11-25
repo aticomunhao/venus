@@ -15,26 +15,25 @@
                         <input class="form-control" type="text" name="nome" value="{{$assistidos->nm_1}}" disabled>
                     </div>
                 </div>
-                <form class="form-horizontal mt-4" method="POST" action="/gerar-enc_trata{{$assistidos->idat}}">
+                <form class="form-horizontal mt-4" method="POST" action="/tratamentos/{{$assistidos->idat}}">
                 @csrf                
-                <div class="row">
-                    <div class="form-check form-check-inline">
+                <div class="row" style="text-align: left;">
+                    <div class="form-check form-check-inline">                        
                         <input type="checkbox" name="pph" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                        <label for="inlineCheckbox1" class="form-check-label">Palestra/Passe de Harmonização - PPH</label>
+                        <label for="pph" class="form-check-label">Palestra/Passe de Harmonização - PPH</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input type="checkbox" name="ptd" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                        <label for="inlineCheckbox1" class="form-check-label">Passe Tratamento Desobessessivo - PTD</label>
+                        <label for="ptd" class="form-check-label">Passe Tratamento Desobessessivo - PTD</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" name="ptig" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                        <label for="ptig" class="form-check-label">Passe Tratamento Integral - PTIg</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input type="checkbox" name="pti" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                        <label for="inlineCheckbox1" class="form-check-label">Passe Tratamento Integral - PTIg</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input type="checkbox" name="pti" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                        <label for="inlineCheckbox1" class="form-check-label">Passe Tratamento Intensivo - PTIs</label>
-                    </div>
-                    
+                        <label for="pti" class="form-check-label">Passe Tratamento Intensivo - PTI</label>
+                    </div>                    
                 </div>
             </div>
                 <br>

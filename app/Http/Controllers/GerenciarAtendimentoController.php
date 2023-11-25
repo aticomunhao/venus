@@ -35,7 +35,7 @@ class GerenciarAtendimentoController extends Controller
             ");
 
         $lista = DB::table('atendimentos AS at')
-                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref', 'p3.nome_completo as nm_3', 'at.id_atendente', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tx.tipo', 'pa.nome', 'att.id as idatt','at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla' )
+                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'att.id as idatt','at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla' )
                     ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id')
                     ->leftJoin('pessoas AS p', 'att.id_pessoa', 'p.id')
@@ -96,6 +96,7 @@ class GerenciarAtendimentoController extends Controller
         from pessoas p
         left join atendentes a on (p.id = a.id_pessoa)
         group by pid, a.id_pessoa
+        order by nome_completo
         ");
 
         $priori = DB::select("select
@@ -103,6 +104,7 @@ class GerenciarAtendimentoController extends Controller
         pr.descricao as prdesc,
         pr.sigla as prsigla
         from tipo_prioridade pr
+        order by prid
         ");
        //dd($lista);
 
@@ -311,7 +313,7 @@ class GerenciarAtendimentoController extends Controller
 
         $result = DB::table('atendimentos AS at')
                     ->where('at.id', $ida)
-                    ->select('at.id AS ida', 'p1.id as idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente as idaf', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tp.nome',  'at.parentesco', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo', 'at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla' )
+                    ->select('at.id AS ida', 'p1.id as idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente as idaf', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tp.nome',  'at.parentesco', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo', 'at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla' )
                     ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id')
                     ->leftJoin('pessoas AS p', 'att.id_pessoa', 'p.id')
@@ -332,6 +334,7 @@ class GerenciarAtendimentoController extends Controller
                     a.id_pessoa
                     from pessoas p
                     left join atendentes a on (p.id = a.id_pessoa)
+                    order by nome_completo
                     ");
 
         //dd($lista);
@@ -345,6 +348,7 @@ class GerenciarAtendimentoController extends Controller
                     a.id
                     from atendentes a
                     left join pessoas p on (a.id_pessoa = p.id)
+                    order by nm_afi
                     ");
 
         $sexo = DB::select("select
@@ -365,6 +369,7 @@ class GerenciarAtendimentoController extends Controller
                     pr.descricao as prdesc,
                     pr.sigla as prsigla
                     from tipo_prioridade pr
+                    order by id
                     ");
 
 

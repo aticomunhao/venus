@@ -68,6 +68,7 @@ Route::post('/grava-atualizacao/{ida}', [GerenciarAtendimentoController::class, 
 Route::get('/visualizar-atendimentos/{idas}', [GerenciarAtendimentoController::class, 'visual'])->name('atevis');
 Route::put('/atendente-atualizar/{ida}', [GerenciarAtendimentoController::class, 'salvaatend'])->name('salate');
 
+
 //Rotas do Atendimento Fraterno:
 Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name('afidex');
 Route::get('/historico/{idat}/{idas}', [AtendimentoFraternoController::class, 'history'])->name('afihis');
@@ -75,7 +76,13 @@ Route::get('/fim-analise/{idat}', [AtendimentoFraternoController::class, 'fimana
 Route::get('/iniciar-atendimento/{idat}', [AtendimentoFraternoController::class, 'inicio'])->name('afiini');
 Route::get('/gerar-enc_entre/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiene');
 Route::get('/gerar-enc_trata/{idat}', [AtendimentoFraternoController::class, 'enc_trata'])->name('afient');
-
+Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
+Route::get('/meus-atendimentos', [AtendimentoFraternoController::class, 'meus_atendimentos'])->name('afimeu');
+Route::get('/tratar/{idat}', [AtendimentoFraternoController::class, 'tratar'])->name('afitra');
+Route::get('/entrevistar/{idat}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
+Route::post('/tratamentos/{idat}', [AtendimentoFraternoController::class, 'enc_trat'])->name('afitra');
+Route::post('/entrevistas/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
+Route::get('/atender', [AtendimentoFraternoController::class, 'atende_agora'])->name('afiini');
 
 
 /*

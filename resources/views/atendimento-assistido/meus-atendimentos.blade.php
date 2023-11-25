@@ -14,29 +14,28 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            HISTÓRICO DO ASSISTIDO
+                            MEUS ATENDIMENTOS
                         </div>
                     </div>
                 </div>                
                 <div class="card-body">                    
                     <fieldset class="border rounded border-secondary p-4">
-                    <div class="form-group row">
-                        <div class="col">
-                            <label for="disabledTextInput" class="form-label">Assistido:</label>
-                            <input type="text" id="" value="{{$assistido[0]->nm_1}}" class="form-control" placeholder="Disabled input" disabled>
+                    <div class="row">
+                        <div class="col-3">Grupo do atendente
+                            <input class="form-control" style="text-align:left; font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="" name="nome" id="" type="text" disabled>
                         </div>
-                        <div class="col-2">
-                            <label for="disabledTextInput" class="form-label">Sexo:</label>
-                            <input type="text" id="" value="{{$assistido[0]->tipo}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
+                    
+                        <div class="col-2">Código Atendente                    
+                            <input class="form-control" style="font-weight:bold; background:#f3f3f3; color:#000;" type="text" name="id_atendene" id="" value="{{$atendente}}" disabled>
                         </div>
-                        <div class="col-3">
-                            <label for="disabledTextInput" class="form-label">Dt nascimento:</label>
-                            <input type="date" id=""  name="date"  value="{{$assistido[0]->dt_nascimento}}"   class="form-control" placeholder="Disabled input" disabled>
-                        </div>
+                                    
+                        <div class="col-5">Nome do Atendete                   
+                            <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{$nome}}" name="nome_usuario" id="" type="text" disabled>
+                        </div>                        
                     </div>
                     </fieldset>
                     <br>
-                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Lista de atendimentos</legend>
+                    <legend style="color: #525252; font-size:12px; font-family:sans-serif">Lista de atendimentos</legend>
                     <?php $a=1; $b=1; $c=1; $d=1; $e=1; ?>
                     @foreach($assistido as $assistidos)
                     <div class="accordion accordion-flush" id="accordionFlushExample"> 
@@ -51,6 +50,7 @@
                                     <table class="table table-sm table-bordered table-striped">
                                         <thead style="text-align:center; background: #daffe0;">
                                             <tr style="text-align:center; font-weight: bold; font-size:12px">
+                                                <td class="col-3">ASSISTIDO</td>
                                                 <td class="col-3">REPRESENTANTE</td>
                                                 <td class="col-1">PARENTESCO</td>
                                                 <td class="col-3">ATENDENTE</td>
@@ -61,7 +61,8 @@
 
                                         </thead>
                                         <tbody>
-                                            <tr style="text-align:center;font-size:11px">       
+                                            <tr style="text-align:center;font-size:11px">
+                                                <td>{{$assistidos->nm_1}}</td>       
                                                 <td>{{$assistidos->nm_2}}</td>
                                                 <td>{{$assistidos->nome}}</td>
                                                 <td>{{$assistidos->nm_4}}</td>
@@ -97,11 +98,8 @@
                     <br>
                     <div class="row">
                         <div class="col">    
-                            <a class="btn btn-danger" href="/atendendo" style="text-align:right;" role="button">Fechar</a>
-
-                            
-                        </div>
-                        
+                            <a class="btn btn-danger" href="/atendendo" style="text-align:right;" role="button">Fechar</a>                            
+                        </div>                        
                     </div>
                 </div>
             </div>

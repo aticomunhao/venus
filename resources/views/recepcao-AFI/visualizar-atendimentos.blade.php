@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <legend style="color:red; font-size:14px; font-family:Tahoma">Dados do assistido</legend>
+                    <legend style="color:#525252; font-size:12px; font-family:sans-serif">Dados do assistido</legend>
                     <fieldset class="border rounded border-secondary p-4">
                     <div class="form-group row">
                         <div class="col">
@@ -40,7 +40,7 @@
                     </div>
                     </fieldset>
                     <br>
-                    <legend style="color:blue; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Lista de atendimentos</legend>
+                    <legend style="color:#525252; font-size:12px; font-family:sans-serif">Lista de atendimentos</legend>
                     <?php $a=1; $b=1; $c=1; $d=1; $e=1; ?>
                     @foreach($result as $results)
                     <div class="accordion accordion-flush" id="accordionFlushExample"> 
