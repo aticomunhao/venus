@@ -57,7 +57,7 @@
                                          <div class="row">
                                                 <div class="col">Número
                                                     <input type="number" class="form-control" id="numero"
-                                                        name="numero" min ="0" required>
+                                                        name="numero" min ="1" required>
                                                     <br>
                                                 </div>
 
@@ -76,12 +76,12 @@
                                              </div>
                                                     <div class="col">M² da sala
                                                         <input type="number" class="form-control" id="tamanho_sala"
-                                                            name="tamanho_sala" min ="0" required>
+                                                            name="tamanho_sala" min ="1" required>
                                                     </div>
                                                     <br>
                                                     <div class="col">Número de lugares
                                                         <input type="number" class="form-control" id="nr_lugares"
-                                                            name="nr_lugares" min ="0" required>
+                                                            name="nr_lugares" min ="1" required>
 
                                                     </div>
                                                     <br>

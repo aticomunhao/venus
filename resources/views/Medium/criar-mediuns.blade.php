@@ -29,7 +29,13 @@
 
                                     <form class="form-horizontal mt-2" method="post" action="/incluir-mediuns">
                                         @csrf
-
+                                        <div class="col-1 text-end offset-11">
+                                            Status
+                                            <label for="status"></label>
+                                            <input type="checkbox" name="status" style="text-align: right;"
+                                                data-toggle="toggle" data-onlabel="A" data-offlabel="D"
+                                                data-onstyle="success" data-offstyle="" @if($medium[0]->status) checked @endif>
+                                        </div>
                                         </div>
                                         <br>
                                         <div class="col">Nome

@@ -13,25 +13,37 @@ class MediumController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
 
-        $medium=db::select("select pessoas.nome_completo,
-        tipo_mediunidade.tipo,medium.id,medium.id_pessoa,medium.id_tp_mediunidade
-        from medium
-        join tipo_mediunidade
-        on tipo_mediunidade.id = medium.id_tp_mediunidade
-        join pessoas
-        on pessoas.id = medium.id_pessoa
-        ORDER BY nome_completo ASC");
 
 
-        
+            $medium = DB::table('medium AS m')
+                ->leftJoin('tipo_mediunidade AS tm', 'm.id_tp_mediunidade', '=', 'tm.id')
+                ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
+                ->select('p.nome_completo', 'tm.tipo', 'm.status', 'm.id', 'm.id_pessoa', 'm.id_tp_mediunidade')
+                ->orderBy('p.nome_completo', 'ASC');
+
+
+            $nome = $request->nome;
+            if ($nome) {
+                $medium->where('p.nome_completo', 'like', "%$nome%");
+            }
+
+
+            $medium = $medium->orderBy('p.status', 'asc')
+                ->orderBy('p.nome_completo', 'asc')
+                ->paginate(50);
+
+
+            $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
+
+
+            return view('medium.gerenciar-mediuns', compact('medium', 'tipo_mediunidade','nome'));
+        }
 
 
 
-        return view('medium/gerenciar-mediuns', compact('medium'));
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -54,14 +66,22 @@ class MediumController extends Controller
     public function store(Request $request)
     {
 
-        DB::table('medium')->insert([
 
+            DB::table('medium')
+            ->where('id_pessoa', $request->input('id_pessoa'))
+            ->delete();
+
+        DB::table('medium')->insert([
             'id_tp_mediunidade' => $request->input('id_tp_mediunidade'),
             'id_pessoa'=> $request->input('id_pessoa'),
+            'status'=> $request->has('status'),
         ]);
 
         app('flasher')->addSuccess("Cadastrado com Sucesso");
         return redirect('gerenciar-mediuns');
+
+
+
     }
     /**
      * Display the specified resource.
@@ -88,18 +108,31 @@ class MediumController extends Controller
     public function edit( $id)
     {
 
-        $mediuns = DB::table('medium')->where('id',$id)->select('*')->first();
-        $medium = db::select('select * from medium');
-        $tipo_mediunidade=db::select('select * from tipo_mediunidade');
-        $pessoas= DB::select('select * from pessoas');
+            // $mediuns = DB::table('medium')->where('id',$id)->select('*')->first();
+            // $medium = db::select('select * from medium');
+            // $tipo_mediunidade=db::select('select * from tipo_mediunidade');
+            // $pessoas= DB::select('select * from pessoas');
+
+    //         $medium = DB::table('medium AS m')
+    //         ->leftJoin('pessoas AS p','m.id_pessoa','p.id')
+    //         ->select('m.id','p.nome_completo','m.status')
+    //         ->get();
+    //         $tipo_mediunidade=db::select('select * from tipo_mediunidade');
 
 
+    //     return view('medium/editar-mediuns', compact('tipo_mediunidade','medium'));
 
+    //     //
+    // }
 
+        $medium = DB::table('medium AS m')
+            ->leftJoin('pessoas AS p', 'm.id_pessoa', 'p.id')
+            ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.status', 'm.id_tp_mediunidade')
+            ->get();
+            $pessoas= DB::table('pessoas')->get();
+        $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
 
-        return view('medium/editar-mediuns', compact('mediuns','tipo_mediunidade','medium','pessoas'));
-
-        //
+        return view('medium/editar-mediuns', compact('tipo_mediunidade', 'medium','pessoas'));
     }
 
     /**
@@ -107,10 +140,11 @@ class MediumController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
-        DB::table('medium')->where('id', $id)->UPDATE([
+        dd('medium');
+        DB::table('medium')->where('id', $id)->update([
             'id_tp_mediunidade' => $request->input('id_tp_mediunidade'),
-            'id_pessoa'=> $request->input('id_pessoa')
+            'id_pessoa' => $request->input('id_pessoa'),
+            'status'=>$request->input('status')
         ]);
 
         app('flasher')->addSuccess("Alterado com Sucesso");

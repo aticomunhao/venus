@@ -148,7 +148,7 @@ Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
 Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 
 //Méaiuns
-Route::get('/gerenciar-mediuns', [MediumController::class, 'index'])->name('');
+Route::get('/gerenciar-mediuns', [MediumController::class, 'index'])->name('lista');
 Route::get('/editar-mediuns/{id}', [MediumController::class, 'edit'])->name('');
 Route::post('/atualizar-mediuns/{id}', [MediumController::class, 'update'])->name('');
 Route::get('/criar-mediuns', [MediumController::class, 'create'])->name('');
