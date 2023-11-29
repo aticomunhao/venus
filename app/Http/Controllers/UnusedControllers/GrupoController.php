@@ -12,7 +12,10 @@ class GrupoController extends Controller
      */
     public function index()
     {
-        //
+        $grupo=DB::table('select* from grupos');
+
+
+        return view('grupos/gerenciar-grupos',compact('grupo'));
     }
 
     /**

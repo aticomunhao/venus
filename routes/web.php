@@ -14,7 +14,7 @@ use App\Http\Controllers\FatosController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SalaController;
-use App\Http\Controllers\MediumController;
+use App\Http\Controllers\GrupoController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 
 
@@ -98,11 +98,11 @@ Route::get('/novo-atendente', [AtendenteController::class, 'create'])->name('nov
 Route::post('/inserir-atendente', [AtendenteController::class, 'RequestTest'])->name('inserir_atendente');
 
 // Grupos
-Route::get('/gerenciar-grupos', [GrupoController::class, 'index']);
-Route::get('novo-grupo', [GrupoController::class,'create'])->name('novo-grupo');
-Route::post('incluir-grupo', [GrupoController::class,'store']);
-Route::post('editar-grupo', [GrupoController::class,'update']);
-Route::post('apagar-grupo', [GrupoController::class,'destroy']);
+Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('lista');
+Route::get('criar-grupos', [GrupoController::class,'create'])->name('');
+Route::post('incluir-grupos', [GrupoController::class,'store']);
+Route::post('editar-grupos', [GrupoController::class,'update']);
+Route::post('apagar-grupos', [GrupoController::class,'destroy']);
 
 // Atendentes Misc/Testes
 Route::get('/visualizar-atendendes/{id}', [AtendenteController::class, 'show_detalhes_atendente'])->name('show_atendente');

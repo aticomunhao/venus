@@ -38,32 +38,28 @@
                                         </div>
                                         </div>
                                         <br>
-                                        <div class="col">Nome
-                                            <select class= "form-select " aria-label=".form-select-lg example" name="id_pessoa">
-                                                <option selected></option>
-                                            </div>
-                                                @foreach ($pessoas as $pessoa)
-                                                    <option value={{$pessoa->id}}>{{$pessoa->nome_completo}}</option>
-                                                @endforeach
-
-                                           </select>
-
-                                           <br>
-                                            <div class="col">Tipo mediunidade
-                                                <select class= "form-select " aria-label=".form-select-lg example" name="id_tp_mediunidade">
-                                                    <option selected></option>
-                                                </div>
-                                                    @foreach ($tipo_mediunidade as $tipo)
-                                                        <option value={{$tipo->id}}>{{$tipo->tipo}}</option>
+                                       <div class="row">
+                                            <div class="col">
+                                                Nome
+                                                <select class="form-select" aria-label=".form-select-lg example" name="id_pessoa">
+                                                    @foreach ($pessoas as $pessoa)
+                                                        <option value={{$pessoa->id}}>{{$pessoa->nome_completo}}</option>
                                                     @endforeach
-
-
-
                                                 </select>
                                                 <br>
                                             </div>
+                                            <div class="col">
+                                                Tipo mediunidade
+                                                <select class="form-select" aria-label=".form-select-lg example" name="id_tp_mediunidade">
+                                                    @foreach ($tipo_mediunidade as $tipo)
+                                                        <option value={{$tipo->id}}>{{$tipo->tipo}}</option>
 
-                                                    <br>
+                                                        @endforeach
+                                                </select>
+                                                <br>
+                                            </div>
+                                        </div>
+                                                  <br>
 
                                                 </div>
                                                 <br>

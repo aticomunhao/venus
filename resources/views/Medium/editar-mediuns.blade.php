@@ -20,7 +20,7 @@
                                 <div class="row justify-content-center">
                                     <form class="form-horizontal mt-2" method="post" action="/atualizar-mediuns/{{$medium[0]->id}}">
                                         @csrf
-                                            <div class="col-1 text-end offset-11">
+                                        <div class="col-1 text-end offset-11">
                                             Status
                                             <label for="status"></label>
                                             <input type="checkbox" name="status" style="text-align: right;"
@@ -30,9 +30,11 @@
                                         <div class="row">
                                             <div class="col">
                                                 Nome
-                                                <select class="form-select" name="id_pessoa" aria-label="form-select-lg example">
+                                                <select class="form-select" aria-label=".form-select-lg example" name="id_pessoa">
                                                     @foreach ($pessoas as $pessoa)
-                                                        <option value="{{$pessoa->id}}" @if($pessoa->id == $medium[0]->id_pessoa) selected @endif>{{$pessoa->nome_completo}}</option>
+                                                        <option value="{{$pessoa->id}}" @if($pessoa->id == $medium[0]->id_pessoa) selected @endif>
+                                                            {{$pessoa->nome_completo}}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                                 <br>
@@ -41,12 +43,14 @@
                                                 Tipo mediunidade
                                                 <select class="form-select" aria-label=".form-select-lg example" name="id_tp_mediunidade">
                                                     @foreach ($tipo_mediunidade as $tipo)
-                                                        <option value="{{$tipo->id}}" @if($tipo->id == $medium[0]->id_tp_mediunidade) selected @endif>{{$tipo->nome_completo}}</option>
+                                                        <option value="{{$tipo->id}}" @if($tipo->id == $medium[0]->id_tp_mediunidade) selected @endif>
+                                                            {{$tipo->tipo}}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                                 <br>
                                             </div>
-
+                                        </div>
                                         <div class="row justify-content-center">
                                             <div class="d-grid gap-1 col-4 mx-auto">
                                                 <br>
