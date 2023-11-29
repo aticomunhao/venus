@@ -89,20 +89,19 @@ class Grupocontroller extends Controller
      */
     public function update(Request $request, $id)
 {
-    // Validar $id
+   
     if (!is_numeric($id)) {
-        // Tratar caso $id não seja numérico
-        // Pode ser útil redirecionar para uma página de erro ou algo do tipo
+
         return redirect()->back()->with('error', 'ID inválido.');
     }
 
-    // Verificar se os campos obrigatórios estão presentes no $request
+
     if (!$request->filled(['nome', 'h_inicio', 'h_fim', 'max_atend', 'id_tipo_grupo', 'status_grupo', 'id_tipo_tratamento'])) {
-        // Se algum campo estiver faltando, redirecione com uma mensagem de erro
+
         return redirect()->back()->with('error', 'Todos os campos são obrigatórios.')->withInput();
     }
 
-    // Atualizar o registro no banco de dados
+
     DB::table('grupo')->where('id', $id)->update([
         'nome' => $request->input('nome'),
         'h_inicio' => $request->input('h_inicio'),
