@@ -8,7 +8,7 @@
             GERENCIAR GRUPOS
         </h4>
         <div class="col">
-            <form action="{{ route('lista') }}" method="GET" class="mb-3">
+            <form action="{{ route('nomes') }}" method="GET" class="mb-3">
                 <div class="row">
                     <div class="col-md-4 col-sm-12">
                         <label for="nome_pesquisa"></label>

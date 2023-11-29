@@ -98,11 +98,11 @@ Route::get('/novo-atendente', [AtendenteController::class, 'create'])->name('nov
 Route::post('/inserir-atendente', [AtendenteController::class, 'RequestTest'])->name('inserir_atendente');
 
 // Grupos
-Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('lista');
+Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
 Route::get('criar-grupos', [GrupoController::class,'create'])->name('');
 Route::post('incluir-grupos', [GrupoController::class,'store']);
-Route::post('editar-grupos', [GrupoController::class,'update']);
-Route::post('apagar-grupos', [GrupoController::class,'destroy']);
+Route::get('/editar-grupos/{id}', [GrupoController::class,'update']);
+Route::any('/deletar-grupos/{id}', [GrupoController::class,'destroy']);
 
 // Atendentes Misc/Testes
 Route::get('/visualizar-atendendes/{id}', [AtendenteController::class, 'show_detalhes_atendente'])->name('show_atendente');

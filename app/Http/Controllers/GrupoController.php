@@ -31,7 +31,7 @@ class Grupocontroller extends Controller
     {
         $grupos = DB::select('select * from grupo');
         return view('grupos.criar-grupos', compact('grupos'));
-    
+
     }
 
     /**
@@ -39,8 +39,32 @@ class Grupocontroller extends Controller
      */
     public function store(Request $request)
     {
-        //
+        DB::table('grupo')->insert([
+
+            'nome' => $request->input('nome'),
+            'h_inicio' => $request->input('h_inicio'),
+            'h_fim' => $request->input('h_fim'),
+            'max_atend' => $request->input('max_atend'),
+            'id_tipo_grupo' => $request->input('id_tipo_grupo'),
+            'status_grupo' =>$request->input('status_grupo'),
+            'id_tipo_tratamento'=>$request->input('id_tipo_tratamento')
+
+        ]);
+
+
+
+
+
+
+        app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
+
+
+
+
+
+        return redirect('gerenciar-grupos');
     }
+
 
     /**
      * Display the specified resource.
@@ -55,32 +79,56 @@ class Grupocontroller extends Controller
      */
     public function edit(string $id)
     {
-        //
+
+        $grupos = DB::select('select * from grupo');
+        return view('grupos.criar-grupos', compact('grupos'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        DB::table('grupo')->where('id', $id)->update([
-            'id_tipo_grupo' => $request->input('id_tipo_grupo'),
-            'status_grupo' => $request->input('status_grupo'),
-            'id_tipo_tratamento' => $request->input('id_tipo_tratamento'),
-
-        ]);
-
-        app('flasher')->addSuccess("Alterado com Sucesso");
-
-        return redirect('gerenciar-grupos');
-
+    public function update(Request $request, $id)
+{
+    // Validar $id
+    if (!is_numeric($id)) {
+        // Tratar caso $id não seja numérico
+        // Pode ser útil redirecionar para uma página de erro ou algo do tipo
+        return redirect()->back()->with('error', 'ID inválido.');
     }
+
+    // Verificar se os campos obrigatórios estão presentes no $request
+    if (!$request->filled(['nome', 'h_inicio', 'h_fim', 'max_atend', 'id_tipo_grupo', 'status_grupo', 'id_tipo_tratamento'])) {
+        // Se algum campo estiver faltando, redirecione com uma mensagem de erro
+        return redirect()->back()->with('error', 'Todos os campos são obrigatórios.')->withInput();
+    }
+
+    // Atualizar o registro no banco de dados
+    DB::table('grupo')->where('id', $id)->update([
+        'nome' => $request->input('nome'),
+        'h_inicio' => $request->input('h_inicio'),
+        'h_fim' => $request->input('h_fim'),
+        'max_atend' => $request->input('max_atend'),
+        'id_tipo_grupo' => $request->input('id_tipo_grupo'),
+        'status_grupo' => $request->input('status_grupo'),
+        'id_tipo_tratamento' => $request->input('id_tipo_tratamento')
+    ]);
+
+    app('flasher')->addSuccess("Alterado com Sucesso");
+
+    return redirect('gerenciar-grupos');
+}
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        DB::table('grupo')->where('id', $id)->delete();
+
+
+        app('flasher')->addError('Excluido com sucesso.');
+        return redirect('/gerenciar-grupos');
     }
+
 }
