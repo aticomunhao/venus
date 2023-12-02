@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-2">Nr Atendimento
+                    <div class="col-3">Nr Atendimento
                         <input class="form-control" type="numeric" name="id" value="{{$assistidos->idat}}" disabled>
                     </div>
                     <div class="col">Nome assistido

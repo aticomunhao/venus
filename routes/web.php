@@ -76,14 +76,16 @@ Route::get('/fim-analise/{idat}', [AtendimentoFraternoController::class, 'fimana
 Route::get('/iniciar-atendimento/{idat}', [AtendimentoFraternoController::class, 'inicio'])->name('afiini');
 Route::get('/gerar-enc_entre/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiene');
 Route::get('/gerar-enc_trata/{idat}', [AtendimentoFraternoController::class, 'enc_trata'])->name('afient');
-Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
 Route::get('/meus-atendimentos', [AtendimentoFraternoController::class, 'meus_atendimentos'])->name('afimeu');
 Route::get('/tratar/{idat}', [AtendimentoFraternoController::class, 'tratar'])->name('afitra');
-Route::get('/entrevistar/{idat}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
 Route::post('/tratamentos/{idat}', [AtendimentoFraternoController::class, 'enc_trat'])->name('afitra');
+Route::get('/entrevistar/{idat}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
 Route::post('/entrevistas/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
+Route::get('/temas/{idat}', [AtendimentoFraternoController::class, 'pre_tema'])->name('afi');
+Route::post('/tematicas/{idat}', [AtendimentoFraternoController::class, 'tematica'])->name('afitem');
 Route::get('/atender', [AtendimentoFraternoController::class, 'atende_agora'])->name('afiini');
-
+Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
+Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
 
 /*
 |--------------------------------------------------------------------------
@@ -117,11 +119,6 @@ Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre'
 Route::get('/excluir-pessoa', [PessoaController::class, 'destroy'])->name('pesdes');
 Route::get('/editar-pessoa/{idp}', [PessoaController::class, 'edit'])->name('pesedt');
 Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name('pesexe');
-/*
-|--------------------------------------------------------------------------
-| David Routes
-|--------------------------------------------------------------------------
-*/
 
 /*
 |--------------------------------------------------------------------------

@@ -15,7 +15,7 @@
                 <br>
                 <div class="row">
                     <div class="col" style="color:red;">Mensagem de alerta:
-                        <input class="form-control" style="background-color: #f7ccca;" type="text" value="Tem certeza que deseja finalizar este Atendimento?" disabled>
+                        <input class="form-control" style="background-color: #f7ccca;" type="text" value="Tem certeza que deseja finalizar o atendimento Nr {{$assistidos->idat}} ?" disabled>
                     </div>
                 </div>
                 <form class="form-horizontal mt-4" method="POST" action="/finalizar/{{$assistidos->idat}}">

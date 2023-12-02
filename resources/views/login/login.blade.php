@@ -4,7 +4,7 @@
 @section('title') Vênus @endsection
 
 @section('content')
- <div class="account-pages my-5 pt-sm-5">
+ <div class="account-pages my-4 pt-sm-4">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8 col-lg-6 col-xl-5">
@@ -14,8 +14,6 @@
                                 <a href="/" class="logo logo-admin"><img src="{{ URL::asset('/images/logo150px.ico')}}" height="100" alt="logo"></a>
                             </h3>
                             <div class="p-3">
-                                <!-- <h4 class="text-muted font-size-18 mb-1 text-center">Welcome Back !</h4> -->
-                                <!-- <p class="text-muted text-center">Sign in to continue to Lexa.</p> -->
                                 <form method="POST" class="form-horizontal mt-4" action="/login/home">
                                     @csrf
 

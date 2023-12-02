@@ -192,26 +192,34 @@ class AtendimentoFraternoController extends Controller
         public function inicio($idat)
         {
 
-            $now =  Carbon::now()->format('Y-m-d');
+            $now =  Carbon::now()->format('Y-m-d H:m:d');
 
             $atendente = session()->get('usuario.id_pessoa');
 
-            $sit = DB::table('atendimentos AS at')->where('at.id', $idat)->where('at.status_atendimento', 3)->count();
-            
-            if ($sit = 1){
-                DB::table('atendimentos AS at')
-            ->where('status_atendimento', '=', 3)
-            ->where('at.id', $idat)
-            ->update([
-                'status_atendimento' => 4,
-                'id_atendente' => $atendente,
-                'dh_inicio' => $now
-            ]);  
-            }
 
-            app('flasher')->addSuccess('O status do atendimento foi alterado para "Em atendimento".');
+            if (DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento') > 3){
+
+                app('flasher')->addError('O início do atendimento já foi registrado.');
         
+                return redirect()->back();
+
+            }
+            elseif (DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento') <= 3){
+                DB::table('atendimentos AS at')            
+                    ->where('at.id', $idat)
+                    ->update([
+                'status_atendimento' => 4,
+                'dh_inicio' => $now
+                
+            ]);
+            
+            app('flasher')->addSuccess('O status do atendimento foi alterado para "Em atendimento".');
+
             return redirect()->back();
+
+            }       
+        
+          
 
         }
 
@@ -220,22 +228,51 @@ class AtendimentoFraternoController extends Controller
         {
 
             $assistido = DB::table('atendimentos AS at')
-            ->select('at.id AS idat', 'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao', 'tsx.tipo', 'pa.nome', 'at.status_atendimento', 'p1.dt_nascimento')
-            ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id_pessoa')
-            ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
+            ->select('at.id as idat', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido','p1.nome_completo AS nm_1', 'at.id_representante', 'at.id_atendente')
             ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-            ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-            ->leftJoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-            ->leftJoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-            ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
-            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-            ->leftJoin('tp_sexo AS tsx', 'p1.sexo', 'tsx.id' )
-            ->where('at.id', $idat)                                    
-            ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'pa.nome', 'tsx.tipo')
-            ->orderBy('at.dh_chegada', 'desc')
+            ->where('at.id', $idat)
             ->get();
 
-            return view('/atendimento-assistido/tratamento', compact('assistido'));
+            return view('/atendimento-assistido/tratamentos', compact('assistido'));
+
+        }
+
+        public function entrevistar($idat)
+        {
+
+            $assistido = DB::table('atendimentos AS at')
+            ->select('at.id as idat', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido','p1.nome_completo AS nm_1', 'at.id_representante', 'at.id_atendente')
+            ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+            ->where('at.id', $idat)
+            ->get();
+
+            return view('/atendimento-assistido/entrevistas', compact('assistido'));
+
+        }
+
+        public function final($idat)
+        {
+
+            $assistido = DB::table('atendimentos AS at')
+            ->select('at.id as idat', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido','p1.nome_completo AS nm_1', 'at.id_representante', 'at.id_atendente')
+            ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+            ->where('at.id', $idat)
+            ->get();
+
+            return view('/atendimento-assistido/finalizar', compact('assistido'));
+
+        }
+
+        public function pre_tema($idat)
+        {
+
+            $assistido = DB::table('atendimentos AS at')
+            ->select('at.id as idat', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido','p1.nome_completo AS nm_1', 'at.id_representante', 'at.id_atendente')
+            ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+            ->where('at.id', $idat)
+            ->get();
+
+            return view('/atendimento-assistido/tematicas', compact('assistido'));
 
         }
 
@@ -326,7 +363,7 @@ class AtendimentoFraternoController extends Controller
             $diamo = isset($request->diamo) ? 1 : 0;
             $nutres = isset($request->nutres) ? 1 : 0;
 
-            //dd($integral, $especifico, $armonia, $tratamento  );
+            //dd($ame, $afe, $diamo, $nutres  );
 
             if ($ame == 1)
             {
@@ -406,7 +443,7 @@ class AtendimentoFraternoController extends Controller
                 
                 app('flasher')->addError('Este atendimento não é sua responsabilidade.');
         
-                return redirect()->back();
+                return redirect('/atendendo');
                 
             } elseif($status = 4 && $atendendo = $atendente ){
                 DB::table('atendimentos AS at')
@@ -421,7 +458,7 @@ class AtendimentoFraternoController extends Controller
 
             app('flasher')->addSuccess('O status do atendimento foi alterado para "Finalizado".');
         
-            return redirect()->back();
+            return redirect('/atendendo');
 
         }
 
@@ -450,8 +487,88 @@ class AtendimentoFraternoController extends Controller
 
             return view ('/atendimento-assistido/meus-atendimentos', compact('assistido', 'atendente', 'nome'));
 
+        }
+
+               
+        public function tematica(Request $request, $idat){
+
+            $r_tema = DB::table('registro_tema')->where('id_atendimento', $idat)->count();
+
+            $now = Carbon::now()->format('Y-m-d H:m:s');
+
+                    
+           $ies = isset($request->ies) ? 2 : null;
+           $obs = isset($request->obs) ? 3 : null;           
+           $coj = isset($request->coj) ? 4 : null;
+           $fam = isset($request->fam) ? 5 : null;
+           $soc = isset($request->soc) ? 6 : null;
+           $prf = isset($request->prf) ? 7 : null;
+           $sau = isset($request->sau) ? 8 : null;
+           $pdg = isset($request->pdg) ? 9 : null;
+           $sex = isset($request->sex) ? 10 : null;
+           $dts = isset($request->dts) ? 11 : null;
+           $adp = isset($request->adp) ? 12 : null;
+           $deq = isset($request->deq) ? 13 : null;
+           $est = isset($request->est) ? 14 : null;
+           $abo = isset($request->abo) ? 15 : null;
+           $sui = isset($request->sui) ? 16 : null;
+           $dou = isset($request->dou) ? 17 : null;
+           $son = isset($request->son) ? 18 : null;
+           $esp = isset($request->esp) ? 19 : null;
+           $dpr = isset($request->dpr) ? 20 : null;
+           $dqu = isset($request->dqu) ? 21 : null;
             
+           
+        
+         // dd($ies, $obs, $coj);
+
+            DB::table('atendimentos AS at')->where('id', $idat)->update([
+
+                'observacao' => $request->input('nota') 
+            ]);
+
+
+            if ($r_tema > 0 ){
+
+                app('flasher')->addError("As temáticas do atendimento $idat já foram registradas.");
+
+                return Redirect('/atendendo');
+
+            }else{
+
+            DB::table('registro_tema AS rt')->where('id', $idat)->insert([
+
+                'id_atendimento' => $idat,
+                'ies' => $ies,
+                'obs' => $obs,
+                'coj' => $coj,
+                'fam' => $fam,
+                'soc' => $soc,
+                'prf' => $prf,
+                'sau' => $sau,
+                'pdg' => $pdg,
+                'sex' => $sex,
+                'dts' => $dts,
+                'adp' => $adp, 
+                'deq' => $deq,
+                'est' => $est,
+                'abo' => $abo,
+                'sui' => $sui,
+                'dou' => $dou,
+                'son' => $son,
+                'esp' => $esp,
+                'dpr' => $dpr,
+                'dqu' => $dqu
+
+            ]);
+
+            app('flasher')->addSuccess('Os temas foram salvos com sucesso.');
+
+            return Redirect('/atendendo');
+            }
 
         }
+
+
 
 }
