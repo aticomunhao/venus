@@ -76,7 +76,9 @@ class Grupocontroller extends Controller
      */
     public function show(string $id)
     {
-        //
+        $grupo = DB::select('select * from grupo');
+
+        return view('grupos/visualizar-grupos', compact('grupo'));
     }
 
     /**
@@ -85,8 +87,9 @@ class Grupocontroller extends Controller
     public function edit(string $id)
     {
 
-        $grupos = DB::select('select * from grupo');
-        return view('grupos.criar-grupos', compact('grupos'));
+        $grupo = DB::select('select * from grupo');
+
+        return view('grupos/editar-grupos', compact('grupo'));
     }
 
     /**
@@ -94,17 +97,10 @@ class Grupocontroller extends Controller
      */
     public function update(Request $request, $id)
 {
-   
-    if (!is_numeric($id)) {
-
-        return redirect()->back()->with('error', 'ID inválido.');
-    }
 
 
-    if (!$request->filled(['nome', 'h_inicio', 'h_fim', 'max_atend', 'id_tipo_grupo', 'status_grupo', 'id_tipo_tratamento'])) {
 
-        return redirect()->back()->with('error', 'Todos os campos são obrigatórios.')->withInput();
-    }
+
 
 
     DB::table('grupo')->where('id', $id)->update([
@@ -115,6 +111,7 @@ class Grupocontroller extends Controller
         'id_tipo_grupo' => $request->input('id_tipo_grupo'),
         'status_grupo' => $request->input('status_grupo'),
         'id_tipo_tratamento' => $request->input('id_tipo_tratamento')
+
     ]);
 
     app('flasher')->addSuccess("Alterado com Sucesso");
