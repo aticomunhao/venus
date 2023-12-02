@@ -87,15 +87,14 @@ class SalaController extends Controller
     public function store(Request $request)
     {
 
-<<<<<<< Updated upstream
+//
 
-        // DB::table('historico_venus')->insert([
-        //     'id_usuario' => session()->get('usuario.id_usuario'),
-        //     'data' => $salas,
-        //     'fato' => 23
-        // ]);
-=======
->>>>>>> Stashed changes
+        DB::table('historico_venus')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $salas,
+            'fato' => 23
+        ]);
+
 
 
 
@@ -184,12 +183,12 @@ class SalaController extends Controller
      */
     public function update(Request $request, string $id)
 
-<<<<<<< Updated upstream
+
     {
 
         $ativo = isset($request->checked) ? 1 : 0;
-=======
->>>>>>> Stashed changes
+
+
 
         $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
         $projetor = isset($request->projetor) ? 1 : 0;

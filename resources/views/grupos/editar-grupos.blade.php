@@ -18,7 +18,7 @@
 
                     <div class="card-body">
                         <div class="container-fluid">
-                            <form class="form-horizontal mt-2" method="post" action="/editar-grupos/{{ $grupo[0]->id }}">
+                            <form class="form-horizontal mt-2" method="post" action="/atualizar-grupos/{{ $grupo[0]->id }}">
                                 @csrf
 
                                 <div class="row">
@@ -40,14 +40,14 @@
 
                                     <div class="col">
                                         Hora inicio
-                                        <input type="hora" class="form-control" id="h_inicio" name="h_inicio" value="{{ $grupo[0]->h_inicio }}" required>
+                                        <input type="time" class="form-control" id="h_inicio" name="h_inicio" value="{{ $grupo[0]->h_inicio }}" required>
                                     </div>
 
                                     <div class="row">
                                         <div class="col">
                                             <br>
                                             Hora fim
-                                            <input type="hora" class="form-control" id="h_fim" name="h_fim" value="{{ $grupo[0]->h_fim }}" required>
+                                            <input type="time" class="form-control" id="h_fim" name="h_fim" value="{{ $grupo[0]->h_fim }}" required>
                                         </div>
 
                                         <div class="col">
@@ -60,7 +60,7 @@
                                             <br>
                                             Tipo grupo
                                             <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_grupo" required>
-                                                @foreach ($grupos as $item)
+                                                @foreach ($grupo as $item)
                                                     <option value="{{ $item->id }}" {{ $grupo[0]->id_tipo_grupo == $item->id ? 'selected' : '' }}>
                                                         {{ $item->id_tipo_grupo }}
                                                     </option>
@@ -71,10 +71,15 @@
                                         <div class="col">
                                             <br>
                                             Tipo de tratamento
-                                            <input type="text" class="form-control" id="id_tipo_tratamento" name="id_tipo_tratamento" value="{{ $grupo->id_tipo_tratamento }}" required>
+                                            <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_tratamento" required>
+                                                @foreach ($grupo as $item)
+                                                    <option value="{{ $item->id }}" {{ $grupo[0]->id_tipo_tratamento == $item->id ? 'selected' : '' }}>
+                                                        {{ $item->id_tipo_tratamento }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
-                                    </div>
-                                </div>
+
                                 <div class="row justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">
                                         <br>

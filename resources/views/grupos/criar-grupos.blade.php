@@ -39,7 +39,7 @@
 
                                     <div class="col">
                                         Hora inicio
-                                        <input type="hora" class="form-control" id="h_inicio" name="h_inicio">
+                                        <input type="time" class="form-control" id="h_inicio" name="h_inicio">
                                     </div>
 
                                     <div class="row">
@@ -47,7 +47,7 @@
                                     <div class="col">
                                         <br>
                                         Hora fim
-                                        <input type="hora" class="form-control" id="h_fim" name="h_fim">
+                                        <input type="time" class="form-control" id="h_fim" name="h_fim">
                                     </div>
 
                                     <div class="col">

@@ -71,7 +71,9 @@ class Grupocontroller extends Controller
      */
     public function show(string $id)
     {
-        //
+        $grupo = DB::select('select * from grupo');
+
+        return view('grupos/visualizar-grupos', compact('grupo'));
     }
 
     /**
@@ -80,8 +82,9 @@ class Grupocontroller extends Controller
     public function edit(string $id)
     {
 
-        $grupos = DB::select('select * from grupo');
-        return view('grupos.criar-grupos', compact('grupos'));
+        $grupo = DB::select('select * from grupo');
+
+        return view('grupos/editar-grupos', compact('grupo'));
     }
 
     /**
