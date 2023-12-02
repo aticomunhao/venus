@@ -33,38 +33,34 @@
                                 <div class="col-2" style="text-align:left;">Sexo
                                     <select class="form-select" id="" name="sex" required="required">
                                         <option value="{{$lista[0]->sexo}}">{{$lista[0]->tipo}}</option>
+                                        <option value=""></option>
                                         @foreach($sexo as $sexos)
                                         <option @if (old ('sex') == $sexos->id) {{'selected="selected"'}} @endif value="{{ $sexos->id }}">{{$sexos->tipo}}</option>
                                         @endforeach
                                     </select>
                                 </div><br>
-                                <div class="form-group row">
-                                    <div class="col-1" style="text-align:left;">DDD
-                                        <select class="form-select" id="" name="ddd" required="required">
-                                            <option value="{{$lista[0]->did}}">{{$lista[0]->ddesc}}</option>
-                                            <@foreach($ddd as $ddds)
-                                            <option @if(old ('ddd') == $ddds->id) {{'selected="selected"'}} @endif value="{{ $ddds->id }}">{{$ddds->descricao}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div><br>
-                                    <div class="col-2" style="text-align:left;">Nr Celular
-                                        <input class="form-control" maxlength="9" type="numeric" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" placeholder="Ex.: 99999-9999" value="{{$lista[0]->celular}}" id="" name="celular" required="required" >
-                                    </div>
-                                </div>
-                            </div><br>
-                            <div class="row">
-                                <div class="col-5" style="text-align:left;">email
-                                    <input class="form-control" type="email" maxlength="45" id="" name="email" value="{{$lista[0]->email}}" required="required" >
-                                </div>                            
+                            <div class="row">          
                                 <div class="col-2" style="text-align:left;">Status
                                     <select class="form-select" id="" name="status" required="required">
-                                        <option value="{{$status_p[0]->id}}">{{$status_p[0]->status}}</option>
+                                        <option value="{{$status_p[0]->id}}">{{$status_p[0]->tipo}}</option>
+                                        <option value=""></option>
                                         <@foreach($status_p as $statp)
-                                        <option @if(old ('status_p') == $statp->id) {{'selected="selected"'}} @endif value="{{ $statp->id }}">{{$statp->status}}</option>
+                                        <option @if(old ('status_p') == $statp->id) {{'selected="selected"'}} @endif value="{{ $statp->id }}">{{$statp->tipo}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div><br>
+                            <div class="row"> 
+                            <div class="col-2" style="text-align:left;">Motivo
+                                    <select class="form-select" id="" name="motivo" required="required">
+                                        <option value="{{$motivo[0]->id}}">{{$motivo[0]->tipo}}</option>
+                                        <option value=""></option>
+                                        <@foreach($motivo as $motivos)
+                                        <option @if(old ('motivo') == $motivos->id) {{'selected="selected"'}} @endif value="{{ $motivos->id }}">{{$motivos->tipo}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>                                    
                     </div>
                     <br>

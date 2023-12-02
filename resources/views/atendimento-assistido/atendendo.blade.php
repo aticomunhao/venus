@@ -5,7 +5,10 @@
 @section('content')
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
+
 
 <?php
 //echo "<meta HTTP-EQUIV='refresh' CONTENT='30;URL=gerenciar-atendimentos'>";
@@ -59,7 +62,7 @@
                                     <th class="col">PRIORIDADE</th>
                                     <th class="col-2">ASSISTIDO</th>
                                     <th class="col-2">REPRESENTANTE</th>
-                                    <th class="col">STATUS</th>
+                                    <th class="col-1">STATUS</th>
                                     <th class="col">AÇÕES</th>
                                 </tr>
                             </thead>
@@ -75,13 +78,13 @@
                                     <td scope="">{{$assistidos->nm_2}}</td>
                                     <td scope="">{{$assistidos->descricao}}</td>
                                     <td scope="">
-                                        <a href="/historico/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Analisar"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/fim-analise/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Chamar assistido"><i class="bi bi-bell" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/iniciar-atendimento/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Iniciar"><i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/tratar/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/entrevistar/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-mic" style="font-size: 1rem; color:#000;"></i></button></a>                                   
-                                        <a href="/temas/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm" ><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/final/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-danger btn-sm" ><i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i></button></a>
+                                        <a href="/historico/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Analisar"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                                        <a href="/fim-analise/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Chamar assistido"><i class="bi bi-bell" style="font-size: 1rem; color:#000;"></i></button></a>
+                                        <a href="/iniciar-atendimento/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Iniciar"><i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button></a>
+                                        <a href="/tratar/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Tratamento"><i class="bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button></a>
+                                        <a href="/entrevistar/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Entrevista"><i class="bi bi-mic" style="font-size: 1rem; color:#000;"></i></button></a>                                   
+                                        <a href="/temas/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Temática"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button></a>
+                                        <a href="/final/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top" title="Finalizar"><i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i></button></a>
                                         <!--<button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#tratamento{{$assistidos->idat}}" data-toggle="tooltip" data-placement="top" title="Tratamentos"><i class="bi bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button>
                                         <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#entrevista{{$assistidos->idat}}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi bi-mic" style="font-size: 1rem; color:#000;"></i></button>                                        
                                         <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#anotacoes{{$assistidos->idat}}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button>
@@ -103,6 +106,9 @@
     </div>
 </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
@@ -112,9 +118,6 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 
 </script>
 
-@endsection
-
-@section('footerScript')
 
 
 @endsection

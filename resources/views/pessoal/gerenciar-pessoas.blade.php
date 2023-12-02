@@ -11,17 +11,16 @@
                 <form action="{{route('pesdex')}}" class="form-horizontal mt-4" method="GET" >
                 <div class="row">
                     <div class="col-4">Nome
-                        <input class="form-control" type="text" maxlength="45" oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="1" name="nome" value="">
+                        <input class="form-control" type="text" maxlength="45" oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="1" name="nome" value="{{$nome}}">
                     </div>
                     <div class="col-2">CPF
-                        <input class="form-control" type="text" maxlength="11" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="2" name="cpf" value="">
+                        <input class="form-control" type="text" maxlength="11" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="2" name="cpf" value="{{$cpf}}">
                     </div>
                     <div class="col-2">Status
                         <select class="form-select" id="3" name="status" type="numeric" required="required">
                             <option value="1">Ativo</option> 
                             <option value="">Todos</option>
-                            <option value="2">Desencarnou</option> 
-                            <option value="3">Mudou</option>                    
+                            <option value="2">Inativo</option>                   
                         </select>
                     </div>
                     <div class="col"><br>
@@ -44,9 +43,6 @@
                             <th class="col">CPF</th>
                             <th class="col">NASCIMENTO</th>
                             <th class="col">SEXO</th>
-                            <th class="col">EMAIL</th>
-                            <th class="col">DDD</th>
-                            <th class="col">TELEFONE</th>
                             <th class="col">STATUS</th>
                             <th class="col">AÇÕES</th>
                         </tr>
@@ -54,14 +50,11 @@
                     <tbody style="font-size: 14px; color:#000000; text-align:center;">
                     @foreach($pessoa as $pessoas)
                         <tr>                        
-                            <td scope="" >{{$pessoas->nome_completo}}</td>
+                            <td scope="" style="text-align: left;">{{$pessoas->nome_completo}}</td>
                             <td scope="" >{{str_pad($pessoas->cpf, 11, "0", STR_PAD_LEFT)}}</td>
                             <td scope="" >{{date( 'd/m/Y' , strtotime($pessoas->dt_nascimento))}}</td>
                             <td scope="" >{{$pessoas->tipo}}</td>
-                            <td scope="" >{{$pessoas->email}}</td>
-                            <td scope="" >{{str_pad($pessoas->ddesc, 2, "0", STR_PAD_LEFT)}}</td>
-                            <td scope="" >{{$pessoas->celular}}</td>
-                            <td scope="" >{{$pessoas->nmstatus}}</td>
+                            <td scope="" >{{$pessoas->tpsta}}</td>
                             <td scope="">                                
                                 <a href="/editar-pessoa/{{$pessoas->idp}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/excluir-pessoa/{{$pessoas->idp}}"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i></button></a>

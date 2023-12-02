@@ -56,7 +56,7 @@ Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name(
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// Rotas da Recepão DAO:
+// Rotas da Recepção Atendimento Fraterno DAO:
 Route::get('/gerenciar-atendimentos', [GerenciarAtendimentoController::class, 'index'])->name('atedex');
 Route::get('/criar-atendimento', [GerenciarAtendimentoController::class, 'create'])->name('atecre');
 Route::post('/novo-atendimento', [GerenciarAtendimentoController::class, 'store'])->name('atetore');
@@ -153,6 +153,17 @@ Route::post('/incluir-mediuns', [MediumController::class, 'store']);
 Route::any('/deletar-mediuns/{id}', [MediumController::class, 'destroy'])->name('');
 Route::get('/visualizar-mediuns/{id}', [MediumController::class, 'show'])->name('');
 
+//RECEPÇÃO INTEGRADA DA DAO
+Route::get('/a', [GerenciarRecepcapIntegradaController::class, 'index'])->name('intdex');
+Route::get('/b', [GerenciarRecepcapIntegradaController::class, 'create'])->name('intcre');
+Route::post('/c', [GerenciarRecepcapIntegradaController::class, 'store'])->name('intore');
+Route::get('/d', [GerenciarRecepcapIntegradaController::class, 'cancelar'])->name('intcan');
+
+
+Route::get('/h', [GerenciarRecepcapIntegradaController::class, 'edit'])->name('intedi');
+Route::post('i', [GerenciarRecepcapIntegradaController::class, 'altera'])->name('intalt');
+Route::get('/j', [GerenciarRecepcapIntegradaController::class, 'visual'])->name('intvis');
+Route::put('/k', [GerenciarRecepcapIntegradaController::class, 'salvaatend'])->name('intate');
 
 
 

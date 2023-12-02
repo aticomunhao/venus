@@ -63,18 +63,14 @@
                         </div>
                         <div class="col-2">
                         </div>
-                    </div><br>
-                    <div class="form-group row">
-                        <div class="col-3" style="text-align:left;">
-                        <label for="validationCustom07" class="form-label">email</label>
-                            <input class="form-control" type="email" maxlength="45" id="" name="email" value="{{old('email')}}" required="required" >
-                        </div>
                     </div>
-                    <br>                                  
+                    <br>
+                    <hr>                                  
                     <div class="form-group row">
                         <div class="col" style="text-align: right;">
-                            <button type="button" class="btn btn-danger">Cancelar</button>
-                        
+                            <a class="btn btn-danger" href="/gerenciar-pessoas" role="button">Cancelar</a>
+                        </div>
+                        <div class="col" style="text-align: left;">                        
                             <button type="submit" class="btn btn-primary" style="background-color:#007bff; color:#fff;">Confirmar</button>
                         </div>
                     </form>

@@ -38,7 +38,6 @@
                              <th class="col">STATUS GRUPO</th>
                              <th class="col">TIPO TRATAMENTO</th>
                             <th class="col">AÇÕES</th>
-
                         </tr>
                     </thead>
                     <tbody>
@@ -48,9 +47,9 @@
                            <td> {{$grupos->h_inicio}} </td>
                           <td> {{$grupos->h_fim}} </td>
                           <td> {{$grupos->max_atend}} </td>
-                          <td> {{$grupos->id_tipo_grupo}} </td>
+                          <td> {{$grupos->nm_tipo_grupo}} </td>
                           <td> {{$grupos->status_grupo}} </td>
-                          <td> {{$grupos->id_tipo_tratamento}} </td>
+                         {{-- <td> {{$grupos->id_tipo_tratamento}} </td>--}}
                           <th>
 
 

@@ -21,8 +21,8 @@ class PessoaController extends Controller
         $sexo = DB::select('select id, tipo from tp_sexo');
 
         $pessoa = DB::table('pessoas AS p')
-                    ->select('p.id AS idp', 'nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'email', 'ddd', 'celular', 'tpsp.id AS idtps', 'p.status', 'tpsp.status AS nmstatus', 'd.id as did', 'd.descricao as ddesc')
-                    ->leftjoin('tipo_status_pessoa AS tpsp', 'p.status', 'tpsp.id')
+                    ->select('p.id AS idp', 'p.nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'email', 'ddd', 'celular', 'tsp.id AS idtps', 'p.status', 'tsp.tipo AS tpsta', 'd.id as did', 'd.descricao as ddesc')
+                    ->leftjoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
                     ->leftJoin('tp_sexo AS tps', 'p.sexo', 'tps.id')
                     ->leftJoin('tp_ddd AS d', 'p.ddd', 'd.id');
 
@@ -49,7 +49,7 @@ class PessoaController extends Controller
         //dd($pessoa);
         $stap = DB::select("select
                         id as ids,
-                        status
+                        tipo
                         from tipo_status_pessoa t
                         ");
 
@@ -57,7 +57,7 @@ class PessoaController extends Controller
 
 
 
-        return view ('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo'));
+        return view ('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
 
     }
 
@@ -146,14 +146,18 @@ class PessoaController extends Controller
 
         $sexo = DB::select('select id, tipo from tp_sexo');
 
-        $status_p = DB::select('select id, status from tipo_status_pessoa');
+        $status_p = DB::select('select id, tipo from tipo_status_pessoa');
+
+        $motivo = DB::select('select id, tipo from tipo_motivo order by tipo');
+
+
 
         $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.sexo, p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
         left join tp_sexo tps on (p.sexo = tps.id)
         left join tp_ddd d on (p.ddd = d.id)
         where p.id = $idp");
 
-        return view ('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p'));
+        return view ('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p', 'motivo'));
 
     }
 

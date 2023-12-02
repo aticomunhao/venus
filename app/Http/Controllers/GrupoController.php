@@ -17,7 +17,12 @@ class Grupocontroller extends Controller
 {
     public function index()
     {
-        $grupo = DB::select('select * from grupo');
+        $grupo = DB::table('grupo AS g')
+                    ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo', 'tg.nm_tipo_grupo')
+                    ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
+                    ->get();
+
+
         return view('grupos/gerenciar-grupos', compact('grupo'));
     }
 
