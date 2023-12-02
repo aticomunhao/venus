@@ -4,7 +4,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
     <br>
     <div class="container">
-
         <div class="row justify-content-center">
             <div class="col-12">
                 <div class="card">
@@ -33,7 +32,7 @@
                                 <br>
 
                                 <div class="row">
-                                    <div class="col-8">
+                                    <div class="col-6">
                                         Nome
                                         <input type="text" class="form-control" id="nome" name="nome">
                                     </div>
