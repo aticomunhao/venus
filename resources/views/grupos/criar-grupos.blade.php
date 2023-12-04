@@ -20,60 +20,59 @@
                             <form class="form-horizontal mt-2" method="post" action="/incluir-grupos">
                                 @csrf
 
-                                <div class="row">
-                                    <div class="col-1 text-end offset-11">
-                                        Status
-                                        <label for="status"></label>
-                                        <input type="checkbox" name="status" style="text-align: right;"
-                                            data-toggle="toggle" data-onlabel="A" data-offlabel="D"
-                                            data-onstyle="success" data-offstyle="" @if($grupos[0]->status_grupo) checked @endif>
-                                    </div>
-                                </div>
-                                <br>
+
+
+                                        <div class="col-1 text-end offset-11">Status <label for="status_grupo"></label>
+                                            <input type="checkbox" name="status_grupo" style=text-align: right; "status_grupo" data-toggle="toggle" data-onlabel="A" data-offlabel="D" data-onstyle="success" data-offstyle="">
+                                        </div>
 
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="col-8">
                                         Nome
-                                        <input type="text" class="form-control" id="nome" name="nome">
+                                        <input type="text" class="form-control" id="nome" name="nome" required="required">
                                     </div>
 
                                     <div class="col">
-                                        Hora inicio
-                                        <input type="time" class="form-control" id="h_inicio" name="h_inicio">
+                                        Tipo de tratamento
+                                        <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_tratamento" required="required">
+                                            @foreach ($tipo_tratamento as $tipo)
+                                            <option value="{{ $tipo->id }}"> {{ $tipo->descricao }} </option>
+                                            @endforeach
+                                        </select>
                                     </div>
-
-                                    <div class="row">
+                                <div class="row">
 
                                     <div class="col">
                                         <br>
-                                        Hora fim
-                                        <input type="time" class="form-control" id="h_fim" name="h_fim">
+                                        Hora Início
+                                        <input type="time" class="form-control" id="h_inicio" name="h_inicio" required="required">
                                     </div>
 
                                     <div class="col">
+                                        <br>
+                                        Hora Fim
+                                        <input type="time" class="form-control" id="h_fim" name="h_fim" required="required">
+                                    </div>
+                                      <br>
+                                      <div class="col">
                                         <br>
                                         Max atendido
-                                        <input type="number" class="form-control" id="max_atend" name="max_atend">
+                                        <input type="number" class="form-control" id="max_atend" min ="1"name="max_atend" required="required">
                                     </div>
 
                                     <div class="col">
                                         <br>
                                         Tipo grupo
-                                        <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_grupo">
-                                            @foreach ($grupos as $item)
-                                                <option value="{{ $item->id }}">{{ $item->id_tipo_grupo }}</option>
+                                        <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_grupo" required="required">
+                                            @foreach ($tipo_grupo as $item)
+                                            <option value="{{ $item->idg }}">{{ $item->nm_tipo_grupo }}</option>
                                             @endforeach
                                         </select>
                                     </div>
 
-                                    <div class="col">
+
                                         <br>
-                                        Tipo de tratamento
-                                        <input type="text" class="form-control" id="id_tipo_tratamento" name="id_tipo_tratamento">
-                                    </div>
-                                </div>
-                                </div>
-                                <div class="row justify-content-center">
+                                        <div class="row justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">
                                         <br>
                                         <a class="btn btn-danger" href="/gerenciar-grupos" role="button">Cancelar</a>

@@ -36,11 +36,13 @@ class SalaController extends Controller
 
 
 
+
         $tipo_localizacao = DB::table('tipo_localizacao as tl')
             ->leftJoin('salas AS s', 'tl.id', '=', 's.id_localizacao')->select('s.id AS ids', 'tl.nome', 'tl.sigla')->get();
 
 
 
+            
 
 
 
@@ -87,15 +89,8 @@ class SalaController extends Controller
     public function store(Request $request)
     {
 
-<<<<<<< HEAD
 
-        // DB::table('historico_venus')->insert([
-        //     'id_usuario' => session()->get('usuario.id_usuario'),
-        //     'data' => $salas,
-        //     'fato' => 23
-        // ]);
-=======
-//
+
 
         DB::table('historico_venus')->insert([
             'id_usuario' => session()->get('usuario.id_usuario'),
@@ -103,7 +98,6 @@ class SalaController extends Controller
             'fato' => 23
         ]);
 
->>>>>>> 2825ca23edf09401ef51e6d38010d983c0f20c9d
 
 
 
@@ -192,18 +186,15 @@ class SalaController extends Controller
      */
     public function update(Request $request, string $id)
 
-<<<<<<< HEAD
-    {
 
-        $ativo = isset($request->checked) ? 1 : 0;
-=======
+
 
     {
 
         $ativo = isset($request->checked) ? 1 : 0;
 
 
->>>>>>> 2825ca23edf09401ef51e6d38010d983c0f20c9d
+
 
         $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
         $projetor = isset($request->projetor) ? 1 : 0;
