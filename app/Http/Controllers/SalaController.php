@@ -42,7 +42,7 @@ class SalaController extends Controller
 
 
 
-            
+
 
 
 

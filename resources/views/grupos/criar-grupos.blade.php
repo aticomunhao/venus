@@ -22,12 +22,9 @@
 
 
 
-                                        <div class="col-1 text-end offset-11">Status <label for="status_grupo"></label>
-                                            <input type="checkbox" name="status_grupo" style=text-align: right; "status_grupo" data-toggle="toggle" data-onlabel="A" data-offlabel="D" data-onstyle="success" data-offstyle="">
-                                        </div>
-
                                 <div class="row">
-                                    <div class="col-8">
+                                    <div class="col-6">
+                                        <p class="text-truncate">
                                         Nome
                                         <input type="text" class="form-control" id="nome" name="nome" required="required">
                                     </div>
@@ -40,8 +37,17 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                <div class="row">
 
+                                    <div class="col">
+                                        Status
+                                        <select class="form-select" aria-label=".form-select-lg example" name="status_grupo"required="required">
+                                            @foreach ($tipo_status_grupo as $tipos)
+                                            <option value="{{ $tipos->ids}}"> {{ $tipos->descricao }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <br>
+                                    <div class="row">
                                     <div class="col">
                                         <br>
                                         Hora Início

@@ -10,8 +10,8 @@
           style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR SALAS
         </h4>
         <div class="col" style="text-align: right">
-
-          <a href="/criar-salas" class="btn btn-success"id="name=" type="button">NOVO+</a>
+            <br>
+          <a href="/criar-salas" class="btn btn-success"id="name=" type="button">Nova Sala</a>
         </div>
         <br>
         <br><br>
@@ -42,9 +42,7 @@
                     <td> {{$salas->nr_lugares}} </td>
 
 
-                    {{-- <td class="text-center"> {{ $sala->status_salas ? 'Ativo' : 'Inativo' }}</td> --}}
 
-                      {{-- @include('salas.popUp-incluir') --}}
 
                       <td  class="text-center">{{$salas->status_sala ? 'Ativo' : 'Inativo' }}</td>
 

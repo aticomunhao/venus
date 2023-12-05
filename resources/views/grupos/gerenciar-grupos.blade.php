@@ -1,18 +1,19 @@
 @extends('layouts.app')
 
+@section('title') Gerenciar Grupos @endsection
+
 @section('content')
-<div class="container">
-    <br>
-    <div class="row" style="text-align:center;">
-        <h4 class="card-title col-12" style="font-size:20px; text-align: left; color: gray; font-family:calibri; margin:0px">
-            GERENCIAR GRUPOS
+<div class="container fluid">
+
+        <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPOS</h4>
+
         </h4>
         <div class="col">
             <form action="{{ route('nomes') }}" method="GET" class="mb-3">
                 <div class="row">
                     <div class="col-md-4 col-sm-12">
                         <label for="nome_pesquisa"></label>
-                        <input class="form-control form-control-lg" type="text" id="nome_pesquisa" name="nome_pesquisa"  placeholder="Pesquisar nome" value="{{ request('nome_pesquisa') }}">
+                        <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa"  value="{{ request('nome_pesquisa') }}">
                     </div>
                     <div class="col-md-4 col-sm-12">
                         <div class="form-group" style="margin-top: 4%">
@@ -27,6 +28,7 @@
             </form>
 
             <div class="table">
+                <div class="row" style="text-align:center;">
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                     <thead style="text-align: center;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
@@ -40,7 +42,7 @@
                             <th class="col">AÇÕES</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody style="font-size: 14px; color:#000000; text-align:center;">
                         @foreach ($grupo as $grupos)
                         <tr>
                           <td> {{$grupos->nome}} </td>
@@ -48,7 +50,7 @@
                           <td> {{$grupos->h_fim}} </td>
                           <td> {{$grupos->max_atend}} </td>
                           <td> {{$grupos->nm_tipo_grupo}} </td>
-                          <td> {{$grupos->status_grupo}} </td>
+                          <td> {{$grupos->descricao1}} </td>
                          <td> {{$grupos->descricao}} </td>
                           <th>
 
@@ -67,6 +69,7 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div class="d-flex justify-content-center">
             </div>
         </div>
     </div>

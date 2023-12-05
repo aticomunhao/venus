@@ -21,16 +21,6 @@
                             <form class="form-horizontal mt-2" method="post" action="/atualizar-grupos/{{ $grupo[0]->id }}">
                                 @csrf
 
-                                <div class="row">
-                                    <div class="col-1 text-end offset-11">
-                                        Status
-                                        <label for="status"></label>
-                                        <input type="checkbox" name="status" style="text-align: right;"
-                                            data-toggle="toggle" data-onlabel="A" data-offlabel="D"
-                                            data-onstyle="success" data-offstyle="" {{ $grupo[0]->status_grupo ? 'checked' : '' }}>
-                                    </div>
-                                </div>
-                                <br>
 
                                 <div class="row">
                                     <div class="col">
@@ -41,16 +31,27 @@
 
                                         Tipo de tratamento
                                         <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_tratamento" required="required">
-                                            @foreach ($grupo as $item)
-                                            <option value="{{ $item->id }}" {{ $grupo[0]->descricao == $item->id ? 'selected' : '' }}>
-                                                {{ $item->descricao }}
+                                            <option value="{{ $grupo[0]->id_tipo_tratamento }}"> {{ $grupo[0]->descricao }}</option>
+                                            @foreach ($tipo_tratamento as $tipo)
+                                            <option value="{{ $tipo->id }}"> {{ $tipo->descricao }}</option>
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                    </div>
+                                    <div class="col-3">
+                                        Status
+                                        <select class="form-select" aria-label=".form-select-lg example" name="status_grupo" required="required">
+                                            <option value="{{ $grupo[0]->status_grupo }}"> {{ $grupo[0]->descricao }}</option>
+                                            @foreach ($tipo_status_grupo as $tipos)
+                                            <option value="{{ $tipos->id }}"> {{ $tipos->descricao }}</option>
                                             </option>
                                             @endforeach
                                         </select>
                                     </div>
-
-
-                                    <div class="row">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
                                         <div class="col">
                                             <br>
                                             Hora início
@@ -60,7 +61,7 @@
                                         <div class="col">
                                             <br>
                                             Hora fim
-                                            <input type="time" class="form-control" id="h_fim" name="h_fim" value="{{ $grupo[0]->h_fim }}" required>
+                                            <input type="time" class="form-control" id="h_fim" name="h_fim" value="{{ $grupo[0]->h_fim }}" required="required">
                                         </div>
                                         <div class="col">
                                             <br>
@@ -72,10 +73,9 @@
                                             <br>
                                             Tipo grupo
                                             <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_grupo" required="required">
-                                                @foreach ($grupo as $item)
-                                                <option value="{{ $item->id }}" {{ $grupo[0]->nm_tipo_grupo== $item->id ? 'selected' : '' }}>
-                                                    {{ $item->nm_tipo_grupo }}
-                                                </option>
+                                                <option value="{{ $grupo[0]->id_tipo_grupo }}" > {{ $grupo[0]->nmg }}</option>
+                                                @foreach ($tipo_grupo as $item)
+                                                <option value="{{ $item->id }}" > {{ $item->nm_tipo_grupo }}</option>
                                                 @endforeach
                                             </select>
                                         </div>

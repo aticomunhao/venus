@@ -20,8 +20,9 @@ class Grupocontroller extends Controller
 
 
             $grupo = DB::table('grupo AS g')
-                ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo', 'tg.nm_tipo_grupo', 'tg.id AS idg', 'tt.descricao')
+                ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo', 'tg.nm_tipo_grupo', 'tg.id AS idg', 'tt.descricao' ,'ts.descricao as descricao1')
                 ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
+                ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
                 ->leftJoin('tipo_tratamento AS tt', 'g.id_tipo_tratamento', 'tt.id');
 
             $nome = $request->nome_pesquisa;
@@ -51,9 +52,10 @@ class Grupocontroller extends Controller
         $grupos = DB::select('select * from grupo');
         $tipo_grupo = DB::select('select id as idg,nm_tipo_grupo from tipo_grupo ');
         $tipo_tratamento = DB::select('select id, descricao from tipo_tratamento');
+        $tipo_status_grupo = DB::select('select id as ids, descricao as descricao from tipo_status_grupo');
 
 
-        return view('grupos/criar-grupos', compact('grupos','tipo_grupo','tipo_tratamento'));
+        return view('grupos/criar-grupos', compact('grupos','tipo_grupo','tipo_tratamento','tipo_status_grupo'));
 
     }
 
@@ -97,12 +99,14 @@ class Grupocontroller extends Controller
         $grupo = DB::table('grupo AS g')
         ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
         ->leftJoin('tipo_tratamento AS tt', 'g.id_tipo_tratamento', 'tt.id')
-        ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo', 'tg.nm_tipo_grupo', 'tt.descricao')->where('g.id', $id)
+        ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
+        ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo', 'tg.nm_tipo_grupo', 'tt.descricao','ts.descricao')->where('g.id', $id)
         ->get();
         $tipo_grupo = DB::table('tipo_grupo')->get();
         $tipo_tratamento = DB::table('tipo_tratamento')->get();
+        $tipo_status_grupo = DB::table('tipo_status_grupo')->get();
 
-        return view('grupos/visualizar-grupos', compact('grupo','tipo_grupo','tipo_tratamento'));
+        return view('grupos/visualizar-grupos', compact('grupo','tipo_grupo','tipo_tratamento','tipo_status_grupo'));
 
     }
 
@@ -116,13 +120,15 @@ class Grupocontroller extends Controller
         $grupo = DB::table('grupo AS g')
         ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
         ->leftJoin('tipo_tratamento AS tt', 'g.id_tipo_tratamento', 'tt.id')
-        ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo', 'tg.nm_tipo_grupo', 'tt.descricao')->where('g.id', $id)
+        ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
+        ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo', 'tg.nm_tipo_grupo as nmg', 'tt.descricao','ts.descricao','g.id_tipo_grupo','g.id_tipo_tratamento','g.status_grupo')->where('g.id', $id)
         ->get();
         $tipo_grupo = DB::table('tipo_grupo')->get();
         $tipo_tratamento = DB::table('tipo_tratamento')->get();
+        $tipo_status_grupo = DB::table('tipo_status_grupo')->get();
 
 
-        return view('grupos/editar-grupos', compact('grupo','tipo_grupo','tipo_tratamento'));
+        return view('grupos/editar-grupos', compact('grupo','tipo_grupo','tipo_tratamento','tipo_status_grupo'));
     }
 
     /**
@@ -157,8 +163,35 @@ class Grupocontroller extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
+
     {
+
+        $ids = DB::table('grupo')->select('nome')->where('id', $id)->get();
+        $teste = session()->get('usuario');
+
+        $verifica = DB::table('historico_venus')->where('fato', $id)->count('fato');
+
+
+        $data = date("Y-m-d H:i:s");
+
+
+
+
+
+
+        DB::table('historico_venus')->insert([
+
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'fato' => 0,
+            'obs' => $id
+
+        ]);
+
         DB::table('grupo')->where('id', $id)->delete();
+
+
+
 
 
         app('flasher')->addError('Excluido com sucesso.');

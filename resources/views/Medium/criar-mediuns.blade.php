@@ -40,6 +40,7 @@
                                         <br>
                                        <div class="row">
                                             <div class="col">
+                                                <p class="text-truncate">
                                                 Nome
                                                 <select class="form-select" aria-label=".form-select-lg example" name="id_pessoa">
                                                     @foreach ($pessoas as $pessoa)

@@ -18,19 +18,8 @@
 
                     <div class="card-body">
                         <div class="container-fluid">
-                                     <div class="row">
-                                    <div class="col-1 text-end offset-11">
-                                        Status
-                                        <label for="status"></label>
-                                        <input type="checkbox" name="status" style="text-align: right;"
-                                            data-toggle="toggle" data-onlabel="A" data-offlabel="D"
-                                            data-onstyle="success" data-offstyle="" {{ $grupo[0]->status_grupo ? 'checked' : '' }}disabled>
-                                        </div>
-                                    </div>
-                                    <br>
-
-                                    <div class="row">
-                                        <div class="col-8">
+                                       <div class="row">
+                                        <div class="col-6">
                                             Nome
                                             <input type="text" class="form-control" id="nome" name="nome" value="{{ $grupo[0]->nome }}" disabled>
                                         </div>
@@ -47,6 +36,16 @@
                                             </select>
                                         </div>
 
+                                            <div class="col">
+                                        Status
+                                        <select class="form-select" aria-label=".form-select-lg example" name="status_grupo" disabled="required">
+                                            <option value="{{ $grupo[0]->status_grupo }}"> {{ $grupo[0]->descricao }}</option>
+                                            @foreach ($tipo_status_grupo as $tipos)
+                                            <option value="{{ $tipos->id }}"> {{ $tipos->descricao }}</option>
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                            </div>
                                         <div class="row">
                                             <div class="col">
                                                 <br>
