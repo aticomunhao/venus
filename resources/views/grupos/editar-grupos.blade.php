@@ -25,7 +25,7 @@
                                 <div class="row">
                                     <div class="col">
                                         Nome
-                                        <input type="text" class="form-control" id="nome" name="nome" value="{{ $grupo[0]->nome }}"required="required">
+                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="30" value="{{ $grupo[0]->nome }}"required="required">
                                     </div>
                                     <div class="col">
 
@@ -66,7 +66,7 @@
                                         <div class="col">
                                             <br>
                                             Max atendido
-                                            <input type="number" class="form-control" id="max_atend"  min ="1"  name="max_atend"value="{{ $grupo[0]->max_atend }}"required="required">
+                                            <input type="number" class="form-control" id="max_atend"   min="1" max="100" name="max_atend" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value="{{ $grupo[0]->max_atend }}"required="required">
                                         </div>
 
                                         <div class="col">

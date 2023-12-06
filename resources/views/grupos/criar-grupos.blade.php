@@ -24,9 +24,8 @@
 
                                 <div class="row">
                                     <div class="col-6">
-                                        <p class="text-truncate">
                                         Nome
-                                        <input type="text" class="form-control" id="nome" name="nome" required="required">
+                                        <input type="text" class="form-control" id="nome" name="nome"  maxlength="30" required="required">
                                     </div>
 
                                     <div class="col">
@@ -63,7 +62,7 @@
                                       <div class="col">
                                         <br>
                                         Max atendido
-                                        <input type="number" class="form-control" id="max_atend" min ="1"name="max_atend" required="required">
+                                        <input type="number" class="form-control" id="max_atend" min="1" max="100" name="max_atend" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" required="required">
                                     </div>
 
                                     <div class="col">

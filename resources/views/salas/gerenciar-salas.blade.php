@@ -3,11 +3,9 @@
 @section('content')
 
 
-<div class="container">
-  <br>
+<div class="container-fluid">
      <div class="row" style="text-align:center;">
-        <h4 class="card-title col-10 " class="card-title"
-          style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR SALAS
+         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR SALAS</h4>
         </h4>
         <div class="col" style="text-align: right">
             <br>

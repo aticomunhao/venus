@@ -92,12 +92,7 @@ class SalaController extends Controller
 
 
 
-        DB::table('historico_venus')->insert([
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $salas,
-            'fato' => 23
-        ]);
-
+       
 
 
 

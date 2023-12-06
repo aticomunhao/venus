@@ -15,6 +15,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\GrupoController;
+use App\Http\Controllers\MediumController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 
 

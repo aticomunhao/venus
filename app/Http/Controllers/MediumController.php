@@ -24,21 +24,21 @@ class MediumController extends Controller
                 ->orderBy('p.nome_completo', 'ASC');
 
 
-            $nome = $request->nome;
-            if ($nome) {
-                $medium->where('p.nome_completo', 'like', "%$nome%");
-            }
+            // $nome = $request->nome;
+            // if ($nome) {
+            //     $medium->where('p.nome_completo', 'like', "%$nome%");
+            // }
 
 
-            $medium = $medium->orderBy('p.status', 'asc')
-                ->orderBy('p.nome_completo', 'asc')
-                ->paginate(50);
+            // $medium = $medium->orderBy('p.status', 'asc')
+            //     ->orderBy('p.nome_completo', 'asc')
+            //     ->paginate(50);
 
 
-            $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
+            // $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
 
 
-            return view('medium/gerenciar-mediuns', compact('medium', 'tipo_mediunidade','nome'));
+            return view('medium/gerenciar-mediuns', compact('medium'));
         }
 
 
