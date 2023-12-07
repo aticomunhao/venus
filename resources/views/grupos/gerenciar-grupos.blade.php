@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="container-fluid">
+<<<<<<< HEAD
 
     <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPOS</h4>
     <br>
@@ -17,6 +18,24 @@
                         <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;" type="submit" value="Pesquisar">
                         <a href="/gerenciar-grupos" class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;">Limpar</a>
                         <a href="/criar-grupos" class="btn btn-success btn-sm" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;">Novo grupo</a>
+=======
+        <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPOS</h4>
+        <div class="col-12">
+            <form action="{{ route('nomes') }}" method="GET" class="mb-3">
+                <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <label for="nome_pesquisa"></label>
+                        <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa"  value="{{ request('nome_pesquisa') }}">
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="form-group" style="margin-top: 4%">
+                            <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:0px;" type="submit" value="Pesquisar">
+                            <a href="/gerenciar-grupos"><input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
+                        </form>
+
+                             <a href="/criar-grupos" class="btn btn-success btn-sm ms-2" id="name" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;"  type="button">Novo grupo</a>
+                        </div>
+>>>>>>> 36b7bd3241590ac910d93410fddd9006747b1280
                     </div>
                 </div>
             </form>
@@ -67,6 +86,6 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    
 </div>
 @endsection

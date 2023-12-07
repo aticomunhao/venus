@@ -78,15 +78,17 @@
                                             <tr style="text-align:center; font-weight: bold; font-size:12px">
                                                 <td class="col">OBSERVAÇÃO</td>
                                                 <td class="col">TEMAS</td>
-                                                <td class="col">ENCAMINHAMENTO</td>
+                                                <td class="col">ENCAMINHAMENTO TRATAMENTO</td>
+                                                <td class="col">ENCAMINHAMENTO ENTREVISTA</td>
                                             </tr>
 
                                         </thead>
                                         <tbody>
                                             <tr style="text-align:center;font-size:11px">       
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                                <td>{{$assistidos->observacao}}</td>
+                                                <td>{{$assistidos->nm_tca}} {{$assistidos->t1}} {{$assistidos->t2}} {{$assistidos->t3}} {{$assistidos->t4}} {{$assistidos->t5}} {{$assistidos->t6}} {{$assistidos->t7}} {{$assistidos->t8}} {{$assistidos->t9}} {{$assistidos->t10}} {{$assistidos->t11}} {{$assistidos->t12}} {{$assistidos->t13}}{{$assistidos->t14}} {{$assistidos->t15}} {{$assistidos->t16}} {{$assistidos->t17}} {{$assistidos->t18}} {{$assistidos->t19}}</td>
+                                                <td>{{$assistidos->ttd}}</td>
+                                                <td>{{$assistidos->ted}}</td>
                                             </tr>
                                         </tbody>
                                     </table>

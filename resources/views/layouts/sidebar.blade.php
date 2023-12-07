@@ -11,7 +11,7 @@
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                             <li><a class="dropdown-item" href="/atendendo">Atendimento Fraterno Individual</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-atendimentos">Recepção Atendimento Fraterno</a></li>
-                            <li><a class="dropdown-item" href="#">Recepção Geral</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-recepcao">Recepção Integrada</a></li>
                         </ul>
                     </li>
                 </ul>
