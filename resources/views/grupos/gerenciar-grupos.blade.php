@@ -3,12 +3,9 @@
 @section('title') Gerenciar Grupos @endsection
 
 @section('content')
-<div class="container fluid">
-
+<div class="container-fluid">
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPOS</h4>
-
-        </h4>
-        <div class="col">
+        <div class="col-12">
             <form action="{{ route('nomes') }}" method="GET" class="mb-3">
                 <div class="row">
                     <div class="col-md-4 col-sm-12">
@@ -72,7 +69,7 @@
             </div class="d-flex justify-content-center">
             </div>
         </div>
-    </div>
+    
 </div>
 @endsection
 

@@ -16,6 +16,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\GrupoController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
+use App\Http\Controllers\RecepcaoIntegradaController;
 
 
 /*
@@ -156,16 +157,14 @@ Route::any('/deletar-mediuns/{id}', [MediumController::class, 'destroy'])->name(
 Route::get('/visualizar-mediuns/{id}', [MediumController::class, 'show'])->name('');
 
 //RECEPÇÃO INTEGRADA DA DAO
-Route::get('/a', [GerenciarRecepcapIntegradaController::class, 'index'])->name('intdex');
-Route::get('/b', [GerenciarRecepcapIntegradaController::class, 'create'])->name('intcre');
-Route::post('/c', [GerenciarRecepcapIntegradaController::class, 'store'])->name('intore');
-Route::get('/d', [GerenciarRecepcapIntegradaController::class, 'cancelar'])->name('intcan');
-
-
-Route::get('/h', [GerenciarRecepcapIntegradaController::class, 'edit'])->name('intedi');
-Route::post('i', [GerenciarRecepcapIntegradaController::class, 'altera'])->name('intalt');
-Route::get('/j', [GerenciarRecepcapIntegradaController::class, 'visual'])->name('intvis');
-Route::put('/k', [GerenciarRecepcapIntegradaController::class, 'salvaatend'])->name('intate');
+Route::get('/gerenciar-recepcao', [RecepcaoIntegradaController::class, 'index'])->name('recdex');
+Route::get('/agenda/{ide}', [RecepcaoIntegradaController::class, 'agendar'])->name('ridage');
+Route::post('/criar-tratamento/{ide}', [RecepcaoIntegradaController::class, 'criar'])->name('ridcri');
+Route::get('/d', [RecepcapIntegradaController::class, 'cancelar'])->name('intcan');
+Route::get('/h', [RecepcaoIntegradaController::class, 'edit'])->name('intedi');
+Route::post('i', [RecepcaoIntegradaController::class, 'altera'])->name('intalt');
+Route::get('/j', [RecepcaoIntegradaController::class, 'visual'])->name('intvis');
+Route::put('/k', [RecepcaoIntegradaController::class, 'salvaatend'])->name('intate');
 
 
 

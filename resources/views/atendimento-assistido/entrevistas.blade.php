@@ -23,24 +23,24 @@
                             <input class="form-control" type="text" name="nome" value="{{$assistido[0]->nm_1}}" disabled>
                         </div>
                     </div>
-                    <form class="form-horizontal mt-4" method="POST" action="/tratamentos/{{$assistido[0]->idat}}">
+                    <form class="form-horizontal mt-4" method="POST" action="/entrevistas/{{$assistido[0]->idat}}">
                     @csrf                
                     <div class="row form-group">
                         <div class="form-check form-check-inline">                        
-                            <input type="checkbox" id="pph" name="pph" class="form-check-input" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                            <label for="pph" class="form-check-label">Palestra/Passe de Harmonização - PPH</label>
+                            <input type="checkbox" id="afe" name="afe" class="form-check-input" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                            <label for="afe" class="form-check-label">Atendente Fraterno Individual - AFE</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input type="checkbox" id="ptd" name="ptd" class="form-check-input" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                            <label for="ptd" class="form-check-label">Passe Tratamento Desobessessivo - PTD</label>
+                            <input type="checkbox" id="ame" name="ame" class="form-check-input" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                            <label for="ame" class="form-check-label">Asessoria da Medicina Espiritual - AME</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input type="checkbox" id="ptig" name="ptig" class="form-check-input" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                            <label for="ptig" class="form-check-label">Passe Tratamento Integral - PTIg</label>
+                            <input type="checkbox" id="diamo" name="diamo" class="form-check-input" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                            <label for="diamo" class="form-check-label">Divisão de Apoio ao Médium Ostensivo em Eclosão da Mediunidade - DIAMO</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input type="checkbox" id="pti" name="pti" class="form-check-input" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                            <label for="pti" class="form-check-label">Passe Tratamento Intensivo - PTI</label>
+                            <input type="checkbox" id="nutres" name="nutres" class="form-check-input" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                            <label for="nutres" class="form-check-label">Núcleo de Tratamento Espiritual - NUTRES</label>
                         </div>                    
                     </div>
                     <br>
