@@ -9,7 +9,7 @@
         </h4>
         <div class="col" style="text-align: right">
             <br>
-          <a href="/criar-salas" class="btn btn-success"id="name=" type="button">Nova Sala</a>
+            <a href="/criar-salas" class="btn btn-success btn-sm" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;">Nova Sala</a>
         </div>
         <br>
         <br><br>

@@ -20,9 +20,10 @@ class Grupocontroller extends Controller
 
 
             $grupo = DB::table('grupo AS g')
-                ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo', 'tg.nm_tipo_grupo', 'tg.id AS idg', 'tt.descricao' ,'ts.descricao as descricao1')
+                ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo','g.id_tipo_motivo', 'tg.nm_tipo_grupo', 'tg.id AS idg', 'tt.descricao' ,'ts.descricao as descricao1','tm.tipo')
                 ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
                 ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
+                ->leftJoin('tipo_motivo AS tm', 'g.id_tipo_motivo', 'tm.id')
                 ->leftJoin('tipo_tratamento AS tt', 'g.id_tipo_tratamento', 'tt.id');
 
             $nome = $request->nome_pesquisa;
@@ -53,11 +54,16 @@ class Grupocontroller extends Controller
         $tipo_grupo = DB::select('select id as idg,nm_tipo_grupo from tipo_grupo ');
         $tipo_tratamento = DB::select('select id, descricao from tipo_tratamento');
         $tipo_status_grupo = DB::select('select id as ids, descricao as descricao from tipo_status_grupo');
+        $tipo_motivo = DB::select('select id id,tipo from tipo_motivo');
+        $initiallyDisabled = true; // Altere isso com a lógica real
 
 
-        return view('grupos/criar-grupos', compact('grupos','tipo_grupo','tipo_tratamento','tipo_status_grupo'));
+
+        return view('grupos/criar-grupos', compact('grupos','tipo_grupo','tipo_tratamento','tipo_status_grupo','tipo_motivo','initiallyDisabled'));
 
     }
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -72,7 +78,8 @@ class Grupocontroller extends Controller
             'h_fim' => $request->input('h_fim'),
             'max_atend' => $request->input('max_atend'),
             'id_tipo_grupo' => $request->input('id_tipo_grupo'),
-            'id_tipo_tratamento'=>$request->input('id_tipo_tratamento')
+            'id_tipo_tratamento'=>$request->input('id_tipo_tratamento'),
+            'id_tipo_motivo'=>$request->input('id_tipo_motivo')
 
         ]);
 
@@ -90,6 +97,9 @@ class Grupocontroller extends Controller
         return redirect('gerenciar-grupos');
     }
 
+// Supondo que você tenha um método no seu controlador para retornar a view
+
+
 
     /**
      * Display the specified resource.
@@ -100,13 +110,15 @@ class Grupocontroller extends Controller
         ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
         ->leftJoin('tipo_tratamento AS tt', 'g.id_tipo_tratamento', 'tt.id')
         ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
-        ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo', 'tg.nm_tipo_grupo', 'tt.descricao','ts.descricao')->where('g.id', $id)
+        ->leftJoin('tipo_motivo AS tm', 'g.id_tipo_motivo', 'tm.id')
+        ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo','g.id_tipo_motivo', 'tg.nm_tipo_grupo', 'tt.descricao','ts.descricao as descricao1','tm.tipo')->where('g.id', $id)
         ->get();
         $tipo_grupo = DB::table('tipo_grupo')->get();
         $tipo_tratamento = DB::table('tipo_tratamento')->get();
-        $tipo_status_grupo = DB::table('tipo_status_grupo')->get();
+        $tipo_status_grupo = DB::table('tipo_status_grupo')->select('descricao as descricao1','id')->get();
+        $tipo_motivo = DB::table('tipo_motivo')->get();
 
-        return view('grupos/visualizar-grupos', compact('grupo','tipo_grupo','tipo_tratamento','tipo_status_grupo'));
+        return view('grupos/visualizar-grupos', compact('grupo','tipo_grupo','tipo_tratamento','tipo_status_grupo','tipo_motivo'));
 
     }
 
@@ -121,14 +133,17 @@ class Grupocontroller extends Controller
         ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
         ->leftJoin('tipo_tratamento AS tt', 'g.id_tipo_tratamento', 'tt.id')
         ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
-        ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo', 'tg.nm_tipo_grupo as nmg', 'tt.descricao','ts.descricao','g.id_tipo_grupo','g.id_tipo_tratamento','g.status_grupo')->where('g.id', $id)
+        ->leftJoin('tipo_motivo AS tm', 'g.id_tipo_motivo', 'tm.id')
+        ->select('g.id', 'g.nome', 'g.h_inicio', 'g.h_fim', 'g.max_atend', 'g.status_grupo', 'tg.nm_tipo_grupo as nmg', 'tt.descricao','ts.descricao as descricao1','g.id_tipo_grupo','g.id_tipo_tratamento','g.status_grupo','g.id_tipo_motivo','tm.tipo')->where('g.id', $id)
         ->get();
         $tipo_grupo = DB::table('tipo_grupo')->get();
-        $tipo_tratamento = DB::table('tipo_tratamento')->get();
-        $tipo_status_grupo = DB::table('tipo_status_grupo')->get();
+        $tipo_tratamento = DB::table('tipo_tratamento')->orderby('descricao','asc')->get();
+        $tipo_status_grupo = DB::table('tipo_status_grupo')->select('descricao as descricao1','id')->get();
+        $tipo_motivo = DB::table('tipo_motivo')->get();
 
 
-        return view('grupos/editar-grupos', compact('grupo','tipo_grupo','tipo_tratamento','tipo_status_grupo'));
+        return view('grupos/editar-grupos', compact('grupo','tipo_grupo','tipo_tratamento','tipo_status_grupo','tipo_motivo'));
+
     }
 
     /**
@@ -149,7 +164,9 @@ class Grupocontroller extends Controller
         'max_atend' => $request->input('max_atend'),
         'id_tipo_grupo' => $request->input('id_tipo_grupo'),
         'status_grupo' => $request->input('status_grupo'),
-        'id_tipo_tratamento' => $request->input('id_tipo_tratamento')
+        'id_tipo_tratamento' => $request->input('id_tipo_tratamento'),
+        'id_tipo_motivo' => $request->input('id_tipo_motivo')
+
 
     ]);
 

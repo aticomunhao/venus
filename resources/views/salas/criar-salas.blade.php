@@ -57,7 +57,7 @@
                                         <input type="number" class="form-control" id="tamanho_sala" name="tamanho_sala" min="1" max="300" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" required="required">
                                     </div>
                                     <div class="col">Número de lugares
-                                        <input type="number" class="form-control" id="nr_lugares" name="nr_lugares" min="1" max="300" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" required="required">
+                                        <input type="number" class="form-control" id="nr_lugares" name="nr_lugares" min="1" max="1000" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" required="required">
                                     </div>
                                 </div>
                             <br>

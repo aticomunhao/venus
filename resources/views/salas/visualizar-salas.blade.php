@@ -40,6 +40,7 @@
                                         <input type="number" id="" value="{{ $salaEditada->numero }}"
                                             class="form-control" placeholder="Disabled input" disabled>
                                     </div>
+                                
                                     <div class="col">Finalidade sala
                                         <select class="form-select" aria-label=".form-select-lg example" disabled>
                                             @foreach ($tipo_finalidade_sala as $tipo)
