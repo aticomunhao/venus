@@ -29,13 +29,9 @@
                             <label for="disabledTextInput" class="form-label">Assistido:</label>
                             <input type="text" id="" value="{{$result[0]->nm_1}}" class="form-control" placeholder="Disabled input" disabled>
                         </div>
-                        <div class="col-1">
-                            <label for="disabledTextInput" class="form-label">DDD:</label>
-                            <input type="text" id="" value="{{$result[0]->ddd}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
-                        </div>
-                        <div class="col-3">
-                            <label for="disabledTextInput" class="form-label">Celular:</label>
-                            <input type="tel" id="phone"  name="phone"  value="{{number_format($result[0]->celular, 0, ',', '-')}}"   class="form-control" placeholder="Disabled input" disabled>
+                        <div class="col-2">
+                            <label for="disabledTextInput" class="form-label">Data nascimento:</label>
+                            <input type="date" id="" value="{{$result[0]->dt_nascimento}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
                         </div>
                     </div>
                     </fieldset>
