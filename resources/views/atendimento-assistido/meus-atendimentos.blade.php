@@ -50,6 +50,7 @@
                                     <table class="table table-sm table-bordered table-striped">
                                         <thead style="text-align:center; background: #daffe0;">
                                             <tr style="text-align:center; font-weight: bold; font-size:12px">
+                                                <td class="col">NR</td>
                                                 <td class="col-3">ASSISTIDO</td>
                                                 <td class="col-3">REPRESENTANTE</td>
                                                 <td class="col-1">PARENTESCO</td>
@@ -62,6 +63,7 @@
                                         </thead>
                                         <tbody>
                                             <tr style="text-align:center;font-size:11px">
+                                                <td>{{$assistidos->ida}}</td>           
                                                 <td>{{$assistidos->nm_1}}</td>       
                                                 <td>{{$assistidos->nm_2}}</td>
                                                 <td>{{$assistidos->nome}}</td>
@@ -78,6 +80,21 @@
                                             <tr style="text-align:center; font-weight: bold; font-size:12px">
                                                 <td class="col">OBSERVAÇÃO</td>
                                                 <td class="col">TEMAS</td>
+
+                                            </tr>
+
+                                        </thead>
+                                        <tbody>
+                                            <tr style="text-align:center;font-size:11px">       
+                                                <td>{{$assistidos->observacao}}</td>
+                                                <td>{{$assistidos->t1}} {{$assistidos->t2}} {{$assistidos->t3}} {{$assistidos->t4}} {{$assistidos->t5}} {{$assistidos->t6}} {{$assistidos->t7}} {{$assistidos->t8}} {{$assistidos->t9}} {{$assistidos->t10}} {{$assistidos->t11}} {{$assistidos->t12}} {{$assistidos->t13}}{{$assistidos->t14}} {{$assistidos->t15}} {{$assistidos->t16}} {{$assistidos->t17}} {{$assistidos->t18}} {{$assistidos->t19}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br/>
+                                    <table class="table table-sm table-bordered table-striped">
+                                        <thead style="text-align:center; background: #daffe0;">
+                                            <tr style="text-align:center; font-weight: bold; font-size:12px">
                                                 <td class="col">ENCAMINHAMENTO TRATAMENTO</td>
                                                 <td class="col">ENCAMINHAMENTO ENTREVISTA</td>
                                             </tr>
@@ -85,8 +102,6 @@
                                         </thead>
                                         <tbody>
                                             <tr style="text-align:center;font-size:11px">       
-                                                <td>{{$assistidos->observacao}}</td>
-                                                <td>{{$assistidos->nm_tca}} {{$assistidos->t1}} {{$assistidos->t2}} {{$assistidos->t3}} {{$assistidos->t4}} {{$assistidos->t5}} {{$assistidos->t6}} {{$assistidos->t7}} {{$assistidos->t8}} {{$assistidos->t9}} {{$assistidos->t10}} {{$assistidos->t11}} {{$assistidos->t12}} {{$assistidos->t13}}{{$assistidos->t14}} {{$assistidos->t15}} {{$assistidos->t16}} {{$assistidos->t17}} {{$assistidos->t18}} {{$assistidos->t19}}</td>
                                                 <td>{{$assistidos->ttd}}</td>
                                                 <td>{{$assistidos->ted}}</td>
                                             </tr>

@@ -8,8 +8,7 @@
 <br>
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-12">
-            
+        <div class="col-12">            
             <div class="card">
                 <div class="card-header">
                     <div class="row">
@@ -71,41 +70,80 @@
                                                 <td>{{$assistidos->dh_inicio}}</td>
                                                 <td>{{$assistidos->dh_fim}}</td>
                                                 <td>{{$assistidos->descricao}}</td>
-                                                <td>{{$assistidos->observacao}}</td>
-                                            </tr>
+                                                
+                                            </tr>                                          
                                         </tbody>
                                     </table>
-                                    <br> 
+                                    <br/>
                                     <table class="table table-sm table-bordered table-striped">
                                         <thead style="text-align:center; background: #daffe0;">
                                             <tr style="text-align:center; font-weight: bold; font-size:12px">
-                                                <td class="col">TEMAS</td>
-                                                <td class="col">OBSERVAÇÃO</td>
-                                                <td class="col">ENCAMINHAMENTO TRATAMENTO</td>
-                                                <td class="col">ENCAMINHAMENTO ENTREVISTA</td>
+                                                <td class="col">OBSERVAÇÃO</td>                                                                                               
+                                            </tr>
+                                            <tr style="text-align:center;font-size:11px">
+                                                <td> {{$assistidos->observacao}}</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table> 
+                                    <br/>                     
+                                    <table class="table table-sm table-bordered table-striped">
+                                        <thead style="text-align:center; background: #daffe0;">
+                                            <tr style="text-align:center; font-weight: bold; font-size:12px">                                
+                                                <td class="col span-1">TEMAS</td>                                                                                               
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr style="text-align:center;font-size:11px">
-                                                <td>{{$assistidos->tt}}</td>
-                                                <td>{{$assistidos->te}}</td>
-                                                <td></td>
+                                                @foreach($tema as $temas)
+                                                <td>                                             
+                                                {{$temas->t1}} {{$temas->t2}} {{$temas->t3}} {{$temas->t4}} {{$temas->t5}} {{$temas->t6}} {{$temas->t7}} {{$temas->t8}} {{$temas->t9}} {{$temas->t10}} {{$temas->t11}} {{$temas->t12}} {{$temas->t13}} {{$temas->t14}} {{$temas->t15}} {{$temas->t16}} {{$temas->t17}} {{$temas->t18}}                                 
+                                                </td>
+                                                @endforeach                                                     
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>                             
+                                    <br/>                                
+                                    <table class="table table-sm table-bordered table-striped">
+                                        <thead style="text-align:center; background: #daffe0;">
+                                            <tr style="text-align:center; font-weight: bold; font-size:12px">
+                                                <td class="col">ENCAMINHAMENTO TRATAMENTO</td>                                               
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr style="text-align:center;font-size:11px">
+                                                @foreach($trata as $tratas)
+                                                <td>
+                                                    {{$tratas->tdt}}
+                                                </td>
+                                                @endforeach                                                
                                             </tr>                                  
                                         </tbody>
-                                    </table>                                  
+                                    </table> 
+                                    <br/> 
+                                    <table class="table table-sm table-bordered table-striped">
+                                        <thead style="text-align:center; background: #daffe0;">
+                                            <tr style="text-align:center; font-weight: bold; font-size:12px">                                              
+                                                <td class="col">ENCAMINHAMENTO ENTREVISTA</td>                                               
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr style="text-align:center;font-size:11px">                                             
+                                            @foreach ($entre as $entres)<td>{{$entres->ted}}</td>@endforeach
+                                            </tr>                                  
+                                        </tbody>
+                                    </table>                                             
                                 </div>
                             </div>
-                        </div>
-                        @endforeach
-                        {{--{{$tema->nm_tca}} {{$assistidos->t1}} {{$assistidos->t2}} {{$assistidos->t3}} {{$assistidos->t4}} {{$assistidos->t5}} {{$assistidos->t6}} {{$assistidos->t7}} {{$assistidos->t8}} {{$assistidos->t9}} {{$assistidos->t10}} {{$assistidos->t11}} {{$assistidos->t12}} {{$assistidos->t13}}{{$assistidos->t14}} {{$assistidos->t15}} {{$assistidos->t16}} {{$assistidos->t17}} {{$assistidos->t18}} {{$assistidos->t19}}--}}
+                        </div>                        
+               @endforeach
                     <br>
                     <div class="row">
                         <div class="col">    
-                            <a class="btn btn-danger" href="/atendendo" style="text-align:right;" role="button">Fechar</a>
-
-                            
-                        </div>
-                        
+                            <a class="btn btn-danger" href="/atendendo" style="text-align:right;" role="button">Fechar</a>                            
+                        </div>                        
                     </div>
                 </div>
             </div>
