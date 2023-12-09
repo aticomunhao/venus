@@ -23,8 +23,17 @@
                                 <div class="row">
                                     <div class="col">
                                         Nome
-                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="30" value="{{ $grupo[0]->nome }}" required="required">
+                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="30" value="{{ $grupo[0]->nome }}" required="required" oninput="validarSomenteLetras(this)">
                                     </div>
+                                    <script>
+                                        function validarSomenteLetras(input) {
+                                            // Remove caracteres não alfabéticos e não espaços
+                                            input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+                                        }
+                                    </script>
+
+
+
                                     <div class="col-3">
                                         Status
                                         <select class="form-select" aria-label=".form-select-lg example" name="status_grupo" id="status_grupo" required="required">
@@ -36,7 +45,7 @@
                                     <div class="col-3">
                                         Motivo
                                         <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_motivo" id="tipo_motivo" required="required" disabled>
-                                            <option value=""> </option>
+                                            <option value="{{ $grupo[0]->id_tipo_motivo }}"> {{ $grupo[0]->tipo }}</option>
                                             @foreach ($tipo_motivo as $tipo_motivos)
                                                 <option value="{{ $tipo_motivos->id }}"> {{ $tipo_motivos->tipo }} </option>
                                             @endforeach

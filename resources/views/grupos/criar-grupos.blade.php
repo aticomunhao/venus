@@ -22,10 +22,18 @@
 
                                 <div class="row">
                                     <div class="col-6">
-
                                         Nome
-                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="30" required="required">
+                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="30" required="required" oninput="validarSomenteLetras(this)">
                                     </div>
+
+                                    <script>
+                                        function validarSomenteLetras(input) {
+                                            // Remove caracteres não alfabéticos e não espaços
+                                            input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+                                        }
+                                    </script>
+
+
 
                                     <!DOCTYPE html>
                                     <html lang="en">
@@ -99,18 +107,19 @@
                                                 </select>
                                             </div>
                                             <div class="col">
-                                            <br>
-                                            Hora Início
-                                            <input type="time" class="form-control" id="h_inicio" name="h_inicio" required="required">
-                                        </div>
+                                                <br>
+                                                Hora Início
+                                                <input type="time" class="form-control" id="h_inicio" name="h_inicio" required="required" step="60">
+                                            </div>
 
-                                        <div class="col">
+                                            <div class="col">
+                                                <br>
+                                                Hora Fim
+                                                <input type="time" class="form-control" id="h_fim" name="h_fim" required="required" step="60">
+                                            </div>
                                             <br>
-                                            Hora Fim
-                                            <input type="time" class="form-control" id="h_fim" name="h_fim" required="required">
-                                        </div>
-                                        <br>
-                                        <div class="col">
+                                            <div class="col">
+
                                             <br>
                                             Max atendido
                                             <input type="number" class="form-control" id="max_atend" min="1" max="100" name="max_atend" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" required="required">

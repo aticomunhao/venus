@@ -15,39 +15,35 @@ use function Psy\debug;
 
 class SalaController extends Controller
 {
-    public function index()
-    {
+    public function index(Request $request)
+{
+    $sala = DB::table('salas AS s')
+        ->select(
+            's.id AS ids',
+            's.nome AS nome1',
+            's.id_finalidade',
+            's.numero',
+            's.id_localizacao',
+            's.tamanho_sala',
+            's.nr_lugares',
+            's.status_sala',
+            'ts.descricao',
+            'tl.nome AS nome2'
+        )
+        ->leftJoin('tipo_finalidade_sala AS ts', 's.id_finalidade', 'ts.id')
+        ->leftJoin('tipo_localizacao AS tl', 's.id_localizacao', 'tl.id');
 
-        $sala = db::select('select s.id as ids,
-                                s.nome as nome1,
-                                s.id_finalidade,
-                                s.numero,
-                                s.id_localizacao,
-                                s.tamanho_sala,
-                                s.nr_lugares,
-                                s.status_sala,
-                                ts.descricao,
-                                tl.nome as nome2
+    $nome = $request->nome_pesquisa;
 
-            from salas s
-            left join tipo_finalidade_sala ts on (s.id_finalidade = ts.id)
-            left join tipo_localizacao as tl on (s.id_localizacao=tl.id)ORDER BY s.nome ASC');
-
-
-
-
-
-        $tipo_localizacao = DB::table('tipo_localizacao as tl')
-            ->leftJoin('salas AS s', 'tl.id', '=', 's.id_localizacao')->select('s.id AS ids', 'tl.nome', 'tl.sigla')->get();
-
-
-
-
-
-
-
-        return view('salas/gerenciar-salas', compact('sala', 'tipo_localizacao'));
+    if ($request->nome_pesquisa) {
+        $sala->where('s.nome', 'like', "%$request->nome_pesquisa%");
     }
+
+    $sala = $sala->orderBy('s.nome', 'ASC')->paginate(50);
+
+    return view('salas.gerenciar-salas', compact('sala'));
+}
+
 
     public function criar()
     {
@@ -92,7 +88,7 @@ class SalaController extends Controller
 
 
 
-       
+
 
 
 

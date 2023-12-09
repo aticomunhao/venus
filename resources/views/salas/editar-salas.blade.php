@@ -18,15 +18,22 @@
                     <form class="form-horizontal mt-2" method="post" action="/atualizar-salas/{{$salaEditada->id}}">
                         @csrf
                         <div class="col-1 text-end offset-11">
-                            Status <label for="status_sala"></label>
-                            <input type="checkbox" name="status_sala" style="text-align: right;" data-toggle="toggle" data-onlabel="A" data-offlabel="D" data-onstyle="success" data-offstyle="">
-                        </div>
-
+                            Status
+                                <label for="status_sala"></label>
+                                    <input type="checkbox" name="status_sala" style="text-align: right;" data-toggle="toggle" data-onlabel="A" data-offlabel="D" data-onstyle="success" data-offstyle="" @checked($salaEditada->status_sala)>
+                                </div>
                                 <div class="row">
                                     <div class="col-8">
                                         Nome
-                                        <input type="text" maxlength="50" class="form-control" id="nome" name="nome" value={{$salaEditada->nome}}>
+                                        <input type="text" maxlength="50" class="form-control" id="nome" name="nome" value={{$salaEditada->nome}}  required="required" oninput="validarSomenteLetras(this)">
                                     </div>
+                                    
+                                    <script>
+                                        function validarSomenteLetras(input) {
+                                            // Remove caracteres não alfabéticos e não espaços
+                                            input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+                                        }
+                                    </script>
                                     <div class="col">
                                         Finalidade sala
                                         <select class="form-select" aria-label=".form-select-lg example" name="id_finalidade">
@@ -40,7 +47,7 @@
                                 <br>
                                 <div class="row">
                                     <div class="col">Número
-                                        <input type="number" class="form-control" id="numero" min="1" max="100" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->numero}} required="required">
+                                        <input type="number" class="form-control" id="numero" min="1" max="200" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->numero}} required="required">
                                     </div>
                                     <div class="col">Localização
                                         <select class="form-select" name="id_localizacao" aria-label="form-select-lg example" value={{$salaEditada->id_localizacao}}>
@@ -61,10 +68,7 @@
                             <br>
 
                         <div class="row form-group">
-                            <div class="col">
-                                <label for="status_sala">Status</label>
-                                    <input type="checkbox" name="status_sala" style="text-align: right;" data-toggle="toggle" data-onlabel="A" data-offlabel="D" data-onstyle="success" data-offstyle="" @checked($salaEditada->status_sala)>
-                                </div>
+
                                 <div class="col">
                                     <label for="ar_condicionado">Ar-cond</label>
                                     <input type="checkbox" name="ar_condicionado" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" @checked($salaEditada->ar_condicionado)>

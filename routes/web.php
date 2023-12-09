@@ -132,7 +132,7 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 
 // Fato
 //Route::post('/Gerenciarm', [PessoaController::class, 'create'])->ID('pesdex');
-Route::get('/gerenciar-fatos', [FatosController::class, 'index'])->name('');
+Route::get('/gerenciar-fatos', [FatosController::class, 'index'])->name('descricao');
 Route::get('/editar-fatos/{id}', [FatosController::class, 'edit'])->name('');
 Route::post('/atualizar-fatos/{id}', [FatosController::class, 'update'])->name('');
 Route::any('/incluir-fatos', [FatosController::class, 'incluir']);
@@ -140,7 +140,7 @@ Route::get('/criar-fatos', [FatosController::class, 'criar'])->name('');
 Route::any('/deletar-fatos/{id}', [FatosController::class, 'destroy'])->name('');
 
 //Salas
-Route::get('/gerenciar-salas', [SalaController::class, 'index'])->name('');
+Route::get('/gerenciar-salas', [SalaController::class, 'index'])->name('salas');
 Route::get('/editar-salas/{id}', [SalaController::class, 'edit'])->name('');
 Route::post('/atualizar-salas/{id}', [SalaController::class, 'update'])->name('');
 Route::get('/criar-salas', [SalaController::class, 'criar'])->name('');

@@ -9,12 +9,19 @@ use Illuminate\Database\DBAL\TimestampType;
 
     class FatosController extends Controller
     {
-        public function index() {
+        public function index(Request $request)
+        {
+            $lista = DB::table('tipo_fato')
+                ->select('id', 'descricao')
+                ->orderBy('id', 'ASC');
 
-            $lista = DB::select('select id, descricao from tipo_fato ORDER BY id ASC') ;
+            if ($request->nome_pesquisa) {
+                $lista->where('descricao', 'like', "%$request->nome_pesquisa%");
+            }
 
+            $lista = $lista->paginate(50);
 
-            return view ('/administrativo/gerenciar-fatos' , compact('lista'));
+            return view('/administrativo/gerenciar-fatos', compact('lista'));
         }
 
         public function edit($id) {
@@ -39,7 +46,7 @@ use Illuminate\Database\DBAL\TimestampType;
 
         public function criar()
         {
-            app('flasher')->addInfo('O cadastro do fato foi realizado com sucesso.');
+
             return view ('/administrativo/criar-fatos');
 
 
@@ -54,7 +61,7 @@ use Illuminate\Database\DBAL\TimestampType;
                 'descricao' => $request->input('fato')
             ]);
 
-            app('flasher')->addInfo('O cadastro do fato foi realizado com sucesso.');
+
 
 
 

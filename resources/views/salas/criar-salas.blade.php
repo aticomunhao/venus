@@ -25,8 +25,16 @@
                                 <div class="row">
                                     <div class="col-8">
                                         Nome
-                                        <input type="text" maxlength="40" class="form-control" id="nome" name="nome" required>
+                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="30" required="required" oninput="validarSomenteLetras(this)">
                                     </div>
+
+                                    <script>
+                                        function validarSomenteLetras(input) {
+                                            // Remove caracteres não alfabéticos e não espaços
+                                            input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+                                        }
+                                    </script>
+
                                     <div class="col">
                                         Finalidade sala
                                         <select class="form-select" aria-label=".form-select-lg example" name="tipo_sala" required>
