@@ -17,7 +17,9 @@ use App\Http\Controllers\SalaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\MediumController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
+use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\RecepcaoIntegradaController;
+
 
 
 /*
@@ -89,14 +91,9 @@ Route::get('/atender', [AtendimentoFraternoController::class, 'atende_agora'])->
 Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
 Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
 
-/*
-|--------------------------------------------------------------------------
-| Alexandre Routes
-|--------------------------------------------------------------------------
-*/
 
 // Atendentes
-Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('gerenciar-atendentes'); // Exibe todos atendentes
+Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('ateger'); // Exibe todos atendentes
 Route::get('/gerenciar-atendende/{id}', [AtendenteController::class, 'show'])->name('gerenciar-atendente_show'); // Exibir detalhes?
 Route::get('/novo-atendente', [AtendenteController::class, 'create'])->name('novo-atendente'); // Select de pessoas -> atendentes.
 Route::post('/inserir-atendente', [AtendenteController::class, 'RequestTest'])->name('inserir_atendente');
@@ -157,17 +154,32 @@ Route::post('/incluir-mediuns', [MediumController::class, 'store']);
 Route::any('/deletar-mediuns/{id}', [MediumController::class, 'destroy'])->name('');
 Route::get('/visualizar-mediuns/{id}', [MediumController::class, 'show'])->name('');
 
+
+/*
+|--------------------------------------------------------------------------
+| Moisés Routes
+|--------------------------------------------------------------------------
+*/
+
 //RECEPÇÃO INTEGRADA DA DAO
 Route::get('/gerenciar-recepcao', [RecepcaoIntegradaController::class, 'index'])->name('recdex');
-Route::get('/agenda/{ide}', [RecepcaoIntegradaController::class, 'agendar'])->name('ridage');
-Route::post('/criar-tratamento/{ide}', [RecepcaoIntegradaController::class, 'criar'])->name('ridcri');
-Route::get('/d', [RecepcapIntegradaController::class, 'cancelar'])->name('intcan');
-Route::get('/h', [RecepcaoIntegradaController::class, 'edit'])->name('intedi');
-Route::post('i', [RecepcaoIntegradaController::class, 'altera'])->name('intalt');
-Route::get('/j', [RecepcaoIntegradaController::class, 'visual'])->name('intvis');
-Route::put('/k', [RecepcaoIntegradaController::class, 'salvaatend'])->name('intate');
+Route::get('/agendar/{ide}', [RecepcaoIntegradaController::class, 'agendas'])->name('recage');
+Route::post('/faltar/{ide}', [RecepcaoIntegradaController::class, 'faltas'])->name('recfal');
+Route::get('/visualizar', [RecepcaoIntegradaController::class, 'visualizas'])->name('recvis');
+Route::get('/inativar', [RecepcaoIntegradaController::class, 'inativas'])->name('recina');
+Route::post('i', [RecepcaoIntegradaController::class, ''])->name('');
+Route::get('/j', [RecepcaoIntegradaController::class, ''])->name('');
+Route::put('/k', [RecepcaoIntegradaController::class, ''])->name('');
 
-
+//REUNIÃO MEDIÚNICA
+Route::get('/gerenciar-reunioes', [ReuniaoMediunicaController::class, 'index'])->name('recdex');
+Route::get('/agendar/{ide}', [ReuniaoMediunicaController::class, 'agendas'])->name('recage');
+Route::post('/faltar/{ide}', [ReuniaoMediunicaController::class, 'faltas'])->name('recfal');
+Route::get('/visualizar', [ReuniaoMediunicaController::class, 'visualizas'])->name('recvis');
+Route::get('/inativar', [ReuniaoMediunicaController::class, 'inativas'])->name('recina');
+Route::post('i', [ReuniaoMediunicaController::class, ''])->name('');
+Route::get('/j', [ReuniaoMediunicaController::class, ''])->name('');
+Route::put('/k', [ReuniaoMediunicaController::class, ''])->name('');
 
 
 

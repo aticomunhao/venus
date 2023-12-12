@@ -70,7 +70,7 @@
                                                 <td>{{$assistidos->nm_4}}</td>
                                                 <td>{{$assistidos->dh_inicio}}</td>
                                                 <td>{{$assistidos->dh_fim}}</td>
-                                                <td>{{$assistidos->descricao}}</td>
+                                                <td>{{$assistidos->tst}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -95,16 +95,25 @@
                                     <table class="table table-sm table-bordered table-striped">
                                         <thead style="text-align:center; background: #daffe0;">
                                             <tr style="text-align:center; font-weight: bold; font-size:12px">
-                                                <td class="col">ENCAMINHAMENTO TRATAMENTO</td>
+                                                <td class="col">ENCAMINHAMENTO TRATAMENTO</td>                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>@foreach($assistido as $assistidos)
+                                            <tr style="text-align:center;font-size:11px">       
+                                                <td>{{$assistidos->tdt}}</td>
+                                            </tr>@endforeach
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-sm table-bordered table-striped">
+                                        <thead style="text-align:center; background: #daffe0;">
+                                            <tr style="text-align:center; font-weight: bold; font-size:12px">                                                
                                                 <td class="col">ENCAMINHAMENTO ENTREVISTA</td>
                                             </tr>
-
                                         </thead>
-                                        <tbody>
-                                            <tr style="text-align:center;font-size:11px">       
-                                                <td>{{$assistidos->ttd}}</td>
-                                                <td>{{$assistidos->ted}}</td>
-                                            </tr>
+                                        <tbody>@foreach($assistido as $assistidos)
+                                            <tr style="text-align:center;font-size:11px">                                                
+                                                <td>{{$assistidos->tde}}</td>
+                                            </tr>@endforeach
                                         </tbody>
                                     </table>
                                 </div>

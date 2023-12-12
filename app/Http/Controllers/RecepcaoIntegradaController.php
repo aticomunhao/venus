@@ -27,7 +27,9 @@ class RecepcaoIntegradaController extends Controller
                     ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
                     ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
                     ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
-                    ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id');
+                    ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+                    ->where('enc.id_tipo_encaminhamento', 2)
+                    ->where('enc.id_tipo_tratamento', '<>', 3);
 
         $data_enc = $request->dt_enc;
 

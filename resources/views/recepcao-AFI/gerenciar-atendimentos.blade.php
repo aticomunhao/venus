@@ -34,6 +34,7 @@
                     </form>
                             <a href="/criar-atendimento"><input class="btn btn-success btn-sm me-md-2" type="button" autofocus value="Novo Atendimento &plus;"></a>
                             <a href="/gerenciar-pessoas"><input class="btn btn-success btn-sm me-md-2" type="button" value="Gerenciar Pessoas"></a>
+                            <a href="#"><input class="btn btn-success btn-sm me-md-2" type="button" value="Sala de Atendimento"></a>
 
                         </div>
                 </div>

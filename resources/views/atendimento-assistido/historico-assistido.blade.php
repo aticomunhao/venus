@@ -22,27 +22,27 @@
                     <div class="form-group row">
                         <div class="col">
                             <label for="disabledTextInput" class="form-label">Assistido:</label>
-                            <input type="text" id="" value="{{$assistido[0]->nm_1}}" class="form-control" placeholder="Disabled input" disabled>
+                            <input type="text" id="" value="{{$analisa[0]->nm_1}}" class="form-control" placeholder="Disabled input" disabled>
                         </div>
                         <div class="col-2">
                             <label for="disabledTextInput" class="form-label">Sexo:</label>
-                            <input type="text" id="" value="{{$assistido[0]->tipo}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
+                            <input type="text" id="" value="{{$analisa[0]->tipo}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
                         </div>
                         <div class="col-3">
                             <label for="disabledTextInput" class="form-label">Dt nascimento:</label>
-                            <input type="date" id=""  name="date"  value="{{$assistido[0]->dt_nascimento}}"   class="form-control" placeholder="Disabled input" disabled>
+                            <input type="date" id=""  name="date"  value="{{$analisa[0]->dt_nascimento}}"   class="form-control" placeholder="Disabled input" disabled>
                         </div>
                     </div>
                     </fieldset>
                     <br>
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Lista de atendimentos</legend>
                     <?php $a=1; $b=1; $c=1; $d=1; $e=1; ?>
-                    @foreach($assistido as $assistidos)
+                    @foreach($analisa as $analisas)
                     <div class="accordion accordion-flush" id="accordionFlushExample"> 
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="{{$a++}}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{$b++}}" aria-expanded="false" aria-controls="flush-collapse{{$c++}}">
-                            {{date('d/m/Y', strtotime($assistidos->dh_chegada))}}
+                            {{date('d/m/Y', strtotime($analisas->dh_chegada))}}
                             </button>
                             </h2>
                             <div id="flush-collapse{{$d++}}" class="accordion-collapse collapse" aria-labelledby="{{$e++}}" data-bs-parent="#accordionFlushExample">
@@ -63,13 +63,13 @@
                                         </thead>
                                         <tbody>
                                             <tr style="text-align:center;font-size:11px">       
-                                                <td>{{$assistidos->ida}}</td>
-                                                <td>{{$assistidos->nm_2}}</td>
-                                                <td>{{$assistidos->nome}}</td>
-                                                <td>{{$assistidos->nm_4}}</td>
-                                                <td>{{$assistidos->dh_inicio}}</td>
-                                                <td>{{$assistidos->dh_fim}}</td>
-                                                <td>{{$assistidos->descricao}}</td>
+                                                <td>{{$analisas->ida}}</td>
+                                                <td>{{$analisas->nm_2}}</td>
+                                                <td>{{$analisas->nome}}</td>
+                                                <td>{{$analisas->nm_4}}</td>
+                                                <td>{{$analisas->dh_inicio}}</td>
+                                                <td>{{$analisas->dh_fim}}</td>
+                                                <td>{{$analisas->tst}}</td>
                                                 
                                             </tr>                                          
                                         </tbody>
@@ -81,7 +81,7 @@
                                                 <td class="col">OBSERVAÇÃO</td>                                                                                               
                                             </tr>
                                             <tr style="text-align:center;font-size:11px">
-                                                <td> {{$assistidos->observacao}}</td>
+                                                <td> {{$analisas->observacao}}</td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -96,11 +96,11 @@
                                         </thead>
                                         <tbody>
                                             <tr style="text-align:center;font-size:11px">
-                                                @foreach($tema as $temas)
+                                                
                                                 <td>                                             
-                                                {{$temas->t1}} {{$temas->t2}} {{$temas->t3}} {{$temas->t4}} {{$temas->t5}} {{$temas->t6}} {{$temas->t7}} {{$temas->t8}} {{$temas->t9}} {{$temas->t10}} {{$temas->t11}} {{$temas->t12}} {{$temas->t13}} {{$temas->t14}} {{$temas->t15}} {{$temas->t16}} {{$temas->t17}} {{$temas->t18}}                                 
+                                                {{$analisas->t1}} {{$analisas->t2}} {{$analisas->t3}} {{$analisas->t4}} {{$analisas->t5}} {{$analisas->t6}} {{$analisas->t7}} {{$analisas->t8}} {{$analisas->t9}} {{$analisas->t10}} {{$analisas->t11}} {{$analisas->t12}} {{$analisas->t13}} {{$analisas->t14}} {{$analisas->t15}} {{$analisas->t16}} {{$analisas->t17}} {{$analisas->t18}} {{$analisas->t19}}                                 
                                                 </td>
-                                                @endforeach                                                     
+                                                                                                    
                                             </tr>
                                             
                                         </tbody>
@@ -109,32 +109,27 @@
                                     <table class="table table-sm table-bordered table-striped">
                                         <thead style="text-align:center; background: #daffe0;">
                                             <tr style="text-align:center; font-weight: bold; font-size:12px">
-                                                <td class="col">ENCAMINHAMENTO TRATAMENTO</td>                                               
+                                                <td class="col">ENCAMINHAMENTO TRATAMENTO</td>                                                
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr style="text-align:center;font-size:11px">
-                                                @foreach($trata as $tratas)
-                                                <td>
-                                                    {{$tratas->tdt}}
-                                                </td>
-                                                @endforeach                                                
-                                            </tr>                                  
+                                            <tr style="text-align:center;font-size:11px">       
+                                                <td>{{$analisas->tdt}}</td>
+                                            </tr>
                                         </tbody>
-                                    </table> 
-                                    <br/> 
+                                    </table>
                                     <table class="table table-sm table-bordered table-striped">
                                         <thead style="text-align:center; background: #daffe0;">
-                                            <tr style="text-align:center; font-weight: bold; font-size:12px">                                              
-                                                <td class="col">ENCAMINHAMENTO ENTREVISTA</td>                                               
+                                            <tr style="text-align:center; font-weight: bold; font-size:12px">                                                
+                                                <td class="col">ENCAMINHAMENTO ENTREVISTA</td>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr style="text-align:center;font-size:11px">                                             
-                                            @foreach ($entre as $entres)<td>{{$entres->ted}}</td>@endforeach
-                                            </tr>                                  
+                                            <tr style="text-align:center;font-size:11px">                                                
+                                                <td>{{$analisas->tde}}</td>
+                                            </tr>
                                         </tbody>
-                                    </table>                                             
+                                    </table>                
                                 </div>
                             </div>
                         </div>                        

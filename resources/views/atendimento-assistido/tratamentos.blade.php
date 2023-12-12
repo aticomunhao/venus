@@ -27,19 +27,19 @@
                     @csrf                
                     <div class="row form-group">
                         <div class="form-check form-check-inline">                        
-                            <input type="checkbox" id="pph" name="pph" class="form-check-input" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                            <input type="checkbox" id="pph" name="pph" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                             <label for="pph" class="form-check-label">Palestra/Passe de Harmonização - PPH</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input type="checkbox" id="ptd" name="ptd" class="form-check-input" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                            <input type="checkbox" id="ptd" name="ptd" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                             <label for="ptd" class="form-check-label">Passe Tratamento Desobessessivo - PTD</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input type="checkbox" id="ptig" name="ptig" class="form-check-input" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                            <input type="checkbox" id="ptig" name="ptig" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                             <label for="ptig" class="form-check-label">Passe Tratamento Integral - PTIg</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input type="checkbox" id="pti" name="pti" class="form-check-input" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                            <input type="checkbox" id="pti" name="pti" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                             <label for="pti" class="form-check-label">Passe Tratamento Intensivo - PTI</label>
                         </div>                    
                     </div>
