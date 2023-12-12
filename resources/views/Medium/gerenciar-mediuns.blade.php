@@ -5,9 +5,32 @@
     <br>
     <div class="row" style="text-align:center;">
         <h4 class="card-title col-12" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
-            GERENCIAR MÉDIUNS
+
         </h4>
-        <div class="col">
+
+        <div class="container-fluid";>
+            <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR MÉDIUNS</h4>
+                <div class="col-12">
+                    <div class="row justify-content-center">
+                            <form action="{{route('nomes')}}" class="form-horizontal mt-4" method="GET" >
+                            <div class="row">
+                                <div class="col-3">Nome
+                                    <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa" placeholder="Pesquisar nome {{ request('nome_pesquisa') }}">
+                                </div>
+
+                                <div class="col"><br>
+                                    <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
+                                    <a href="/gerenciar-mediuns"><input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
+                                </form>
+                                <a href="/criar-mediuns"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;" type="button" value="Novo Medium"></a>
+
+                                </div>
+                            </div>
+                    </div>
+
+
+                <hr>
+        {{-- <div class="col">
             <form action="{{ route('lista') }}" method="GET" class="mb-3">
                 <div class="row">
                     <div class="col-md-4 col-sm-12">
@@ -24,7 +47,7 @@
                         </div>
                     </div>
                 </div>
-            </form>
+            </form> --}}
 
             <div class="table">
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">

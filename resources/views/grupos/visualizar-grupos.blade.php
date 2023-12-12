@@ -20,12 +20,21 @@
                             <form class="form-horizontal mt-2" method="post" action="/incluir-grupos">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="col">
+                                        Número
+                                        <select class="form-select" aria-label=".form-select-lg example" name="id" id="id" disabled>
+                                            <option value="{{ $grupo[0]->id }}"> {{ $grupo[0]->id }}</option>
+                                            @foreach ($tipo_motivo as $tipo_motivos)
+                                                <option value="{{ $tipo_motivos->id }}"> {{ $tipo_motivos->id }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-5">
                                         Nome
                                         <input type="text" class="form-control" id="nome" name="nome" value="{{ $grupo[0]->nome }}" disabled>
                                     </div>
 
-                                    <div class="col">
+                                    <div class="col-3">
                                         Status
                                         <select class="form-select" aria-label=".form-select-lg example" name="status_grupo" disabled="required">
                                             <option value="{{ $grupo[0]->status_grupo }}"> {{ $grupo[0]->descricao1 }}</option>
@@ -45,6 +54,17 @@
                                         </select>
                                     </div>
                                     <div class="row">
+                                        <div class="col-3">
+                                            <br>
+                                            Tipo grupo
+                                            <select class="form-select" aria-label=".form-select-lg example" name="nm_tipo_grupo" disabled>
+                                                @foreach ($grupo as $item)
+                                                    <option value="{{ $item->id }}" {{ $grupo[0]->nm_tipo_grupo == $item->id ? 'selected' : '' }}>
+                                                        {{ $item->nm_tipo_grupo}}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     <div class="col-5">
                                         <br>
                                         Tipo de tratamento
@@ -56,38 +76,17 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-3">
-                                        <br>
-                                        Tipo grupo
-                                        <select class="form-select" aria-label=".form-select-lg example" name="nm_tipo_grupo" disabled>
-                                            @foreach ($grupo as $item)
-                                                <option value="{{ $item->id }}" {{ $grupo[0]->nm_tipo_grupo == $item->id ? 'selected' : '' }}>
-                                                    {{ $item->nm_tipo_grupo}}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
                                     <div class="col">
                                         <br>
-                                        Hora início
-                                        <input type="time" class="form-control" id="h_inicio" name="h_inicio" value="{{ $grupo[0]->h_inicio}}" disabled>
+                                        Data início
+                                        <input type="time" class="form-control" id="h_inicio" name="data_inicio" value="{{ $grupo[0]->data_inicio}}" disabled>
                                     </div>
 
                                     <div class="col">
                                         <br>
-                                        Hora fim
-                                        <input type="time" class="form-control" id="h_fim" name="h_fim" value="{{ $grupo[0]->h_fim }}" disabled>
+                                        Data fim
+                                        <input type="time" class="form-control" id="h_fim" name="data_fim" value="{{ $grupo[0]->data_fim }}" disabled>
                                     </div>
-
-                                    <div class="col">
-                                        <br>
-                                        Max atendido
-                                        <input type="number" class="form-control" id="max_atend" name="max_atend" value="{{ $grupo[0]->max_atend }}" disabled>
-                                    </div>
-
-
-                                </div>
-                            </div>
                                 <div class="row justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">
                                         <br>

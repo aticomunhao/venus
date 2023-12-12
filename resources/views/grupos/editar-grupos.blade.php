@@ -22,16 +22,26 @@
 
                                 <div class="row">
                                     <div class="col">
-                                        Nome
-                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="30" value="{{ $grupo[0]->nome }}" required="required" oninput="validarSomenteLetras(this)">
+                                        Número
+                                        <select class="form-select" aria-label=".form-select-lg example" name="id" id="id" disabled>
+                                            <option value="{{ $grupo[0]->id }}"> {{ $grupo[0]->id }}</option>
+                                            @foreach ($tipo_motivo as $tipo_motivos)
+                                                <option value="{{ $tipo_motivos->id }}"> {{ $tipo_motivos->id }} </option>
+                                            @endforeach
+                                        </select>
                                     </div>
+
+                                    <div class="col-5">
+                                        Nome
+                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="30" value="{{ $grupo[0]->nome }}" required="required" oninput="validarLetrasEspeciais(this)">
+                                    </div>
+
                                     <script>
-                                        function validarSomenteLetras(input) {
-                                            // Remove caracteres não alfabéticos e não espaços
-                                            input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+                                        function validarLetrasEspeciais(input) {
+                                            // Permite letras, espaços e caracteres especiais
+                                            input.value = input.value.replace(/[^a-zA-Z\u00C0-\u00FF\s]/g, '');
                                         }
                                     </script>
-
 
 
                                     <div class="col-3">
@@ -54,16 +64,6 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-5">
-                                        <br>
-                                        Tipo de tratamento
-                                        <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_tratamento" required="required">
-                                            <option value="{{ $grupo[0]->id_tipo_tratamento }}"> {{ $grupo[0]->descricao }}</option>
-                                            @foreach ($tipo_tratamento as $tipo)
-                                            <option value="{{ $tipo->id }}"> {{ $tipo->descricao }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
                                     <div class="col-3">
                                         <br>
                                         Tipo grupo
@@ -74,22 +74,27 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-5">
                                         <br>
-                                        Hora início
-                                        <input type="time" class="form-control" id="h_inicio" name="h_inicio" value="{{ $grupo[0]->h_inicio }}" required="required">
+                                        Tipo de tratamento
+                                        <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_tratamento" required="required">
+                                            <option value="{{ $grupo[0]->id_tipo_tratamento }}"> {{ $grupo[0]->descricao }}</option>
+                                            @foreach ($tipo_tratamento as $tipo)
+                                            <option value="{{ $tipo->id }}"> {{ $tipo->descricao }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="col">
                                         <br>
-                                        Hora fim
-                                        <input type="time" class="form-control" id="h_fim" name="h_fim" value="{{ $grupo[0]->h_fim }}" required="required">
+                                        Data início
+                                        <input type="date" class="form-control" id="h_inicio" name="data_inicio" value="{{ $grupo[0]->data_inicio }}"disabled>
                                     </div>
                                     <div class="col">
                                         <br>
-                                        Max atendido
-                                        <input type="number" class="form-control" id="max_atend" min="1" max="100" name="max_atend" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value="{{ $grupo[0]->max_atend }}" required="required">
+                                        Data fim
+                                        <input type="date" class="form-control" id="h_fim" name="data_fim" value="{{ $grupo[0]->data_fim }}" disabled>
                                     </div>
-                                </div>
+
 
                                 <div class="row justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">

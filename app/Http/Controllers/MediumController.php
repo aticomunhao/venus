@@ -50,8 +50,8 @@ class MediumController extends Controller
     {
 
         $medium = DB::select('select *from medium');
-        $tipo_mediunidade = DB::select('select *from tipo_mediunidade');
-        $pessoas = DB::select('select *from pessoas');
+        $tipo_mediunidade = DB::select('select id as ids,tipo from tipo_mediunidade');
+        $pessoas = DB::select('select ids as idp, nome_completo from pessoas');
 
 
         return view('medium/criar-mediuns', compact('medium', 'tipo_mediunidade', 'pessoas'));

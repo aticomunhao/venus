@@ -30,10 +30,11 @@
 
                                     <script>
                                         function validarSomenteLetras(input) {
-                                            // Remove caracteres não alfabéticos e não espaços
-                                            input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+                                            // Permite letras, espaços e caracteres especiais
+                                            input.value = input.value.replace(/[^a-zA-Z\u00C0-\u00FF\s]/g, '');
                                         }
                                     </script>
+
 
                                     <div class="col">
                                         Finalidade sala
