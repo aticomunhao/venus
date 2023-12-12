@@ -175,7 +175,7 @@ Route::put('/k', [RecepcaoIntegradaController::class, ''])->name('');
 Route::get('/gerenciar-reunioes', [ReuniaoMediunicaController::class, 'index'])->name('recdex');
 Route::get('/agendar/{ide}', [ReuniaoMediunicaController::class, 'agendas'])->name('recage');
 Route::post('/faltar/{ide}', [ReuniaoMediunicaController::class, 'faltas'])->name('recfal');
-Route::get('/visualizar', [ReuniaoMediunicaController::class, 'visualizas'])->name('recvis');
+Route::get('/criar-reuniao', [ReuniaoMediunicaController::class, 'create'])->name('recvis');
 Route::get('/inativar', [ReuniaoMediunicaController::class, 'inativas'])->name('recina');
 Route::post('i', [ReuniaoMediunicaController::class, ''])->name('');
 Route::get('/j', [ReuniaoMediunicaController::class, ''])->name('');

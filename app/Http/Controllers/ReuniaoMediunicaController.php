@@ -20,7 +20,7 @@ class ReuniaoMediunicaController extends Controller
                         ->select('reu.id AS idr', 'id_grupo', 'dia', 'id_sala', 'id_tratamento', 'h_inicio', 'h_fim', 'max_atend' )
                         ->leftjoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->leftJoin('medium AS me', 'gr.id', 'me.id_grupo')
-                        ->leftJoin('sala AS sa', 'reu.id_sala', 'sa.id');
+                        ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id');
                         
     
             $data_inicio = $request->dt_ini;
@@ -63,49 +63,17 @@ class ReuniaoMediunicaController extends Controller
     
         public function create(){
     
-            $lista = DB::select("select
-            p.id as pid,
-            p.ddd,
-            p.celular,
-            p.nome_completo,
-            a.id_pessoa
-            from pessoas p
-            left join atendentes a on (p.id = a.id_pessoa)
-            group by pid, a.id_pessoa
-            order by nome_completo
-            ");
-    
-            $priori = DB::select("select
-            pr.id as prid,
-            pr.descricao as prdesc,
-            pr.sigla as prsigla
-            from tipo_prioridade pr
-            order by prid
-            ");
-           //dd($lista);
-    
-            $afi = DB::select("select
-            p.id as idatt,
-            p.nome_completo as nm_1,
-            p.ddd,
-            p.celular,
-            a.id_pessoa
-            from atendentes a
-            left join pessoas p on (a.id_pessoa = p.id)
-            ");
-    
-            $sexo = DB::select("select
-            id,
-            tipo,
-            sigla
-            from tp_sexo
-            ");
-    
-            $parentes = DB::select("select
-            id,
-            nome
-            from tp_parentesco
-            ");
+            $reuniao = DB::table('reuniao_mediunica AS reu')
+                        ->select('reu.id AS idr', 'id_grupo', 'dia', 'id_sala', 'id_tratamento', 'h_inicio', 'h_fim', 'max_atend' )
+                        ->leftjoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+                        ->leftJoin('medium AS me', 'gr.id', 'me.id_grupo')
+                        ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id');
+
+            $grupo = DB::table('reuniao_mediunica AS reu')
+            ->select('reu.id AS idr', 'id_grupo', 'dia', 'id_sala', 'id_tratamento', 'h_inicio', 'h_fim', 'max_atend' )
+            ->leftjoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+            ->leftJoin('medium AS me', 'gr.id', 'me.id_grupo')
+            ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id');
     
             //dd($lista);
     

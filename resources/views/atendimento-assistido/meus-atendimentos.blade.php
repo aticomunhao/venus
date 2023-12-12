@@ -98,9 +98,9 @@
                                                 <td class="col">ENCAMINHAMENTO TRATAMENTO</td>                                                
                                             </tr>
                                         </thead>
-                                        <tbody>@foreach($assistido as $assistidos)
+                                        <tbody>@foreach($assistidos->tratamentos as $tratas)
                                             <tr style="text-align:center;font-size:11px">       
-                                                <td>{{$assistidos->tdt}}</td>
+                                                <td>{{$tratas->tdt}}</td>
                                             </tr>@endforeach
                                         </tbody>
                                     </table>
@@ -110,9 +110,9 @@
                                                 <td class="col">ENCAMINHAMENTO ENTREVISTA</td>
                                             </tr>
                                         </thead>
-                                        <tbody>@foreach($assistido as $assistidos)
+                                        <tbody>@foreach($assistidos->entrevistas as $entres)
                                             <tr style="text-align:center;font-size:11px">                                                
-                                                <td>{{$assistidos->tde}}</td>
+                                                <td>{{$entres->tde}}</td>
                                             </tr>@endforeach
                                         </tbody>
                                     </table>
