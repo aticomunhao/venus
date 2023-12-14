@@ -82,21 +82,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col">
-                                            <br>
-                                            Tipo de tratamento
-                                            <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_tratamento" required="required">
-                                                @foreach ($tipo_tratamento as $tipo)
-                                                    <option value="{{ $tipo->id }}"> {{ $tipo->descricao }} </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-
-
-
-                                    <br>
-
+                                       
                                     <div class="row justify-content-center">
                                         <div class="d-grid gap-1 col-4 mx-auto">
                                             <br>

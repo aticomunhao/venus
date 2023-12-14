@@ -74,16 +74,6 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-5">
-                                        <br>
-                                        Tipo de tratamento
-                                        <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_tratamento" required="required">
-                                            <option value="{{ $grupo[0]->id_tipo_tratamento }}"> {{ $grupo[0]->descricao }}</option>
-                                            @foreach ($tipo_tratamento as $tipo)
-                                            <option value="{{ $tipo->id }}"> {{ $tipo->descricao }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
                                     <div class="col">
                                         <br>
                                         Data início

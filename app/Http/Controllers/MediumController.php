@@ -10,48 +10,35 @@ use function Laravel\Prompts\select;
 
 class MediumController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
-    {
 
-
-   $medium = DB::table('medium AS m')
+        public function index(Request $request)
+        {
+            $medium = DB::table('medium AS m')
                 ->leftJoin('tipo_mediunidade AS tm', 'm.id_tp_mediunidade', '=', 'tm.id')
                 ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-                ->select('p.nome_completo', 'm.id', 'm.id_pessoa', 'm.id_tp_mediunidade','p.status','tm.tipo')
+                ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.id_tp_mediunidade', 'p.status', 'tm.tipo', 'p.cpf', 'p.dt_nascimento', 'p.sexo', 'p.email')
                 ->orderBy('p.nome_completo', 'ASC');
 
+            $nome = $request->nome;
+            if ($nome) {
+                $medium->where('p.nome_completo', 'like', "%$nome%");
+            }
 
-            // $nome = $request->nome;
-            // if ($nome) {
-            //     $medium->where('p.nome_completo', 'like', "%$nome%");
-            // }
+            $medium = $medium->orderBy('p.status', 'asc')
+                ->orderBy('p.nome_completo', 'asc')
+                ->paginate(50);
 
-
-            // $medium = $medium->orderBy('p.status', 'asc')
-            //     ->orderBy('p.nome_completo', 'asc')
-            //     ->paginate(50);
-
-
-            // $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
-
-
-            return view('medium/gerenciar-mediuns', compact('medium'));
+            return view('medium.gerenciar-mediuns', compact('medium'));
         }
+    
 
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
 
         $medium = DB::select('select *from medium');
-        $tipo_mediunidade = DB::select('select id as ids,tipo from tipo_mediunidade');
-        $pessoas = DB::select('select ids as idp, nome_completo from pessoas');
+        $tipo_mediunidade = DB::select('select *from tipo_mediunidade');
+        $pessoas = DB::select('select* from pessoas');
 
 
         return view('medium/criar-mediuns', compact('medium', 'tipo_mediunidade', 'pessoas'));
@@ -89,7 +76,7 @@ class MediumController extends Controller
 
         $medium = DB::table('medium AS m')
         ->leftJoin('pessoas AS p', 'm.id_pessoa', 'p.id')
-        ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.id_tp_mediunidade','p.status')->where('m.id', $id)
+        ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.id_tp_mediunidade','p.status','p.dt_nascimento','p.sexo','p.email','p.cpf')->where('m.id', $id)
         ->get();
         $pessoas= DB::table('pessoas')->get();
     $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
@@ -120,7 +107,7 @@ class MediumController extends Controller
 
         $medium = DB::table('medium AS m')
             ->leftJoin('pessoas AS p', 'm.id_pessoa', 'p.id')
-            ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.id_tp_mediunidade','p.status')->where('m.id', $id)
+            ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.id_tp_mediunidade','p.status','p.dt_nascimento','p.sexo','p.email','p.cpf')->where('m.id', $id)
             ->get();
             $pessoas= DB::table('pessoas')->get();
         $tipo_mediunidade = DB::table('tipo_mediunidade')->get();

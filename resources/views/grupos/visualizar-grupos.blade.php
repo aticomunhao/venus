@@ -65,7 +65,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    <div class="col-5">
+                                    {{-- <div class="col-5">
                                         <br>
                                         Tipo de tratamento
                                         <select class="form-select" aria-label=".form-select-lg example" name="descricao" disabled>
@@ -75,7 +75,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                    </div>
+                                    </div> --}}
                                     <div class="col">
                                         <br>
                                         Data início

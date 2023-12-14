@@ -38,7 +38,6 @@
                         <th class="col"> DATA INÍCIO</th>
                         <th class="col"> DATA FIM</th>
                         <th class="col">TIPO GRUPO</th>
-                        <th class="col">TIPO TRATAMENTO</th>
                         <th class="col">STATUS GRUPO</th>
                         <th class="col">AÇÕES</th>
                     </tr>
@@ -50,7 +49,6 @@
                         <td> {{$grupos->data_inicio}} </td>
                         <td> {{$grupos->data_fim}} </td>
                         <td> {{$grupos->nm_tipo_grupo}} </td>
-                        <td> {{$grupos->descricao}} </td>
                         <td> {{$grupos->descricao1}} </td>
                         <td>
 
