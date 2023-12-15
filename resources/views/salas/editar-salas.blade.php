@@ -25,15 +25,17 @@
                                 <div class="row">
                                     <div class="col-8">
                                         Nome
-                                        <input type="text" maxlength="50" class="form-control" id="nome" name="nome" value={{$salaEditada->nome}}  required="required" oninput="validarSomenteLetras(this)">
+                                        <input type="text" maxlength="50" class="form-control" id="nome" name="nome" value="{{ $salaEditada->nome }}" required="required" oninput="validarSomenteLetras(this)">
                                     </div>
-                                    
+
                                     <script>
                                         function validarSomenteLetras(input) {
-                                            // Remove caracteres não alfabéticos e não espaços
-                                            input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+                                            // Permite letras e alguns caracteres especiais comuns, excluindo números
+                                            input.value = input.value.replace(/[^a-zA-Z\u00C0-\u00FF\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]/g, '');
                                         }
                                     </script>
+
+
                                     <div class="col">
                                         Finalidade sala
                                         <select class="form-select" aria-label=".form-select-lg example" name="id_finalidade">

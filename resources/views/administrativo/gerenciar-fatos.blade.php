@@ -1,31 +1,36 @@
 @extends('layouts.app')
 
-@section('title') Gerenciar Grupos @endsection
+@section('title') Gerenciar Fatos @endsection
 
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 
-<div class="container-fluid">
-    <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPOS</h4>
-    <br>
-    <div class="row">
-        <div class="col-md-4 col-sm-12">
-            <form action="{{ route('descricao') }}" class="form-horizontal mt-4" method="GET">
-                <label for="nome_pesquisa" style="display: block; text-align: left; font-size: 14px; margin-bottom: 4px;">Nome</label>
-                <div class="input-group">
-                    <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa" placeholder="Pesquisar nome {{ request('nome_pesquisa') }}">
-                    <div class="input-group-append">
-                        <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;" type="submit" value="Pesquisar">
-                        <a href="/gerenciar-fatos" class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;">Limpar</a>
-                        <a href="/criar-fatos" class="btn btn-success btn-sm" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;">Novo grupo + </a>
+
+
+<div class="container-fluid";>
+    <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR FATOS</h4>
+        <div class="col-12">
+            <div class="row justify-content-center">
+                    <form action="{{route('descricao')}}" class="form-horizontal mt-4" method="GET" >
+                    <div class="row">
+                        <div class="col-3">Descrição
+                            <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa" placeholder="Pesquisar descrição {{ request('descrição') }}">
+                        </div>
+
+                        <div class="col"><br>
+                            <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
+                            <a href="/gerenciar-fatos"><input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
+                        </form>
+                        <a href="/criar-fatos"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;" type="button" value="Novo Fato +"></a>
+
+                        </div>
                     </div>
-                </div>
-            </form>
+            </div>
+
         </div>
-    </div>
-    <br>
-    <hr>
+        <hr>
+
     <div class="row" style="text-align:center;">
         <div class="table">
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">

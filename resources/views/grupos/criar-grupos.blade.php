@@ -21,15 +21,17 @@
                                 @csrf
 
                                 <div class="row">
+
                                     <div class="col-6">
                                         Nome
-                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="30" required="required" oninput="validarSomenteLetras(this)">
+                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="30" required="required" oninput="validarCaracteresEspeciais(this)">
+
                                     </div>
 
                                     <script>
-                                        function validarSomenteLetras(input) {
-                                            // Remove caracteres não alfabéticos e não espaços
-                                            input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+                                        function validarCaracteresEspeciais(input) {
+                                            // Permite letras, espaços e caracteres especiais
+                                            input.value = input.value.replace(/[^a-zA-Z\u00C0-\u00FF\s]/g, '');
                                         }
                                     </script>
 
@@ -67,68 +69,20 @@
                                             </select>
                                         </div>
 
-                                        <script>
-                                            $(document).ready(function () {
-                                                // Adiciona um ouvinte de evento para o campo "Status"
-                                                $('#status_grupo').change(function () {
-                                                    // Obtém o valor selecionado no campo "Status"
-                                                    var selectedStatus = $(this).val();
-
-                                                    // Habilita ou desabilita o campo "Motivo" com base na seleção
-                                                    if (selectedStatus === '2') {
-                                                        $('#tipo_motivo').prop('disabled', false);
-                                                    } else {
-                                                        $('#tipo_motivo').prop('disabled', true);
-                                                        $('#tipo_motivo').val(''); // Limpa a seleção quando desabilitado
-                                                    }
-                                                });
-                                            });
-                                        </script>
                                     </body>
                                     </html>
 
                                     <div class="row">
-                                        <div class="col-5">
+                                        <div class="col">
                                             <br>
-                                            Tipo de tratamento
-                                            <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_tratamento" required="required">
-                                                @foreach ($tipo_tratamento as $tipo)
-                                                    <option value="{{ $tipo->id }}"> {{ $tipo->descricao }} </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-3">
-                                                <br>
-                                                Tipo grupo
-                                                <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_grupo" required="required">
-                                                    @foreach ($tipo_grupo as $item)
-                                                        <option value="{{ $item->idg }}">{{ $item->nm_tipo_grupo }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col">
-                                                <br>
-                                                Hora Início
-                                                <input type="time" class="form-control" id="h_inicio" name="h_inicio" required="required" step="60">
-                                            </div>
-
-                                            <div class="col">
-                                                <br>
-                                                Hora Fim
-                                                <input type="time" class="form-control" id="h_fim" name="h_fim" required="required" step="60">
-                                            </div>
-                                            <br>
-                                            <div class="col">
-
-                                            <br>
-                                            Max atendido
-                                            <input type="number" class="form-control" id="max_atend" min="1" max="100" name="max_atend" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" required="required">
+                                            Tipo grupo
+                                            <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_grupo" required="required">
+                                                @foreach ($tipo_grupo as $item)
+                                                    <option value="{{ $item->idg }}">{{ $item->nm_tipo_grupo }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
-
-                                    </div>
-
-                                    <br>
-
+                                       
                                     <div class="row justify-content-center">
                                         <div class="d-grid gap-1 col-4 mx-auto">
                                             <br>
@@ -147,6 +101,23 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            // Adiciona um ouvinte de evento para o campo "Status"
+            $('#status_grupo').change(function () {
+                // Obtém o valor selecionado no campo "Status"
+                var selectedStatus = $(this).val();
+
+                // Habilita ou desabilita o campo "Motivo" com base na seleção
+                if (selectedStatus === '2') {
+                    $('#tipo_motivo').prop('disabled', false);
+                } else {
+                    $('#tipo_motivo').prop('disabled', true);
+                    $('#tipo_motivo').val(''); // Limpa a seleção quando desabilitado
+                }
+            });
+        });
+    </script>
 <script>
 
         const status_grupo = document.getElementById('status_grupo');
@@ -172,7 +143,7 @@
             }
         });
 
-            </script>
+ </script>
 
 
 
