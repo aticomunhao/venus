@@ -113,9 +113,9 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr style="text-align:center;font-size:11px">       
-                                                <td>{{$analisas->tdt}}</td>
-                                            </tr>
+                                            <tr style="text-align:center;font-size:11px">@foreach($analisas->tratamentos as $tratas)       
+                                                <td>{{$tratas->tdt}}</td>
+                                            @endforeach</tr>
                                         </tbody>
                                     </table>
                                     <table class="table table-sm table-bordered table-striped">
@@ -125,9 +125,9 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr style="text-align:center;font-size:11px">                                                
-                                                <td>{{$analisas->tde}}</td>
-                                            </tr>
+                                            <tr style="text-align:center;font-size:11px">@foreach($analisas->entrevistas as $entres)                                                
+                                                <td>{{$entres->tde}}</td>
+                                                @endforeach</tr>
                                         </tbody>
                                     </table>                
                                 </div>

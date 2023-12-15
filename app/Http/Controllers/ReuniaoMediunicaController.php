@@ -15,148 +15,139 @@ class ReuniaoMediunicaController extends Controller
         public function index(Request $request){
     
             $now =  Carbon::now()->format('Y-m-d');
-    
+
+             
             $reuniao = DB::table('reuniao_mediunica AS reu')
-                        ->select('reu.id AS idr', 'id_grupo', 'dia', 'id_sala', 'id_tratamento', 'h_inicio', 'h_fim', 'max_atend' )
+                        ->select('reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia AS idd', 'reu.dia', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.id_tipo_tratamento', 'reu.h_inicio','td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao as descst', 'tst.descricao AS tstd' )
+                        ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
                         ->leftjoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+                        ->leftjoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
                         ->leftJoin('medium AS me', 'gr.id', 'me.id_grupo')
-                        ->leftJoin('sala AS sa', 'reu.id_sala', 'sa.id');
+                        ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
+                        ->leftJoin('tipo_dia AS td', 'reu.dia', 'td.id');
                         
     
-            $data_inicio = $request->dt_ini;
+            $semana = $request->semana;
     
             $grupo = $request->grupo;
+
+            $status = $request->status;
+   
     
-            $situacao = $request->status;
-    
-    
-            if ($request->dt_ini){
-                $reuniao->where('at.dh_chegada', '>=', $request->dt_ini);
+            if ($request->semana){
+                $reuniao->where('reu.dia', '=', $request->semana);
             }
     
             if ($request->grupo){
-                $reuniao->where('p1.nome_completo', 'like', "%$request->grupo%");
+                $reuniao->where('gr.nome', 'like', "%$request->grupo%");
             }
-    
+
             if ($request->status){
-                $reuniao->where('at.status_atendimento', $request->status);
+                $reuniao->where('tsg.id', '=', $request->status);
             }
     
-    
-            $reuniao = $reuniao->orderby('gr.status', 'ASC')->paginate(50);
+            $reuniao = $reuniao->orderby('gr.status_grupo', 'ASC')->paginate(50);
+
+             //dd($request->semana);
+              //dd($status);
     
             $contar = $reuniao->count('reu.id');
     
-            $status = DB::select("select
-            s.id,
-            s.descricao
-            from tipo_status_atendimento s
-            ");
+            $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
+    
+            $tpdia = DB::table('tipo_dia')->select('id AS idtd', 'nome AS nomed')->get();
+         
+         // dd($tpdia);
     
     
-    
-    
-            return view ('/reuniao-mediunica/gerenciar-reunioes', compact('reuniao', 'status', 'contar'));
+            return view('/reuniao-mediunica/gerenciar-reunioes', compact('reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupo'));
     
     
         }
     
         public function create(){
     
-            $lista = DB::select("select
-            p.id as pid,
-            p.ddd,
-            p.celular,
-            p.nome_completo,
-            a.id_pessoa
-            from pessoas p
-            left join atendentes a on (p.id = a.id_pessoa)
-            group by pid, a.id_pessoa
-            order by nome_completo
-            ");
+            $sala = DB::table('salas AS sl')
+                        ->select('sl.id AS ids', 'sl.nome', 'sl.numero', 'sl.nr_lugares')
+                        ->get();
+
+            $grupo = DB::table('grupo AS gr')
+                        ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
+                        ->orderBy('gr.nome')
+                        ->get();
+
+            $tipo = DB::table('tipo_grupo AS tg')
+                        ->select('tg.id AS idtg', 'tg.nm_tipo_grupo')
+                        ->get();
     
-            $priori = DB::select("select
-            pr.id as prid,
-            pr.descricao as prdesc,
-            pr.sigla as prsigla
-            from tipo_prioridade pr
-            order by prid
-            ");
-           //dd($lista);
+            $tratamento = DB::table('tipo_tratamento AS tt')
+                        ->select('tt.id AS idt', 'tt.descricao', 'tt.sigla')
+                        ->get();
+
+            $dia = DB::table('tipo_dia AS td')
+                        ->select('td.id AS idd', 'td.nome', 'td.sigla')
+                        ->get();
+
+
+
+
+            // Array com os dias da semana
+        $diasemana = array('Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado');
+
+        //Aqui usamos a data atual ou qualquer outra data no formato Y-M-D (2016-05-19)
+        $data = date('Y-m-d');
+
+        // Variável que recebe o dia da semana (0 = domingo, 1 = segunda, 2 = terca ...)
+        $diasemana_numero = date('w', strtotime($data));
+
     
-            $afi = DB::select("select
-            p.id as idatt,
-            p.nome_completo as nm_1,
-            p.ddd,
-            p.celular,
-            a.id_pessoa
-            from atendentes a
-            left join pessoas p on (a.id_pessoa = p.id)
-            ");
     
-            $sexo = DB::select("select
-            id,
-            tipo,
-            sigla
-            from tp_sexo
-            ");
-    
-            $parentes = DB::select("select
-            id,
-            nome
-            from tp_parentesco
-            ");
-    
-            //dd($lista);
-    
-            return view ('/recepcao-AFI/incluir-atendimento', compact('afi', 'priori', 'sexo', 'parentes', 'lista'));
+            return view ('/reuniao-mediunica/criar-reuniao', compact('sala', 'grupo', 'tipo',  'tratamento',  'dia'));
     
     
         }
     
         public function store(Request $request){
     
+            $usuario = session()->get('usuario.id_pessoa');
+
             $dt_hora = Carbon::now();
     
-            $assistido = $request->assist;
-    
-            $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 5)->where('id_assistido', $assistido)->count();
+            
     
             //dd($resultado);
-            if ($resultado > 0){
+            // if ($resultado > 0){
     
-                app('flasher')->addError('Não é permitido duplicar o cadastro do assistido.');
+            //     app('flasher')->addError('Não é permitido duplicar o cadastro do assistido.');
     
-                return redirect ('/gerenciar-atendimentos');
+            //     return redirect ('/gerenciar-atendimentos');
     
-            };
+            // };
     
     
-            //dd($dt_hora);
-           DB::table('atendimentos AS atd')->insert([
-            'dh_chegada'=> ($dt_hora->toDateTimeString() . PHP_EOL),
-            'id_usuario'=> 1,
-            'id_atendente_usuario_tem_perfil'=>2,
-            'id_assistido'=>$request->input('assist'),
-            'id_representante'=>$request->input('repres'),
-            'parentesco'=>$request->input('parent'),
-            'id_atendente_pref'=>$request->input('afi_p'),
-            'pref_tipo_atendente'=>$request->input('tipo_afi'),
-            'id_prioridade'=>$request->input('priori'),
-            'status_atendimento'=> 1
-           ]);
+           DB::table('reuniao_mediunica AS rm')->insert([                   
+                    'id_grupo'=>$request->input('grupo'),
+                    'id_sala'=>$request->input('numero'),
+                    'h_inicio'=>$request->input('h_inicio'),
+                    'h_fim'=>$request->input('h_fim'),
+                    'max_atend'=>$request->input('max_atend'),             
+                    'dia'=>$request->input('dia'),                    
+                    'id_tipo_tratamento'=>$request->input('tratamento')                           
+                ]);
+
+            $result = DB::table('reuniao_mediunica')->max('id');
     
            DB::table('historico_venus')->insert([
-            'id_usuario' => 1,
+            'id_usuario' => $usuario,
             'data' => $dt_hora,
-            'fato' => 5,
-            'pessoa' => $request->input('assist')
+            'fato' => 34,
+            'id_ref' => $result
         ]);
     
     
             app('flasher')->addSuccess('O cadastro do atendimento foi realizado com sucesso.');
     
-            return redirect ('/gerenciar-atendimentos');
+            return redirect ('/gerenciar-reunioes');
     
         }
     

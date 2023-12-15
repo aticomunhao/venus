@@ -35,7 +35,7 @@ class GerenciarAtendimentoController extends Controller
             ");
 
         $lista = DB::table('atendimentos AS at')
-                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'att.id as idatt','at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla' )
+                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'att.id as idatt','at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento' )
                     ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id')
                     ->leftJoin('pessoas AS p', 'att.id_pessoa', 'p.id')
@@ -67,11 +67,11 @@ class GerenciarAtendimentoController extends Controller
         }
 
 
-        $lista = $lista->orderby('status_atendimento', 'ASC')->orderBy( 'at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC')->paginate(50);
+        $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy( 'at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC')->paginate(50);
 
         $contar = $lista->count('at.id');
 
-        $status = DB::select("select
+        $st_atend = DB::select("select
         s.id,
         s.descricao
         from tipo_status_atendimento s
@@ -80,7 +80,7 @@ class GerenciarAtendimentoController extends Controller
 
 
 
-        return view ('/recepcao-AFI/gerenciar-atendimentos', compact('lista', 'status', 'contar', 'atende', 'data_inicio', 'assistido', 'situacao'));
+        return view ('/recepcao-AFI/gerenciar-atendimentos', compact('lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'situacao'));
 
 
     }
@@ -406,11 +406,11 @@ class GerenciarAtendimentoController extends Controller
                     ->select('at.id AS ida', 'at.pref_tipo_atendente', 'p1.dt_nascimento', 'at.dh_chegada',  'at.dh_fim', 'at.dh_inicio', 'at.id_assistido', 'at.id_representante', 'at.id_atendente_pref', 'at.id_atendente', 'at.parentesco', 'tdd.descricao AS ddd', 'p1.celular', 'p1.id AS idas', 'p1.nome_completo AS nm_1',  'p2.nome_completo as nm_2',  'p3.id AS idp', 'p3.nome_completo as nm_3',  'p4.nome_completo as nm_4',  'ts.descricao', 'tp.nome',   'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo')
                     ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id')
-                    ->leftJoin('pessoas AS p', 'att.id_pessoa', 'p.id')
+                    //->leftJoin('pessoas AS p', 'at.id_pessoa', 'p.id')
                     ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                     ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                    ->leftjoin('pessoas AS p3', 'att.id_pessoa', 'p3.id')
-                    ->leftjoin('pessoas AS p4', 'att.id_pessoa', 'p4.id')
+                    ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+                    ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
                     ->leftjoin('tp_sexo AS tpsx', 'at.pref_tipo_atendente', 'tpsx.id')
                     ->leftJoin('tp_parentesco AS tp', 'at.parentesco', 'tp.id')
                     ->leftJoin('tp_ddd AS tdd', 'p1.ddd', 'tdd.id')
