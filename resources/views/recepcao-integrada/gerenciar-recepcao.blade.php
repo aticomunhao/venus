@@ -67,7 +67,7 @@
                             <td>{{$listas->desctrat}}</td>
                             <td>{{$listas->tsenc}}</td>
                             <td>                                
-                                <a href="/agenda/{{$listas->ide}}"><button type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Agendar"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/agendar/{{$listas->ide}}/{{$listas->idtt}}"><button type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Agendar"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/faltas/{{$listas->ide}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Presença"><i class="bi bi-exclamation-triangle" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/visualizar/{{$listas->ide}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Histórico"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/inativar/{{$listas->ide}}"><button type="button" class="btn btn-outline-danger btn-sm"  data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
