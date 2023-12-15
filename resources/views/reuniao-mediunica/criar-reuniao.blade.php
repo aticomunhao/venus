@@ -21,105 +21,79 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <form class="form-horizontal mt-4" method="post" action="/novo-atendimento">
+                    <form class="form-horizontal mt-4" method="post" action="/nova-reuniao">
                         @csrf
                     <legend style="color:#525252; font-size:12px; font-family:sans-serif">Dados da reunião</legend>
-                    <fieldset class="border rounded border-primary p-2">
-                    <div class="form-group row">
-                        <div class="col-3">Tipo Prioridade
-                            <select class="form-select" id="" name="priori" required="required">
-                                <option value=""></option>
-                                @foreach($priori as $prioris)
-                                <option value="{{$prioris->prid}}">{{$prioris->prdesc}}</option>
-                                @endforeach
-                            </select>
-                        </div>         
-                        <div class="col">Nome do assistido
-                            <select class="form-select" id="" name="assist" required="required">
-                                <option value=""></option>
-                                @foreach($lista as $listas)
-                                <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
-                                @endforeach
-                            </select>
-                        </div>                       
+                    <fieldset class="border rounded border-secundary p-2">
+                        <div class="row">                          
+                            <div class="col-4">Grupo
+                                <select class="form-select" id="" name="grupo" required="required">
+                                    <option value=""></option>
+                                    @foreach($grupo as $grupos)
+                                    <option value="{{$grupos->idg}}">{{$grupos->nome}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-2">Dia da semana
+                                <select class="form-select" id="" name="dia" required="required">
+                                    <option value=""></option>
+                                    @foreach($dia as $dias)
+                                    <option value="{{$dias->idd}}">{{$dias->nome}}</option>
+                                    @endforeach
+                                </select>
+                            </div> 
+                            <div class="col-4">Tipo de Tratamento
+                                <select class="form-select" id="" name="tratamento" required="required">
+                                    <option value=""></option>
+                                    @foreach($tratamento as $tratamentos)
+                                    <option value="{{$tratamentos->idt}}">{{$tratamentos->descricao}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col">Max atendimentos
+                                <input type="number" class="form-control" id="" min="1" max="800" name="max_atend" required="required">
+                            </div>                 
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">Número Sala
+                                <select class="form-select" id="" name="numero" required="required">
+                                    <option value=""></option>
+                                    @foreach($sala as $salas)
+                                    <option value="{{$salas->ids}}">{{$salas->numero}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-4">Nome Sala
+                                <select class="form-select" id="" name="nome" required="required" >
+                                    <option value=""></option>
+                                    @foreach($sala as $salas)
+                                    <option value="{{$salas->ids}}">{{$salas->nome}}</option>
+                                    @endforeach
+                                </select>
+                            </div> 
+                            <div class="col">Hora de início
+                                <input class="form-control" type="time" id="" name="h_inicio" required="required">     
+                            </div>
+                            <div class="col">Hora de fim
+                                <input class="form-control" type="time" id="" name="h_fim" required="required">     
+                            </div>    
+                        </div>                             
                     </div>
-                    <br>
-                    <div class="form-group row">
-                    <div class="col">Nome do representante
-                            <select class="form-select" id="" name="repres" >
-                                <option value=""></option>
-                                @foreach($lista as $listas)
-                                <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
-                                @endforeach
-                            </select>
-                        </div>     
-                        <div class="col-2">Parentesco
-                            <select class="form-select" id="" name="parent" >
-                                <option value=""></option>
-                                @foreach($parentes as $parentess)
-                                <option value="{{$parentess->id}}">{{$parentess->nome}}</option>
-                                @endforeach
-                            </select>
-                        </div>         
-                        <div class="col">AFI preferido
-                            <select class="form-select" id="afi_p" name="afi_p" >
-                                <option value=""></option>
-                                @foreach($afi as $afis)
-                                <option value="{{$afis->idatt}}">{{$afis->nm_1}}</option>
-                                @endforeach
-                            </select>
-                        </div>                        
-                        <div class="col-3">Tipo AFI
-                            <select class="form-select" id="tipo_afi" name="tipo_afi" >
-                                <option value=""></option>
-                                @foreach($sexo as $sexos)
-                                <option value="{{$sexos->id}}">{{$sexos->tipo}}</option>
-                                @endforeach
-                            </select>                                                 
-                        </div>                        
-                    </div>                   
-                    <br>
-                </div>
                 <div class="row">
-                        <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-atendimentos" role="button">Cancelar</a>
-                        </div>
-                        <div class="d-grid gap-2 col-4 mx-auto" >
-                            <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>
-                        </div>
-                        </form>
-                        
+                    <div class="d-grid gap-1 col-4 mx-auto">
+                        <a class="btn btn-danger" href="/gerenciar-atendimentos" role="button">Cancelar</a>
                     </div>
-                    <br>
+                    <div class="d-grid gap-2 col-4 mx-auto" >
+                        <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>
+                    </div>
+                    </form>                        
+                </div>
+                <br/>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-    const campo1 = document.getElementById('afi_p');
-    const campo2 = document.getElementById('tipo_afi');
-
-    // Adiciona um ouvinte de eventos para o campo1
-    afi_p.addEventListener('input', function() {
-      // Se campo1 estiver preenchido, desabilita o campo2
-      if (afi_p.value.trim() !== '') {
-        tipo_afi.disabled = true;
-      } else {
-        tipo_afi.disabled = false;
-      }
-    });
-
-    // Adiciona um ouvinte de eventos para o campo2
-    tipo_afi.addEventListener('input', function() {
-      // Se campo2 estiver preenchido, desabilita o campo1
-      if (tipo_afi.value.trim() !== '') {
-        afi_p.disabled = true;
-      } else {
-        afi_p.disabled = false;
-      }
-    });
-  </script>
 
 
 @endsection

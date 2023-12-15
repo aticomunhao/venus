@@ -172,11 +172,11 @@ Route::get('/j', [RecepcaoIntegradaController::class, ''])->name('');
 Route::put('/k', [RecepcaoIntegradaController::class, ''])->name('');
 
 //REUNIÃO MEDIÚNICA
-Route::get('/gerenciar-reunioes', [ReuniaoMediunicaController::class, 'index'])->name('recdex');
-Route::get('/agendar/{ide}', [ReuniaoMediunicaController::class, 'agendas'])->name('recage');
-Route::post('/faltar/{ide}', [ReuniaoMediunicaController::class, 'faltas'])->name('recfal');
-Route::get('/criar-reuniao', [ReuniaoMediunicaController::class, 'create'])->name('recvis');
-Route::get('/inativar', [ReuniaoMediunicaController::class, 'inativas'])->name('recina');
+Route::get('/gerenciar-reunioes', [ReuniaoMediunicaController::class, 'index'])->name('remdex');
+Route::get('/agendar/{ide}', [ReuniaoMediunicaController::class, 'agendas'])->name('remage');
+Route::post('/faltar/{ide}', [ReuniaoMediunicaController::class, 'faltas'])->name('remfal');
+Route::get('/criar-reuniao', [ReuniaoMediunicaController::class, 'create'])->name('remcre');
+Route::post('/nova-reuniao', [ReuniaoMediunicaController::class, 'store'])->name('remore');
 Route::post('i', [ReuniaoMediunicaController::class, ''])->name('');
 Route::get('/j', [ReuniaoMediunicaController::class, ''])->name('');
 Route::put('/k', [ReuniaoMediunicaController::class, ''])->name('');

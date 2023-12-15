@@ -20,11 +20,11 @@
                     <div class="col-2">Assistido
                         <input class="form-control" type="text" id="3" name="assist" value="{{$assistido}}">
                     </div>
-                    <div class="col-1">Status
-                        <select class="form-select" id="4" name="status" type="number">
-                            <option value="{{$situacao}}"></option>
-                            @foreach ($status as $statusz)
-                            <option value="{{$statusz->id}}">{{$statusz->descricao}}</option>
+                    <div class="col-2">Status
+                        <select class="form-select" id="4" name="status" type="number">                           
+                            <option value=""></option>
+                            @foreach ($st_atend as $statusz)
+                            <option @if(old('status')==$statusz->id) {{'selected="selected"'}} @endif value="{{ $statusz->id }}">{{$statusz->descricao}}</option>
                             @endforeach               
                         </select>                       
                     </div>
