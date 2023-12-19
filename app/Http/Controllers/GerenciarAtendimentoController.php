@@ -202,102 +202,109 @@ class GerenciarAtendimentoController extends Controller
     }
 
 
-    public function sobeStatus($ida){
+    // public function sobeStatus($ida){
 
-        $data = date("Y-m-d H:i:s");
-
-
-        $sta_at = DB::table('atendimentos AS a')->where('id','=', $ida)->value('a.status_atendimento');
+    //     $data = date("Y-m-d H:i:s");
 
 
-        if ($sta_at == 1){
-
-            app('flasher')->addError('Utilize a opção de vincula o Atendente Fraterno ao atendimento.');
-            return redirect ('/gerenciar-atendimentos');
-        }
-        elseif ($sta_at > 4){
-
-            app('flasher')->addError('O atendimento foi cancelado ou finalizado e não pode ser alterado.');
-            return redirect ('/gerenciar-atendimentos');
-        }
-        elseif ($sta_at == 2){
-
-            app('flasher')->addError('Somente o Atendente Fraterno pode alterar este status');
-            return redirect ('/gerenciar-atendimentos');
-
-        }elseif ($sta_at == 3){
-
-            DB::table('atendimentos AS a')->where('id', '=', $ida)->update([
-                'status_atendimento' => 4,
-                'dh_inicio' => $data
-            ]);
-
-        }elseif ($sta_at == 4){
-
-            DB::table('atendimentos AS a')->where('id', '=', $ida)->update([
-                'status_atendimento' => 5,
-                'dh_fim' => $data
-            ]);
-
-        }
-
-        app('flasher')->addSuccess('O satus foi alterado com sucesso.');
-        return redirect ('/gerenciar-atendimentos');
-
-    }
-
-    public function desceStatus($ida){
-
-        $sta_at = DB::table('atendimentos AS a')->where('id','=', $ida)->value('a.status_atendimento');
+    //     $sta_at = DB::table('atendimentos AS a')->where('id','=', $ida)->value('a.status_atendimento');
 
 
-        if ($sta_at == 1){
+    //     if ($sta_at == 1){
 
-            app('flasher')->addWarning('Não existe um status menor.');
-            return redirect ('/gerenciar-atendimentos');
-        }
-        if ($sta_at == 2){
+    //         app('flasher')->addError('Utilize a opção de vincula o Atendente Fraterno ao atendimento.');
+    //         return redirect ('/gerenciar-atendimentos');
+    //     }
+    //     elseif ($sta_at > 4){
 
-            app('flasher')->addInfo('Somente o atendente pode alterar este status.');
-            return redirect ('/gerenciar-atendimentos');
-        }
-        if ($sta_at == 6){
+    //         app('flasher')->addError('O atendimento foi cancelado ou finalizado e não pode ser alterado.');
+    //         return redirect ('/gerenciar-atendimentos');
+    //     }
+    //     elseif ($sta_at == 2){
 
-            app('flasher')->addWarning('O atendimento foi cancelado e não pode ser alterado.');
-            return redirect ('/gerenciar-atendimentos');
+    //         app('flasher')->addError('Somente o Atendente Fraterno pode alterar este status');
+    //         return redirect ('/gerenciar-atendimentos');
 
-        }elseif ($sta_at == 5){
+    //     }elseif ($sta_at == 3){
 
-            app('flasher')->addWarning('O atendimento foi Finalizado e não pode ser alterado.');
-            return redirect ('/gerenciar-atendimentos');
+    //         DB::table('atendimentos AS a')->where('id', '=', $ida)->update([
+    //             'status_atendimento' => 4,
+    //             'dh_inicio' => $data
+    //         ]);
 
-        }elseif ($sta_at == 3){
+    //     }elseif ($sta_at == 4){
 
-            DB::table('atendimentos AS a')->where('id', '=', $ida)->update([
-                'status_atendimento' => 1
-            ]);
+    //         DB::table('atendimentos AS a')->where('id', '=', $ida)->update([
+    //             'status_atendimento' => 5,
+    //             'dh_fim' => $data
+    //         ]);
 
-        }elseif ($sta_at == 4){
+    //     }
 
-            DB::table('atendimentos AS a')->where('id', '=', $ida)->update([
-                'status_atendimento' => 1,
-                'dh_inicio' => null,
-                'id_atendente' => null
-            ]);
+    //     app('flasher')->addSuccess('O satus foi alterado com sucesso.');
+    //     return redirect ('/gerenciar-atendimentos');
 
-            app('flasher')->addSuccess('O status foi alterado com sucesso.');
-            return redirect ('/gerenciar-atendimentos');
+    // }
 
-        }
+    // public function desceStatus($ida){
 
-        app('flasher')->addError('Aconteceu um problema desconhecido contate o administrador.');
-        return redirect ('/gerenciar-atendimentos');
+    //     $sta_at = DB::table('atendimentos AS a')->where('id','=', $ida)->value('a.status_atendimento');
 
-    }
+
+    //     if ($sta_at == 1){
+
+    //         app('flasher')->addWarning('Não existe um status menor.');
+    //         return redirect ('/gerenciar-atendimentos');
+    //     }
+    //     if ($sta_at == 2){
+
+    //         app('flasher')->addInfo('Somente o atendente pode alterar este status.');
+    //         return redirect ('/gerenciar-atendimentos');
+    //     }
+    //     if ($sta_at == 6){
+
+    //         app('flasher')->addWarning('O atendimento foi cancelado e não pode ser alterado.');
+    //         return redirect ('/gerenciar-atendimentos');
+
+    //     }elseif ($sta_at == 5){
+
+    //         app('flasher')->addWarning('O atendimento foi Finalizado e não pode ser alterado.');
+    //         return redirect ('/gerenciar-atendimentos');
+
+    //     }elseif ($sta_at == 3){
+
+    //         DB::table('atendimentos AS a')->where('id', '=', $ida)->update([
+    //             'status_atendimento' => 1
+    //         ]);
+
+    //     }elseif ($sta_at == 4){
+
+    //         DB::table('atendimentos AS a')->where('id', '=', $ida)->update([
+    //             'status_atendimento' => 1,
+    //             'dh_inicio' => null,
+    //             'id_atendente' => null
+    //         ]);
+
+    //         app('flasher')->addSuccess('O status foi alterado com sucesso.');
+    //         return redirect ('/gerenciar-atendimentos');
+
+    //     }
+
+    //     app('flasher')->addError('Aconteceu um problema desconhecido contate o administrador.');
+    //     return redirect ('/gerenciar-atendimentos');
+
+    // }
 
     public function cancelar($ida){
 
-        dd(session());
+        $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
+
+        if ($status > 1){
+
+            app('flasher')->addError('Somente é permitido "Cancelar" atendimentos no status "Aguardando atendimento".');
+            return redirect ('/gerenciar-atendimentos');
+
+        }else{
 
             DB::table('atendimentos AS a')->where('id', '=', $ida)->update([
                 'status_atendimento' => 6
@@ -306,10 +313,21 @@ class GerenciarAtendimentoController extends Controller
         app('flasher')->addSuccess('O status do atendimento foi alterado para "Cancelado".');
         return redirect ('/gerenciar-atendimentos');
 
+        }
     }
 
 
     public function edit($ida){
+
+       $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
+
+       //dd($status);
+        if ($status > 1){
+
+            app('flasher')->addError('Somente são permitidas alterações no status "Aguardando atendimento".');
+            return redirect ('/gerenciar-atendimentos');
+
+        }else{
 
         $result = DB::table('atendimentos AS at')
                     ->where('at.id', $ida)
@@ -371,10 +389,10 @@ class GerenciarAtendimentoController extends Controller
                     from tipo_prioridade pr
                     order by id
                     ");
-
+        
 
         return view ('/recepcao-AFI/editar-atendimento', compact('result', 'priori', 'sexo', 'pare', 'afi', 'lista'));
-
+        }
     }
 
     public function altera(Request $request, $ida){
@@ -475,6 +493,165 @@ class GerenciarAtendimentoController extends Controller
 
         app('flasher')->addSuccess('O status foi alterado e o atendente incluído.');
         return redirect ('/gerenciar-atendimentos');
+    }
+
+    public function atendente_dia(Request $request){
+
+        $now = Carbon::now()->format('d/m/Y');
+
+        //dd($now);
+
+        $atende = DB::table('atendente_dia AS atd')
+                ->select('att.id AS ida', 'atd.id', 'atd.id_atendente', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.nome AS nm_sala')
+                ->leftJoin('atendentes AS att', 'atd.id_atendente','att.id')
+                ->leftjoin('pessoas AS p', 'att.id_pessoa', 'p.id' )
+                ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
+                ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
+                ->leftJoin('grupo AS g', 'att.id_grupo', 'g.id')
+                ;
+
+        $grupo = $request->grupo;
+
+        $atendente = $request->atendente;
+
+        $status = $request->status;
+
+
+        if ($request->grupo){
+        $atende->where('g.id', '=', $request->grupo);
+        }
+
+        if ($request->atendente){
+        $atende->where('p.nm_4', 'like', "%$request->atendente%");
+        }
+
+        if ($request->status){
+        $atende->where('p.status', $request->status);
+        }
+
+
+        $atende = $atende->orderby('atd.data_hora', 'ASC')->paginate(50);
+
+
+        $st_atend = DB::select("select
+        tsp.id,
+        tsp.tipo
+        from tipo_status_pessoa tsp
+        ");
+
+        $situacao = DB::table('tipo_status_pessoa')
+                    ->select('id', 'tipo')
+                    ->get();
+
+        $grupo = DB::table('grupo')
+                    ->select('id', 'nome')
+                    ->where('id_tipo_grupo', 3)
+                    ->where('status_grupo', 1)
+                    ->orderBy('nome')
+                    ->get();
+
+
+
+
+        return view ('/recepcao-AFI/gerenciar-atendente-dia', compact('atende', 'st_atend',  'atendente', 'status', 'situacao', 'grupo'));
+
+
+
+    }
+
+            
+    public function definir_sala(Request $request){
+
+                $atende = DB::table('atendentes AS att',)
+                ->select('att.id AS ida', 'atd.id', 'att.id_pessoa AS idat','atd.id_atendente', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id AS pid', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.nome AS nm_sala')
+                ->leftJoin('atendente_dia AS atd', 'att.id_pessoa', 'atd.id_atendente')
+                ->leftjoin('pessoas AS p', 'att.id_pessoa', 'p.id' )
+                ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
+                ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
+                ->leftJoin('grupo AS g', 'att.id_grupo', 'g.id');
+
+
+                $grupo = $request->grupo;
+
+                $atendente = $request->atendente;
+
+                $status = $request->status;
+        
+        
+                if ($request->grupo){
+                $atende->where('g.id', '=', $request->grupo);
+                }
+        
+                if ($request->atendente){
+                $atende->where('att.id_pessoa', $request->atendente);
+                }
+        
+                if ($request->status){
+                $atende->where('p.status', $request->status);
+                }
+        
+        
+                $atende = $atende->orderby('atd.data_hora', 'ASC')->paginate(50);
+        
+
+                $st_atend = DB::select("select
+                tsp.id,
+                tsp.tipo
+                from tipo_status_pessoa tsp
+                ");
+
+                $situacao = DB::table('tipo_status_pessoa')
+                        ->select('id', 'tipo')
+                        ->get();
+
+                $grupo = DB::table('grupo')
+                        ->select('id', 'nome')
+                        ->where('id_tipo_grupo', 3)
+                        ->where('status_grupo', 1)
+                        ->orderBy('nome')
+                        ->get();
+
+                $sala = DB::table('salas AS s')
+                        ->select('id', 'numero')
+                        ->where( 'id_finalidade', 2)
+                        ->where('status_sala', 1)
+                        ->orderBy('numero', 'asc')
+                        ->get();
+
+//dd($sala);
+
+
+    return view ('/recepcao-AFI/incluir-atendente-dia', compact('atende', 'st_atend',  'situacao', 'grupo', 'sala'));
+
+
+    }
+
+    public function gravar_sala(Request $request, $ida){
+
+        $now = Carbon::now()->format('d/m/Y');
+
+        $sit_afi = DB::table('atendente_dia AS atd')->select('id_atendente')->where('atd.data_hora', $now)->count();
+
+dd($sit_afi);
+
+        if ($sit_afi > 0){
+
+            app('flasher')->addWarning('O atendente está em outra sala.');
+
+            return redirect()->back() ;
+
+        }else{
+
+        DB::table('atendente_dia AS atd')->where('atd.id', $ida)->insert([
+
+            'id_atendente'=>$request->input('atendente'),
+            'id_sala'=>$request->input('sala'),
+            'data_hora'=> $now
+        ]);
+
+        }
+
+
     }
 
 }

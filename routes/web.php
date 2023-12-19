@@ -71,7 +71,9 @@ Route::get('/editar-atendimento/{ida}', [GerenciarAtendimentoController::class, 
 Route::post('/grava-atualizacao/{ida}', [GerenciarAtendimentoController::class, 'altera'])->name('atealt');
 Route::get('/visualizar-atendimentos/{idas}', [GerenciarAtendimentoController::class, 'visual'])->name('atevis');
 Route::put('/atendente-atualizar/{ida}', [GerenciarAtendimentoController::class, 'salvaatend'])->name('salate');
-
+Route::get('/gerenciar-atendente-dia', [GerenciarAtendimentoController::class, 'atendente_dia'])->name('atedia');
+Route::get('/definir-sala-atendente', [GerenciarAtendimentoController::class, 'definir_sala'])->name('atesal');
+Route::post('/gravar-escolha/{ida}', [GerenciarAtendimentoController::class, 'gravar_sala'])->name('ategrv');
 
 //Rotas do Atendimento Fraterno:
 Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name('afidex');
