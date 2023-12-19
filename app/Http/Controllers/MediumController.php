@@ -16,13 +16,13 @@ class MediumController extends Controller
         $medium = DB::table('medium AS m')
             ->leftJoin('tipo_mediunidade AS tm', 'm.id_tp_mediunidade', '=', 'tm.id')
             ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-            ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.id_tp_mediunidade', 'p.status', 'tm.tipo', 'p.cpf', 'p.dt_nascimento', 'p.sexo', 'p.email')
+            ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.id_tp_mediunidade', 'p.status','tm.tipo','p.motivo_status')
             ->orderBy('p.nome_completo', 'ASC');
 
-        $nome = $request->nome_pesquisa; // Correção no nome do campo
+        $nome = $request->nome_pesquisa;
         if ($nome) {
             $medium->where('p.nome_completo', 'like', "%$nome%")
-                   ->orWhere('p.cpf', 'like', "%$nome%"); // Adicione outros campos se necessário
+                   ->orWhere('p.cpf', 'like', "%$nome%");
         }
 
         $medium = $medium->orderBy('p.status', 'asc')

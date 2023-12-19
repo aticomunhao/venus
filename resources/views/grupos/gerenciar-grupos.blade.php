@@ -6,11 +6,11 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 
-<div class="container-fluid";>
-<h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPOS</h4>
+<div class="container-fluid">
+    <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPOS</h4>
     <div class="col-12">
         <div class="row justify-content-center">
-                <form action="{{route('nomes')}}" class="form-horizontal mt-4" method="GET" >
+            <form action="{{route('nomes')}}" class="form-horizontal mt-4" method="GET">
                 <div class="row">
                     <div class="col-3">Nome
                         <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa" placeholder="Pesquisar nome {{ request('nome_pesquisa') }}">
@@ -51,15 +51,13 @@
                         <td> {{$grupos->nm_tipo_grupo}} </td>
                         <td> {{$grupos->descricao1}} </td>
                         <td>
-
-
                             <a href="/editar-grupos/{{$grupos->id}}" type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar">
                                 <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
                             </a>
                             <a href="/visualizar-grupos/{{$grupos->id}}" type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">
                                 <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
                             </a>
-                            <a href="/deletar-grupos" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao" onclick="confirmarExclusao('{{ $grupos->id }}')" data-tt="tooltip" data-placement="top" title="Deletar">
+                            <a href="/deletar-grupos" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao" onclick="confirmarExclusao('{{ $grupos->id }}', '{{ $grupos->nome }}')" data-tt="tooltip" data-placement="top" title="Deletar">
                                 <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                             </a>
 
@@ -81,7 +79,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Tem certeza que deseja excluir este item?
+                Tem certeza que deseja excluir o grupo "<span id="modal-body-text"></span>"?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -102,8 +100,9 @@
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
 
-    function confirmarExclusao(id) {
+    function confirmarExclusao(id, nome) {
         document.getElementById('btn-confirmar-exclusao').setAttribute('data-id', id);
+        document.getElementById('modal-body-text').innerText = nome;
         $('#confirmacaoDelecao').modal('show');
     }
 

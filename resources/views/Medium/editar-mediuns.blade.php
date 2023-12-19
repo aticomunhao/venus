@@ -33,50 +33,6 @@
                             </select>
                         </div>
                         <div class="col">
-                            CPF
-                            <select class="form-select" aria-label=".form-select-lg example" name="cpf">
-                                @foreach ($pessoas as $pessoa)
-                                    <option value="{{$pessoa->id}}" @if($pessoa->id == $medium[0]->id_pessoa) selected @endif>
-                                        {{$pessoa->cpf}}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col">
-                            Data nascimento
-                            <select class="form-select" aria-label=".form-select-lg example" name="dt_nascimento">
-                                @foreach ($pessoas as $pessoa)
-                                    <option value="{{$pessoa->id}}" @if($pessoa->id == $medium[0]->id_pessoa) selected @endif>
-                                        {{$pessoa->dt_nascimento}}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <br>
-                            Sexo
-                            <select class="form-select" aria-label=".form-select-lg example" name="sexo">
-                                @foreach ($pessoas as $pessoa)
-                                    <option value="{{$pessoa->id}}" @if($pessoa->id == $medium[0]->id_pessoa) selected @endif>
-                                        {{$pessoa->sexo}}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col">
-                            <br>
-                            Email
-                            <select class="form-select" aria-label=".form-select-lg example" name="email">
-                                @foreach ($pessoas as $pessoa)
-                                    <option value="{{$pessoa->id}}" @if($pessoa->id == $medium[0]->id_pessoa) selected @endif>
-                                        {{$pessoa->email}}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col">
                             <br>
                             Tipo mediunidade
                             <select class="form-select" aria-label=".form-select-lg example" name="id_tp_mediunidade">

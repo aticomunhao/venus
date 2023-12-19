@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Spatie\FlareClient\Http\Exceptions\InvalidData;
+use Illuminate\Validation\Rule;
 
 
 use function Psy\debug;
@@ -49,13 +50,20 @@ class SalaController extends Controller
     {
         $salas = db::select('select * from salas');
         $tipo_finalidade_sala = db::select('select * from tipo_finalidade_sala');
+        $tipo_motivo = db::select('select * from tipo_motivo');
 
         $tipo_localizacao = DB::table('tipo_localizacao as tl')
             ->select('tl.id AS ids', 'tl.nome', 'tl.sigla')->get();
 
+            $numerosExistem = DB::table('salas')->pluck('numero')->toArray();
+
+
+
+
+
 
         //
-        return view('salas/criar-salas', compact('salas', 'tipo_finalidade_sala', 'tipo_localizacao'));
+        return view('salas/criar-salas', compact('salas', 'tipo_finalidade_sala', 'tipo_localizacao','numerosExistem','tipo_motivo'));
     }
     /**
      * Display the specified resource.
@@ -92,7 +100,7 @@ class SalaController extends Controller
 
 
 
-        $ativo = isset($request->checked) ? 1 : 0;
+        // $ativo = isset($request->checked) ? 1 : 0;
         $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
 
 
@@ -106,7 +114,6 @@ class SalaController extends Controller
         $luz_azul = isset($request->luz_azul) ? 1 : 0;
         $bebedouro = isset($request->bebedouro) ? 1 : 0;
         $armarios = isset($request->armarios) ? 1 : 0;
-        $status_sala = isset($request->status_sala) ? 1 : 0;
 
 
 
@@ -120,6 +127,7 @@ class SalaController extends Controller
             'nr_lugares' => $request->input('nr_lugares'),
             'id_localizacao' => $request->input('id_localizacao'),
             'id_finalidade' => $request->input('tipo_sala'),
+            'status_sala' => $request->input('status_sala'),
             'projetor' => $projetor,
             'quadro' => $quadro,
             'tela_projetor' => $tela_projetor,
@@ -131,7 +139,6 @@ class SalaController extends Controller
             'luz_azul' => $luz_azul,
             'bebedouro' => $bebedouro,
             'armarios' => $armarios,
-            'status_sala' => $status_sala,
             'tamanho_sala' => $request->input('tamanho_sala')
 
         ]);
@@ -155,32 +162,57 @@ class SalaController extends Controller
      */
     public function edit($id)
     {
+        $ativo = isset($request->status_sala) ? 1 : 0;
+
         $salaEditada = DB::table('salas')->where('id', $id)->select('*')->first();
-        $salas = db::select('select * from salas');
-        $tipo_finalidade_sala = db::select('select * from tipo_finalidade_sala');
-        $tipo_localizacao = DB::select('select * from tipo_localizacao');
+        $salas = DB::table('salas AS s')
+        ->leftJoin('tipo_finalidade_sala AS tf', 's.id_finalidade', 'tf.id')
+        ->leftJoin('tipo_localizacao AS tl', 's.id_localizacao', 'tl.id')
+        ->leftJoin('tipo_motivo AS tm', 's.id_motivo', 'tm.id')
+        ->select(
+            's.id',
+            's.nome',
+            's.numero',
+            's.nr_lugares',
+            's.projetor',
+            's.quadro',
+            's.tela_projetor',
+            's.ventilador',
+            's.ar_condicionado',
+            's.computador',
+            's.controle',
+            's.som',
+            's.luz_azul',
+            's.bebedouro',
+            's.armarios',
+            's.tamanho_sala',
+            's.status_sala',
+            's.id_finalidade',
+            's.id_localizacao',
+            's.id_motivo',
+            'tf.descricao',
+            'tl.nome',
+            'tm.tipo'
+        )
+
+        ->where('s.id', $id)
+        ->get();
+
+        $numerosExistem = DB::table('salas')->pluck('numero')->toArray();
+
+    $tipo_finalidade_sala = DB::select('select * from tipo_finalidade_sala');
+    $tipo_localizacao = DB::select('select * from tipo_localizacao');
+
+    return view('salas/editar-salas', compact('salas', 'tipo_finalidade_sala', 'tipo_localizacao','salaEditada','numerosExistem'));
 
 
+}
 
 
-
-        return view('salas/editar-salas', compact('salas', 'tipo_finalidade_sala', 'salaEditada', 'tipo_localizacao'));
-    }
-
+public function update(Request $request, string $id)
+{
 
 
-
-
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-
-
-
-
-    {
 
         $ativo = isset($request->checked) ? 1 : 0;
 
@@ -198,6 +230,8 @@ class SalaController extends Controller
         $luz_azul = isset($request->luz_azul) ? 1 : 0;
         $bebedouro = isset($request->bebedouro) ? 1 : 0;
         $armarios = isset($request->armarios) ? 1 : 0;
+
+
 
 
 

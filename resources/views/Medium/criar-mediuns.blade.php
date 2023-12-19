@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
+
 
     <div class="container mt-4">
         <div class="card">
@@ -16,16 +16,11 @@
             <div class="card-body">
                 <form class="form-horizontal mt-2" method="post" action="/incluir-mediuns">
                     @csrf
-                    <div class="col-1 text-end offset-11 mb-3">
-                        Status
-                        <label for="status"></label>
-                        <input type="checkbox" name="status" style="text-align: right;"
-                            data-toggle="toggle" data-onlabel="A" data-offlabel="D"
-                            data-onstyle="success" data-offstyle="">
-                    </div>
 
-                    <div class="row mb-3">
+
+                    <div class="row ">
                         <div class="col">
+
                             Nome
                             <select class="form-select" aria-label=".form-select-lg example" name="id_pessoa">
                                 @foreach ($pessoas as $pessoa)
@@ -33,49 +28,8 @@
                                 @endforeach
                             </select>
                         </div>
-
                         <div class="col">
-                            CPF
-                            <select class="form-select" aria-label=".form-select-lg example" name="cpf">
-                                @foreach ($pessoas as $pessoa)
-                                    <option value="{{$pessoa->id}}">{{$pessoa->cpf}}</option>
-                                @endforeach
-                            </select>
-                        </div>
 
-                        <div class="col">
-                            Data de Nascimento
-                            <select class="form-select" aria-label=".form-select-lg example" name="dt_nascimento">
-                                @foreach ($pessoas as $pessoa)
-                                    <option value="{{$pessoa->id}}">{{$pessoa->dt_nascimento}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col">
-                            <br>
-                            Sexo
-                            <select class="form-select" aria-label=".form-select-lg example" name="sexo">
-                                @foreach ($pessoas as $pessoa)
-                                    <option value="{{$pessoa->id}}">{{$pessoa->sexo}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col">
-                            <br>
-                            Email
-                            <select class="form-select" aria-label=".form-select-lg example" name="email">
-                                @foreach ($pessoas as $pessoa)
-                                    <option value="{{$pessoa->id}}">{{$pessoa->email}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col">
-                            <br>
                             Tipo de Mediunidade
                             <select class="form-select" aria-label=".form-select-lg example" name="id_tp_mediunidade">
                                 @foreach ($tipo_mediunidade as $tipo)
@@ -84,7 +38,25 @@
                             </select>
                         </div>
                     </div>
+                   <div class="row ">
+                    <div class="col">
+                        <br>
+                        Status
+                        <input class="form-control" type="text" name="status" id="status">
 
+                        </select>
+                    </div>
+                    <br>
+                    <div class="col">
+                        <br>
+                        Motivo
+                        <input class="form-control" type="text"  name="motivo_status" id="moltivo_status">
+
+                        </select>
+                    </div>
+                </div>
+
+                </body>
                     <div class="row mt-2 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
                             <br>
