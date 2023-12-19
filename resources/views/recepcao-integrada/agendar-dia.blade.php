@@ -4,129 +4,152 @@
 
 <title>Agendar Tratamento</title>
 
-
 @endsection
 
 @section('content')
 
 <br>
-<div class="container">
+<div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card">
-            <div class="card-header">
+                <div class="card-header">
                     <div class="row">
                         <div class="col">
                             AGENDAR TRATAMENTO
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
-                    <form class="form-horizontal mt-4" method="post" action="/novo-atendimento">
-                        @csrf
-                    <legend style="color:#525252; font-size:12px; font-family:sans-serif">Dados do assistido</legend>
-                    <fieldset class="border rounded border-primary p-2">
-                    <div class="form-group row">
-                        <div class="col-3">Tipo Prioridade
-                            <select class="form-select" id="" name="priori" required="required">
-                                <option value=""></option>
-                                @foreach($priori as $prioris)
-                                <option value="{{$prioris->prid}}">{{$prioris->prdesc}}</option>
-                                @endforeach
-                            </select>
-                        </div>         
-                        <div class="col">Nome do assistido
-                            <select class="form-select" id="" name="assist" required="required">
-                                <option value=""></option>
-                                @foreach($lista as $listas)
-                                <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
-                                @endforeach
-                            </select>
-                        </div>                       
+                <div class="card-body">                    
+                        <legend style="color:#525252; font-size:12px; font-family:sans-serif">Dados do Encaminhamento</legend>
+                        <fieldset class="border rounded border-secondary p-2">
+                        <div class="form-group row">
+                            <div class="col">Tipo Prioridade:
+                                <input type="text" class="form-control" value="{{$result[0]->prdesc}}" Disabled="Disabled">                            
+                            </div>         
+                            <div class="col">Nome do assistido:
+                                <input type="text" class="form-control" value="{{$result[0]->nm_1}}" Disabled="Disabled">                            
+                            </div>
+                            <div class="col">Nome do representante:
+                                <input type="text" class="form-control" value="{{$result[0]->nm_2}}" Disabled="Disabled"> 
+                            </div>    
+                            <div class="col">Parentesco:
+                                <input type="text" class="form-control" value="{{$result[0]->nome}}" Disabled="Disabled">        
+                            </div>   
+                            <div class="col">Tratamento:
+                                <input type="text" class="form-control" value="{{$result[0]->desctrat}}" Disabled="Disabled">        
+                            </div>                                            
+                        </div>
+                        </fieldset>                   
+                    <br/>
+                    <form class="form-horizontal mt-2" method="post" action="/novo-atendimento">
+                        @csrf              
+                    <div class="row g-2" style="text-align:center;">
+                        <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">                   
+                            <div class="form-check form-check-inline p-3">
+                                <input class="form-check-input" type="radio" name="dia" id="" value="0" checked>
+                                <label class="form-check-label" for="">Segunda</label>
+                                <br/>
+                                Nr Grupos: {{$contgrseg[0]->ttreu}}
+                                <br/>
+                                Max Vagas: {{$contgrseg[0]->maxat}}
+                            </div>
+                        </div>
+                        <div class="col-1"></div>
+                        <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">  
+                            <div class="form-check form-check-inline p-3">
+                                <input class="form-check-input" type="radio" name="dia" id="" value="1">
+                                <label class="form-check-label" for="">Terça</label>
+                                <br/>
+                                Nr Grupos: {{$contgrter[0]->ttreu}}
+                                <br/>
+                                Max Vagas: {{$contgrter[0]->maxat}}
+                            </div>
+                        </div>
+                        <div class="col-1"></div>    
+                        <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">  
+                            <div class="form-check form-check-inline p-3">
+                                <input class="form-check-input" type="radio" name="dia" id="" value="2">
+                                <label class="form-check-label" for="">Quarta</label>
+                                <br/>
+                                Nr Grupos: {{$contgrqua[0]->ttreu}}
+                                <br/>
+                                Max Vagas: {{$contgrqua[0]->maxat}}
+                            </div>
+                        </div>               
                     </div>
-                    <br>
-                    <div class="form-group row">
-                    <div class="col">Nome do representante
-                            <select class="form-select" id="" name="repres" >
-                                <option value=""></option>
-                                @foreach($lista as $listas)
-                                <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
-                                @endforeach
-                            </select>
-                        </div>     
-                        <div class="col-2">Parentesco
-                            <select class="form-select" id="" name="parent" >
-                                <option value=""></option>
-                                @foreach($parentes as $parentess)
-                                <option value="{{$parentess->id}}">{{$parentess->nome}}</option>
-                                @endforeach
-                            </select>
-                        </div>         
-                        <div class="col">AFI preferido
-                            <select class="form-select" id="afi_p" name="afi_p" >
-                                <option value=""></option>
-                                @foreach($afi as $afis)
-                                <option value="{{$afis->idatt}}">{{$afis->nm_1}}</option>
-                                @endforeach
-                            </select>
-                        </div>                        
-                        <div class="col-3">Tipo AFI
-                            <select class="form-select" id="tipo_afi" name="tipo_afi" >
-                                <option value=""></option>
-                                @foreach($sexo as $sexos)
-                                <option value="{{$sexos->id}}">{{$sexos->tipo}}</option>
-                                @endforeach
-                            </select>                                                 
-                        </div>                        
-                    </div>                   
-                    <br>
-                </div>
-                <div class="row">
+                    <div class="row p-3"></div>
+                    <div class="row g-2"  style="text-align:center;">
+                        <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">                   
+                            <div class="form-check form-check-inline p-3">
+                                <input class="form-check-input" type="radio" name="dia" id="" value="4" checked>
+                                <label class="form-check-label" for="">Quinta</label>
+                                <br/>
+                                Nr Grupos: {{$contgrqui[0]->ttreu}}
+                                <br/>
+                                Max Vagas: {{$contgrqui[0]->maxat}}
+                            </div>
+                        </div>
+                        <div class="col-1"></div>
+                        <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">  
+                            <div class="form-check form-check-inline p-3">
+                                <input class="form-check-input" type="radio" name="dia" id="" value="5">
+                                <label class="form-check-label" for="">Sexta</label>
+                                <br/>
+                                Nr Grupos: {{$contgrsex[0]->ttreu}}
+                                <br/>
+                                Max Vagas: {{$contgrsex[0]->maxat}}
+                            </div>
+                        </div> 
+                        <div class="col-1"></div>
+                        <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;"> 
+                            <div class="form-check form-check-inline p-3">
+                                <input class="form-check-input" type="radio" name="dia" id="" value="6">
+                                <label class="form-check-label" for="">Sábado</label>
+                                <br/>
+                                Nr Grupos: {{$contgrsab[0]->ttreu}}
+                                <br/>
+                                Max Vagas: {{$contgrsab[0]->maxat}}
+                            </div>
+                        </div>               
+                    </div>
+                    <div class="row p-3"></div>
+                    <div class="row g-2"  style="text-align:center;">
+                        <div class="col"></div>
+                        <div class="col"></div>
+                        <div class="col-3" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">                   
+                            <div class="form-check form-check-inline p-3">
+                                <input class="form-check-input" type="radio" name="dia" id="" value="4" checked>
+                                <label class="form-check-label" for="">Domingo</label>
+                                <br/>
+                                Nr Grupos: {{$contgrdom[0]->ttreu}}
+                                <br/>
+                                Max Vagas: {{$contgrdom[0]->maxat}}
+                            </div>
+                        </div>
+                        <div class="col"></div>
+                        <div class="col"></div>
+                    </div>
+                    <br/>
+                    <div class="row">
                         <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-atendimentos" role="button">Cancelar</a>
+                            <a class="btn btn-danger" href="/gerenciar-recepcao" role="button">Cancelar</a>
                         </div>
                         <div class="d-grid gap-2 col-4 mx-auto" >
                             <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>
                         </div>
-                        </form>
-                        
+                    </form>
                     </div>
-                    <br>
-            </div>
+                </div>  
+            </div>                                  
         </div>
     </div>
 </div>
-
-<script>
-    const campo1 = document.getElementById('afi_p');
-    const campo2 = document.getElementById('tipo_afi');
-
-    // Adiciona um ouvinte de eventos para o campo1
-    afi_p.addEventListener('input', function() {
-      // Se campo1 estiver preenchido, desabilita o campo2
-      if (afi_p.value.trim() !== '') {
-        tipo_afi.disabled = true;
-      } else {
-        tipo_afi.disabled = false;
-      }
-    });
-
-    // Adiciona um ouvinte de eventos para o campo2
-    tipo_afi.addEventListener('input', function() {
-      // Se campo2 estiver preenchido, desabilita o campo1
-      if (tipo_afi.value.trim() !== '') {
-        afi_p.disabled = true;
-      } else {
-        afi_p.disabled = false;
-      }
-    });
-  </script>
 
 
 @endsection
 
 @section('footerScript')
 
-<script src="{{ URL::asset('/js/pages/mascaras.init.js')}}"></script>
 
 @endsection

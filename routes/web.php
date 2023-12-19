@@ -163,7 +163,7 @@ Route::get('/visualizar-mediuns/{id}', [MediumController::class, 'show'])->name(
 
 //RECEPÇÃO INTEGRADA DA DAO
 Route::get('/gerenciar-recepcao', [RecepcaoIntegradaController::class, 'index'])->name('recdex');
-Route::get('/agendar/{ide}', [RecepcaoIntegradaController::class, 'agendas'])->name('recage');
+Route::get('/agendar/{ide}/{idtt}', [RecepcaoIntegradaController::class, 'agenda'])->name('recage');
 Route::post('/faltar/{ide}', [RecepcaoIntegradaController::class, 'faltas'])->name('recfal');
 Route::get('/visualizar', [RecepcaoIntegradaController::class, 'visualizas'])->name('recvis');
 Route::get('/inativar', [RecepcaoIntegradaController::class, 'inativas'])->name('recina');
@@ -173,13 +173,9 @@ Route::put('/k', [RecepcaoIntegradaController::class, ''])->name('');
 
 //REUNIÃO MEDIÚNICA
 Route::get('/gerenciar-reunioes', [ReuniaoMediunicaController::class, 'index'])->name('remdex');
-Route::get('/agendar/{ide}', [ReuniaoMediunicaController::class, 'agendas'])->name('remage');
-Route::post('/faltar/{ide}', [ReuniaoMediunicaController::class, 'faltas'])->name('remfal');
 Route::get('/criar-reuniao', [ReuniaoMediunicaController::class, 'create'])->name('remcre');
 Route::post('/nova-reuniao', [ReuniaoMediunicaController::class, 'store'])->name('remore');
-Route::post('i', [ReuniaoMediunicaController::class, ''])->name('');
-Route::get('/j', [ReuniaoMediunicaController::class, ''])->name('');
-Route::put('/k', [ReuniaoMediunicaController::class, ''])->name('');
+
 
 
 
