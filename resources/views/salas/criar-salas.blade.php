@@ -17,59 +17,63 @@
                 <div class="card-body">
                     <form class="form-horizontal mt-2" method="post" action="/incluir-salas/">
                         @csrf
-                        <div class="col-1 text-end offset-11">
-                            Status <label for="status_sala"></label>
-                            <input type="checkbox" name="status_sala" style="text-align: right;" data-toggle="toggle" data-onlabel="A" data-offlabel="D" data-onstyle="success" data-offstyle="">
+
+                        <div class="row">
+                            <div class="col-6">
+                                Nome
+                                <input type="text" class="form-control" id="nome" name="nome" maxlength="30" required="required" oninput="validarSomenteLetras(this)">
+                            </div>
+
+                            <script>
+                                function validarSomenteLetras(input) {
+                                    // Permite letras, espaços e caracteres especiais
+                                    input.value = input.value.replace(/[^a-zA-Z\u00C0-\u00FF\s]/g, '');
+                                }
+                            </script>
+
+                            <div class="col">
+                                Status
+                                <select class="form-select" aria-label=".form-select-lg example" name="status_sala " required="required">
+                                    <option value="1">Ativo</option>
+                                    <option value="2">Inativo</option>
+                                </select>
+                            </div>
+                            <div class="col">Localização
+                                <select class="form-select" name="id_localizacao" aria-label=".form-select-lg example">
+                                    <option selected></option>
+                                    @foreach ($tipo_localizacao as $localizacao )
+                                    <option value={{$localizacao->ids}}>{{$localizacao->nome}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+
                         </div>
 
-                                <div class="row">
-                                    <div class="col-8">
-                                        Nome
-                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="30" required="required" oninput="validarSomenteLetras(this)">
-                                    </div>
-
-                                    <script>
-                                        function validarSomenteLetras(input) {
-                                            // Permite letras, espaços e caracteres especiais
-                                            input.value = input.value.replace(/[^a-zA-Z\u00C0-\u00FF\s]/g, '');
-                                        }
-                                    </script>
-
-
-                                    <div class="col">
-                                        Finalidade sala
-                                        <select class="form-select" aria-label=".form-select-lg example" name="tipo_sala" required>
-                                            <option selected></option>
-                                            @foreach ($tipo_finalidade_sala as $tipo)
-                                            <option value={{$tipo->id}}>{{$tipo->descricao}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <br>
-                                <div class="row">
-                                    <div class="col">Número
-                                        <input type="number" class="form-control" id="numero" min="1" max="300" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" required="required">
-                                    </div>
-                                    <div class="col">Localização
-                                        <select class="form-select" name="id_localizacao" aria-label=".form-select-lg example">
-                                            <option selected></option>
-                                            @foreach ($tipo_localizacao as $localizacao )
-                                            <option value={{$localizacao->ids}}>{{$localizacao->nome}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                Finalidade sala
+                                <select class="form-select" aria-label=".form-select-lg example" name="tipo_sala" required>
+                                    <option selected></option>
+                                    @foreach ($tipo_finalidade_sala as $tipo)
+                                    <option value={{$tipo->id}}>{{$tipo->descricao}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col">Número
+                                <input type="number" class="form-control" id="numero" min="1" max="300" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3); validarNumero(this);" required="required">
+                            </div>
 
 
-                                    <div class="col">M² da sala
-                                        <input type="number" class="form-control" id="tamanho_sala" name="tamanho_sala" min="1" max="300" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" required="required">
-                                    </div>
-                                    <div class="col">Número de lugares
-                                        <input type="number" class="form-control" id="nr_lugares" name="nr_lugares" min="1" max="1000" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" required="required">
-                                    </div>
-                                </div>
-                            <br>
+                            <div class="col">M² da sala
+                                <input type="number" class="form-control" id="tamanho_sala" name="tamanho_sala" min="1" max="300" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3); validarNumero(this);" required="required">
+                            </div>
+                            <div class="col">Número de lugares
+                                <input type="number" class="form-control" id="nr_lugares" name="nr_lugares" min="1" max="1000" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3); validarNumero(this);" required="required">
+                            </div>
+                        </div>
+                        <br>
 
                         <div class="row form-group">
                             <div class="col">
@@ -139,11 +143,12 @@
                                     data-offstyle="danger">
                             </div>
                         </div>
+                        </div>
+
                         <div class="row justify-content-center">
                             <div class="d-grid gap-1 col-4 mx-auto">
                                 <br>
-                                <a class="btn btn-danger" href="/gerenciar-salas"
-                                    role="button">Cancelar</a>
+                                <a class="btn btn-danger" href="/gerenciar-salas" role="button">Cancelar</a>
                             </div>
                             <div class="d-grid gap-2 col-4 mx-auto">
                                 <br>
@@ -157,6 +162,27 @@
     </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
+<script>
+
+
+    function validarNumero(input) {
+        var valor = parseInt(input.value, 10);
+        if (isNaN(valor) || valor < 1) {
+            alert('O valor deve ser um número maior ou igual a 1.');
+            input.value = '';
+        }
+    }
+
+    document.getElementById('numero').addEventListener('change', function () {
+        var numeroSelecionado = parseInt(this.value, 10);
+        var numerosExistem = {!! json_encode($numerosExistem) !!};
+
+        if (numeroSelecionado < 1 || numeroSelecionado > 300 || numerosExistem.includes(numeroSelecionado)) {
+            alert('Já existe uma sala com esse número. Escolha um que ainda não foi cadastrado.');
+            this.value = '';
+        }
+    });
+</script>
+
 @endsection

@@ -12,17 +12,18 @@
                     </div>
                     <div class="card-body">
                         <div class="container-fluid">
-                            <div class="col-1 text-end offset-11">
-                                <label for="status_sala"></label>
-                                <input type="checkbox" name="ar_condicionado" @checked($salaEditada->status_sala)
-                                    data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
-                                    data-offstyle="danger" placeholder="Disabled input" disabled>
-                            </div>
                             <div class="row">
                                 <div class="col-8">
                                     <label for="disabledTextInput" class="form-label">Nome:</label>
                                     <input type="text" id="" value="{{ $salaEditada->nome }}"
                                         class="form-control" placeholder="Disabled input" disabled>
+                                </div>
+                                <div class="col">
+                                    <label for="status_sala">Status </label>
+                                    <select name="status_sala" class="form-control"disabled>
+                                        <option value="1" {{ $salaEditada->status_sala == 1 ? 'selected' : '' }}>Ativo</option>
+                                        <option value="0" {{ $salaEditada->status_sala == 0 ? 'selected' : '' }}>Inativo</option>
+                                    </select>
                                 </div>
                                 <div class="col">
                                     Localização
@@ -35,11 +36,6 @@
                                     <br>
                                 </div>
                                 <div class="row">
-                                    <div class="col">
-                                        <label for="disabledTextInput" class="form-label">Número</label>
-                                        <input type="number" id="" value="{{ $salaEditada->numero }}"
-                                            class="form-control" placeholder="Disabled input" disabled>
-                                    </div>
                                 
                                     <div class="col">Finalidade sala
                                         <select class="form-select" aria-label=".form-select-lg example" disabled>
@@ -49,6 +45,12 @@
                                         </select>
                                         <br>
                                     </div>
+                                    <div class="col">
+                                        <label for="disabledTextInput" class="form-label">Número</label>
+                                        <input type="number" id="" value="{{ $salaEditada->numero }}"
+                                            class="form-control" placeholder="Disabled input" disabled>
+                                    </div>
+
                                     <div class="col">
                                         <label for="disabledTextInput" class="form-label">M² da sala</label>
                                         <input type="number" id="" value="{{ $salaEditada->tamanho_sala }}"

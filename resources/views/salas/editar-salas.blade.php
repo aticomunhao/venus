@@ -17,13 +17,8 @@
                 <div class="card-body">
                     <form class="form-horizontal mt-2" method="post" action="/atualizar-salas/{{$salaEditada->id}}">
                         @csrf
-                        <div class="col-1 text-end offset-11">
-                            Status
-                                <label for="status_sala"></label>
-                                    <input type="checkbox" name="status_sala" style="text-align: right;" data-toggle="toggle" data-onlabel="A" data-offlabel="D" data-onstyle="success" data-offstyle="" @checked($salaEditada->status_sala)>
-                                </div>
-                                <div class="row">
-                                    <div class="col-8">
+                                    <div class="row">
+                                    <div class="col-6">
                                         Nome
                                         <input type="text" maxlength="50" class="form-control" id="nome" name="nome" value="{{ $salaEditada->nome }}" required="required" oninput="validarSomenteLetras(this)">
                                     </div>
@@ -35,29 +30,41 @@
                                         }
                                     </script>
 
-
                                     <div class="col">
-                                        Finalidade sala
-                                        <select class="form-select" aria-label=".form-select-lg example" name="id_finalidade">
-                                            @foreach ($tipo_finalidade_sala as $tipo)
-                                                <option value={{$tipo->id}}>{{$tipo->descricao}}</option>
-                                            @endforeach
+                                        <label for="status_sala">Status</label>
+                                        <select name="status_sala" class="form-control">
+                                            <option value="1" {{ $salaEditada->status_sala == 1 ? 'selected' : '' }}>Ativo</option>
+                                            <option value="0" {{ $salaEditada->status_sala == 0 ? 'selected' : '' }}>Inativo</option>
                                         </select>
-                                    </div>
-                                </div>
-
-                                <br>
-                                <div class="row">
-                                    <div class="col">Número
-                                        <input type="number" class="form-control" id="numero" min="1" max="200" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->numero}} required="required">
                                     </div>
                                     <div class="col">Localização
                                         <select class="form-select" name="id_localizacao" aria-label="form-select-lg example" value={{$salaEditada->id_localizacao}}>
+                                            <option value="{{ $salas[0]->id_localizacao }}"> {{ $salas[0]->nome }}</option>
                                             @foreach ($tipo_localizacao as $localizacao )
                                                 <option value={{$localizacao->id}}>{{$localizacao->nome}}</option>
                                             @endforeach
                                         </select>
                                     </div>
+
+
+                                </div>
+                        </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-4">
+                                        Finalidade sala
+                                        <select class="form-select" aria-label=".form-select-lg example" name="id_finalidade">
+                                            <option value="{{ $salas[0]->id_finalidade }}"> {{ $salas[0]->descricao }}</option>
+                                            @foreach ($tipo_finalidade_sala as $tipo)
+                                                <option value={{$tipo->id}}>{{$tipo->descricao}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col">Número
+                                        Número
+                                <input type="number" class="form-control" id="numero" min="1" max="200" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->numero}} required="required" onchange="validarNumero(this)">
+                                <span id="numeroError" style="color: red;"></span>
+                            </div>
 
 
                                      <div class="col">M² da sala
@@ -133,4 +140,18 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
-@endsection
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
+    <script>
+        function validarNumero(input) {
+            var numeroSelecionado = parseInt(input.value, 10);
+            var numerosExistem = {!! json_encode($numerosExistem) !!};
+
+            if (numeroSelecionado < 1 || numeroSelecionado > 200 || numerosExistem.includes(numeroSelecionado)) {
+                document.getElementById('numeroError').innerText = 'Já existe uma sala com esse número. Escolha um que ainda não foi cadastrado.';
+                input.value = '';
+            } else {
+                document.getElementById('numeroError').innerText = '';
+            }
+        }
+    </script>
+    @endsection
