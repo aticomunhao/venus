@@ -33,7 +33,7 @@
 
                             <div class="col">
                                 Status
-                                <select class="form-select" aria-label=".form-select-lg example" name="status_sala " required="required">
+                                <select class="form-select" aria-label=".form-select-lg example" name="status_sala" required="required">
                                     <option value="1">Ativo</option>
                                     <option value="2">Inativo</option>
                                 </select>
@@ -179,7 +179,7 @@
         var numerosExistem = {!! json_encode($numerosExistem) !!};
 
         if (numeroSelecionado < 1 || numeroSelecionado > 300 || numerosExistem.includes(numeroSelecionado)) {
-            alert('Já existe uma sala com esse número. Escolha um que ainda não foi cadastrado.');
+            alert('Existe uma sala com esse número.');
             this.value = '';
         }
     });

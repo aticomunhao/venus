@@ -100,7 +100,7 @@ class SalaController extends Controller
 
 
 
-        // $ativo = isset($request->checked) ? 1 : 0;
+
         $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
 
 
@@ -114,8 +114,6 @@ class SalaController extends Controller
         $luz_azul = isset($request->luz_azul) ? 1 : 0;
         $bebedouro = isset($request->bebedouro) ? 1 : 0;
         $armarios = isset($request->armarios) ? 1 : 0;
-
-
 
 
 

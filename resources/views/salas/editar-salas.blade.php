@@ -60,11 +60,10 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col">Número
-                                        Número
-                                <input type="number" class="form-control" id="numero" min="1" max="200" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->numero}} required="required" onchange="validarNumero(this)">
-                                <span id="numeroError" style="color: red;"></span>
-                            </div>
+                                        <div class="col">Número
+                                        <input type="number" class="form-control" id="numero" min="1" max="200" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->numero}} required="required" onchange="validarNumero(this)">
+                                    <span id="numeroError" style="color: red;"></span>
+                                </div>
 
 
                                      <div class="col">M² da sala
@@ -147,7 +146,7 @@
             var numerosExistem = {!! json_encode($numerosExistem) !!};
 
             if (numeroSelecionado < 1 || numeroSelecionado > 200 || numerosExistem.includes(numeroSelecionado)) {
-                document.getElementById('numeroError').innerText = 'Já existe uma sala com esse número. Escolha um que ainda não foi cadastrado.';
+                document.getElementById('numeroError').innerText = 'Existe uma sala registrada com esse número.';
                 input.value = '';
             } else {
                 document.getElementById('numeroError').innerText = '';
