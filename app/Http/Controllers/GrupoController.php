@@ -24,19 +24,21 @@ class Grupocontroller extends Controller
                 ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
                 ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
                 ->leftJoin('tipo_motivo AS tm', 'g.id_tipo_motivo', 'tm.id');
-               
 
-            $nome = $request->nome_pesquisa;
 
-            if ($request->nome_pesquisa) {
-                $grupo->where('g.nome', 'like', "%$request->nome_pesquisa%");
+                $nome = $request->nome_pesquisa;
+
+                if ($request->nome_pesquisa) {
+                    $grupo->where('g.nome', 'ilike', "%$nome%");
+                }
+
+                $grupo = $grupo->orderBy('g.status_grupo', 'DESC')
+                               ->orderBy('g.nome', 'ASC')
+                               ->paginate(50);
+
+                return view('grupos/gerenciar-grupos', compact('grupo'));
             }
 
-
-            $grupo = $grupo->orderBy('g.nome', 'ASC')->paginate(50);
-
-            return view('grupos/gerenciar-grupos', compact('grupo'));
-        }
 
 
 

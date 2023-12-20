@@ -14,14 +14,15 @@ use Illuminate\Database\DBAL\TimestampType;
             $lista = DB::table('tipo_fato')
                 ->select('id', 'descricao')
                 ->orderBy('id', 'ASC');
+                if ($request->nome_pesquisa) {
+                    $lista->where('descricao', 'ilike', "%$request->nome_pesquisa%");
+                }
 
-            if ($request->nome_pesquisa) {
-                $lista->where('descricao', 'like', "%$request->nome_pesquisa%");
-            }
+                $lista = $lista->paginate(50);
 
-            $lista = $lista->paginate(50);
+                return view('/administrativo/gerenciar-fatos', compact('lista'));
 
-            return view('/administrativo/gerenciar-fatos', compact('lista'));
+
         }
 
         public function edit($id) {

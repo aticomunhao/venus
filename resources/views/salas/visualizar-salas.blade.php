@@ -13,55 +13,74 @@
                     <div class="card-body">
                         <div class="container-fluid">
                             <div class="row">
-                                <div class="col-8">
-                                    <label for="disabledTextInput" class="form-label">Nome:</label>
-                                    <input type="text" id="" value="{{ $salaEditada->nome }}"
-                                        class="form-control" placeholder="Disabled input" disabled>
-                                </div>
-                                <div class="col">
-                                    <label for="status_sala">Status </label>
-                                    <select name="status_sala" class="form-control"disabled>
-                                        <option value="1" {{ $salaEditada->status_sala == 1 ? 'selected' : '' }}>Ativo</option>
-                                        <option value="0" {{ $salaEditada->status_sala == 0 ? 'selected' : '' }}>Inativo</option>
-                                    </select>
-                                </div>
-                                <div class="col">
-                                    Localização
-                                    <select class="form-select" name="id_localizacao" aria-label=".form-select-lg example"
-                                        disabled>
-                                        @foreach ($tipo_localizacao as $localizacao)
-                                            <option value={{ $localizacao->ids }}>{{ $localizacao->nome }}</option>
-                                        @endforeach
-                                    </select>
-                                    <br>
-                                </div>
                                 <div class="row">
-                                
-                                    <div class="col">Finalidade sala
-                                        <select class="form-select" aria-label=".form-select-lg example" disabled>
-                                            @foreach ($tipo_finalidade_sala as $tipo)
-                                                <option value={{ $tipo->id }}>{{ $tipo->descricao }}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="col-8">
                                         <br>
-                                    </div>
-                                    <div class="col">
-                                        <label for="disabledTextInput" class="form-label">Número</label>
-                                        <input type="number" id="" value="{{ $salaEditada->numero }}"
-                                            class="form-control" placeholder="Disabled input" disabled>
+                                        <label for="nome" class="form-label">Nome</label>
+                                        <input type="text" id="nome" value="{{ $salaEditada->nome }}" class="form-control" placeholder="Nome" disabled>
                                     </div>
 
                                     <div class="col">
-                                        <label for="disabledTextInput" class="form-label">M² da sala</label>
-                                        <input type="number" id="" value="{{ $salaEditada->tamanho_sala }}"
-                                            class="form-control" placeholder="Disabled input" disabled>
+                                        <br>
+                                        <label for="status_sala" class="form-label">Status</label>
+                                        <select name="status_sala" class="form-control" disabled>
+                                            <option value="1" {{ $salaEditada->status_sala == 1 ? 'selected' : '' }}>Ativo</option>
+                                            <option value="0" {{ $salaEditada->status_sala == 0 ? 'selected' : '' }}>Inativo</option>
+                                        </select>
                                     </div>
+
                                     <div class="col">
-                                        <label for="disabledTextInput" class="form-label">Número de lugares</label>
-                                        <input type="number" id="" value="{{ $salaEditada->nr_lugares }}"
-                                            class="form-control" placeholder="Disabled input" disabled>
+                                        <br>
+                                        <label for="id_localizacao" class="form-label">Localização</label>
+                                        <select name="id_localizacao" class="form-control" required="required" disabled>
+                                            @foreach ($tipo_localizacao as $localizacao)
+                                                <option value="{{ $localizacao->id }}">{{ $localizacao->nome }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <br>
+                                        <label for="id_motivo" class="form-label">Motivo</label>
+                                        <select name="id_motivo" class="form-control" required="required" disabled>
+                                            <option value="{{ $salas[0]->id_motivo }}">{{ $salas[0]->tipo }}</option>
+                                            @foreach ($tipo_motivo as $tipo_motivos)
+                                                <option value="{{ $tipo_motivos->id }}">{{ $tipo_motivos->tipo }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col">
+                                        <br>
+                                        <label for="id_finalidade" class="form-label">Finalidade Sala</label>
+                                        <select name="id_finalidade" class="form-control" required="required" disabled>
+                                            @foreach ($tipo_finalidade_sala as $tipo)
+                                                <option value="{{ $tipo->id }}">{{ $tipo->descricao }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col">
+                                        <br>
+                                        <label for="numero" class="form-label">Número</label>
+                                        <input type="number" id="numero" value="{{ $salaEditada->numero }}" class="form-control" placeholder="Número" disabled>
+                                    </div>
+
+                                    <div class="col">
+                                        <br>
+                                        <label for="tamanho_sala" class="form-label">M² da Sala</label>
+                                        <input type="number" id="tamanho_sala" value="{{ $salaEditada->tamanho_sala }}" class="form-control" placeholder="M² da Sala" disabled>
+                                    </div>
+
+                                    <div class="col">
+                                        <br>
+                                        <label for="nr_lugares" class="form-label">Número de Lugares</label>
+                                        <input type="number" id="nr_lugares" value="{{ $salaEditada->nr_lugares }}" class="form-control" placeholder="Número de Lugares" disabled>
+                                    </div>
+                                </div>
+
                                 <div class="row mt-4">
                                     <div class="col">
                                         <label for="ar_condicionado">Ar-cond</label>
@@ -145,7 +164,7 @@
                         <br>
 
                         <?php $a = 1; $b = 1; $c = 1; $d = 1; $e = 1; ?>
-                        @foreach ($sala as $salas)
+                        @foreach ($salas as $sala)
                             </tbody>
                         @endforeach
 

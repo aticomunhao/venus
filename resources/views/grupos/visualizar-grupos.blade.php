@@ -22,7 +22,7 @@
                                 <div class="row">
                                     <div class="col">
                                         Número
-                                        <select class="form-select" aria-label=".form-select-lg example" name="id" id="id" disabled>
+                                        <select name="id" class="form-control" disabled>
                                             <option value="{{ $grupo[0]->id }}"> {{ $grupo[0]->id }}</option>
                                             @foreach ($tipo_motivo as $tipo_motivos)
                                                 <option value="{{ $tipo_motivos->id }}"> {{ $tipo_motivos->id }} </option>
@@ -36,7 +36,7 @@
 
                                     <div class="col-3">
                                         Status
-                                        <select class="form-select" aria-label=".form-select-lg example" name="status_grupo" disabled="required">
+                                        <select name="status_grupo" class="form-control" disabled>
                                             <option value="{{ $grupo[0]->status_grupo }}"> {{ $grupo[0]->descricao1 }}</option>
                                             @foreach ($tipo_status_grupo as $tipos)
                                                 <option value="{{ $tipos->id }}"> {{ $tipos->descricao1 }}</option>
@@ -46,7 +46,7 @@
 
                                     <div class="col-3">
                                         Motivo
-                                        <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_motivo" disabled="required">
+                                        <select name="id_tipo_motivo" class="form-control" disabled>
                                             <option value="{{ $grupo[0]->id_tipo_motivo }}"> {{ $grupo[0]->tipo }}</option>
                                             @foreach ($tipo_motivo as $tipo_motivos)
                                                 <option value="{{ $tipo_motivos->id }}"> {{ $tipo_motivos->tipo }}</option>
@@ -57,7 +57,7 @@
                                         <div class="col-3">
                                             <br>
                                             Tipo grupo
-                                            <select class="form-select" aria-label=".form-select-lg example" name="nm_tipo_grupo" disabled>
+                                            <select name="nm_tipo_grupo" class="form-control" disabled>
                                                 @foreach ($grupo as $item)
                                                     <option value="{{ $item->id }}" {{ $grupo[0]->nm_tipo_grupo == $item->id ? 'selected' : '' }}>
                                                         {{ $item->nm_tipo_grupo}}
@@ -65,17 +65,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    {{-- <div class="col-5">
-                                        <br>
-                                        Tipo de tratamento
-                                        <select class="form-select" aria-label=".form-select-lg example" name="descricao" disabled>
-                                            @foreach ($grupo as $item)
-                                                <option value="{{ $item->id }}" {{ $grupo[0]->descricao == $item->id ? 'selected' : '' }}>
-                                                    {{ $item->descricao }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div> --}}
+
                                     <div class="col">
                                         <br>
                                         Data início
