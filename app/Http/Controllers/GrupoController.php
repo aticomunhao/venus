@@ -32,7 +32,7 @@ class Grupocontroller extends Controller
                     $grupo->where('g.nome', 'ilike', "%$nome%");
                 }
 
-                $grupo = $grupo->orderBy('g.status_grupo', 'DESC')
+                $grupo = $grupo->orderBy('g.status_grupo', 'ASC')
                                ->orderBy('g.nome', 'ASC')
                                ->paginate(50);
 
