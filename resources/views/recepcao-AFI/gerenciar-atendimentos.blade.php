@@ -3,6 +3,11 @@
 @section('title') Gerenciar Atendimentos @endsection
 
 @section('content')
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 <?php
 //echo "<meta HTTP-EQUIV='refresh' CONTENT='30;URL=gerenciar-atendimentos'>";
 ?>
@@ -76,9 +81,9 @@
                                 <button class="btn btn-outline-warning btn-sm" style="font-size: 1rem; color:#000;" type="button" id="" data-bs-toggle="modal" data-bs-target="#atendimento{{$listas->ida}}"><i class="bi bi-person" style="font-size: 1rem; color:#000;"></i></button>
                                 @include('recepcao-AFI.popUp-sel-atendente')
                                 <a href="/sobe-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-right-square" style="font-size: 1rem; color:#000;"></i></button></a>-->
-                                <a href="/editar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/visualizar-atendimentos/{{$listas->idas}}"><button type="button" class="btn btn-outline-primary btn-sm"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/cancelar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
+                                <a href="/editar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/visualizar-atendimentos/{{$listas->idas}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/cancelar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top" title="Cancelar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
                             </td>
                         </tr>
                         @endforeach
@@ -89,7 +94,16 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+<script>
+
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
+
+</script>
 
 
 @endsection

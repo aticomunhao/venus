@@ -71,9 +71,13 @@ Route::get('/editar-atendimento/{ida}', [GerenciarAtendimentoController::class, 
 Route::post('/grava-atualizacao/{ida}', [GerenciarAtendimentoController::class, 'altera'])->name('atealt');
 Route::get('/visualizar-atendimentos/{idas}', [GerenciarAtendimentoController::class, 'visual'])->name('atevis');
 Route::put('/atendente-atualizar/{ida}', [GerenciarAtendimentoController::class, 'salvaatend'])->name('salate');
-Route::get('/gerenciar-atendente-dia', [GerenciarAtendimentoController::class, 'atendente_dia'])->name('atedia');
-Route::get('/definir-sala-atendente', [GerenciarAtendimentoController::class, 'definir_sala'])->name('atesal');
-Route::post('/gravar-escolha/{ida}', [GerenciarAtendimentoController::class, 'gravar_sala'])->name('ategrv');
+Route::get('/gerenciar-atendente-dia', [GerenciarAtendimentoController::class, 'atendente_dia'])->name('afidia');
+Route::get('/definir-sala-atendente', [GerenciarAtendimentoController::class, 'definir_sala'])->name('afisal');
+Route::get('/editar-atendente-dia/{idatd}', [GerenciarAtendimentoController::class, 'editar_afi'])->name('afiedt');
+Route::post('/altera-atendente-dia/{idatd}', [GerenciarAtendimentoController::class, 'update_afi'])->name('afiupt');
+Route::post('/incluir-afi-sala/{idat}/{idg}', [GerenciarAtendimentoController::class, 'salva_afi'])->name('afidef');
+Route::post('/gravar-escolha/{idatd}', [GerenciarAtendimentoController::class, 'gravar_sala'])->name('ategrv');
+Route::any('/excluir-atendente/{idatd}/{idad}', [GerenciarAtendimentoController::class, 'delete'])->name('atedel');
 
 //Rotas do Atendimento Fraterno:
 Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name('afidex');

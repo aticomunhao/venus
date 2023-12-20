@@ -6,11 +6,11 @@
 
 
 <div class="container-fluid";>
-<h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">DEFINIR SALA DE TRABALHO</h4>
+<h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">DEFINIR AFI/SALA</h4>
     <div class="col-12">
         <div class="row justify-content-center">
             <div>
-                <form action="{{route('atesal')}}" class="form-horizontal mt-4" method="GET" >
+                <form class="form-horizontal mt-4" method="GET" >
                 <div class="row">
                     <div class="col-2">Grupo
                         <select class="form-select" id="" name="grupo" type="number">                           
@@ -37,7 +37,7 @@
                         </select>                       
                     </div>
                         <div class="col"><br>
-                            <input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
+                            <input type="submit" formaction="{{route('afisal')}}"  class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" value="Pesquisar">
                             <a href="/definir-sala-atendente"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
                     </form>
                         </div>
@@ -45,49 +45,52 @@
                 <br>
             </div style="text-align:right;">
             <hr>
-            <form action="/gravar-escolha{{$atende[0]->ida}}" class="form-horizontal mt-4" method="POST" >
-            <div class="col" style="text-align: center;"><input class="btn btn-success btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Incluir selecionados"></div>
+            <div class="col" style="text-align: center;">
+                <a href="/gerenciar-atendente-dia"><input class="btn btn-danger btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Finalizar definição"></a>
+            </div>
+            <div class="table">Total selecionados:
+       
             
-            <div class="table">Total selecionados: 
-                <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
-                    <thead style="text-align: center;">
-                        <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                            <th class="col"><input class="form-check-input" type="checkbox"  value="" id="flexCheckDefault"></th>
-                            <th class="col">NR</th>
-                            <th class="col">GRUPO</th>                                               
-                            <th class="col">ATENDENTE</th>
-                            <th class="col">SALA</th>                           
-                            <th class="col">STATUS</th>
-                            <th class="col">AÇÕES</th>
-                        </tr>
-                    </thead>
-                    <tbody style="font-size: 14px; color:#000000; text-align: center;">
-                        <tr>
+                    <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
+                        <thead style="text-align: center;">
+                            <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">                                
+                                <th class="col">NR</th>
+                                <th class="col">GRUPO</th>                                               
+                                <th class="col">ATENDENTE</th>
+                                <th class="col-1">SALA</th>                           
+                                <th class="col">STATUS</th>
+                                <th class="col">AÇÕES</th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-size: 14px; color:#000000; text-align: center;">
                         @foreach($atende as $atendes)
-                            <td scope=""><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></td>
-                            <td scope="">{{$atendes->ida}}</td>
-                            <td scope="">{{$atendes->nomeg}}</td>                                                      
-                            <td scope="">{{$atendes->nm_4}}</td>                            
-                            <td scope=""><select class="form-select text-center" id="" name="sala" type="number">
-                            @foreach ($sala as $salas)
-                            <option @if(old('sala')==$salas->id) {{'selected="selected"'}} @endif value="{{ $salas->id }}">{{$salas->numero}}</option>
-                            @endforeach               
-                        </select>     </td>
-                            <td scope="">{{$atendes->tipo}}</td>
-                            <td scope="">                                
-                                <a href="/gravar-escolha/{{$atendes->ida}}"><button type="button" class="btn btn-outline-success btn-sm">Incluir</button></a>                                
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
+                        <form class="form-horizontal mt-4" method="POST" >@csrf 
+                            <tr>
+                                <td>{{$atendes->ida}}</td>
+                                <td>{{$atendes->nomeg}}</td>                                                      
+                                <td>{{$atendes->nm_4}}</td>                            
+                                <td><select class="form-select" id="" name="sala" type="number">
+                                @foreach ($sala as $salas)
+                                <option value="{{ $salas->id }}">{{$salas->numero}}</option>
+                                @endforeach               
+                                </select></td>
+                                <td>{{$atendes->tipo}}</td>
+                                <td>                                
+                                <button type="submit" formaction="/incluir-afi-sala/{{$atendes->idat}}/{{$atendes->idg}}" class="btn btn-success btn-sm" style="color:#fff;">Confirmar</button>                           
+                                <!--<a href="/incluir-afi-sala/{{$atendes->ida}}"><input class="btn btn-light btn-sm me-md-2" formaction="/incluir-afi-sala/{{$atendes->ida}}" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="cONFIRMAR"></a>                                                  -->
+                                </td>                                
+                            </tr>
+                            </form>
+                            @endforeach
+                        </tbody>
                 </table>
-                </form>
+                
             </div class="d-flex justify-content-center">
             {{$atende->withQueryString()->links()}}
         </div>
     </div>
 </div>
-
+<!--
 <script>
   const masterCheckBox = document.querySelector('th input');
  const checkBoxes = Array.from(document.querySelectorAll('td input'));
@@ -113,7 +116,7 @@ function changeBackground(input) {
   else tableRow.style.background = '';
 }
 
-</script>
+</script>-->
 
 @endsection
 
