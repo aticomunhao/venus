@@ -34,24 +34,17 @@ class MediumController extends Controller
 
 
 
-    public function create()
-    {
 
 
 
+        public function create()
+        {
             $medium = DB::select('select * from medium');
-
-
             $tipo_mediunidade = DB::select('select id, tipo from tipo_mediunidade');
-
-
             $pessoas = DB::select('select id, nome_completo, motivo_status, status from pessoas');
-
-
             $tipo_motivo_status_pessoa = DB::select('select motivo from tipo_motivo_status_pessoa');
-
-
             $tipo_status_pessoa = DB::select('select tipo from tipo_status_pessoa');
+
 
             return view('medium/criar-mediuns', compact('medium', 'tipo_mediunidade', 'pessoas', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa'));
         }
@@ -60,26 +53,9 @@ class MediumController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-
-
-            DB::table('medium')
-            ->where('id_pessoa', $request->input('id_pessoa'))
-            ->delete();
-
-        DB::table('medium')->insert([
-            'id_tp_mediunidade' => $request->input('id_tp_mediunidade'),
-            'id_pessoa'=> $request->input('id_pessoa'),
-
-        ]);
-
-        app('flasher')->addSuccess("Cadastrado com Sucesso");
-        return redirect('gerenciar-mediuns');
 
 
 
-    }
     /**
      * Display the specified resource.
      */
@@ -98,6 +74,47 @@ class MediumController extends Controller
 
         return view('medium/visualizar-mediuns', compact('tipo_mediunidade', 'medium', 'pessoas', 'tipo_motivo_status_pessoa'));
     }
+
+    public function store(Request $request)
+    {
+        // Valide os dados do formulário conforme necessário
+        $request->validate([
+            'id_pessoa' => 'required|integer',
+            'id_tp_mediunidade' => 'required|array',
+            'data_manifestou_mediunidade.*' => 'required|date',
+        ]);
+
+        // Exclua registros existentes para a pessoa
+        DB::table('medium')
+            ->where('id_pessoa', $request->input('id_pessoa'))
+            ->delete();
+
+        // Insira os novos dados diretamente na tabela medium
+        $id_pessoa = $request->input('id_pessoa');
+        $id_tp_mediunidade = $request->input('id_tp_mediunidade');
+        $data_manifestou_mediunidade = $request->input('data_manifestou_mediunidade');
+
+        // Certifique-se de que ambos os arrays têm o mesmo comprimento
+        $count = min(count($id_tp_mediunidade), count($data_manifestou_mediunidade));
+
+        // Itera sobre os tipos de mediunidade e insere cada registro
+        for ($i = 0; $i < $count; $i++) {
+            $tipo_id = $id_tp_mediunidade[$i];
+            $data_manifestou = $data_manifestou_mediunidade[$i];
+
+            DB::table('medium')->insert([
+                'id_pessoa' => $id_pessoa,
+                'id_tp_mediunidade' => $tipo_id,
+                'data_manifestou_mediunidade' => $data_manifestou,
+            ]);
+        }
+
+        
+        app('flasher')->addSuccess("Cadastrado com Sucesso");
+        return redirect('gerenciar-mediuns');
+    }
+
+
 
 
 
