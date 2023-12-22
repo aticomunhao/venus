@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
-
     <div class="container mt-4">
         <div class="card">
             <div class="card-header">
@@ -17,53 +15,51 @@
                 <form class="form-horizontal mt-2" method="post" action="/incluir-mediuns">
                     @csrf
 
-
-                    <div class="row ">
-                        <div class="col">
-
-                            Nome
+                    <div class="row mt-3">
+                        <div class="col-5">
+                           Nome
                             <select class="form-select" aria-label=".form-select-lg example" name="id_pessoa">
                                 @foreach ($pessoas as $pessoa)
-                                    <option value="{{$pessoa->id}}">{{$pessoa->nome_completo}}</option>
+                                    <option value="{{ $pessoa->id }}">{{ $pessoa->nome_completo }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col">
-
-                            Tipo de Mediunidade
-                            <select class="form-select" aria-label=".form-select-lg example" name="id_tp_mediunidade">
-                                @foreach ($tipo_mediunidade as $tipo)
-                                    <option value="{{$tipo->id}}">{{$tipo->tipo}}</option>
+                            Status
+                            <select class="form-select" aria-label=".form-select-lg example" name="status">
+                                @foreach ($tipo_status_pessoa as $status)
+                                    <option value="{{ $status->tipo }}">{{ $status->tipo }}</option>
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                   <div class="row ">
-                    <div class="col">
-                        <br>
-                        Status
-                        <input class="form-control" type="text" name="status" id="status">
+                        <div class="col">
+                            Motivo Status
+                            <select class="form-select" aria-label=".form-select-lg example" name="motivo_status">
+                                @foreach ($tipo_motivo_status_pessoa as $motivo)
+                                    <option value="{{ $motivo->motivo }}">{{ $motivo->motivo }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                        </select>
-                    </div>
-                    <br>
-                    <div class="col">
-                        <br>
-                        Motivo
-                        <input class="form-control" type="text"  name="motivo_status" id="moltivo_status">
+                    <div class="row mt-4">
 
-                        </select>
-                    </div>
-                </div>
+                        <div class="col">
+                            Tipo mediunidade
+                            <select class="form-select" aria-label=".form-select-lg example" name="id_tp_mediunidade">
+                                @foreach ($tipo_mediunidade as $tipo)
+                                    <option value="{{ $tipo->id }}">{{ $tipo->tipo }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                </body>
-                    <div class="row mt-2 justify-content-center">
+
+                    </div>
+
+                    <div class="row mt-3 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
-                            <br>
                             <a class="btn btn-danger" href="/gerenciar-mediuns" role="button">Cancelar</a>
                         </div>
                         <div class="d-grid gap-2 col-4 mx-auto">
-                            <br>
                             <button class="btn btn-primary" type="submit">Confirmar</button>
                         </div>
                     </div>

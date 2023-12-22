@@ -21,7 +21,7 @@ class MediumController extends Controller
 
         $nome = $request->nome_pesquisa;
         if ($nome) {
-            $medium->where('p.nome_completo', 'like', "%$nome%")
+            $medium->where('p.nome_completo', 'ilike', "%$nome%")
                    ->orWhere('p.cpf', 'like', "%$nome%");
         }
 
@@ -37,14 +37,25 @@ class MediumController extends Controller
     public function create()
     {
 
-        $medium = DB::select('select *from medium');
-        $tipo_mediunidade = DB::select('select *from tipo_mediunidade');
-        $pessoas = DB::select('select* from pessoas');
 
 
-        return view('medium/criar-mediuns', compact('medium', 'tipo_mediunidade', 'pessoas'));
-        //
-    }
+            $medium = DB::select('select * from medium');
+
+
+            $tipo_mediunidade = DB::select('select id, tipo from tipo_mediunidade');
+
+
+            $pessoas = DB::select('select id, nome_completo, motivo_status, status from pessoas');
+
+
+            $tipo_motivo_status_pessoa = DB::select('select motivo from tipo_motivo_status_pessoa');
+
+
+            $tipo_status_pessoa = DB::select('select tipo from tipo_status_pessoa');
+
+            return view('medium/criar-mediuns', compact('medium', 'tipo_mediunidade', 'pessoas', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa'));
+        }
+
 
     /**
      * Store a newly created resource in storage.
@@ -75,46 +86,37 @@ class MediumController extends Controller
     public function show(string $id)
     {
 
-        $medium = DB::table('medium AS m')
-        ->leftJoin('pessoas AS p', 'm.id_pessoa', 'p.id')
-        ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.id_tp_mediunidade','p.status','p.dt_nascimento','p.sexo','p.email','p.cpf')->where('m.id', $id)
-        ->get();
-        $pessoas= DB::table('pessoas')->get();
-    $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
-
-    return view('medium/visualizar-mediuns', compact('tipo_mediunidade', 'medium','pessoas',));
-    }
-
-    //     $mediuns = DB::table('medium')->where('id',$id)->select('*')->first();
-    //     $medium = db::select('select * from medium');
-    //     $tipo_mediunidade=db::select('select * from tipo_mediunidade');
-    //     $pessoas= DB::select('select * from pessoas');
-
-
-
-
-
-    //     return view('medium/visualizar-mediuns', compact('mediuns','tipo_mediunidade','medium','pessoas','id'));
-
-    //     //
-    // }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit( $id)
-    {
-
-
-        $medium = DB::table('medium AS m')
+            $medium = DB::table('medium AS m')
             ->leftJoin('pessoas AS p', 'm.id_pessoa', 'p.id')
-            ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.id_tp_mediunidade','p.status','p.dt_nascimento','p.sexo','p.email','p.cpf')->where('m.id', $id)
-            ->get();
-            $pessoas= DB::table('pessoas')->get();
-        $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
+            ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.id_tp_mediunidade','p.status')
+            ->where('m.id', $id)
+            ->first();
 
-        return view('medium/editar-mediuns', compact('tipo_mediunidade', 'medium','pessoas',));
+        $pessoas = DB::table('pessoas')->get();
+        $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
+        $tipo_motivo_status_pessoa = DB::table('tipo_motivo_status_pessoa')->pluck('motivo');
+
+        return view('medium/visualizar-mediuns', compact('tipo_mediunidade', 'medium', 'pessoas', 'tipo_motivo_status_pessoa'));
     }
+
+
+
+     public function edit($id)
+     {
+         $medium = DB::table('medium AS m')
+             ->leftJoin('pessoas AS p', 'm.id_pessoa', 'p.id')
+             ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.id_tp_mediunidade','p.status')
+             ->where('m.id', $id)
+             ->first();
+
+         $pessoas = DB::table('pessoas')->get();
+         $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
+         $tipo_motivo_status_pessoa = DB::table('tipo_motivo_status_pessoa')->pluck('motivo');
+
+         return view('medium/editar-mediuns', compact('tipo_mediunidade', 'medium', 'pessoas', 'tipo_motivo_status_pessoa'));
+     }
+
+
 
     /**
      * Update the specified resource in storage.
