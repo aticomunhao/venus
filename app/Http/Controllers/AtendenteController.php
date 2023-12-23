@@ -21,10 +21,12 @@ class AtendenteController extends Controller
 
         $ddd = DB::select('select id, descricao from tp_ddd');
 
+        $grupos = DB::select('select id, nome from grupo order by nome');
+
         $sexo = DB::select('select id, tipo from tp_sexo');
 
         $atendente = DB::table('atendentes AS ad')
-                    ->select('p.id AS idp', 'p.nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'email', 'ddd', 'celular', 'tsp.id AS idtps', 'p.status', 'tsp.tipo AS tpsta', 'd.id as did', 'd.descricao as ddesc', 'p.motivo_status', 'ad.id_grupo')
+                    ->select('p.id AS idp', 'p.nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'p.email', 'p.ddd', 'p.celular', 'tsp.id AS idtps', 'p.status', 'tsp.tipo AS tpsta', 'd.id as did', 'd.descricao as ddesc', 'p.motivo_status', 'ad.id_grupo', 'g.nome AS gnome')
                     ->leftJoin('pessoas AS p', 'ad.id_pessoa', 'p.id')
                     ->leftjoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
                     ->leftJoin('tp_sexo AS tps', 'p.sexo', 'tps.id')
@@ -34,7 +36,13 @@ class AtendenteController extends Controller
         $nome = $request->nome;
 
         if ($request->nome) {
-                $atendente->where('p.nome_completo', 'like', "%$request->nome%");
+                $atendente->where('p.nome_completo', 'ilike', "%$request->nome%");
+        }
+
+        $grupo = $request->grupo;
+
+        if ($request->grupo) {
+                $atendente->where('g.id', $request->grupo);
         }
 
         $cpf = $request->cpf;
@@ -62,7 +70,7 @@ class AtendenteController extends Controller
 
 
 
-        return view ('/atendentes/gerenciar-atendentes', compact('atendente', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
+        return view ('/atendentes/gerenciar-atendentes', compact('atendente', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome', 'grupos'));
 
     }
 

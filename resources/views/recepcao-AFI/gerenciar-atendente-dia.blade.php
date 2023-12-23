@@ -60,7 +60,7 @@
                     <tbody style="font-size: 14px; color:#000000; text-align: center;">
                         <tr>
                         @foreach($atende as $atendes)
-                            <td scope="">{{$atendes->idad}}</td>
+                            <td scope="">{{$atendes->nr}}</td>
                             <td scope="">{{date( 'd/m/Y', strtotime($atendes->data_hora))}}</td>                                                       
                             <td scope="">{{$atendes->nm_4}}</td>                            
                             <td scope="">{{$atendes->nm_sala}}</td>
