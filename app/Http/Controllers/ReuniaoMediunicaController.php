@@ -39,7 +39,7 @@ class ReuniaoMediunicaController extends Controller
             }
     
             if ($request->grupo){
-                $reuniao->where('gr.nome', 'like', "%$request->grupo%");
+                $reuniao->where('gr.nome', 'ilike', "%$request->grupo%");
             }
 
             if ($request->status){

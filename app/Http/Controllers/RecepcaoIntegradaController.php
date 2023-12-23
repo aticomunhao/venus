@@ -43,7 +43,7 @@ class RecepcaoIntegradaController extends Controller
         }
 
         if ($request->assist){
-            $lista->where('p1.nome_completo', 'like', "%$request->assist%");
+            $lista->where('p1.nome_completo', 'ilike', "%$request->assist%");
         }
 
         if ($request->status){
@@ -51,7 +51,7 @@ class RecepcaoIntegradaController extends Controller
         }
 
 
-        $lista = $lista->orderby('status_encaminhamento', 'ASC')->orderby('at.id_prioridade', 'ASC')->orderby('dh_enc', 'ASC')->paginate(50);
+        $lista = $lista->orderby('status_encaminhamento', 'ASC')->orderby('at.id_prioridade', 'ASC')->orderby('nm_1', 'ASC')->paginate(50);
 
         $contar = $lista->count('enc.id');
 

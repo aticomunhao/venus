@@ -38,12 +38,14 @@ class AtendimentoFraternoController extends Controller
                     ->leftJoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
                     ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
                     ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                    ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+                    ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')                    
                     ->where('at.status_atendimento', '<', 5 )
                     ->Where('at.id_atendente', $atendente)                                                                                 
                     ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
                     ->orderby('status_atendimento', 'ASC')
                     ->get();
+
+                    
 
             return view ('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome'));
 
@@ -51,11 +53,15 @@ class AtendimentoFraternoController extends Controller
 
         public function atende_agora()
         {
+
+            $now =  Carbon::now()->format('Y-m-d');
             $atendente = session()->get('usuario.id_pessoa');
             $pref_att = session()->get('usuario.sexo');
             $atendendo = DB::table('atendimentos')->where('id_atendente', $atendente)->where('status_atendimento', '<', 5)->count();
             $assistido = DB::table('atendimentos')->where('status_atendimento', 1)->count();
+            $sala = DB::table('atendente_dia AS atd')->where('data_hora', $now )->where('id_atendente', $atendente )->value('id_sala');
             
+            //dd($sala);
 
             if ($atendendo > 0){
 
@@ -68,9 +74,14 @@ class AtendimentoFraternoController extends Controller
                 app('flasher')->addError('Todos os assistidos foram atendidos.');
 
                 return redirect('/atendendo');
+                
+            }elseif($atendendo < 1 && $sala == null) {
 
+                app('flasher')->addError('O atendente deve estar designado para o trabalho de hoje.');
 
-            }elseif ($atendendo < 1){
+                return redirect('/atendendo');
+            
+            }elseif ($atendendo < 1 && $sala > 0){
 
                 DB::table('atendimentos')
                     ->where('status_atendimento', '1')
@@ -81,15 +92,16 @@ class AtendimentoFraternoController extends Controller
                     ->orderby('id_prioridade')->orderBy('dh_chegada')
                     ->limit(1)
                     ->update([
-                            'id_atendente' => $atendente
+                            'id_atendente' => $atendente,
+                            'id_sala'=>$sala
                     ]);
+
 
                 app('flasher')->addSuccess('O assistido foi selecionando com sucesso.');
 
                 return redirect('/atendendo');
 
-            }
-
+            } 
 
         }
 
@@ -168,6 +180,7 @@ class AtendimentoFraternoController extends Controller
             
             $sit = DB::table('atendimentos AS at')->where('at.id_atendente', $atendente)->where('at.status_atendimento','<',5)->count();
 
+
             if ($sit > 0 && $atendendo == null)
             {
                 app('flasher')->addError('Não é permitido atender dois assistidos ao mesmo tempo.');
@@ -187,12 +200,12 @@ class AtendimentoFraternoController extends Controller
             if($atendendo = $atendente && $status = 1)
             {
                 DB::table('atendimentos AS at')
-            ->where('status_atendimento', '=', 1)
-            ->where('at.id', $idat)
-            ->update([
-                'status_atendimento' => 2,
-                'id_atendente' => $atendente
-            ]);  
+                        ->where('status_atendimento', '=', 1)
+                        ->where('at.id', $idat)
+                        ->update([
+                            'status_atendimento' => 2,
+                            'id_atendente' => $atendente
+                        ]);  
 
             app('flasher')->addSuccess('O status do atendimento foi alterado para em análise.');
 
@@ -297,6 +310,19 @@ class AtendimentoFraternoController extends Controller
         public function final($idat)
         {
 
+            $sit = DB::table('atendimentos AS at')->where('at.id', $idat)->where('status_atendimento', '<', 4)->count();
+
+            //dd($sit);
+
+
+            if($sit > 0){
+
+                app('flasher')->addError('Para finalizar o atendimento ele deve estar no mínimo no status "Em atendimento"');
+
+                return redirect()->back();
+            
+            }else{
+
             $assistido = DB::table('atendimentos AS at')
             ->select('at.id as idat', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido','p1.nome_completo AS nm_1', 'at.id_representante', 'at.id_atendente')
             ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
@@ -304,6 +330,8 @@ class AtendimentoFraternoController extends Controller
             ->get();
 
             return view('/atendimento-assistido/finalizar', compact('assistido'));
+
+            }
 
         }
 

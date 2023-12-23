@@ -29,7 +29,7 @@ class PessoaController extends Controller
         $nome = $request->nome;
 
         if ($request->nome) {
-                $pessoa->where('p.nome_completo', 'like', "%$request->nome%");
+                $pessoa->where('p.nome_completo', 'ilike', "%$request->nome%");
         }
 
         $cpf = $request->cpf;

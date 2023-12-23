@@ -5,19 +5,27 @@
 @section('content')
 
 <div class="container-fluid";>
-<h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ATENDENTES</h4>
+<h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ATENDENTES FRATERNOS</h4>
     <div class="col-12">
         <div class="row justify-content-center">
                 <form action="{{route('ateger')}}" class="form-horizontal mt-4" method="GET" >
                 <div class="row">
-                    <div class="col-4">Nome
+                    <div class="col">Nome
                         <input class="form-control" type="text" maxlength="45" oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="1" name="nome" value="{{$nome}}">
                     </div>
-                    <div class="col-2">CPF
+                    <div class="col">CPF
                         <input class="form-control" type="text" maxlength="11" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="2" name="cpf" value="{{$cpf}}">
                     </div>
-                    <div class="col-2">Status
-                        <select class="form-select" id="3" name="status" type="numeric" required="required">
+                    <div class="col">Grupo
+                        <select class="form-select" id="3" name="grupo" type="numeric" required="required">
+                            <option value=""></option>
+                            @foreach($grupos as $gr)
+                            <option value="{{$gr->id}}">{{$gr->nome}}</option>
+                            @endforeach                   
+                        </select>
+                    </div>
+                    <div class="col">Status
+                        <select class="form-select" id="4" name="status" type="numeric" required="required">
                             <option value="1">Ativo</option> 
                             <option value="">Todos</option>
                             <option value="2">Inativo</option>                   
@@ -44,6 +52,8 @@
                             <th class="col">NASCIMENTO</th>
                             <th class="col">SEXO</th>
                             <th class="col">GRUPOS</th>
+                            <th class="col">DDD</th>
+                            <th class="col">CELULAR</th>
                             <th class="col">STATUS</th>
                             <th class="col">MOTIVO</th>
                             <th class="col">AÇÕES</th>
@@ -56,7 +66,9 @@
                             <td scope="" >{{str_pad($atendentes->cpf, 11, "0", STR_PAD_LEFT)}}</td>
                             <td scope="" >{{date( 'd/m/Y' , strtotime($atendentes->dt_nascimento))}}</td>
                             <td scope="" >{{$atendentes->tipo}}</td>
-                            <td scope="" >{{$atendentes->id_grupo}}</td>
+                            <td scope="" >{{$atendentes->gnome}}</td>
+                            <td scope="" >{{$atendentes->ddd}}</td>
+                            <td scope="" >{{$atendentes->celular}}</td>
                             <td scope="" >{{$atendentes->tpsta}}</td>
                             <td scope="" >{{$atendentes->motivo_status}}</td>
                             <td scope="">                                

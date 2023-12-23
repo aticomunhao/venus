@@ -37,7 +37,7 @@ class GerenciarAtendimentoController extends Controller
             ");
 
         $lista = DB::table('atendimentos AS at')
-                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'att.id as idatt','at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento' )
+                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'att.id as idatt','at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento', 's.numero AS nr_sala' )
                     ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id')
                     ->leftJoin('pessoas AS p', 'att.id_pessoa', 'p.id')
@@ -47,7 +47,8 @@ class GerenciarAtendimentoController extends Controller
                     ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
                     ->leftjoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
                     ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                    ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id');
+                    ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+                    ->leftJoin('salas AS s', 'at.id_sala', 's.id');
 
         $data_inicio = $request->dt_ini;
 
@@ -61,7 +62,7 @@ class GerenciarAtendimentoController extends Controller
         }
 
         if ($request->assist){
-            $lista->where('p1.nome_completo', 'like', "%$request->assist%");
+            $lista->where('p1.nome_completo', 'ilike', "%$request->assist%");
         }
 
         if ($request->status){
@@ -70,6 +71,8 @@ class GerenciarAtendimentoController extends Controller
 
 
         $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy( 'at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC')->paginate(50);
+
+//dd($lista);
 
         $contar = $lista->count('at.id');
 
@@ -145,7 +148,7 @@ class GerenciarAtendimentoController extends Controller
 
         $usuario = session()->get('usuario.id_pessoa');
 
-        $now = Carbon::now()->format('d/m/Y H:m:s');
+        $now = Carbon::now()->format('Y-m-d H:m:s');
 
         $dt_hora = Carbon::now();
 
@@ -508,7 +511,7 @@ class GerenciarAtendimentoController extends Controller
                //dd($now);
 
         $atende = DB::table('atendente_dia AS atd')
-                ->select('att.id AS ida', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala')
+                ->select('atd.id AS nr','att.id AS ida', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala')
                 ->leftJoin('atendentes AS att', 'atd.id_atendente','att.id_pessoa')
                 ->leftjoin('pessoas AS p', 'atd.id_atendente', 'p.id' )
                 ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
@@ -527,7 +530,7 @@ class GerenciarAtendimentoController extends Controller
         }
 
         if ($request->atendente){
-        $atende->where('p.nm_4', 'like', "%$request->atendente%");
+        $atende->where('p.nm_4', 'ilike', "%$request->atendente%");
         }
 
         if ($request->status){
@@ -535,7 +538,7 @@ class GerenciarAtendimentoController extends Controller
         }
 
 
-        $atende = $atende->orderby('atd.data_hora', 'ASC')->paginate(50);
+        $atende = $atende->orderby('atd.data_hora', 'DESC')->orderby('nm_sala', 'ASC')->paginate(50);
 
 
         $st_atend = DB::select("select
@@ -626,6 +629,7 @@ class GerenciarAtendimentoController extends Controller
                 DB::table('atendente_dia AS atd')->where('id', $idatd)->update([
                             'id_sala' => $request->input('sala')
                         ]);
+                        
 
                 app('flasher')->addSuccess('A sala foi alterada com sucesso.');
 
@@ -644,18 +648,26 @@ class GerenciarAtendimentoController extends Controller
 
     }
 
+
+
     //////GERENCIAR/DEFINIR OS AFI E SALAS DE ATENDIMENTO DO DIA
             
     public function definir_sala(Request $request){
 
+        
+        $now = Carbon::now()->format('Y-m-d');
+
+        $aten = DB::table('atendente_dia AS atd')->select('id_atendente')->where('data_hora', $now)->pluck('id_atendente');
+
+        //dd($aten);
+
                 $atende = DB::table('atendentes AS att')
-                ->select('att.id AS ida', 'atd.id', 'att.id_pessoa AS idat','atd.id_atendente AS idatd', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id AS pid', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.nome AS nm_sala')
-                ->leftJoin('atendente_dia AS atd', 'att.id_pessoa', 'atd.id_atendente')
+                ->select('att.id AS ida', 'att.id_pessoa AS idat', 'p.nome_completo AS nm_4',  'p.id AS pid', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg')
                 ->leftjoin('pessoas AS p', 'att.id_pessoa', 'p.id' )
                 ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
-                ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
                 ->leftJoin('grupo AS g', 'att.id_grupo', 'g.id')
-                ->where('p.status', 1);
+                ->where('p.status', 1)
+                ->whereNotIn('att.id_pessoa', $aten);
 
 
                 $grupo = $request->grupo;
@@ -678,7 +690,7 @@ class GerenciarAtendimentoController extends Controller
                 }
         
         
-                $atende = $atende->orderby('atd.data_hora', 'ASC')->paginate(50);
+                $atende = $atende->orderby('nm_4', 'ASC')->paginate(50);
         
 
                 $st_atend = DB::select("select
@@ -723,21 +735,19 @@ class GerenciarAtendimentoController extends Controller
 
         $verif = DB::table('atendente_dia AS atd')->where('data_hora', $now)->where('id_sala', $sala)->count();
 
-        dd($verif);
+        //dd($verif);
 
-        if ($verif = 0){
+        if ($verif == 0){
 
         DB::table('atendente_dia AS atd')->insert([
+                        'id_sala' => $request->input('sala'),
+                        'id_atendente' => $idat,
+                        'data_hora' => $now
+                        ]);
 
-            'sala' => $request->input('sala'),
-            'id_atendente' => $idat,
-            'id_grupo' => $idg 
+        app('flasher')->addSuccess('O atendente foi incluido e a sala vinculada.');
 
-            ]);
-
-            app('flasher')->addSuccess('O atendente foi incluido e a sala vinculada.');
-
-            return redirect()->back() ;
+        return redirect()->back() ;
 
         }else{
 
@@ -787,7 +797,7 @@ class GerenciarAtendimentoController extends Controller
 
         $usuario = session()->get('usuario.id_pessoa');
 
-        $now = Carbon::now()->format('d/m/Y H:m:s');
+        $now = Carbon::now()->format('Y/m/d');
 
         DB::table('atendente_dia AS atd')->where('id',$idatd)->delete();
 
