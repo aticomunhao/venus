@@ -156,7 +156,7 @@ Route::get('/gerenciar-mediuns', [MediumController::class, 'index'])->name('list
 Route::get('/editar-mediuns/{id}', [MediumController::class, 'edit'])->name('');
 Route::post('/atualizar-mediuns/{id}', [MediumController::class, 'update'])->name('');
 Route::get('/criar-mediuns', [MediumController::class, 'create'])->name('');
-Route::post('/incluir-mediuns', [MediumController::class, 'store']);
+Route::post('/incluir-mediuns', [MediumController::class, 'store'])->name('medium.store');
 Route::any('/deletar-mediuns/{id}', [MediumController::class, 'destroy'])->name('');
 Route::get('/visualizar-mediuns/{id}', [MediumController::class, 'show'])->name('');
 
