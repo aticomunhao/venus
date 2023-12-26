@@ -33,6 +33,7 @@
                 <th>ID</th>
                 <th>NOME</th>
                 <th>TIPO MEDIUNIDADE</th>
+                <th>FUNÇÃO</th>
                 <th>STATUS</th>
                 <th>AÇÕES</th>
             </tr>
@@ -41,8 +42,10 @@
                 @foreach ($medium as $mediuns)
                 <tr>
                     <td>{{$mediuns->idm}}</td>
+                    {{-- <td>{{$mediuns->id_grupo}}</td> --}}
                     <td>{{$mediuns->nome_completo}}</td>
                     <td>{{$mediuns->tipo}}</td>
+                    <td>{{$mediuns->nome}}</td>
                     <td>{{$mediuns->status ? 'Ativo' : 'Inativo' }}</td>
                     <td>
                         <a href="/editar-mediuns/{{$mediuns->idm}}" type="button" class="btn btn-outline-warning btn-sm">

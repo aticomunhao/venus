@@ -16,7 +16,8 @@ class MediumController extends Controller
         $medium = DB::table('medium AS m')
             ->leftJoin('tipo_mediunidade AS tm', 'm.id_tp_mediunidade', '=', 'tm.id')
             ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-            ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.id_tp_mediunidade', 'p.status','tm.tipo','p.motivo_status')
+            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+            ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.id_tp_mediunidade','m.id_funcao','p.status','tm.tipo','p.motivo_status','tf.nome')
             ->orderBy('p.nome_completo', 'ASC');
 
         $nome = $request->nome_pesquisa;
@@ -91,7 +92,7 @@ class MediumController extends Controller
      {
          $medium = DB::table('medium AS m')
              ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id') // Adicionei o join com a tabela tipo_funcao
+             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
              ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.id_tp_mediunidade', 'p.status', 'm.data_manifestou_mediunidade', 'm.id_funcao','tf.nome')
              ->where('m.id', $id)
              ->first();
@@ -131,14 +132,16 @@ class MediumController extends Controller
              $tipo_id = $id_tp_mediunidade[$i];
 
              // Verifique se o índice existe no array de datas
-             $data_manifestou = isset($data_manifestou_mediunidade[$i]) ? $data_manifestou_mediunidade[$i] : null;
+             $data_manifestou = isset($data_manifestou_mediunidade[$tipo_id]) ? $data_manifestou_mediunidade[$tipo_id] : null;
 
              // Faça a inserção usando o Query Builder
-             DB::table('medium')->insert([
-                 'id_pessoa' => $id_pessoa,
-                 'id_tp_mediunidade' => $tipo_id,
-                 'data_manifestou_mediunidade' => $data_manifestou,
-             ]);
+         // Faça a inserção usando o Query Builder
+            DB::table('medium')->insert([
+                'id_pessoa' => $id_pessoa,
+                'id_tp_mediunidade' => $tipo_id,
+                'data_manifestou_mediunidade' => $data_manifestou ? date('Y-m-d', strtotime($data_manifestou)) : null,
+            ]);
+
          }
 
          // Adicione uma mensagem de sucesso

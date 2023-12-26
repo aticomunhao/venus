@@ -26,17 +26,14 @@ class Grupocontroller extends Controller
                 ->leftJoin('tipo_motivo AS tm', 'g.id_tipo_motivo', 'tm.id');
 
 
-<<<<<<< Updated upstream
                 $nome = $request->nome_pesquisa;
 
                 if ($request->nome_pesquisa) {
                     $grupo->where('g.nome', 'ilike', "%$nome%");
                 }
-=======
             if ($request->nome_pesquisa) {
                 $grupo->where('g.nome', 'ilike', "%$request->nome_pesquisa%");
             }
->>>>>>> Stashed changes
 
                 $grupo = $grupo->orderBy('g.status_grupo', 'ASC')
                                ->orderBy('g.nome', 'ASC')
