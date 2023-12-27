@@ -13,12 +13,14 @@ class MediumController extends Controller
 
     public function index(Request $request)
     {
+
         $medium = DB::table('medium AS m')
-            ->leftJoin('tipo_mediunidade AS tm', 'm.id_tp_mediunidade', '=', 'tm.id')
-            ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-            ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.id_tp_mediunidade','m.id_funcao','p.status','tm.tipo','p.motivo_status','tf.nome')
-            ->orderBy('p.nome_completo', 'ASC');
+    ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
+    ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+    ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.id_funcao', 'p.status', 'p.motivo_status', 'tf.nome', 'm.id_grupo')
+    ->orderBy('p.nome_completo', 'ASC');
+
+
 
         $nome = $request->nome_pesquisa;
         if ($nome) {
@@ -66,7 +68,7 @@ class MediumController extends Controller
      {
         $medium = DB::table('medium AS m')
         ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-        ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id') // Adicionei o join com a tabela tipo_funcao
+        ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
         ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.id_tp_mediunidade', 'p.status', 'm.data_manifestou_mediunidade', 'm.id_funcao','tf.nome')
         ->where('m.id', $id)
         ->first();
@@ -116,38 +118,41 @@ class MediumController extends Controller
              'id_pessoa' => 'required|integer',
              'id_tp_mediunidade' => 'required|array',
              'data_manifestou_mediunidade' => 'required|array',
+             'id_funcao'=>'required|integer'
              // Adicione outras regras de validação conforme necessário
          ]);
 
-         // Obtenha os dados do request
+
          $id_pessoa = $request->input('id_pessoa');
          $id_tp_mediunidade = $request->input('id_tp_mediunidade');
          $data_manifestou_mediunidade = $request->input('data_manifestou_mediunidade');
+         $id_grupo = $request->input('id_grupo');
+         $id_funcao = $request->input('id_funcao');
 
-         // Certifique-se de que ambos os arrays têm o mesmo comprimento
+
          $count = count($id_tp_mediunidade);
 
-         // Itera sobre os tipos de mediunidade e insere cada registro
+
          for ($i = 0; $i < $count; $i++) {
              $tipo_id = $id_tp_mediunidade[$i];
 
-             // Verifique se o índice existe no array de datas
+
              $data_manifestou = isset($data_manifestou_mediunidade[$tipo_id]) ? $data_manifestou_mediunidade[$tipo_id] : null;
 
-             // Faça a inserção usando o Query Builder
-         // Faça a inserção usando o Query Builder
-            DB::table('medium')->insert([
-                'id_pessoa' => $id_pessoa,
-                'id_tp_mediunidade' => $tipo_id,
-                'data_manifestou_mediunidade' => $data_manifestou ? date('Y-m-d', strtotime($data_manifestou)) : null,
-            ]);
 
+             DB::table('medium')->insert([
+                 'id_pessoa' => $id_pessoa,
+                 'id_tp_mediunidade' => $tipo_id,
+                 'data_manifestou_mediunidade' => $data_manifestou ? date('Y-m-d', strtotime($data_manifestou)) : null,
+                 'id_grupo' => $id_grupo,
+                 'id_funcao'=>$id_funcao,
+             ]);
          }
 
-         // Adicione uma mensagem de sucesso
+
          session()->flash('success', 'Cadastrado com sucesso!');
 
-         // Redirecione para a página desejada
+
          return redirect('gerenciar-mediuns');
      }
 

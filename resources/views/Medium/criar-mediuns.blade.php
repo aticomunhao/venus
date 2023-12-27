@@ -51,19 +51,24 @@
                             <label class="form-label">Tipos de Mediunidade</label>
                             @foreach ($tipo_mediunidade as $tipo)
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="id_tp_mediunidade[]" value="{{ $tipo->id }}" id="tipo_{{ $tipo->id }}">
-                                    <label class="form-check-label" for="tipo_{{ $tipo->id }}">{{ $tipo->tipo }}</label>
+                                    <input class="form-check-input" type="checkbox" name="id_tp_mediunidade[]"
+                                        value="{{ $tipo->id }}" id="tipo_{{ $tipo->id }}">
+                                    <label class="form-check-label"
+                                        for="tipo_{{ $tipo->id }}">{{ $tipo->tipo }}</label>
                                 </div>
                             @endforeach
                         </div>
                         <div class="col-md-6">
                             @foreach ($tipo_mediunidade as $tipo)
-                                <div class="form-group" id="data_manifestou_{{ $loop->index + 1 }}">
-                                    <label for="data_manifestou_mediunidade[{{ $tipo->id }}]" class="form-label small mb-0">Data que manifestou {{ $tipo->tipo }}</label>
+                                <div class="form-group data_manifestou" id="data_manifestou_{{ $tipo->id }}">
+                                    <label for="data_manifestou_mediunidade[{{ $tipo->id }}]"
+                                        class="form-label small mb-0"> {{ $tipo->tipo }}</label>
                                     @if (isset($data_manifestou_mediunidade[$tipo->id]))
-                                        <input type="date" class="form-control form-control-sm" name="data_manifestou_mediunidade[{{ $tipo->id }}]" required>
+                                        <input type="date" class="form-control form-control-sm"
+                                            name="data_manifestou_mediunidade[{{ $tipo->id }}]"required="required">
                                     @else
-                                        <input type="date" class="form-control form-control-sm" name="data_manifestou_mediunidade[{{ $tipo->id }}]" disabled>
+                                        <input type="date" class="form-control form-control-sm"
+                                            name="data_manifestou_mediunidade[{{ $tipo->id }}]" required= "required">
                                     @endif
                                 </div>
                             @endforeach
@@ -87,27 +92,20 @@
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
-        $(document).ready(function () {
-            console.log('Documento pronto.');
+        $(document).ready(function() {
+            $('.data_manifestou').hide().prop("required", false);
 
-            $('[id^=data_manifestou_]').hide();
-
-            $('[name^=id_tp_mediunidade]').change(function () {
-                console.log('Checkbox alterado.');
-                var numSelecoes = $('[name^=id_tp_mediunidade]:checked').length;
-                console.log('Número de seleções:', numSelecoes);
-                $('[id^=data_manifestou_]').hide();
-                for (var i = 1; i <= numSelecoes; i++) {
-                    $('#data_manifestou_' + i).show();
-                    $('#data_manifestou_' + i + ' input').prop('disabled', false);
-                }
+            $('[name^=id_tp_mediunidade]').change(function() {
+                $('.data_manifestou').hide();
+                $('[name^=id_tp_mediunidade]:checked').each(function() {
+                    var tipoId = $(this).val();
+                    $('#data_manifestou_' + tipoId).show().attr("required", true);
+                });
             });
 
-            $('#confirmButton').click(function () {
-                console.log('Botão Confirmar clicado.');
+            $('#confirmButton').click(function() {
                 $('#mediumForm').submit();
             });
         });
     </script>
-
 @endsection

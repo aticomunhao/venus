@@ -31,8 +31,8 @@
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                 <th>ID</th>
+                <th>ID_GRUPO</th>
                 <th>NOME</th>
-                <th>TIPO MEDIUNIDADE</th>
                 <th>FUNÇÃO</th>
                 <th>STATUS</th>
                 <th>AÇÕES</th>
@@ -42,9 +42,8 @@
                 @foreach ($medium as $mediuns)
                 <tr>
                     <td>{{$mediuns->idm}}</td>
-                    {{-- <td>{{$mediuns->id_grupo}}</td> --}}
+                    <td>{{$mediuns->id_grupo}}</td>
                     <td>{{$mediuns->nome_completo}}</td>
-                    <td>{{$mediuns->tipo}}</td>
                     <td>{{$mediuns->nome}}</td>
                     <td>{{$mediuns->status ? 'Ativo' : 'Inativo' }}</td>
                     <td>

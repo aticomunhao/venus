@@ -78,6 +78,8 @@
                         <div class="d-grid gap-1 col-4 mx-auto">
                             <br>
                             <a class="btn btn-danger" href="/gerenciar-mediuns" role="button">Cancelar</a>
+                            <button class="btn btn-primary">Confirmar</button>
+
                         </div>
                     </div>
                 </form>
