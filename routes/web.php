@@ -170,11 +170,13 @@ Route::get('/visualizar-mediuns/{id}', [MediumController::class, 'show'])->name(
 //RECEPÇÃO INTEGRADA DA DAO
 Route::get('/gerenciar-recepcao', [RecepcaoIntegradaController::class, 'index'])->name('recdex');
 Route::get('/agendar/{ide}/{idtt}', [RecepcaoIntegradaController::class, 'agenda'])->name('recage');
+Route::get('/agendar-tratamento/{ide}', [RecepcaoIntegradaController::class, 'tratamento'])->name('rectra');
+Route::post('incluir-tratamento/{ide}', [RecepcaoIntegradaController::class, 'tratar'])->name('rectrt');
 Route::post('/faltar/{ide}', [RecepcaoIntegradaController::class, 'faltas'])->name('recfal');
 Route::get('/visualizar', [RecepcaoIntegradaController::class, 'visualizas'])->name('recvis');
 Route::get('/inativar', [RecepcaoIntegradaController::class, 'inativas'])->name('recina');
-Route::post('i', [RecepcaoIntegradaController::class, ''])->name('');
-Route::get('/j', [RecepcaoIntegradaController::class, ''])->name('');
+
+
 Route::put('/k', [RecepcaoIntegradaController::class, ''])->name('');
 
 //REUNIÃO MEDIÚNICA

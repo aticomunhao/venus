@@ -9,14 +9,14 @@
 @section('content')
 
 <br>
-<div class="container-fluid">
+<div class="container-fluid overflow-hidden">
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            AGENDAR TRATAMENTO
+                            AGENDAR TRATAMENTO - DIA
                         </div>
                     </div>
                 </div>
@@ -42,12 +42,12 @@
                         </div>
                         </fieldset>                   
                     <br/>
-                    <form class="form-horizontal mt-2" method="post" action="/novo-atendimento">
+                    <form class="form-horizontal mt-2" method="get" action="/agendar-tratamento/{{$result[0]->ide}}">
                         @csrf              
-                    <div class="row g-2" style="text-align:center;">
+                    <div class="row g-2 justify-content-evenly" style="text-align:center;  column-gap:10px;">
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">                   
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                                <input type="radio" class="btn-check" name="dia" id="option1" value="0" autocomplete="off" checked>
+                                <input type="radio" class="btn-check" name="dia" id="option1" value="1" autocomplete="off" checked>
                                 <label class="btn btn-outline-success" for="option1">Segunda</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -66,11 +66,10 @@
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                        <div class="col-1"></div>
+                        </div>                 
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">  
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                                <input type="radio" class="btn-check" name="dia" id="option2" value="1" autocomplete="off">
+                                <input type="radio" class="btn-check" name="dia" id="option2" value="2" autocomplete="off">
                                 <label class="btn btn-outline-success" for="option2">Terça</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -89,11 +88,10 @@
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                        <div class="col-1"></div>    
+                        </div>                 
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">  
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                                <input type="radio" class="btn-check" name="dia" id="option3" value="2" autocomplete="off">
+                                <input type="radio" class="btn-check" name="dia" id="option3" value="3" autocomplete="off">
                                 <label class="btn btn-outline-success" for="option3">Quarta</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -112,13 +110,10 @@
                                     </tbody>
                                 </table>
                             </div>
-                        </div>               
-                    </div>
-                    <div class="row p-3"></div>
-                    <div class="row g-2"  style="text-align:center;">
+                        </div>                
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">                   
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                                <input type="radio" class="btn-check" name="dia" id="option4" value="3" autocomplete="off">
+                                <input type="radio" class="btn-check" name="dia" id="option4" value="4" autocomplete="off">
                                 <label class="btn btn-outline-success" for="option4">Quinta</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -137,11 +132,13 @@
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                        <div class="col-1"></div>
+                        </div>        
+                    </div>
+                <div class="row p-3"></div>
+                    <div class="row g-2" style="text-align:center;  column-gap:215px;">
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">  
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                                <input type="radio" class="btn-check" name="dia" id="option5" value="4" autocomplete="off">
+                                <input type="radio" class="btn-check" name="dia" id="option5" value="5" autocomplete="off">
                                 <label class="btn btn-outline-success" for="option5">Sexta</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -161,10 +158,9 @@
                                 </table>
                             </div>
                         </div> 
-                        <div class="col-1"></div>
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;"> 
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                                <input type="radio" class="btn-check" name="dia" id="option6" value="5" autocomplete="off">
+                                <input type="radio" class="btn-check" name="dia" id="option6" value="6" autocomplete="off">
                                 <label class="btn btn-outline-success" for="option6">Sábado</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -184,14 +180,9 @@
                                 </table>
                             </div>
                         </div>               
-                    </div>
-                    <div class="row p-3"></div>
-                    <div class="row g-2"  style="text-align:center;">
-                        <div class="col"></div>
-                        <div class="col"></div>
-                        <div class="col-3" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">                   
+                        <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">                   
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                             <input type="radio" class="btn-check" name="dia" id="option7" value="6" autocomplete="off">
+                             <input type="radio" class="btn-check" name="dia" id="option7" value="0" autocomplete="off">
                                 <label class="btn btn-outline-success" for="option7">Domingo</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -210,10 +201,9 @@
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                        <div class="col"></div>
-                        <div class="col"></div>
+                        </div>               
                     </div>
+                </div>
                     <br/>
                     <div class="row">
                         <div class="d-grid gap-1 col-4 mx-auto">
@@ -221,13 +211,16 @@
                         </div>
                         <div class="d-grid gap-2 col-4 mx-auto" >
                             <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>
-                        </div>
-                    </form>
-                    </div>
+                        </div>                       
+                    </form> 
+                    </div> <br/>
                 </div>  
-            </div>                                  
+            </div>
+                                              
         </div>
+        
     </div>
+   
 </div>
 
 
