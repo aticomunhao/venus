@@ -62,6 +62,7 @@
                                                 <th class="col">HORÁRIO INÍCIO</th>
                                                 <th class="col">HORÁRIO FIM</th>
                                                 <th class="col">MAX ATENDIDOS</th>
+                                                <th class="col">NR VAGAS</th>
                                                 <th class="col">MARCAR</th>
                                                 </tr>
                                             </thead>
@@ -73,7 +74,8 @@
                                                 <td>{{$tratas->tstd}}</td>
                                                 <td>{{date('H:i:s', strtotime($tratas->h_inicio))}}</td>
                                                 <td>{{date('H:i:s', strtotime($tratas->h_fim))}}</td>
-                                                <td>{{$tratas->max_atend}}</td>
+                                                <td>{{$tratas->max_atend}}</td>                                            
+                                                <td>{{$tratas->trat}}</td>                                    
                                                 <td><center><input type="radio" class="form-check" name="reuniao" id="" value="{{$tratas->idr}}" autocomplete="off"></center>
                                                     </td>    
                                                 </tr>

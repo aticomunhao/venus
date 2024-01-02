@@ -40,6 +40,7 @@
                             <a href="/gerenciar-atendente-dia"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
                             <a href="/definir-sala-atendente"><input class="btn btn-success btn-sm me-md-2" type="button" value="Definir Atendente / Sala"></a>
                     </form>
+                    <a href="/gerenciar-atendimentos"><input class="btn btn-danger btn-sm me-md-2" style="font-size: 0.9rem;" type="button" value="Retornar principal"></a>
                         </div>
                 </div>
                 <br>

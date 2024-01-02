@@ -91,21 +91,49 @@ class RecepcaoIntegradaController extends Controller
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
+                        ->where('reu.dia', 1)
+                        ->get();
+
+        $seg = $contgrseg[0]->maxat;
+        
+        $conttratseg = DB::table('tratamento AS tr')
+                        ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                        ->selectRaw("$seg - count(tr.id) as trat")
+                        ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 1)        
                         ->get();
+               
 
         $contgrter = DB::table('reuniao_mediunica AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
-                        ->where('reu.dia', 2)        
+                        ->where('reu.dia', 2)
                         ->get();
 
+        $ter = $contgrter[0]->maxat;
+
+        $conttratter = DB::table('tratamento AS tr')
+                            ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                            ->selectRaw("$ter - count(tr.id) as trat")
+                            ->where('reu.id_tipo_tratamento', $idtt)
+                            ->where('reu.dia', 2)        
+                            ->get();
+
         $contgrqua = DB::table('reuniao_mediunica AS reu')
-                        ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
-                        ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
-                        ->where('gr.data_fim', null)
+                            ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
+                            ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+                            ->where('gr.data_fim', null)
+                            ->where('reu.id_tipo_tratamento', $idtt)
+                            ->where('reu.dia', 3)
+                            ->get();
+
+        $qua = $contgrqua[0]->maxat;
+        
+        $conttratqua = DB::table('tratamento AS tr')
+                        ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                        ->selectRaw("$qua - count(tr.id) as trat")
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 3)        
                         ->get();
@@ -115,13 +143,32 @@ class RecepcaoIntegradaController extends Controller
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
+                        ->where('reu.dia', 4)
+                        ->get();
+
+        $qui = $contgrqui[0]->maxat;
+        
+        $conttratqui = DB::table('tratamento AS tr')
+                        ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                        ->selectRaw("$qui - count(tr.id) as trat")
+                        ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 4)        
                         ->get();
+                      
 
         $contgrsex = DB::table('reuniao_mediunica AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
+                        ->where('reu.id_tipo_tratamento', $idtt)
+                        ->where('reu.dia', 5)
+                        ->get();
+
+        $sex = $contgrsex[0]->maxat;
+        
+        $conttratsex = DB::table('tratamento AS tr')
+                        ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                        ->selectRaw("$sex - count(tr.id) as trat")
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 5)        
                         ->get();
@@ -131,6 +178,15 @@ class RecepcaoIntegradaController extends Controller
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
+                        ->where('reu.dia', 6)
+                        ->get();
+
+        $sab = $contgrsab[0]->maxat;
+
+        $conttratsab = DB::table('tratamento AS tr')
+                        ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                        ->selectRaw("$sab - count(tr.id) as trat")
+                        ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 6)        
                         ->get();
 
@@ -139,19 +195,29 @@ class RecepcaoIntegradaController extends Controller
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
-                        ->where('reu.dia', 0)        
+                        ->where('reu.dia', 0)
                         ->get();
 
-        //dd($contgrter);
+        $dom = $contgrdom[0]->maxat;
+
+        $conttratdom = DB::table('tratamento AS tr')
+                        ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                        ->selectRaw("$dom - count(tr.id) as trat")
+                        ->where('reu.id_tipo_tratamento', $idtt)
+                        ->where('reu.dia', 0)        
+                        ->get();
 
         $contcap = DB::table('reuniao_mediunica AS reu')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->sum('reu.max_atend');
+        
+
+    
 //dd($contcap);
 
-        return view('/recepcao-integrada/agendar-dia', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'contcap'));
+        return view('/recepcao-integrada/agendar-dia', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
 
     }
 
@@ -181,9 +247,11 @@ class RecepcaoIntegradaController extends Controller
                         ->where('enc.id', $ide)
                         ->get();
 
-
+        
         $trata = DB::table('reuniao_mediunica AS reu')
-                        ->select('reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia AS idd', 'reu.dia', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.id_tipo_tratamento', 'reu.h_inicio','td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao as descst', 'tst.descricao AS tstd', 'sa.numero' )
+                        ->select(DB::raw('(reu.max_atend - COUNT(tr.id)) AS trat'),'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia AS idd', 'reu.dia', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.id_tipo_tratamento', 'reu.h_inicio','td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao as descst', 'tst.descricao AS tstd', 'sa.numero' )
+                        //->select(DB::raw('(reu.max_atend - COUNT(tr.id)) AS trat'))
+                        ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
                         ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
                         ->leftjoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->leftjoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
@@ -192,7 +260,17 @@ class RecepcaoIntegradaController extends Controller
                         ->leftJoin('tipo_dia AS td', 'reu.dia', 'td.id')
                         ->where('reu.id_tipo_tratamento', $tp_trat )
                         ->where('reu.dia', $dia)
+                        ->where('tr.status', '<', 3)
+                        ->where('reu.dia', $dia)
+                        ->where('reu.id_tipo_tratamento', $tp_trat )
+                        ->groupBy('reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 'tsg.descricao', 'sa.numero')
                         ->get();
+        
+     
+
+
+         //dd($trata);
+
         
         return view('/recepcao-integrada/agendar-tratamento', compact('result', 'trata', 'dia'));
 
@@ -203,11 +281,17 @@ class RecepcaoIntegradaController extends Controller
 
         $reu = intval($request->reuniao);
 
+      
+
         $dia_semana = DB::table('reuniao_mediunica AS reu')->where('id', $reu)->value('dia');
+
+        
 
         $data_atual = Carbon::now();
         
         $dia_atual = $data_atual->weekday();
+
+        //dd($dia_atual);
 
         if ($dia_atual < $dia_semana){
 
@@ -218,20 +302,40 @@ class RecepcaoIntegradaController extends Controller
             $prox = (date("Y-m-d", strtotime("$data_atual + $dia_semana day + 7 day - $dia_atual day"))); 
         }
 
-        //dd($prox);
+        
 
         // $primeiro_trat = date_diff();
 
         //dd($dia_semana);
 
-        DB::table('tratamento AS tr')->insert([
+        $id_trata = DB::table('tratamento AS t')
+        ->select(DB::raw('MAX(id) as max_id'))
+        ->value('max_id');
+
+        DB::table('tratamento AS tr')
+                            ->insert([
                             'id_reuniao' => $reu,
                             'id_encaminhamento' => $ide,
-                            'data' => $prox,
                             'status' => 1
 
         ]);
 
+        DB::table('dias_tratamento AS dt')
+                            ->insert([
+                            'id_tratamento' => $id_trata,
+                            'data' => $prox
+
+        ]);
+
+        DB::table('encaminhamento AS enc')
+                                    ->where('enc.id', $ide)
+                                    ->update([
+                                    'status_encaminhamento' => 2
+        ]);
+
+        app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
+
+        return Redirect('/gerenciar-recepcao');
 
     }
 

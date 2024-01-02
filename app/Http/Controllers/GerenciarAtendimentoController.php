@@ -19,22 +19,22 @@ class GerenciarAtendimentoController extends Controller
         $now =  Carbon::now()->format('Y-m-d');
 
         DB::table('atendimentos')
-        ->where('status_atendimento', '<', 5)
-        ->where('dh_chegada', '<', $now)
-        ->update([
-            'status_atendimento' => 6
+                    ->where('status_atendimento', '<', 5)
+                    ->where('dh_chegada', '<', $now)
+                    ->update([
+                    'status_atendimento' => 6
         ]);
 
 
         $atende = DB::select("select
-            p.id as idatt,
-            p.nome_completo as nm_1,
-            p.ddd,
-            p.celular,
-            a.id_pessoa
-            from atendentes a
-            left join pessoas p on (a.id_pessoa = p.id)
-            ");
+                    p.id as idatt,
+                    p.nome_completo as nm_1,
+                    p.ddd,
+                    p.celular,
+                    a.id_pessoa
+                    from atendentes a
+                    left join pessoas p on (a.id_pessoa = p.id)
+                    ");
 
         $lista = DB::table('atendimentos AS at')
                     ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'att.id as idatt','at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento', 's.numero AS nr_sala' )
@@ -569,7 +569,11 @@ class GerenciarAtendimentoController extends Controller
 
     ////PREPARA INFORMAÇÕES DO FORMULÁRIO DE EDIÇÃO DA SALA
 
+    
+
     public function editar_afi($idatd){
+
+        $now =  Carbon::now()->format('Y-m-d');
 
         $atende = DB::table('atendente_dia AS atd')
         ->select('att.id AS ida', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala')
@@ -598,15 +602,27 @@ class GerenciarAtendimentoController extends Controller
                     ->orderBy('nome')
                     ->get();
 
+        $sala_ocupada = DB::table('atendente_dia AS atd')
+                        ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
+                        ->where('atd.data_hora', $now)
+                        ->pluck('id_sala');
+        
+   
+
         $sala = DB::table('salas AS s')
-                    ->select('id', 'numero')
-                    ->where( 'id_finalidade', 2)
-                    ->where('status_sala', 1)
+                    ->select('s.id', 's.numero')
+                    ->where( 's.id_finalidade', 2)
+                    ->where('s.status_sala', 1)
+                    ->whereNotIn('s.id', DB::table('atendente_dia AS atd')
+                        ->where('atd.data_hora', $now)
+                        ->pluck('atd.id_sala'))
                     ->orderBy('numero', 'asc')
                     ->get();
-        
+      
 
-                    //dd($atende);
+          // dd($sala);
+
+
 
         return view ('/recepcao-AFI/editar-atendente-dia', compact('atende', 'st_atend', 'grupo', 'sala'));
     }
@@ -711,9 +727,12 @@ class GerenciarAtendimentoController extends Controller
                         ->get();
 
                 $sala = DB::table('salas AS s')
-                        ->select('id', 'numero')
-                        ->where( 'id_finalidade', 2)
-                        ->where('status_sala', 1)
+                        ->select('s.id', 's.numero')
+                        ->where( 's.id_finalidade', 2)
+                        ->where('s.status_sala', 1)
+                        ->whereNotIn('s.id', DB::table('atendente_dia AS atd')
+                            ->where('atd.data_hora', $now)
+                            ->pluck('atd.id_sala'))
                         ->orderBy('numero', 'asc')
                         ->get();
 
