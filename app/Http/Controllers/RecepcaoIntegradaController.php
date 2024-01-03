@@ -249,8 +249,7 @@ class RecepcaoIntegradaController extends Controller
 
         
         $trata = DB::table('reuniao_mediunica AS reu')
-                        ->select(DB::raw('(reu.max_atend - COUNT(tr.id)) AS trat'),'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia AS idd', 'reu.dia', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.id_tipo_tratamento', 'reu.h_inicio','td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao as descst', 'tst.descricao AS tstd', 'sa.numero' )
-                        //->select(DB::raw('(reu.max_atend - COUNT(tr.id)) AS trat'))
+                        ->select(DB::raw('(reu.max_atend - COUNT(tr.id)) AS trat'), 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia AS idd', 'reu.dia', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.id_tipo_tratamento', 'reu.h_inicio','td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao as descst', 'tst.descricao AS tstd', 'sa.numero' )
                         ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
                         ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
                         ->leftjoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
@@ -260,8 +259,7 @@ class RecepcaoIntegradaController extends Controller
                         ->leftJoin('tipo_dia AS td', 'reu.dia', 'td.id')
                         ->where('reu.id_tipo_tratamento', $tp_trat )
                         ->where('reu.dia', $dia)
-                        ->where('tr.status', '<', 3)
-                        ->where('reu.dia', $dia)
+                        //->where('tr.status', '<', 3)
                         ->where('reu.id_tipo_tratamento', $tp_trat )
                         ->groupBy('reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 'tsg.descricao', 'sa.numero')
                         ->get();
@@ -269,7 +267,7 @@ class RecepcaoIntegradaController extends Controller
      
 
 
-         //dd($trata);
+        //dd($trata);
 
         
         return view('/recepcao-integrada/agendar-tratamento', compact('result', 'trata', 'dia'));

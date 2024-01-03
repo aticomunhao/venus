@@ -47,7 +47,7 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="{{$a++}}">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{$b++}}" aria-expanded="false" aria-controls="flush-collapse{{$c++}}">
-                                {{date('H:i:s', strtotime($tratas->h_inicio))}}
+                                {{date('H:i:s', strtotime($tratas->h_inicio))}} - {{$tratas->nomeg}}
                                 </button>
                                 </h2>
                                 <div id="flush-collapse{{$d++}}" class="accordion-collapse collapse" aria-labelledby="{{$e++}}" data-bs-parent="#accordionFlushExample">
