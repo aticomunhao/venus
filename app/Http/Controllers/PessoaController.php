@@ -53,7 +53,7 @@ class PessoaController extends Controller
                         from tipo_status_pessoa t
                         ");
 
-        $soma = DB::table('pessoas')->count();
+        $soma = $pessoa->count();
 
 
 
@@ -148,7 +148,7 @@ class PessoaController extends Controller
 
         $status_p = DB::select('select id, tipo from tipo_status_pessoa');
 
-        $motivo = DB::select('select id, tipo from tipo_motivo order by tipo');
+        $motivo = DB::select('select id, motivo from tipo_motivo_status_pessoa order by id');
 
 
 
@@ -169,6 +169,10 @@ class PessoaController extends Controller
 
     public function update(Request $request, $idp)
     {
+        $usuario = session()->get('usuario.id_usuario');
+
+        //dd($usuario);
+
         $today = Carbon::today()->format('Y-m-d H:m:s');
 
         $cpf = $request->cpf;
@@ -202,23 +206,24 @@ class PessoaController extends Controller
         {
 
         DB::table('pessoas AS p')->where('p.id', $idp)->update([
-                'nome_completo' => $request->input('nome'),
-                'cpf' => $request->input('cpf'),
-                'dt_nascimento' => $request->input('dt_nasc'),
-                'sexo' => $request->input('sex'),
-                'ddd' => $request->input('ddd'),
-                'celular' => $request->input('celular'),
-                'email' => $request->input('email'),
-                'status' => $request->input('status')
-        ]);
+                    'nome_completo' => $request->input('nome'),
+                    'cpf' => $request->input('cpf'),
+                    'dt_nascimento' => $request->input('dt_nasc'),
+                    'sexo' => $request->input('sex'),
+                    'ddd' => $request->input('ddd'),
+                    'celular' => $request->input('celular'),
+                    'email' => $request->input('email'),
+                    'status' => $request->input('status'),
+                    'motivo_status' => $request->input('motivo')
+            ]);
 
         //dd($pessoa);
         DB::table('historico_venus')->insert([
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $today,
-            'fato' => 3,
-            'pessoa' => $idp
-        ]);
+                    'id_usuario' => $usuario,
+                    'data' => $today,
+                    'fato' => 3,
+                    'pessoa' => $idp
+                ]);
 
 
         app('flasher')->addSuccess('O cadastro da pessoa foi alterado com sucesso');

@@ -46,7 +46,7 @@
             </div style="text-align:right;">
             <hr>
             <div class="col" style="text-align: center;">
-                <a href="/gerenciar-atendente-dia"><input class="btn btn-danger btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Finalizar definição"></a>
+                <a href="/gerenciar-atendente-dia"><input class="btn btn-danger btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px; font-size: 0.9rem;" type="button" value="Retornar principal"></a>
             </div>
             <div class="table">Total selecionados:
        

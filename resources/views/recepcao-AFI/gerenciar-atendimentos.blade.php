@@ -39,7 +39,7 @@
                     </form>
                             <a href="/criar-atendimento"><input class="btn btn-success btn-sm me-md-2" type="button" autofocus value="Novo Atendimento &plus;"></a>
                             <a href="/gerenciar-pessoas"><input class="btn btn-success btn-sm me-md-2" type="button" value="Gerenciar Pessoas"></a>
-                            <a href="/gerenciar-atendente-dia"><input class="btn btn-success btn-sm me-md-2" type="button" value="Atendentes do dia"></a>
+                            <a href="/gerenciar-atendente-dia"><input class="btn btn-success btn-sm me-md-2" type="button" value="Gerenciar Atendentes do dia"></a>
 
                         </div>
                 </div>

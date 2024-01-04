@@ -67,10 +67,10 @@
                             <td>{{$reuni->idr}}</td>   
                             <td>{{$reuni->nomeg}}</td>
                             <td>{{$reuni->nomed}}</td>
-                            <td>{{$reuni->id_sala}}</td>
+                            <td>{{$reuni->numero}}</td>
                             <td>{{$reuni->tstd}}</td>
-                            <td>{{date ('H:m:s', strtotime($reuni->h_inicio))}}</td>
-                            <td>{{date ('H:m:s', strtotime($reuni->h_fim))}}</td>
+                            <td>{{date('H:i:s', strtotime($reuni->h_inicio))}}</td>
+                            <td>{{date('H:i:s', strtotime($reuni->h_fim))}}</td>
                             <td>{{$reuni->max_atend}}</td>
                             <td>{{$reuni->descst}}</td>    
                             <td>                                
