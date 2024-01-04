@@ -17,7 +17,9 @@ class MediumController extends Controller
         $medium = DB::table('medium AS m')
     ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
     ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-    ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.id_funcao', 'p.status', 'p.motivo_status', 'tf.nome', 'm.id_grupo')
+    ->leftJoin('setor AS s', 'm.id_setor', '=', 's.id')
+    ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
+    ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.id_funcao', 'p.cpf','p.status', 'p.motivo_status', 'tf.nome as nome_funcao', 'm.id_grupo','s.nome as nome_setor','g.nome as nome_grupo')
     ->orderBy('p.nome_completo', 'ASC');
 
 
@@ -32,26 +34,28 @@ class MediumController extends Controller
             ->orderBy('p.nome_completo', 'asc')
             ->paginate(50);
 
+
+
         return view('medium.gerenciar-mediuns', compact('medium'));
     }
 
 
 
 
+    public function create()
+    {
+        $medium = DB::select('select * from medium');
+        $tipo_mediunidade = DB::select('select id, tipo from tipo_mediunidade');
+        $pessoas = DB::select('select id, nome_completo, motivo_status, status from pessoas');
+        $tipo_funcao = DB::select('select tipo_funcao,nome,sigla from tipo_funcao');
+        $setor = DB::select('select nome from setor');
+        $mediunidade_medium = DB::select('select data_inicio from mediunidade_medium');
 
 
-        public function create()
-        {
-            $medium = DB::select('select * from medium');
-            $tipo_mediunidade = DB::select('select id, tipo from tipo_mediunidade');
-            $pessoas = DB::select('select id, nome_completo, motivo_status, status from pessoas');
-            $tipo_motivo_status_pessoa = DB::select('select motivo from tipo_motivo_status_pessoa');
-            $tipo_status_pessoa = DB::select('select tipo from tipo_status_pessoa');
-            $tipo_funcao = DB::select('select tipo_funcao,nome,sigla from tipo_funcao');
 
+        return view('medium/criar-mediuns', compact('medium', 'tipo_mediunidade', 'pessoas', 'tipo_funcao', 'setor','mediunidade_medium'));
+    }
 
-            return view('medium/criar-mediuns', compact('medium', 'tipo_mediunidade', 'pessoas', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa','tipo_funcao'));
-        }
 
 
     /**
@@ -65,20 +69,24 @@ class MediumController extends Controller
      */
 
      public function show($id)
+
      {
         $medium = DB::table('medium AS m')
         ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
         ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-        ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.id_tp_mediunidade', 'p.status', 'm.data_manifestou_mediunidade', 'm.id_funcao','tf.nome')
+        ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
+        ->leftJoin('setor AS s', 'm.id_setor', '=', 's.id')
+        ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.status', 'm.id_setor', 'm.motivo_status', 'm.id_grupo', 'g.nome AS nome_grupo', 'tf.nome AS nome_funcao', 'm.id_funcao', 's.nome AS nome_setor')
         ->where('m.id', $id)
         ->first();
 
-    $pessoas = DB::table('pessoas')->get();
-    $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
-    $tipo_motivo_status_pessoa = DB::table('tipo_motivo_status_pessoa')->pluck('motivo');
-    $tipo_funcao = DB::table('tipo_funcao')->pluck('nome');
 
-         return view('medium.visualizar-mediuns', compact('tipo_mediunidade', 'medium', 'pessoas', 'tipo_motivo_status_pessoa','tipo_funcao'));
+         $pessoas = DB::table('pessoas')->get();
+         $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
+         $tipo_funcao = DB::table('tipo_funcao')->get();
+         $setor = DB::table('setor')->get();
+
+         return view('medium.visualizar-mediuns', compact('tipo_mediunidade', 'medium', 'pessoas', 'tipo_funcao','setor'));
      }
 
 
@@ -92,22 +100,23 @@ class MediumController extends Controller
 
      public function edit($id)
      {
-         $medium = DB::table('medium AS m')
-             ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-             ->select('m.id', 'p.nome_completo', 'm.id_pessoa', 'm.id_tp_mediunidade', 'p.status', 'm.data_manifestou_mediunidade', 'm.id_funcao','tf.nome')
-             ->where('m.id', $id)
-             ->first();
+        $medium = DB::table('medium AS m')
+        ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
+        ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+        ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
+        ->leftJoin('setor AS s', 'm.id_setor', '=', 's.id')
+        ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.status', 'm.id_setor', 'm.motivo_status', 'm.id_grupo', 'g.nome AS nome_grupo', 'tf.nome AS nome_funcao', 'm.id_funcao', 's.nome AS nome_setor')
+        ->where('m.id', $id)
+        ->first();
+
 
          $pessoas = DB::table('pessoas')->get();
          $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
-         $tipo_motivo_status_pessoa = DB::table('tipo_motivo_status_pessoa')->pluck('motivo');
-         $tipo_funcao = DB::table('tipo_funcao')->pluck('nome');
+         $tipo_funcao = DB::table('tipo_funcao')->get();
+         $setor = DB::table('setor')->get();
 
-         return view('medium.editar-mediuns', compact('tipo_mediunidade', 'medium', 'pessoas', 'tipo_motivo_status_pessoa', 'tipo_funcao'));
+         return view('medium.editar-mediuns', compact('tipo_mediunidade', 'medium', 'pessoas', 'tipo_funcao','setor'));
      }
-
-
 
 
 
@@ -117,44 +126,41 @@ class MediumController extends Controller
          $request->validate([
              'id_pessoa' => 'required|integer',
              'id_tp_mediunidade' => 'required|array',
-             'data_manifestou_mediunidade' => 'required|array',
-             'id_funcao'=>'required|integer'
+             'data_inicio' => 'required|array',
+             'id_funcao' => 'required|integer',
              // Adicione outras regras de validação conforme necessário
          ]);
-
+         
 
          $id_pessoa = $request->input('id_pessoa');
          $id_tp_mediunidade = $request->input('id_tp_mediunidade');
-         $data_manifestou_mediunidade = $request->input('data_manifestou_mediunidade');
+         $data_inicio_mediunidade = $request->input('data_inicio');
          $id_grupo = $request->input('id_grupo');
          $id_funcao = $request->input('id_funcao');
 
-
          $count = count($id_tp_mediunidade);
-
 
          for ($i = 0; $i < $count; $i++) {
              $tipo_id = $id_tp_mediunidade[$i];
+             $data_inicio = isset($data_inicio_mediunidade[$tipo_id]) ? $data_inicio_mediunidade[$tipo_id] : null;
 
-
-             $data_manifestou = isset($data_manifestou_mediunidade[$tipo_id]) ? $data_manifestou_mediunidade[$tipo_id] : null;
-
-
-             DB::table('medium')->insert([
+             DB::table('mediunidade_mediunica')->insert([
                  'id_pessoa' => $id_pessoa,
                  'id_tp_mediunidade' => $tipo_id,
-                 'data_manifestou_mediunidade' => $data_manifestou ? date('Y-m-d', strtotime($data_manifestou)) : null,
+                 'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
                  'id_grupo' => $id_grupo,
-                 'id_funcao'=>$id_funcao,
+                 'id_funcao' => $id_funcao,
              ]);
          }
 
-
          session()->flash('success', 'Cadastrado com sucesso!');
-
-
          return redirect('gerenciar-mediuns');
      }
+
+
+
+
+
 
     /**
      * Update the specified resource in storage.
