@@ -122,15 +122,16 @@ class MediumController extends Controller
 
      public function store(Request $request)
      {
-         // Valide os dados do formulário conforme necessário
          $request->validate([
              'id_pessoa' => 'required|integer',
              'id_tp_mediunidade' => 'required|array',
              'data_inicio' => 'required|array',
              'id_funcao' => 'required|integer',
-             // Adicione outras regras de validação conforme necessário
          ]);
-         
+
+         if (count($request->input('id_tp_mediunidade')) !== count($request->input('data_inicio'))) {
+             return redirect()->back()->withInput()->withErrors(['message' => 'Os arrays de tipos de mediunidade e datas não têm o mesmo tamanho.']);
+         }
 
          $id_pessoa = $request->input('id_pessoa');
          $id_tp_mediunidade = $request->input('id_tp_mediunidade');

@@ -94,8 +94,7 @@
                             <a class="btn btn-danger" href="/gerenciar-mediuns" role="button">Cancelar</a>
                         </div>
                         <div class="d-grid gap-2 col-4 mx-auto">
-                            <button type="submit" class="btn btn-primary" id="confirmButton">Confirmar</button>
-
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
                         </div>
                     </div>
                 </form>
@@ -116,12 +115,9 @@
                 });
             });
 
-            $('#confirmButton').click(function () {
-                console.log('Botão Confirmar clicado.');
-                // Use trigger('submit') para acionar o envio do formulário
-                $('#mediumForm').trigger('submit');
+            $('#mediumForm').submit(function () {
+                console.log('Formulário enviado.');
             });
         });
     </script>
-
 @endsection
