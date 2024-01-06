@@ -18,9 +18,8 @@ use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\MediumController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 use App\Http\Controllers\ReuniaoMediunicaController;
-use App\Http\Controllers\RecepcaoIntegradaController;
-
-
+use App\Http\Controllers\GerenciarEncaminhamentoController;
+use App\Http\Controllers\GerenciarTratamentosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -168,16 +167,20 @@ Route::get('/visualizar-mediuns/{id}', [MediumController::class, 'show'])->name(
 */
 
 //RECEPÇÃO INTEGRADA DA DAO
-Route::get('/gerenciar-recepcao', [RecepcaoIntegradaController::class, 'index'])->name('recdex');
-Route::get('/agendar/{ide}/{idtt}', [RecepcaoIntegradaController::class, 'agenda'])->name('recage');
-Route::get('/agendar-tratamento/{ide}', [RecepcaoIntegradaController::class, 'tratamento'])->name('rectra');
-Route::post('incluir-tratamento/{ide}', [RecepcaoIntegradaController::class, 'tratar'])->name('rectrt');
-Route::post('/faltar/{ide}', [RecepcaoIntegradaController::class, 'faltas'])->name('recfal');
-Route::get('/visualizar', [RecepcaoIntegradaController::class, 'visualizas'])->name('recvis');
-Route::get('/inativar', [RecepcaoIntegradaController::class, 'inativas'])->name('recina');
+Route::get('/gerenciar-encaminhamentos', [GerenciarEncaminhamentoController::class, 'index'])->name('gecdex');
+Route::get('/agendar/{ide}/{idtt}', [GerenciarEncaminhamentoController::class, 'agenda'])->name('gecage');
+Route::get('/agendar-tratamento/{ide}', [GerenciarEncaminhamentoController::class, 'tratamento'])->name('gtctra');
+Route::get('/visualiza/{ide}', [GerenciarEncaminhamentoController::class, 'visualizar'])->name('gecvis');
+Route::get('/inativar', [GerenciarEncaminhamentoController::class, 'inativas'])->name('gecina');
+
+Route::get('/gerenciar-tratamentos', [GerenciarTratamentosController::class, 'index'])->name('gtcdex');
+
+Route::post('incluir-tratamento/{ide}', [GerenciarTratamentosController::class, 'tratar'])->name('gtctrt');
+Route::post('/presenca/{idtr}', [GerenciarTratamentosController::class, 'presenca'])->name('gtcpre');
+Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
 
 
-Route::put('/k', [RecepcaoIntegradaController::class, ''])->name('');
+Route::put('/k', [GerenciarTratamentosController::class, ''])->name('');
 
 //REUNIÃO MEDIÚNICA
 Route::get('/gerenciar-reunioes', [ReuniaoMediunicaController::class, 'index'])->name('remdex');

@@ -17,7 +17,7 @@
     <div class="col-12">
         <div class="row justify-content-center">
             <div>
-                <form action="{{route('recdex')}}" class="form-horizontal mt-4" method="GET" >
+                <form action="{{route('gecdex')}}" class="form-horizontal mt-4" method="GET" >
                 <div class="row">
                     <div class ="col">Data início
                         <input class="form-control" type="date" id="" name="dt_enc" value="{{$data_enc}}">
@@ -35,7 +35,7 @@
                     </div>
                         <div class="col"><br/>
                             <input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
-                            <a href="/gerenciar-recepcao"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
+                            <a href="/gerenciar-encaminhamentos"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
                     </form>
                         </div>
                 </div>
@@ -66,12 +66,20 @@
                             <td>{{$listas->nm_2}}</td>
                             <td>{{$listas->desctrat}}</td>
                             <td>{{$listas->tsenc}}</td>
-                            <td>                                
+                            <td>
+                                @if ($listas->status_encaminhamento == 1)                              
                                 <a href="/agendar/{{$listas->ide}}/{{$listas->idtt}}"><button type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Agendar"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/faltas/{{$listas->ide}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Presença"><i class="bi bi-exclamation-triangle" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/visualizar/{{$listas->ide}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Histórico"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                                @else
+                                <button type="button" class="btn btn-outline-success btn-sm disabled" data-tt="tooltip" data-placement="top" title="Agendar" aria-disabled="true"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button>
+                                @endif
+                                <a href="/visualiza/{{$listas->ide}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Histórico"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                                @if ($listas->status_encaminhamento < 2) 
                                 <a href="/inativar/{{$listas->ide}}"><button type="button" class="btn btn-outline-danger btn-sm"  data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
+                                @else
+                                <button type="button" class="btn btn-outline-danger btn-sm disabled"  data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>
+                                @endif
                             </td>
+                            @include('recepcao-integrada/pop-up-presenca')
                         </tr>
                         @endforeach
                     </tbody>
@@ -79,8 +87,10 @@
             </div class="d-flex justify-content-center">
             {{$lista->withQueryString()->links()}}
         </div>
+        
     </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -92,6 +102,7 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 })
 
 </script>
+
 
 
 
