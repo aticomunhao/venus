@@ -68,9 +68,14 @@ class GerenciarEncaminhamentoController extends Controller
         from tipo_status_encaminhamento ts
         ");
 
+        $motivo = DB::select("select
+        tm.id,
+        tm.tipo
+        from tipo_motivo tm
+        ");
 
 
-        return view ('/recepcao-integrada/gerenciar-encaminhamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now'));
+        return view ('/recepcao-integrada/gerenciar-encaminhamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'motivo'));
 
 
     }
@@ -298,21 +303,74 @@ class GerenciarEncaminhamentoController extends Controller
     public function visualizar($ide){
 
         $result = DB::table('encaminhamento AS enc')
-        ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido','p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'enc.status_encaminhamento AS tst' )
-        ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-        ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-        ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-        ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-        ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-        ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-        ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-        ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
-        ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-        ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
-        ->where('enc.id', $ide)
-        ->get();
+                        ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido','p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo')
+                        ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+                        ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+                        ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+                        ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+                        ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
+                        ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+                        ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+                        ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
+                        ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+                        ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
+                        ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
+                        ->leftjoin('reuniao_mediunica AS rm', 'tr.id_reuniao', 'rm.id')
+                        ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
+                        ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
+                        ->where('enc.id', $ide)
+                        ->get();
 
-        return view('/recepcao-integrada/historico-encaminhamento', compact('result'));
+        $list = DB::table('encaminhamento AS enc')
+                        ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.data', 'dt.presenca' )
+                        ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
+                        ->leftjoin('reuniao_mediunica AS rm', 'tr.id_reuniao', 'rm.id')        
+                        ->leftJoin('dias_tratamento AS dt', 'tr.id', 'dt.id_tratamento')
+                        ->where('enc.id', $ide)
+                        ->get();
+
+        $faul = DB::table('encaminhamento AS enc')
+                        ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.data', 'dt.presenca')
+                        ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
+                        ->leftjoin('reuniao_mediunica AS rm', 'tr.id_reuniao', 'rm.id')        
+                        ->leftJoin('dias_tratamento AS dt', 'tr.id', 'dt.id_tratamento')
+                        ->where('enc.id', $ide)
+                        ->where('presenca', 0)
+                        ->count();
+
+
+        return view('/recepcao-integrada/historico-encaminhamento', compact('result', 'list', 'faul'));
+
+    }
+
+
+    public function inative(Request $request, $ide){
+
+        $today = Carbon::today()->format('Y-m-d');
+
+
+        $inative =  DB::table('encaminhamento AS enc')                   
+                        ->where('enc.id', $ide)
+                        ->update([
+                            'status_encaminhamento' => 4,
+                            'motivo' => $request->input('motivo')
+
+                        ]);
+
+
+
+                    DB::table('historico_venus')->insert([
+                        'id_usuario' => session()->get('usuario.id_usuario'),
+                        'data' => $today,
+                        'fato' => 36,
+                        'id_ref' => $ide
+                        
+        ]);
+
+        app('flasher')->addSuccess('O encaminhamento foi inativado.');
+
+
+        return redirect('/gerenciar-encaminhamentos');
 
     }
 

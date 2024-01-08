@@ -13,7 +13,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            HISTÓRICO DO ENCAMINHAMENTO
+                            HISTÓRICO DO TRATAMENTO
                         </div>
                     </div>
                 </div>                
@@ -57,12 +57,12 @@
                                 <td>{{$results->nm_4}}</td>
                                 <td>{{$results->dh_inicio}}</td>
                                 <td>{{$results->dh_fim}}</td>
-                                <td>{{$results->tst}}</td>                                
+                                <td>{{$results->statat}}</td>                                
                             </tr>                                          
                         </tbody>
                     </table>       
                     @endforeach
-                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Encaminhamento</legend>
+                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Tratamento</legend>
                     @foreach($result as $results) 
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
@@ -105,11 +105,11 @@
                         <tbody>
                             <tr style="text-align:center;font-size:13px">       
                                 <td>{{$lists->idp}}</td>
-                                <td>{{date ('d-m-Y', strtotime($lists->data))}}</td>
-                                @if ($lists->presenca = 1)
+                                <td>{{$lists->data}}</td>
+                                @if ($lists->presenca == 1)
                                 <td style="background-color:#90EE90;">Sim</td>
-                                @else
-                                <td style="background-color:#FA8072;">Não</td>                                 
+                                @elseif ($lists->presenca == 0)
+                                <td style="background-color:#FA8072;">Não</td>   
                                 @endif
                             </tr>                                          
                         </tbody>
@@ -118,7 +118,7 @@
                     @endforeach
                     <div class="row">
                         <div class="col">    
-                            <a class="btn btn-danger" href="/gerenciar-encaminhamentos" style="text-align:right;" role="button">Fechar</a>                            
+                            <a class="btn btn-danger" href="/gerenciar-tratamentos" style="text-align:right;" role="button">Fechar</a>                            
                         </div>                        
                     </div>
                 </div>

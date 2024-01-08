@@ -170,12 +170,13 @@ Route::get('/visualizar-mediuns/{id}', [MediumController::class, 'show'])->name(
 Route::get('/gerenciar-encaminhamentos', [GerenciarEncaminhamentoController::class, 'index'])->name('gecdex');
 Route::get('/agendar/{ide}/{idtt}', [GerenciarEncaminhamentoController::class, 'agenda'])->name('gecage');
 Route::get('/agendar-tratamento/{ide}', [GerenciarEncaminhamentoController::class, 'tratamento'])->name('gtctra');
-Route::get('/visualiza/{ide}', [GerenciarEncaminhamentoController::class, 'visualizar'])->name('gecvis');
-Route::get('/inativar', [GerenciarEncaminhamentoController::class, 'inativas'])->name('gecina');
+Route::get('/visualizar-enc/{ide}', [GerenciarEncaminhamentoController::class, 'visualizar'])->name('gecvis');
+Route::post('/inativar/{ide}', [GerenciarEncaminhamentoController::class, 'inative'])->name('gecina');
+
 
 Route::get('/gerenciar-tratamentos', [GerenciarTratamentosController::class, 'index'])->name('gtcdex');
-
-Route::post('incluir-tratamento/{ide}', [GerenciarTratamentosController::class, 'tratar'])->name('gtctrt');
+Route::get('/visualizar-trat/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
+Route::post('incluir-tratamento/{idtr}', [GerenciarTratamentosController::class, 'tratar'])->name('gtctrt');
 Route::post('/presenca/{idtr}', [GerenciarTratamentosController::class, 'presenca'])->name('gtcpre');
 Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
 

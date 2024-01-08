@@ -61,7 +61,7 @@
 
                                         </thead>
                                         <tbody>
-                                            <tr style="text-align:center;font-size:11px">       
+                                            <tr style="text-align:center;font-size:13px">       
                                                 <td>{{$results->nm_2}}</td>
                                                 <td>{{$results->nome}}</td>
                                                 <td>{{$results->nm_4}}</td>
