@@ -94,7 +94,7 @@ class Grupocontroller extends Controller
         return redirect('gerenciar-grupos');
     }
 
-// Supondo que você tenha um método no seu controlador para retornar a view
+
 
 
 

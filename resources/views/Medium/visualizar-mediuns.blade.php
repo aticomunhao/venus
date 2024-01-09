@@ -66,18 +66,11 @@
                             </div>
                         </div>
                                 </div>
-                                <div class="row mt-3">
-                        <div class="accordion" id="accordionTiposMediunidade">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingTiposMediunidade">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTiposMediunidade" aria-expanded="true" aria-controls="collapseTiposMediunidade">
-                                        Tipos de Mediunidade
-                                    </button>
-                                </h2>
-                                <div id="collapseTiposMediunidade" class="accordion-collapse collapse show" aria-labelledby="headingTiposMediunidade" data-bs-parent="#accordionTiposMediunidade">
-                                    <div class="accordion-body">
+
+
                                         <div class="row mt-4">
-                                            <div class="col-md-6">
+                                            <div class="col">
+                                                Tipo mediunidade
                                                 <label class="form-label"></label>
                                                 <select class="form-select" name="id_tp_mediunidade[]" multiple disabled>
                                                     @foreach ($tipo_mediunidade as $tipo)
