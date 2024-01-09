@@ -85,60 +85,6 @@ class GerenciarTratamentosController extends Controller
 
 
     }
-    
-
-    public function tratar(Request $request, $ide){
-
-        $reu = intval($request->reuniao);
-
-        $dia_semana = DB::table('reuniao_mediunica AS reu')->where('id', $reu)->value('dia');
-
-        $data_atual = Carbon::now();
-
-        $dia_atual = $data_atual->weekday();
-
-        //dd($dia_atual);
-
-        if ($dia_atual < $dia_semana){
-
-            $prox = (date("Y-m-d", strtotime("$data_atual + $dia_semana day - $dia_atual day")));
-
-        }elseif($dia_atual > $dia_semana){
-
-            $prox = (date("Y-m-d", strtotime("$data_atual + $dia_semana day + 7 day - $dia_atual day")));
-        }
-
-        $id_trata = DB::table('tratamento AS t')
-        ->select(DB::raw('MAX(id) as max_id'))
-        ->value('max_id');
-
-        DB::table('tratamento AS tr')
-                            ->insert([
-                            'id_reuniao' => $reu,
-                            'id_encaminhamento' => $ide,
-                            'status' => 1
-
-        ]);
-
-        DB::table('dias_tratamento AS dt')
-                            ->insert([
-                            'id_tratamento' => $id_trata,
-                            'data' => $prox
-
-        ]);
-
-        DB::table('encaminhamento AS enc')
-                                    ->where('enc.id', $ide)
-                                    ->update([
-                                    'status_encaminhamento' => 2
-        ]);
-
-        app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
-
-        return Redirect('/gerenciar-encaminhamentos');
-
-    }
-
 
 
     public function presenca(Request $request, $idtr){
