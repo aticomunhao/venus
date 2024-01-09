@@ -62,7 +62,7 @@
 
                                         </thead>
                                         <tbody>
-                                            <tr style="text-align:center;font-size:11px">
+                                            <tr style="text-align:center;font-size:13px">
                                                 <td>{{$assistidos->ida}}</td>           
                                                 <td>{{$assistidos->nm_1}}</td>       
                                                 <td>{{$assistidos->nm_2}}</td>

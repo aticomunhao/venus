@@ -46,7 +46,7 @@ class ReuniaoMediunicaController extends Controller
                 $reuniao->where('tsg.id', '=', $request->status);
             }
 
-            $reuniao = $reuniao->orderby('gr.status_grupo', 'ASC')->paginate(50);
+            $reuniao = $reuniao->orderby('gr.status_grupo', 'ASC')->orderby('reu.id_tipo_tratamento', 'ASC')->paginate(50);
 
              //dd($request->semana);
               //dd($status);
