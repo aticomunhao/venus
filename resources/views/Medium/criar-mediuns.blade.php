@@ -42,6 +42,14 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                {{-- <div class="col">
+                                    <label for="id_grupo" class="form-label">Nome grupo</label>
+                                    <select class="form-select" aria-label=".form-select-lg example" name="id_funcao">
+                                        @foreach ($grupo as $grupos)
+                                            <option value="{{ $grupos->idf }}">{{ $funcao->nome }}</option>
+                                        @endforeach
+                                    </select>
+                                </div> --}}
                                 <div class="col">
                                     <label for="status" class="form-label text-start">Status</label>
                                     <select class="form-select" aria-label=".form-select-lg example" name="status"
@@ -71,15 +79,23 @@
                             @foreach ($tipo_mediunidade as $tipo)
                                 <div class="form-group data_manifestou" name="id_mediunidade_medium"
                                     id="data_inicio_{{ $tipo->id }}">
-                                    <label for="data_inicio[{{ $tipo->id }}]"
+                                    <label for="data_inicio_{{ $tipo->id }}"
                                         class="form-label small mb-0">{{ $tipo->tipo }}</label>
 
                                     <!-- Adicione este campo oculto para passar o id_medium -->
                                     <input type="hidden" name="id_medium" value="{{ $id_medium }}">
 
-                                    <input type="date" class="form-control form-control-sm"
-                                        name="data_inicio[{{ $tipo->id }}]"
-                                        value="{{ old('data_inicio.' . $tipo->id) }}" required="required">
+                                    @if(old("data_inicio.$tipo->id"))
+                                        @foreach(old("data_inicio.$tipo->id") as $oldDate)
+                                            <input type="date" class="form-control form-control-sm"
+                                                name="data_inicio[{{ $tipo->id }}][]"
+                                                value="{{ $oldDate }}" required="required">
+                                        @endforeach
+                                    @else
+                                        <input type="date" class="form-control form-control-sm"
+                                            name="data_inicio[{{ $tipo->id }}][]"
+                                            value="" required="required">
+                                    @endif
                                 </div>
                             @endforeach
                         </div>

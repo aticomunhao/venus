@@ -45,8 +45,8 @@ class MediumController extends Controller
     public function create()
     {
         $id_medium = 1;
-
-        $medium=DB::select('select * from medium');
+        // $grupo=DB::select('select id, nome from grupo');
+        $medium = DB::select('select * from medium');
         $tipo_mediunidade = DB::select('select id, tipo from tipo_mediunidade');
         $pessoas = DB::select('select id as idp, nome_completo, motivo_status, status from pessoas');
         $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao');
@@ -54,7 +54,7 @@ class MediumController extends Controller
         $mediunidade_medium = DB::select('select id as idme, data_inicio from mediunidade_medium');
 
 
-        return view('medium/criar-mediuns', compact('id_medium','medium','tipo_mediunidade', 'pessoas', 'tipo_funcao', 'setor', 'mediunidade_medium'));
+        return view('medium/criar-mediuns', compact('id_medium', 'medium', 'tipo_mediunidade', 'pessoas', 'tipo_funcao', 'setor', 'mediunidade_medium'));
     }
 
 
@@ -81,9 +81,6 @@ class MediumController extends Controller
     }
 
 
-
-
-
     public function edit($id)
     {
         $medium = DB::table('medium AS m')
@@ -91,58 +88,67 @@ class MediumController extends Controller
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
             ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
             ->leftJoin('setor AS s', 'm.id_setor', '=', 's.id')
-            ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.status', 'm.id_setor', 'm.motivo_status', 'm.id_grupo', 'g.nome AS nome_grupo', 'tf.nome AS nome_funcao', 'm.id_funcao', 's.nome AS nome_setor')
+            ->leftJoin('mediunidade_medium AS mm', 'm.id', '=', 'mm.id_medium')
+            ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'm.status', 'm.id_setor', 'm.motivo_status', 'm.id_grupo', 'g.nome AS nome_grupo', 'tf.nome AS nome_funcao', 'm.id_funcao', 's.nome AS nome_setor', 'mm.id_mediunidade', 'mm.data_inicio') // Include id_mediunidade and data_inicio
             ->where('m.id', $id)
             ->first();
 
+        $id_medium = 1;
 
         $pessoas = DB::table('pessoas')->get();
         $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
         $tipo_funcao = DB::table('tipo_funcao')->get();
         $setor = DB::table('setor')->get();
+        $mediunidade_medium = DB::table('mediunidade_medium')->select('id_mediunidade', 'data_inicio', 'id')->get();
 
-        return view('medium.editar-mediuns', compact('tipo_mediunidade', 'medium', 'pessoas', 'tipo_funcao', 'setor'));
+
+
+        return view('medium.editar-mediuns', compact('id_medium', 'tipo_mediunidade', 'medium', 'pessoas', 'tipo_funcao', 'setor', 'mediunidade_medium'));
     }
+
+
 
 
 
 
     public function store(Request $request)
     {
-        $id_medium = $request->input('id_medium');
+        // Obter os dados do formulário
+        $id_pessoa = $request->input('id_pessoa');
+        $id_setor = $request->input('id_setor');
+        $id_funcao = $request->input('id_funcao');
+        $status = $request->input('status');
         $tipo_ids = $request->input('id_tp_mediunidade');
-        $id_mediunidade = $request->input('id_mediunidade');
 
 
-        DB::table('medium')->insert([
-            'id_pessoa' => $request->input('id_pessoa'),
-            'id_setor' => $request->input('id_setor'),
-            'id_funcao' => $request->input('id_funcao'),
-            'status' => $request->input('status'),
-            'id_tipo_mediunidade' => implode(',', $tipo_ids), // Convertendo array em string
-            'id_mediunidade_medium' => $id_mediunidade,
+        // Inserir dados na tabela 'medium'
+        $mediumId = DB::table('medium')->insertGetId([
+            'id_pessoa' => $id_pessoa,
+            'id_setor' => $id_setor,
+            'id_funcao' => $id_funcao,
+            'status' => $status,
+
         ]);
 
+        // Inserir dados na tabela 'mediunidade_medium'
         foreach ($tipo_ids as $tipo_id) {
-            $data_inicio = $request->input("data_inicio.{$tipo_id}");
+            // Obter um array de datas do mesmo tipo de mediunidade
+            $datas_inicio = $request->input("data_inicio.{$tipo_id}");
 
-            DB::table('mediunidade_medium')->insert([
-                'id_medium' => $id_medium,
-                'id_mediunidade' => $id_mediunidade,
-                'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
-            ]);
+            // Inserir cada data na tabela 'mediunidade_medium'
+            foreach ($datas_inicio as $data_inicio) {
+                DB::table('mediunidade_medium')->insert([
+                    'id_medium' => $mediumId,
+                    'id_mediunidade' => $tipo_id, // Use $tipo_id em vez de $id_mediunidade
+                    'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
+                ]);
+            }
         }
 
+        // Mensagem de sucesso e redirecionamento
         app('flasher')->addSuccess("Cadastrado com Sucesso");
-
         return redirect('gerenciar-mediuns');
     }
-
-
-
-
-
-
 
 
 
@@ -176,16 +182,25 @@ class MediumController extends Controller
             if (isset($dataManifestacao[$tipo])) {
                 // Adicione a data de manifestação ao array de dados a serem atualizados
                 $dataToUpdate["data_de_manifestacao_mediunidade_$tipo"] = $dataManifestacao[$tipo];
+
+                // Atualize a tabela 'mediunidade_medium'
+                DB::table('mediunidade_medium')
+                    ->where('id_medium', $id)
+                    ->where('id_mediunidade', $tipo)
+                    ->update([
+                        'data_inicio' => $dataManifestacao[$tipo] ? date('Y-m-d', strtotime($dataManifestacao[$tipo])) : null,
+                    ]);
             }
         }
 
-        // Atualize os dados no banco de dados
+        // Atualize os dados na tabela 'medium'
         DB::table('medium')->where('id', $id)->update($dataToUpdate);
 
         app('flasher')->addSuccess("Alterado com Sucesso");
 
         return redirect('gerenciar-mediuns');
     }
+
 
     //
 
@@ -197,26 +212,13 @@ class MediumController extends Controller
     public function destroy(string $id)
     {
 
-        $ids = DB::table('medium')->select('id')->where('id', $id)->get();
-        $teste = session()->get('usuario');
-
-        $verifica = DB::table('historico_venus')->where('fato', $id)->count('fato');
-
-
-        $data = date("Y-m-d H:i:s");
 
 
 
 
 
 
-        DB::table('historico_venus')->insert([
 
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $data,
-            'fato' => 0,
-            'obs' => $ids
-        ]);
 
         DB::table('medium')->where('id', $id)->delete();
 
