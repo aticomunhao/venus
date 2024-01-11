@@ -83,7 +83,7 @@
                                         class="form-label small mb-0">{{ $tipo->tipo }}</label>
 
                                     <!-- Adicione este campo oculto para passar o id_medium -->
-                                    <input type="hidden" name="id_medium" value="{{ $id_medium }}">
+                                    <input  name="id_medium" value="{{ $id_medium }}">
 
                                     @if(old("data_inicio.$tipo->id"))
                                         @foreach(old("data_inicio.$tipo->id") as $oldDate)

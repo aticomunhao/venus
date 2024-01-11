@@ -66,24 +66,61 @@
                         </div>
                     </div>
 
+                    <br>
                     <div class="row mt-3">
                         <div class="col">
-                            <label for="id_mediunidade" class="form-label">Tipo mediunidade</label>
-                            <select class="form-select" aria-label=".form-select-lg example" name="id_mediunidade">
-                                @foreach ($tipo_mediunidade as $tipos)
-                                    <option value="{{ $tipos->id }}"> {{ $tipos->tipo }} </option>
-                                @endforeach
-                            </select>
+                            <label for="id_mediunidade" class="form-label">Mediunidades</label>
+                            @foreach ($mediunidade_medium as $mediuns)
+                                <select class="form-select" aria-label=".form-select-lg example" name="mediunidades[]">
+                                    @foreach ($tipo_mediunidade as $tipos)
+                                        <option value="{{ $tipos->id }}" @if ($tipos->id == $mediuns->id_mediunidade) selected @endif>
+                                            {{ $tipos->tipo }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @endforeach
                         </div>
                         <div class="col">
-                            <label for="data_inicio" class="form-label">Data inicio</label>
-                            <select class="form-select" aria-label=".form-select-lg example" name="data_inicio">
-                                @foreach ($mediunidade_medium as $mediunidades)
-                                    <option value="{{ $mediunidades->id }}"> {{ $mediunidades->data_inicio }} </option>
-                                @endforeach
-                            </select>
+                            <label for="data_inicio" class="form-label">Data que manifestou</label>
+                            @foreach ($mediunidade_medium as $mediunidades)
+                                <select class="form-select" aria-label=".form-select-lg example" name="datas_manifestou[]">
+                                    <option value="{{ $mediunidades->id_mediuns }}" @if ($mediunidades->data_inicio == $mediuns->data_inicio) selected @endif>
+                                        {{ $mediunidades->data_inicio }}
+                                    </option>
+                                </select>
+                            @endforeach
                         </div>
                     </div>
+
+                    {{-- <?php
+                    $a=1; $b=50;
+                    ?>
+                     <div class="row mt-3">
+                        <div class="col">
+                            <label for="id_mediunidade" class="form-label">Mediunidades</label>
+                            @foreach ($mediunidade_medium as $mediuns)
+                                <select class="form-select" aria-label=".form-select-lg example" name="$a++">
+                                    @foreach ($tipo_mediunidade as $tipos)
+                                        <option value="{{ $tipos->id }}" @if ($tipos->id == $mediuns->id_mediunidade) selected @endif>
+                                            {{ $tipos->tipo }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @endforeach
+                        </div>
+                        <div class="col">
+                            <label for="data_inicio" class="form-label">Data que manifestou</label>
+                            @foreach ($mediunidade_medium as $mediunidades)
+                                <select class="form-select" aria-label=".form-select-lg example" name="$b++">
+                                    <option value="{{ $mediunidades->id_mediuns }}" @if ($mediunidades->data_inicio == $mediuns->data_inicio) selected @endif>
+                                        {{ $mediunidades->data_inicio }}
+                                    </option>
+                                </select>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <br> --}}
 
                     <div class="row mt-1 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
@@ -100,10 +137,29 @@
 
     <!-- Adicione este script no final do seu HTML ou em uma seção de scripts -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script>
-        $(document).ready(function () {
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Aqui você pode acessar os valores de todas as opções, independentemente de estarem selecionadas ou não
+        var mediunidades = $('select[name="mediunidades[]"]').map(function() {
+            return $(this).val();
+        }).get();
+
+        var datasManifestou = $('select[name="datas_manifestou[]"]').map(function() {
+            return $(this).val();
+        }).get();
+
+        // Agora, 'mediunidades' e 'datasManifestou' contêm todos os valores, você pode fazer o que quiser com eles
+        console.log('Mediunidades:', mediunidades);
+        console.log('Datas Manifestou:', datasManifestou);
+    });
+</script>
+
+
+    {{-- <script>
+        $(document).ready(function() {
             // Associar uma função ao evento change do select de tipo de mediunidade
-            $('select[name="id_mediunidade"]').on('change', function () {
+            $('select[name="id_mediunidade"]').on('change', function() {
                 var selectedTypeId = $(this).val(); // Obtém o valor selecionado
 
                 // Esconder todas as divs de datas
@@ -117,7 +173,7 @@
             $('select[name="id_mediunidade"]').trigger('change');
 
             // Adiciona um ouvinte de evento para o campo "Status"
-            $('#idstatus').change(function () {
+            $('#idstatus').change(function() {
                 // Obtém o valor selecionado no campo "Status"
                 var selectedStatus = $(this).val();
 
@@ -133,5 +189,7 @@
             // Define o valor inicial do campo "Status" ao carregar a página
             $('#idstatus').val('{{ $medium->status }}').trigger('change');
         });
-    </script>
+    </script> --}}
+
+
 @endsection
