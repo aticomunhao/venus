@@ -66,33 +66,8 @@
                         </div>
                     </div>
 
-                    <br>
-                    <div class="row mt-3">
-                        <div class="col">
-                            <label for="id_mediunidade" class="form-label">Mediunidades</label>
-                            @foreach ($mediunidade_medium as $mediuns)
-                                <select class="form-select" aria-label=".form-select-lg example" name="mediunidades[]">
-                                    @foreach ($tipo_mediunidade as $tipos)
-                                        <option value="{{ $tipos->id }}" @if ($tipos->id == $mediuns->id_mediunidade) selected @endif>
-                                            {{ $tipos->tipo }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            @endforeach
-                        </div>
-                        <div class="col">
-                            <label for="data_inicio" class="form-label">Data que manifestou</label>
-                            @foreach ($mediunidade_medium as $mediunidades)
-                                <select class="form-select" aria-label=".form-select-lg example" name="datas_manifestou[]">
-                                    <option value="{{ $mediunidades->id_mediuns }}" @if ($mediunidades->data_inicio == $mediuns->data_inicio) selected @endif>
-                                        {{ $mediunidades->data_inicio }}
-                                    </option>
-                                </select>
-                            @endforeach
-                        </div>
-                    </div>
 
-                    {{-- <?php
+                     {{-- <?php
                     $a=1; $b=50;
                     ?>
                      <div class="row mt-3">
@@ -121,6 +96,41 @@
                     </div>
 
                     <br> --}}
+
+                    <div class="row mt-3">
+                        <div class="col">
+                            <label class="form-label">Mediunidades</label>
+                            @foreach ($tipo_mediunidade as $tipos)
+                                <div class="form-check">
+                                    <input class="form-check-input mediunidade-checkbox" type="checkbox" name="mediunidades[]" value="{{ $tipos->id }}" id="mediunidade_{{ $tipos->id }}" @if ($tipos->id == $medium->id_mediunidade) checked @endif>
+                                    <label class="form-check-label" for="mediunidade_{{ $tipos->id }}">
+                                        {{ $tipos->tipo }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="col">
+                            <label for="data_inicio" class="form-label">Data que manifestou</label>
+                            @foreach ($mediunidade_medium as $mediunidades)
+                                <input type="text" class="form-control" name="datas_manifestou[]" value="{{ $mediunidades->data_inicio }}" readonly>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                        $(document).ready(function() {
+                            $('.mediunidade-checkbox').change(function() {
+                                var isChecked = $(this).prop('checked');
+                                var dataIndex = $(this).val();
+
+                                if (isChecked) {
+                                    $(this).closest('.row').find('[name="datas_manifestou[]"]').val(dataIndex);
+                                }
+                            });
+                        });
+                    </script>
+
 
                     <div class="row mt-1 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
@@ -156,7 +166,7 @@
 </script>
 
 
-    {{-- <script>
+    <script>
         $(document).ready(function() {
             // Associar uma função ao evento change do select de tipo de mediunidade
             $('select[name="id_mediunidade"]').on('change', function() {
@@ -189,7 +199,7 @@
             // Define o valor inicial do campo "Status" ao carregar a página
             $('#idstatus').val('{{ $medium->status }}').trigger('change');
         });
-    </script> --}}
+    </script>
 
 
 @endsection
