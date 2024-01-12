@@ -8,8 +8,9 @@
 @endsection
 
 @section('content')
-
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<link href="/venus/node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />  
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 
 <br>
@@ -39,7 +40,7 @@
                             </select>
                         </div>         
                         <div class="col">Nome do assistido
-                            <select class="form-select" id="" name="assist" required="required">
+                            <select class="form-select lista" id="" name="assist" required="required">
                                 <option value=""></option>
                                 @foreach($lista as $listas)
                                 <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
@@ -50,7 +51,7 @@
                     <br>
                     <div class="form-group row">
                     <div class="col">Nome do representante
-                            <select class="form-select" id="" name="repres" >
+                            <select class="form-select lista" id="" name="repres" >
                                 <option value=""></option>
                                 @foreach($lista as $listas)
                                 <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
@@ -100,6 +101,19 @@
     </div>
 </div>
 
+
+
+<script>
+    jQuery(document).ready(function() {
+        jQuery('.lista').select2({
+    
+            height: '150%',
+            width: "100%",           
+        });
+    });
+</script>
+
+
 <script>
     const campo1 = document.getElementById('afi_p');
     const campo2 = document.getElementById('tipo_afi');
@@ -130,6 +144,5 @@
 
 @section('footerScript')
 
-<script src="{{ URL::asset('/js/pages/mascaras.init.js')}}"></script>
 
 @endsection
