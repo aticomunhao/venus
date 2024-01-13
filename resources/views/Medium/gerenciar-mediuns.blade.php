@@ -6,14 +6,24 @@
     <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR MÉDIUNS</h4>
 
     <div class="col-12">
-        <form action="{{route('lista')}}" class="form-horizontal mt-4" method="GET">
+        <form action="{{ route('lista') }}" class="form-horizontal mt-4" method="GET">
             <div class="row">
                 <div class="col-3">
                     Nome
-                    <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa" placeholder="Pesquisar nome {{ request('nome_pesquisa') }}">
-
+                    <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa" placeholder="Pesquisar nome" value="{{ request('nome_pesquisa') }}">
                 </div>
-
+                <div class="col-2">
+                    Cpf
+                    <input class="form-control" type="text" id="cpf_pesquisa" name="cpf_pesquisa" placeholder="Pesquisar cpf" value="{{ request('cpf_pesquisa') }}">
+                </div>
+                <div class="col-2">
+                    Grupo
+                    <input class="form-control" type="text" id="grupo_pesquisa" name="grupo_pesquisa" placeholder="Pesquisar grupo" value="{{ request('grupo_pesquisa') }}">
+                </div>
+                <div class="col-2">
+                    Setor
+                    <input class="form-control" type="text" id="setor_pesquisa" name="setor_pesquisa" placeholder="Pesquisar setor" value="{{ request('setor_pesquisa') }}">
+                </div>
                 <div class="col">
                     <br>
                     <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
@@ -21,6 +31,9 @@
                     <a href="/criar-mediuns"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;" type="button" value="Novo médium +"></a>
                 </div>
             </div>
+
+
+
         </form>
 
     </div>

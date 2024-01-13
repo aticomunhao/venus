@@ -16,7 +16,7 @@
                     @csrf
 
                     <div class="row mt-3">
-                        <div class="col-6">
+                        <div class="col-4">
                             <label for="id_pessoa" class="form-label">Nome</label>
                             <select class="form-select" aria-label=".form-select-lg example" name="id_pessoa">
                                 @foreach ($pessoas as $pessoa)
@@ -42,22 +42,22 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                {{-- <div class="col">
+                                <div class="col">
                                     <label for="id_grupo" class="form-label">Nome grupo</label>
-                                    <select class="form-select" aria-label=".form-select-lg example" name="id_funcao">
+                                    <select class="form-select" aria-label=".form-select-lg example" name="id_grupo">
                                         @foreach ($grupo as $grupos)
-                                            <option value="{{ $grupos->idf }}">{{ $funcao->nome }}</option>
+                                            <option value="{{ $grupos->id }}">{{ $grupos->nome }}</option>
                                         @endforeach
                                     </select>
-                                </div> --}}
-                                <div class="col">
-                                    <label for="status" class="form-label text-start">Status</label>
-                                    <select class="form-select" aria-label=".form-select-lg example" name="status"
-                                        id="status" required="required">
-                                        <option value="1">Ativo</option>
-                                        <option value="2">Inativo</option>
-                                    </select>
                                 </div>
+                                <div class="col-2">
+                                        <label for="id_pessoa" class="form-label">Nome</label>
+                                        <select class="form-select" aria-label=".form-select-lg example" name="id_pessoa">
+                                            @foreach ($tipo_status_pessoa as $tipo)
+                                                <option value="{{ $tipo->id }}">{{ $tipo->tipos }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                                         class="form-label small mb-0">{{ $tipo->tipo }}</label>
 
                                     <!-- Adicione este campo oculto para passar o id_medium -->
-                                    <input  name="id_medium" value="{{ $id_medium }}">
+                                    <input type="hidden" name="id_medium" value="{{ $id_medium }}">
 
                                     @if(old("data_inicio.$tipo->id"))
                                         @foreach(old("data_inicio.$tipo->id") as $oldDate)
