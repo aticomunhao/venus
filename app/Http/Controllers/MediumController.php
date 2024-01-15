@@ -58,7 +58,7 @@ class MediumController extends Controller
 
 
 
-        return view('medium.gerenciar-mediuns', compact('medium'));
+        return view('medium.gerenciar-mediuns', compact('setor','medium'));
     }
 
 
@@ -97,6 +97,7 @@ class MediumController extends Controller
             'id_funcao' => $id_funcao,
             'status' => $status,
             'id_grupo' => $id_grupo,
+            
         ]);
 
         // Inserir dados na tabela 'mediunidade_medium'
@@ -204,7 +205,7 @@ class MediumController extends Controller
             'status' => $input['status'],
             'id_funcao' => $input['id_funcao'],
             'id_setor' => $input['setor'],
-            // 'motivo_status' => $input['motivo_status'],
+            'motivo_status' => $input['motivo_status'],
         ];
 
         // Limpar todas as datas de manifestação existentes para esse médium
@@ -233,16 +234,44 @@ class MediumController extends Controller
 
 
     public function destroy(string $id)
-    {
+
+
+        {
+
+            $ids = DB::table('medium')->where('id', $id)->get();
+            $teste = session()->get('usuario');
+
+            $verifica = DB::table('historico_venus')->where('fato', $id)->count('fato');
+
+
+            $data = date("Y-m-d H:i:s");
 
 
 
 
 
-        DB::table('medium')->where('id', $id)->delete();
+
+            DB::table('historico_venus')->insert([
+
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $data,
+                'fato' => 0,
+                'obs' => $id
+
+            ]);
+
+            DB::table('medium')->where('id', $id)->delete();
 
 
-        app('flasher')->addError('Excluido com sucesso.');
-        return redirect('/gerenciar-mediuns');
+
+
+
+            app('flasher')->addError('Excluido com sucesso.');
+            return redirect('/gerenciar-mediuns');
+        }
+
+
+
+
+
     }
-}
