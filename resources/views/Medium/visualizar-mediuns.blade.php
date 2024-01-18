@@ -26,32 +26,35 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-4">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-control" aria-label=".form-select-lg example" name="id_pessoa" id="status"
+                                required="required" disabled>
+                                @foreach ($tipo_status_pessoa as $tipos)
+                                    <option value="{{ $tipos->id }}"
+                                        {{ $medium->status == $tipos->id ? 'selected' : '' }}>
+                                        {{ $tipos->tipos }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <div class="col">
-                            <div class="row">
-                                <div class="col">
-                                    <label for="id_grupo" class="form-label">Nome grupo</label>
-                                    <select name="id_grupo" class="form-control" disabled>
-                                        <option value="{{ $medium->id_grupo }}"> {{ $medium->nome_grupo }}</option>
-                                        @foreach ($grupo as $grupos)
-                                            <option value="{{ $grupos->id }}"> {{ $grupos->nome }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col">
-                                    <label for="id_funcao" class="form-label">Função</label>
-                                    <select name="id_funcao" class="form-control" disabled>
-                                        <option value="{{ $medium->id_funcao }}"> {{ $medium->nome_funcao }}</option>
-                                        @foreach ($tipo_funcao as $funcao)
-                                            <option value="{{ $funcao->id }}"> {{ $funcao->nome }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                            <label for="motivo_status" class="form-label">Motivo status</label>
+                            <select class="form-control" aria-label=".form-select-lg example" name="motivo_status"
+                                id="motivo_status" required="required" disabled>
+                                <option value=""></option>
+                                @foreach ($tipo_motivo_status_pessoa as $motivo)
+                                    <option value="{{ $motivo->id }}"
+                                        {{ $medium->motivo_status == $motivo->id ? 'selected' : '' }}>
+                                        {{ $motivo->motivo }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
-
                     <div class="row mt-3">
-                        <div class="col-4">
+                        <div class="col">
                             <label for="id_setor" class="form-label">Setor</label>
                             <select name="id_setor" class="form-control" disabled>
                                 <option value="{{ $medium->id_setor }}"> {{ $medium->nome_setor }}</option>
@@ -60,25 +63,24 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-4">
-                            <label for="status" class="form-label text-start">Status</label>
-                            <select name="status" class="form-control" disabled>
-                                <option value="1" {{ $medium->status == 1 ? 'selected' : '' }}>Ativo</option>
-                                <option value="2" {{ $medium->status == 2 ? 'selected' : '' }}>Inativo</option>
+
+                        <div class="col">
+                            <label for="id_funcao" class="form-label">Função</label>
+                            <select name="id_funcao" class="form-control" disabled>
+                                <option value="{{ $medium->id_funcao }}"> {{ $medium->nome_funcao }}</option>
+                                @foreach ($tipo_funcao as $funcao)
+                                    <option value="{{ $funcao->id }}"> {{ $funcao->nome }} </option>
+                                @endforeach
                             </select>
                         </div>
-                        <div class="col-4">
-                            <label for="motivo_status" class="form-label text-start">Motivo</label>
-                            <select name="motivo_status" class="form-control" disabled>
-                                <option value="1" {{ $medium->motivo_status == 1 ? 'selected' : '' }}>Desencarnou
-                                </option>
-                                <option value="2" {{ $medium->motivo_status == 2 ? 'selected' : '' }}>Mudou-se
-                                </option>
-                                <option value="3" {{ $medium->motivo_status == 3 ? 'selected' : '' }}>Afastado
-                                </option>
-                                <option value="4" {{ $medium->motivo_status == 4 ? 'selected' : '' }}>Saúde</option>
-                                <option value="5" {{ $medium->motivo_status == 5 ? 'selected' : '' }}>Não informado
-                                </option>
+
+                        <div class="col">
+                            <label for="id_grupo" class="form-label">Nome grupo</label>
+                            <select name="id_grupo" class="form-control" disabled>
+                                <option value="{{ $medium->id_grupo }}"> {{ $medium->nome_grupo }}</option>
+                                @foreach ($grupo as $grupos)
+                                    <option value="{{ $grupos->id }}"> {{ $grupos->nome }} </option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -91,8 +93,6 @@
                             <label for="data_inicio" class="form-label"></label>
                         </div>
                     </div>
-
-
 
                     <div class="table-responsive mt-3">
                         <table
@@ -128,9 +128,6 @@
                             </tbody>
                         </table>
                     </div>
-
-
-
 
                     <div class="row mt-1 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
