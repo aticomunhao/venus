@@ -31,9 +31,10 @@
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                 <th>ID</th>
-                <th>ID_GRUPO</th>
+                <th>NOME GRUPO</th>
                 <th>NOME</th>
                 <th>FUNÇÃO</th>
+                <th>SETOR</th>
                 <th>STATUS</th>
                 <th>AÇÕES</th>
             </tr>
@@ -42,9 +43,10 @@
                 @foreach ($medium as $mediuns)
                 <tr>
                     <td>{{$mediuns->idm}}</td>
-                    <td>{{$mediuns->id_grupo}}</td>
+                    <td>{{$mediuns->nome_grupo}}</td>
                     <td>{{$mediuns->nome_completo}}</td>
-                    <td>{{$mediuns->nome}}</td>
+                    <td>{{$mediuns->nome_funcao}}</td>
+                    <td>{{$mediuns->nome_setor}}</td>
                     <td>{{$mediuns->status ? 'Ativo' : 'Inativo' }}</td>
                     <td>
                         <a href="/editar-mediuns/{{$mediuns->idm}}" type="button" class="btn btn-outline-warning btn-sm">
