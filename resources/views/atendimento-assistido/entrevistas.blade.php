@@ -19,7 +19,7 @@
                         <div class="col-2">Nr Atendimento
                             <input class="form-control" type="numeric" name="id" value="{{$assistido[0]->idat}}" disabled>
                         </div>
-                        <div class="col">Nome assistido
+                        <div class="col">Nome Atendido
                             <input class="form-control" type="text" name="nome" value="{{$assistido[0]->nm_1}}" disabled>
                         </div>
                     </div>
@@ -30,14 +30,17 @@
                             <input type="checkbox" id="afe" name="afe" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                             <label for="afe" class="form-check-label">Atendente Fraterno Individual - AFE</label>
                         </div>
+                        <br>
                         <div class="form-check form-check-inline">
                             <input type="checkbox" id="ame" name="ame" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                             <label for="ame" class="form-check-label">Asessoria da Medicina Espiritual - AME</label>
                         </div>
+                        <br>
                         <div class="form-check form-check-inline">
                             <input type="checkbox" id="diamo" name="diamo" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                             <label for="diamo" class="form-check-label">Divisão de Apoio ao Médium Ostensivo em Eclosão da Mediunidade - DIAMO</label>
                         </div>
+                        <br>
                         <div class="form-check form-check-inline">
                             <input type="checkbox" id="nutres" name="nutres" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                             <label for="nutres" class="form-check-label">Núcleo de Tratamento Espiritual - NUTRES</label>

@@ -31,7 +31,7 @@ class GerenciarEncaminhamentoController extends Controller
                     ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
                     ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
                     ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
-                    ->leftjoin('reuniao_mediunica AS rm', 'tr.id_reuniao', 'rm.id')
+                    ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                     ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
                     ->where('enc.id_tipo_encaminhamento', 2)
                     ->where('enc.id_tipo_tratamento', '<>', 3);
@@ -97,7 +97,7 @@ class GerenciarEncaminhamentoController extends Controller
                         ->where('enc.id', $ide)
                         ->get();
 
-        $contgrseg = DB::table('reuniao_mediunica AS reu')
+        $contgrseg = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
@@ -108,7 +108,7 @@ class GerenciarEncaminhamentoController extends Controller
         $seg = $contgrseg[0]->maxat;
 
         $conttratseg = DB::table('tratamento AS tr')
-                        ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                        ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id' )
                         ->select(DB::raw("($seg - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 1)
@@ -116,7 +116,7 @@ class GerenciarEncaminhamentoController extends Controller
         //dd($conttratseg, $seg);
 
 
-        $contgrter = DB::table('reuniao_mediunica AS reu')
+        $contgrter = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
@@ -127,7 +127,7 @@ class GerenciarEncaminhamentoController extends Controller
         $ter = $contgrter[0]->maxat;
 
         $conttratter = DB::table('tratamento AS tr')
-                            ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                            ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id' )
                             ->select(DB::raw("($ter - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
                             ->where('reu.id_tipo_tratamento', $idtt)
                             ->where('reu.dia', 2)
@@ -135,7 +135,7 @@ class GerenciarEncaminhamentoController extends Controller
 
          //dd($conttratter);
 
-        $contgrqua = DB::table('reuniao_mediunica AS reu')
+        $contgrqua = DB::table('cronograma AS reu')
                             ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                             ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                             ->where('gr.data_fim', null)
@@ -146,7 +146,7 @@ class GerenciarEncaminhamentoController extends Controller
         $qua = intval($contgrqua[0]->maxat);
 
         $conttratqua = DB::table('tratamento AS tr')
-                        ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                        ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id' )
                         ->select(DB::raw("($qua - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 3)
@@ -154,7 +154,7 @@ class GerenciarEncaminhamentoController extends Controller
         
         //dd($conttratqua);
 
-        $contgrqui = DB::table('reuniao_mediunica AS reu')
+        $contgrqui = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
@@ -165,14 +165,14 @@ class GerenciarEncaminhamentoController extends Controller
         $qui = $contgrqui[0]->maxat;
 
         $conttratqui = DB::table('tratamento AS tr')
-                        ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                        ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id' )
                         ->select(DB::raw("($qui - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 4)
                         ->get();
         
 
-        $contgrsex = DB::table('reuniao_mediunica AS reu')
+        $contgrsex = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
@@ -183,7 +183,7 @@ class GerenciarEncaminhamentoController extends Controller
         $sex = $contgrsex[0]->maxat;
 
         $conttratsex = DB::table('tratamento AS tr')
-                        ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                        ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id' )
                         ->select(DB::raw("($sex - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 5)
@@ -191,7 +191,7 @@ class GerenciarEncaminhamentoController extends Controller
 
         //dd($conttratsex);
 
-        $contgrsab = DB::table('reuniao_mediunica AS reu')
+        $contgrsab = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
@@ -202,13 +202,13 @@ class GerenciarEncaminhamentoController extends Controller
         $sab = $contgrsab[0]->maxat;
 
         $conttratsab = DB::table('tratamento AS tr')
-                        ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                        ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id' )
                         ->select(DB::raw("($sab - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 6)
                         ->get();
 
-        $contgrdom = DB::table('reuniao_mediunica AS reu')
+        $contgrdom = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
@@ -219,13 +219,13 @@ class GerenciarEncaminhamentoController extends Controller
         $dom = $contgrdom[0]->maxat;
 
         $conttratdom = DB::table('tratamento AS tr')
-                        ->leftJoin('reuniao_mediunica AS reu', 'tr.id_reuniao', 'reu.id' )
+                        ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id' )
                         ->select(DB::raw("($dom - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 0)
                         ->get();
 
-        $contcap = DB::table('reuniao_mediunica AS reu')
+        $contcap = DB::table('cronograma AS reu')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where('gr.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
@@ -246,7 +246,7 @@ class GerenciarEncaminhamentoController extends Controller
 
         $ide = intval($ide);
 
-        $verifica = DB::table('reuniao_mediunica AS rm')
+        $verifica = DB::table('cronograma AS rm')
                     ->select('rm.dia', 'rm.id AS idrm', 'enc.id_tipo_tratamento AS trenc', 'rm.id_tipo_tratamento AS trtr')
                     ->leftJoin('tratamento AS tr', 'tr.id_reuniao', 'rm.id')
                     ->leftJoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
@@ -278,7 +278,7 @@ class GerenciarEncaminhamentoController extends Controller
                         ->get();
 
 
-        $trata = DB::table('reuniao_mediunica AS reu')
+        $trata = DB::table('cronograma AS reu')
                        
                         ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'),'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
                         ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
@@ -292,7 +292,8 @@ class GerenciarEncaminhamentoController extends Controller
                         ->where('reu.id_tipo_tratamento', $tp_trat) 
                         ->orWhere('tr.status', null) 
                         ->where('tr.status', '<', 3)                       
-                        ->groupBy('reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 'tsg.descricao', 'sa.numero')
+                        ->groupBy('reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
+                        ->orderBy('h_inicio')
                         ->get(); 
 
         return view('/recepcao-integrada/agendar-tratamento', compact('result', 'trata', 'dia'));
@@ -304,7 +305,7 @@ class GerenciarEncaminhamentoController extends Controller
 
         $reu = intval($request->reuniao);
 
-        $dia_semana = DB::table('reuniao_mediunica AS reu')->where('id', $reu)->value('dia');
+        $dia_semana = DB::table('cronograma AS reu')->where('id', $reu)->value('dia');
 
         $data_atual = Carbon::now();
 
@@ -404,7 +405,7 @@ class GerenciarEncaminhamentoController extends Controller
                         ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
                         ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
                         ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
-                        ->leftjoin('reuniao_mediunica AS rm', 'tr.id_reuniao', 'rm.id')
+                        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                         ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
                         ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
                         ->where('enc.id', $ide)
@@ -413,7 +414,7 @@ class GerenciarEncaminhamentoController extends Controller
         $list = DB::table('encaminhamento AS enc')
                         ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.data', 'dt.presenca' )
                         ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
-                        ->leftjoin('reuniao_mediunica AS rm', 'tr.id_reuniao', 'rm.id')        
+                        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')        
                         ->leftJoin('dias_tratamento AS dt', 'tr.id', 'dt.id_tratamento')
                         ->where('enc.id', $ide)
                         ->get();
@@ -421,7 +422,7 @@ class GerenciarEncaminhamentoController extends Controller
         $faul = DB::table('encaminhamento AS enc')
                         ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.data', 'dt.presenca')
                         ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
-                        ->leftjoin('reuniao_mediunica AS rm', 'tr.id_reuniao', 'rm.id')        
+                        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')        
                         ->leftJoin('dias_tratamento AS dt', 'tr.id', 'dt.id_tratamento')
                         ->where('enc.id', $ide)
                         ->where('presenca', 0)

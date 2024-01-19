@@ -60,7 +60,7 @@
                                     <th class="col-1">TIPO AF</th>
                                     <th class="col-1">HORÁRIO CHEGADA</th>
                                     <th class="col">PRIORIDADE</th>
-                                    <th class="col-2">ASSISTIDO</th>
+                                    <th class="col-2">ATENDIDO</th>
                                     <th class="col-2">REPRESENTANTE</th>
                                     <th class="col-1">STATUS</th>
                                     <th class="col">AÇÕES</th>

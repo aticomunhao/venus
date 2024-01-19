@@ -22,16 +22,16 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <legend style="color:#525252; font-size:12px; font-family:sans-serif">Dados do assistido</legend>
+                    <legend style="color:#525252; font-size:12px; font-family:sans-serif">Dados do Atendido</legend>
                     <fieldset class="border rounded border-secondary p-4">
                     <div class="form-group row">
                         <div class="col">
-                            <label for="disabledTextInput" class="form-label">Assistido:</label>
+                            <label for="disabledTextInput" class="form-label">Atendido:</label>
                             <input type="text" id="" value="{{$result[0]->nm_1}}" class="form-control" placeholder="Disabled input" disabled>
                         </div>
                         <div class="col-2">
                             <label for="disabledTextInput" class="form-label">Data nascimento:</label>
-                            <input type="date" id="" value="{{$result[0]->dt_nascimento}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
+                            <input type="date" class="form-control" id="" value="{{$result[0]->dt_nascimento}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
                         </div>
                     </div>
                     </fieldset>

@@ -14,7 +14,7 @@
                     <div class="col-3" style="text-align:left;">Nr
                         <input class="form-control" style="font-weight:bold; background:#f3f3f3; color:#000;" type="numeric" name="numero" id="" value="">    
                     </div>
-                    <div class="col" style="text-align:left;">Assistido
+                    <div class="col" style="text-align:left;">Atendido
                         <input class="form-control" style="font-weight:bold; background:#f3f3f3; color:#000;" type="text" name="atendido" id="" value="" >                            
                     </div>
                 </div>
