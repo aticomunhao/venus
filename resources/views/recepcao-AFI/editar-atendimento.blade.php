@@ -36,7 +36,7 @@
                             @endforeach
                         </select>
                         </div>       
-                        <div class="col">Nome do assistido
+                        <div class="col">Nome do atendido
                             <select class="form-select" id="" name="assist" required="required">
                                 <option value="{{$result[0]->idas}}">{{$result[0]->nm_1}}</option>
                                 <option value=""></option>

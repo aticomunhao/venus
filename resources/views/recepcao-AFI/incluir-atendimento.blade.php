@@ -9,7 +9,7 @@
 
 @section('content')
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<link href="/venus/node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />  
+<link href="/node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />  
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 
@@ -28,7 +28,7 @@
                 <div class="card-body">
                     <form class="form-horizontal mt-4" method="post" action="/novo-atendimento">
                         @csrf
-                    <legend style="color:#525252; font-size:12px; font-family:sans-serif">Dados do assistido</legend>
+                    <legend style="color:#525252; font-size:12px; font-family:sans-serif">Dados do Atendido</legend>
                     <fieldset class="border rounded border-primary p-2">
                     <div class="form-group row">
                         <div class="col-3">Tipo Prioridade
@@ -39,7 +39,7 @@
                                 @endforeach
                             </select>
                         </div>         
-                        <div class="col">Nome do assistido
+                        <div class="col">Nome do Atendido
                             <select class="form-select lista" id="" name="assist" required="required">
                                 <option value=""></option>
                                 @foreach($lista as $listas)

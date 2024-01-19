@@ -9,7 +9,7 @@
     <div class="col-12">
     "Olá, seja bem-vindo(a) {{session()->get('usuario.nome', 'usuario.perfis')}}"        
        
-        <div class= "col mx-auto text-center" style="margin-top: 250px;">
+        <div class= "col mx-auto text-center" style="margin-top: 200px;">
             <img class="img-responsive" src="{{ URL::asset('/images/logo.jpg')}}" width="250">
   
         </div>

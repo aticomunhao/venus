@@ -30,7 +30,7 @@
                         </div>
                         <div class="col-3">
                             <label for="disabledTextInput" class="form-label">Dt nascimento:</label>
-                            <input type="date" id=""  name="date"  value="{{$result[0]->dt_nascimento}}"   class="form-control" placeholder="Disabled input" disabled>
+                            <input type="date" class="form-control" id=""  name="date"  value="{{$result[0]->dt_nascimento}}"   class="form-control" placeholder="Disabled input" disabled>
                         </div>
                     </div>
                     </fieldset>

@@ -22,7 +22,7 @@
                     <div class ="col-2">Data início
                         <input class="form-control" type="date" id="" name="dt_ini" value="{{$data_inicio}}">
                     </div>
-                    <div class="col-2">Assistido
+                    <div class="col-2">Atendido
                         <input class="form-control" type="text" id="3" name="assist" value="{{$assistido}}">
                     </div>
                     <div class="col-2">Status
@@ -46,7 +46,7 @@
                 <br>
             </div style="text-align:right;">
             <hr>
-            <div class="table">Total assistidos: {{$contar}}
+            <div class="table">Total Atendidos: {{$contar}}
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                     <thead style="text-align: center;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
@@ -55,7 +55,7 @@
                             <th class="col">TIPO AFI</th>
                             <th class="col">HORÁRIO CHEGADA</th>
                             <th class="col">PRIOR</th>
-                            <th class="col">ASSISTIDO</th>
+                            <th class="col">ATENDIDO</th>
                             <th class="col">REPRESENTANTE</th>                                                        
                             <th class="col">ATENDENTE</th>
                             <th class="col">SALA</th>                           

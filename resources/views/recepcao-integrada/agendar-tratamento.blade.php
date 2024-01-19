@@ -40,18 +40,24 @@
                         <form class="form-horizontal mt-4" method="POST" action="/incluir-tratamento/{{$result[0]->ide}}" >
                         @csrf      
                         <legend style="color:#525252; font-size:12px; font-family:sans-serif">Reuniões do dia:</legend>
-                        
-                        <?php $a=1; $b=1; $c=1; $d=1; $e=1; ?>
-                        @foreach($trata as $tratas)
+                       
+                        <?php 
+                        $trataPorHorario = $trata->groupBy('h_inicio');
+
+                        $a=1; $b=1; $c=1; $d=1; $e=1;                        
+                        ?>
+
+                        @foreach($trataPorHorario as $horario => $tratasDoHorario)
                         <div class="accordion accordion-flush" id="accordionFlushExample"> 
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="{{$a++}}">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{$b++}}" aria-expanded="false" aria-controls="flush-collapse{{$c++}}">
-                                {{date('H:i:s', strtotime($tratas->h_inicio))}} - {{$tratas->nomeg}}
+                                {{date('H:i:s', strtotime($horario))}}
                                 </button>
                                 </h2>
                                 <div id="flush-collapse{{$d++}}" class="accordion-collapse collapse" aria-labelledby="{{$e++}}" data-bs-parent="#accordionFlushExample">
                                     <div class="accordion-body">
+                                    @foreach($tratasDoHorario as $tratas)
                                         <table class="table table-sm table-bordered table-striped">
                                             <thead style="text-align:center; background: #daffe0;">
                                                 <tr style="text-align:center; font-weight: bold; font-size:13px">
@@ -81,6 +87,7 @@
                                                 </tr>
                                             </tbody>
                                         </table>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>

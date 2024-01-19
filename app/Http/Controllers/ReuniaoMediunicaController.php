@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
 
+
 use function Laravel\Prompts\select;
 
 class ReuniaoMediunicaController extends Controller
@@ -17,14 +18,14 @@ class ReuniaoMediunicaController extends Controller
             $now =  Carbon::now()->format('Y-m-d');
 
 
-            $reuniao = DB::table('reuniao_mediunica AS reu')
-                        ->select('reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia AS idd', 'reu.dia', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.id_tipo_tratamento', 'reu.h_inicio','td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao as descst', 'tst.descricao AS tstd', 'sa.numero' )
-                        ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
-                        ->leftjoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+            $reuniao = DB::table('cronograma AS cro')
+                        ->select('cro.id AS idr', 'gr.nome AS nomeg', 'cro.dia AS idd', 'cro.dia', 'cro.id_sala', 'cro.id_tipo_tratamento', 'cro.id_tipo_tratamento', 'cro.h_inicio','td.nome AS nomed', 'cro.h_fim', 'cro.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao as descst', 'tst.descricao AS tstd', 'sa.numero' )
+                        ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
+                        ->leftjoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
                         ->leftjoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
                         ->leftJoin('medium AS me', 'gr.id', 'me.id_grupo')
-                        ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
-                        ->leftJoin('tipo_dia AS td', 'reu.dia', 'td.id');
+                        ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
+                        ->leftJoin('tipo_dia AS td', 'cro.dia', 'td.id');
 
 
             $semana = $request->semana;
@@ -35,7 +36,7 @@ class ReuniaoMediunicaController extends Controller
 
 
             if ($request->semana){
-                $reuniao->where('reu.dia', '=', $request->semana);
+                $reuniao->where('cro.dia', '=', $request->semana);
             }
 
             if ($request->grupo){
@@ -46,12 +47,12 @@ class ReuniaoMediunicaController extends Controller
                 $reuniao->where('tsg.id', '=', $request->status);
             }
 
-            $reuniao = $reuniao->orderby('gr.status_grupo', 'ASC')->orderby('reu.id_tipo_tratamento', 'ASC')->paginate(50);
+            $reuniao = $reuniao->orderby('gr.status_grupo', 'ASC')->orderby('cro.id_tipo_tratamento', 'ASC')->paginate(50);
 
              //dd($request->semana);
               //dd($status);
 
-            $contar = $reuniao->count('reu.id');
+            $contar = $reuniao->count('cro.id');
 
             $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
 
@@ -110,9 +111,25 @@ class ReuniaoMediunicaController extends Controller
             $h_fim = $request->h_fim;
             $dia = intval($request->dia);
 
-            //dd($grupo, $numero, $h_inicio, $h_fim, $dia);
+            // $arrayDeTempos =  DB::table('cronograma AS rm')
+            // ->select('h_fim')->pluck('h_fim')->toArray();
 
-            $repeat = DB::table('reuniao_mediunica AS rm')
+            // $arrayDeTemposAtualizados = array_map(function ($tempo) {
+            //     $carbonTempo = Carbon::parse($tempo);
+            //     return $carbonTempo->addMinutes(30)->toTimeString(); // Convertendo de volta para string
+            // }, $arrayDeTempos);
+            
+            // // $arrayDeTemposAtualizados agora contém os tempos atualizados
+      
+            
+            // dd($arrayDeTemposAtualizados); 
+
+   
+      
+
+         
+
+            $repeat = DB::table('cronograma AS rm')
             ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
             ->leftJoin('salas AS s', 'rm.id_sala', 's.id')
             ->where('rm.dia', $dia)
@@ -132,7 +149,7 @@ class ReuniaoMediunicaController extends Controller
 
             if($repeat > 0){
 
-                app('flasher')->addSuccess('Existe uma outra reunião nesse horário.');
+                app('flasher')->addError('Existe uma outra reunião nesse horário.');
 
                 return redirect ('/gerenciar-reunioes');
 
@@ -141,7 +158,7 @@ class ReuniaoMediunicaController extends Controller
             }
             
 
-           DB::table('reuniao_mediunica AS rm')->insert([
+           DB::table('cronograma AS rm')->insert([
                     'id_grupo'=>$request->input('grupo'),
                     'id_sala'=>$request->input('numero'),
                     'h_inicio'=>$request->input('h_inicio'),
@@ -152,7 +169,7 @@ class ReuniaoMediunicaController extends Controller
                     'data_inicio' => $now
                 ]);
 
-            $result = DB::table('reuniao_mediunica')->max('id');
+            $result = DB::table('cronograma')->max('id');
 
            DB::table('historico_venus')->insert([
             'id_usuario' => $usuario,
