@@ -274,19 +274,43 @@ class MediumController extends Controller
 
     public function destroy(string $id)
     {
-        // Obtém os detalhes da medium que será excluída
+
+
+
+        $ids = DB::table('grupo')->select('nome')->where('id', $id)->get();
+        $teste = session()->get('usuario');
+
+        $verifica = DB::table('historico_venus')->where('fato', $id)->count('fato');
+
+
+        $data = date("Y-m-d H:i:s");
+
+
+
+
+
+
+        DB::table('historico_venus')->insert([
+
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'fato' => 0,
+            'obs' => $id
+
+        ]);
+
         $medium = DB::table('medium')->where('id', $id)->first();
 
-        // Se a medium não existir, redirecione com uma mensagem de erro
+
         if (!$medium) {
             app('flasher')->addError('A medium não foi encontrada.');
             return redirect('/gerenciar-mediuns');
         }
         DB::table('mediunidade_medium')->where('id_medium', $id)->delete();
-        // Exclui a medium
+
         DB::table('medium')->where('id', $id)->delete();
 
-        // Redireciona com uma mensagem de sucesso
+        
         app('flasher')->addError('Excluído com sucesso.');
         return redirect('/gerenciar-mediuns');
     }
