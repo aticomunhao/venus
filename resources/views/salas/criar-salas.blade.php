@@ -137,7 +137,7 @@
                                     data-offstyle="danger">
                             </div>
                             <div class="col">
-                                <label for="luz_azul">Luz azul</label>
+                                <label for="luz_azul">Luz_azul/vermelha</label>
                                 <input type="checkbox" name="luz_azul" data-toggle="toggle"
                                     data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
                                     data-offstyle="danger">
