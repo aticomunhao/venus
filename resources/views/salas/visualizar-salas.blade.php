@@ -152,8 +152,15 @@
                                             disabled>
                                     </div>
                                     <div class="col">
-                                        <label for="luz_azul">Luz_azul/vermelha</label>
+                                        <label for="luz_azul">Luz_azul</label>
                                         <input type="checkbox" name="luz_azul" @checked($salaEditada->luz_azul)
+                                            data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
+                                            data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
+                                            disabled>
+                                    </div>
+                                    <div class="col">
+                                        <label for="luz_azul">Luz_vermelha</label>
+                                        <input type="checkbox" name="luz_vermelha" @checked($salaEditada->luz_vermelha)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
                                             disabled>

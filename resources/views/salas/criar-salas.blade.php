@@ -31,13 +31,14 @@
                                 }
                             </script>
 
-                            <div class="col">
-                                Status
-                                <select class="form-control" aria-label=".form-select-lg example" name="status_sala" required="required" disabled>
-                                    <option value="1">Ativo</option>
-                                    <option value="2">Inativo</option>
-                                </select>
-                            </div>
+                        <div class="col">
+                            Status
+                            <select class="form-control" aria-label=".form-select-lg example" name="status_sala" required="required" readonly>
+                                <option value="1" selected>Ativo</option>
+                               
+                                <option value="2">Inativo</option>
+                            </select>
+                        </div>
                             <div class="col">Localização
                                 <select class="form-select" name="id_localizacao" aria-label=".form-select-lg example">
                                     <option selected></option>
@@ -137,8 +138,14 @@
                                     data-offstyle="danger">
                             </div>
                             <div class="col">
-                                <label for="luz_azul">Luz_azul/vermelha</label>
+                                <label for="luz_azul">Luz_azul</label>
                                 <input type="checkbox" name="luz_azul" data-toggle="toggle"
+                                    data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
+                                    data-offstyle="danger">
+                            </div>
+                            <div class="col">
+                                <label for="luz_azul">Luz_vermelha</label>
+                                <input type="checkbox" name="luz_vermelha" data-toggle="toggle"
                                     data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
                                     data-offstyle="danger">
                             </div>

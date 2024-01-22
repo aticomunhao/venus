@@ -36,7 +36,7 @@
                         <div class="col">
                             <label for="tipo_status_pessoa" class="form-label">Status</label>
                             <select class="form-control" aria-label=".form-select-lg example"
-                                name="tipo_status_pessoa" disabled>
+                                name="tipo_status_pessoa" >
                                 @foreach ($tipo_status_pessoa as $tipo)
                                     <option value="{{ $tipo->id }}">{{ $tipo->tipos }}</option>
                                 @endforeach
