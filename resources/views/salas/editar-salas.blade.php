@@ -38,18 +38,6 @@
                                 </select>
                             </div>
                             <div class="col">
-                                <label for="id_localizacao">Localização</label>
-                                <select class="form-select" name="id_localizacao" aria-label="form-select-lg example" value={{$salaEditada->id_localizacao}}>
-                                    <option value="{{ $salas[0]->id_localizacao }}"> {{ $salas[0]->nome }}</option>
-                                    @foreach ($tipo_localizacao as $localizacao )
-                                    <option value={{$localizacao->id}}>{{$localizacao->nome}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="col">
                                 Motivo
                                 <select class="form-select" aria-label=".form-select-lg example" name="id_motivo" id="tipo_motivo" disabled>
                                     <option value="{{ $salas[0]->id_motivo }}"> {{ $salas[0]->tipo }}</option>
@@ -59,6 +47,19 @@
                                 </select>
                             </div>
 
+                        </div>
+                        <br>
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="id_localizacao">Localização</label>
+                                <select class="form-select" name="id_localizacao" aria-label="form-select-lg example" value={{$salaEditada->id_localizacao}}>
+                                    <option value="{{ $salas[0]->id_localizacao }}"> {{ $salas[0]->nome }}</option>
+                                    @foreach ($tipo_localizacao as $localizacao )
+                                    <option value={{$localizacao->id}}>{{$localizacao->nome}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
 
                             <div class="col-4">
                                 Finalidade sala

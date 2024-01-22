@@ -28,19 +28,6 @@
                                             <option value="0" {{ $salaEditada->status_sala == 0 ? 'selected' : '' }}>Inativo</option>
                                         </select>
                                     </div>
-
-                                    <div class="col">
-                                        <br>
-                                        <label for="id_localizacao" class="form-label">Localização</label>
-                                        <select name="id_localizacao" class="form-control" required="required" disabled>
-                                            @foreach ($tipo_localizacao as $localizacao)
-                                                <option value="{{ $localizacao->id }}">{{ $localizacao->nome }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row">
                                     <div class="col">
                                         <br>
                                         <label for="id_motivo" class="form-label">Motivo</label>
@@ -52,6 +39,19 @@
                                         </select>
                                     </div>
 
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col">
+                                        <br>
+                                        <label for="id_localizacao" class="form-label">Localização</label>
+                                        <select name="id_localizacao" class="form-control" required="required" disabled>
+                                            @foreach ($tipo_localizacao as $localizacao)
+                                                <option value="{{ $localizacao->id }}">{{ $localizacao->nome }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                     <div class="col">
                                         <br>
                                         <label for="id_finalidade" class="form-label">Finalidade Sala</label>

@@ -33,7 +33,7 @@
 
                             <div class="col">
                                 Status
-                                <select class="form-select" aria-label=".form-select-lg example" name="status_sala" required="required">
+                                <select class="form-control" aria-label=".form-select-lg example" name="status_sala" required="required" disabled>
                                     <option value="1">Ativo</option>
                                     <option value="2">Inativo</option>
                                 </select>
