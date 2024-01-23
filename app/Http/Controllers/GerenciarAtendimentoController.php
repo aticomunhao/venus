@@ -165,6 +165,10 @@ class GerenciarAtendimentoController extends Controller
 
         };
 
+            $menor = isset($request->menor) ? 1 : 0;
+
+            //dd($menor);
+
             DB::table('atendimentos AS atd')->insert([
                     'dh_chegada'=> ($dt_hora->toDateTimeString() . PHP_EOL),
                     'id_usuario'=> $usuario,
@@ -175,6 +179,7 @@ class GerenciarAtendimentoController extends Controller
                     'id_atendente_pref'=>$request->input('afi_p'),
                     'pref_tipo_atendente'=>$request->input('tipo_afi'),
                     'id_prioridade'=>$request->input('priori'),
+                    'menor_auto'=>$menor,
                     'status_atendimento'=> 1
                     ]);
 
@@ -506,17 +511,21 @@ class GerenciarAtendimentoController extends Controller
 
     public function atendente_dia(Request $request){
 
-        $now = Carbon::now()->format('d/m/Y');
+        $now = Carbon::now()->format('Y-m-d');
 
                //dd($now);
 
         $atende = DB::table('atendente_dia AS atd')
-                ->select('atd.id AS nr','att.id AS ida', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala')
-                ->leftJoin('atendentes AS att', 'atd.id_atendente','att.id_pessoa')
-                ->leftjoin('pessoas AS p', 'atd.id_atendente', 'p.id' )
+                ->select('atd.id AS nr','att.id AS ida', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')
+                ->leftJoin('atendentes AS att', 'atd.id_atendente','att.id')
+                ->leftjoin('pessoas AS p', 'att.id_pessoa', 'p.id' )
                 ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
                 ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
                 ->leftJoin('grupo AS g', 'att.id_grupo', 'g.id');
+                
+        //dd($atende);
+
+        $data = $request->data;
 
         $grupo = $request->grupo;
 
@@ -524,44 +533,44 @@ class GerenciarAtendimentoController extends Controller
 
         $status = $request->status;
 
+       // dd($status);
+
+        if ($request->data){
+            $atende->where('atd.data_hora', '=', $request->data);
+        }
 
         if ($request->grupo){
-        $atende->where('g.id', '=', $request->grupo);
+            $atende->where('g.id', '=', $request->grupo);
         }
 
         if ($request->atendente){
-        $atende->where('p.nm_4', 'ilike', "%$request->atendente%");
+            $atende->where('p.nome_completo', 'ilike', "%$request->atendente%");
         }
 
         if ($request->status){
-        $atende->where('p.status', $request->status);
+            $atende->where('p.status', '=', intval($request->status));
         }
 
 
-        $atende = $atende->orderby('atd.data_hora', 'DESC')->orderby('nm_sala', 'ASC')->paginate(50);
+        $atende = $atende->orderby('atd.data_hora', 'DESC')->orderby('nm_sala', 'ASC')->get();
 
-
-        $st_atend = DB::select("select
-        tsp.id,
-        tsp.tipo
-        from tipo_status_pessoa tsp
-        ");
+        //dd($atende);
 
         $situacao = DB::table('tipo_status_pessoa')
-                    ->select('id', 'tipo')
-                    ->get();
+                     ->select('id', 'tipo')
+                     ->get();
 
         $grupo = DB::table('grupo')
                     ->select('id', 'nome')
                     ->where('id_tipo_grupo', 3)
                     ->where('status_grupo', 1)
-                    ->orderBy('nome')
+                    ->orderBy('id')
                     ->get();
 
+        //dd($now, $atende);
 
 
-
-        return view ('/recepcao-AFI/gerenciar-atendente-dia', compact('atende', 'st_atend',  'atendente', 'status', 'situacao', 'grupo'));
+        return view ('/recepcao-AFI/gerenciar-atendente-dia', compact('atende', 'atendente', 'status', 'situacao', 'grupo', 'data', 'now'));
 
 
 

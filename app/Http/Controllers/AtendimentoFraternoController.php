@@ -145,6 +145,7 @@ class AtendimentoFraternoController extends Controller
             ->leftJoin('tca AS t17', 'rt.dpr', 't17.id')
             ->leftJoin('tca AS t18', 'rt.dqu', 't18.id')
             ->leftJoin('tca AS t19', 'rt.dts', 't19.id')
+            ->leftJoin('tca AS t20', 'rt.maf', 't20.id')
             ->where('at.id_assistido', $idas)
             ->orderBy('at.dh_chegada', 'desc')
             ->get();
@@ -357,69 +358,13 @@ class AtendimentoFraternoController extends Controller
 
             $harmonia = isset($request->pph) ? 1 : 0;
             $desobsessivo = isset($request->ptd) ? 1 : 0;
-            $integral = isset($request->ptig) ? 1 : 0;
-            $intensivo = isset($request->pti) ? 1 : 0;
-            $acolhe = isset($request->ga) ? 1 : 0;
-            $irradiacao = isset($request->gi) ? 1 : 0;
-            $evangelho = isset($request->gel) ? 1 : 0;
+           // $integral = isset($request->ptig) ? 1 : 0;
+           // $intensivo = isset($request->pti) ? 1 : 0;
+            $acolher = isset($request->ga) ? 1 : 0;
+            $viver = isset($request->gv) ? 1 : 0;
+            //$evangelho = isset($request->gel) ? 1 : 0;
             $quimica = isset($request->gdq) ? 1 : 0;
             //dd($harmonia, $desobsessivo, $integral);
-            if ($quimica == 1)
-            {
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,    
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento'=> 3,
-                    'id_atendimento' =>$idat,
-                    'id_tipo_tratamento' => 10,
-                    'status_encaminhamento' =>  3
-                ]);
-
-                app('flasher')->addSuccess('O encaminhamento para PTI foi criado com sucesso.');
-
-            }
-            if ($evangelho == 1)
-            {
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,    
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento'=> 3,
-                    'id_atendimento' =>$idat,
-                    'id_tipo_tratamento' => 9,
-                    'status_encaminhamento' =>  1
-                ]);
-
-                app('flasher')->addSuccess('O encaminhamento para PTI foi criado com sucesso.');
-
-            }
-            if ($irradiacao == 1)
-            {
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,    
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento'=> 3,
-                    'id_atendimento' =>$idat,
-                    'id_tipo_tratamento' => 8,
-                    'status_encaminhamento' =>  3
-                ]);
-
-                app('flasher')->addSuccess('O encaminhamento para o Grupo de Harmonização foi criado com sucesso.');
-
-            }
-            if ($acolhe == 1)
-            {
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,    
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento'=> 3,
-                    'id_atendimento' =>$idat,
-                    'id_tipo_tratamento' => 7,
-                    'status_encaminhamento' =>  3
-                ]);
-
-                app('flasher')->addSuccess('O encaminhamento para o Grupo Acolher foi criado com sucesso.');
-
-            }
 
             if ($harmonia == 1)
             {
@@ -433,8 +378,7 @@ class AtendimentoFraternoController extends Controller
                 ]);
 
                 app('flasher')->addSuccess('O encaminhamento para PPH foi criado com sucesso.');
-
-            }
+            }    
             if ($desobsessivo == 1)
             {
                 DB::table('encaminhamento AS enc')->insert([
@@ -449,35 +393,48 @@ class AtendimentoFraternoController extends Controller
                 app('flasher')->addSuccess('O encaminhamento para PTD foi criado com sucesso.');
 
             }
-            if ($integral == 1)
+            if ($acolher == 1)
             {
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,    
                     'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento'=> 2,
+                    'id_tipo_encaminhamento'=> 3,
                     'id_atendimento' =>$idat,
-                    'id_tipo_tratamento' => 6,
-                    'status_encaminhamento' =>  1
+                    'id_tipo_tratamento' => 7,
+                    'status_encaminhamento' =>  3
                 ]);
 
-                app('flasher')->addSuccess('O encaminhamento para PTIg foi criado com sucesso.');
+                app('flasher')->addSuccess('O encaminhamento para o Grupo Acolher foi criado com sucesso.');
 
             }
-            if ($intensivo == 1)
+            if ($viver == 1)
             {
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,    
                     'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento'=> 2,
+                    'id_tipo_encaminhamento'=> 3,
                     'id_atendimento' =>$idat,
-                    'id_tipo_tratamento' => 2,
-                    'status_encaminhamento' =>  1
+                    'id_tipo_tratamento' => 10,
+                    'status_encaminhamento' =>  3
                 ]);
 
-                app('flasher')->addSuccess('O encaminhamento para PTI foi criado com sucesso.');
+                app('flasher')->addSuccess('O encaminhamento para o Grupo Viver foi criado com sucesso.');
 
             }
-            
+            if ($quimica == 1)
+            {
+                DB::table('encaminhamento AS enc')->insert([
+                    'dh_enc' => $now,    
+                    'id_usuario' => $atendente,
+                    'id_tipo_encaminhamento'=> 3,
+                    'id_atendimento' =>$idat,
+                    'id_tipo_tratamento' => 9,
+                    'status_encaminhamento' =>  3
+                ]);
+
+                app('flasher')->addSuccess('O encaminhamento para Grupo de Dependência Química foi criado com sucesso.');
+
+            } 
 
             return Redirect('/atendendo');
             
@@ -496,8 +453,10 @@ class AtendimentoFraternoController extends Controller
             $afe = isset($request->afe) ? 1 : 0;
             $diamo = isset($request->diamo) ? 1 : 0;
             $nutres = isset($request->nutres) ? 1 : 0;
+            $evangelho = isset($request->gel) ? 1 : 0;
 
           //  dd($ame, $afe, $diamo, $nutres  );
+          
 
             if ($ame == 1)
             {
@@ -546,13 +505,27 @@ class AtendimentoFraternoController extends Controller
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,    
                     'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento'=> 2,
+                    'id_tipo_encaminhamento'=> 1,
                     'id_atendimento' =>$idat,
                     'id_tipo_entrevista' => 4,
                     'status_encaminhamento' =>  1
                 ]);
 
                 app('flasher')->addSuccess('O encaminhamento para o NUTRES foi criado com sucesso.');
+
+            }
+            if ($evangelho == 1)
+            {
+                DB::table('encaminhamento AS enc')->insert([
+                    'dh_enc' => $now,    
+                    'id_usuario' => $atendente,
+                    'id_tipo_encaminhamento'=> 1,
+                    'id_atendimento' =>$idat,
+                    'id_tipo_entrevista' => 8,
+                    'status_encaminhamento' =>  1
+                ]);
+
+                app('flasher')->addSuccess('O encaminhamento para o Grupo de Evangelho foi criado com sucesso.');
 
             }
 
@@ -635,6 +608,7 @@ class AtendimentoFraternoController extends Controller
             ->leftJoin('tca AS t17', 'rt.dpr', 't17.id')
             ->leftJoin('tca AS t18', 'rt.dqu', 't18.id')
             ->leftJoin('tca AS t19', 'rt.dts', 't19.id')
+            ->leftJoin('tca AS t20', 'rt.maf', 't20.id')
             ->where('id_atendente', $atendente)
             ->distinct('at.dh_chegada')       
             ->orderBy('at.dh_chegada', 'desc')
@@ -672,7 +646,7 @@ class AtendimentoFraternoController extends Controller
 
             $now = Carbon::now()->format('Y-m-d H:m:s');
 
-                    
+           $maf = isset($request->maf) ? 1 : null;          
            $ies = isset($request->ies) ? 2 : null;
            $obs = isset($request->obs) ? 3 : null;           
            $coj = isset($request->coj) ? 4 : null;
@@ -693,6 +667,7 @@ class AtendimentoFraternoController extends Controller
            $esp = isset($request->esp) ? 19 : null;
            $dpr = isset($request->dpr) ? 20 : null;
            $dqu = isset($request->dqu) ? 21 : null;
+           
             
            
         
@@ -715,6 +690,7 @@ class AtendimentoFraternoController extends Controller
             DB::table('registro_tema AS rt')->where('id', $idat)->insert([
 
                 'id_atendimento' => $idat,
+                'maf' => $maf,
                 'ies' => $ies,
                 'obs' => $obs,
                 'coj' => $coj,
