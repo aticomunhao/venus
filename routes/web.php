@@ -97,11 +97,6 @@ Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->na
 Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
 
 
-// Atendentes
-Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('ateger'); // Exibe todos atendentes
-Route::get('/gerenciar-atendende/{id}', [AtendenteController::class, 'show'])->name('gerenciar-atendente_show'); // Exibir detalhes?
-Route::get('/novo-atendente', [AtendenteController::class, 'create'])->name('novo-atendente'); // Select de pessoas -> atendentes.
-Route::post('/inserir-atendente', [AtendenteController::class, 'RequestTest'])->name('inserir_atendente');
 
 // Grupos
 Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
@@ -132,6 +127,14 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 |--------------------------------------------------------------------------
 */
 
+// Atendentes
+Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('list'); // Exibe todos atendentes
+Route::get('/visualizar-atendente/{id}', [AtendenteController::class, 'show'])->name(''); // Exibir detalhes?
+Route::any('/criar-atendente', [AtendenteController::class, 'create'])->name('criar');
+Route::get('/editar-atendente', [AtendenteController::class, 'edit'])->name('');
+Route::post('/incluir-atendente', [AtendenteController::class, 'incluir'])->name('');
+
+
 // Fato
 //Route::post('/Gerenciarm', [PessoaController::class, 'create'])->ID('pesdex');
 Route::get('/gerenciar-fatos', [FatosController::class, 'index'])->name('descricao');
@@ -150,7 +153,7 @@ Route::post('/incluir-salas', [SalaController::class, 'store']);
 Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
 Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 
-//Méaiuns
+//Médiuns
 Route::get('/gerenciar-mediuns', [MediumController::class, 'index'])->name('lista');
 Route::get('/editar-mediuns/{id}', [MediumController::class, 'edit'])->name('');
 Route::post('/atualizar-mediuns/{id}', [MediumController::class, 'update'])->name('');

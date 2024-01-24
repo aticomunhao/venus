@@ -63,37 +63,93 @@ class AtendenteController extends Controller
 
             $soma = DB::table('atendentes')->count();
 
-            return view('/atendentes/gerenciar-atendentes', compact('atendente', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome', 'grupos'));
+            return view('/atendentes/gerenciar-atendente', compact('atendente', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome', 'grupos'));
         }
-    
+
+
+
+        public function create(Request $request)
+        {
+
+            $pessoas = DB::select('select id as idp, nome_completo from pessoas');
+            $tipo_status_pessoa = DB::select('select *from tipo_status_pessoa');
+            $grupo = DB::select('select id, nome from grupo');
+            $atendentes = DB::select('select * from atendentes');
+            $atendente_grupo = DB::select('select * from atendente_grupo');
 
 
 
 
 
 
+
+            return view('atendentes/criar-atendente', compact('pessoas','grupo','atendentes','atendente_grupo'));
+
+
+        }
+
+        public function store()
+    {
+
+        $data = date("Y-m-d H:i:s");
+        DB::table('pessoas')->insert([
+            'nome_completo' =>$request->input('nome_completo'),
+
+        ]);
+
+            DB::table('atendente_grupo')->insert([
+            'nome' => $request->input('nome'),
+            'data_inicio' => $data,
+
+
+        ]);
+
+
+        app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
+
+
+
+
+
+        return redirect('gerenciar-atendentes');
+
+
+    }
+
+    public function update(Request $request, $idp)
+    {
+
+    }
 
     public function edit($idp)
     {
-        $ddd = DB::select('select id, descricao from tp_ddd');
-
-        $sexo = DB::select('select id, tipo from tp_sexo');
-
-        $status_p = DB::select('select id, tipo from tipo_status_pessoa');
-
-        $motivo = DB::select('select id, tipo from tipo_motivo order by tipo');
 
 
+        $pessoas = DB::select('select id as idp, nome_completo from pessoas');
+        $tipo_status_pessoa = DB::select('select *from tipo_status_pessoa');
+        $grupo = DB::select('select id, nome from grupo');
+        $atendentes = DB::select('select * from atendentes');
+        $atendente_grupo = DB::select('select * from atendente_grupo');
 
-        $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.sexo, p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
-        left join tp_sexo tps on (p.sexo = tps.id)
-        left join tp_ddd d on (p.ddd = d.id)
-        where p.id = $idp");
 
-        return view ('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p', 'motivo'));
+
+
+        $lista = DB::select ->select('p.id AS idp', 'p.nome_completo', 'p.cpf', 'tps.tipo', 'ag.id_grupo', 'ag.id_atendente',
+         'ag.dt_inicio', 'ag.dt_fim', 'ag.motivo', 'ag.dt_fim', 'p.dt_nascimento', 'p.sexo', 'p.email', 'p.ddd', 'p.celular', 'tsp.id AS idtps',
+         'p.status', 'tsp.tipo AS tpsta', 'd.id as did', 'd.descricao as ddesc', 'p.motivo_status', 'g.nome AS gnome');
+
+        return view ('/pessoal/editar-atendente', compact('pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo'));
+
+    }
+    public function show()
+    {
 
     }
 
 
+    public function destroy($idp)
+    {
+
+}
 
 }
