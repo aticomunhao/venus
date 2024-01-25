@@ -136,6 +136,10 @@ Route::post('/incluir-atendente', [AtendenteController::class, 'store'])->name('
 Route::get('/visualizar-atendente/{id}', [AtendenteController::class, 'show'])->name(''); // Exibir detalhes?
 Route::any('/excluir-atendente/{id}', [AtendenteController::class, 'destroy'])->name(''); // Exibir detalhes?
 
+//Atendentes de Apoio
+Route::get('/gerenciar-atendentes-apoio', [AtendimentoApoioController::class, 'index'])->name('indexAtendenteApoio');
+Route::get('/incluir-atendentes-apoio', [AtendimentoApoioController::class, 'create']);
+Route::any('/armazenar-atendentes-apoio', [AtendimentoApoioController::class, 'store']);
 
 // Fato
 //Route::post('/Gerenciarm', [PessoaController::class, 'create'])->ID('pesdex');

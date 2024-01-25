@@ -21,7 +21,7 @@
                         <a class="nav-link dropdown-toggle" href="#" id="2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Gerenciamento DAO</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                             <li><a class="dropdown-item" href="/gerenciar-atendentes">Gerenciar Atendente Fraterno</a></li>
-                            <li><a class="dropdown-item" href="#">Gerenciar Atendente de Apoio</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-atendentes-apoio">Gerenciar Atendente de Apoio</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
                         </ul>
