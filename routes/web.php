@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 
 // Controllers
 use App\Http\Controllers\AtendenteController;
+use App\Http\Controllers\AtendimentoApoioController;
 use App\Http\Controllers\TesteController;
 use App\Http\Controllers\GerenciarAtendimentoController;
 use App\Http\Controllers\AtendimentoFraternoController;
