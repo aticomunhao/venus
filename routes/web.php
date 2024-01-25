@@ -129,10 +129,12 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 
 // Atendentes
 Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('list'); // Exibe todos atendentes
+Route::get('/criar-atendente', [AtendenteController::class, 'create'])->name('');
+Route::get('/editar-atendente/{id}', [AtendenteController::class, 'edit'])->name('');
+Route::post('/atualizar-atendente/{id}', [AtendenteController::class, 'update'])->name('');
+Route::post('/incluir-atendente', [AtendenteController::class, 'store'])->name('cadastrar');
 Route::get('/visualizar-atendente/{id}', [AtendenteController::class, 'show'])->name(''); // Exibir detalhes?
-Route::any('/criar-atendente', [AtendenteController::class, 'create'])->name('criar');
-Route::get('/editar-atendente', [AtendenteController::class, 'edit'])->name('');
-Route::post('/incluir-atendente', [AtendenteController::class, 'incluir'])->name('');
+Route::any('/excluir-atendente/{id}', [AtendenteController::class, 'destroy'])->name(''); // Exibir detalhes?
 
 
 // Fato

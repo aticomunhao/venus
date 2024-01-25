@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title') Gerenciar Pessoas @endsection
+@section('title') Gerenciar Atendentes Fraternos @endsection
 
 @section('content')
 
@@ -35,7 +35,7 @@
                         <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
                         <a href="/gerenciar-pessoas"><input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
                     </form>
-                    <a href="/criar-atendente"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;" type="button" value="Nova Pessoa +"></a>
+                    <a href="/criar-atendente"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;" type="button" value="Novo Atendente +"></a>
 
                     </div>
                 </div>
@@ -55,7 +55,6 @@
                             <th class="col">DDD</th>
                             <th class="col">CELULAR</th>
                             <th class="col">STATUS</th>
-                            <th class="col">MOTIVO</th>
                             <th class="col">AÇÕES</th>
                         </tr>
                     </thead>
@@ -70,10 +69,17 @@
                             <td scope="" >{{$atendentes->ddd}}</td>
                             <td scope="" >{{$atendentes->celular}}</td>
                             <td scope="" >{{$atendentes->tpsta}}</td>
-                            <td scope="" >{{$atendentes->motivo_status}}</td>
                             <td scope="">
-                                <a href="/editar-atendente/{{$atendentes->idp}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/inativar-atendente/{{$atendentes->idp}}"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/editar-atendente/{{$atendentes->id}}" type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar">
+                                    <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+
+                                    <a href="/visualizar-atendente/{{$atendentes->id}}" type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">
+                                        <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
+                                    </a>
+                                    <a href="/excluir-atendente/{{$atendentes->id}}" type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">
+                                        <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
+                                    </a>
                             </td>
                         </tr>
                         @endforeach

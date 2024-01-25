@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container ">
+<div class="container">
+    <br>
     <div class="card">
         <div class="card-header">
             <div class="row">
@@ -12,17 +13,17 @@
         </div>
         <br>
         <div class="card-body">
-            <form class="form-horizontal mt-2" method="post" action="{{ route('criar') }}">
+            <form class="form-horizontal mt-2" method="post" action="{{ route('cadastrar') }}">
                 @csrf
                 <div class="row">
-                <div class="col">
-                    <label for="id_pessoa" class="form-label">Nome </label>
-                    <select class="form-select" aria-label=".form-select-lg example" name="id_pessoa">
-                        @foreach ($pessoas as $pessoas)
-                            <option value="{{ $pessoas->idp }}">{{ $pessoas->nome_completo}}</option>
-                        @endforeach
-                    </select>
-                </div>
+                    <div class="col">
+                        <label for="id_pessoa" class="form-label">Nome </label>
+                        <select class="form-select" aria-label=".form-select-lg example" name="id_pessoa">
+                            @foreach ($pessoas as $pessoa)
+                                <option value="{{ $pessoa->idp }}">{{ $pessoa->nome_completo }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     <div class="col">
                         <label for="id_grupo" class="form-label">Nome grupo</label>
