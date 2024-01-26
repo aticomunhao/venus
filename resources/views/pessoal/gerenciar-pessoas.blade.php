@@ -10,7 +10,7 @@
         <div class="row justify-content-center">
                 <form action="{{route('pesdex')}}" class="form-horizontal mt-4" method="GET" >
                 <div class="row">
-                    <div class="col-4">Nome
+                    <div class="col">Nome
                         <input class="form-control" type="text" maxlength="45" oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="1" name="nome" value="{{$nome}}">
                     </div>
                     <div class="col-2">CPF
@@ -23,12 +23,12 @@
                             <option value="2">Inativo</option>                   
                         </select>
                     </div>
-                    <div class="col"><br>
+                    <div class="col-5"><br>
                         <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
                         <a href="/gerenciar-pessoas"><input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
                     </form>
-                    <a href="/dados-pessoa"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;" type="button" value="Nova Pessoa +"></a>                            
-                    <a href="/gerenciar-atendimentos"><input class="btn btn-danger btn-sm me-md-2" style="font-size: 0.9rem;" type="button" value="Retornar principal"></a>                                                    
+                    <a href="/dados-pessoa"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" style="font-size: 0.9rem;" type="button" value="Nova Pessoa +"></a>                            
+                    <a href="/gerenciar-atendimentos"><input class="btn btn-danger btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" style="font-size: 0.9rem;" type="button" value="Retornar principal"></a>                                                    
                     </div>
                 </div>
         </div>

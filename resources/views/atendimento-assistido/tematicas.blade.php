@@ -38,15 +38,15 @@
                         <div class="row">
                             @if ($verifi == 0)
                             <div class="col"  style="text-align:center">Espirituais
-                                <div class="form-check p-3">
+                                <div class="form-check m-2">
                                     <input id="21" type="checkbox" name="maf" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                     <label for="maf" class="form-check-label" data-tt="tooltip" data-placement="top" title="Mediunidade aflorada" >1.1</label>
                                 </div>  
-                                <div class="form-check  p-3">
+                                <div class="form-check m-2">
                                     <input id="1" type="checkbox" name="ies" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" >
                                     <label for="ies" class="form-check-label" data-tt="tooltip" data-placement="top" title="Influenciação espiritual" >1.2</label>
                                 </div>
-                                <div class="form-check">
+                                <div class="form-check m-2">
                                     <input id="2" type="checkbox" name="obs" data-size="small"  data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                     <label for="obs" class="form-check-label" data-tt="tooltip" data-placement="top" title="Obsessão" >1.3</label>
                                 </div>
@@ -231,11 +231,9 @@
                     <br>
                     <hr>
                         <div class="row">
-                            <div class="col" style="text-align: left;">
-                                    <a class="btn btn-danger" href="/atendendo" style="text-align:right;" role="button">Cancelar</a>
-                                </div>
-                            <div class="col" style="text-align: left;">
-                                <button type="submit" class="btn" style="background-color:#007bff; color:#fff;" data-bs-dismiss="modal">Confirmar</button>
+                            <div class="col" style="text-align: right;">
+                                    <a class="btn btn-danger" href="/atendendo" style="text-align:right; margin-right: 50px" role="button">Cancelar</a>
+                                    <button type="submit" class="btn btn-primary" style="background-color:#007bff; color:#fff;" data-bs-dismiss="modal">Confirmar</button>
                                 </form>
                             </div>
                         </div>

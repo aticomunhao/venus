@@ -551,10 +551,6 @@ class AtendimentoFraternoController extends Controller
                 
 
             }
-<<<<<<< HEAD
-=======
-
->>>>>>> parent of 6feb23e (Merge branch 'master' of https://github.com/aticomunhao/venus)
 
             return Redirect('/atendendo');
             

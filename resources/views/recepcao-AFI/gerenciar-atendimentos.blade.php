@@ -38,7 +38,8 @@
                             <a href="/gerenciar-atendimentos"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
                     </form>
                             <a href="/criar-atendimento"><input class="btn btn-success btn-sm me-md-2" type="button" autofocus value="Novo Atendimento &plus;"></a>
-                            <a href="/gerenciar-pessoas"><input class="btn btn-secondary btn-sm me-md-2" type="button" value="Gerenciar Pessoas"></a>
+                            <a href="/gerenciar-pessoas"><input class="btn btn-warning btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Registrar Pessoa"></a>
+                            <a href="/gerenciar-atendente-dia"><input class="btn btn-warning btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Atendente do  Dia"></a>
                         </div>
                 </div>
                 <br>
