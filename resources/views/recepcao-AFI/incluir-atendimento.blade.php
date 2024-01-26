@@ -8,12 +8,9 @@
 @endsection
 
 @section('content')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <link href="/node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />  
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-
 
 
 <br>
@@ -42,22 +39,18 @@
                                 @endforeach
                             </select>
                         </div>         
-                        <div class="col">Atendido
+                        <div class="col">Nome do Atendido
                             <select class="form-select lista" id="" name="assist" required="required">
                                 <option value=""></option>
                                 @foreach($lista as $listas)
                                 <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
                                 @endforeach
                             </select>
-                        </div>
-                        <div class="col-1">Menor Auto
-                            <label for="menor" class="form-check-label"></label>
-                            <input id="menor" type="checkbox" name="menor" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">                            
-                        </div>                              
+                        </div>                       
                     </div>
                     <br>
                     <div class="form-group row">
-                    <div class="col">Representante/Responsável
+                    <div class="col">Nome do representante
                             <select class="form-select lista" id="" name="repres" >
                                 <option value=""></option>
                                 @foreach($lista as $listas)
@@ -65,35 +58,30 @@
                                 @endforeach
                             </select>
                         </div>     
-                        <div class="col">Parentesco
+                        <div class="col-2">Parentesco
                             <select class="form-select" id="" name="parent" >
                                 <option value=""></option>
                                 @foreach($parentes as $parentess)
                                 <option value="{{$parentess->id}}">{{$parentess->nome}}</option>
                                 @endforeach
                             </select>
-                        </div>
-                        <div class="col">Tipo AFI
-                            <select class="form-select" id="tipo_afi" name="tipo_afi" >
-                                <option value=""></option>
-                                @foreach($sexo as $sexos)
-                                <option value="{{$sexos->id}}">{{$sexos->tipo}}</option>
-                                @endforeach
-                            </select>                                                 
-                        </div>
-                        <div class="col-1">Ped especial
-                            <label for="especial" class="form-check-label"></label>
-                            <input id="especial" type="checkbox" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" >
-                            
-                        </div>                    
-                        <div class="col" id="hiddenField" style="display: none;">AFI preferido
+                        </div>         
+                        <div class="col">AFI preferido
                             <select class="form-select" id="afi_p" name="afi_p" >
                                 <option value=""></option>
                                 @foreach($afi as $afis)
                                 <option value="{{$afis->idatt}}">{{$afis->nm_1}}</option>
                                 @endforeach
                             </select>
-                        </div> 
+                        </div>                        
+                        <div class="col-3">Tipo AFI
+                            <select class="form-select" id="tipo_afi" name="tipo_afi" >
+                                <option value=""></option>
+                                @foreach($sexo as $sexos)
+                                <option value="{{$sexos->id}}">{{$sexos->tipo}}</option>
+                                @endforeach
+                            </select>                                                 
+                        </div>                        
                     </div>                   
                     <br>
                 </div>
@@ -113,17 +101,7 @@
     </div>
 </div>
 
-<script>
-       jQuery(document).ready(function () {
-            jQuery('#especial').change(function () {
-                if ($(this).prop('checked')) {
-                    $('#hiddenField').show();
-                } else {
-                    $('#hiddenField').hide();
-                }
-            });
-        });
-</script>
+
 
 <script>
     jQuery(document).ready(function() {
@@ -161,7 +139,6 @@
     });
   </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
 
 @endsection
 
