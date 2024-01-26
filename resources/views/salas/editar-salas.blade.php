@@ -38,6 +38,18 @@
                                 </select>
                             </div>
                             <div class="col">
+                                <label for="id_localizacao">Localização</label>
+                                <select class="form-select" name="id_localizacao" aria-label="form-select-lg example" value={{$salaEditada->id_localizacao}}>
+                                    <option value="{{ $salas[0]->id_localizacao }}"> {{ $salas[0]->nome }}</option>
+                                    @foreach ($tipo_localizacao as $localizacao )
+                                    <option value={{$localizacao->id}}>{{$localizacao->nome}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">
                                 Motivo
                                 <select class="form-select" aria-label=".form-select-lg example" name="id_motivo" id="tipo_motivo" disabled>
                                     <option value="{{ $salas[0]->id_motivo }}"> {{ $salas[0]->tipo }}</option>
@@ -47,19 +59,6 @@
                                 </select>
                             </div>
 
-                        </div>
-                        <br>
-                        <div class="row">
-
-                            <div class="col">
-                                <label for="id_localizacao">Localização</label>
-                                <select class="form-select" name="id_localizacao" aria-label="form-select-lg example" value={{$salaEditada->id_localizacao}}>
-                                    <option value="{{ $salas[0]->id_localizacao }}"> {{ $salas[0]->nome }}</option>
-                                    @foreach ($tipo_localizacao as $localizacao )
-                                    <option value={{$localizacao->id}}>{{$localizacao->nome}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
 
                             <div class="col-4">
                                 Finalidade sala
@@ -124,15 +123,10 @@
                                 <input type="checkbox" name="ventilador" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->ventilador ? 'checked' : ''}}>
                             </div>
                             <div class="col">
-                                <label for="luz_azul">Luz_azul</label>
+                                <label for="luz_azul">Luz azul</label>
                                 <input type="checkbox" name="luz_azul" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->luz_azul ? 'checked' : ''}}>
                             </div>
-                            <div class="col">
-                                <label for="luz_azul">Luz_vermelha</label>
-                                <input type="checkbox" name="luz_vermelha" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->luz_vermelha ? 'checked' : ''}}>
-                            </div>
                         </div>
-
                         <div class="row justify-content-center">
                             <div class="d-grid gap-1 col-4 mx-auto">
                                 <br>

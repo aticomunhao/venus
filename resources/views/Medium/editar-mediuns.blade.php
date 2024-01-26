@@ -1,10 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <link href="/venus/node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
     <div class="container mt-4">
         <div class="card">
             <div class="card-header">
@@ -16,272 +12,194 @@
             </div>
 
             <div class="card-body">
-                <form class="form-horizontal mt-2" method="post" action="/atualizar-mediuns/{{ $medium->idm }}"
-                    id="mediumForm">
+                <form class="form-horizontal mt-2" method="post" action="/atualizar-mediuns/{{ $medium->idm }}" id="mediumForm">
                     @csrf
 
                     <div class="row mt-3">
-                        <div class="col-4">
+                        <div class="col-5">
                             <label for="id_pessoa" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="searchInput" disabled
-                                placeholder="Pesquisar nome..." value="{{ $medium->nome_completo }}">
-                            <ul id="pessoaList" class="list-group" style="display: none;">
+                            <select class="form-select" aria-label=".form-select-lg example" name="id_pessoa">
+                                <option value="{{ $medium->id_pessoa }}"> {{ $medium->nome_completo }}</option>
                                 @foreach ($pessoas as $pessoa)
-                                    <li class="list-group-item" data-id="{{ $pessoa->id }}">{{ $pessoa->nome_completo }}
-                                    </li>
-                                @endforeach
-                            </ul>
-                            <input type="hidden" name="id_pessoa" id="selectedId" value="{{ $medium->id_pessoa }}">
-                        </div>
-                        <div class="col">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-select" aria-label=".form-select-lg example" name="status" id="idstatus"
-                                required="required">
-                                @foreach ($tipo_status_pessoa as $status)
-                                    <option value="{{ $status->id }}"
-                                        {{ $medium->status == $status->id ? 'selected' : '' }}>
-                                        {{ $status->tipos }}
-                                    </option>
+                                    <option value="{{ $pessoa->id }}"> {{ $pessoa->nome_completo }} </option>
                                 @endforeach
                             </select>
                         </div>
-
                         <div class="col">
-                            <label for="motivo_status" class="form-label">Motivo status</label>
-                            <select class="form-select" aria-label=".form-select-lg example" name="motivo_status"
-                                id="motivo_status" required="required">
-                                @foreach ($tipo_motivo_status_pessoa as $motivo)
-                                    <option value="{{ $motivo->id }}"
-                                        {{ $medium->motivo_status == $motivo->id ? 'selected' : '' }}>
-                                        {{ $motivo->motivo }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col">
-                                <label for="id_setor" class="form-label">Setor</label>
-                                <select class="form-select" aria-label=".form-select-lg example" name="setor">
-                                    <option value="{{ $medium->id_setor }}">{{ $medium->nome_setor }}</option>
-                                    @foreach ($setor as $setores)
-                                        <option value="{{ $setores->id }}">{{ $setores->nome }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col">
-                                <label for="id_funcao" class="form-label">Função</label>
-                                <select class="form-select" aria-label=".form-select-lg example" name="id_funcao">
-                                    <option value="{{ $medium->id_funcao }}">{{ $medium->nome_funcao }}</option>
-                                    @foreach ($tipo_funcao as $funcao)
-                                        <option value="{{ $funcao->id }}">{{ $funcao->nome }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col">
-                                <label for="id_grupo" class="form-label">Nome grupo</label>
-                                <select class="form-select" aria-label=".form-select-lg example" name="id_grupo">
-                                    <option value="{{ $medium->id_grupo }}">{{ $medium->nome_grupo }}</option>
-                                    @foreach ($grupo as $grupos)
-                                        <option value="{{ $grupos->id }}">{{ $grupos->nome }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <?php $a = 1; ?>
-
-                        <div class="row mt-3">
-                            <div class="col">
-                                <label for="id_mediunidade" class="form-label"></label>
-                                <div class="table-responsive">
-                                    <div class="table">
-                                        <table
-                                            class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
-                                            <thead>
-                                                <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                                                    <th scope="col">
-                                                         {{-- <input type="checkbox" id="toggleAll"
-                                                            onclick="toggleCheckboxes(this)">  --}}
-                                                    </th>
-                                                    <th scope="col">Mediunidade</th>
-                                                    <th scope="col">Data de Manifestação</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($tipo_mediunidade as $tipos)
-                                                    <tr class="{{ $a % 2 == 0 ? 'table-row-gray' : 'table-row-white' }}">
-                                                        <td>
-                                                            <?php
-                                                            $isChecked = in_array($tipos->id, $createdMediunidadeIds) ? 'checked' : '';
-                                                            ?>
-                                                            <input class="form-check-input mediunidade-checkbox"
-                                                                type="checkbox" name="mediunidades[]"
-                                                                value="{{ $tipos->id }}"
-                                                                id="mediunidade_{{ $a++ }}" {{ $isChecked }}>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <label class="form-check-label"
-                                                                for="mediunidade_{{ $a }}">
-                                                                {{ $tipos->tipo }}
-                                                            </label>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <?php
-                                                            $dateValue = in_array($tipos->id, $createdMediunidadeIds) ? $createdMediunidadeData[$tipos->id] : '';
-                                                            ?>
-                                                            <div class="form-group data_manifestou"
-                                                                name="id_mediunidade_medium"
-                                                                id="data_inicio_{{ $tipos->id }}"
-                                                                style="{{ $dateValue ? '' : 'display: none;' }}">
-                                                                <input type="date"
-                                                                    class="form-control form-control-sm date-input"
-                                                                    name="datas_manifestou[{{ $tipos->id }}]"
-                                                                    value="{{ $dateValue }}" placeholder="Data">
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="id_setor" class="form-label">Setor</label>
+                                    <select class="form-select" aria-label=".form-select-lg example" name="setor">
+                                        <option value="{{ $medium->id_setor }}"> {{ $medium->nome_setor }}</option>
+                                        @foreach ($setor as $setores)
+                                            <option value="{{ $setores->id }}"> {{ $setores->nome }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="id_funcao" class="form-label">Função</label>
+                                    <select class="form-select" aria-label=".form-select-lg example" name="id_funcao">
+                                        <option value="{{ $medium->id_funcao }}"> {{ $medium->nome_funcao }}</option>
+                                        @foreach ($tipo_funcao as $funcao)
+                                            <option value="{{ $funcao->id }}"> {{ $funcao->nome }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="status" class="form-label text-start">Status</label>
+                                    <select class="form-select" aria-label=".form-select-lg example" name="status" id="idstatus" required="required">
+                                        <option value="1" {{ $medium->status == 1 ? 'selected' : '' }}>Ativo</option>
+                                        <option value="2" {{ $medium->status == 2 ? 'selected' : '' }}>Inativo</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="motivo_status" class="form-label text-start">Motivo</label>
+                                    <select class="form-select" aria-label=".form-select-lg example" name="motivo_status" id="motivo_status" required="required" disabled>
+                                        <option value="1" {{ $medium->motivo_status == 1 ? 'selected' : '' }}>Desencarnou</option>
+                                        <option value="2" {{ $medium->motivo_status == 2 ? 'selected' : '' }}>Mudou-se</option>
+                                        <option value="3" {{ $medium->motivo_status == 3 ? 'selected' : '' }}>Afastado</option>
+                                        <option value="4" {{ $medium->motivo_status == 4 ? 'selected' : '' }}>Saúde</option>
+                                        <option value="5" {{ $medium->motivo_status == 5 ? 'selected' : '' }}>Não informado</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <style>
-                            /* Estilo mais visível e maior para o checkbox */
-                            .table th input[type="checkbox"],
-                            .table td input[type="checkbox"] {
-                                width: 17px; /* Ajusta a largura do checkbox */
-                                height: 17px; /* Ajusta a altura do checkbox */
-                                cursor: pointer; /* Adiciona o cursor de ponteiro ao passar sobre o checkbox */
-                                border: 2px solid #000; /* Adiciona borda preta ao checkbox */
-                            }
+                    </div>
 
 
-
-                        </style>
-                        <div class="row mt-1 justify-content-center">
-                            <div class="d-grid gap-1 col-4 mx-auto">
-                                <a class="btn btn-danger" href="/gerenciar-mediuns" role="button">Cancelar</a>
-                            </div>
-                            <div class="d-grid gap-2 col-4 mx-auto">
-                                <button class="btn btn-primary">Confirmar</button>
-                            </div>
+                     {{-- <?php
+                    $a=1; $b=50;
+                    ?>
+                     <div class="row mt-3">
+                        <div class="col">
+                            <label for="id_mediunidade" class="form-label">Mediunidades</label>
+                            @foreach ($mediunidade_medium as $mediuns)
+                                <select class="form-select" aria-label=".form-select-lg example" name="$a++">
+                                    @foreach ($tipo_mediunidade as $tipos)
+                                        <option value="{{ $tipos->id }}" @if ($tipos->id == $mediuns->id_mediunidade) selected @endif>
+                                            {{ $tipos->tipo }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @endforeach
                         </div>
+                        <div class="col">
+                            <label for="data_inicio" class="form-label">Data que manifestou</label>
+                            @foreach ($mediunidade_medium as $mediunidades)
+                                <select class="form-select" aria-label=".form-select-lg example" name="$b++">
+                                    <option value="{{ $mediunidades->id_mediuns }}" @if ($mediunidades->data_inicio == $mediuns->data_inicio) selected @endif>
+                                        {{ $mediunidades->data_inicio }}
+                                    </option>
+                                </select>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <br> --}}
+
+                    <div class="row mt-3">
+                        <div class="col">
+                            <label class="form-label">Mediunidades</label>
+                            @foreach ($tipo_mediunidade as $tipos)
+                                <div class="form-check">
+                                    <input class="form-check-input mediunidade-checkbox" type="checkbox" name="mediunidades[]" value="{{ $tipos->id }}" id="mediunidade_{{ $tipos->id }}" @if ($tipos->id == $medium->id_mediunidade) checked @endif>
+                                    <label class="form-check-label" for="mediunidade_{{ $tipos->id }}">
+                                        {{ $tipos->tipo }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="col">
+                            <label for="data_inicio" class="form-label">Data que manifestou</label>
+                            @foreach ($mediunidade_medium as $mediunidades)
+                                <input type="text" class="form-control" name="datas_manifestou[]" value="{{ $mediunidades->data_inicio }}" readonly>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                        $(document).ready(function() {
+                            $('.mediunidade-checkbox').change(function() {
+                                var isChecked = $(this).prop('checked');
+                                var dataIndex = $(this).val();
+
+                                if (isChecked) {
+                                    $(this).closest('.row').find('[name="datas_manifestou[]"]').val(dataIndex);
+                                }
+                            });
+                        });
+                    </script>
+
+
+                    <div class="row mt-1 justify-content-center">
+                        <div class="d-grid gap-1 col-4 mx-auto">
+                            <a class="btn btn-danger" href="/gerenciar-mediuns" role="button">Cancelar</a>
+                        </div>
+                        <div class="d-grid gap-2 col-4 mx-auto">
+                            <button class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
-    </div>
-    <!-- Adicione antes do fechamento da tag </body> -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var checkboxes = document.querySelectorAll('.mediunidade-checkbox');
-
-        checkboxes.forEach(function (checkbox) {
-            checkbox.addEventListener('change', function () {
-                var tipoId = this.value;
-                var dataInput = document.querySelector('#data_inicio_' + tipoId + ' .date-input');
-
-                if (!this.checked) {
-                    // Limpar a data se o checkbox for desmarcado
-                    dataInput.value = '';
-                    dataInput.parentElement.style.display = 'none'; // Oculta o campo de data
-                } else {
-                    dataInput.parentElement.style.display = ''; // Exibe o campo de data se o checkbox for marcado
-                }
-            });
-        });
-    });
-</script>
-
-    <script>
-        // Função para filtrar a lista com base na entrada do usuário
-        function filterList() {
-            var input, filter, ul, li, a, i, id;
-            input = document.getElementById('searchInput');
-            filter = input.value.toUpperCase();
-            ul = document.getElementById('pessoaList');
-            li = ul.getElementsByTagName('li');
-
-            // Exibe a lista somente quando o usuário começar a digitar
-            ul.style.display = (filter === "") ? 'none' : 'block';
-
-            for (i = 0; i < li.length; i++) {
-                a = li[i];
-                id = a.getAttribute('data-id');
-                if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    li[i].style.display = '';
-                } else {
-                    li[i].style.display = 'none';
-                }
-            }
-        }
-
-        // Adiciona um ouvinte de evento ao campo de pesquisa
-        document.getElementById('searchInput').addEventListener('input', filterList);
-
-        // Adiciona um ouvinte de evento às opções da lista
-        var listItems = document.getElementById('pessoaList').getElementsByTagName('li');
-        for (var i = 0; i < listItems.length; i++) {
-            listItems[i].addEventListener('click', function() {
-                var id = this.getAttribute('data-id');
-                var nome = this.innerHTML;
-                document.getElementById('searchInput').value = nome;
-                document.getElementById('selectedId').value = id;
-                // Oculta a lista após a seleção de um item
-                document.getElementById('pessoaList').style.display = 'none';
-            });
-        }
-    </script>
-
-    <script>
-        function toggleCheckboxes(checkbox) {
-            var checkboxes = document.getElementsByClassName('mediunidade-checkbox');
-            for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].checked = checkbox.checked;
-            }
-        }
-    </script>
 
     <!-- Adicione este script no final do seu HTML ou em uma seção de scripts -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Aqui você pode acessar os valores de todas as opções, independentemente de estarem selecionadas ou não
+        var mediunidades = $('select[name="mediunidades[]"]').map(function() {
+            return $(this).val();
+        }).get();
+
+        var datasManifestou = $('select[name="datas_manifestou[]"]').map(function() {
+            return $(this).val();
+        }).get();
+
+        // Agora, 'mediunidades' e 'datasManifestou' contêm todos os valores, você pode fazer o que quiser com eles
+        console.log('Mediunidades:', mediunidades);
+        console.log('Datas Manifestou:', datasManifestou);
+    });
+</script>
+
 
     <script>
         $(document).ready(function() {
-            $('.mediunidade-checkbox').change(function() {
+            // Associar uma função ao evento change do select de tipo de mediunidade
+            $('select[name="id_mediunidade"]').on('change', function() {
+                var selectedTypeId = $(this).val(); // Obtém o valor selecionado
+
+                // Esconder todas as divs de datas
                 $('.data_manifestou').hide();
-                $('.mediunidade-checkbox:checked').each(function() {
-                    var dataIndex = $(this).val();
-                    $('#data_inicio_' + dataIndex).show();
-                });
+
+                // Exibir apenas a div correspondente ao tipo selecionado
+                $('#data_inicio_' + selectedTypeId).show();
             });
 
-            // Mostra automaticamente as datas das mediunidades já criadas
-            $('.mediunidade-checkbox:checked').change();
-        });
-    </script>
+            // Trigger change para garantir que a função seja chamada na inicialização
+            $('select[name="id_mediunidade"]').trigger('change');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var statusSelect = document.getElementById('idstatus');
-            var motivoStatusSelect = document.getElementById('motivo_status');
+            // Adiciona um ouvinte de evento para o campo "Status"
+            $('#idstatus').change(function() {
+                // Obtém o valor selecionado no campo "Status"
+                var selectedStatus = $(this).val();
 
-            // Adiciona um ouvinte de evento ao campo de status
-            statusSelect.addEventListener('change', function() {
-                // Se o status for "ativo", desabilita o campo de motivo_status
-                motivoStatusSelect.disabled = statusSelect.value === '1';
-                // Se desabilitado, seleciona a opção vazia
-                if (motivoStatusSelect.disabled) {
-                    motivoStatusSelect.value = '';
+                // Habilita ou desabilita o campo "Motivo" com base na seleção
+                if (selectedStatus === '2') {
+                    $('#motivo_status').prop('disabled', false);
+                } else {
+                    $('#motivo_status').prop('disabled', true);
+                    $('#motivo_status').val(''); // Limpa a seleção quando desabilitado
                 }
             });
 
-            // Dispara o evento inicialmente para configurar o estado inicial
-            statusSelect.dispatchEvent(new Event('change'));
+            // Define o valor inicial do campo "Status" ao carregar a página
+            $('#idstatus').val('{{ $medium->status }}').trigger('change');
         });
     </script>
+
+
 @endsection

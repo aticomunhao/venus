@@ -94,7 +94,6 @@ class SalaController extends Controller
             's.controle',
             's.som',
             's.luz_azul',
-            's.luz_vermelha',
             's.bebedouro',
             's.armarios',
             's.tamanho_sala',
@@ -143,7 +142,6 @@ class SalaController extends Controller
         $controle = isset($request->controle) ? 1 : 0;
         $som = isset($request->som) ? 1 : 0;
         $luz_azul = isset($request->luz_azul) ? 1 : 0;
-        $luz_vermelha = isset($request->luz_vermelha) ? 1 : 0;
         $bebedouro = isset($request->bebedouro) ? 1 : 0;
         $armarios = isset($request->armarios) ? 1 : 0;
 
@@ -168,7 +166,6 @@ class SalaController extends Controller
             'controle' => $controle,
             'som' => $som,
             'luz_azul' => $luz_azul,
-            'luz_vermelha' => $luz_vermelha,
             'bebedouro' => $bebedouro,
             'armarios' => $armarios,
             'tamanho_sala' => $request->input('tamanho_sala')
@@ -215,7 +212,6 @@ class SalaController extends Controller
             's.controle',
             's.som',
             's.luz_azul',
-            's.luz_vermelha',
             's.bebedouro',
             's.armarios',
             's.tamanho_sala',
@@ -264,7 +260,6 @@ public function update(Request $request, $id)
     $controle = isset($request->controle) ? 1 : 0;
     $som = isset($request->som) ? 1 : 0;
     $luz_azul = isset($request->luz_azul) ? 1 : 0;
-    $luz_vermelha = isset($request->luz_vermelha) ? 1 : 0;
     $bebedouro = isset($request->bebedouro) ? 1 : 0;
     $armarios = isset($request->armarios) ? 1 : 0;
 
@@ -295,7 +290,6 @@ public function update(Request $request, $id)
             'controle' => $controle,
             'som' => $som,
             'luz_azul' => $luz_azul,
-            'luz_vermelha' => $luz_vermelha,
             'bebedouro' => $bebedouro,
             'armarios' => $armarios,
             'status_sala' => $request->input('status_sala'),
