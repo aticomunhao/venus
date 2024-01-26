@@ -5,7 +5,7 @@
 @section('content')
 
 
-<div class="container-fluid";>
+<div class="container";>
 <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">DEFINIR AFI/SALA</h4>
     <div class="col-12">
         <div class="row justify-content-center">

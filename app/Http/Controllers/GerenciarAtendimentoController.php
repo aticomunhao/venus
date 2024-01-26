@@ -511,7 +511,6 @@ class GerenciarAtendimentoController extends Controller
                //dd($now);
 
         $atende = DB::table('atendente_dia AS atd')
-<<<<<<< HEAD
                 ->select('atd.id AS nr','att.id_pessoa AS idp', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')
                 ->leftJoin('atendentes AS att', 'atd.id_atendente','att.id_pessoa')
                 ->leftjoin('pessoas AS p', 'att.id_pessoa', 'p.id' )
@@ -523,14 +522,6 @@ class GerenciarAtendimentoController extends Controller
         //dd($atende);
 
         $data = $request->data;
-=======
-                ->select('atd.id AS nr','att.id AS ida', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala')
-                ->leftJoin('atendentes AS att', 'atd.id_atendente','att.id_pessoa')
-                ->leftjoin('pessoas AS p', 'atd.id_atendente', 'p.id' )
-                ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
-                ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
-                ->leftJoin('grupo AS g', 'att.id_grupo', 'g.id');
->>>>>>> ffcc50c78ff5861fd8b99aa39d82d04bfda08b5f
 
         $grupo = $request->grupo;
 

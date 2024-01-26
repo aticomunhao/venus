@@ -113,7 +113,6 @@ class AtendimentoFraternoController extends Controller
  
             
             $analisa = DB::table('atendimentos AS at')
-<<<<<<< HEAD
                         ->select('at.id AS ida', 'at.observacao', 'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao AS tst', 'tsx.tipo', 'pa.nome', 'p1.dt_nascimento',  't.nm_tca', 't1.nm_tca AS t1', 't2.nm_tca AS t2', 't3.nm_tca AS t3','t4.nm_tca AS t4','t5.nm_tca AS t5','t6.nm_tca AS t6','t7.nm_tca AS t7','t8.nm_tca AS t8','t9.nm_tca AS t9','t10.nm_tca AS t10','t11.nm_tca AS t11','t12.nm_tca AS t12','t13.nm_tca AS t13','t14.nm_tca AS t14','t15.nm_tca AS t15','t16.nm_tca AS t16','t17.nm_tca AS t17','t18.nm_tca AS t18','t19.nm_tca AS t19')
                         ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id_pessoa', 'enc.')
                         ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
@@ -149,42 +148,6 @@ class AtendimentoFraternoController extends Controller
                         ->where('at.id_assistido', $idas)
                         ->orderBy('at.dh_chegada', 'desc')
                         ->get();
-=======
-            ->select('at.id AS ida', 'at.observacao', 'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao AS tst', 'tsx.tipo', 'pa.nome', 'p1.dt_nascimento',  't.nm_tca', 't1.nm_tca AS t1', 't2.nm_tca AS t2', 't3.nm_tca AS t3','t4.nm_tca AS t4','t5.nm_tca AS t5','t6.nm_tca AS t6','t7.nm_tca AS t7','t8.nm_tca AS t8','t9.nm_tca AS t9','t10.nm_tca AS t10','t11.nm_tca AS t11','t12.nm_tca AS t12','t13.nm_tca AS t13','t14.nm_tca AS t14','t15.nm_tca AS t15','t16.nm_tca AS t16','t17.nm_tca AS t17','t18.nm_tca AS t18','t19.nm_tca AS t19')
-            ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id_pessoa', 'enc.')
-            ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
-            ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-            ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-            ->leftJoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-            ->leftJoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-            ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
-            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-            ->leftJoin('tp_sexo AS tsx', 'p1.sexo', 'tsx.id')
-            ->leftJoin('registro_tema AS rt', 'at.id', 'rt.id_atendimento')
-            ->leftJoin('tca AS t', 'rt.ies', 't.id')
-            ->leftJoin('tca AS t1', 'rt.obs', 't1.id')
-            ->leftJoin('tca AS t2', 'rt.coj', 't2.id')
-            ->leftJoin('tca AS t3', 'rt.fam', 't3.id')
-            ->leftJoin('tca AS t4', 'rt.soc', 't4.id')
-            ->leftJoin('tca AS t5', 'rt.prf', 't5.id')
-            ->leftJoin('tca AS t6', 'rt.sau', 't6.id')
-            ->leftJoin('tca AS t7', 'rt.pdg', 't7.id')
-            ->leftJoin('tca AS t8', 'rt.sex', 't8.id')
-            ->leftJoin('tca AS t9', 'rt.adp', 't9.id')
-            ->leftJoin('tca AS t10', 'rt.deq', 't10.id')
-            ->leftJoin('tca AS t11', 'rt.est', 't11.id')
-            ->leftJoin('tca AS t12', 'rt.abo', 't12.id')
-            ->leftJoin('tca AS t13', 'rt.sui', 't13.id')
-            ->leftJoin('tca AS t14', 'rt.dou', 't14.id')
-            ->leftJoin('tca AS t15', 'rt.son', 't15.id')
-            ->leftJoin('tca AS t16', 'rt.esp', 't16.id')
-            ->leftJoin('tca AS t17', 'rt.dpr', 't17.id')
-            ->leftJoin('tca AS t18', 'rt.dqu', 't18.id')
-            ->leftJoin('tca AS t19', 'rt.dts', 't19.id')
-            ->where('at.id_assistido', $idas)
-            ->orderBy('at.dh_chegada', 'desc')
-            ->get();
->>>>>>> ffcc50c78ff5861fd8b99aa39d82d04bfda08b5f
 
             foreach($analisa as $key => $teste){
                 $trata = DB::table('encaminhamento AS enc')
@@ -553,7 +516,6 @@ class AtendimentoFraternoController extends Controller
             ->where('p.id', $idas)
             ->get();
 
-<<<<<<< HEAD
             $result = DB::table('tratamento AS tr')
             ->leftJoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
@@ -561,21 +523,6 @@ class AtendimentoFraternoController extends Controller
             ->where('enc.id_tipo_tratamento', 1)
             ->where('tr.status','<', 4)
             ->count();
-=======
-                app('flasher')->addSuccess('O encaminhamento para PPH foi criado com sucesso.');
-
-            }
-            if ($desobsessivo == 1)
-            {
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,    
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento'=> 2,
-                    'id_atendimento' =>$idat,
-                    'id_tipo_tratamento' => 1,
-                    'status_encaminhamento' =>  1
-                ]);
->>>>>>> ffcc50c78ff5861fd8b99aa39d82d04bfda08b5f
 
             //dd($result > 0 && $desobsessivo > 0);
             if ($result > 0 && $desobsessivo > 0)
@@ -660,39 +607,6 @@ class AtendimentoFraternoController extends Controller
                 
 
             }
-<<<<<<< HEAD
-
-=======
-            if ($integral == 1)
-            {
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,    
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento'=> 2,
-                    'id_atendimento' =>$idat,
-                    'id_tipo_tratamento' => 6,
-                    'status_encaminhamento' =>  1
-                ]);
-
-                app('flasher')->addSuccess('O encaminhamento para PTIg foi criado com sucesso.');
-
-            }
-            if ($intensivo == 1)
-            {
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,    
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento'=> 2,
-                    'id_atendimento' =>$idat,
-                    'id_tipo_tratamento' => 2,
-                    'status_encaminhamento' =>  1
-                ]);
-
-                app('flasher')->addSuccess('O encaminhamento para PTI foi criado com sucesso.');
-
-            }
-            
->>>>>>> ffcc50c78ff5861fd8b99aa39d82d04bfda08b5f
 
             return Redirect('/atendendo');
             
@@ -819,7 +733,6 @@ class AtendimentoFraternoController extends Controller
             $nome = session()->get('usuario.nome');
 
             $assistido = DB::table('atendimentos AS at')
-<<<<<<< HEAD
                     ->select('at.id AS ida', 'at.observacao',   'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao AS tst', 'tsx.tipo', 'pa.nome', 'at.status_atendimento', 'p1.dt_nascimento',  't.nm_tca', 't1.nm_tca AS t1', 't2.nm_tca AS t2', 't3.nm_tca AS t3','t4.nm_tca AS t4','t5.nm_tca AS t5','t6.nm_tca AS t6','t7.nm_tca AS t7','t8.nm_tca AS t8','t9.nm_tca AS t9','t10.nm_tca AS t10','t11.nm_tca AS t11','t12.nm_tca AS t12','t13.nm_tca AS t13','t14.nm_tca AS t14','t15.nm_tca AS t15','t16.nm_tca AS t16','t17.nm_tca AS t17','t18.nm_tca AS t18','t19.nm_tca AS t19')
                     ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id_pessoa', 'enc.')
                     ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
@@ -856,43 +769,6 @@ class AtendimentoFraternoController extends Controller
                     ->distinct('at.dh_chegada')       
                     ->orderBy('at.dh_chegada', 'desc')
                     ->get();
-=======
-            ->select('at.id AS ida', 'at.observacao',   'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao AS tst', 'tsx.tipo', 'pa.nome', 'at.status_atendimento', 'p1.dt_nascimento',  't.nm_tca', 't1.nm_tca AS t1', 't2.nm_tca AS t2', 't3.nm_tca AS t3','t4.nm_tca AS t4','t5.nm_tca AS t5','t6.nm_tca AS t6','t7.nm_tca AS t7','t8.nm_tca AS t8','t9.nm_tca AS t9','t10.nm_tca AS t10','t11.nm_tca AS t11','t12.nm_tca AS t12','t13.nm_tca AS t13','t14.nm_tca AS t14','t15.nm_tca AS t15','t16.nm_tca AS t16','t17.nm_tca AS t17','t18.nm_tca AS t18','t19.nm_tca AS t19')
-            ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id_pessoa', 'enc.')
-            ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
-            ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-            ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-            ->leftJoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-            ->leftJoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-            ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
-            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-            ->leftJoin('tp_sexo AS tsx', 'p1.sexo', 'tsx.id')
-            ->leftJoin('registro_tema AS rt', 'at.id', 'rt.id_atendimento')
-            ->leftJoin('tca AS t', 'rt.ies', 't.id')
-            ->leftJoin('tca AS t1', 'rt.obs', 't1.id')
-            ->leftJoin('tca AS t2', 'rt.coj', 't2.id')
-            ->leftJoin('tca AS t3', 'rt.fam', 't3.id')
-            ->leftJoin('tca AS t4', 'rt.soc', 't4.id')
-            ->leftJoin('tca AS t5', 'rt.prf', 't5.id')
-            ->leftJoin('tca AS t6', 'rt.sau', 't6.id')
-            ->leftJoin('tca AS t7', 'rt.pdg', 't7.id')
-            ->leftJoin('tca AS t8', 'rt.sex', 't8.id')
-            ->leftJoin('tca AS t9', 'rt.adp', 't9.id')
-            ->leftJoin('tca AS t10', 'rt.deq', 't10.id')
-            ->leftJoin('tca AS t11', 'rt.est', 't11.id')
-            ->leftJoin('tca AS t12', 'rt.abo', 't12.id')
-            ->leftJoin('tca AS t13', 'rt.sui', 't13.id')
-            ->leftJoin('tca AS t14', 'rt.dou', 't14.id')
-            ->leftJoin('tca AS t15', 'rt.son', 't15.id')
-            ->leftJoin('tca AS t16', 'rt.esp', 't16.id')
-            ->leftJoin('tca AS t17', 'rt.dpr', 't17.id')
-            ->leftJoin('tca AS t18', 'rt.dqu', 't18.id')
-            ->leftJoin('tca AS t19', 'rt.dts', 't19.id')
-            ->where('id_atendente', $atendente)
-            ->distinct('at.dh_chegada')       
-            ->orderBy('at.dh_chegada', 'desc')
-            ->get();
->>>>>>> ffcc50c78ff5861fd8b99aa39d82d04bfda08b5f
 
             foreach($assistido as $key => $teste){
                 $trata = DB::table('encaminhamento AS enc')
