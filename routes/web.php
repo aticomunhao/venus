@@ -86,9 +86,9 @@ Route::get('/iniciar-atendimento/{idat}', [AtendimentoFraternoController::class,
 Route::get('/gerar-enc_entre/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiene');
 Route::get('/gerar-enc_trata/{idat}', [AtendimentoFraternoController::class, 'enc_trata'])->name('afient');
 Route::get('/meus-atendimentos', [AtendimentoFraternoController::class, 'meus_atendimentos'])->name('afimeu');
-Route::get('/tratar/{idat}', [AtendimentoFraternoController::class, 'tratar'])->name('afitra');
-Route::post('/tratamentos/{idat}', [AtendimentoFraternoController::class, 'enc_trat'])->name('afitra');
-Route::get('/entrevistar/{idat}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
+Route::get('/tratar/{idat}/{idas}', [AtendimentoFraternoController::class, 'tratar'])->name('afitra');
+Route::post('/tratamentos/{idat}/{idas}', [AtendimentoFraternoController::class, 'enc_trat'])->name('afitra');
+Route::get('/entrevistar/{idat}/{idas}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
 Route::post('/entrevistas/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
 Route::get('/temas/{idat}', [AtendimentoFraternoController::class, 'pre_tema'])->name('afi');
 Route::post('/tematicas/{idat}', [AtendimentoFraternoController::class, 'tematica'])->name('afitem');
