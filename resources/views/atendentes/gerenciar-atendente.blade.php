@@ -47,11 +47,12 @@
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                     <thead style="text-align: center;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
+                            <th class="col">ID</th>
                             <th class="col">NOME</th>
                             <th class="col">CPF</th>
                             <th class="col">NASCIMENTO</th>
                             <th class="col">SEXO</th>
-                            <th class="col">GRUPOS</th>
+                            {{-- <th class="col">GRUPOS</th> --}}
                             <th class="col">DDD</th>
                             <th class="col">CELULAR</th>
                             <th class="col">STATUS</th>
@@ -61,11 +62,12 @@
                     <tbody style="font-size: 14px; color:#000000; text-align:center;">
                     @foreach($atendente as $atendentes)
                         <tr>
+                            <td scope="" >{{$atendentes->id}}</td>
                             <td scope="" style="text-align: left;">{{$atendentes->nome_completo}}</td>
                             <td scope="" >{{str_pad($atendentes->cpf, 11, "0", STR_PAD_LEFT)}}</td>
                             <td scope="" >{{date( 'd/m/Y' , strtotime($atendentes->dt_nascimento))}}</td>
                             <td scope="" >{{$atendentes->tipo}}</td>
-                            <td scope="" >{{$atendentes->gnome}}</td>
+                            {{-- <td scope="" >{{$atendentes->gnome}}</td> --}}
                             <td scope="" >{{$atendentes->ddd}}</td>
                             <td scope="" >{{$atendentes->celular}}</td>
                             <td scope="" >{{$atendentes->tpsta}}</td>
