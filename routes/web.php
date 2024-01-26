@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 
 // Controllers
 use App\Http\Controllers\AtendenteController;
+use App\Http\Controllers\AtendimentoApoioController;
 use App\Http\Controllers\TesteController;
 use App\Http\Controllers\GerenciarAtendimentoController;
 use App\Http\Controllers\AtendimentoFraternoController;
@@ -191,6 +192,15 @@ Route::post('/nova-reuniao', [ReuniaoMediunicaController::class, 'store'])->name
 
 
 
+/*
+|--------------------------------------------------------------------------
+| Nathan Routes
+|--------------------------------------------------------------------------
+*/
 
+//Atendentes de Apoio
+Route::get('/gerenciar-atendentes-apoio', [AtendimentoApoioController::class, 'index'])->name('indexAtendenteApoio');
+Route::get('/incluir-atendentes-apoio', [AtendimentoApoioController::class, 'create']);
+Route::any('/armazenar-atendentes-apoio', [AtendimentoApoioController::class, 'store']);
 
 
