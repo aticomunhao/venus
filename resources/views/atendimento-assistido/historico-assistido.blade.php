@@ -35,11 +35,6 @@
                     </div>
                     </fieldset>
                     <br>
-                    <div class="row">
-                        <div class="col">    
-                            <a class="btn btn-danger" href="/atendendo" style="text-align:right;" role="button">Fechar</a>                            
-                        </div>                        
-                    </div>
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Lista de atendimentos</legend>
                     <?php $a=1; $b=1; $c=1; $d=1; $e=1; ?>
                     @foreach($analisa as $analisas)

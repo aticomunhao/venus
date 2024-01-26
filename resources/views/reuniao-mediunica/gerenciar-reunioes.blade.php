@@ -9,7 +9,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 
 <br/>
-<div class="container";>
+<div class="container-fluid";>
 <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR REUNIÕES MEDIÚNICAS</h4>
     <div class="col-12">
         <div class="row justify-content-center">

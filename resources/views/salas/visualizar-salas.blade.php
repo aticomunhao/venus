@@ -28,19 +28,6 @@
                                             <option value="0" {{ $salaEditada->status_sala == 0 ? 'selected' : '' }}>Inativo</option>
                                         </select>
                                     </div>
-
-                                    <div class="col">
-                                        <br>
-                                        <label for="id_localizacao" class="form-label">Localização</label>
-                                        <select name="id_localizacao" class="form-control" required="required" disabled>
-                                            @foreach ($tipo_localizacao as $localizacao)
-                                                <option value="{{ $localizacao->id }}">{{ $localizacao->nome }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row">
                                     <div class="col">
                                         <br>
                                         <label for="id_motivo" class="form-label">Motivo</label>
@@ -52,6 +39,19 @@
                                         </select>
                                     </div>
 
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col">
+                                        <br>
+                                        <label for="id_localizacao" class="form-label">Localização</label>
+                                        <select name="id_localizacao" class="form-control" required="required" disabled>
+                                            @foreach ($tipo_localizacao as $localizacao)
+                                                <option value="{{ $localizacao->id }}">{{ $localizacao->nome }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                     <div class="col">
                                         <br>
                                         <label for="id_finalidade" class="form-label">Finalidade Sala</label>
@@ -152,8 +152,15 @@
                                             disabled>
                                     </div>
                                     <div class="col">
-                                        <label for="luz_azul">Luz azul</label>
+                                        <label for="luz_azul">Luz_azul</label>
                                         <input type="checkbox" name="luz_azul" @checked($salaEditada->luz_azul)
+                                            data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
+                                            data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
+                                            disabled>
+                                    </div>
+                                    <div class="col">
+                                        <label for="luz_azul">Luz_vermelha</label>
+                                        <input type="checkbox" name="luz_vermelha" @checked($salaEditada->luz_vermelha)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
                                             disabled>

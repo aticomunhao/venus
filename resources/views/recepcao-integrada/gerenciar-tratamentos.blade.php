@@ -12,7 +12,7 @@
 //echo "<meta HTTP-EQUIV='refresh' CONTENT='30;URL=gerenciar-atendimentos'>";
 ?>
 
-<div class="container";>
+<div class="container-fluid";>
 <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR TRATAMENTOS</h4>
     <div class="col-12">
         <div class="row justify-content-center">
