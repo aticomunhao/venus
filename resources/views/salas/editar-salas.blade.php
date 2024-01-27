@@ -38,18 +38,6 @@
                                 </select>
                             </div>
                             <div class="col">
-                                <label for="id_localizacao">Localização</label>
-                                <select class="form-select" name="id_localizacao" aria-label="form-select-lg example" value={{$salaEditada->id_localizacao}}>
-                                    <option value="{{ $salas[0]->id_localizacao }}"> {{ $salas[0]->nome }}</option>
-                                    @foreach ($tipo_localizacao as $localizacao )
-                                    <option value={{$localizacao->id}}>{{$localizacao->nome}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="col">
                                 Motivo
                                 <select class="form-select" aria-label=".form-select-lg example" name="id_motivo" id="tipo_motivo" disabled>
                                     <option value="{{ $salas[0]->id_motivo }}"> {{ $salas[0]->tipo }}</option>
@@ -58,6 +46,17 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="row mt-5">
+                            <div class="col">
+                                <label for="id_localizacao">Localização</label>
+                                <select class="form-select" name="id_localizacao" aria-label="form-select-lg example" value={{$salaEditada->id_localizacao}}>
+                                    <option value="{{ $salas[0]->id_localizacao }}"> {{ $salas[0]->nome }}</option>
+                                    @foreach ($tipo_localizacao as $localizacao )
+                                    <option value={{$localizacao->id}}>{{$localizacao->nome}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <br>
 
 
                             <div class="col-4">
@@ -80,8 +79,9 @@
                                 <input type="number" class="form-control" id="nr_lugares" name="nr_lugares"  min="1" max="1000"  oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->nr_lugares}} required="required">
                             </div>
                         </div>
+                    </div>
                         <br>
-                        <div class="row form-group">
+                        <div class="row mt-3 form-group">
                             <div class="col">
                                 <label for="ar_condicionado">Ar-cond</label>
                                 <input type="checkbox" name="ar_condicionado" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->ar_condicionado ? 'checked' : ''}}>

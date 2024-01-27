@@ -31,23 +31,23 @@
 
                                     <div class="col">
                                         <br>
-                                        <label for="id_localizacao" class="form-label">Localização</label>
-                                        <select name="id_localizacao" class="form-control" required="required" disabled>
-                                            @foreach ($tipo_localizacao as $localizacao)
-                                                <option value="{{ $localizacao->id }}">{{ $localizacao->nome }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
-                                        <br>
                                         <label for="id_motivo" class="form-label">Motivo</label>
                                         <select name="id_motivo" class="form-control" required="required" disabled>
                                             <option value="{{ $salas[0]->id_motivo }}">{{ $salas[0]->tipo }}</option>
                                             @foreach ($tipo_motivo as $tipo_motivos)
                                                 <option value="{{ $tipo_motivos->id }}">{{ $tipo_motivos->tipo }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+
+                                    <div class="row mt-4">
+                                    <div class="col">
+                                        <br>
+                                        <label for="id_localizacao" class="form-label">Localização</label>
+                                        <select name="id_localizacao" class="form-control" required="required" disabled>
+                                            @foreach ($tipo_localizacao as $localizacao)
+                                                <option value="{{ $localizacao->id }}">{{ $localizacao->nome }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -80,8 +80,9 @@
                                         <input type="number" id="nr_lugares" value="{{ $salaEditada->nr_lugares }}" class="form-control" placeholder="Número de Lugares" disabled>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="row mt-4">
+                                <div class="row mt-5">
                                     <div class="col">
                                         <label for="ar_condicionado">Ar-cond</label>
                                         <input type="checkbox" name="ar_condicionado" @checked($salaEditada->ar_condicionado)
