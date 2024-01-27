@@ -18,7 +18,7 @@
                         <div class="col">
                             <label for="id_pessoa" class="form-label">Nome</label>
                             <select class="form-select" name="id_pessoa">
-                                <option value="{{ $atendente->id }}">{{ $atendente->nome_completo }}</option>
+                                <option value="{{ $atendente->id}}">{{ $atendente->nome_completo }}</option>
                                 @foreach ($pessoas as $pessoa)
                                     <option value="{{ $pessoa->idp }}">{{ $pessoa->nome_completo }}</option>
                                 @endforeach
@@ -29,7 +29,7 @@
                     <div class="col">
                         <label for="status" class="form-label">Status</label>
                         <select class="form-select" name="status">
-                            <option value="{{ $atendente->id }}">{{ $atendente->tipos }}</option>
+                            <option value="{{ $atendente->id}}">{{ $atendente->tipos }}</option>
                             @foreach ($tipo_status_pessoa as $status)
                                 <option value="{{ $status->id }}">{{ $status->tipo }}</option>
                             @endforeach
@@ -43,7 +43,7 @@
                         <div class="col">
                             <label for="motivo" class="form-label">Motivo</label>
                             <select class="form-select" name="motivo">
-                                <option value="{{ $atendente->id }}">{{ $atendente->motivo }}</option>
+                                <option value="{{ $atendente->id}}">{{ $atendente->motivo }}</option>
                                 @foreach ($atendente_grupo as $atendenteItem)
                                     <option value="{{ $atendenteItem->id }}">{{ $atendenteItem->motivo }}</option>
                                 @endforeach
@@ -59,7 +59,7 @@
                                 <thead>
                                     <tr>
                                         <th>Nome grupo</th>
-                                        <th>Adicionar mais grupos?</th>
+                                        <th>Adicionar grupos</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,7 +82,7 @@
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="adicionarMaisGrupos" name="adicionar_mais_grupos">
                                                 <label class="form-check-label" for="adicionarMaisGrupos">
-                                                    Adicionar mais grupos?
+
                                                 </label>
                                             </div>
                                             <!-- Container para adicionar os campos dinamicamente -->
@@ -105,7 +105,19 @@
                     </div>
 
 
+                    <style>
 
+                        .table th input[type="checkbox"],
+                        .table td input[type="checkbox"] {
+                            width: 17px; /* Ajusta a largura do checkbox */
+                            height: 17px; /* Ajusta a altura do checkbox */
+                            cursor: pointer; /* Adiciona o cursor de ponteiro ao passar sobre o checkbox */
+                            border: 2px solid #000; /* Adiciona borda preta ao checkbox */
+                        }
+
+
+
+                    </style>
                     <div class="row mt-4 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
                             <a class="btn btn-danger" href="/gerenciar-atendentes" role="button">Cancelar</a>

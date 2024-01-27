@@ -74,14 +74,13 @@
                                 <a href="/editar-atendente/{{$atendentes->id}}" type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar">
                                     <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
                                 </a>
-
                                 <a href="/visualizar-atendente/{{$atendentes->id}}" type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
                                 </a>
-
-                                <a href="/excluir-atendente/{{$atendentes->id}}" type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">
-                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
+                                <a href="/inativar-atendente/{{$atendentes->id}}"class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao" onclick="confirmarExclusao('{{ $atendentes->id }}', '{{ $atendentes->nome_completo }}')" data-tt="tooltip" data-placement="top" title="inativar">
+                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </a>
+
                         </td>
 
                         </tr>

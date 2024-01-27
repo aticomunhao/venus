@@ -94,33 +94,32 @@ class MediumController extends Controller
 
     public function store(Request $request)
     {
-        // Obter os dados do formulário
+
         $id_pessoa = $request->input('id_pessoa');
         $id_setor = $request->input('id_setor');
         $id_funcao = $request->input('id_funcao');
         $tipo_ids = $request->input('id_tp_mediunidade');
         $id_grupo = $request->input('id_grupo');
 
-        // Verificar se o nome já existe na tabela 'medium'
         $existingMedium = DB::table('medium')
             ->where('id_pessoa', $id_pessoa)
             ->first();
 
-        // Verificar se o nome do médium está presente na tabela 'pessoas'
+
         $isValidPerson = DB::table('pessoas')->where('id', $id_pessoa)->exists();
 
         if ($existingMedium || !$isValidPerson) {
-            // Nome duplicado ou inválido, exiba uma mensagem de erro ou trate conforme necessário
+
             if ($existingMedium) {
                 app('flasher')->addError("Medium já cadastrado");
             }
             if (!$isValidPerson) {
                 app('flasher')->addError("Nome de pessoa inválido");
             }
-            return redirect()->back(); // Redirecione de volta para o formulário
+            return redirect()->back();
         }
 
-        // Se não houver duplicidade e o nome for válido, continue com a inserção
+
         $mediumId = DB::table('medium')->insertGetId([
             'id_pessoa' => $id_pessoa,
             'id_setor' => $id_setor,
@@ -128,7 +127,7 @@ class MediumController extends Controller
             'id_grupo' => $id_grupo,
         ]);
 
-        // Inserir dados na tabela 'mediunidade_medium'
+
         foreach ($tipo_ids as $tipo_id) {
             $datas_inicio = $request->input("data_inicio.{$tipo_id}");
 
@@ -141,7 +140,6 @@ class MediumController extends Controller
             }
         }
 
-        // Mensagem de sucesso e redirecionamento
         app('flasher')->addSuccess("Cadastrado com Sucesso");
         return redirect('gerenciar-mediuns');
     }
@@ -180,17 +178,17 @@ class MediumController extends Controller
             ->where('id_medium', $medium->idm)
             ->get();
 
-        // Inicialize os arrays
+
         $createdMediunidadeIds = [];
         $createdMediunidadeData = [];
 
-        // Preencha os arrays com as informações das mediunidades criadas
+
         foreach ($createdMediunidades as $createdMediunidade) {
             $createdMediunidadeIds[] = $createdMediunidade->id_mediunidade;
             $createdMediunidadeData[$createdMediunidade->id_mediunidade] = $createdMediunidade->data_inicio;
         }
 
-        // ... Seu código posterior ...
+
 
         return view('medium.editar-mediuns', compact('tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo', 'createdMediunidadeData', 'createdMediunidadeIds', 'tipo_mediunidade', 'mediunidade_medium', 'medium', 'pessoas', 'tipo_funcao', 'setor', 'tipo_mediunidade'));
     }
@@ -204,12 +202,12 @@ class MediumController extends Controller
         $dataManifestacao = $input['datas_manifestou'] ?? [];
         $tiposMediunidade = $input['mediunidades'] ?? [];
 
-        // Limpar todas as datas de manifestação existentes para esse médium
+
         DB::table('mediunidade_medium')->where('id_medium', $id)->delete();
 
-        // Iterar sobre os tipos de mediunidades e datas fornecidas
+
         foreach ($tiposMediunidade as $tipo) {
-            // Inserir a nova entrada na tabela intermediária
+
             DB::table('mediunidade_medium')->insert([
                 'id_medium' => $id,
                 'id_mediunidade' => $tipo,
@@ -217,7 +215,7 @@ class MediumController extends Controller
             ]);
         }
 
-        // Atualizar os dados do médium na tabela 'medium'
+
         $dataToUpdate = [
             'id_pessoa' => $input['id_pessoa'],
             'id_funcao' => $input['id_funcao'],
@@ -226,7 +224,7 @@ class MediumController extends Controller
         ];
         DB::table('medium')->where('id', $id)->update($dataToUpdate);
 
-        // Verificar se a chave 'motivo_status' está presente em $input antes de acessá-la
+
         $dataToUpdatePessoas = [
             'status' => $input['status'] ?? null,
             'motivo_status' => $input['motivo_status'] ?? null,
@@ -274,19 +272,18 @@ class MediumController extends Controller
 
     public function destroy(string $id)
     {
-        // Obtém os detalhes da medium que será excluída
         $medium = DB::table('medium')->where('id', $id)->first();
 
-        // Se a medium não existir, redirecione com uma mensagem de erro
+
         if (!$medium) {
             app('flasher')->addError('A medium não foi encontrada.');
             return redirect('/gerenciar-mediuns');
         }
         DB::table('mediunidade_medium')->where('id_medium', $id)->delete();
-        // Exclui a medium
+
         DB::table('medium')->where('id', $id)->delete();
 
-        // Redireciona com uma mensagem de sucesso
+        
         app('flasher')->addError('Excluído com sucesso.');
         return redirect('/gerenciar-mediuns');
     }

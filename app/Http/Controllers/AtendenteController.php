@@ -161,9 +161,8 @@ class AtendenteController extends Controller
     {
 
         $gruposAtendente = DB::table('atendente_grupo')
-        ->where('id_atendente', $id)
-        ->get();
-
+            ->where('id_atendente', $id)
+            ->get();
 
 
         $pessoas = DB::select('select id as idp, nome_completo from pessoas');
@@ -213,100 +212,100 @@ class AtendenteController extends Controller
 
 
         // Retorna a view com os dados
-        return view('atendentes/editar-atendente', compact('gruposAtendente','pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
+        return view('atendentes/editar-atendente', compact('gruposAtendente', 'pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
     }
 
-    public function update(Request $request,$id)
-{
+    public function update(Request $request, $id)
+    {
+        $data = date("Y-m-d H:i:s");
+        $dt_fim = $request->input('dt_fim');
+        $motivo = $request->input('motivo');
 
-    dd($request->input('id_pessoa'));
-    $data = date("Y-m-d H:i:s");
-
-    // Atualizar tabela "atendentes"
-    DB::table('atendentes')
-        ->where('id_pessoa', $id)
-        ->update([
-            'id_pessoa' => $request->input('id_pessoa'),
-        ]);
-
-    // Atualizar tabela "atendente_grupo"
-    DB::table('atendente_grupo')
-        ->where('id_atendente', $id)
-        ->delete(); // Excluir os registros antigos
-
-    // Inserir os novos registros
-    if ($request->has('id_grupo') && is_array($request->input('id_grupo'))) {
-        foreach ($request->input('id_grupo') as $idGrupo) {
-            DB::table('atendente_grupo')->insert([
-                'id_atendente' => $id,
-                'id_grupo' => $idGrupo,
-                'dt_inicio' => $data,
+        DB::table('atendentes')
+            ->where('id', $id)
+            ->update([
+                'id_pessoa' => $request->input('id_pessoa'),
             ]);
+
+        DB::table('atendente_grupo')
+            ->where('id_atendente', $id)
+            ->delete();
+
+        if ($request->has('id_grupo') && is_array($request->input('id_grupo'))) {
+            foreach ($request->input('id_grupo') as $idGrupo) {
+                DB::table('atendente_grupo')->insert([
+                    'id_atendente' => $id,
+                    'id_grupo' => $idGrupo,
+                    'dt_inicio' => $data,
+                    'dt_fim' => $dt_fim,
+                    'motivo' => $motivo,
+                ]);
+            }
         }
+
+        return redirect()->route('nome_da_rota_para_visualizar_detalhes', ['id' => $id])->with('success', 'Atendente atualizado com sucesso.');
     }
-
-    app('flasher')->addSuccess('Os dados foram atualizados com sucesso.');
-
-    return redirect('gerenciar-atendentes');
-}
 
 
 
     public function show($id)
-{
+    {
+
+        $gruposAtendente = DB::table('atendente_grupo')
+            ->where('id_atendente', $id)
+            ->get();
+
+        $pessoas = DB::select('select id as idp, nome_completo from pessoas');
+        $tipo_status_pessoa = DB::select('select * from tipo_status_pessoa');
+        $grupo = DB::select('select id, nome from grupo');
+        $atendentes = DB::select('select * from atendentes');
+        $atendente_grupo = DB::select('select * from atendente_grupo');
+
+        $atendente = DB::table('atendentes AS ad')
+            ->select(
+                'ad.id',
+                'p.id AS idp',
+                'p.nome_completo',
+                'p.cpf',
+                'tps.tipo',
+                'ag.id_grupo',
+                'p.cpf',
+                'p.ddd',
+                'p.email',
+                'p.celular',
+                'ag.id_atendente',
+                'ag.dt_inicio',
+                'ag.dt_fim',
+                'ag.motivo',
+                'ag.dt_fim',
+                'p.dt_nascimento',
+                'p.sexo',
+                'p.email',
+                'p.ddd',
+                'p.celular',
+                'tsp.id AS idtps',
+                'p.status',
+                'tsp.tipo AS tipos',
+                'd.id as did',
+                'd.descricao as ddesc',
+                'p.motivo_status',
+                'g.nome AS nome_grupo'
+            )
 
 
-    $pessoas = DB::select('select id as idp, nome_completo from pessoas');
-    $tipo_status_pessoa = DB::select('select * from tipo_status_pessoa');
-    $grupo = DB::select('select id, nome from grupo');
-    $atendentes = DB::select('select * from atendentes');
-    $atendente_grupo = DB::select('select * from atendente_grupo');
 
-    $atendente = DB::table('atendentes AS ad')
-        ->select(
-            'ad.id',
-            'p.id AS idp',
-            'p.nome_completo',
-            'p.cpf',
-            'tps.tipo',
-            'ag.id_grupo',
-            'p.cpf',
-            'p.ddd',
-            'p.email',
-            'p.celular',
-            'ag.id_atendente',
-            'ag.dt_inicio',
-            'ag.dt_fim',
-            'ag.motivo',
-            'ag.dt_fim',
-            'p.dt_nascimento',
-            'p.sexo',
-            'p.email',
-            'p.ddd',
-            'p.celular',
-            'tsp.id AS idtps',
-            'p.status',
-            'tsp.tipo AS tipos',
-            'd.id as did',
-            'd.descricao as ddesc',
-            'p.motivo_status',
-            'g.nome AS nome_grupo'
-        )
+            ->where('ad.id', $id)
+            ->leftJoin('pessoas AS p', 'ad.id_pessoa', '=', 'p.id')
+            ->leftJoin('atendente_grupo AS ag', 'ag.id_atendente', '=', 'ad.id')
+            ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', '=', 'tsp.id')
+            ->leftJoin('tp_sexo AS tps', 'p.sexo', '=', 'tps.id')
+            ->leftJoin('tp_ddd AS d', 'p.ddd', '=', 'd.id')
+            ->leftJoin('grupo AS g', 'ag.id_grupo', '=', 'g.id')
+            ->first();
 
-
-
-        ->where('ad.id', $id)
-        ->leftJoin('pessoas AS p', 'ad.id_pessoa', '=', 'p.id')
-        ->leftJoin('atendente_grupo AS ag', 'ag.id_atendente', '=', 'ad.id')
-        ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', '=', 'tsp.id')
-        ->leftJoin('tp_sexo AS tps', 'p.sexo', '=', 'tps.id')
-        ->leftJoin('tp_ddd AS d', 'p.ddd', '=', 'd.id')
-        ->leftJoin('grupo AS g', 'ag.id_grupo', '=', 'g.id')
-        ->first();
-
-    // Retorna a view com os dados
-    return view('atendentes/visualizar-atendente', compact('pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
-}
+        // Retorna a view com os dados
+        return view('atendentes/visualizar-atendente', compact('gruposAtendente','pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
+    }
 
     public function destroy($id)
     {
