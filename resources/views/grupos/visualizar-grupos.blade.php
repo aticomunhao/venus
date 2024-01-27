@@ -69,13 +69,13 @@
                                     <div class="col">
                                         <br>
                                         Data início
-                                        <input type="time" class="form-control" id="h_inicio" name="data_inicio" value="{{ $grupo[0]->data_inicio}}" disabled>
+                                        <input type="date" class="form-control" id="h_inicio" name="data_inicio" value="{{ $grupo[0]->data_inicio}}" disabled>
                                     </div>
 
                                     <div class="col">
                                         <br>
                                         Data fim
-                                        <input type="time" class="form-control" id="h_fim" name="data_fim" value="{{ $grupo[0]->data_fim }}" disabled>
+                                        <input type="date" class="form-control" id="h_fim" name="data_fim" value="{{ $grupo[0]->data_fim }}" disabled>
                                     </div>
                                 <div class="row justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">

@@ -13,7 +13,8 @@
             <div class="card-body">
                 <form class="form-horizontal mt-2" method="post" action="/atualizar-atendente/{{ $atendente->id }}">
                     @csrf
-                    <div class="row mt-4">
+
+                    <div class="row">
                         <div class="col">
                             <label for="id_pessoa" class="form-label">Nome</label>
                             <select class="form-control" name="id_pessoa" disabled>
@@ -25,7 +26,9 @@
                         </div>
                     </div>
 
-                    <div class="row mt-4">
+                    <br>
+
+                    <div class="row">
                         <div class="col">
                             <label for="id_grupo" class="form-label">Nome grupo</label>
                             <select class="form-control" name="id_grupo" disabled>
@@ -39,18 +42,20 @@
                         <div class="col">
                             <label for="status" class="form-label">Status</label>
                             <select class="form-control" name="status" disabled>
-                                <option value="{{ $atendente->id }}">{{ $atendente->tpsta }}</option>
+                                <option value="{{ $atendente->id }}">{{ $atendente->tipos }}</option>
                                 @foreach ($tipo_status_pessoa as $status)
-                                    <option value="{{ $status->id }}">{{ $status->tipo }}</option>
+                                <option value="{{ $status->id }}">{{ $status->tipo }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="row mt-4">
+                    </div>
+
+                    <div class="row mt-4">
                         <div class="col">
                             <label for="data_fim" class="form-label">Data fim</label>
                             <input type="date" class="form-control" id="data_fim" name="data_fim" disabled value="{{ $atendente->dt_fim }}">
                         </div>
-                        <br>
+
                         <div class="col">
                             <label for="motivo" class="form-label">Motivo</label>
                             <select class="form-control" name="motivo" disabled>
@@ -61,8 +66,9 @@
                             </select>
                         </div>
                     </div>
+
                     <br>
-                    </div>
+
                     <div class="row mt-4 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
                             <a class="btn btn-danger" href="/gerenciar-atendentes" role="button">Cancelar</a>

@@ -16,6 +16,14 @@
                 <form class="form-horizontal mt-2" method="post" action="{{ route('cadastrar') }}">
                     @csrf
                     <div class="row">
+                        <div class="col-1">
+                            <label for="id_pessoa" class="form-label">Id</label>
+                            <select class="form-select" aria-label=".form-select-lg example" name="id">
+                                @foreach ($pessoas as $pessoa)
+                                    <option value="{{ $pessoa->idp }}">{{ $pessoa->idp }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col">
                             <label for="id_pessoa" class="form-label">Nome</label>
                             <select class="form-select" aria-label=".form-select-lg example" name="id_pessoa">
@@ -37,7 +45,7 @@
 
                         <div class="row mt-4">
                             <div class="col" id="additional-group-fields">
-                                <!-- O conteúdo será adicionado dinamicamente aqui -->
+
                             </div>
                         </div>
 
@@ -51,10 +59,10 @@
                         </div>
                         <style>
                             .custom-checkbox input[type="checkbox"] {
-                                border: 2px solid #000; /* Cor preta para a borda do checkbox */
-                                width: 17px; /* Largura personalizada (ajuste conforme necessário) */
+                                border: 2px solid #000;
+                                width: 17px;
                                 height: 17px;
-                                cursor: pointer; /* Adiciona o cursor de ponteiro ao passar sobre o checkbox */
+                                cursor: pointer;
                             }
                         </style>
 
@@ -63,7 +71,7 @@
                         <div class="col" id="group_selection" style="display: none;">
                             <label for="selected_groups" class="form-label">Selecione a quantidade de grupos:</label>
                             <select class="form-select" name="selected_groups" id="selected_groups">
-                                <!-- Adicione aqui as opções desejadas, por exemplo, 1, 2, 3, ... -->
+
                                 @for ($i = 1; $i <= 12; $i++)
                                     <option value="{{ $i }}">{{ $i }}</option>
                                 @endfor
@@ -73,10 +81,10 @@
 
                     <br>
 
-                    <!-- Inclua a biblioteca jQuery -->
+
                     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-                    <!-- Adicione o script JavaScript para manipular a exibição dos campos adicionais -->
+
                     <script>
                         $(document).ready(function() {
                             $('#multiple_groups_checkbox').on('change', function() {
@@ -84,7 +92,7 @@
                                 $('#group_selection').toggle(isChecked);
 
                                 if (!isChecked) {
-                                    // Se o checkbox não estiver marcado, limpa os campos adicionais
+
                                     $('#additional-group-fields').empty();
                                 }
                             });
@@ -94,10 +102,10 @@
                             });
 
                             function updateAdditionalFields() {
-                                // Limpa os campos adicionais
+
                                 $('#additional-group-fields').empty();
 
-                                // Adiciona os campos adicionais com base na quantidade selecionada
+
                                 var selectedQuantity = parseInt($('#selected_groups').val());
                                 for (var i = 0; i < selectedQuantity; i++) {
                                     var newField = $('#additional-group-field-template').clone();
@@ -109,11 +117,11 @@
                         });
                     </script>
 
-                    <!-- Modelo de campo adicional oculto -->
+
                     <div id="additional-group-field-template" class="col" style="display: none;">
                         <label for="additional_id_grupo" class="form-label">Nome grupo adicional</label>
                         <select class="form-select" aria-label=".form-select-lg example">
-                            <option value=""></option> <!-- Opção em branco -->
+                            <option value=""></option>
                             @foreach ($grupo as $grupos)
                                 <option value="{{ $grupos->id }}">{{ $grupos->nome }}</option>
                             @endforeach

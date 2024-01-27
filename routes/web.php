@@ -98,20 +98,7 @@ Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->na
 Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
 
 
-// Atendentes
-Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('ateger'); // Exibe todos atendentes
-Route::get('/gerenciar-atendende/{id}', [AtendenteController::class, 'show'])->name('gerenciar-atendente_show'); // Exibir detalhes?
-Route::get('/novo-atendente', [AtendenteController::class, 'create'])->name('novo-atendente'); // Select de pessoas -> atendentes.
-Route::post('/inserir-atendente', [AtendenteController::class, 'RequestTest'])->name('inserir_atendente');
 
-// Grupos
-Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
-Route::get('criar-grupos', [GrupoController::class,'create'])->name('');
-Route::post('incluir-grupos', [GrupoController::class,'store']);
-Route::get('/editar-grupos/{id}', [GrupoController::class,'edit']);
-Route::post('/atualizar-grupos/{id}', [GrupoController::class,'update'])->name('');
-Route::any('/deletar-grupos/{id}', [GrupoController::class,'destroy']);
-Route::get('/visualizar-grupos/{id}', [GrupoController::class, 'show'])->name('');
 
 // Atendentes Misc/Testes
 Route::get('/visualizar-atendendes/{id}', [AtendenteController::class, 'show_detalhes_atendente'])->name('show_atendente');
@@ -133,6 +120,25 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 |--------------------------------------------------------------------------
 */
 
+// Atendentes
+Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('list'); // Exibe todos atendentes
+Route::get('/criar-atendente', [AtendenteController::class, 'create'])->name('atualizar');
+Route::post('/incluir-atendente', [AtendenteController::class, 'store'])->name('cadastrar');
+Route::get('/editar-atendente/{id}', [AtendenteController::class, 'edit'])->name('');
+Route::post('/atualizar-atendente/{id}', [AtendenteController::class, 'update'])->name('');
+Route::get('/visualizar-atendente/{id}', [AtendenteController::class, 'show'])->name(''); // Exibir detalhes?
+Route::any('/excluir-atendente/{id}', [AtendenteController::class, 'destroy'])->name(''); // Exibir detalhes?
+
+// Grupos
+Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
+Route::get('criar-grupos', [GrupoController::class,'create'])->name('');
+Route::post('incluir-grupos', [GrupoController::class,'store']);
+Route::get('/editar-grupos/{id}', [GrupoController::class,'edit']);
+Route::post('/atualizar-grupos/{id}', [GrupoController::class,'update'])->name('');
+Route::any('/deletar-grupos/{id}', [GrupoController::class,'destroy']);
+Route::get('/visualizar-grupos/{id}', [GrupoController::class, 'show'])->name('');
+
+
 // Fato
 //Route::post('/Gerenciarm', [PessoaController::class, 'create'])->ID('pesdex');
 Route::get('/gerenciar-fatos', [FatosController::class, 'index'])->name('descricao');
@@ -151,7 +157,7 @@ Route::post('/incluir-salas', [SalaController::class, 'store']);
 Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
 Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 
-//Méaiuns
+//Médiuns
 Route::get('/gerenciar-mediuns', [MediumController::class, 'index'])->name('lista');
 Route::get('/editar-mediuns/{id}', [MediumController::class, 'edit'])->name('');
 Route::post('/atualizar-mediuns/{id}', [MediumController::class, 'update'])->name('');
