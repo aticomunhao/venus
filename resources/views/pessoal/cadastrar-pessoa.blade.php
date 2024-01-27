@@ -2,7 +2,7 @@
         <div class="modal-body">
             <form>
             @csrf
-            <div class="container-fluid"> 
+            <div class="container"> 
                     <div class="row">
                         <div class="col-md-4">
                             <label for="txtAssNome">Nome:</label>

@@ -5,17 +5,27 @@
 @endsection
 
 @section('content')
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <div class="container-fluid";>
+
+    <div class="container";>
+
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
             GERENCIAR ATENDENTES DE APOIO</h4>
         <div class="col-12">
             <div class="row justify-content-center">
                 <form action="" class="form-horizontal mt-4" method="GET">
                     <div class="row">
-                        <div class="col">Nome
+                        <div class="col-4">Nome
                             <input class="form-control" type="text" maxlength="45"
                                 oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                 id="1" name="nome">
+                        </div>
+                        <div class="col-2">CPF
+                            <input class="form-control" type="text" maxlength="45"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                id="1" name="cpf">
                         </div>
 
                         <div class="col"><br>
@@ -32,7 +42,7 @@
         </div>
     </div>
     <hr>
-    Quantidade filtrada:
+    Quantidade filtrada:{{ $conta }}
     <div class="table">
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
             <thead style="text-align: center;">
@@ -46,19 +56,33 @@
                 </tr>
             </thead>
             <tbody style="font-size: 14px; color:#000000; text-align:center;">
+                @foreach ($atendente as $atendentes)
+                    <tr>
+                        <td>{{ $atendentes->nome_completo }}</td>
+                        <td>{{ str_pad($atendentes->cpf, 11, '0', STR_PAD_LEFT) }}</td>
+                        <td>{{ date('G:i', strtotime($atendentes->dh_inicio)) }}</td>
+                        <td>{{ date('G:i', strtotime($atendentes->dh_fim)) }}</td>
+                        <td>{{ $atendentes->tipo }}</td>
+                        <td scope="">
 
-                @foreach ( $atendente as  $atendentes)
-                <tr>
-                    <td>{{$atendentes->nome_completo}}</td>
-                    <td>{{ str_pad($atendentes->cpf, 11, "0", STR_PAD_LEFT)}}</td>
-                    <td>{{date('G:i', strtotime($atendentes->dh_inicio))}}</td>
-                    <td>{{date('G:i', strtotime($atendentes->dh_fim))}}</td>
-                    <td>{{$atendentes->tipo}}</td>
-                </tr>
+                            <a href="/editar-atendentes-apoio/{{ $atendentes->id }}" type="button"
+                                class="btn btn-outline-warning btn-sm"  data-tt="tooltip" data-placement="top" title="Editar">
+                                <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                            </a>
+
+                            <a href="" type="button"
+                                class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
+                                title="Visualizar">
+                                <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
+                            </a>
+                        </td>
+                    </tr>
                 @endforeach
-
             </tbody>
-            @endsection
-
-
-
+            <script>
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
+                var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl)
+                })
+            </script>
+        @endsection

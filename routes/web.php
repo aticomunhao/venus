@@ -87,9 +87,9 @@ Route::get('/iniciar-atendimento/{idat}', [AtendimentoFraternoController::class,
 Route::get('/gerar-enc_entre/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiene');
 Route::get('/gerar-enc_trata/{idat}', [AtendimentoFraternoController::class, 'enc_trata'])->name('afient');
 Route::get('/meus-atendimentos', [AtendimentoFraternoController::class, 'meus_atendimentos'])->name('afimeu');
-Route::get('/tratar/{idat}', [AtendimentoFraternoController::class, 'tratar'])->name('afitra');
-Route::post('/tratamentos/{idat}', [AtendimentoFraternoController::class, 'enc_trat'])->name('afitra');
-Route::get('/entrevistar/{idat}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
+Route::get('/tratar/{idat}/{idas}', [AtendimentoFraternoController::class, 'tratar'])->name('afitra');
+Route::post('/tratamentos/{idat}/{idas}', [AtendimentoFraternoController::class, 'enc_trat'])->name('afitra');
+Route::get('/entrevistar/{idat}/{idas}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
 Route::post('/entrevistas/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
 Route::get('/temas/{idat}', [AtendimentoFraternoController::class, 'pre_tema'])->name('afi');
 Route::post('/tematicas/{idat}', [AtendimentoFraternoController::class, 'tematica'])->name('afitem');
@@ -98,6 +98,11 @@ Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->na
 Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
 
 
+// Atendentes
+Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('ateger'); // Exibe todos atendentes
+Route::get('/gerenciar-atendende/{id}', [AtendenteController::class, 'show'])->name('gerenciar-atendente_show'); // Exibir detalhes?
+Route::get('/novo-atendente', [AtendenteController::class, 'create'])->name('novo-atendente'); // Select de pessoas -> atendentes.
+Route::post('/inserir-atendente', [AtendenteController::class, 'RequestTest'])->name('inserir_atendente');
 
 // Grupos
 Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
@@ -128,20 +133,6 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 |--------------------------------------------------------------------------
 */
 
-// Atendentes
-Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('list'); // Exibe todos atendentes
-Route::get('/criar-atendente', [AtendenteController::class, 'create'])->name('');
-Route::get('/editar-atendente/{id}', [AtendenteController::class, 'edit'])->name('');
-Route::post('/atualizar-atendente/{id}', [AtendenteController::class, 'update'])->name('');
-Route::post('/incluir-atendente', [AtendenteController::class, 'store'])->name('cadastrar');
-Route::get('/visualizar-atendente/{id}', [AtendenteController::class, 'show'])->name(''); // Exibir detalhes?
-Route::any('/excluir-atendente/{id}', [AtendenteController::class, 'destroy'])->name(''); // Exibir detalhes?
-
-//Atendentes de Apoio
-Route::get('/gerenciar-atendentes-apoio', [AtendimentoApoioController::class, 'index'])->name('indexAtendenteApoio');
-Route::get('/incluir-atendentes-apoio', [AtendimentoApoioController::class, 'create']);
-Route::any('/armazenar-atendentes-apoio', [AtendimentoApoioController::class, 'store']);
-
 // Fato
 //Route::post('/Gerenciarm', [PessoaController::class, 'create'])->ID('pesdex');
 Route::get('/gerenciar-fatos', [FatosController::class, 'index'])->name('descricao');
@@ -160,7 +151,7 @@ Route::post('/incluir-salas', [SalaController::class, 'store']);
 Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
 Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 
-//Médiuns
+//Méaiuns
 Route::get('/gerenciar-mediuns', [MediumController::class, 'index'])->name('lista');
 Route::get('/editar-mediuns/{id}', [MediumController::class, 'edit'])->name('');
 Route::post('/atualizar-mediuns/{id}', [MediumController::class, 'update'])->name('');
@@ -201,6 +192,15 @@ Route::post('/nova-reuniao', [ReuniaoMediunicaController::class, 'store'])->name
 
 
 
+/*
+|--------------------------------------------------------------------------
+| Nathan Routes
+|--------------------------------------------------------------------------
+*/
 
+//Atendentes de Apoio
+Route::get('/gerenciar-atendentes-apoio', [AtendimentoApoioController::class, 'index'])->name('indexAtendenteApoio');
+Route::get('/incluir-atendentes-apoio', [AtendimentoApoioController::class, 'create']);
+Route::any('/armazenar-atendentes-apoio', [AtendimentoApoioController::class, 'store']);
 
 

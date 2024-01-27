@@ -14,9 +14,6 @@ class AtendenteController extends Controller
 {
 
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
 
@@ -94,7 +91,7 @@ class AtendenteController extends Controller
     public function store(Request $request)
     {
         $data = date("Y-m-d H:i:s");
-dd($request);
+
         $id_pessoa = $request->input('id_pessoa');
         $selectedGroupIds = $request->input('id_grupo');
 
@@ -126,7 +123,14 @@ dd($request);
             return redirect()->back(); // Redirecione de volta para o formulário
         }
 
+        $atendente = $atendente->orderBy('p.status','asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
 
+        //dd($pessoa);
+        $stap = DB::select("select
+                        id as ids,
+                        tipo
+                        from tipo_status_pessoa t
+                        ");
 
         app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
 
@@ -266,16 +270,14 @@ dd($request);
     public function destroy($id)
     { {
 
-            $ids = DB::table('atendentes')->where('id', $id)->get();
-            $teste = session()->get('usuario');
-
-            $verifica = DB::table('historico_venus')->where('fato', $id)->count('fato');
-
-
-            $data = date("Y-m-d H:i:s");
+        $motivo = DB::select('select id, tipo from tipo_motivo order by tipo');
 
 
 
+        $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.sexo, p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
+        left join tp_sexo tps on (p.sexo = tps.id)
+        left join tp_ddd d on (p.ddd = d.id)
+        where p.id = $idp");
 
 
 

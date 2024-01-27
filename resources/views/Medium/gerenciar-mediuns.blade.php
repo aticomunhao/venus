@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container-fluid">
+    <div class="container">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR MÉDIUNS
         </h4>
 
@@ -18,35 +18,28 @@
                         <input class="form-control" type="text" id="cpf_pesquisa" name="cpf_pesquisa"
                             placeholder="Pesquisar cpf" value="{{ request('cpf_pesquisa') }}">
                     </div>
-
                     <div class="col-2">
                         Grupo
-                        <div class="dropdown">
-                            <input class="form-control" type="text" id="grupo_pesquisa_input" name="grupo_pesquisa_input" placeholder="Pesquisar grupo">
-                            <ul class="dropdown-menu" id="grupo_dropdown">
-                                @foreach ($grupos as $grupoId => $grupoNome)
-                                    <li class="dropdown-item" data-value="{{ $grupoId }}">{{ $grupoNome }}</li>
-                                @endforeach
-                            </ul>
-                            <input type="hidden" name="grupo_pesquisa" id="grupo_pesquisa" value="{{ $grupoPesquisa }}">
-                        </div>
+                        <select class="form-select" id="grupo_pesquisa" name="grupo_pesquisa">
+                            <option value="" selected>Selecione o grupo</option>
+                            @foreach ($grupos as $grupoId => $grupoNome)
+                                <option value="{{ $grupoId }}" {{ $grupoPesquisa == $grupoId ? 'selected' : '' }}>
+                                    {{ $grupoNome }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-2">
                         Setor
-                        <div class="dropdown">
-                            <input class="form-control" type="text" id="setor_pesquisa_input" name="setor_pesquisa_input" placeholder="Pesquisar setor">
-                            <ul class="dropdown-menu" id="setor_dropdown">
-                                @foreach ($setores as $setorId => $setorNome)
-                                    <li class="dropdown-item" data-value="{{ $setorId }}">{{ $setorNome }}</li>
-                                @endforeach
-                            </ul>
-                            <input type="hidden" name="setor_pesquisa" id="setor_pesquisa" value="{{ $setorPesquisa }}">
-                        </div>
+                        <select class="form-select" id="setor_pesquisa" name="setor_pesquisa">
+                            <option value="" selected>Selecione o setor</option>
+                            @foreach ($setores as $setorId => $setorNome)
+                                <option value="{{ $setorId }}" {{ $setorPesquisa == $setorId ? 'selected' : '' }}>
+                                    {{ $setorNome }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-
-
-
-
 
                     <div class="col">
                         <br>
@@ -137,46 +130,6 @@
     <script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
     <link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-    <script>
-        // Função para filtrar opções de dropdown
-        function filterDropdown(inputId, dropdownId) {
-            const input = document.getElementById(inputId);
-            const filter = input.value.toUpperCase();
-            const dropdown = document.getElementById(dropdownId);
-            const items = dropdown.getElementsByTagName('li');
-
-            for (let i = 0; i < items.length; i++) {
-                const textValue = items[i].textContent || items[i].innerText;
-                if (textValue.toUpperCase().indexOf(filter) > -1) {
-                    items[i].style.display = '';
-                } else {
-                    items[i].style.display = 'none';
-                }
-            }
-        }
-
-        // Adiciona evento de input para cada campo de pesquisa
-        document.getElementById('grupo_pesquisa_input').addEventListener('input', function () {
-            filterDropdown('grupo_pesquisa_input', 'grupo_dropdown');
-        });
-
-        document.getElementById('setor_pesquisa_input').addEventListener('input', function () {
-            filterDropdown('setor_pesquisa_input', 'setor_dropdown');
-        });
-
-        // Adiciona evento de clique para cada item de dropdown
-        const dropdownItems = document.querySelectorAll('.dropdown-item');
-        dropdownItems.forEach(function (item) {
-            item.addEventListener('click', function () {
-                const dropdownId = this.parentElement.id;
-                const inputId = dropdownId.replace('_dropdown', '_pesquisa_input');
-                const hiddenInputId = inputId.replace('_input', '');
-                document.getElementById(inputId).value = this.textContent.trim();
-                document.getElementById(hiddenInputId).value = this.getAttribute('data-value');
-            });
-        });
-    </script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -197,3 +150,4 @@
         }
     </script>
 @endsection
+

@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title') Gerenciar Atendentes Fraternos @endsection
+@section('title') Gerenciar Pessoas @endsection
 
 @section('content')
 
-<div class="container-fluid";>
+<div class="container";>
 <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ATENDENTES FRATERNOS</h4>
     <div class="col-12">
         <div class="row justify-content-center">
-                <form action="{{route('list')}}" class="form-horizontal mt-4" method="GET" >
+                <form action="{{route('ateger')}}" class="form-horizontal mt-4" method="GET" >
                 <div class="row">
                     <div class="col">Nome
                         <input class="form-control" type="text" maxlength="45" oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="1" name="nome" value="{{$nome}}">
@@ -21,22 +21,22 @@
                             <option value=""></option>
                             @foreach($grupos as $gr)
                             <option value="{{$gr->id}}">{{$gr->nome}}</option>
-                            @endforeach
+                            @endforeach                   
                         </select>
                     </div>
                     <div class="col">Status
                         <select class="form-select" id="4" name="status" type="numeric" required="required">
-                            <option value="1">Ativo</option>
+                            <option value="1">Ativo</option> 
                             <option value="">Todos</option>
-                            <option value="2">Inativo</option>
+                            <option value="2">Inativo</option>                   
                         </select>
                     </div>
                     <div class="col"><br>
                         <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
                         <a href="/gerenciar-pessoas"><input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
                     </form>
-                    <a href="/criar-atendente"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;" type="button" value="Novo Atendente +"></a>
-
+                    <a href="/dados-pessoa"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;" type="button" value="Nova Pessoa +"></a>                            
+                        
                     </div>
                 </div>
         </div>
@@ -56,13 +56,18 @@
                             <th class="col">DDD</th>
                             <th class="col">CELULAR</th>
                             <th class="col">STATUS</th>
+                            <th class="col">MOTIVO</th>
                             <th class="col">AÇÕES</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 14px; color:#000000; text-align:center;">
                     @foreach($atendente as $atendentes)
+<<<<<<< HEAD:resources/views/atendentes/gerenciar-atendente.blade.php
                         <tr>
                             <td scope="" >{{$atendentes->id}}</td>
+=======
+                        <tr>                        
+>>>>>>> 90bea1975bd4bdbdb337824ce46b46f6bcb6f3de:resources/views/atendentes/gerenciar-atendentes.blade.php
                             <td scope="" style="text-align: left;">{{$atendentes->nome_completo}}</td>
                             <td scope="" >{{str_pad($atendentes->cpf, 11, "0", STR_PAD_LEFT)}}</td>
                             <td scope="" >{{date( 'd/m/Y' , strtotime($atendentes->dt_nascimento))}}</td>
@@ -71,20 +76,13 @@
                             <td scope="" >{{$atendentes->ddd}}</td>
                             <td scope="" >{{$atendentes->celular}}</td>
                             <td scope="" >{{$atendentes->tpsta}}</td>
-                            <td scope="">
-                                <a href="/editar-atendente/{{$atendentes->id}}" type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar">
-                                    <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
-                                </a>
-
-                                    <a href="/visualizar-atendente/{{$atendentes->id}}" type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">
-                                        <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
-                                    </a>
-                                    <a href="/excluir-atendente/{{$atendentes->id}}" type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">
-                                        <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
-                                    </a>
-                            </td>
+                            <td scope="" >{{$atendentes->motivo_status}}</td>
+                            <td scope="">                                
+                                <a href="/editar-atendente/{{$atendentes->idp}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/inativar-atendente/{{$atendentes->idp}}"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i></button></a>
+                            </td>                            
                         </tr>
-                        @endforeach
+                        @endforeach                        
                     </tbody>
                 </table>
             </div class="d-flex justify-content-center">
@@ -98,7 +96,7 @@
 
 @endsection
 
-@section('footerScript')
+@section('footerScript')  
 
 
 @endsection

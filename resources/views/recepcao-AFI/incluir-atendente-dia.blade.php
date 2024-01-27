@@ -5,7 +5,7 @@
 @section('content')
 
 
-<div class="container-fluid";>
+<div class="container";>
 <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">DEFINIR AFI/SALA</h4>
     <div class="col-12">
         <div class="row justify-content-center">
@@ -24,7 +24,7 @@
                         <select class="form-select" id="" name="atendente" type="number">                           
                             <option value=""></option>
                             @foreach ($atende as $atendes)
-                            <option @if(old('atendente')==$atendes->idat) {{'selected="selected"'}} @endif value="{{ $atendes->idat}}">{{$atendes->nm_4}}</option>
+                            <option @if(old('atendente')==$atendes->idp) {{'selected="selected"'}} @endif value="{{ $atendes->idp}}">{{$atendes->nm_4}}</option>
                             @endforeach               
                         </select>                       
                     </div>
@@ -64,10 +64,15 @@
                         </thead>
                         <tbody style="font-size: 14px; color:#000000; text-align: center;">
                         @foreach($atende as $atendes)
-                        <form class="form-horizontal mt-4" method="POST" >@csrf 
+                        <form class="form-horizontal mt-4" method="POST" >
+                            @csrf 
                             <tr>
-                                <td>{{$atendes->ida}}</td>
-                                <td>{{$atendes->nomeg}}</td>                                                      
+                                <td>{{$atendes->idp}}</td>
+                                <td><select class="form-select" id="" name="grupo" type="number">
+                                @foreach ($grupo as $grupos)
+                                <option value="{{ $grupos->id }}">{{$grupos->nome}}</option>
+                                @endforeach               
+                                </select></td>                                                      
                                 <td>{{$atendes->nm_4}}</td>                            
                                 <td><select class="form-select" id="" name="sala" type="number">
                                 @foreach ($sala as $salas)
@@ -76,8 +81,8 @@
                                 </select></td>
                                 <td>{{$atendes->tipo}}</td>
                                 <td>                                
-                                <button type="submit" formaction="/incluir-afi-sala/{{$atendes->idat}}/{{$atendes->idg}}" class="btn btn-success btn-sm" style="color:#fff;">Confirmar</button>                           
-                                <!--<a href="/incluir-afi-sala/{{$atendes->ida}}"><input class="btn btn-light btn-sm me-md-2" formaction="/incluir-afi-sala/{{$atendes->ida}}" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="cONFIRMAR"></a>                                                  -->
+                                <button type="submit" formaction="/incluir-afi-sala/{{$atendes->idp}}/{{$atendes->idg}}" class="btn btn-success btn-sm" style="color:#fff;">Confirmar</button>                           
+                                <!--<a href="/incluir-afi-sala/{{$atendes->idp}}"><input class="btn btn-light btn-sm me-md-2" formaction="/incluir-afi-sala/{{$atendes->idp}}" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="cONFIRMAR"></a>                                                  -->
                                 </td>                                
                             </tr>
                             </form>

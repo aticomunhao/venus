@@ -3,7 +3,7 @@
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 <br>               
-<div class="container-fluid">
+<div class="container">
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card">               
@@ -24,11 +24,9 @@
                     </div>                    
                 </div>
                 <br>
-                <div class="row">
-                    <div class="col-3">
-                    </div>
-                    <div class="col-4" style="color:red;">Mensagem de alerta:
-                        <input class="form-control" style="background-color: #f7ccca;" type="text" value="Tem certeza que deseja finalizar o atendimento Nr {{$assistido[0]->idat}} ?" disabled>
+                <div class="row">                   
+                    <div class="col" style="color:red;">
+                        <input class="form-control" style=" height:80px; background-color: #f7ccca; text-align:center; font-size:medium;" type="text" value="Tem certeza que deseja finalizar o atendimento Nr {{$assistido[0]->idat}} ?" disabled>
                     </div>
                 </div>
                 <form class="form-horizontal mt-4" method="POST" action="/finalizar/{{$assistido[0]->idat}}">
@@ -36,7 +34,6 @@
                       
             </div>
                 <br>
-                    <br>
                     <hr>
                     <div class="row">
                         <div class="col" style="text-align: center;">

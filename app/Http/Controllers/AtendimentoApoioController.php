@@ -12,14 +12,36 @@ class AtendimentoApoioController extends Controller
      */
     public function index(Request $request)
     {
+        $pesquisaNome = $request->input('nome');
+        $pesquisaCpf = $request->input('cpf');
 
+        if ($pesquisaNome) {
+            $atendente = DB::table('atendente_apoio AS at')
+                ->select('at.id','at.dh_inicio', 'at.dh_fim', 'p.nome_completo', 'p.cpf', 'tp.tipo')
+                ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
+                ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
+                ->where('nome_completo', 'ilike', "%$pesquisaNome%")
+                ->get();
 
-        $atendente = DB::table('atendente_apoio AS at')
-        ->select('at.dh_inicio', 'at.dh_fim', 'p.nome_completo', 'p.cpf', 'tp.tipo')
-        ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
-        ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')->get();
+        } elseif ($pesquisaCpf) {
+            $atendente = DB::table('atendente_apoio AS at')
+                ->select('at.id','at.dh_inicio', 'at.dh_fim', 'p.nome_completo', 'p.cpf', 'tp.tipo')
+                ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
+                ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
+                ->where('cpf', 'ilike', "%$pesquisaCpf%")
+                ->get();
+        }
+         else {
+            $atendente = DB::table('atendente_apoio AS at')
+                ->select('at.id','at.dh_inicio', 'at.dh_fim', 'p.nome_completo', 'p.cpf', 'tp.tipo')
+                ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
+                ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
+                ->get();
+        }
 
-        return view('/atendentes-apoio/gerenciar_atendente_apoio', compact('atendente'));
+        $conta = $atendente->count();
+
+        return view('/atendentes-apoio/gerenciar-atendente-apoio', compact('atendente', 'conta'));
     }
 
     /**
@@ -27,9 +49,10 @@ class AtendimentoApoioController extends Controller
      */
     public function create()
     {
-       $nomes = DB::table('pessoas')->get();
-
-        return view('/atendentes-apoio/incluir_atendente_apoio', compact('nomes'));
+        $nomes = DB::table('pessoas')
+            ->where('status', '=', '1')
+            ->get();
+        return view('/atendentes-apoio/incluir-atendente-apoio', compact('nomes'));
     }
 
     /**
@@ -37,13 +60,11 @@ class AtendimentoApoioController extends Controller
      */
     public function store(Request $request)
     {
-
         DB::table('atendente_apoio')->insert([
             'id_pessoa' => $request->input('nome'),
             'dh_inicio' => $request->input('dhInicio'),
             'dh_fim' => $request->input('dhFinal'),
         ]);
-
 
         return redirect()->route('indexAtendenteApoio');
     }
@@ -61,7 +82,7 @@ class AtendimentoApoioController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('atendentes-apoio/editar-atendente-apoio');
     }
 
     /**

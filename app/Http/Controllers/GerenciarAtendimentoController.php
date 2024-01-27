@@ -165,6 +165,10 @@ class GerenciarAtendimentoController extends Controller
 
         };
 
+            $menor = isset($request->menor) ? 1 : 0;
+
+            //dd($menor);
+
             DB::table('atendimentos AS atd')->insert([
                     'dh_chegada'=> ($dt_hora->toDateTimeString() . PHP_EOL),
                     'id_usuario'=> $usuario,
@@ -175,6 +179,7 @@ class GerenciarAtendimentoController extends Controller
                     'id_atendente_pref'=>$request->input('afi_p'),
                     'pref_tipo_atendente'=>$request->input('tipo_afi'),
                     'id_prioridade'=>$request->input('priori'),
+                    'menor_auto'=>$menor,
                     'status_atendimento'=> 1
                     ]);
 
@@ -506,17 +511,22 @@ class GerenciarAtendimentoController extends Controller
 
     public function atendente_dia(Request $request){
 
-        $now = Carbon::now()->format('d/m/Y');
+        $now = Carbon::now()->format('Y-m-d');
 
                //dd($now);
 
         $atende = DB::table('atendente_dia AS atd')
-                ->select('atd.id AS nr','att.id AS ida', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala')
+                ->select('atd.id AS nr','att.id_pessoa AS idp', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')
                 ->leftJoin('atendentes AS att', 'atd.id_atendente','att.id_pessoa')
-                ->leftjoin('pessoas AS p', 'atd.id_atendente', 'p.id' )
+                ->leftjoin('pessoas AS p', 'att.id_pessoa', 'p.id' )
                 ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
                 ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
-                ->leftJoin('grupo AS g', 'att.id_grupo', 'g.id');
+                ->leftJoin('atendente_grupo AS ag', 'att.id', 'ag.id_atendente')
+                ->leftJoin('grupo AS g', 'ag.id_grupo', 'g.id');
+                
+        //dd($atende);
+
+        $data = $request->data;
 
         $grupo = $request->grupo;
 
@@ -524,44 +534,44 @@ class GerenciarAtendimentoController extends Controller
 
         $status = $request->status;
 
+       // dd($status);
+
+        if ($request->data){
+            $atende->where('atd.data_hora', '=', $request->data);
+        }
 
         if ($request->grupo){
-        $atende->where('g.id', '=', $request->grupo);
+            $atende->where('g.id', '=', $request->grupo);
         }
 
         if ($request->atendente){
-        $atende->where('p.nm_4', 'ilike', "%$request->atendente%");
+            $atende->where('p.nome_completo', 'ilike', "%$request->atendente%");
         }
 
         if ($request->status){
-        $atende->where('p.status', $request->status);
+            $atende->where('p.status', '=', intval($request->status));
         }
 
 
-        $atende = $atende->orderby('atd.data_hora', 'DESC')->orderby('nm_sala', 'ASC')->paginate(50);
+        $atende = $atende->orderby('atd.data_hora', 'DESC')->orderby('nm_sala', 'ASC')->get();
 
-
-        $st_atend = DB::select("select
-        tsp.id,
-        tsp.tipo
-        from tipo_status_pessoa tsp
-        ");
+        //dd($atende);
 
         $situacao = DB::table('tipo_status_pessoa')
-                    ->select('id', 'tipo')
-                    ->get();
+                     ->select('id', 'tipo')
+                     ->get();
 
         $grupo = DB::table('grupo')
                     ->select('id', 'nome')
                     ->where('id_tipo_grupo', 3)
                     ->where('status_grupo', 1)
-                    ->orderBy('nome')
+                    ->orderBy('id')
                     ->get();
 
+        //dd($now, $atende);
 
 
-
-        return view ('/recepcao-AFI/gerenciar-atendente-dia', compact('atende', 'st_atend',  'atendente', 'status', 'situacao', 'grupo'));
+        return view ('/recepcao-AFI/gerenciar-atendente-dia', compact('atende', 'atendente', 'status', 'situacao', 'grupo', 'data', 'now'));
 
 
 
@@ -678,10 +688,11 @@ class GerenciarAtendimentoController extends Controller
         //dd($aten);
 
                 $atende = DB::table('atendentes AS att')
-                ->select('att.id AS ida', 'att.id_pessoa AS idat', 'p.nome_completo AS nm_4',  'p.id AS pid', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg')
+                ->select('att.id AS idat', 'att.id_pessoa AS idp', 'p.nome_completo AS nm_4',  'p.id AS pid', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg')
                 ->leftjoin('pessoas AS p', 'att.id_pessoa', 'p.id' )
                 ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
-                ->leftJoin('grupo AS g', 'att.id_grupo', 'g.id')
+                ->leftJoin('atendente_grupo AS ag', 'att.id', 'ag.id_atendente')
+                ->leftJoin('grupo AS g', 'ag.id_grupo', 'g.id')
                 ->where('p.status', 1)
                 ->whereNotIn('att.id_pessoa', $aten);
 
@@ -726,6 +737,19 @@ class GerenciarAtendimentoController extends Controller
                         ->orderBy('nome')
                         ->get();
 
+                foreach($atende as $key => $lista){
+                $result = DB::table('atendente_grupo AS ag')
+                        ->leftJoin('grupo AS g', 'ag.id_grupo', 'g.id')
+                        ->leftJoin('atendentes AS att', 'ag.id_atendente', 'att.id_pessoa')
+                        ->select('ag.id_grupo', 'g.nome')
+                        ->where('g.id_tipo_grupo', 3)
+                        ->where('g.data_fim', null)
+                        ->where('ag.id_atendente', )
+                        ->orderBy('nome')
+                        ->get();
+                        $lista->grup=$result;
+                }
+
                 $sala = DB::table('salas AS s')
                         ->select('s.id', 's.numero')
                         ->where( 's.id_finalidade', 2)
@@ -737,7 +761,7 @@ class GerenciarAtendimentoController extends Controller
                         ->get();
 
 
-
+                    //dd($atende);
 
     return view ('/recepcao-AFI/incluir-atendente-dia', compact('atende', 'st_atend',  'situacao', 'grupo', 'sala'));
 
@@ -752,6 +776,8 @@ class GerenciarAtendimentoController extends Controller
 
         $now = Carbon::now()->format('Y-m-d');
 
+        //$atendente = DB::table('atendentes AS a')->select('a.id AS ida')->where('id_pessoa', $idat)->get();
+
         $verif = DB::table('atendente_dia AS atd')->where('data_hora', $now)->where('id_sala', $sala)->count();
 
         //dd($verif);
@@ -760,6 +786,7 @@ class GerenciarAtendimentoController extends Controller
 
         DB::table('atendente_dia AS atd')->insert([
                         'id_sala' => $request->input('sala'),
+                        'id_grupo' => $request->input('grupo'),
                         'id_atendente' => $idat,
                         'data_hora' => $now
                         ]);
