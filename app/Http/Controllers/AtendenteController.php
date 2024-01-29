@@ -13,12 +13,12 @@ class AtendenteController extends Controller
 {
     public function index(Request $request)
     {
-        // Recupera dados do banco de dados
+
         $ddd = DB::select('select id, descricao from tp_ddd');
         $grupos = DB::select('select id, nome from grupo order by nome');
         $sexo = DB::select('select id, tipo from tp_sexo');
 
-        // Constrói a query para atendente
+
         $atendente = DB::table('atendentes AS ad')
             ->select(
                 'ad.id',
@@ -26,16 +26,10 @@ class AtendenteController extends Controller
                 'p.nome_completo',
                 'p.cpf',
                 'tps.tipo',
-                'ag.id_grupo',
                 'p.cpf',
                 'p.ddd',
                 'p.email',
                 'p.celular',
-                'ag.id_atendente',
-                'ag.dt_inicio',
-                'ag.dt_fim',
-                'ag.motivo',
-                'ag.dt_fim',
                 'p.dt_nascimento',
                 'p.sexo',
                 'p.email',
@@ -47,29 +41,25 @@ class AtendenteController extends Controller
                 'd.id as did',
                 'd.descricao as ddesc',
                 'p.motivo_status',
-                'g.nome AS gnome'
+
             )
             ->leftJoin('pessoas AS p', 'ad.id_pessoa', '=', 'p.id')
-            ->leftJoin('atendente_grupo AS ag', 'ag.id_atendente', '=', 'ad.id')
             ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', '=', 'tsp.id')
             ->leftJoin('tp_sexo AS tps', 'p.sexo', '=', 'tps.id')
-            ->leftJoin('tp_ddd AS d', 'p.ddd', '=', 'd.id')
-            ->leftJoin('grupo AS g', 'ag.id_grupo', '=', 'g.id');
+            ->leftJoin('tp_ddd AS d', 'p.ddd', '=', 'd.id');
 
-        // Aplica filtros
+
+
+
         $nome = $request->nome;
         if ($request->nome) {
             $atendente->where('p.nome_completo', 'ilike', "%$request->nome%");
         }
 
-        $grupo = $request->grupo;
-        if ($request->grupo) {
-            $atendente->where('g.id', $request->grupo);
-        }
 
         $cpf = $request->cpf;
         if ($request->cpf) {
-            $atendente->where('p.cpf', $request->cpf);
+            $atendente->where('p.cpf', 'ilike', "%$request->cpf%");
         }
 
         $status = $request->status;
@@ -77,14 +67,14 @@ class AtendenteController extends Controller
             $atendente->where('p.status', $request->status);
         }
 
-        // Pagina os resultados
+
         $atendente = $atendente->orderBy('p.status', 'asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
 
-        // Recupera dados adicionais
+
         $stap = DB::select("select id as ids, tipo from tipo_status_pessoa t");
         $soma = DB::table('atendentes')->count();
 
-        // Retorna a view com os dados
+
         return view('/atendentes/gerenciar-atendentes', compact('atendente', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome', 'grupos'));
     }
 
@@ -211,7 +201,7 @@ class AtendenteController extends Controller
             ->first();
 
 
-        // Retorna a view com os dados
+
         return view('atendentes/editar-atendente', compact('gruposAtendente', 'pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
     }
 
@@ -221,21 +211,15 @@ class AtendenteController extends Controller
         $dt_fim = $request->input('dt_fim');
         $motivo = $request->input('motivo');
 
-        DB::table('atendentes')
-            ->where('id', $id)
-            ->update([
-                'id_pessoa' => $request->input('id_pessoa'),
-            ]);
-
-        DB::table('atendente_grupo')
-            ->where('id_atendente', $id)
-            ->delete();
+       $atendentes= $request->all();
 
         if ($request->has('id_grupo') && is_array($request->input('id_grupo'))) {
-            foreach ($request->input('id_grupo') as $idGrupo) {
+            foreach ($atendentes['novo_grupo'] as $novo_grupo) {
+
+
                 DB::table('atendente_grupo')->insert([
                     'id_atendente' => $id,
-                    'id_grupo' => $idGrupo,
+                    'id_grupo' => $novo_grupo,
                     'dt_inicio' => $data,
                     'dt_fim' => $dt_fim,
                     'motivo' => $motivo,
@@ -243,9 +227,9 @@ class AtendenteController extends Controller
             }
         }
 
-        return redirect()->route('nome_da_rota_para_visualizar_detalhes', ['id' => $id])->with('success', 'Atendente atualizado com sucesso.');
-    }
 
+        return redirect('gerenciar-atendentes');
+    }
 
 
     public function show($id)
@@ -303,27 +287,18 @@ class AtendenteController extends Controller
             ->leftJoin('grupo AS g', 'ag.id_grupo', '=', 'g.id')
             ->first();
 
-        // Retorna a view com os dados
+
         return view('atendentes/visualizar-atendente', compact('gruposAtendente','pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
     }
 
     public function destroy($id)
     {
-        $ids = DB::table('atendentes')->where('id', $id)->get();
-        $teste = session()->get('usuario');
 
-        $verifica = DB::table('historico_venus')->where('fato', $id)->count('fato');
 
-        $data = date("Y-m-d H:i:s");
-
-        DB::table('historico_venus')->insert([
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $data,
-            'fato' => 0,
-            'obs' => $id
-        ]);
+        DB::table('atendente_grupo')->where('id_atendente', $id)->delete();
 
         DB::table('atendentes')->where('id', $id)->delete();
+
 
         app('flasher')->addError('Excluído com sucesso.');
         return redirect('/gerenciar-atendentes');
