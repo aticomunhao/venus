@@ -5,7 +5,7 @@
 @section('content')
     <br />
     <div class="container">
-        <div class="card" >
+        <div class="card">
             <div class="card-header">
                 Inlcuir Atendentes Apoio
             </div>
@@ -14,27 +14,66 @@
                 <div class="row justify-content-start">
                     <form method="POST" action="/armazenar-atendentes-apoio">
                         @csrf
-                            <div class="row col-10 offset-1" style="margin-top:none">
-                                <div class="col-md-6 col-12">
-                                    <div>Nome</div>
-                                    <select class="form-select" aria-label="Default select example" required name="nome">
-                                        <option value=""></option>
-                                        @foreach ($nomes as $nome)
+                        <div class="row col-10 offset-1" style="margin-top:none">
+                            <div class="col-md-6 col-12">
+                                <div>Nome</div>
+                                <select class="form-select" aria-label="Default select example" required name="nome">
+                                    <option value=""></option>
+                                    @foreach ($nomes as $nome)
                                         <option value="{{ $nome->id }}">{{ $nome->nome_completo }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-3 col-12 mt-3 mt-md-0 ">
-                                    <div>Horário de inicio</div>
-                                    <input type="time" class="form-control" aria-label="Sizing example input"{{-- Input de porcentagem, com minimo de 0.01 e maximo de 100 --}}
-                                         name = "dhInicio" required="Required">
-                                </div>
-                                <div class="col-md-3 col-12 mt-3 mt-md-0 ">
-                                    <div>Horário de Final</div>
-                                    <input type="time" class="form-control" aria-label="Sizing example input"{{-- Input de data --}}
-                                         name = "dhFinal" required="Required">
+                                    @endforeach
+                                </select>
+                            </div>
+
+
+
+
+
+                        </div>
+                        <br />
+                        <center>
+                            <div class="table-responsive col-10">
+                                <div class="table">
+                                    <table
+                                        class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
+                                        <thead>
+                                            <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
+                                                <th scope="col"></th>
+                                                <th scope="col">Dia da Semana</th>
+                                                <th scope="col">Inicio</th>
+                                                <th scope="col">Final</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @foreach ($dias as $diaSemana)
+                                                <tr>
+
+                                                    <td><input class="form-check-input" type="checkbox" name="checkbox[]"
+                                                            id="{{ $diaSemana->id }}" value="{{ $diaSemana->id }}"></td>
+                                                    <td>{{ $diaSemana->nome }}</td>
+                                                    <td >
+                                                        <div class="inicio" id="data_inicio_{{ $diaSemana->id }}">
+                                                            <input type="time" class="form-control"
+                                                                aria-label="Sizing example input"{{-- Input de porcentagem, com minimo de 0.01 e maximo de 100 --}}
+                                                                name = "dhInicio[]" required="Required">
+                                                        </div>
+                                                    </td>
+
+                                                    <td>
+
+
+
+                                                </td>
+                                                </tr>
+                                                @endforeach
+
+
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
+                        </center>
                         <center>
                             <div class="col-12" style="margin-top: 70px;">
                                 <a href="/gerenciar-atendentes-apoio" class="btn btn-danger col-3">
@@ -50,4 +89,11 @@
             </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            
+
+
+    </script>
 @endsection

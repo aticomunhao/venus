@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 class AtendimentoApoioController extends Controller
 {
@@ -15,29 +16,16 @@ class AtendimentoApoioController extends Controller
         $pesquisaNome = $request->input('nome');
         $pesquisaCpf = $request->input('cpf');
 
-        if ($pesquisaNome) {
+
+
+
             $atendente = DB::table('atendente_apoio AS at')
-                ->select('at.id','at.dh_inicio', 'at.dh_fim', 'p.nome_completo', 'p.cpf', 'tp.tipo')
+                ->select('at.id', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo', 'p.cpf', 'tp.tipo')
                 ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
                 ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
-                ->where('nome_completo', 'ilike', "%$pesquisaNome%")
+                ->leftJoin('atendente_apoio_dia as atd', 'at.id', '=', 'atd.id_atendente')
                 ->get();
 
-        } elseif ($pesquisaCpf) {
-            $atendente = DB::table('atendente_apoio AS at')
-                ->select('at.id','at.dh_inicio', 'at.dh_fim', 'p.nome_completo', 'p.cpf', 'tp.tipo')
-                ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
-                ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
-                ->where('cpf', 'ilike', "%$pesquisaCpf%")
-                ->get();
-        }
-         else {
-            $atendente = DB::table('atendente_apoio AS at')
-                ->select('at.id','at.dh_inicio', 'at.dh_fim', 'p.nome_completo', 'p.cpf', 'tp.tipo')
-                ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
-                ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
-                ->get();
-        }
 
         $conta = $atendente->count();
 
@@ -52,7 +40,10 @@ class AtendimentoApoioController extends Controller
         $nomes = DB::table('pessoas')
             ->where('status', '=', '1')
             ->get();
-        return view('/atendentes-apoio/incluir-atendente-apoio', compact('nomes'));
+
+        $dias = DB::table('tipo_dia')->get();
+
+        return view('/atendentes-apoio/incluir-atendente-apoio', compact('nomes', 'dias'));
     }
 
     /**
@@ -60,8 +51,35 @@ class AtendimentoApoioController extends Controller
      */
     public function store(Request $request)
     {
-        DB::table('atendente_apoio')->insert([
+        $req = $request->all();
+        $dataHoje = Carbon::today()->toDateString();
+
+dd($req);
+        $idAtendente = DB::table('atendente_apoio')->insertGetId([
             'id_pessoa' => $request->input('nome'),
+        ]);
+
+        foreach($req['checkbox'] as $checked){
+            DB::table('atendente_apoio_dia')
+            ->insert([
+                'id_atendente' => $idAtendente,
+                'id_dia' => $checked->id,
+
+            ]);
+
+
+
+            }
+
+
+
+
+
+
+
+        DB::table('historico_atendente_apoio')->insert([
+            'id_atendente_apoio' => $idAtendente,
+            'dt_inicio' => $dataHoje,
             'dh_inicio' => $request->input('dhInicio'),
             'dh_fim' => $request->input('dhFinal'),
         ]);
