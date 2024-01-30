@@ -40,16 +40,17 @@
                         <input type="date" class="form-control" id="data_fim" name="data_fim" disabled value="{{ $atendente->dt_fim }}">
                     </div>
                     <div class="col">
-                        <label for="motivo" class="form-label">Motivo</label>
-                        <select class="form-control" name="motivo" disabled>
-                            <option value="{{ $atendente->id }}">{{ $atendente->motivo }}</option>
-                            @foreach ($atendente_grupo as $atendenteItem)
-                            <option value="{{ $atendenteItem->id }}">{{ $atendenteItem->motivo }}</option>
+                        <label for="motivo_status" class="form-label">Motivo </label>
+                        <select class="form-select" aria-label=".form-select-lg example" name="motivo_status"
+                            id="motivo_status" required="required" disabled>
+                            @foreach ($tipo_motivo_status_pessoa as $motivo)
+                                <option value="{{ $motivo->id }}"
+                                    {{ $atendente->motivo_status == $motivo->id ? 'selected' : '' }}>
+                                    {{ $motivo->motivo }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
-                </div>
-
                 <div class="row mt-4">
                     <div class="col">
                         <table class="table">
@@ -87,7 +88,7 @@
                     <div class="d-grid gap-1 col-4 mx-auto">
                         <a class="btn btn-danger" href="/gerenciar-atendentes" role="button">Cancelar</a>
                     </div>
-                   
+
                     </div>
                 </div>
             </form>

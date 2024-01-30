@@ -42,11 +42,14 @@
                                 value="{{ $atendente->dt_fim }}">
                         </div>
                         <div class="col">
-                            <label for="motivo" class="form-label">Motivo</label>
-                            <select class="form-select" name="motivo" id="motivo" required="required" disabled>
-                                <option value="{{ $atendente->id }}">{{ $atendente->motivo }}</option>
-                                @foreach ($atendente_grupo as $atendenteItem)
-                                    <option value="{{ $atendenteItem->id }}">{{ $atendenteItem->motivo }}</option>
+                            <label for="motivo_status" class="form-label">Motivo status</label>
+                            <select class="form-select" aria-label=".form-select-lg example" name="motivo_status"
+                                id="motivo_status" required="required">
+                                @foreach ($tipo_motivo_status_pessoa as $motivo)
+                                    <option value="{{ $motivo->id }}"
+                                        {{ $atendente->motivo_status == $motivo->id ? 'selected' : '' }}>
+                                        {{ $motivo->motivo }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -81,13 +84,13 @@
                                                     <div class="col" id="group_selection" style="display: none;">
                                                         <label for="selected_groups" class="form-label">Selecione a quantidade de grupos:</label>
                                                         <select class="form-select" name="selected_groups" id="selected_groups">
-                                                            <!-- Apenas uma opção aqui -->
+
                                                             <option value="1">1</option>
                                                         </select>
                                                     </div>
 
                                                     <div id="grupoAdicionalContainer">
-                                                        <!-- Este contêiner será preenchido dinamicamente com grupos adicionais -->
+                                                      
                                                         <div class="mb-3 grupo-adicional" style="display: none;">
                                                             <label for="novo_grupo" class="form-label">Novo Grupo</label>
                                                             <select class="form-select" name="novo_grupo[]">
@@ -101,7 +104,8 @@
                                                     </div>
                                                 </div>
 
-                                                <input type="checkbox" id="adicionarMaisGrupos">
+                                                <input type="checkbox" id="adicionarMaisGrupos" name="adicionarMaisGrupos">
+
 
                                                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                                                 <script>
@@ -128,63 +132,6 @@
                                                         });
                                                     });
                                                 </script>
-
-
-                                                {{-- <div id="gruposAdicionais" style="display: none;">
-                                                    <div class="col" id="group_selection" style="display: none;">
-                                                        <label for="selected_groups" class="form-label">Selecione a quantidade de grupos:</label>
-                                                        <select class="form-select" name="selected_groups" id="selected_groups">
-                                                            <!-- Apenas uma opção aqui -->
-                                                            <option value="1">1</option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div id="grupoAdicionalContainer">
-                                                        <!-- Este contêiner será preenchido dinamicamente com grupos adicionais -->
-                                                        <div class="mb-3 grupo-adicional" style="display: none;">
-                                                            <label for="novo_grupo" class="form-label">Novo Grupo</label>
-                                                            <select class="form-select" name="novo_grupo[]">
-                                                                <option> </option>
-                                                                @foreach ($grupo as $grupos)
-                                                                    <option value="{{ $grupos->id }}">{{ $grupos->nome }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <input type="checkbox" id="adicionarMaisGrupos"> Adicionar Mais Grupos
-
-                                                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                                                <script>
-                                                    $(document).ready(function () {
-                                                        $('#adicionarMaisGrupos').on('change', function () {
-                                                            var isChecked = $(this).prop('checked');
-                                                            $('#gruposAdicionais').toggle(isChecked);
-
-                                                            if (isChecked) {
-                                                                // Mostra o primeiro campo "Novo Grupo" e esconde os demais
-                                                                $('.grupo-adicional:first').show();
-                                                                $('.grupo-adicional:not(:first)').hide();
-                                                            } else {
-                                                                // Remove todos os elementos exceto o primeiro
-                                                                $('.grupo-adicional:not(:first)').remove();
-                                                            }
-                                                        });
-
-                                                        // Adiciona mais campos "Novo Grupo" dinamicamente somente se "Adicionar Mais Grupos" estiver marcado
-                                                        $('#grupoAdicionalContainer').on('change', '.grupo-adicional:last select[name="novo_grupo[]"]', function () {
-                                                            var selectedValue = $(this).val();
-                                                            if ($('#adicionarMaisGrupos').prop('checked') && selectedValue !== '') {
-                                                                var novoGrupoClone = $('.grupo-adicional:last').clone();
-                                                                novoGrupoClone.find('select[name="novo_grupo[]"]').val('');
-                                                                $('#grupoAdicionalContainer').append(novoGrupoClone);
-                                                            }
-                                                        });
-                                                    });
-                                                </script> --}}
-
-
                                             </td>
                                         </tr>
                                     </tbody>
@@ -212,7 +159,7 @@
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
                                     var dataFimInput = document.getElementById('data_fim');
-                                    var motivoSelect = document.getElementById('motivo');
+                                    var motivoSelect = document.getElementById('motivo_status');
 
 
                                     dataFimInput.addEventListener('change', function() {
@@ -221,9 +168,6 @@
                                     });
                                 });
                             </script>
-
-
-
 
                         </div>
                 </form>

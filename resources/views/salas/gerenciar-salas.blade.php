@@ -50,6 +50,9 @@
                         <td> {{$salas->descricao}} </td>
                         <td> {{$salas->numero}} </td>
                         <td> {{$salas->nome2}} </td>
+
+
+                        
                         <td> {{$salas->tamanho_sala}} </td>
                         <td> {{$salas->nr_lugares}} </td>
                         <td class="text-center">{{$salas->status_sala ? 'Ativo' : 'Inativo' }}</td>

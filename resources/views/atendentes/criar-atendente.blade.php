@@ -18,7 +18,7 @@
                     <div class="row">
                         <div class="col">
                         <label for="id_pessoa" class="form-label">Nome</label>
-                        <input type="text" class="form-select" id="searchInput" placeholder="Pesquisar nome..."
+                        <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar nome..."
                             value="{{ old('nome_completo') }}">
                         <ul id="pessoaList" class="list-group" style="display: none;">
                             @foreach ($pessoas as $pessoa)
