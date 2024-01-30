@@ -29,7 +29,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-2">
+                    {{-- <div class="col-2">
                         Setor
                         <select class="form-select" id="setor_pesquisa" name="setor_pesquisa">
                             <option value="" selected>Selecione o setor</option>
@@ -39,7 +39,7 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
 
                     <div class="col">
                         <br>
@@ -65,8 +65,8 @@
                 class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                     <th>ID</th>
-                    <th>NOME GRUPO</th>
                     <th>NOME</th>
+                    <th>NOME GRUPO</th>
                     <th>FUNÇÃO</th>
                     <th>SETOR</th>
                     <th>STATUS</th>
@@ -77,8 +77,8 @@
                     @foreach ($medium as $mediuns)
                         <tr>
                             <td>{{ $mediuns->idm }}</td>
-                            <td>{{ $mediuns->nome_grupo }}</td>
                             <td>{{ $mediuns->nome_completo }}</td>
+                            <td>{{ $mediuns->nome_grupo }}</td>
                             <td>{{ $mediuns->nome_funcao }}</td>
                             <td>{{ $mediuns->nome_setor }}</td>
                             <td>{{ $mediuns->status ? 'Ativo' : 'Inativo' }}</td>

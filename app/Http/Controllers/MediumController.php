@@ -149,9 +149,6 @@ class MediumController extends Controller
 
 
 
-
-
-
     public function edit($id)
     {
         $medium = DB::table('medium AS m')
@@ -283,7 +280,7 @@ class MediumController extends Controller
 
         DB::table('medium')->where('id', $id)->delete();
 
-        
+
         app('flasher')->addError('Excluído com sucesso.');
         return redirect('/gerenciar-mediuns');
     }
