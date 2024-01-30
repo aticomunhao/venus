@@ -17,7 +17,7 @@
                                 oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                 id="1" name="nome" value="{{ $nome }}">
                         </div>
-                        <div class="col">CPF
+                        <div class="col-2">CPF
                             <input class="form-control" type="text" maxlength="11"
                                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                 id="2" name="cpf" value="{{ $cpf }}">

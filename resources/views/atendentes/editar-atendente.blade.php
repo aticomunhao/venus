@@ -25,7 +25,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row mt-4">
+                     <div class="row mt-4">
                         <div class="col">
                             <label for="status" class="form-label">Status</label>
                             <select class="form-select" name="status">
@@ -53,6 +53,7 @@
                                 @endforeach
                             </select>
                         </div>
+
                         <div class="row mt-4">
                             <div class="col">
                                 <table class="table">
@@ -90,7 +91,7 @@
                                                     </div>
 
                                                     <div id="grupoAdicionalContainer">
-                                                      
+
                                                         <div class="mb-3 grupo-adicional" style="display: none;">
                                                             <label for="novo_grupo" class="form-label">Novo Grupo</label>
                                                             <select class="form-select" name="novo_grupo[]">
@@ -107,31 +108,6 @@
                                                 <input type="checkbox" id="adicionarMaisGrupos" name="adicionarMaisGrupos">
 
 
-                                                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                                                <script>
-                                                    $(document).ready(function () {
-                                                        $('#adicionarMaisGrupos').on('change', function () {
-                                                            var isChecked = $(this).prop('checked');
-                                                            $('#gruposAdicionais').toggle(isChecked);
-
-                                                            if (isChecked) {
-                                                                // Mostra o primeiro campo "Novo Grupo" e esconde os demais
-                                                                $('.grupo-adicional:first').show();
-                                                                $('.grupo-adicional:not(:first)').hide();
-                                                            } else {
-                                                                // Remove todos os elementos exceto o primeiro
-                                                                $('.grupo-adicional:not(:first)').remove();
-                                                            }
-                                                        });
-
-                                                        // Adiciona mais campos "Novo Grupo" dinamicamente ao clicar no botão de "+"
-                                                        $('#grupoAdicionalContainer').on('click', '.adicionar-mais', function () {
-                                                            var novoGrupoClone = $('.grupo-adicional:last').clone();
-                                                            novoGrupoClone.find('select[name="novo_grupo[]"]').val('');
-                                                            $('#grupoAdicionalContainer').append(novoGrupoClone);
-                                                        });
-                                                    });
-                                                </script>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -148,7 +124,7 @@
                                 cursor: pointer;
                                 border: 2px solid #000;
                             }
-                        </style>
+                            </style>
                         <div class="row mt-4 justify-content-center">
                             <div class="d-grid gap-1 col-4 mx-auto">
                                 <a class="btn btn-danger" href="/gerenciar-atendentes" role="button">Cancelar</a>
@@ -156,7 +132,33 @@
                             <div class="d-grid gap-2 col-4 mx-auto">
                                 <button type="submit" class="btn btn-primary">Confirmar</button>
                             </div>
+
+                            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                             <script>
+                                $(document).ready(function () {
+                                    $('#adicionarMaisGrupos').on('change', function () {
+                                        var isChecked = $(this).prop('checked');
+                                        $('#gruposAdicionais').toggle(isChecked);
+
+                                        if (isChecked) {
+                                            // Mostra o primeiro campo "Novo Grupo" e esconde os demais
+                                            $('.grupo-adicional:first').show();
+                                            $('.grupo-adicional:not(:first)').hide();
+                                        } else {
+                                            // Remove todos os elementos exceto o primeiro
+                                            $('.grupo-adicional:not(:first)').remove();
+                                        }
+                                    });
+
+                                    // Adiciona mais campos "Novo Grupo" dinamicamente ao clicar no botão de "+"
+                                    $('#grupoAdicionalContainer').on('click', '.adicionar-mais', function () {
+                                        var novoGrupoClone = $('.grupo-adicional:last').clone();
+                                        novoGrupoClone.find('select[name="novo_grupo[]"]').val('');
+                                        $('#grupoAdicionalContainer').append(novoGrupoClone);
+                                    });
+                                });
+                            </script>
+                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
                                     var dataFimInput = document.getElementById('data_fim');
                                     var motivoSelect = document.getElementById('motivo_status');
