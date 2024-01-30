@@ -208,5 +208,6 @@ Route::post('/nova-reuniao', [ReuniaoMediunicaController::class, 'store'])->name
 Route::get('/gerenciar-atendentes-apoio', [AtendimentoApoioController::class, 'index'])->name('indexAtendenteApoio');
 Route::get('/incluir-atendentes-apoio', [AtendimentoApoioController::class, 'create']);
 Route::any('/armazenar-atendentes-apoio', [AtendimentoApoioController::class, 'store']);
+Route::any('/visualizar-atendentes-apoio/{id}', [AtendimentoApoioController::class, 'show']);
 
 

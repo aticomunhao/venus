@@ -48,52 +48,62 @@
 
                                             @foreach ($dias as $diaSemana)
                                                 <tr>
-
-                                                    <td><input class="form-check-input" type="checkbox" name="checkbox[]"
-                                                            id="{{ $diaSemana->id }}" value="{{ $diaSemana->id }}"></td>
+                                                    <td>
+                                                        <input class="form-check-input checkbox-trigger" type="checkbox" name="checkbox[]"
+                                                               id="{{ $diaSemana->id }}" value="{{ $diaSemana->id }}">
+                                                    </td>
                                                     <td>{{ $diaSemana->nome }}</td>
-                                                    <td >
-                                                        <div class="inicio" id="data_inicio_{{ $diaSemana->id }}">
-                                                            <input type="time" class="form-control"
-                                                                aria-label="Sizing example input"{{-- Input de porcentagem, com minimo de 0.01 e maximo de 100 --}}
-                                                                name = "dhInicio[]" required="Required">
+                                                    <td>
+                                                        <div class="data_io" id="data_inicio_{{ $diaSemana->id }}">
+                                                            <input type="time" class="form-control" aria-label="Sizing example input"
+                                                                   name="dhInicio[]" required="Required" id="data_ini_{{ $diaSemana->id }}" disabled>
                                                         </div>
                                                     </td>
 
-                                                    <td>
+                                <td>
 
+                                    <div class="data_io" id="data_inicio_{{ $diaSemana->id }}">
+                                        <input type="time" class="form-control" aria-label="Sizing example input"
+                                               name="dhFim[]" required="Required" id="data_ini_{{ $diaSemana->id }}" disabled>
+                                    </div>
 
-
-                                                </td>
-                                                </tr>
-                                                @endforeach
-
-
-                                        </tbody>
-                                    </table>
-                                </div>
+                                </td>
+                                </tr>
+                                @endforeach
+                                </tbody>
+                                </table>
                             </div>
-                        </center>
-                        <center>
-                            <div class="col-12" style="margin-top: 70px;">
-                                <a href="/gerenciar-atendentes-apoio" class="btn btn-danger col-3">
-                                    Cancelar
-                                </a>
-                                <button type = "submit" class="btn btn-primary col-3 offset-3">
-                                    Confirmar
-                                </button>
-                            </div>
-                        </center>
-                    </form>
                 </div>
+                </center>
+                <center>
+                    <div class="col-12" style="margin-top: 70px;">
+                        <a href="/gerenciar-atendentes-apoio" class="btn btn-danger col-3">
+                            Cancelar
+                        </a>
+                        <button type = "submit" class="btn btn-primary col-3 offset-3">
+                            Confirmar
+                        </button>
+                    </div>
+                </center>
+                </form>
             </div>
         </div>
     </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
-        $(document).ready(function() {
-            
+        $(document).ready(function () {
+            $('.checkbox-trigger').change(function () {
+                var isChecked = $(this).prop('checked');
+                var id = $(this).attr('id');
 
-
+                if (isChecked) {
+                    $('#data_inicio_' + id + ' input').prop('disabled', false);
+                } else {
+                    $('#data_inicio_' + id + ' input').prop('disabled', true);
+                }
+            });
+        });
     </script>
+
 @endsection

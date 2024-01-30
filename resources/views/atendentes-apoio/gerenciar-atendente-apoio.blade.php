@@ -49,8 +49,6 @@
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                     <th class="col">NOME</th>
                     <th class="col">CPF</th>
-                    <th class="col">HORARIO DE INICIO</th>
-                    <th class="col">HORARIO FINAL</th>
                     <th class="col">STATUS</th>
                     <th class="col">AÇÕES</th>
                 </tr>
@@ -60,8 +58,6 @@
                     <tr>
                         <td>{{ $atendentes->nome_completo }}</td>
                         <td>{{ str_pad($atendentes->cpf, 11, '0', STR_PAD_LEFT) }}</td>
-                        <td>{{ date('G:i', strtotime($atendentes->dh_inicio)) }}</td>
-                        <td>{{ date('G:i', strtotime($atendentes->dh_fim)) }}</td>
                         <td>{{ $atendentes->tipo }}</td>
                         <td scope="">
 
@@ -70,7 +66,7 @@
                                 <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
                             </a>
 
-                            <a href="" type="button"
+                            <a href="/visualizar-atendentes-apoio/{{ $atendentes->id }}" type="button"
                                 class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                 title="Visualizar">
                                 <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>

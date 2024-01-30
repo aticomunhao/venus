@@ -16,16 +16,12 @@ class AtendimentoApoioController extends Controller
         $pesquisaNome = $request->input('nome');
         $pesquisaCpf = $request->input('cpf');
 
+        $atendente = DB::table('atendente_apoio AS at')
+            ->select('at.id', 'p.nome_completo', 'p.cpf', 'tp.tipo')
+            ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
+            ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
 
-
-
-            $atendente = DB::table('atendente_apoio AS at')
-                ->select('at.id', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo', 'p.cpf', 'tp.tipo')
-                ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
-                ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
-                ->leftJoin('atendente_apoio_dia as atd', 'at.id', '=', 'atd.id_atendente')
-                ->get();
-
+            ->get();
 
         $conta = $atendente->count();
 
@@ -54,35 +50,32 @@ class AtendimentoApoioController extends Controller
         $req = $request->all();
         $dataHoje = Carbon::today()->toDateString();
 
-dd($req);
         $idAtendente = DB::table('atendente_apoio')->insertGetId([
             'id_pessoa' => $request->input('nome'),
         ]);
 
-        foreach($req['checkbox'] as $checked){
-            DB::table('atendente_apoio_dia')
-            ->insert([
+        $i = 0;
+
+        foreach ($request->checkbox as $checked) {
+            DB::table('atendente_apoio_dia')->insert([
                 'id_atendente' => $idAtendente,
-                'id_dia' => $checked->id,
-
+                'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
+                'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
+                'dh_fim' => $req['dhFim'][$i], // Se você também tiver um array para dhFim
             ]);
-
-
-
-            }
-
-
-
-
-
-
-
-        DB::table('historico_atendente_apoio')->insert([
-            'id_atendente_apoio' => $idAtendente,
-            'dt_inicio' => $dataHoje,
-            'dh_inicio' => $request->input('dhInicio'),
-            'dh_fim' => $request->input('dhFinal'),
-        ]);
+            $i += 1;
+        }
+        $i = 0;
+        foreach ($request->checkbox as $checked) {
+            DB::table('historico_atendente_apoio')->insert([
+                'id_atendente_apoio' => $idAtendente,
+                'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
+                'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
+                'dh_fim' => $req['dhFim'][$i],
+                'dt_inicio' => $dataHoje, // Se você também tiver um array para dhFim
+            ]);
+            $i += 1;
+        }
 
         return redirect()->route('indexAtendenteApoio');
     }
@@ -92,7 +85,23 @@ dd($req);
      */
     public function show(string $id)
     {
-        //
+        $idp = DB::table('atendente_apoio')
+            ->where('id', '=', $id)
+            ->get();
+
+        $nomes = DB::table('pessoas')
+            ->where('id', '=', $idp[0]->id_pessoa)
+            ->get();
+
+        $historico = DB::table('historico_atendente_apoio as hs')
+            ->select(['hs.dt_inicio', 'hs.dt_fim', 'hs.dh_inicio', 'hs.dh_fim', 'd.nome'])
+            ->leftJoin('tipo_dia as d', 'hs.id_dia', '=', 'd.id')
+            ->where('id_atendente_apoio', '=', $id)
+            ->get();
+
+        $dias = DB::table('tipo_dia')->get();
+
+        return view('/atendentes-apoio/visualizar-atendente-apoio', compact('nomes', 'dias', 'historico'));
     }
 
     /**
