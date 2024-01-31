@@ -31,7 +31,6 @@
                                         class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
                                         <thead>
                                             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-
                                                 <th scope="col">Dia da Semana</th>
                                                 <th scope="col">Data de Inicio</th>
                                                 <th scope="col">Data Final</th>

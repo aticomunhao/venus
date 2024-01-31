@@ -109,7 +109,24 @@ class AtendimentoApoioController extends Controller
      */
     public function edit(string $id)
     {
-        return view('atendentes-apoio/editar-atendente-apoio');
+        $nomes = DB::table('atendente_apoio as at')
+            ->select('p.nome_completo')
+            ->leftJoin('pessoas as p', 'at.id_pessoa', '=', 'p.id')
+            ->where('at.id', '=', $id)
+            ->get();
+
+        $dias = DB::table('tipo_dia')->get();
+
+        $diasHorarios = DB::table('atendente_apoio_dia')->where('id_atendente', '=', $id)->get();
+        $checkTheBox = [];
+
+foreach($diasHorarios as $dia){
+
+
+$checkTheBox[] = $dia->id_dia;
+
+}
+        return view('atendentes-apoio/editar-atendente-apoio', compact('nomes', 'dias', 'diasHorarios', 'checkTheBox'));
     }
 
     /**

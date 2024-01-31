@@ -209,5 +209,7 @@ Route::get('/gerenciar-atendentes-apoio', [AtendimentoApoioController::class, 'i
 Route::get('/incluir-atendentes-apoio', [AtendimentoApoioController::class, 'create']);
 Route::any('/armazenar-atendentes-apoio', [AtendimentoApoioController::class, 'store']);
 Route::any('/visualizar-atendentes-apoio/{id}', [AtendimentoApoioController::class, 'show']);
+Route::any('/editar-atendentes-apoio/{id}', [AtendimentoApoioController::class, 'edit']);
+Route::any('/atualizar-atendentes-apoio/{id}', [AtendimentoApoioController::class, 'update']);
 
 
