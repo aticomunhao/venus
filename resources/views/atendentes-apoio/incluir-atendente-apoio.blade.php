@@ -1,13 +1,13 @@
 @extends('layouts.app')
 @section('head')
-    <title>Inlcuir Atendentes Apoio</title>
+    <title>Incluir Atendentes Apoio</title>
 @endsection
 @section('content')
     <br />
     <div class="container">
         <div class="card">
             <div class="card-header">
-                Inlcuir Atendentes Apoio
+                Incluir Atendentes Apoio
             </div>
             <div class="card-body">
                 <br>
@@ -49,51 +49,56 @@
                                             @foreach ($dias as $diaSemana)
                                                 <tr>
                                                     <td>
-                                                        <input class="form-check-input checkbox-trigger" type="checkbox" name="checkbox[]"
-                                                               id="{{ $diaSemana->id }}" value="{{ $diaSemana->id }}">
+                                                        <input class="form-check-input checkbox-trigger" type="checkbox"
+                                                            name="checkbox[]" id="{{ $diaSemana->id }}"
+                                                            value="{{ $diaSemana->id }}">
                                                     </td>
                                                     <td>{{ $diaSemana->nome }}</td>
                                                     <td>
                                                         <div class="data_io" id="data_inicio_{{ $diaSemana->id }}">
-                                                            <input type="time" class="form-control" aria-label="Sizing example input"
-                                                                   name="dhInicio[]" required="Required" id="data_ini_{{ $diaSemana->id }}" disabled>
+                                                            <input type="time" class="form-control"
+                                                                aria-label="Sizing example input" name="dhInicio[]"
+                                                                required="Required" id="data_ini_{{ $diaSemana->id }}"
+                                                                disabled>
                                                         </div>
                                                     </td>
 
-                                <td>
+                                                    <td>
 
-                                    <div class="data_io" id="data_inicio_{{ $diaSemana->id }}">
-                                        <input type="time" class="form-control" aria-label="Sizing example input"
-                                               name="dhFim[]" required="Required" id="data_ini_{{ $diaSemana->id }}" disabled>
-                                    </div>
+                                                        <div class="data_io" id="data_inicio_{{ $diaSemana->id }}">
+                                                            <input type="time" class="form-control"
+                                                                aria-label="Sizing example input" name="dhFim[]"
+                                                                required="Required" id="data_ini_{{ $diaSemana->id }}"
+                                                                disabled>
+                                                        </div>
 
-                                </td>
-                                </tr>
-                                @endforeach
-                                </tbody>
-                                </table>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
+                        </center>
+                        <center>
+                            <div class="col-12" style="margin-top: 70px;">
+                                <a href="/gerenciar-atendentes-apoio" class="btn btn-danger col-3">
+                                    Cancelar
+                                </a>
+                                <button type = "submit" class="btn btn-primary col-3 offset-3">
+                                    Confirmar
+                                </button>
+                            </div>
+                        </center>
+                    </form>
                 </div>
-                </center>
-                <center>
-                    <div class="col-12" style="margin-top: 70px;">
-                        <a href="/gerenciar-atendentes-apoio" class="btn btn-danger col-3">
-                            Cancelar
-                        </a>
-                        <button type = "submit" class="btn btn-primary col-3 offset-3">
-                            Confirmar
-                        </button>
-                    </div>
-                </center>
-                </form>
             </div>
         </div>
     </div>
-    </div>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $('.checkbox-trigger').change(function () {
+        $(document).ready(function() {
+            $('.checkbox-trigger').change(function() {
                 var isChecked = $(this).prop('checked');
                 var id = $(this).attr('id');
 
@@ -105,5 +110,4 @@
             });
         });
     </script>
-
 @endsection
