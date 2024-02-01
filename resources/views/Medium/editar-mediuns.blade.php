@@ -151,7 +151,7 @@
                             </div>
                         </div>
                         <style>
-                            
+
                             .table th input[type="checkbox"],
                             .table td input[type="checkbox"] {
                                 width: 17px; /* Ajusta a largura do checkbox */

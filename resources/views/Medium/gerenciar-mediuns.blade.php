@@ -8,17 +8,17 @@
         <div class="col-12">
             <form action="{{ route('lista') }}" class="form-horizontal mt-4" method="GET">
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-4">
                         Nome
                         <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa"
-                            placeholder="Pesquisar nome" value="{{ request('nome_pesquisa') }}">
+                             value="{{ request('nome_pesquisa') }}">
                     </div>
                     <div class="col-2">
                         CPF
                         <input class="form-control" type="text" id="cpf_pesquisa" name="cpf_pesquisa"
-                            placeholder="Pesquisar cpf" value="{{ request('cpf_pesquisa') }}">
+                             value="{{ request('cpf_pesquisa') }}">
                     </div>
-                    <div class="col-2">
+                    {{-- <div class="col-2">
                         Grupo
                         <select class="form-select" id="grupo_pesquisa" name="grupo_pesquisa">
                             <option value="" selected>Selecione o grupo</option>
@@ -28,7 +28,7 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
                     {{-- <div class="col-2">
                         Setor
                         <select class="form-select" id="setor_pesquisa" name="setor_pesquisa">

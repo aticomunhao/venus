@@ -75,7 +75,7 @@ class AtendenteController extends Controller
         $soma = DB::table('atendentes')->count();
 
 
-        return view('/atendentes/gerenciar-atendentes', compact('atendente', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome', 'grupos'));
+        return view('/atendentes-fraterno/gerenciar-atendentes', compact('atendente', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome', 'grupos'));
     }
 
 
@@ -90,7 +90,7 @@ class AtendenteController extends Controller
         $atendente_grupo = DB::select('select * from atendente_grupo');
 
 
-        return view('atendentes/criar-atendente', compact('pessoas', 'grupo', 'atendentes', 'atendente_grupo'));
+        return view('atendentes-fraterno/criar-atendente', compact('pessoas', 'grupo', 'atendentes', 'atendente_grupo'));
     }
 
     public function store(Request $request)
@@ -204,8 +204,9 @@ class AtendenteController extends Controller
 
 
 
-        return view('atendentes/editar-atendente', compact('tipo_motivo_status_pessoa', 'gruposAtendente', 'pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
+        return view('atendentes-fraterno/editar-atendente', compact('tipo_motivo_status_pessoa', 'gruposAtendente', 'pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
     }
+
 
 
 
@@ -257,6 +258,7 @@ class AtendenteController extends Controller
             }
         }
 
+
         // Inserir novos registros dos grupos adicionais apenas se o checkbox estiver marcado
         if ($request->has('adicionarMaisGrupos') && $request->input('adicionarMaisGrupos')) {
             if ($request->has('novo_grupo') && is_array($request->input('novo_grupo'))) {
@@ -271,12 +273,14 @@ class AtendenteController extends Controller
             }
         }
 
+
+
         return redirect('gerenciar-atendentes');
     }
 
 
 
-    
+
 
 
     public function show($id)
@@ -336,7 +340,7 @@ class AtendenteController extends Controller
             ->first();
 
 
-        return view('atendentes/visualizar-atendente', compact('tipo_motivo_status_pessoa', 'gruposAtendente', 'pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
+        return view('atendentes-fraterno/visualizar-atendente', compact('tipo_motivo_status_pessoa', 'gruposAtendente', 'pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
     }
 
     public function destroy($id)
