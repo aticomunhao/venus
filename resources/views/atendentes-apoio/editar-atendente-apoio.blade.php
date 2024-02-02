@@ -12,7 +12,7 @@
             <div class="card-body">
                 <br>
                 <div class="row justify-content-start">
-                    <form method="POST" action="/armazenar-atendentes-apoio">
+                    <form method="POST" action="atualizar-atendentes-apoio">
                         @csrf
                         <div class="row col-10 offset-1" style="margin-top:none">
                             <div class="col-md-6 col-12">
@@ -105,8 +105,6 @@
                                                         </div>
                                                     </td>
                                                     @endif
-
-
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -131,9 +129,10 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
- 
+
     <script>
         $(document).ready(function() {
+
             $('.checkbox-trigger').change(function() {
                 var isChecked = $(this).prop('checked');
                 var id = $(this).attr('id');
@@ -144,6 +143,8 @@
                     $('#data_inicio_' + id + ' input').prop('disabled', true);
                 }
             });
+            $('.checkbox-trigger:checked').change();
         });
+
     </script>
 @endsection

@@ -110,22 +110,21 @@ class AtendimentoApoioController extends Controller
     public function edit(string $id)
     {
         $nomes = DB::table('atendente_apoio as at')
-            ->select('p.nome_completo')
+            ->select('p.nome_completo', 'at.id')
             ->leftJoin('pessoas as p', 'at.id_pessoa', '=', 'p.id')
             ->where('at.id', '=', $id)
             ->get();
 
         $dias = DB::table('tipo_dia')->get();
 
-        $diasHorarios = DB::table('atendente_apoio_dia')->where('id_atendente', '=', $id)->get();
+        $diasHorarios = DB::table('atendente_apoio_dia')
+            ->where('id_atendente', '=', $id)
+            ->get();
         $checkTheBox = [];
 
-foreach($diasHorarios as $dia){
-
-
-$checkTheBox[] = $dia->id_dia;
-
-}
+        foreach ($diasHorarios as $dia) {
+            $checkTheBox[] = $dia->id_dia;
+        }
         return view('atendentes-apoio/editar-atendente-apoio', compact('nomes', 'dias', 'diasHorarios', 'checkTheBox'));
     }
 
@@ -134,7 +133,34 @@ $checkTheBox[] = $dia->id_dia;
      */
     public function update(Request $request, string $id)
     {
-        //
+        $dataHoje = Carbon::today()->toDateString();
+        $idAtendente = $id;
+        $req = $request->all();
+
+        $i = 0;
+        foreach ($request->checkbox as $checked) {
+            DB::table('atendente_apoio_dia')->update([
+                'id_atendente' => $idAtendente,
+                'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
+                'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
+                'dh_fim' => $req['dhFim'][$i], // Se você também tiver um array para dhFim
+            ]);
+            $i += 1;
+        }
+        $i = 0;
+        foreach ($request->checkbox as $checked) {
+            DB::table('historico_atendente_apoio')->where('id_atendente_apoio', '=', $id)
+                ->update([
+                    'id_atendente_apoio' => $idAtendente,
+                    'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
+                    'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
+                    'dh_fim' => $req['dhFim'][$i],
+                    'dt_inicio' => $dataHoje, // Se você também tiver um array para dhFim
+                ]);
+
+            $i += 1;
+        }
+        return redirect()->route('indexAtendenteApoio');
     }
 
     /**
