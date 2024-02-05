@@ -48,7 +48,7 @@
                             <div class="form-check custom-checkbox">
                                 <input type="checkbox" class="form-check-input" id="multiple_groups_checkbox">
                                 <label class="form-check-label" for="multiple_groups_checkbox">
-                                    Selecione mais de um grupo
+                                    Adicionar mais grupos ao atendente
                                 </label>
                             </div>
                         </div>
@@ -63,7 +63,7 @@
 
 
                         <div class="col" id="group_selection" style="display: none;">
-                            <label for="selected_groups" class="form-label">Selecione a quantidade de grupos:</label>
+                            <label for="selected_groups" class="form-label">Informe a quantidade de grupos:</label>
                             <select class="form-select" name="selected_groups" id="selected_groups">
 
                                 @for ($i = 0; $i <= 20; $i++)

@@ -24,30 +24,34 @@
                                 @endforeach
                             </select>
                         </div>
+
+
                         <div class="row mt-4">
                             <div class="col">
                                 <label for="status" class="form-label">Status</label>
                                 <select class="form-select" name="status">
-                                    <option value="{{ $atendente->id }}">{{ $atendente->tipo }}</option>
+                                    <option value="{{ $atendente->status }}" selected>{{ $atendente->tipos }}</option>
                                     @foreach ($tipo_status_pessoa as $status)
-                                        <option value="{{ $status->id }}">{{ $status->tipo }}</option>
+                                        @if ($status->id != $atendente->id && $status->id != $atendente->status)
+                                            <option value="{{ $status->id }}">{{ $status->tipo }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
-
                             <div class="col">
                                 <label for="data_fim" class="form-label">Data fim</label>
-                                <input type="date" class="form-select" id="data_fim" name="data_fim" value="{{ $atendente->dt_fim }}">
+                                <input type="date" class="form-select" id="dt_fim" name="dt_fim" value="{{ $atendente->dt_fim }}">
                             </div>
-                             <div class="col">
-                                <label for="motivo_status" class="form-label">Motivo </label>
-                                <select class="form-select" aria-label=".form-select-lg example" name="motivo_status" id="motivo_status"
-                                    required="required">
+                            <div class="col">
+                                <label for="motivo_status" class="form-label">Motivo</label>
+                                <select class="form-select" aria-label=".form-select-lg example" name="motivo_status" id="motivo_status" >
                                     <option value="" {{ is_null($atendente->motivo_status) ? 'selected' : '' }}></option>
                                     @foreach ($tipo_motivo_status_pessoa as $motivo)
-                                        <option value="{{ $motivo->id }}" {{ $atendente->motivo_status == $motivo->id ? 'selected' : '' }}>
-                                            {{ $motivo->motivo }}
-                                        </option>
+                                        @if ($motivo->motivo == 'mudou' || $motivo->motivo == 'desencarnou')
+                                            <option value="{{ $motivo->id }}" {{ $atendente->motivo_status == $motivo->id ? 'selected' : '' }}>
+                                                {{ $motivo->motivo }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -130,35 +134,33 @@
                             <div class="d-grid gap-2 col-4 mx-auto">
                                 <button type="submit" class="btn btn-primary">Confirmar</button>
                             </div>
-                              <!-- Adicione o jQuery à sua página se ainda não estiver presente -->
-                              <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-                              <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+                            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-                                <script>
-                                    $(document).ready(function () {
-                                        // Função para verificar e atualizar o estado dos campos
-                                        function atualizarCampos() {
-                                            var atendenteId = "{{ $atendente->id }}";
-                                            var statusSelecionado = $("select[name='status']").val();
+                            <script>
+                                $(document).ready(function () {
+                                    // Função para verificar e atualizar o estado dos campos
+                                    function atualizarCampos() {
+                                        var statusSelecionado = $("select[name='status']").val();
 
-                                            // Verificar se o status é ativo
-                                            if (statusSelecionado == atendenteId) {
-                                                $("#data_fim, #motivo_status").prop('disabled', true);
-                                            } else {
-                                                $("#data_fim, #motivo_status").prop('disabled', false);
-                                            }
-                                        }
+                                        // Habilitar ou desabilitar campos com base no status selecionado
+                                        $("#dt_fim, #motivo_status").prop('disabled', statusSelecionado == "{{ $atendente->id }}");
+                                    }
 
-                                        // Adicionar um ouvinte de alteração ao campo de status
-                                        $("select[name='status']").change(function () {
-                                            atualizarCampos();
-                                        });
-
-                                        // Chamar a função quando a página for carregada
+                                    // Adicionar um ouvinte de alteração ao campo de status
+                                    $("select[name='status']").change(function () {
                                         atualizarCampos();
                                     });
-                                </script>
+
+                                    // Chamar a função quando a página for carregada
+                                    atualizarCampos();
+                                });
+                            </script>
+
+
+
+
+
 
                             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                             <script>

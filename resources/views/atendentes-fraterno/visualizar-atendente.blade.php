@@ -25,29 +25,32 @@
                         </select>
                     </div>
                 </div>
-                <div class="row mt-5">
+                <div class="row mt-4">
                     <div class="col">
                         <label for="status" class="form-label">Status</label>
                         <select class="form-control" name="status" disabled>
-                            <option value="{{ $atendente->id }}">{{ $atendente->tipos }}</option>
+                            <option value="{{ $atendente->id }}" selected>{{ $atendente->tipos }}</option>
                             @foreach ($tipo_status_pessoa as $status)
-                            <option value="{{ $status->id }}">{{ $status->tipo }}</option>
+                                @if ($status->id != $atendente->id && $status->id != $atendente->status)
+                                    <option value="{{ $status->id }}">{{ $status->tipo }}</option>
+                                @endif
                             @endforeach
                         </select>
                     </div>
                     <div class="col">
                         <label for="data_fim" class="form-label">Data fim</label>
-                        <input type="date" class="form-control" id="data_fim" name="data_fim" disabled value="{{ $atendente->dt_fim }}">
+                        <input type="date" class="form-control" id="dt_fim" name="dt_fim" disabled value="{{ $atendente->dt_fim }}">
                     </div>
                     <div class="col">
-                        <label for="motivo_status" class="form-label">Motivo </label>
-                        <select class="form-select" aria-label=".form-select-lg example" name="motivo_status"
-                            id="motivo_status" required="required" disabled>
+                        <label for="motivo_status" class="form-label">Motivo</label>
+                        <select class="form-control" aria-label=".form-select-lg example" name="motivo_status" disabled id="motivo_status" >
+                            <option value="" {{ is_null($atendente->motivo_status) ? 'selected' : '' }}></option>
                             @foreach ($tipo_motivo_status_pessoa as $motivo)
-                                <option value="{{ $motivo->id }}"
-                                    {{ $atendente->motivo_status == $motivo->id ? 'selected' : '' }}>
-                                    {{ $motivo->motivo }}
-                                </option>
+                                @if ($motivo->motivo == 'mudou' || $motivo->motivo == 'desencarnou')
+                                    <option value="{{ $motivo->id }}" {{ $atendente->motivo_status == $motivo->id ? 'selected' : '' }}>
+                                        {{ $motivo->motivo }}
+                                    </option>
+                                @endif
                             @endforeach
                         </select>
                     </div>

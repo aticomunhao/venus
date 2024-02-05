@@ -149,18 +149,20 @@ class AtendenteController extends Controller
 
     public function edit($id)
     {
-
         $gruposAtendente = DB::table('atendente_grupo')
             ->where('id_atendente', $id)
             ->get();
 
+        $tipo_motivo_status_pessoa = collect([
+            (object)['id' => 1, 'motivo' => 'mudou'],
+            (object)['id' => 2, 'motivo' => 'desencarnou'],
+        ]);
 
         $pessoas = DB::select('select id as idp, nome_completo from pessoas');
         $tipo_status_pessoa = DB::select('select * from tipo_status_pessoa');
         $grupo = DB::select('select id, nome from grupo');
         $atendentes = DB::select('select * from atendentes');
         $atendente_grupo = DB::select('select * from atendente_grupo');
-        $tipo_motivo_status_pessoa = DB::select('select id, motivo from tipo_motivo_status_pessoa');
 
         $atendente = DB::table('atendentes AS ad')
             ->select(
@@ -201,151 +203,170 @@ class AtendenteController extends Controller
             ->leftJoin('tp_ddd AS d', 'p.ddd', '=', 'd.id')
             ->leftJoin('grupo AS g', 'ag.id_grupo', '=', 'g.id')
             ->first();
-
-
 
         return view('atendentes-fraterno/editar-atendente', compact('tipo_motivo_status_pessoa', 'gruposAtendente', 'pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
     }
 
 
 
+        public function update(Request $request, $id)
+        {
+            $data = now();
+            $dt_fim = $request->input('dt_fim');
+            $motivo = $request->input('motivo_status');
+            $status = $request->input('status');
 
-    public function update(Request $request, $id)
-    {
-        $data = now();
-        $dt_fim = $request->input('dt_fim');
-        $motivo = $request->input('motivo');
+            try {
+                // Update 'status' and 'motivo_status' in 'pessoas' table
+                DB::table('pessoas')
+                    ->join('atendentes', 'pessoas.id', '=', 'atendentes.id_pessoa')
+                    ->where('atendentes.id', $id)
+                    ->update([
+                        'status' => $status,
+                        'motivo_status' => $motivo,
+                    ]);
 
-        // Obter os grupos existentes associados ao atendente
-        $existingGroups = DB::table('atendente_grupo')
-            ->where('id_atendente', $id)
-            ->pluck('id_grupo')
-            ->toArray();
-
-        // Verificar e deletar os registros antigos que não estão mais presentes no formulário
-        $groupsToDelete = array_diff($existingGroups, $request->input('id_grupo'));
-        DB::table('atendente_grupo')
-            ->where('id_atendente', $id)
-            ->whereIn('id_grupo', $groupsToDelete)
-            ->delete();
-
-        // Inserir ou atualizar os registros, incluindo os grupos existentes e os novos
-        if ($request->has('id_grupo') && is_array($request->input('id_grupo'))) {
-            foreach ($request->input('id_grupo') as $grupo_id) {
-                $existingRecord = DB::table('atendente_grupo')
+                // Obter os grupos existentes associados ao atendente
+                $existingGroups = DB::table('atendente_grupo')
                     ->where('id_atendente', $id)
-                    ->where('id_grupo', $grupo_id)
-                    ->first();
+                    ->pluck('id_grupo')
+                    ->toArray();
 
-                if ($existingRecord) {
-                    // Se o registro já existe, atualizar
-                    DB::table('atendente_grupo')
-                        ->where('id_atendente', $id)
-                        ->where('id_grupo', $grupo_id)
-                        ->update([
-                            'dt_inicio' => $data,
-                            'dt_fim' => $dt_fim,
-                        ]);
-                } else {
-                    // Se o registro não existe, inserir
-                    DB::table('atendente_grupo')->insert([
-                        'id_atendente' => $id,
-                        'id_grupo' => $grupo_id,
-                        'dt_inicio' => $data,
-                        'dt_fim' => $dt_fim,
-                    ]);
+                // Verificar e deletar os registros antigos que não estão mais presentes no formulário
+                $groupsToDelete = array_diff($existingGroups, $request->input('id_grupo'));
+                DB::table('atendente_grupo')
+                    ->where('id_atendente', $id)
+                    ->whereIn('id_grupo', $groupsToDelete)
+                    ->delete();
+
+                // Inserir ou atualizar os registros, incluindo os grupos existentes e os novos
+                if ($request->has('id_grupo') && is_array($request->input('id_grupo'))) {
+                    foreach ($request->input('id_grupo') as $grupo_id) {
+                        $existingRecord = DB::table('atendente_grupo')
+                            ->where('id_atendente', $id)
+                            ->where('id_grupo', $grupo_id)
+                            ->first();
+
+                        if ($existingRecord) {
+                            // Se o registro já existe, atualizar
+                            DB::table('atendente_grupo')
+                                ->where('id_atendente', $id)
+                                ->where('id_grupo', $grupo_id)
+                                ->update([
+                                    'dt_inicio' => $data,
+                                    'dt_fim' => $dt_fim,
+                                ]);
+                        } else {
+                            // Se o registro não existe, inserir
+                            DB::table('atendente_grupo')->insert([
+                                'id_atendente' => $id,
+                                'id_grupo' => $grupo_id,
+                                'dt_inicio' => $data,
+                                'dt_fim' => $dt_fim,
+                            ]);
+                        }
+                    }
                 }
+
+                // Inserir novos registros dos grupos adicionais apenas se o checkbox estiver marcado
+                if ($request->has('adicionarMaisGrupos') && $request->input('adicionarMaisGrupos')) {
+                    if ($request->has('novo_grupo') && is_array($request->input('novo_grupo'))) {
+                        foreach ($request->input('novo_grupo') as $novo_grupo) {
+                            DB::table('atendente_grupo')->insert([
+                                'id_atendente' => $id,
+                                'id_grupo' => $novo_grupo,
+                                'dt_inicio' => $data,
+                                'dt_fim' => $dt_fim,
+                            ]);
+                        }
+                    }
+                }
+
+                return redirect('gerenciar-atendentes');
+            } catch (\Exception $e) {
+                dd($e->getMessage());
             }
         }
-
-
-        // Inserir novos registros dos grupos adicionais apenas se o checkbox estiver marcado
-        if ($request->has('adicionarMaisGrupos') && $request->input('adicionarMaisGrupos')) {
-            if ($request->has('novo_grupo') && is_array($request->input('novo_grupo'))) {
-                foreach ($request->input('novo_grupo') as $novo_grupo) {
-                    DB::table('atendente_grupo')->insert([
-                        'id_atendente' => $id,
-                        'id_grupo' => $novo_grupo,
-                        'dt_inicio' => $data,
-                        'dt_fim' => $dt_fim,
-                    ]);
-                }
-            }
-        }
-
-
-
-        return redirect('gerenciar-atendentes');
-    }
-
-
 
 
 
 
     public function show($id)
     {
-
         $gruposAtendente = DB::table('atendente_grupo')
-            ->where('id_atendente', $id)
-            ->get();
+        ->where('id_atendente', $id)
+        ->get();
 
-        $tipo_motivo_status_pessoa = DB::select('select id, motivo from tipo_motivo_status_pessoa');
-        $pessoas = DB::select('select id as idp, nome_completo from pessoas');
-        $tipo_status_pessoa = DB::select('select * from tipo_status_pessoa');
-        $grupo = DB::select('select id, nome from grupo');
-        $atendentes = DB::select('select * from atendentes');
-        $atendente_grupo = DB::select('select * from atendente_grupo');
+    $tipo_motivo_status_pessoa = collect([
+        (object)['id' => 1, 'motivo' => 'mudou'],
+        (object)['id' => 2, 'motivo' => 'desencarnou'],
+    ]);
 
-        $atendente = DB::table('atendentes AS ad')
-            ->select(
-                'ad.id',
-                'p.id AS idp',
-                'p.nome_completo',
-                'p.cpf',
-                'tps.tipo',
-                'ag.id_grupo',
-                'p.cpf',
-                'p.ddd',
-                'p.email',
-                'p.celular',
-                'ag.id_atendente',
-                'ag.dt_inicio',
-                'ag.dt_fim',
-                'p.motivo_status',
-                'ag.dt_fim',
-                'p.dt_nascimento',
-                'p.sexo',
-                'p.email',
-                'p.ddd',
-                'p.celular',
-                'tsp.id AS idtps',
-                'p.status',
-                'tsp.tipo AS tipos',
-                'd.id as did',
-                'd.descricao as ddesc',
-                'p.motivo_status',
-                'g.nome AS nome_grupo'
-            )
+    $pessoas = DB::select('select id as idp, nome_completo from pessoas');
+    $tipo_status_pessoa = DB::select('select * from tipo_status_pessoa');
+    $grupo = DB::select('select id, nome from grupo');
+    $atendentes = DB::select('select * from atendentes');
+    $atendente_grupo = DB::select('select * from atendente_grupo');
+
+    $atendente = DB::table('atendentes AS ad')
+        ->select(
+            'ad.id',
+            'p.id AS idp',
+            'p.nome_completo',
+            'p.cpf',
+            'tps.tipo',
+            'ag.id_grupo',
+            'p.cpf',
+            'p.ddd',
+            'p.email',
+            'p.celular',
+            'ag.id_atendente',
+            'p.motivo_status',
+            'ag.dt_inicio',
+            'ag.dt_fim',
+            'p.motivo_status',
+            'ag.dt_fim',
+            'p.dt_nascimento',
+            'p.sexo',
+            'p.email',
+            'p.ddd',
+            'p.celular',
+            'tsp.id AS idtps',
+            'p.status',
+            'tsp.tipo AS tipos',
+            'd.id as did',
+            'd.descricao as ddesc',
+            'p.motivo_status',
+            'g.nome AS nome_grupo'
+        )
+        ->where('ad.id', $id)
+        ->leftJoin('pessoas AS p', 'ad.id_pessoa', '=', 'p.id')
+        ->leftJoin('atendente_grupo AS ag', 'ag.id_atendente', '=', 'ad.id')
+        ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', '=', 'tsp.id')
+        ->leftJoin('tp_sexo AS tps', 'p.sexo', '=', 'tps.id')
+        ->leftJoin('tp_ddd AS d', 'p.ddd', '=', 'd.id')
+        ->leftJoin('grupo AS g', 'ag.id_grupo', '=', 'g.id')
+        ->first();
+
+    return view('atendentes-fraterno/visualizar-atendente', compact('tipo_motivo_status_pessoa', 'gruposAtendente', 'pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
+}
 
 
-
-            ->where('ad.id', $id)
-            ->leftJoin('pessoas AS p', 'ad.id_pessoa', '=', 'p.id')
-            ->leftJoin('atendente_grupo AS ag', 'ag.id_atendente', '=', 'ad.id')
-            ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', '=', 'tsp.id')
-            ->leftJoin('tp_sexo AS tps', 'p.sexo', '=', 'tps.id')
-            ->leftJoin('tp_ddd AS d', 'p.ddd', '=', 'd.id')
-            ->leftJoin('grupo AS g', 'ag.id_grupo', '=', 'g.id')
-            ->first();
-
-
-        return view('atendentes-fraterno/visualizar-atendente', compact('tipo_motivo_status_pessoa', 'gruposAtendente', 'pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
-    }
 
     public function destroy($id)
     {
 
+
+        $data = date("Y-m-d H:i:s");
+
+        DB::table('historico_venus')->insert([
+
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'fato' => 0,
+            'obs' => $id
+
+        ]);
 
         DB::table('atendente_grupo')->where('id_atendente', $id)->delete();
 
