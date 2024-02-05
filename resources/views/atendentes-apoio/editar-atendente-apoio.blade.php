@@ -11,15 +11,14 @@
             </div>
             <div class="card-body">
                 <br>
-                <div class="row justify-content-start">
-                    <form method="POST" action="atualizar-atendentes-apoio">
+                <div class="row ">
+                    <form method="POST" action="../atualizar-atendentes-apoio/{{ $nomes[0]->id }}">
                         @csrf
                         <div class="row col-10 offset-1" style="margin-top:none">
                             <div class="col-md-6 col-12">
                                 <div>Nome</div>
                                 <input class="form-control" type="text" value="{{ $nomes[0]->nome_completo }}" Disabled>
                             </div>
-
 
 
 
@@ -50,7 +49,7 @@
                                                         ?>
 
                                                         <input class="form-check-input checkbox-trigger check_io" type="checkbox"
-                                                            name="checkbox[]" id="{{ $diaSemana->id }}"
+                                                            name="checkbox[{{ $diaSemana->id }}]" id="{{ $diaSemana->id }}"
                                                             value="{{ $diaSemana->id }}" {{ $isChecked }}>
                                                     </td>
                                                     <td>{{ $diaSemana->nome }}</td>
@@ -66,7 +65,7 @@
                                                             <td>
                                                                 <div class="data_io" id="data_inicio_{{ $diaSemana->id }}">
                                                                     <input type="time" class="form-control"
-                                                                        aria-label="Sizing example input" name="dhInicio[]"
+                                                                        aria-label="Sizing example input" name="dhInicio[{{ $diaSemana->id }}]"
                                                                         required="Required"
                                                                         id="data_ini_{{ $diaSemana->id }}"
                                                                         value="{{ $dia->dh_inicio }}" disabled>
@@ -75,7 +74,7 @@
                                                             <td>
                                                                 <div class="data_io" id="data_inicio_{{ $diaSemana->id }}">
                                                                     <input type="time" class="form-control"
-                                                                        aria-label="Sizing example input" name="dhFim[]"
+                                                                        aria-label="Sizing example input" name="dhFim[{{ $diaSemana->id }}]"
                                                                         required="Required"
                                                                         id="data_ini_{{ $diaSemana->id }}"
                                                                         value="{{ $dia->dh_fim }}"disabled>
@@ -89,16 +88,16 @@
                                                     <td>
                                                         <div class="data_io" id="data_inicio_{{ $diaSemana->id }}">
                                                             <input type="time" class="form-control"
-                                                                aria-label="Sizing example input" name="dhInicio[]"
+                                                                aria-label="Sizing example input" name="dhInicio[{{ $diaSemana->id }}]"
                                                                 required="Required"
                                                                 id="data_ini_{{ $diaSemana->id }}"
                                                                  disabled>
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <div class="data_io">
+                                                        <div class="data_io" id="data_inicio_{{ $diaSemana->id }}">
                                                             <input type="time" class="form-control"
-                                                                aria-label="Sizing example input" name="dhFim[]"
+                                                                aria-label="Sizing example input" name="dhFim[{{ $diaSemana->id }}]"
                                                                 required="Required"
                                                                 id="data_ini_{{ $diaSemana->id }}"
                                                                 disabled>
@@ -116,7 +115,7 @@
                                 <a href="/gerenciar-atendentes-apoio" class="btn btn-danger col-3">
                                     Cancelar
                                 </a>
-                                <button type = "submit" class="btn btn-primary col-3 offset-3">
+                                <button  class="btn btn-primary col-3 offset-3">
                                     Confirmar
                                 </button>
                             </div>

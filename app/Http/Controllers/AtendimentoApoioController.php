@@ -11,6 +11,15 @@ class AtendimentoApoioController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+
+/*
+|--------------------------------------------------------------------------
+| Consertar tabela LOG
+|--------------------------------------------------------------------------
+*/
+
+
     public function index(Request $request)
     {
         $pesquisaNome = $request->input('nome');
@@ -96,7 +105,7 @@ class AtendimentoApoioController extends Controller
         $historico = DB::table('historico_atendente_apoio as hs')
             ->select(['hs.dt_inicio', 'hs.dt_fim', 'hs.dh_inicio', 'hs.dh_fim', 'd.nome'])
             ->leftJoin('tipo_dia as d', 'hs.id_dia', '=', 'd.id')
-            ->where('id_atendente_apoio', '=', $id)
+            ->where('id_atendente_apoio', '=', $id, 'and', 'dt_fim', '=', null)
             ->get();
 
         $dias = DB::table('tipo_dia')->get();
@@ -110,10 +119,12 @@ class AtendimentoApoioController extends Controller
     public function edit(string $id)
     {
         $nomes = DB::table('atendente_apoio as at')
-            ->select('p.nome_completo', 'at.id')
+            ->select('p.nome_completo', 'at.id', 'p.status')
             ->leftJoin('pessoas as p', 'at.id_pessoa', '=', 'p.id')
             ->where('at.id', '=', $id)
             ->get();
+            $pessoas = DB::select('select id as idp, nome_completo from pessoas');
+        $tipo_status_pessoa = DB::select('select * from tipo_status_pessoa');
 
         $dias = DB::table('tipo_dia')->get();
 
@@ -134,32 +145,45 @@ class AtendimentoApoioController extends Controller
     public function update(Request $request, string $id)
     {
         $dataHoje = Carbon::today()->toDateString();
-        $idAtendente = $id;
         $req = $request->all();
+        $hist = DB::table('historico_atendente_apoio')->get();
 
-        $i = 0;
+
+        $diasHorarios = DB::table('atendente_apoio_dia')
+        ->where('id_atendente', '=', $id)
+        ->get();
+
+
+
+
+        DB::table('atendente_apoio_dia')
+            ->where('id_atendente', '=', $id)
+            ->delete();
+
+            DB::table('historico_atendente_apoio')
+            ->where('id_atendente', '=', $id)
+            ->delete();
+
+
+
+
         foreach ($request->checkbox as $checked) {
-            DB::table('atendente_apoio_dia')->update([
-                'id_atendente' => $idAtendente,
+            DB::table('atendente_apoio_dia')->insert([
+                'id_atendente' => $id,
                 'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
-                'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
-                'dh_fim' => $req['dhFim'][$i], // Se você também tiver um array para dhFim
+                'dh_inicio' => $req['dhInicio'][$checked], // Use o array $req para obter os horários
+                'dh_fim' => $req['dhFim'][$checked], // Se você também tiver um array para dhFim
             ]);
-            $i += 1;
-        }
-        $i = 0;
-        foreach ($request->checkbox as $checked) {
-            DB::table('historico_atendente_apoio')->where('id_atendente_apoio', '=', $id)
-                ->update([
-                    'id_atendente_apoio' => $idAtendente,
-                    'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
-                    'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
-                    'dh_fim' => $req['dhFim'][$i],
-                    'dt_inicio' => $dataHoje, // Se você também tiver um array para dhFim
-                ]);
 
-            $i += 1;
+            DB::table('historico_atendente_apoio')->insert([
+                'id_atendente_apoio' => $id,
+                'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
+                'dh_inicio' => $req['dhInicio'][$checked], // Use o array $req para obter os horários
+                'dh_fim' => $req['dhFim'][$checked],
+                'dt_inicio' => $dataHoje, // Se você também tiver um array para dhFim
+            ]);
         }
+
         return redirect()->route('indexAtendenteApoio');
     }
 
