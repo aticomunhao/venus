@@ -21,6 +21,7 @@ use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\GerenciarEncaminhamentoController;
 use App\Http\Controllers\GerenciarTratamentosController;
+use App\Http\Controllers\GerenciarEntrevistaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -119,6 +120,15 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 | David Routes
 |--------------------------------------------------------------------------
 */
+//Entrevista
+
+Route::get('/gerenciar-entrevistas', [GerenciarEntrevistaController::class, 'index'])->name('gerenciamento');
+Route::get('/criar-entrevista', [GerenciarEntrevistaController::class, 'create'])->name('');
+Route::post('/incluir-entrevista', [GerenciarEntrevistaController::class, 'store'])->name('');
+Route::get('/editar-entrevista/{id}', [GerenciarEntrevistaController::class, 'edit'])->name('');
+Route::post('/atualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'update'])->name('');
+Route::get('/visualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'show'])->name('');
+Route::any('/excluir-entrevista/{id}', [GerenciarEntrevistaController::class, 'destroy'])->name('');
 
 // Atendentes
 Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('list');
