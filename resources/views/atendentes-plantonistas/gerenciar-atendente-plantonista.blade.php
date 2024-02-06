@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Gerenciar Atendentes Apoio
+    Gerenciar Plantonistas
 @endsection
 
 @section('content')
@@ -12,7 +12,7 @@
     <div class="container";>
 
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
-            GERENCIAR ATENDENTES DE APOIO</h4>
+            GERENCIAR PLANTONISTAS</h4>
         <div class="col-12">
             <div class="row justify-content-center">
                 <form action="" class="form-horizontal mt-4" method="GET">
@@ -32,11 +32,11 @@
                             <input class="btn btn-light btn-sm me-md-2"
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
                                 value="Pesquisar">
-                            <a href="/gerenciar-atendentes-apoio"><input class="btn btn-light btn-sm me-md-2"
+                            <a href="/gerenciar-atendentes-plantonistas"><input class="btn btn-light btn-sm me-md-2"
                                     style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                     value="Limpar"></a>
                 </form>
-                <a href="/incluir-atendentes-apoio"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
+                <a href="/incluir-atendentes-plantonistas"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
                         type="button" value="Novo Atendente+"></a>
             </div>
         </div>
@@ -61,12 +61,12 @@
                         <td>{{ $atendentes->tipo }}</td>
                         <td scope="">
 
-                            <a href="/editar-atendentes-apoio/{{ $atendentes->id }}" type="button"
+                            <a href="/editar-atendentes-plantonistas/{{ $atendentes->id }}" type="button"
                                 class="btn btn-outline-warning btn-sm"  data-tt="tooltip" data-placement="top" title="Editar">
                                 <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
                             </a>
 
-                            <a href="/visualizar-atendentes-apoio/{{ $atendentes->id }}" type="button"
+                            <a href="/visualizar-atendentes-plantonistas/{{ $atendentes->id }}" type="button"
                                 class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                 title="Visualizar">
                                 <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>

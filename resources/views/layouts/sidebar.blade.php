@@ -1,8 +1,9 @@
 <div id="app">
-    <nav class="navbar navbar-expand-md navbar-light shadow-sm" style="background-color:#87CEFA; font-family:tahoma; font-weight:bold;">
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color:#87CEFA; font-family:tahoma; font-weight:bold;">
         <div class="container">
             <a class="navbar-brand" style="color: #fff;" href="{{ url('/login/valida') }}">Vênus</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="dropdown" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation" style="border:none">
+                <span class="navbar-toggler-icon"></span>
                 </button>
             <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
                 <ul class="navbar-nav">
@@ -32,7 +33,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Gerenciamento DAE</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                            <li><a class="dropdown-item" href="#">Gerenciar Plantonistas</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-atendentes-plantonistas">Gerenciar Plantonistas</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-mediuns">Gerenciar Médiuns</a></li>

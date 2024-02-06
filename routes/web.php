@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 // Controllers
 use App\Http\Controllers\AtendenteController;
 use App\Http\Controllers\AtendimentoApoioController;
+use App\Http\Controllers\AtendentePlantonistaController;
 use App\Http\Controllers\TesteController;
 use App\Http\Controllers\GerenciarAtendimentoController;
 use App\Http\Controllers\AtendimentoFraternoController;
@@ -211,5 +212,13 @@ Route::any('/armazenar-atendentes-apoio', [AtendimentoApoioController::class, 's
 Route::any('/visualizar-atendentes-apoio/{id}', [AtendimentoApoioController::class, 'show']);
 Route::any('/editar-atendentes-apoio/{id}', [AtendimentoApoioController::class, 'edit']);
 Route::any('/atualizar-atendentes-apoio/{id}', [AtendimentoApoioController::class, 'update']);
+
+//Atendentes Plantonistas
+Route::get('/gerenciar-atendentes-plantonistas', [AtendentePlantonistaController::class, 'index'])->name('indexAtendentePlantonista');
+Route::get('/incluir-atendentes-plantonistas', [AtendentePlantonistaController::class, 'create']);
+Route::any('/armazenar-atendentes-plantonistas', [AtendentePlantonistaController::class, 'store']);
+Route::any('/visualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'show']);
+Route::any('/editar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'edit']);
+Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'update']);
 
 

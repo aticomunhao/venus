@@ -6,19 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 
-class AtendimentoApoioController extends Controller
+class AtendentePlantonistaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
 
-
-/*
+    /*
 |--------------------------------------------------------------------------
 | Consertar tabela LOG
 |--------------------------------------------------------------------------
 */
-
 
     public function index(Request $request)
     {
@@ -26,21 +24,21 @@ class AtendimentoApoioController extends Controller
         $pesquisaCpf = $request->input('cpf');
 
         if ($pesquisaNome) {
-            $atendente = DB::table('atendente_apoio AS at')
+            $atendente = DB::table('atendente_plantonista AS at')
                 ->select('at.id', 'p.nome_completo', 'p.cpf', 'tp.tipo')
                 ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
                 ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
                 ->where('p.nome_completo', 'ilike', "%$pesquisaNome%")
                 ->get();
         } elseif ($pesquisaCpf) {
-            $atendente = DB::table('atendente_apoio AS at')
+            $atendente = DB::table('atendente_plantonista AS at')
                 ->select('at.id', 'p.nome_completo', 'p.cpf', 'tp.tipo')
                 ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
                 ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
                 ->where('p.cpf', 'ilike', "%$pesquisaCpf%")
                 ->get();
         } else {
-            $atendente = DB::table('atendente_apoio AS at')
+            $atendente = DB::table('atendente_plantonista AS at')
                 ->select('at.id', 'p.nome_completo', 'p.cpf', 'tp.tipo')
                 ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
                 ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
@@ -49,7 +47,7 @@ class AtendimentoApoioController extends Controller
 
         $conta = $atendente->count();
 
-        return view('/atendentes-apoio/gerenciar-atendente-apoio', compact('atendente', 'conta'));
+        return view('/atendentes-plantonistas/gerenciar-atendente-plantonista', compact('atendente', 'conta'));
     }
 
     /**
@@ -63,7 +61,7 @@ class AtendimentoApoioController extends Controller
 
         $dias = DB::table('tipo_dia')->get();
 
-        return view('/atendentes-apoio/incluir-atendente-apoio', compact('nomes', 'dias'));
+        return view('/atendentes-plantonistas/incluir-atendente-plantonista', compact('nomes', 'dias'));
     }
 
     /**
@@ -74,14 +72,14 @@ class AtendimentoApoioController extends Controller
         $req = $request->all();
         $dataHoje = Carbon::today()->toDateString();
 
-        $idAtendente = DB::table('atendente_apoio')->insertGetId([
+        $idAtendente = DB::table('atendente_plantonista')->insertGetId([
             'id_pessoa' => $request->input('nome'),
         ]);
 
         $i = 0;
 
         foreach ($request->checkbox as $checked) {
-            DB::table('atendente_apoio_dia')->insert([
+            DB::table('atendente_plantonista_dia')->insert([
                 'id_atendente' => $idAtendente,
                 'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
                 'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
@@ -91,8 +89,8 @@ class AtendimentoApoioController extends Controller
         }
         $i = 0;
         foreach ($request->checkbox as $checked) {
-            DB::table('historico_atendente_apoio')->insert([
-                'id_atendente_apoio' => $idAtendente,
+            DB::table('historico_atendente_plantonista')->insert([
+                'id_atendente' => $idAtendente,
                 'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
                 'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
                 'dh_fim' => $req['dhFim'][$i],
@@ -101,7 +99,7 @@ class AtendimentoApoioController extends Controller
             $i += 1;
         }
 
-        return redirect()->route('indexAtendenteApoio');
+        return redirect()->route('indexAtendentePlantonista');
     }
 
     /**
@@ -109,7 +107,7 @@ class AtendimentoApoioController extends Controller
      */
     public function show(string $id)
     {
-        $idp = DB::table('atendente_apoio')
+        $idp = DB::table('atendente_plantonista')
             ->where('id', '=', $id)
             ->get();
 
@@ -117,15 +115,15 @@ class AtendimentoApoioController extends Controller
             ->where('id', '=', $idp[0]->id_pessoa)
             ->get();
 
-        $historico = DB::table('historico_atendente_apoio as hs')
+        $historico = DB::table('historico_atendente_plantonista as hs')
             ->select(['hs.dt_inicio', 'hs.dt_fim', 'hs.dh_inicio', 'hs.dh_fim', 'd.nome'])
             ->leftJoin('tipo_dia as d', 'hs.id_dia', '=', 'd.id')
-            ->where('id_atendente_apoio', '=', $id, 'and', 'dt_fim', '=', null)
+            ->where('id_atendente', '=', $id, 'and', 'dt_fim', '=', null)
             ->get();
 
         $dias = DB::table('tipo_dia')->get();
 
-        return view('/atendentes-apoio/visualizar-atendente-apoio', compact('nomes', 'dias', 'historico'));
+        return view('/atendentes-plantonistas/visualizar-atendente-plantonista', compact('nomes', 'dias', 'historico'));
     }
 
     /**
@@ -133,17 +131,18 @@ class AtendimentoApoioController extends Controller
      */
     public function edit(string $id)
     {
-        $nomes = DB::table('atendente_apoio as at')
+        $nomes = DB::table('atendente_plantonista as at')
             ->select('p.nome_completo', 'at.id', 'p.status')
             ->leftJoin('pessoas as p', 'at.id_pessoa', '=', 'p.id')
             ->where('at.id', '=', $id)
             ->get();
-            $pessoas = DB::select('select id as idp, nome_completo from pessoas');
+
+        $pessoas = DB::select('select id as idp, nome_completo from pessoas');
         $tipo_status_pessoa = DB::select('select * from tipo_status_pessoa');
 
         $dias = DB::table('tipo_dia')->get();
 
-        $diasHorarios = DB::table('atendente_apoio_dia')
+        $diasHorarios = DB::table('atendente_plantonista_dia')
             ->where('id_atendente', '=', $id)
             ->get();
         $checkTheBox = [];
@@ -151,7 +150,7 @@ class AtendimentoApoioController extends Controller
         foreach ($diasHorarios as $dia) {
             $checkTheBox[] = $dia->id_dia;
         }
-        return view('atendentes-apoio/editar-atendente-apoio', compact('nomes', 'dias', 'diasHorarios', 'checkTheBox'));
+        return view('atendentes-plantonistas/editar-atendente-plantonista', compact('nomes', 'dias', 'diasHorarios', 'checkTheBox'));
     }
 
     /**
@@ -161,37 +160,30 @@ class AtendimentoApoioController extends Controller
     {
         $dataHoje = Carbon::today()->toDateString();
         $req = $request->all();
-        $hist = DB::table('historico_atendente_apoio')->get();
+        $hist = DB::table('historico_atendente_plantonista')->get();
 
+        $diasHorarios = DB::table('atendente_plantonista_dia')
+            ->where('id_atendente', '=', $id)
+            ->get();
 
-        $diasHorarios = DB::table('atendente_apoio_dia')
-        ->where('id_atendente', '=', $id)
-        ->get();
-
-
-
-
-        DB::table('atendente_apoio_dia')
+        DB::table('atendente_plantonista_dia')
             ->where('id_atendente', '=', $id)
             ->delete();
 
-            DB::table('historico_atendente_apoio')
+        DB::table('historico_atendente_plantonista')
             ->where('id_atendente', '=', $id)
             ->delete();
-
-
-
 
         foreach ($request->checkbox as $checked) {
-            DB::table('atendente_apoio_dia')->insert([
+            DB::table('atendente_plantonista_dia')->insert([
                 'id_atendente' => $id,
                 'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
                 'dh_inicio' => $req['dhInicio'][$checked], // Use o array $req para obter os horários
                 'dh_fim' => $req['dhFim'][$checked], // Se você também tiver um array para dhFim
             ]);
 
-            DB::table('historico_atendente_apoio')->insert([
-                'id_atendente_apoio' => $id,
+            DB::table('historico_atendente_plantonista')->insert([
+                'id_atendente' => $id,
                 'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
                 'dh_inicio' => $req['dhInicio'][$checked], // Use o array $req para obter os horários
                 'dh_fim' => $req['dhFim'][$checked],
@@ -199,7 +191,7 @@ class AtendimentoApoioController extends Controller
             ]);
         }
 
-        return redirect()->route('indexAtendenteApoio');
+        return redirect()->route('indexAtendentePlantonista');
     }
 
     /**
