@@ -15,6 +15,7 @@
                             <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Recepção Integrada - Encaminhamentos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-tratamentos">Recepção Integrada - Tratamentos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-atendente-dia">Gerenciar Atendentes do dia</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-entrevistas">Gerenciar Entrevistas</a></li>
                         </ul>
                     </li>
                 </ul>
