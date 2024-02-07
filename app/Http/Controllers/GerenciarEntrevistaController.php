@@ -16,32 +16,11 @@ class GerenciarEntrevistaController extends Controller
 
     public function index()
     {
-
-        $lista = DB::table('entrevistas AS entre')
-            ->select(
-                'enc.id AS id',
-                'p.nome_completo',
-                'tpe.descricao AS descricao1',
-                'tpe.sigla AS sigla1',
-                'tt.descricao AS descricao2',
-                'tt.sigla AS sigla2',
-                'g.nome AS nome_grupo'
-            )
-            ->join('encaminhamento AS enc', 'entre.id', '=', 'enc.id')
-            ->join('pessoas AS p', 'p.id', '=', 'enc.id')
-            ->join('tipo_encaminhamento AS tpe', 'tpe.id', '=', 'enc.id')
-            ->join('tipo_tratamento AS tt', 'tt.id', '=', 'enc.id')
-            ->join('grupo AS g', 'g.id', '=', 'entre.id')
-            ->join('atendimentos AS at', 'at.id', '=', 'enc.id')
-            ->where('tt.sigla', '<>', 'ptd')
-            ->whereNotNull('enc.id_tipo_entrevista')
-            ->get();
+        $encaminhamentos = DB::table('encaminhamento')->get();
 
 
-
-        return view('entrevistas/gerenciar-entrevistas', compact('lista'));
+        return view('entrevistas.gerenciar-entrevistas', ['encaminhamentos' => $encaminhamentos]);
     }
-
 
 
 

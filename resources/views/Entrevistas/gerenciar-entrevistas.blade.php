@@ -49,13 +49,13 @@
                         </tr>
                     </thead>
                     <tbody style="font-size: 14px; color:#000000; text-align: center;">
-                        @foreach($lista as $listas)
+                        @foreach($encaminhamentos as $encaminhamento)
                         <tr>
-                            <td>{{$listas->id}}</td>
-                            <td>{{$listas->nome_completo}}</td>
-                            <td>{{$listas->descricao2}}</td>
-                            <td>{{$listas->descricao1}}</td>
-                            <td>{{$listas->nome_grupo}}</td>
+                            <td>{{$encaminhamentos->id}}</td>
+                            <td>{{$encaminhamentos->nome_completo}}</td>
+                            <td>{{$encaminhamentos->descricao2}}</td>
+                            <td>{{$encaminhamentos->descricao1}}</td>
+                            <td>{{$encaminhamentos->nome_grupo}}</td>
                             <td></td>
                             <td>
 
