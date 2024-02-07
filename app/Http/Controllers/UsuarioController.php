@@ -20,7 +20,6 @@ class UsuarioController extends Controller
     $this->notify(new ResetPassword($token));
     }
 
-
     private $objUsuario;
 
     public function __construct(){
@@ -34,7 +33,7 @@ class UsuarioController extends Controller
                         u.id,
                         u.id_pessoa,
                         p.cpf,
-                        p.nome,
+                        p.nome_completo,
                         u.ativo,
                         u.bloqueado,
                         u.data_ativacao

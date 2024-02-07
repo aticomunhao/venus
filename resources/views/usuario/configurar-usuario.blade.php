@@ -3,76 +3,99 @@
 @section('title') Cadastrar usuário @endsection
 
 @section('content')
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title" style="color: rgb(255, 0, 0)">Usuário <i class="ti-user"></i></h4>
-                    <hr>
-                    <div class="card-body">
-                        <p>NOME:<strong> {{$result[0]->nome}}</strong></p>
-                        <p>CPF: <strong> {{$result[0]->cpf}}</strong> </p>
-                        <p>IDENTIDADE:<strong>  {{$result[0]->identidade}}</strong> </p>
-                        <p>DATA NASCIMENTO:<strong>  {{$result[0]->data_nascimento}}</strong> </p>
-                        <p>EMAIL: <strong> {{$result[0]->email}}</strong> </p>
-                    </div>
 
-                <form class="form-horizontal mt-4" method="POST" action="/cad-usuario/inserir">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
+
+<br>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card m-1">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            GERENCIAR USUÁRIO
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <p>NOME:<strong> {{$result[0]->nome_completo}}</strong></p>                            
+                                <p>IDENTIDADE:<strong>  {{$result[0]->idt}}</strong> </p>
+                            </div>
+                            <div class="col">
+                                <p>CPF: <strong> {{$result[0]->cpf}}</strong> </p>
+                                <p>DATA NASCIMENTO:<strong>  {{date('d-m-Y', strtotime($result[0]->dt_nascimento))}}</strong> </p>
+                            </div>
+                            <div class="col">
+                                <p>EMAIL: <strong> {{$result[0]->email}}</strong> </p>                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card m-1">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            SELECIONAR PERFIS
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form class="form-horizontal mt-4" method="POST" action="/cad-usuario/inserir">
                 @csrf
-                <input type="hidden" name="idPessoa" value="{{$result[0]->id}}">
+                    <input type="hidden" name="idPessoa" value="{{$result[0]->id}}">
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped mb-0">
                             <tr>
+                                <td style="text-align:right;">Ativo</td>
                                 <td>
-                                    Ativo
-                                </td>
+                                <input id="ativo" type="checkbox" name="ativo" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                                <label for="ativo" class="form-check-label"></label>
+                                </td>                    
+                                <td style="text-align:right;">Bloqueado</td>
                                 <td>
-                                    <input type="checkbox" id="ativo" name="ativo" switch="bool" checked />
-                                    <label for="ativo" data-on-label="Sim" data-off-label="Não"></label>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    Bloqueado
-                                </td>
-                                <td>
-                                    <input type="checkbox" id="bloqueado" name="bloqueado" switch="bool" checked />
-                                    <label for="bloqueado" data-on-label="Sim" data-off-label="Não"></label>
+                                <input id="bloqueado" type="checkbox" name="bloqueado" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                                <label for="bloqueado" class="form-check-label"></label>
                                 </td>
                             </tr>
                         </table>
                     </div>
+                    <br>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped mb-0">
+                            @foreach($resultPerfil as $resultPerfils)
+                            <tr>
+                                <td>
+                                    {{$resultPerfils->nome}}
+                                </td>
+                                <td>
+                                    <input id="{{$resultPerfils->nome}}" type="checkbox" name="{{$resultPerfils->nome}}" value="{{$resultPerfils->id}}" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                                </td>
+                            </tr>
+                            @endforeach
+                        </table>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="card" >
-                <div class="card-body" >
+            </div> 
+            <div class="card m-1">
+                <div class="card-header">
                     <div class="row">
-                        <div class="col-sm">
-                            <h4 class="card-title" style="color: rgb(255, 0, 0)">Selecionar Perfis <i class="ti-key" ></i></h4>
+                        <div class="col">
+                            SELECIONAR ESTOQUE
                         </div>
                     </div>
-                    <hr>
-                    <div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped mb-0">
-                                @foreach($resultPerfil as $resultPerfils)
-                                <tr>
-                                    <td>
-                                        {{$resultPerfils->nome}}
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" id="{{$resultPerfils->nome}}" name="{{$resultPerfils->nome}}" value="{{$resultPerfils->id}}" />
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </table>
-                        </div><br><br>
-                        <h4 class="card-title" style="color: rgb(255, 0, 0)">Selecionar Estoque <i class="ti-unlock" ></i> </h4>
-                        <hr>
+                </div>
+                <div class="card-body">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">                       
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped mb-0">
                                   @foreach($resultDeposito as $resultDepositos)
@@ -81,7 +104,7 @@
                                             {{$resultDepositos->nome}}
                                         </td>
                                         <td>
-                                            <input type="checkbox" id="{{$resultDepositos->nome}}" name="{{$resultDepositos->nome}}" value="{{$resultDepositos->id}}">
+                                            <input id="{{$resultDepositos->nome}}" type="checkbox" name="{{$resultDepositos->nome}}" value="{{$resultDepositos->id}}" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                         </td>
                                     </tr>
                                     @endforeach
@@ -89,7 +112,13 @@
                             </div>
                     </div>
                 </div>
-                <div class="row">
+            </div>
+                
+            </div>
+            
+        </div>
+        <br>
+        <div class="row">
                     <div class="col">
                         <button type="submit" class="btn btn-success btn-block">Cadastrar</button>
                     </div>
@@ -99,10 +128,11 @@
                         </a>
                     </div>
                 </div>
-            </form>
-            </div>
-        </div>
+                </form>
     </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
+
 @endsection
 
 @section('footerScript')

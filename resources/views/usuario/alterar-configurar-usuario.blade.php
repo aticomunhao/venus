@@ -11,10 +11,10 @@
                     <h4 class="card-title">Usuário  <i class="ti-user"></i></h4>
                     <hr>
                     <div class="card-body">
-                        <p>Nome:<strong> {{$result[0]->nome}}</strong></p>
+                        <p>Nome:<strong> {{$result[0]->nome_completo}}</strong></p>
                         <p>Cpf: <strong> {{$result[0]->cpf}}</strong> </p>
-                        <p>Identidade:<strong>  {{$result[0]->identidade}}</strong> </p>
-                        <p>Data de Nascimento:<strong>  {{$result[0]->data_nascimento}}</strong> </p>
+                        <p>Identidade:<strong>  {{$result[0]->idt}}</strong> </p>
+                        <p>Data de Nascimento:<strong>  {{$result[0]->dt_nascimento}}</strong> </p>
                         <p>Email: <strong> {{$result[0]->email}}</strong> </p>
                     </div>
 

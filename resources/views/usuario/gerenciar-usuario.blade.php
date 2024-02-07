@@ -8,10 +8,10 @@
                             <div class="card">
                                 <div class="card-body">
                                     <a href="/usuario-incluir">
-                                            <input class="btn btn-success" type="button" value="Incluir Usuário">
+                                        <input class="btn btn-success" type="button" value="Incluir Usuário">
                                     </a>
-                    <br><hr>
-                        <h4 class="card-title">Lista de Usuário</h4>
+                    <hr>
+                        <h4 class="card-title">Lista de Usuários</h4>
                     <div class="row">
                         <div class="col-12">
                             <div class="card">
@@ -33,7 +33,7 @@
                                         <tbody>
                                           @foreach($result as $results)
                                              <tr>
-                                                <td>{{$results->nome}}</td>
+                                                <td>{{$results->nome_completo}}</td>
                                                 <td>{{$results->cpf}}</td>
                                                 <td>{{$results->ativo ? 'sim' : 'não' }}</td>
                                                 <td>{{$results->bloqueado ? 'sim' : 'não' }}</td>

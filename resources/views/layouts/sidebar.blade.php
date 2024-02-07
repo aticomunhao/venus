@@ -48,6 +48,7 @@
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                             <li><a class="dropdown-item" href="/gerenciar-fatos">Gerenciar Fatos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-salas">Gerenciar Salas</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-usuario">Gerenciar Usuários</a></li>
                         </ul>
                     </li>
                 </ul>

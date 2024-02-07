@@ -31,23 +31,29 @@ use App\Http\Controllers\GerenciarEntrevistaController;
 */
 Auth::routes();
 
+Route::get('/', 'LoginController@index');
+Route::any('/login/home', 'LoginController@valida');
+Route::any('/login/valida', 'LoginController@validaUserLogado')->name('home.post');
+Route::get('/email/remessa-email', 'RecuperaSenhaController@index');
+Route::post('/email/remessa-email', 'RecuperaSenhaController@validar');
+
 Route::get('/logout', 'LexaAdmin@logout');
 
 Route::get('/', [LoginController::class, 'index']);
 Route::any('/login/valida', [LoginController::class, 'validaUserLogado'])->name('home.post');
 Route::any('/login/home', [LoginController::class, 'valida']);
 
-Route::name('usuario')->middleware('validaUsuario')->group(function () {
-    Route::get('gerenciar-usuario', [UsuarioController::class, 'index']);
-    Route::get('usuario-incluir', [UsuarioController::class, 'create']);
-    Route::get('cadastrar-usuarios/configurar/{id}', [UsuarioController::class, 'configurarUsuario']);
+//Route::name('usuario')->middleware('validaUsuario')->group(function () {
+    Route::get('/gerenciar-usuario', [UsuarioController::class, 'index']);
+    Route::get('/usuario-incluir', [UsuarioController::class, 'create']);
+    Route::get('/cadastrar-usuarios/configurar/{id}', [UsuarioController::class, 'configurarUsuario']);
     Route::post('/cad-usuario/inserir', [UsuarioController::class, 'store']);
     Route::get('/usuario/excluir/{id}', [UsuarioController::class, 'destroy']);
     Route::get('/usuario/alterar/{id}', [UsuarioController::class, 'edit']);
     Route::put('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
-    Route::get('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
+    Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
 
-  });
+//});
 
 Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
 Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
