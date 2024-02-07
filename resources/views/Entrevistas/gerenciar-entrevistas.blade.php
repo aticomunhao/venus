@@ -43,25 +43,20 @@
                             <th class="col">ASSISTIDO</th>
                             <th class="col">TRATAMENTO</th>
                             <th class="col">ENTREVISTA</th>
-                            <th class="col">GRUPO</th>
-                            <th class="col">STATUS</th>
                             <th class="col">AÇÕES</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 14px; color:#000000; text-align: center;">
-                        @foreach($encaminhamentos as $encaminhamento)
                         <tr>
-                            <td>{{$encaminhamentos->id}}</td>
-                            <td>{{$encaminhamentos->nome_completo}}</td>
-                            <td>{{$encaminhamentos->descricao2}}</td>
-                            <td>{{$encaminhamentos->descricao1}}</td>
-                            <td>{{$encaminhamentos->nome_grupo}}</td>
-                            <td></td>
+                        @foreach($informacoes as $informacao)
+                        <tr>
+                            <td>{{$informacao->id}}</td>
+                            <td>{{$informacao->nome_pessoa}}</td>
+                            <td>{{$informacao->tratamento_descricao}} ({{$informacao->tratamento_sigla}})</td>
+                            <td>{{$informacao->entrevista_descricao}} ({{$informacao->entrevista_sigla}})</td>
                             <td>
+                    @endforeach
 
-                            </td>
-                        </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>

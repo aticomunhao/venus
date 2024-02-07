@@ -15,12 +15,39 @@ class GerenciarEntrevistaController extends Controller
 {
 
     public function index()
+
+
     {
-        $encaminhamentos = DB::table('encaminhamento')->get();
+        $informacoes = DB::table('encaminhamento')
+            ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
+            ->leftjoin('pessoas as pessoa_atendente', 'atendimentos.id_usuario', '=', 'pessoa_atendente.id')
+            ->leftjoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
+            ->leftjoin('tipo_tratamento', 'encaminhamento.id_tipo_tratamento', '=', 'tipo_tratamento.id')
+            ->leftjoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
+            ->select(
+
+                        'encaminhamento.id',
+            'pessoa_pessoa.nome_completo as nome_pessoa',
+            'tipo_tratamento.descricao as tratamento_descricao',
+            'tipo_tratamento.sigla as tratamento_sigla',
+            'tipo_entrevista.descricao as entrevista_descricao',
+            'tipo_entrevista.sigla as entrevista_sigla'
+        )
+                        // 'pessoa_atendente.nome_completo as nome_atendente',
+                // 'pessoa_pessoa.nome_completo as nome_pessoa',
+                // 'tipo_tratamento.descricao as tratamento_descricao',
+                // 'tipo_tratamento.sigla as tratamento_sigla',
+                // 'tipo_entrevista.descricao as entrevista_descricao',
+                // 'tipo_entrevista.sigla as entrevista_sigla'
 
 
-        return view('entrevistas.gerenciar-entrevistas', ['encaminhamentos' => $encaminhamentos]);
-    }
+            ->get();
+
+            return view('entrevistas/gerenciar-entrevistas', compact('informacoes'));
+            }
+
+
+
 
 
 
