@@ -4,10 +4,6 @@
 
 @section('content')
 
-<?php
-
-?>
-
 <div class="container">
     <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ENTREVISTA</h4>
     <div class="col-12">
@@ -15,13 +11,13 @@
             <div>
                 <form action="{{route('gerenciamento')}}" class="form-horizontal mt-4" method="GET">
                     <div class="row">
-                        <div class="col-1">Dia
-                            <select class="form-select" id="" name="dia" type="number">
+                        <div class="col">Nome
+                            <select class="form-select" id="" name="nome" type="name">
 
                             </select>
                         </div>
 
-                        <div class="col-1">Status
+                        <div class="col">Status
                             <select class="form-select" id="4" name="status" type="number">
 
                             </select>
@@ -47,7 +43,6 @@
                         </tr>
                     </thead>
                     <tbody style="font-size: 14px; color:#000000; text-align: center;">
-                        <tr>
                         @foreach($informacoes as $informacao)
                         <tr>
                             <td>{{$informacao->id}}</td>
@@ -55,18 +50,31 @@
                             <td>{{$informacao->tratamento_descricao}} ({{$informacao->tratamento_sigla}})</td>
                             <td>{{$informacao->entrevista_descricao}} ({{$informacao->entrevista_sigla}})</td>
                             <td>
-                    @endforeach
+                              {{--  <a href="/marcar-entrevista/{{ $informacao->id }}" type="button"
+                                    class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top"
+                                    title="Agendar">
+                                    <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
+                                </a>--}}
+                                <a href="/criar-entrevista{{ $informacao->id }}" type="button"
+                                    class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
+                                    title="Tratamento">
+                                    <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                                <a href="/visualizar-entrevista/{{ $informacao->id }}" type="button"
+                                    class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
+                                    title="Histórico">
+                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                                </a>
 
+                            </td>
+                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
-
         </div>
     </div>
 </div>
-
-
-
 
 @endsection
 
