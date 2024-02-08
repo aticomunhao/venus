@@ -262,7 +262,7 @@ class PessoaController extends Controller
 
         }else{
 
-            //dd($pessoa);
+            // dd($pessoa);
            DB::delete('delete from pessoas where id = ?', [$idp]);
 
            DB::table('historico')->insert([

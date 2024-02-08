@@ -130,7 +130,7 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 //Entrevista
 
 Route::get('/gerenciar-entrevistas', [GerenciarEntrevistaController::class, 'index'])->name('gerenciamento');
-Route::get('/criar-entrevista', [GerenciarEntrevistaController::class, 'create'])->name('create');
+Route::get('/criar-entrevista', [GerenciarEntrevistaController::class, 'create'])->name('criar-entrevista');
 Route::post('/incluir-entrevista', [GerenciarEntrevistaController::class, 'store'])->name('');
 Route::get('/editar-entrevista/{id}', [GerenciarEntrevistaController::class, 'edit'])->name('');
 Route::post('/atualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'update'])->name('');

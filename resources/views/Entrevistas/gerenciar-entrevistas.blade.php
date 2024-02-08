@@ -39,6 +39,7 @@
                             <th class="col">ASSISTIDO</th>
                             <th class="col">TRATAMENTO</th>
                             <th class="col">ENTREVISTA</th>
+                            {{-- <th class="col">STATUS</th> --}}
                             <th class="col">AÇÕES</th>
                         </tr>
                     </thead>
@@ -47,6 +48,7 @@
                         <tr>
                             <td>{{$informacao->id}}</td>
                             <td>{{$informacao->nome_pessoa}}</td>
+                            {{-- <td>{{$informacao->status}}</td> --}}
                             <td>{{$informacao->tratamento_descricao}} ({{$informacao->tratamento_sigla}})</td>
                             <td>{{$informacao->entrevista_descricao}} ({{$informacao->entrevista_sigla}})</td>
                             <td>
@@ -55,11 +57,12 @@
                                     title="Agendar">
                                     <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
                                 </a>--}}
-                                <a href="/criar-entrevista{{ $informacao->id }}" type="button"
+                                <a href="{{ route('criar-entrevista', ['id' => $informacao->id]) }}" type="button"
                                     class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Tratamento">
                                     <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
-                                </a>
+                                 </a>
+
                                 <a href="/visualizar-entrevista/{{ $informacao->id }}" type="button"
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Histórico">
