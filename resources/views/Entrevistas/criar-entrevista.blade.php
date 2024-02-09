@@ -17,17 +17,15 @@
                         <div class="col">
                             <div class="mb-3">
                                 <label for="assistido" class="form-label">Nome</label>
-                                <input type="text" class="form-control" id="assistido" name="assistido">
+                                <select class="form-select" id="assistido" name="assistido">
+                                    <option value="">Selecione o Assistido</option>
+                                    @foreach($pessoas as $pessoa)
+                                        <option value="{{ $pessoa->id }}">{{ $pessoa->nome_completo }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col">
-                            <div class="mb-3">
-                                <label for="tratamento" class="form-label">Tratamento</label>
-                                <input type="text" class="form-control" id="tratamento" name="tratamento">
-                            </div>
+
                         </div>
                         <div class="col">
                             <div class="mb-3">
@@ -53,7 +51,7 @@
                         </div>
                         <div class="col">
                             <div class="mb-3">
-                                <label for="sexo" class="form-label">Sexo da Pessoa</label>
+                                <label for="sexo" class="form-label">Sexo</label>
                                 <select class="form-select" id="sexo" name="sexo">
                                     <option value="Masculino">Masculino</option>
                                     <option value="Feminino">Feminino</option>

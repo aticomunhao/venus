@@ -53,10 +53,7 @@ Route::any('/login/home', [LoginController::class, 'valida']);
     Route::put('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
     Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
 
-<<<<<<< HEAD
 //});
-=======
->>>>>>> f3f2276a6b82e4aab40cfbcd3267409072e77683
 
     Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
     Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
@@ -293,9 +290,4 @@ Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaContr
 
 
 
-<<<<<<< HEAD
 
-});
-=======
-//});
->>>>>>> f3f2276a6b82e4aab40cfbcd3267409072e77683

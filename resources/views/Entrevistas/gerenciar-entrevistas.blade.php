@@ -36,10 +36,10 @@
                     <thead style="text-align: center;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             <th class="col">Nr</th>
-                            <th class="col">ASSISTIDO</th>
+                            <th class="col">NOME</th>
                             <th class="col">TRATAMENTO</th>
                             <th class="col">ENTREVISTA</th>
-                            {{-- <th class="col">STATUS</th> --}}
+                            <th class="col">STATUS</th>
                             <th class="col">AÇÕES</th>
                         </tr>
                     </thead>
@@ -48,9 +48,9 @@
                         <tr>
                             <td>{{$informacao->id}}</td>
                             <td>{{$informacao->nome_pessoa}}</td>
-                            {{-- <td>{{$informacao->status}}</td> --}}
                             <td>{{$informacao->tratamento_descricao}} ({{$informacao->tratamento_sigla}})</td>
                             <td>{{$informacao->entrevista_descricao}} ({{$informacao->entrevista_sigla}})</td>
+                            <td>{{$informacao->status}}</td>
                             <td>
                               {{--  <a href="/marcar-entrevista/{{ $informacao->id }}" type="button"
                                     class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top"
