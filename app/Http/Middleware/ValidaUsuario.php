@@ -8,7 +8,10 @@ class ValidaUsuario
 {
     public function handle($request, Closure $next)
     {
+
+        //dd(!session()->get('usuario'));
         if(!session()->get('usuario')){
+            app('flasher')->addError('O usuário não tem perfil');
             return redirect('/');
         }
         // $route = $request->getPathInfo();
