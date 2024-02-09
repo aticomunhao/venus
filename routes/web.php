@@ -42,7 +42,7 @@ Route::get('/', [LoginController::class, 'index']);
 Route::any('/login/home', [LoginController::class, 'valida']);
 
 
-Route::name('usuario')->middleware('validaUsuario')->group(function () {
+//Route::name('usuario')->middleware('validaUsuario')->group(function () {
     Route::any('/login/valida', [LoginController::class, 'validaUserLogado'])->name('home.post');
     Route::get('/gerenciar-usuario', [UsuarioController::class, 'index']);
     Route::get('/usuario-incluir', [UsuarioController::class, 'create']);
@@ -53,15 +53,18 @@ Route::name('usuario')->middleware('validaUsuario')->group(function () {
     Route::put('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
     Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
 
+<<<<<<< HEAD
 //});
+=======
+>>>>>>> f3f2276a6b82e4aab40cfbcd3267409072e77683
 
-Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
-Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
+    Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
+    Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
 
-// Pessoas
-Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
-Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
-Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name('pesdes');
+    // Pessoas
+    Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
+    Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
+    Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name('pesdes');
 
 
 
@@ -290,5 +293,9 @@ Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaContr
 
 
 
+<<<<<<< HEAD
 
 });
+=======
+//});
+>>>>>>> f3f2276a6b82e4aab40cfbcd3267409072e77683
