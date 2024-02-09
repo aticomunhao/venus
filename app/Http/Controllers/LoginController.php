@@ -19,17 +19,9 @@ class LoginController extends Controller
 
     public function valida(Request $request)
     {
-
+       
         $cpf = $request->input('cpf');
         $senha = $request->input('senha');
-
-       // dd($cpf, $senha);
-
-        // $result=DB::table('usuario')->
-        //             join('pessoa', 'usuario.id_pessoa', '=', 'pessoa.id')->
-        //            where('pessoa.email',$email)->
-        //            where('ativo',true)->
-        //            get();
 
         $result=DB::select("
                         select
@@ -45,22 +37,18 @@ class LoginController extends Controller
                         left join pessoas p on u.id_pessoa = p.id
                         left join usuario_perfil u_p on u.id = u_p.id_usuario
                         left join usuario_deposito u_d on u.id = u_d.id_usuario
-                        where u.ativo is true and p.cpf ='$cpf'
+                        where u.ativo is true and p.cpf = $cpf
                         group by u.id, p.id
                         ");
 
-         //dd($result);
-
-
-        //$senha = Hash::make($request->senha);
-        //return ($request->senha . ' - ' . $senha);
+     
 
 
         if (count($result)>0){
 
             $hash_senha = $result[0]->hash_senha;
 
-            if (Hash::check($senha, $hash_senha))
+        if (Hash::check($senha, $hash_senha))
             {
                session()->put('usuario', [
                              'id_usuario'=> $result[0]->id_usuario,
@@ -72,14 +60,14 @@ class LoginController extends Controller
                              'depositos' => $result[0]->depositos
                     ]);
 
-
-
+            
+               app('flasher')->addSuccess('Acesso autorizado');
                return view('login/home');
-               //$this->validaUserLogado();
             }
 
         }
-        return view('login/login')->withErrors(['Credenciais inválidas']);
+        app('flasher')->addError('Credenciais inválidas');
+        return view('login/login');
 
 
 
@@ -123,7 +111,8 @@ class LoginController extends Controller
             return view('/login/home');
         }else{
 
-            return view('login/login')->withErrors(['O Sr(a) deve informar as credenciais para acessar o sistema']);
+            return view('login/login')
+            ->with('Error', 'O Sr(a) deve informar as credenciais para acessar o sistema');
         }
     }
 

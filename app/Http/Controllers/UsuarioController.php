@@ -137,7 +137,8 @@ class UsuarioController extends Controller
 
         $result = $this->getUsuarios();
 
-        return view('usuario/gerenciar-usuario', compact('result'));
+        app('flasher')->addSuccess('Usuário alterado com sucesso!');
+        return redirect('gerenciar-usuario');
 
     }
 
@@ -269,7 +270,9 @@ class UsuarioController extends Controller
     }
 
     public function alteraSenha(){
-       return view('login.alterar-senha');
+
+       return view('usuario.alterar-senha');
+
     }
 
     public function gravaSenha(Request $request){
@@ -277,7 +280,7 @@ class UsuarioController extends Controller
        $id_usuario = (session()->get('usuario.id_usuario'));
        $senhaAtual = $request->input('senhaAtual');
        $resultSenhaAtualHash = DB::select("select hash_senha from usuario where id = $id_usuario");
-
+      
 
         if ( Hash::check($senhaAtual, $resultSenhaAtualHash[0]->hash_senha))
         {
@@ -293,7 +296,7 @@ class UsuarioController extends Controller
 
             app('flasher')->addSuccess('Senha Alterada com sucesso!');
             
-            return redirect ('/login/home');
+            return redirect ('/login/valida');
         }
         return redirect()
                     ->back()
@@ -310,8 +313,7 @@ class UsuarioController extends Controller
             ->update([
                 'hash_senha' => $senha,
             ]);
-            return redirect()
-                    ->back()
+            return redirect('gerenciar-usuario')
                     ->with('mensagem', 'Senha gerada com sucesso!') ;
     }
 
