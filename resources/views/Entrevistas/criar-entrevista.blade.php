@@ -71,7 +71,7 @@
 
                     <div class="row mt-4 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-atendentes" role="button">Cancelar</a>
+                            <a class="btn btn-danger" href="/gerenciar-entrevistas" role="button">Cancelar</a>
                         </div>
                         <div class="d-grid gap-1 col-4 mx-auto">
                             <button type="submit" class="btn btn-primary">Salvar Entrevista</button>

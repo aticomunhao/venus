@@ -53,7 +53,6 @@ Route::name('usuario')->middleware('validaUsuario')->group(function () {
     Route::put('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
     Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
 
-<<<<<<< Updated upstream
 //});
 
 Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
@@ -238,8 +237,6 @@ Route::any('/visualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaCont
 Route::any('/editar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'edit']);
 Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'update']);
 
-=======
->>>>>>> Stashed changes
 
     Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
     Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
@@ -293,134 +290,5 @@ Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaContr
 
 
 
-
-    // Atendentes Misc/Testes
-    Route::get('/visualizar-atendendes/{id}', [AtendenteController::class, 'show_detalhes_atendente'])->name('show_atendente');
-
-    // Debugger
-    //Route::get('/tester', [TesteController::class, 'index'])->name('tester');
-
-    // Pessoas
-    Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
-    Route::get('/dados-pessoa', [PessoaController::class, 'store'])->name('pesdap');
-    Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
-    Route::get('/excluir-pessoa', [PessoaController::class, 'destroy'])->name('pesdes');
-    Route::get('/editar-pessoa/{idp}', [PessoaController::class, 'edit'])->name('pesedt');
-    Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name('pesexe');
-
-    /*
-    |--------------------------------------------------------------------------
-    | David Routes
-    |--------------------------------------------------------------------------
-    */
-    //Entrevista
-
-    Route::get('/gerenciar-entrevistas', [GerenciarEntrevistaController::class, 'index'])->name('gerenciamento');
-    Route::get('/criar-entrevista', [GerenciarEntrevistaController::class, 'create'])->name('');
-    Route::post('/incluir-entrevista', [GerenciarEntrevistaController::class, 'store'])->name('');
-    Route::get('/editar-entrevista/{id}', [GerenciarEntrevistaController::class, 'edit'])->name('');
-    Route::post('/atualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'update'])->name('');
-    Route::get('/visualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'show'])->name('');
-    Route::any('/excluir-entrevista/{id}', [GerenciarEntrevistaController::class, 'destroy'])->name('');
-
-    // Atendentes
-    Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('list');
-    Route::get('/criar-atendente', [AtendenteController::class, 'create'])->name('atualizar');
-    Route::post('/incluir-atendente', [AtendenteController::class, 'store'])->name('cadastrar');
-    Route::get('/editar-atendente/{id}', [AtendenteController::class, 'edit'])->name('');
-    Route::post('/atualizar-atendente/{id}', [AtendenteController::class, 'update'])->name('atualize');
-    Route::get('/visualizar-atendente/{id}', [AtendenteController::class, 'show'])->name('');
-    Route::any('/excluir-atendente/{id}', [AtendenteController::class, 'destroy'])->name('');
-
-    // Grupos
-    Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
-    Route::get('criar-grupos', [GrupoController::class,'create'])->name('');
-    Route::post('incluir-grupos', [GrupoController::class,'store']);
-    Route::get('/editar-grupos/{id}', [GrupoController::class,'edit']);
-    Route::post('/atualizar-grupos/{id}', [GrupoController::class,'update'])->name('');
-    Route::any('/deletar-grupos/{id}', [GrupoController::class,'destroy']);
-    Route::get('/visualizar-grupos/{id}', [GrupoController::class, 'show'])->name('');
-
-
-    // Fato
-
-    Route::get('/gerenciar-fatos', [FatosController::class, 'index'])->name('descricao');
-    Route::get('/editar-fatos/{id}', [FatosController::class, 'edit'])->name('');
-    Route::post('/atualizar-fatos/{id}', [FatosController::class, 'update'])->name('');
-    Route::any('/incluir-fatos', [FatosController::class, 'incluir']);
-    Route::get('/criar-fatos', [FatosController::class, 'criar'])->name('');
-    Route::any('/deletar-fatos/{id}', [FatosController::class, 'destroy'])->name('');
-
-    //Salas
-    Route::get('/gerenciar-salas', [SalaController::class, 'index'])->name('salas');
-    Route::get('/editar-salas/{id}', [SalaController::class, 'edit'])->name('');
-    Route::post('/atualizar-salas/{id}', [SalaController::class, 'update'])->name('');
-    Route::get('/criar-salas', [SalaController::class, 'criar'])->name('');
-    Route::post('/incluir-salas', [SalaController::class, 'store']);
-    Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
-    Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
-
-    //Médiuns
-    Route::get('/gerenciar-mediuns', [MediumController::class, 'index'])->name('lista');
-    Route::get('/editar-mediuns/{id}', [MediumController::class, 'edit'])->name('');
-    Route::post('/atualizar-mediuns/{id}', [MediumController::class, 'update'])->name('');
-    Route::get('/criar-mediuns', [MediumController::class, 'create'])->name('');
-    Route::post('/incluir-mediuns', [MediumController::class, 'store'])->name('medium.store');
-    Route::any('/deletar-mediuns/{id}', [MediumController::class, 'destroy'])->name('');
-    Route::get('/visualizar-mediuns/{id}', [MediumController::class, 'show'])->name('');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Moisés Routes
-    |--------------------------------------------------------------------------
-    */
-
-    //RECEPÇÃO INTEGRADA DA DAO
-    Route::get('/gerenciar-encaminhamentos', [GerenciarEncaminhamentoController::class, 'index'])->name('gecdex');
-    Route::get('/agendar/{ide}/{idtt}', [GerenciarEncaminhamentoController::class, 'agenda'])->name('gecage');
-    Route::get('/agendar-tratamento/{ide}', [GerenciarEncaminhamentoController::class, 'tratamento'])->name('gtctra');
-    Route::post('incluir-tratamento/{idtr}', [GerenciarEncaminhamentoController::class, 'tratar'])->name('gtctrt');
-    Route::get('/visualizar-enc/{ide}', [GerenciarEncaminhamentoController::class, 'visualizar'])->name('gecvis');
-    Route::post('/inativar/{ide}', [GerenciarEncaminhamentoController::class, 'inative'])->name('gecina');
-
-
-    Route::get('/gerenciar-tratamentos', [GerenciarTratamentosController::class, 'index'])->name('gtcdex');
-    Route::get('/visualizar-trat/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
-
-    Route::post('/presenca/{idtr}', [GerenciarTratamentosController::class, 'presenca'])->name('gtcpre');
-    Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
-
-
-    Route::put('/k', [GerenciarTratamentosController::class, ''])->name('');
-
-    //REUNIÃO MEDIÚNICA
-    Route::get('/gerenciar-reunioes', [ReuniaoMediunicaController::class, 'index'])->name('remdex');
-    Route::get('/criar-reuniao', [ReuniaoMediunicaController::class, 'create'])->name('remcre');
-    Route::post('/nova-reuniao', [ReuniaoMediunicaController::class, 'store'])->name('remore');
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Nathan Routes
-    |--------------------------------------------------------------------------
-    */
-
-    //Atendentes de Apoio
-    Route::get('/gerenciar-atendentes-apoio', [AtendimentoApoioController::class, 'index'])->name('indexAtendenteApoio');
-    Route::get('/incluir-atendentes-apoio', [AtendimentoApoioController::class, 'create']);
-    Route::any('/armazenar-atendentes-apoio', [AtendimentoApoioController::class, 'store']);
-    Route::any('/visualizar-atendentes-apoio/{id}', [AtendimentoApoioController::class, 'show']);
-    Route::any('/editar-atendentes-apoio/{id}', [AtendimentoApoioController::class, 'edit']);
-    Route::any('/atualizar-atendentes-apoio/{id}', [AtendimentoApoioController::class, 'update']);
-
-    //Atendentes Plantonistas
-    Route::get('/gerenciar-atendentes-plantonistas', [AtendentePlantonistaController::class, 'index'])->name('indexAtendentePlantonista');
-    Route::get('/incluir-atendentes-plantonistas', [AtendentePlantonistaController::class, 'create']);
-    Route::any('/armazenar-atendentes-plantonistas', [AtendentePlantonistaController::class, 'store']);
-    Route::any('/visualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'show']);
-    Route::any('/editar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'edit']);
-    Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'update']);
 
 });
