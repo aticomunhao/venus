@@ -37,7 +37,7 @@ class LoginController extends Controller
                         left join pessoas p on u.id_pessoa = p.id
                         left join usuario_perfil u_p on u.id = u_p.id_usuario
                         left join usuario_deposito u_d on u.id = u_d.id_usuario
-                        where u.ativo is true and p.cpf = $cpf
+                        where u.ativo is true and p.cpf = '$cpf'
                         group by u.id, p.id
                         ");
 
