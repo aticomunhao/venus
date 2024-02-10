@@ -52,16 +52,23 @@
                             <td>{{$informacao->entrevista_descricao}} ({{$informacao->entrevista_sigla}})</td>
                             <td>{{$informacao->status}}</td>
                             <td>
-                              {{--  <a href="/marcar-entrevista/{{ $informacao->id }}" type="button"
+
+                                {{-- <a href="/agendar/{{ $informacao->id }}/{{ $informacao->id }}" class="btn btn-outline-success btn-sm"
+                                    data-tt="tooltip" data-placement="top" title="Agendar">
+                                    <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
+                                </a> --}}
+                                <a href="{{ route('agen', ['id' => $informacao->id]) }}" type="button"
                                     class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Agendar">
                                     <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
-                                </a>--}}
+                                 </a>
+
                                 <a href="{{ route('criar-entrevista', ['id' => $informacao->id]) }}" type="button"
                                     class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Tratamento">
+                                    title="Entrevista">
                                     <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                                  </a>
+
 
                                 <a href="/visualizar-entrevista/{{ $informacao->id }}" type="button"
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
