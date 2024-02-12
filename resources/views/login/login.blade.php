@@ -26,7 +26,7 @@
                                     <div class="form-group">
                                         <label for="username">CPF</label>
                                          <!--<input id="cpf" type="numeric" class="form-control @error('cpf') is-invalid @enderror" name="cpf" value="{{ old('cpf') }}" required autocomplete="cpf" autofocus placeholder="">-->
-                                         <input id="cpf" type="numeric" class="form-control mascara_cpf @error('cpf') is-invalid @enderror" name="cpf" placeholder="Ex.: 000.000.000-00"  value="{{ old('cpf') }}">
+                                         <input id="cpf" type="text" class="form-control mascara_cpf @error('cpf') is-invalid @enderror" name="cpf" placeholder="Ex.: 000.000.000-00"  value="{{ old('cpf') }}">
                                         @error('cpf')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
