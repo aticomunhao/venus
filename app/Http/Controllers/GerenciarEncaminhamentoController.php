@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Core\Number;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -40,7 +41,7 @@ class GerenciarEncaminhamentoController extends Controller
 
         $assistido = $request->assist;
 
-        $situacao = $request->status;
+        $situacao = $request->status;   //
 
 
         if ($request->dt_enc){
@@ -81,7 +82,7 @@ class GerenciarEncaminhamentoController extends Controller
     }
 
     public function agenda($ide, $idtt){
-        
+
 
         $result = DB::table('encaminhamento AS enc')
                         ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat' )
@@ -151,7 +152,7 @@ class GerenciarEncaminhamentoController extends Controller
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 3)
                         ->get();
-        
+
         //dd($conttratqua);
 
         $contgrqui = DB::table('cronograma AS reu')
@@ -170,7 +171,7 @@ class GerenciarEncaminhamentoController extends Controller
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 4)
                         ->get();
-        
+
 
         $contgrsex = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
@@ -198,6 +199,8 @@ class GerenciarEncaminhamentoController extends Controller
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 6)
                         ->get();
+
+
 
         $sab = $contgrsab[0]->maxat;
 
@@ -242,6 +245,9 @@ class GerenciarEncaminhamentoController extends Controller
 
     public function tratamento(Request $request, $ide){
 
+
+
+
         $dia = intval($request->dia);
 
         $ide = intval($ide);
@@ -252,16 +258,16 @@ class GerenciarEncaminhamentoController extends Controller
                     ->leftJoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
                     ->where('rm.dia', $dia)
                     ->distinct('rm.id')
-                    ->whereRaw('enc.id_tipo_tratamento = rm.id_tipo_tratamento')                   
-                    ->get();      
+                    ->whereRaw('enc.id_tipo_tratamento = rm.id_tipo_tratamento')
+                    ->get();
 
-       
+
         $tp_trat = DB::table('encaminhamento AS enc')
                         ->select('enc.id_tipo_tratamento')
                         ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
                         ->where('enc.id', $ide)
                         ->value('enc.id_tipo_tratamento');
-       
+
 
         $result = DB::table('encaminhamento AS enc')
                         ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat' )
@@ -279,7 +285,7 @@ class GerenciarEncaminhamentoController extends Controller
 
 
         $trata = DB::table('cronograma AS reu')
-                       
+
                         ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'),'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
                         ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
                         ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
@@ -289,12 +295,12 @@ class GerenciarEncaminhamentoController extends Controller
                         ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
                         ->leftJoin('tipo_dia AS td', 'reu.dia', 'td.id')
                         ->where('reu.dia', $dia)
-                        ->where('reu.id_tipo_tratamento', $tp_trat) 
-                        ->orWhere('tr.status', null) 
-                        ->where('tr.status', '<', 3)                       
+                        ->where('reu.id_tipo_tratamento', $tp_trat)
+                        ->orWhere('tr.status', null)
+                        ->where('tr.status', '<', 3)
                         ->groupBy('reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
                         ->orderBy('h_inicio')
-                        ->get(); 
+                        ->get();
 
         return view('/recepcao-integrada/agendar-tratamento', compact('result', 'trata', 'dia'));
 
@@ -312,6 +318,19 @@ class GerenciarEncaminhamentoController extends Controller
         $dia_atual = $data_atual->weekday();
 
         //dd($dia_atual);
+        $countVagas = DB::table('tratamento')->where('id_reuniao', '=', "$reu")->where('status', '<', '3' )->count();
+        $maxAtend = DB::table('cronograma')->where('id', '=', "$reu")->get();
+        $tratID = DB::table('encaminhamento')->where('id', '=', $ide)->get();
+
+
+        if ($tratID[0]->id_tipo_tratamento == 2 and $countVagas >= $maxAtend[0]->max_atend){
+
+            app('flasher')->addError('Número de vagas insuficientes');
+            return redirect()->back();
+        }
+
+
+
 
         if ($dia_atual < $dia_semana){
 
@@ -320,37 +339,37 @@ class GerenciarEncaminhamentoController extends Controller
             $id_trata = DB::table('tratamento AS t')
             ->select(DB::raw('MAX(id) as max_id'))
             ->value('max_id');
-    
+
             DB::table('tratamento AS tr')
                                 ->insert([
                                 'id_reuniao' => $reu,
                                 'id_encaminhamento' => $ide,
                                 'status' => 1
-    
+
             ]);
-    
+
             DB::table('dias_tratamento AS dt')
                                 ->insert([
                                 'id_tratamento' => $id_trata,
                                 'data' => $prox
-    
+
             ]);
-    
+
             DB::table('encaminhamento AS enc')
                                         ->where('enc.id', $ide)
                                         ->update([
                                         'status_encaminhamento' => 2
             ]);
-    
+
             app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
 
             return redirect('/gerenciar-encaminhamentos');
-    
+
 
         }elseif($dia_atual > $dia_semana){
 
             $prox = (date("Y-m-d", strtotime("$data_atual + $dia_semana day + 7 day - $dia_atual day")));
-        
+
 
         $id_trata = DB::table('tratamento AS t')
         ->select(DB::raw('MAX(id) as max_id'))
@@ -414,7 +433,7 @@ class GerenciarEncaminhamentoController extends Controller
         $list = DB::table('encaminhamento AS enc')
                         ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.data', 'dt.presenca' )
                         ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
-                        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')        
+                        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                         ->leftJoin('dias_tratamento AS dt', 'tr.id', 'dt.id_tratamento')
                         ->where('enc.id', $ide)
                         ->get();
@@ -422,7 +441,7 @@ class GerenciarEncaminhamentoController extends Controller
         $faul = DB::table('encaminhamento AS enc')
                         ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.data', 'dt.presenca')
                         ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
-                        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')        
+                        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                         ->leftJoin('dias_tratamento AS dt', 'tr.id', 'dt.id_tratamento')
                         ->where('enc.id', $ide)
                         ->where('presenca', 0)
@@ -439,7 +458,7 @@ class GerenciarEncaminhamentoController extends Controller
         $today = Carbon::today()->format('Y-m-d');
 
 
-        $inative =  DB::table('encaminhamento AS enc')                   
+        $inative =  DB::table('encaminhamento AS enc')
                         ->where('enc.id', $ide)
                         ->update([
                             'status_encaminhamento' => 4,
@@ -454,7 +473,7 @@ class GerenciarEncaminhamentoController extends Controller
                         'data' => $today,
                         'fato' => 36,
                         'id_ref' => $ide
-                        
+
         ]);
 
         app('flasher')->addSuccess('O encaminhamento foi inativado.');
@@ -464,5 +483,5 @@ class GerenciarEncaminhamentoController extends Controller
 
     }
 
-   
+
 }

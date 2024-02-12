@@ -15,7 +15,34 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body"> <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                <div class="card-body">
+                    <div class="row justify-content-center">
+                        <form action="" class="form-horizontal mt-4" method="GET">
+                            <div class="row mb-4">
+                                <div class="col-4">Nome
+                                    <input class="form-control" type="text" maxlength="45"
+                                        oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                        id="1" name="nome">
+                                </div>
+                                <div class="col-2">CPF
+                                    <input class="form-control" type="text" maxlength="45"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                        id="1" name="cpf">
+                                </div>
+
+                                <div class="col"><br>
+                                    <input class="btn btn-light btn-sm me-md-2"
+                                        style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
+                                        value="Pesquisar">
+                                    <a href="/usuario-incluir"><input class="btn btn-light btn-sm me-md-2"
+                                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
+                                            value="Limpar"></a>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                             <tr style="text-align: center;">
                                 <th>ID</th>
@@ -44,7 +71,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                </div> 
+                </div>
             </div>
         </div>
     </div>

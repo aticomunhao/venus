@@ -7,11 +7,39 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <a href="/usuario-incluir">
-                                        <input class="btn btn-success" type="button" value="Incluir Usuário">
-                                    </a>
-                    <hr>
+
+
                         <h4 class="card-title">Lista de Usuários</h4>
+                        <div class="row justify-content-center">
+                            <form action="" class="form-horizontal mt-4" method="GET">
+                                <div class="row mb-4">
+                                    <div class="col-4">Nome
+                                        <input class="form-control" type="text" maxlength="45"
+                                            oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                            id="1" name="nome">
+                                    </div>
+                                    <div class="col-2">CPF
+                                        <input class="form-control" type="text" maxlength="45"
+                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                            id="1" name="cpf">
+                                    </div>
+
+                                    <div class="col"><br>
+                                        <input class="btn btn-light btn-sm me-md-2"
+                                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
+                                            value="Pesquisar">
+                                        <a href="/gerenciar-usuario"><input class="btn btn-light btn-sm me-md-2"
+                                                style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
+                                                value="Limpar"></a>
+                            </form>
+
+                                <a href="/usuario-incluir"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
+                                        type="button" value="Incluir Usuário"></a>
+
+                                </div>
+                                </div>
+                                </div>
+                                <hr />
                     <div class="row">
                         <div class="col-12">
                             <div class="card">
@@ -35,18 +63,18 @@
                                              <tr>
                                                 <td>{{$results->nome_completo}}</td>
                                                 <td>{{$results->cpf}}</td>
-                                                <td>{{$results->ativo ? 'sim' : 'não' }}</td>
-                                                <td>{{$results->bloqueado ? 'sim' : 'não' }}</td>
+                                                <td>{{$results->ativo ? 'Sim' : 'Não' }}</td>
+                                                <td>{{$results->bloqueado ? 'Sim' : 'Não' }}</td>
                                                 <td>{{$results->data_ativacao}}</td>
                                                 <td>
-                                                    <a href="/usuario/alterar/{{$results->id}}">
-                                                        <input class="btn btn-warning btn-sm" type="button" value="Alterar">
+                                                    <a href="/usuario/alterar/{{$results->id}}"
+                                                         class="btn btn-warning btn-sm" type="button"> Alterar
                                                     </a>
-                                                    <a href="/usuario/excluir/{{$results->id}}">
-                                                        <input class="btn btn-danger btn-sm" type="button" value="Excluir">
+                                                    <a href="/usuario/excluir/{{$results->id}}"
+                                                         class="btn btn-danger btn-sm" type="button"> Excluir
                                                     </a>
-                                                     <a href="/usuario/gerar-Senha/{{$results->id_pessoa}}">
-                                                        <input class="btn btn-primary btn-sm" type="button" value="Gerar Senha">
+                                                     <a href="/usuario/gerar-Senha/{{$results->id_pessoa}}"
+                                                         class="btn btn-primary btn-sm" type="button"> Gerar Senha
                                                     </a>
                                                 </td>
                                             </tr>
