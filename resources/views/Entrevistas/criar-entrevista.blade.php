@@ -6,7 +6,7 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <div class="col">CRIAR ENTREVISTA</div>
+                <div class="col">AGENDAR ENTREVISTA</div>
             </div>
         </div>
         <br>
@@ -35,33 +35,19 @@
                         </select>
                     </div>
                     <div class="col">
-                        <label for="entrevista" class="form-label">Entrevista</label>
-                        <input type="text" class="form-control" id="entrevista" name="entrevista" >
+                        <label for="representante" class="form-label">Representante</label>
+                        <input type="text" class="form-control" id="representante" name="representante" >
+                    </div>
+                    <div class="col">
+                        <label for="dt_hr" class="form-label">Data</label>
+                        <input type="date" class="form-control" id="dt_hr" name="dt_hr" >
+                    </div>
+                    <div class="col">
+                        <label for="dt_hr" class="form-label">Hora</label>
+                        <input type="time" class="form-control" id="dt_hr" name="dt_hr" >
                     </div>
                 </div>
-
-                <div class="row mb-5">
-                    <div class="col">
-                        <label for="quantidade_pessoas" class="form-label">Quantidade de Pessoas</label>
-                        <input type="number" class="form-control" id="quantidade_pessoas" name="quantidade_pessoas" >
-                    </div>
-                    <div class="col">
-                        <label for="cidade" class="form-label">Cidade</label>
-                        <input type="text" class="form-control" id="cidade" name="cidade">
-                    </div>
-                    <div class="col">
-                        <label for="sexo" class="form-label">Sexo</label>
-                        <select class="form-select" id="sexo" name="sexo">
-                            <option value="Masculino">Masculino</option>
-                            <option value="Feminino">Feminino</option>
-                            <option value="Outros">Outros</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <label for="idade" class="form-label">Idade</label>
-                        <input type="number" class="form-control" id="idade" name="idade" >
-                    </div>
-                </div>
+            </div>
                 <div class="row mt-4 justify-content-center">
                     <div class="d-grid gap-1 col-4 mx-auto">
                         <a class="btn btn-danger" href="/gerenciar-entrevistas" role="button">Cancelar</a>

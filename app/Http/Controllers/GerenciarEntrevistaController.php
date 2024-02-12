@@ -17,28 +17,43 @@ class GerenciarEntrevistaController extends Controller
 
 
     public function index()
-{
-    $informacoes = DB::table('encaminhamento')
-        ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
-        ->leftJoin('pessoas as pessoa_atendente', 'atendimentos.id_usuario', '=', 'pessoa_atendente.id')
-        ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
-        ->leftJoin('tipo_tratamento', 'encaminhamento.id_tipo_tratamento', '=', 'tipo_tratamento.id')
-        ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
-        ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
-        ->where('tipo_tratamento.sigla', '!=', 'PTD')
-        ->select(
-            'encaminhamento.id',
-            'pessoa_pessoa.nome_completo as nome_pessoa',
-            'tipo_tratamento.descricao as tratamento_descricao',
-            'tipo_tratamento.sigla as tratamento_sigla',
-            'tipo_entrevista.descricao as entrevista_descricao',
-            'tipo_entrevista.sigla as entrevista_sigla',
-            DB::raw("'Aguardando agendar' as status")
-        )
-        ->get();
+    {
+        $informacoes = DB::table('encaminhamento')
+            ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
+            ->leftJoin('pessoas as pessoa_atendente', 'atendimentos.id_usuario', '=', 'pessoa_atendente.id')
+            ->leftJoin('pessoas as pessoa_representante', 'atendimentos.id_representante', '=', 'pessoa_representante.id')
+            ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
+            ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
+            ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
+            ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
+            ->where('encaminhamento.id_tipo_encaminhamento', 1) // Filtro para apenas id_tipo_encaminhamento igual a 1
+            ->select(
+                'entrevistas.status',
+                'entrevistas.dt_hr',
+                'encaminhamento.id',
+                'tipo_encaminhamento.descricao',
+                'encaminhamento.id_tipo_encaminhamento',
+                'pessoa_pessoa.nome_completo as nome_pessoa',
+                'pessoa_representante.nome_completo as nome_representante', // Adicionando o nome do representante
+                'atendimentos.id_representante as id_representante', // Adicionando o ID do representante
+                'tipo_entrevista.descricao as entrevista_descricao',
+                'tipo_entrevista.sigla as entrevista_sigla',
+                'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
+                DB::raw("'Aguardando agendar' as status")
+            )
+            ->get();
 
-    return view('entrevistas/gerenciar-entrevistas', compact('informacoes'));
-}
+        return view('entrevistas/gerenciar-entrevistas', compact('informacoes'));
+    }
+
+
+
+
+
+
+
+
+
 
 
 
