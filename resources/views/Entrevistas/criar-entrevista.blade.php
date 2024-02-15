@@ -17,7 +17,7 @@
 
                     <div class="row mb-5">
                         <div class="col">
-                            <label for="id_pessoa" class="form-label">Nome</label>
+                            <label for="id_encaminhamento" class="form-label">Nome</label>
                             <select class="form-control" id="id_encaminhamento" name="id_encaminhamento" disabled>
                                 @foreach ($informacoes as $informacao)
                                     <option value="{{ $informacao->id_pessoa }}">{{ $informacao->nome_pessoa }}</option>
@@ -27,8 +27,8 @@
                     </div>
                     <div class="row mb-5">
                         <div class="col">
-                            <label for="id_pessoa" class="form-label">Entrevistador</label>
-                            <select class="form-select" id="id_pessoa" name="entrevistador">
+                            <label for="id_entrevistador" class="form-label">Entrevistador</label>
+                            <select class="form-select" id="id_entrevistador" name="id_entrevistador">
                                 <option value=""></option>
                                 @foreach ($pessoas as $pessoa)
                                     <option value="{{ $pessoa->id }}">{{ $pessoa->nome_completo }}</option>

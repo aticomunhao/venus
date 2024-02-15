@@ -71,19 +71,6 @@
                             </td>
                         </tr>
                         @endforeach
-                        @foreach($entrevistas as $entrevista)
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td>{{$entrevista->data}}</td>
-                            <td>{{$entrevista->hora}}</td>
-                            <td></td>
-                            <td>{{$entrevista->id_entrevistador}}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>
