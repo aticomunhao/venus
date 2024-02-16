@@ -236,6 +236,14 @@ class PessoaController extends Controller
 
     public function destroy($idp)
     {
+
+        if(is_null(session()->get('usuario.id_usuario'))){
+
+
+            app('flasher')->addError('É necessário fazer Login!');
+            return redirect()->route('homeLogin');
+
+        }
         $data = date("Y-m-d H:i:s");
 
         $pessoa = DB::table('pessoas')->select('nome_completo')->where('id', $idp)->get();
@@ -265,7 +273,7 @@ class PessoaController extends Controller
             // dd($pessoa);
            DB::delete('delete from pessoas where id = ?', [$idp]);
 
-           DB::table('historico')->insert([
+           DB::table('historico_venus')->insert([
             'id_usuario' => session()->get('usuario.id_usuario'),
             'data' => $data,
             'fato' => 1,
