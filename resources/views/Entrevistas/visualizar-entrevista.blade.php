@@ -10,21 +10,21 @@
                 </div>
             </div>
             <br>
-            <div class="card-body">
-                <form class="form-horizontal mt-2" method="post" action="/visualizar-entrevista/{{ $entrevistas[0]->id }}">
-                    @csrf
+            <form class="form-horizontal mt-2" method="post" action="/visualizar-entrevista/{{ $encaminhamento->id }}>
+                @csrf
 
-                    <div class="row mb-5">
-                        <div class="col">
-                            <label for="id_encaminhamento" class="form-label">Nome</label>
-                            <select class="form-control" id="id_encaminhamento" name="id_encaminhamento" disabled>
-                                <option value="{{ $entrevistas[0]->id}}">{{ $entrevistas[0]->id}}</option>
-                                @foreach ($pessoas as $pessoa)
-                                <option value="{{ $pessoa->id}}">{{ $pessoa->nome_completo }}</option>
+                <div class="row mb-5">
+                    <div class="col">
+                        <label for="id_encaminhamento" class="form-label">Nome</label>
+                        <select class="form-control" id="id_encaminhamento" name="id_encaminhamento">
+                            <option value="{{ $encaminhamento->id }}">{{ $encaminhamento->id }}</option>
+                            @foreach ($pessoas as $pessoa)
+                                <option value="{{ $pessoa->id }}">{{ $pessoa->nome_completo }}</option>
                             @endforeach
-                            </select>
-                        </div>
+                        </select>
                     </div>
+                </div>
+
                     <div class="row mb-5">
                         <div class="col">
                             <label for="id_entrevistador" class="form-label">Entrevistador</label>

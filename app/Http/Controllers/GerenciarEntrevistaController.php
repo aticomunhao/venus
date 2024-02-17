@@ -18,8 +18,8 @@ class GerenciarEntrevistaController extends Controller
     {
     $informacoes = DB::table('encaminhamento')
     ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
-    ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento') // Adicionado join com a tabela 'entrevistas'
-    ->leftJoin('pessoas as pessoa_entrevistas', 'entrevistas.id_entrevistador', '=', 'pessoa_entrevistas.id') // Corrigido o join com a tabela 'entrevistas'
+    ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
+    ->leftJoin('pessoas as pessoa_entrevistas', 'entrevistas.id_entrevistador', '=', 'pessoa_entrevistas.id')
     ->leftJoin('pessoas as pessoa_representante', 'atendimentos.id_representante', '=', 'pessoa_representante.id')
     ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
     ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
@@ -33,7 +33,7 @@ class GerenciarEntrevistaController extends Controller
                 END as status"),
         'entrevistas.data',
         'entrevistas.hora',
-        'encaminhamento.id',
+        'encaminhamento.id as ide',
         'tipo_encaminhamento.descricao',
         'encaminhamento.id_tipo_encaminhamento',
         'pessoa_pessoa.nome_completo as nome_pessoa',
@@ -143,15 +143,13 @@ public function store(Request $request,$id)
 
 
 
-
-
 public function show($id)
 {
     $entrevistas = DB::table('entrevistas AS entre')
         ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
         ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
         ->leftJoin('pessoas AS p', 'entre.id_entrevistador', 'p.id')
-        ->select('p.nome_completo', 's.nome', 's.numero', 's.id_localizacao','enc.id')
+        ->select('p.nome_completo', 's.nome', 's.numero', 's.id_localizacao','enc.id','entre.id','entre.id_entrevistador')
         ->where('entre.id', $id)
         ->first();
 
@@ -159,8 +157,9 @@ public function show($id)
 
     }
 
+    $entrevistas = DB::table('entrevistas')->find($id);
     $salas = DB::table('salas')->get();
-    $encaminhamento = DB::table('encaminhamento')->get();
+    $encaminhamento = DB::table('encaminhamento')->find($id);
     $pessoas = DB::table('pessoas')->get();
 
 

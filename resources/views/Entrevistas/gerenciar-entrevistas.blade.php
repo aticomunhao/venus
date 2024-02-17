@@ -49,7 +49,7 @@
                     <tbody style="font-size: 14px; color:#000000; text-align: center;">
                         @foreach($informacoes as $informacao)
                         <tr>
-                            <td>{{$informacao->id}}</td>
+                            <td>{{$informacao->ide}}</td>
                             <td>{{$informacao->nome_pessoa}}</td>
                             <td>{{ date('G:i', strtotime($informacao->hora)) }}</td>
                             <td>{{ !is_null( $informacao->data ) ? date('d-m-Y', strtotime( $informacao->data ))  : '--' }}</td>
@@ -69,7 +69,7 @@
                                        <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
                                     </a>
                                 @else
-                                    <a href="{{ route('criar-entrevista', ['id' => $informacao->id]) }}"
+                                    <a href="{{ route('criar-entrevista', ['id' => $informacao->ide]) }}"
                                        type="button"
                                        class="btn btn-outline-success btn-sm"
                                        data-tt="tooltip"
@@ -79,7 +79,7 @@
                                     </a>
                                 @endif
 
-                                <a href="/visualizar-entrevista/{{ $informacao->id }}" type="button"
+                                <a href="/visualizar-entrevista/{{ $informacao->ide }}" type="button"
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Histórico">
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
