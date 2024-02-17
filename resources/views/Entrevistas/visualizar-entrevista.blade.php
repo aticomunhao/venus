@@ -11,31 +11,32 @@
             </div>
             <br>
             <div class="card-body">
-                <form class="form-horizontal mt-2" method="post" action="/visualizar-entrevista/{{  $entrevista->id }}">
+                <form class="form-horizontal mt-2" method="post" action="/visualizar-entrevista/{{ $entrevistas[0]->id }}">
                     @csrf
 
                     <div class="row mb-5">
                         <div class="col">
                             <label for="id_encaminhamento" class="form-label">Nome</label>
                             <select class="form-control" id="id_encaminhamento" name="id_encaminhamento" disabled>
-                                @foreach ($informacoes as $informacao)
-                                    <option value="{{ $informacao->id_pessoa }}">{{ $informacao->nome_pessoa }}</option>
-                                @endforeach
+                                <option value="{{ $entrevistas[0]->id}}">{{ $entrevistas[0]->id}}</option>
+                                @foreach ($pessoas as $pessoa)
+                                <option value="{{ $pessoa->id}}">{{ $pessoa->nome_completo }}</option>
+                            @endforeach
                             </select>
                         </div>
                     </div>
                     <div class="row mb-5">
                         <div class="col">
                             <label for="id_entrevistador" class="form-label">Entrevistador</label>
-                            <select class="form-select" id="id_entrevistador" name="id_entrevistador">
-                                <option value=""></option>
+                            <select class="form-control" id="id_entrevistador" name="id_entrevistador" disabled>
+
                                 @foreach ($pessoas as $pessoa)
-                                    <option value="{{ $pessoa->id }}" @if($entrevista && $entrevista->id_entrevistador == $pessoa->id) selected @endif>{{ $pessoa->nome_completo }}</option>
+                                    <option value="{{ $pessoa->id}}">{{ $pessoa->nome_completo }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
-                    <div class="row mb-5">
+                    {{-- <div class="row mb-5">
                         <div class="col">
                             <label for="id_sala" class="form-label">Sala</label>
                             <select class="form-select" id="id_sala" name="id_sala">
@@ -53,11 +54,11 @@
                             <label for="localizacao" class="form-label">Localização</label>
                             <input type="text" class="form-control" id="localizacao" name="localizacao" value="{{ $entrevista ? $entrevista->localizacao : '' }}" readonly>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="row mt-4 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-entrevistas" role="button">Cancelar</a>
+                            <a class="btn btn-danger" href="/gerenciar-entrevistas" role="button">Fechar</a>
                         </div>
                     </div>
                 </form>

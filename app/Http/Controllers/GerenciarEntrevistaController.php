@@ -116,49 +116,6 @@ return view('entrevistas.gerenciar-entrevistas', compact('informacoes'));
 
 
 
-
-
-
-// public function agen($id)
-// {
-
-//     $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->get();
-//     $tipo_tratamento = DB::table('tipo_tratamento')->select('id', 'descricao AS tratamento_descricao')->get();
-//     $tipo_entrevista = DB::table('tipo_entrevista')->select('id', 'descricao AS descricao_entrevista')->get();
-//     $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
-
-
-//     $informacoes = [];
-//     if ($encaminhamento) {
-//         $info = DB::table('encaminhamento')
-//             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
-//             ->leftJoin('pessoas AS pessoa_atendente', 'atendimentos.id_usuario', '=', 'pessoa_atendente.id')
-//             ->leftJoin('pessoas AS pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
-//             ->leftJoin('tipo_tratamento', 'encaminhamento.id_tipo_tratamento', '=', 'tipo_tratamento.id')
-//             ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
-//             ->select(
-//                 'atendimentos.id_assistido AS id_pessoa',
-//                 'pessoa_pessoa.nome_completo AS nome_pessoa',
-//                 'encaminhamento.id_tipo_tratamento',
-//                 'tipo_tratamento.descricao AS tratamento_descricao',
-//                 'tipo_tratamento.sigla AS tratamento_sigla',
-//                 'tipo_entrevista.descricao AS entrevista_descricao',
-//                 'tipo_entrevista.sigla AS entrevista_sigla'
-//             )
-//             ->where('encaminhamento.id', $encaminhamento->id)
-//             ->distinct()
-//             ->first();
-
-
-//         if ($info) {
-//             $informacoes[] = $info;
-//         }
-//     }
-
-//     return view('entrevistas/agendar-entrevista', compact('encaminhamento', 'informacoes', 'pessoas', 'tipo_tratamento', 'tipo_entrevista'));
-// }
-
-
 public function store(Request $request,$id)
 {
 
@@ -184,26 +141,64 @@ public function store(Request $request,$id)
     return redirect()->route('gerenciamento')->with('success', 'Entrevista criada com sucesso!');
 }
 
+
+
+
+
 public function show($id)
 {
-    $entrevista = DB::table('entrevistas AS entre')
+    $entrevistas = DB::table('entrevistas AS entre')
         ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
         ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
         ->leftJoin('pessoas AS p', 'entre.id_entrevistador', 'p.id')
-        ->select('p.nome_completo', 's.nome', 's.numero', 's.id_localizacao')
+        ->select('p.nome_completo', 's.nome', 's.numero', 's.id_localizacao','enc.id')
         ->where('entre.id', $id)
         ->first();
 
-    if (!$entrevista) {
-        
+    if (!$entrevistas) {
+
     }
 
     $salas = DB::table('salas')->get();
     $encaminhamento = DB::table('encaminhamento')->get();
     $pessoas = DB::table('pessoas')->get();
 
-    return view('entrevistas.visualizar-entrevista', compact('entrevista', 'encaminhamento', 'pessoas', 'salas'));
+
+
+
+
+    return view('entrevistas.visualizar-entrevista', compact('entrevistas', 'encaminhamento', 'pessoas', 'salas'));
 }
+
+
+
+// public function show($id)
+// {
+
+//     $informacoes = [];
+//     if ($encaminhamento) {
+//     $entrevista = DB::table('entrevistas AS entre')
+//         ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
+//         ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
+//         ->leftJoin('pessoas AS p', 'entre.id_entrevistador', 'p.id')
+//         ->select('p.nome_completo', 's.nome', 's.numero', 's.id_localizacao',)
+//         ->where('entre.id', $id)
+//         ->first();
+
+//     if (!$entrevista) {
+
+//     }
+
+//     $salas = DB::table('salas')->get();
+//     $encaminhamento = DB::table('encaminhamento')->get();
+//     $pessoas = DB::table('pessoas')->get();
+
+//     if ($info) {
+//         $informacoes[] = $info;
+//     }
+
+//     return view('entrevistas.visualizar-entrevista', compact('entrevista', 'encaminhamento', 'pessoas', 'salas'));
+// }
 
 
 

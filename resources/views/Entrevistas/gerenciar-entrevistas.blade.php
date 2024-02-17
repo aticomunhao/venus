@@ -58,11 +58,27 @@
                             <td>{{$informacao->nome_representante}}</td>
                             <td>{{$informacao->status}}</td>
                             <td>
-                                <a href="{{ route('criar-entrevista', ['id' => $informacao->id]) }}" type="button"
-                                    class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Agendar">
-                                    <i class="bi bi-clipboard-check"style="font-size: 1rem; color:#000;"></i>
-                                 </a>
+
+                                @if($informacao->status !== 'Aguardando agendamento')
+                                    <a href="#"
+                                       type="button"
+                                       class="btn btn-outline-success btn-sm disabled"
+                                       data-tt="tooltip"
+                                       data-placement="top"
+                                       title="Agendar" disabled>
+                                       <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
+                                    </a>
+                                @else
+                                    <a href="{{ route('criar-entrevista', ['id' => $informacao->id]) }}"
+                                       type="button"
+                                       class="btn btn-outline-success btn-sm"
+                                       data-tt="tooltip"
+                                       data-placement="top"
+                                       title="Agendar">
+                                       <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
+                                    </a>
+                                @endif
+
                                 <a href="/visualizar-entrevista/{{ $informacao->id }}" type="button"
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Histórico">

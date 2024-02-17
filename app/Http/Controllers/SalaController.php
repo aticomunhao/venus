@@ -68,12 +68,9 @@ class SalaController extends Controller
         //
         return view('salas/criar-salas', compact('salas', 'tipo_finalidade_sala', 'tipo_localizacao','numerosExistem','tipo_motivo'));
     }
-    /**
-     * Display the specified resource.
-     */
+
     public function show($id)
     {
-
 
         $salaEditada = DB::table('salas')->where('id', $id)->select('*')->first();
         $salas = DB::table('salas AS s')
@@ -123,13 +120,6 @@ class SalaController extends Controller
 
     public function store(Request $request)
     {
-
-
-
-
-
-
-
 
 
         $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
@@ -189,9 +179,7 @@ class SalaController extends Controller
         return redirect('gerenciar-salas');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit($id)
     {
 
@@ -249,12 +237,6 @@ public function update(Request $request, $id)
 {
 
 
-
-
-
-
-
-
     $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
     $projetor = isset($request->projetor) ? 1 : 0;
     $quadro = isset($request->quadro) ? 1 : 0;
@@ -267,10 +249,6 @@ public function update(Request $request, $id)
     $luz_vermelha = isset($request->luz_vermelha) ? 1 : 0;
     $bebedouro = isset($request->bebedouro) ? 1 : 0;
     $armarios = isset($request->armarios) ? 1 : 0;
-
-
-
-
 
 
 
@@ -308,9 +286,7 @@ public function update(Request $request, $id)
         return redirect('gerenciar-salas');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy($id)
     {
         $ids = DB::table('salas')->select('nome')->where('id', $id)->get();
