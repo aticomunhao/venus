@@ -147,20 +147,22 @@ public function show($id)
 {
     $entrevistas = DB::table('entrevistas AS entre')
         ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
+        ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
         ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
-        ->leftJoin('pessoas AS p', 'entre.id_entrevistador', 'p.id')
-        ->select('p.nome_completo', 's.nome', 's.numero', 's.id_localizacao','enc.id','entre.id','entre.id_entrevistador')
-        ->where('entre.id', $id)
+        ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+        ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
+        ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local','enc.id','entre.id','entre.id_entrevistador','entre.data','entre.hora')
+        ->where('entre.id_encaminhamento', $id)
         ->first();
 
-    if (!$entrevistas) {
+        if (!$entrevistas) {
 
-    }
+        }
 
-    $entrevistas = DB::table('entrevistas')->find($id);
-    $salas = DB::table('salas')->get();
-    $encaminhamento = DB::table('encaminhamento')->find($id);
-    $pessoas = DB::table('pessoas')->get();
+
+        $salas = DB::table('salas')->get();
+        $encaminhamento = DB::table('encaminhamento')->find($id);
+        $pessoas = DB::table('pessoas')->where('id', '=', $entrevistas->id_entrevistador)->get();
 
 
 
