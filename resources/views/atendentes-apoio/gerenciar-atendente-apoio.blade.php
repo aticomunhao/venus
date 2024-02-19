@@ -20,12 +20,12 @@
                         <div class="col-4">Nome
                             <input class="form-control" type="text" maxlength="45"
                                 oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                                id="1" name="nome">
+                                id="1" name="nome" value={{ $pesquisaNome }}>
                         </div>
                         <div class="col-2">CPF
                             <input class="form-control" type="text" maxlength="45"
                                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                                id="1" name="cpf">
+                                id="1" name="cpf" value={{ $pesquisaCpf }}>
                         </div>
 
                         <div class="col"><br>

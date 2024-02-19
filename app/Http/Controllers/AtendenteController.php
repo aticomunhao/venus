@@ -68,7 +68,7 @@ class AtendenteController extends Controller
         }
 
 
-        $atendente = $atendente->orderBy('p.status', 'asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
+        $atendente = $atendente->orderBy('p.status', 'desc')->orderBy('p.nome_completo', 'asc')->get();
 
 
         $stap = DB::select("select id as ids, tipo from tipo_status_pessoa t");

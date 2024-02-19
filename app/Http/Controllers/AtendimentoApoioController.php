@@ -25,31 +25,27 @@ class AtendimentoApoioController extends Controller
         $pesquisaNome = $request->input('nome');
         $pesquisaCpf = $request->input('cpf');
 
+        $atendente = DB::table('atendente_apoio AS at')
+        ->select('at.id', 'p.nome_completo', 'p.cpf', 'tp.tipo')
+        ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
+        ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id');
+
+
+
         if ($pesquisaNome) {
-            $atendente = DB::table('atendente_apoio AS at')
-                ->select('at.id', 'p.nome_completo', 'p.cpf', 'tp.tipo')
-                ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
-                ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
-                ->where('p.nome_completo', 'ilike', "%$pesquisaNome%")
-                ->get();
+            $atendente =
+            $atendente->where('p.nome_completo', 'ilike', "%$pesquisaNome%");
+
         } elseif ($pesquisaCpf) {
-            $atendente = DB::table('atendente_apoio AS at')
-                ->select('at.id', 'p.nome_completo', 'p.cpf', 'tp.tipo')
-                ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
-                ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
-                ->where('p.cpf', 'ilike', "%$pesquisaCpf%")
-                ->get();
-        } else {
-            $atendente = DB::table('atendente_apoio AS at')
-                ->select('at.id', 'p.nome_completo', 'p.cpf', 'tp.tipo')
-                ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
-                ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id')
-                ->get();
+            $atendente = $atendente
+                ->where('p.cpf', 'ilike', "%$pesquisaCpf%");
+
         }
 
+        $atendente = $atendente->orderBy('p.status', 'desc')->orderBy('nome_completo')->get();
         $conta = $atendente->count();
 
-        return view('/atendentes-apoio/gerenciar-atendente-apoio', compact('atendente', 'conta'));
+        return view('/atendentes-apoio/gerenciar-atendente-apoio', compact('atendente', 'conta', 'pesquisaNome', 'pesquisaCpf'));
     }
 
     /**

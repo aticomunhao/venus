@@ -44,7 +44,7 @@ class PessoaController extends Controller
                 $pessoa->where('p.status', $request->status);
         }
 
-        $pessoa = $pessoa->orderBy('p.status','asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
+        $pessoa = $pessoa->orderBy('p.status','desc')->orderBy('p.nome_completo', 'asc')->paginate(50);
 
         //dd($pessoa);
         $stap = DB::select("select
