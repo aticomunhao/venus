@@ -44,7 +44,7 @@ class PessoaController extends Controller
                 $pessoa->where('p.status', $request->status);
         }
 
-        $pessoa = $pessoa->orderBy('p.status','desc')->orderBy('p.nome_completo', 'asc')->paginate(50);
+        $pessoa = $pessoa->orderBy('p.status','desc')->orderBy('p.nome_completo', 'asc')->Paginate(30);
 
         //dd($pessoa);
         $stap = DB::select("select
@@ -109,7 +109,7 @@ class PessoaController extends Controller
 
         DB::table('pessoas')->insert([
 
-            'nome_completo' => $request->input('nome'),
+            'nome_completo' => ucwords(trans($request->input('nome'))),
             'cpf' => $request->input('cpf'),
             'dt_nascimento' => $request->input('dt_na'),
             'sexo' => $request->input('sex'),
@@ -206,7 +206,7 @@ class PessoaController extends Controller
         {
 
         DB::table('pessoas AS p')->where('p.id', $idp)->update([
-                    'nome_completo' => $request->input('nome'),
+                    'nome_completo' => ucwords(trans($request->input('nome'))),
                     'cpf' => $request->input('cpf'),
                     'dt_nascimento' => $request->input('dt_nasc'),
                     'sexo' => $request->input('sex'),

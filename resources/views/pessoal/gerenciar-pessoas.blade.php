@@ -18,17 +18,17 @@
                     </div>
                     <div class="col-2">Status
                         <select class="form-select" id="3" name="status" type="numeric" required="required">
-                            <option value="1">Ativo</option> 
+                            <option value="1">Ativo</option>
                             <option value="">Todos</option>
-                            <option value="2">Inativo</option>                   
+                            <option value="2">Inativo</option>
                         </select>
                     </div>
                     <div class="col-5"><br>
                         <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
                         <a href="/gerenciar-pessoas"><input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
                     </form>
-                    <a href="/dados-pessoa"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" style="font-size: 0.9rem;" type="button" value="Nova Pessoa +"></a>                            
-                    <a href="/gerenciar-atendimentos"><input class="btn btn-danger btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" style="font-size: 0.9rem;" type="button" value="Retornar principal"></a>                                                    
+                    <a href="/dados-pessoa"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" style="font-size: 0.9rem;" type="button" value="Nova Pessoa +"></a>
+                    <a href="/gerenciar-atendimentos"><input class="btn btn-danger btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" style="font-size: 0.9rem;" type="button" value="Retornar principal"></a>
                     </div>
                 </div>
         </div>
@@ -49,22 +49,26 @@
                     </thead>
                     <tbody style="font-size: 14px; color:#000000; text-align:center;">
                     @foreach($pessoa as $pessoas)
-                        <tr>                        
+                        <tr>
                             <td scope="" style="text-align: left;">{{$pessoas->nome_completo}}</td>
                             <td scope="" >{{str_pad($pessoas->cpf, 11, "0", STR_PAD_LEFT)}}</td>
                             <td scope="" >{{date( 'd/m/Y' , strtotime($pessoas->dt_nascimento))}}</td>
                             <td scope="" >{{$pessoas->tipo}}</td>
                             <td scope="" >{{$pessoas->tpsta}}</td>
-                            <td scope="">                                
+                            <td scope="">
                                 <a href="/editar-pessoa/{{$pessoas->idp}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/excluir-pessoa/{{$pessoas->idp}}"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i></button></a>
-                            </td>                            
+                            </td>
                         </tr>
-                        @endforeach                        
+                        @endforeach
                     </tbody>
                 </table>
             </div class="d-flex justify-content-center">
-            {{$pessoa->withQueryString()->links()}}
+            {{ $pessoa->links('pagination::bootstrap-5') }}
+            <br />
+            <br />
+            <br />
+            <br />
         </div>
     </div>
 </div>
@@ -74,7 +78,7 @@
 
 @endsection
 
-@section('footerScript')  
+@section('footerScript')
 
 
 @endsection

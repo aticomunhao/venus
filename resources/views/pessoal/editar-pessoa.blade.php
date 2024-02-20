@@ -17,10 +17,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body">                
+                <div class="card-body">
                     <div class="form-group row">
                         <form class="form-horizontal mt-4" method="post" action="/executa-edicao/{{$lista[0]->idp}}">
-                            @csrf                                   
+                            @csrf
                                 <div class="col-5">Nome completo
                                     <input class="form-control"  type="text" maxlength="40" id="" name="nome" value="{{$lista[0]->nome_completo}}" required="required">
                                 </div><br>
@@ -33,13 +33,13 @@
                                 <div class="col-2" style="text-align:left;">Sexo
                                     <select class="form-select" id="" name="sex" required="required">
                                         <option value="{{$lista[0]->sexo}}">{{$lista[0]->tipo}}</option>
-                                        <option value=""></option>
+                                        
                                         @foreach($sexo as $sexos)
                                         <option @if (old ('sex') == $sexos->id) {{'selected="selected"'}} @endif value="{{ $sexos->id }}">{{$sexos->tipo}}</option>
                                         @endforeach
                                     </select>
                                 </div><br>
-                            <div class="row">          
+                            <div class="row">
                                 <div class="col-2" style="text-align:left;">Status
                                     <select class="form-select" id="status_pessoa" name="status" required="required">
                                         <option value="{{$status_p[0]->id}}">{{$status_p[0]->tipo}}</option>
@@ -48,18 +48,18 @@
                                     </select>
                                 </div>
                             </div><br>
-                            <div class="row"> 
+                            <div class="row">
                             <div class="col-2" style="text-align:left;">Motivo
                                     <select class="form-select" id="tp_motivo" name="motivo" required="required">
                                         <option value=""></option>
-                                        <option value="{{$motivo[0]->id}}">{{$motivo[0]->motivo}}</option>                                        
+                                        <option value="{{$motivo[0]->id}}">{{$motivo[0]->motivo}}</option>
                                         <@foreach($motivo as $motivos)
                                         <option @if(old ('motivo') == $motivos->id) {{'selected="selected"'}} @endif value="{{ $motivos->id }}">{{$motivos->motivo}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-                        </div>                                    
+                        </div>
                     </div>
                     <br>
                     <div class="row">
@@ -68,7 +68,7 @@
                         </div>
                         <div class="d-grid gap-3 col-2 mx-auto">
                             <button type="submit" class="btn btn-primary btn-sm" >Confirmar</button>
-                        </div>                
+                        </div>
                     </div>
                     <br>
                     </form>
