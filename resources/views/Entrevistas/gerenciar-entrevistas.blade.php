@@ -59,6 +59,26 @@
                             <td>{{$informacao->status}}</td>
                             <td>
 
+                                @if($informacao->status !== 'Agendado')
+                                <a href="#"
+                                   type="button"
+                                   class="btn btn-outline-warning btn-sm disabled"
+                                   data-tt="tooltip"
+                                   data-placement="top"
+                                   title="Editar" disabled>
+                                   <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                            @else
+                            <a href="/editar-entrevista/{{$informacao->ide}}"
+                                   type="button"
+                                   class="btn btn-outline-warning btn-sm"
+                                   data-tt="tooltip"
+                                   data-placement="top"
+                                   title="Editar">
+                                   <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                            @endif
+
                                 @if($informacao->status !== 'Aguardando agendamento')
                                     <a href="#"
                                        type="button"
@@ -79,11 +99,26 @@
                                     </a>
                                 @endif
 
-                                <a href="/visualizar-entrevista/{{ $informacao->ide }}" type="button"
-                                    class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Histórico">
-                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
-                                </a>
+                                @if($informacao->status !== 'Agendado')
+                                    <a href="#"
+                                       type="button"
+                                       class="btn btn-outline-primary btn-sm disabled"
+                                       data-tt="tooltip"
+                                       data-placement="top"
+                                       title="historico" disabled>
+                                       <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                                    </a>
+                                @else
+                                    <a href="/visualizar-entrevista/{{ $informacao->ide }}"
+                                       type="button"
+                                       class="btn btn-outline-primary btn-sm"
+                                       data-tt="tooltip"
+                                       data-placement="top"
+                                       title="Histórico">
+                                       <i class="bi bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                                    </a>
+                                @endif
+
                             </td>
                         </tr>
                         @endforeach
