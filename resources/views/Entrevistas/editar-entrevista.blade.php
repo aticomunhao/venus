@@ -28,6 +28,9 @@
                         <label for="id_entrevistador" class="form-label">Entrevistador</label>
                         <select class="form-select" id="id_entrevistador" name="id_entrevistador">
                             <option value="">{{ $pessoas[0]->nome_completo }}</option>
+                            @foreach ($entrevistador as $entrevistadores)
+                            <option value="{{ $entrevistadores->id }}">{{ $entrevistadores->nome_completo }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>

@@ -51,8 +51,8 @@
                         <tr>
                             <td>{{$informacao->ide}}</td>
                             <td>{{$informacao->nome_pessoa}}</td>
-                            <td>{{ date('G:i', strtotime($informacao->hora)) }}</td>
                             <td>{{ !is_null( $informacao->data ) ? date('d-m-Y', strtotime( $informacao->data ))  : '--' }}</td>
+                            <td>{{ date('G:i', strtotime($informacao->hora)) }}</td>
                             <td>{{$informacao->descricao}}</td>
                             <td>{{$informacao->nome_entrevistador}}</td>
                             <td>{{$informacao->nome_representante}}</td>

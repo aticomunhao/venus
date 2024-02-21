@@ -159,7 +159,6 @@ public function show($id)
 
         }
 
-
         $salas = DB::table('salas')->get();
         $encaminhamento = DB::table('encaminhamento')->find($id);
         $pessoas = DB::table('pessoas')->where('id', '=', $entrevistas->id_entrevistador)->get();
@@ -197,7 +196,8 @@ public function show($id)
         }
 
 
-      
+
+        $entrevistador=DB::table('pessoas')->get();
         $encaminhamento = DB::table('encaminhamento')->find($id);
         $pessoas = DB::table('pessoas')->where('id', '=', $entrevistas->id_entrevistador)->get();
         $salas = DB::table('salas')
@@ -208,7 +208,7 @@ public function show($id)
 
 
 
-    return view('entrevistas.editar-entrevista', compact('entrevistas', 'encaminhamento', 'pessoas', 'salas'));
+    return view('entrevistas.editar-entrevista', compact('entrevistador','entrevistas', 'encaminhamento', 'pessoas', 'salas'));
 }
 
 
