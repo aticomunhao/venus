@@ -11,7 +11,7 @@
         </div>
         <br>
         <div class="card-body">
-            <form class="form-horizontal mt-2" method="post" action="/editar-entrevista/{{ $encaminhamento->id }}">
+            <form class="form-horizontal mt-2" method="post" action="/atualizar-entrevista/{{ $encaminhamento->id }}">
                 @csrf
 
                 <div class="row mb-5">
@@ -27,7 +27,8 @@
                     <div class="col">
                         <label for="id_entrevistador" class="form-label">Entrevistador</label>
                         <select class="form-select" id="id_entrevistador" name="id_entrevistador">
-                            <option value="">{{ $pessoas[0]->nome_completo }}</option>
+
+                            <option value={{$pessoas[0]->id}}>{{ $pessoas[0]->nome_completo }}</option>
                             @foreach ($entrevistador as $entrevistadores)
                             <option value="{{ $entrevistadores->id }}">{{ $entrevistadores->nome_completo }}</option>
                             @endforeach
@@ -35,7 +36,7 @@
                     </div>
                 </div>
 
-                <div class="row mb-5">
+                 <div class="row mb-5">
                     <div class="col">
                         <label for="id_sala" class="form-label">Sala</label>
                         <select class="form-select" id="id_sala" name="id_sala">
@@ -58,7 +59,7 @@
                         <label for="localizacao" class="form-label">Localização</label>
                         <input type="text" class="form-select" id="localizacao" name="localizacao" value="{{ $entrevistas ? $entrevistas->local : '' }}" readonly >
                     </div>
-                </div>
+                </div> 
 
                 <div class="row mb-3">
                     <div class="col">
@@ -71,12 +72,15 @@
                     </div>
                 </div>
                 <br>
-
                 <div class="row mt-4 justify-content-center">
                     <div class="d-grid gap-1 col-4 mx-auto">
-                        <a class="btn btn-danger" href="/gerenciar-entrevistas" role="button">Fechar</a>
+                        <a class="btn btn-danger" href="/gerenciar-entrevistas" role="button">Cancelar</a>
                     </div>
-                </div>
+                    <div class="d-grid gap-1 col-4 mx-auto">
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </div>
+
+
             </form>
         </div>
     </div>

@@ -14,11 +14,37 @@ use PhpParser\Node\Expr\BinaryOp\Coalesce as BinaryOpCoalesce;
 class GerenciarEntrevistaController extends Controller
 {
 
-    public function index()
+
+    public function verificarChaveEstrangeira($nomeTabela, $nomeColuna)
+    {
+        // Consulta para verificar se a coluna é usada como chave estrangeira em outras tabelas
+        $resultado = DB::select("
+            SELECT
+                tc.table_name AS tabela_referenciada,
+                ccu.column_name AS coluna_referenciada
+            FROM
+                information_schema.table_constraints AS tc
+            JOIN information_schema.key_column_usage AS kcu
+                ON tc.constraint_name = kcu.constraint_name
+            JOIN information_schema.constraint_column_usage AS ccu
+                ON ccu.constraint_name = tc.constraint_name
+            WHERE
+                tc.constraint_type = 'FOREIGN KEY'
+                AND kcu.table_name = '$nomeTabela'
+                AND kcu.column_name = '$nomeColuna';
+        ");
+
+        // Retorna o resultado da consulta
+        return $resultado;
+    }
+
+    public function index(Request $request)
     {
     $informacoes = DB::table('encaminhamento')
     ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
     ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
+    ->leftJoin('salas AS s', 'entrevistas.id_sala', 's.id')
+    ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
     ->leftJoin('pessoas as pessoa_entrevistas', 'entrevistas.id_entrevistador', '=', 'pessoa_entrevistas.id')
     ->leftJoin('pessoas as pessoa_representante', 'atendimentos.id_representante', '=', 'pessoa_representante.id')
     ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
@@ -42,11 +68,51 @@ class GerenciarEntrevistaController extends Controller
         'atendimentos.id_representante as id_representante',
         'tipo_entrevista.descricao as entrevista_descricao',
         'tipo_entrevista.sigla as entrevista_sigla',
-        'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao'
-    )
-    ->get();
+        'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
+        's.nome as local'
+    );
+$i = 0;
+$pesquisaNome = null;
+$pesquisaStatus = 0;
+$pesquisaValue = 0;
+    if($request->nome_pesquisa){
 
-return view('entrevistas.gerenciar-entrevistas', compact('informacoes'));
+        $informacoes = $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome_pesquisa%");
+        $pesquisaNome = $request->nome_pesquisa;
+    }
+    if($request->status == 2){
+
+
+     $informacoes->where('entrevistas.status', "like", "Agendado");
+
+     $pesquisaStatus = "Agendado";
+     $pesquisaValue = 2;
+
+    }
+
+    $informacoes = $informacoes->orderBy('status', 'desc')->orderBy('pessoa_pessoa.nome_completo')->get();
+
+    if($request->status == 1){
+        $info = [];
+        foreach ($informacoes as $dia) {
+            $info[] = $dia;
+        }
+foreach($info as $check){
+    if($check->id_entrevistador != null){
+        unset($info[$i]);
+    }
+$i = $i +1;
+}
+$informacoes = $info;
+$pesquisaStatus = "Aguardando agendamento";
+$pesquisaValue = 1;
+}
+
+
+
+
+
+return view('entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue'));
     }
 
 
@@ -207,7 +273,6 @@ public function show($id)
 
 
 
-
     return view('entrevistas.editar-entrevista', compact('entrevistador','entrevistas', 'encaminhamento', 'pessoas', 'salas'));
 }
 
@@ -215,9 +280,8 @@ public function show($id)
 
 
 
-    public function update(Request $request, $id)
-    {
-
+public function update(Request $request, $id)
+{
 
     $entrevista = DB::table('entrevistas AS entre')
         ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
@@ -230,30 +294,35 @@ public function show($id)
         ->first();
 
 
+
     if (!$entrevista) {
 
-
-
-        DB::table('entrevistas')->where('id', $id)->update([
-            'id_entrevistador' => $request->input('id_entrevistador'),
-            'data' => $request->input('data'),
-            'hora' => $request->input('hora'),
-            'id_grupo' => $request->input('id_grupo'),
-            'id_sala' => $request->input('id_sala'),
-
-
-
-        ]);
-
-        app('flasher')->addSuccess("Alterado com Sucesso");
-
+        app('flasher')->addError("Entrevista não encontrada");
         return redirect('gerenciar-entrevistas');
     }
 
+    DB::table('entrevistas')
+    ->where('id_encaminhamento', $id)
+    ->update([
+        'id_entrevistador' => $request->input('id_entrevistador'),
+        'data' => $request->input('data'),
+        'hora' => $request->input('hora'),
+        'id_sala' => $request->id_sala,
+        'id_grupo' => $request->input('id_grupo'),
+        'id_sala' => $request->input('id_sala'),
+    ]);
 
 
-        return redirect()->route('gerenciar-entrevistas', $id);
-    }
+
+
+    app('flasher')->addSuccess("Entrevista alterada com sucesso");
+
+
+    return redirect('gerenciar-entrevistas');
+}
+
+
+
 
     public function destroy($id)
     {
