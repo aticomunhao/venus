@@ -20,6 +20,7 @@
                                 <option ></option>
                                 <option value=1 {{$pesquisaValue == 1 ? 'selected' : ''}} >Aguardando agendamento</option>
                                 <option value=2 {{$pesquisaValue == 2 ? 'selected' : ''}}>Agendado</option>
+                                <option value=3 {{$pesquisaValue == 3 ? 'selected' : ''}}>Entrevistado</option>
                             </select>
                         </div>
                         <div class="col"><br/>
@@ -62,7 +63,7 @@
                                 @endif
                             </td>
                             <td>
-                                @if($informacao->status !== 'Agendado')
+                                @if($informacao->status == 'Aguardando agendamento'  )
                                     <a href="#"
                                        type="button"
                                        class="btn btn-outline-warning btn-sm disabled"
@@ -102,7 +103,7 @@
                                     </a>
                                 @endif
 
-                                @if($informacao->status !== 'Agendado')
+                                @if($informacao->status == 'Aguardando agendamento')
                                     <a href="#"
                                        type="button"
                                        class="btn btn-outline-primary btn-sm disabled"
@@ -122,6 +123,46 @@
                                     </a>
                                 @endif
 
+                                @if($informacao->status !== 'Agendado')
+                                <a href="#"
+                                   type="button"
+                                   class="btn btn-outline-success btn-sm disabled"
+                                   data-tt="tooltip"
+                                   data-placement="top"
+                                   title="Finalizar" disabled>
+                                   <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                            @else
+                                <a href="/finalizar-entrevista/{{ $informacao->ide }}"
+                                   type="button"
+                                   class="btn btn-outline-success btn-sm"
+                                   data-tt="tooltip"
+                                   data-placement="top"
+                                   title="Finalizar">
+                                   <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                            @endif
+
+
+                            @if($informacao->status == 'Entrevistado')
+                            <a href="#"
+                               type="button"
+                               class="btn btn-outline-danger btn-sm disabled"
+                               data-tt="tooltip"
+                               data-placement="top"
+                               title="Inativar" disabled>
+                               <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                            </a>
+                        @else
+                            <a href="/inativar-entrevista/{{ $informacao->ide }}"
+                               type="button"
+                               class="btn btn-outline-danger btn-sm"
+                               data-tt="tooltip"
+                               data-placement="top"
+                               title="Inativar">
+                               <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                            </a>
+                        @endif
                             </td>
                         </tr>
                         @endforeach

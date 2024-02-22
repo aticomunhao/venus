@@ -136,7 +136,11 @@ Route::post('/incluir-entrevista/{id}', [GerenciarEntrevistaController::class, '
 Route::get('/editar-entrevista/{id}', [GerenciarEntrevistaController::class, 'edit'])->name('');
 Route::post('/atualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'update'])->name('');
 Route::get('/visualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'show'])->name('');
-Route::any('/excluir-entrevista/{id}', [GerenciarEntrevistaController::class, 'destroy'])->name('');
+Route::any('/finalizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'finalizar'])->name('finalizar.entrevista');
+Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, 'inativar'])->name('');
+
+
+
 
 // Atendentes
 Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('list');

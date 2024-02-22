@@ -51,6 +51,7 @@ class GerenciarEntrevistaController extends Controller
     ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
     ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
     ->where('encaminhamento.id_tipo_encaminhamento', 1)
+    ->where('encaminhamento.status_encaminhamento','<>',4 )
     ->select(
         'entrevistas.id_entrevistador',
         DB::raw("CASE
@@ -80,17 +81,24 @@ $pesquisaValue = 0;
         $informacoes = $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome_pesquisa%");
         $pesquisaNome = $request->nome_pesquisa;
     }
-    if($request->status == 2){
+    if($request->status != 1){
+
+        if($request->status == 2){
+            $informacoes->where('entrevistas.status', "ilike", "Agendado");
+            $pesquisaValue = 2;
+        }
 
 
-     $informacoes->where('entrevistas.status', "like", "Agendado");
+    elseif($request->status == 3){
+        $informacoes->where('entrevistas.status', "ilike", "Entrevistado");
+    $pesquisaValue = 3;
+}
 
-     $pesquisaStatus = "Agendado";
-     $pesquisaValue = 2;
+
 
     }
 
-    $informacoes = $informacoes->orderBy('status', 'desc')->orderBy('pessoa_pessoa.nome_completo')->get();
+    $informacoes = $informacoes->orderBy('status', 'asc')->orderBy('pessoa_pessoa.nome_completo')->get();
 
     if($request->status == 1){
         $info = [];
@@ -242,7 +250,6 @@ public function show($id)
 
 
 
-
     public function edit($id)
     {
 
@@ -324,12 +331,44 @@ public function update(Request $request, $id)
 
 
 
-    public function destroy($id)
-    {
-
-        DB::table('entrevistas')->where('id', $id)->delete();
+public function finalizar($id)
+{
 
 
-        return redirect()->route('entrevistas.index');
-    }
+    DB::table('entrevistas')
+        ->where('id_encaminhamento', $id)
+        ->update(['status' => 'Entrevistado']);
+
+    return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
+}
+
+public function inativar($id){
+
+    DB::table('historico_venus')->insert([
+
+        'id_usuario' => session()->get('usuario.id_encaminhamento'),
+        'data' => $data,
+        'fato' => 0,
+        'obs' => $id
+
+    ]);
+
+   $entrevistas= DB::table('entrevistas')->where('id_encaminhamento','=', $id)->first();
+
+
+if(!is_null($entrevistas) and $entrevistas->status =='Agendado'){
+
+    DB::table('entrevistas')
+    ->where('id_encaminhamento','=', $id)
+    ->delete();
+}
+
+    DB::table('encaminhamento')
+        ->where('id', $id)
+        ->update(['status_encaminhamento' => 4]);
+
+
+    return redirect()->route('gerenciamento')->with('danger', 'Entrevista inativada !');
+}
+
 }
