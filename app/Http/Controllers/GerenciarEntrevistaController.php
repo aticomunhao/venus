@@ -344,11 +344,14 @@ public function finalizar($id)
 
 public function inativar($id){
 
+
+    $data = date("Y-m-d H:i:s");
+
     DB::table('historico_venus')->insert([
 
-        'id_usuario' => session()->get('usuario.id_encaminhamento'),
+        'id_usuario' => session()->get('usuario.id_usuario'),
         'data' => $data,
-        'fato' => 0,
+        'fato' => 37,
         'obs' => $id
 
     ]);

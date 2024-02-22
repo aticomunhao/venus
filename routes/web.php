@@ -24,6 +24,7 @@ use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\GerenciarEncaminhamentoController;
 use App\Http\Controllers\GerenciarTratamentosController;
 use App\Http\Controllers\GerenciarEntrevistaController;
+use App\Http\Controllers\GerenciarEntrevistadorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -127,6 +128,17 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 | David Routes
 |--------------------------------------------------------------------------
 */
+
+//Entrevistador
+Route::get('/gerenciar-entrevistador', [EntrevistadorController::class, 'index'])->name('');
+Route::get('/criar-entrevistador', [EntrevistadorController::class, 'create'])->name('');
+Route::post('/incluir-entrevistador', [EntrevistadorController::class, 'store'])->name('');
+Route::get('/editar-entrevistador/{id}', [EntrevistadorController::class, 'edit'])->name('');
+Route::post('/atualizar-entrevistador/{id}', [EntrevistadorController::class, 'update'])->name('');
+Route::get('/visualizar-entrevistador/{id}', [EntrevistadorController::class, 'show'])->name('');
+Route::any('/excluir-entrevistador/{id}', [EntrevistadorController::class, 'destroy'])->name('');
+
+
 //Entrevista
 
 Route::get('/gerenciar-entrevistas', [GerenciarEntrevistaController::class, 'index'])->name('gerenciamento');
