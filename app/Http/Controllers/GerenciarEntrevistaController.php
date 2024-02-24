@@ -207,12 +207,64 @@ public function store(Request $request,$id)
         'id_sala' => $request->id_sala,
         'data' => $request->data,
         'hora' => $request->hora,
-        'status' => 'Agendado',
+        'status' => 'Aguardando entrevistador',
     ]);
 
 
 
     return redirect()->route('gerenciamento')->with('success', 'Entrevista criada com sucesso!');
+}
+
+public function criar($id)
+{
+
+
+    $pessoas = DB::select('SELECT id, nome_completo FROM pessoas');
+    $entrevistas = DB::table('entrevistas AS entre')
+        ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
+        ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
+        ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
+        ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+        ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
+        ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local','enc.id','entre.id','entre.id_entrevistador','entre.data','entre.hora')
+        ->where('entre.id_encaminhamento', $id)
+        ->first();
+
+        if (!$entrevistas) {
+
+        }
+
+        $salas = DB::table('salas')->get();
+        $encaminhamento = DB::table('encaminhamento')->find($id);
+
+
+
+
+        return view('entrevistas.agendar-entrevistador', compact('entrevistas', 'encaminhamento', 'pessoas', 'salas'));
+    }
+
+
+
+
+
+
+public function incluir(Request $request,$id)
+{
+
+$request->validate([
+    'id_entrevistador' => 'required',
+
+]);
+
+
+DB::table('entrevistas')->insert([
+    'id_entrevistador' => $request->id_entrevistador,
+    'status' => 'Agendado',
+]);
+
+
+
+return redirect()->route('gerenciamento')->with('success', 'Entrevista criada com sucesso!');
 }
 
 

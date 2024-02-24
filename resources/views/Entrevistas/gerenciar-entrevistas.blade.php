@@ -98,7 +98,7 @@
                                        class="btn btn-outline-success btn-sm"
                                        data-tt="tooltip"
                                        data-placement="top"
-                                       title="Agendar">
+                                       title="Agendar ">
                                        <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
                                     </a>
                                 @endif
@@ -113,6 +113,27 @@
                                        <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
                                     </a>
                                 @else
+
+                                <a href="{{ route('agendar-entrevistador', ['id' => $informacao->ide]) }}"
+                                    type="button"
+                                    class="btn btn-outline-success btn-sm"
+                                    data-tt="tooltip"
+                                    data-placement="top"
+                                    title="Agendar entrevistador">
+                                    <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
+                                 </a>
+                             @endif
+
+                             @if($informacao->status == 'Aguardando agendamento')
+                                 <a href="#"
+                                    type="button"
+                                    class="btn btn-outline-primary btn-sm disabled"
+                                    data-tt="tooltip"
+                                    data-placement="top"
+                                    title="historico" disabled>
+                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                                 </a>
+                             @else
                                     <a href="/visualizar-entrevista/{{ $informacao->ide }}"
                                        type="button"
                                        class="btn btn-outline-primary btn-sm"
