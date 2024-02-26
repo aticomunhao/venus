@@ -194,7 +194,6 @@ public function store(Request $request,$id)
 {
 
     $request->validate([
-        'id_entrevistador' => 'required',
         'id_sala' => 'required',
         'data' => 'required|date',
         'hora' => 'required',
@@ -203,7 +202,6 @@ public function store(Request $request,$id)
 
     DB::table('entrevistas')->insert([
         'id_encaminhamento' => $id,
-        'id_entrevistador' => $request->id_entrevistador,
         'id_sala' => $request->id_sala,
         'data' => $request->data,
         'hora' => $request->hora,
@@ -245,27 +243,27 @@ public function criar($id)
 
 
 
+    public function incluir(Request $request)
+    {
+
+        DB::table('entrevistas')->insert([
+            'id_entrevistador' =>$request->input('id_entrevistador'),
+            'status' => 'Agendado',
+
+        ]);
+
+
+        app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
 
 
 
-public function incluir(Request $request,$id)
-{
-
-$request->validate([
-    'id_entrevistador' => 'required',
-
-]);
 
 
-DB::table('entrevistas')->insert([
-    'id_entrevistador' => $request->id_entrevistador,
-    'status' => 'Agendado',
-]);
+        return redirect()->route('gerenciamento')->with('success', 'Entrevista criada com sucesso!');
+    }
 
 
 
-return redirect()->route('gerenciamento')->with('success', 'Entrevista criada com sucesso!');
-}
 
 
 
