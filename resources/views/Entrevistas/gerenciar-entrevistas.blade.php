@@ -16,9 +16,9 @@
                         </div>
 
                         <div class="col">Status
-                            <select class="form-select" id="4" name="status" type="number">
-                                <option ></option>
+                            <select class="form-select teste" id="4" name="status" type="number">
                                 <option value=1 {{$pesquisaValue == 1 ? 'selected' : ''}} >Aguardando agendamento</option>
+                                <option value=4 {{$pesquisaValue == 4 ? 'selected' : ''}}>Aguardando entrevistador</option>
                                 <option value=2 {{$pesquisaValue == 2 ? 'selected' : ''}}>Agendado</option>
                                 <option value=3 {{$pesquisaValue == 3 ? 'selected' : ''}}>Entrevistado</option>
                             </select>
@@ -193,11 +193,23 @@
         </div>
     </div>
 </div>
+
 <script>
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
+
+
+
+    if({{ $pesquisaValue }} == 0){
+        $(".teste").prop("selectedIndex", -1);
+    }
+
+
+
+
+
 </script>
 @endsection
 

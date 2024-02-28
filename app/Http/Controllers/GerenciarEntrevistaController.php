@@ -94,6 +94,10 @@ $pesquisaValue = 0;
     $pesquisaValue = 3;
 }
 
+elseif($request->status == 4){
+    $informacoes->where('entrevistas.status', "ilike", "Aguardando entrevistador");
+$pesquisaValue = 4;
+}
 
 
     }
@@ -106,7 +110,7 @@ $pesquisaValue = 0;
             $info[] = $dia;
         }
 foreach($info as $check){
-    if($check->id_entrevistador != null){
+    if($check->status != "Aguardando agendamento"){
         unset($info[$i]);
     }
 $i = $i +1;
@@ -423,7 +427,7 @@ if(!is_null($entrevistas) and $entrevistas->status =='Agendado'){
         ->update(['status_encaminhamento' => 4]);
 
 
-    return redirect()->route('gerenciamento')->with('danger', 'Entrevista inativada !');
+    return redirect()->route('gerenciamento')->with('danger', 'Entrevista inativada!');
 }
 
 }
