@@ -26,9 +26,9 @@
                 <div class="row mb-5">
                     <div class="col">
                         <label for="id_entrevistador" class="form-label">Entrevistador</label>
-                        <select class="form-select" id="id_entrevistador" name="id_entrevistador">
+                        <select class="form-select" id="id_entrevistador" name="id_entrevistador" {{ is_null($pessoas) ? 'disabled' : ""}}>
 
-                            <option value={{$pessoas[0]->id}}>{{ $pessoas[0]->nome_completo }}</option>
+                            <option value={{ !is_null($pessoas) ? $pessoas->id : ""}}>{{!is_null($pessoas) ? $pessoas->nome_completo : ""  }}</option>
                             @foreach ($entrevistador as $entrevistadores)
                             <option value="{{ $entrevistadores->id }}">{{ $entrevistadores->nome_completo }}</option>
                             @endforeach
@@ -59,7 +59,7 @@
                         <label for="localizacao" class="form-label">Localização</label>
                         <input type="text" class="form-select" id="localizacao" name="localizacao" value="{{ $entrevistas ? $entrevistas->local : '' }}" readonly >
                     </div>
-                </div> 
+                </div>
 
                 <div class="row mb-3">
                     <div class="col">

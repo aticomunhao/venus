@@ -27,7 +27,7 @@
                             <li><a class="dropdown-item" href="/gerenciar-atendentes-apoio">Gerenciar Atendente de Apoio</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-entrevistador">Gerenciar Entrevistador</a></li>
+
                         </ul>
                     </li>
                 </ul>

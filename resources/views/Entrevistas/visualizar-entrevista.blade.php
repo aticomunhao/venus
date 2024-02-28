@@ -27,7 +27,7 @@
                     <div class="col">
                         <label for="id_entrevistador" class="form-label">Entrevistador</label>
                         <select class="form-control" id="id_entrevistador" name="id_entrevistador" disabled>
-                            <option value="">{{ $pessoas[0]->nome_completo }}</option>
+                            <option value="">{{ !is_null($pessoas) ? $pessoas->nome_completo : ""}}</option>
                         </select>
                     </div>
                 </div>

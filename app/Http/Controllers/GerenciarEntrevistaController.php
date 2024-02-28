@@ -247,10 +247,10 @@ public function criar($id)
 
 
 
-    public function incluir(Request $request)
+    public function incluir(Request $request, string $id)
     {
 
-        DB::table('entrevistas')->insert([
+        DB::table('entrevistas')->where('id_encaminhamento', $id)->update([
             'id_entrevistador' =>$request->input('id_entrevistador'),
             'status' => 'Agendado',
 
@@ -289,7 +289,7 @@ public function show($id)
 
         $salas = DB::table('salas')->get();
         $encaminhamento = DB::table('encaminhamento')->find($id);
-        $pessoas = DB::table('pessoas')->where('id', '=', $entrevistas->id_entrevistador)->get();
+        $pessoas = DB::table('pessoas')->where('id', '=', $entrevistas->id_entrevistador)->first();
 
 
 
@@ -326,7 +326,7 @@ public function show($id)
 
         $entrevistador=DB::table('pessoas')->get();
         $encaminhamento = DB::table('encaminhamento')->find($id);
-        $pessoas = DB::table('pessoas')->where('id', '=', $entrevistas->id_entrevistador)->get();
+        $pessoas = DB::table('pessoas')->where('id', '=', $entrevistas->id_entrevistador)->first();
         $salas = DB::table('salas')
         ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
         ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
