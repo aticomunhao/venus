@@ -92,11 +92,37 @@
                                 title="Visualizar">
                                 <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
                             </a>
-                            <a href="/excluir-atendente/{{ $atendentes->id }}" type="button"
-                                class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top"
-                                title="Excluir">
-                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
-                            </a>
+                             <!-- Botão de Exclusão com Modal de Confirmação -->
+                             <a href="/excluir-atendente/ class="btn btn-outline-danger btn-sm data-bs-toggle="modal"
+                             data-bs-target="#confirmarExclusao{{ $atendentes->id }}" data-tt="tooltip"
+                             data-placement="top" title="Excluir"  class="btn btn-outline-danger btn-sm">
+                             <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                         </a>
+
+                         <!-- Modal de Confirmação -->
+                         <div class="modal fade" id="confirmarExclusao{{ $atendentes->id }}" tabindex="-1"
+                             aria-labelledby="confirmarExclusao{{ $atendentes->id}}Label" aria-hidden="true">
+                             <div class="modal-dialog">
+                                 <div class="modal-content">
+                                     <div class="modal-header">
+                                         <h5 class="modal-title" id="confirmarExclusao{{ $atendentes->id }}Label">
+                                             Confirmar Exclusão</h5>
+                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                             aria-label="Fechar"></button>
+                                     </div>
+                                     <div class="modal-body">
+                                         Tem certeza que deseja excluir este atendente?
+                                     </div>
+                                     <div class="modal-footer">
+                                         <button type="button" class="btn btn-secondary"
+                                             data-bs-dismiss="modal">Cancelar</button>
+                                         <a href="/excluir-atendente/{{ $atendentes->id }}" type="button"
+                                             class="btn btn-danger">Excluir</a>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+
                             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
                             <script>
