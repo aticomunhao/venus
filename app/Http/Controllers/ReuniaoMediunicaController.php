@@ -57,7 +57,7 @@ class ReuniaoMediunicaController extends Controller
             $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
 
             $tpdia = DB::table('tipo_dia')->select('id AS idtd', 'nome AS nomed')->get();
-
+            dd($tpdia);
          // dd($tpdia);
 
 
@@ -118,16 +118,16 @@ class ReuniaoMediunicaController extends Controller
             //     $carbonTempo = Carbon::parse($tempo);
             //     return $carbonTempo->addMinutes(30)->toTimeString(); // Convertendo de volta para string
             // }, $arrayDeTempos);
-            
+
             // // $arrayDeTemposAtualizados agora contém os tempos atualizados
-      
-            
-            // dd($arrayDeTemposAtualizados); 
 
-   
-      
 
-         
+            // dd($arrayDeTemposAtualizados);
+
+
+
+
+
 
             $repeat = DB::table('cronograma AS rm')
             ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
@@ -156,7 +156,7 @@ class ReuniaoMediunicaController extends Controller
             }else{
 
             }
-            
+
 
            DB::table('cronograma AS rm')->insert([
                     'id_grupo'=>$request->input('grupo'),

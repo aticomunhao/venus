@@ -35,14 +35,15 @@
                                         <br>
 
                                     </div>
-                                    <div class="form-group">
-                                        <label for="userpassword">Senha</label>
-                                        <input id="senha" type="password" class="form-control @error('password') is-invalid @enderror" name="senha" required autocomplete="current-password" placeholder="">
+                                    <label for="userpassword">Senha</label>
+                                    <div class="input-group">
+                                        <input id="senha" type="password" class="form-control @error('password') is-invalid @enderror testee" name="senha" required autocomplete="current-password" placeholder="">
                                         @error('password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
+                                        <button class="btn btn-outline-primary bi bi-eye" type="button" id="buttonEye"></button>
                                     </div>
                                     <br>
                                     <div class="form-group row mt-4">
@@ -67,13 +68,30 @@
                         </div>
                     </div>
                     <div class="mt-5 text-center">
-                        <!-- <p>Don't have an account ? <a href="/register" class="text-primary"> Signup Now </a></p> -->
-                        <!-- <p>© {{  date('Y', strtotime('-2 year')) }} - {{  date('Y') }} Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p> -->
+                        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+                        <script>
+                            $("#buttonEye").click(function(){
+
+                                $("#buttonEye").toggleClass("bi-eye");
+                                $("#buttonEye").toggleClass("bi-eye-slash");
+
+                                if($('#senha').attr('type') == "password"){
+                                    $("#senha").attr("type", "text");
+                                }else{
+                                    $("#senha").attr("type", "password");
+                                }
+
+                            })
+
+                        </script>
+                        {{-- <p>Don't have an account ? <a href="/register" class="text-primary"> Signup Now </a></p> --> --}}
+                         {{-- <p>© {{  date('Y', strtotime('-2 year')) }} - {{  date('Y') }} Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p> --> --}}
                         <p>© Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 @stop
 

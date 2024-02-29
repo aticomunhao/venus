@@ -23,28 +23,28 @@
                 <div class="card-body">
                     <form class="form-horizontal mt-4" method="post" action="/nova-reuniao">
                         @csrf
-                    <legend style="color:#525252; font-size:12px; font-family:sans-serif">Dados da reunião</legend>
-                    <fieldset class="border rounded border-secundary p-2">
-                        <div class="row">                          
+
+
+                        <div class="row">
                             <div class="col-4">Grupo
-                                <select class="form-select" id="" type="number" name="grupo" required="required">
-                                    <option value=""></option>
+                                <select class="form-select slct" id="" type="number" name="grupo" required="required">
+
                                     @foreach($grupo as $grupos)
                                     <option value="{{$grupos->idg}}">{{$grupos->nome}}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-2">Dia da semana
-                                <select class="form-select" id="" type="number" name="dia" required="required">
-                                    <option value=""></option>
+                                <select class="form-select slct" id="" type="number" name="dia" required="required">
+
                                     @foreach($dia as $dias)
                                     <option value="{{$dias->idd}}">{{$dias->nome}}</option>
                                     @endforeach
                                 </select>
-                            </div> 
+                            </div>
                             <div class="col-4">Tipo de Tratamento
-                                <select class="form-select" id="" type="number" name="tratamento" required="required">
-                                    <option value=""></option>
+                                <select class="form-select slct" id="" type="number" name="tratamento" required="required">
+
                                     @foreach($tratamento as $tratamentos)
                                     <option value="{{$tratamentos->idt}}">{{$tratamentos->descricao}}</option>
                                     @endforeach
@@ -52,33 +52,33 @@
                             </div>
                             <div class="col">Max atendimentos
                                 <input type="number" class="form-control" id="" min="1" max="800" name="max_atend" required="required">
-                            </div>                 
+                            </div>
                         </div>
                         <br>
                         <div class="row">
                             <div class="col">Número Sala
-                                <select class="form-select" id="" type="number" name="numero" required="required">
-                                    <option value=""></option>
+                                <select class="form-select slct" id="" type="number" name="numero" required="required">
+                              
                                     @foreach($sala as $salas)
                                     <option value="{{$salas->ids}}">{{$salas->numero}}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-4">Nome Sala
-                                <select class="form-select" id="" type="number" name="nome" required="required" >
-                                    <option value=""></option>
+                                <select class="form-select slct" id="" type="number" name="nome" required="required" >
+
                                     @foreach($sala as $salas)
                                     <option value="{{$salas->ids}}">{{$salas->nome}}</option>
                                     @endforeach
                                 </select>
-                            </div> 
+                            </div>
                             <div class="col">Hora de início
-                                <input class="form-control" type="time" step="1"  id="" name="h_inicio" required="required">     
+                                <input class="form-control" type="time"   name="h_inicio" required="required">
                             </div>
                             <div class="col">Hora de fim
-                                <input class="form-control" type="time" step="1" id="" name="h_fim" required="required">     
-                            </div>    
-                        </div>                             
+                                <input class="form-control" type="time"  " name="h_fim" required="required">
+                            </div>
+                        </div>
                     </div>
                 <div class="row">
                     <div class="d-grid gap-1 col-4 mx-auto">
@@ -87,7 +87,7 @@
                     <div class="d-grid gap-2 col-4 mx-auto" >
                         <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>
                     </div>
-                    </form>                        
+                    </form>
                 </div>
                 <br/>
             </div>
@@ -95,7 +95,11 @@
     </div>
 </div>
 
+<script>
+    //Deixa o select status como padrao vazio
+        $(".slct").prop("selectedIndex", -1);
 
+</script>
 @endsection
 
 @section('footerScript')
