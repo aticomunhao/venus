@@ -22,7 +22,7 @@
                             <div class="col">Status
                                 <select class="form-select teste" id="4" name="status" type="number">{{-- Select de pesquisa de status --}}
                                     <option value=1 {{ $pesquisaValue == 1 ? 'selected' : '' }}>Aguardando agendamento</option>{{-- Se auto seleciona de acordo com o valor anterior --}}
-                                    <option value=4 {{ $pesquisaValue == 4 ? 'selected' : '' }}>Aguardando entrevistado</option>
+                                    <option value=4 {{ $pesquisaValue == 4 ? 'selected' : '' }}>Aguardando entrevistador</option>
                                     <option value=2 {{ $pesquisaValue == 2 ? 'selected' : '' }}>Agendado</option>
                                     <option value=3 {{ $pesquisaValue == 3 ? 'selected' : '' }}>Entrevistado</option>
                                 </select>
