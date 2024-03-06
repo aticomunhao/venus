@@ -101,7 +101,7 @@ class GerenciarEncaminhamentoController extends Controller
         $contgrseg = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
-                        ->where('gr.data_fim', null)
+                        ->where('reu.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 1)
                         ->get();
@@ -120,7 +120,7 @@ class GerenciarEncaminhamentoController extends Controller
         $contgrter = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
-                        ->where('gr.data_fim', null)
+                        ->where('reu.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 2)
                         ->get();
@@ -139,7 +139,7 @@ class GerenciarEncaminhamentoController extends Controller
         $contgrqua = DB::table('cronograma AS reu')
                             ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                             ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
-                            ->where('gr.data_fim', null)
+                            ->where('reu.data_fim', null)
                             ->where('reu.id_tipo_tratamento', $idtt)
                             ->where('reu.dia', 3)
                             ->get();
@@ -158,7 +158,7 @@ class GerenciarEncaminhamentoController extends Controller
         $contgrqui = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
-                        ->where('gr.data_fim', null)
+                        ->where('reu.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 4)
                         ->get();
@@ -176,7 +176,7 @@ class GerenciarEncaminhamentoController extends Controller
         $contgrsex = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
-                        ->where('gr.data_fim', null)
+                        ->where('reu.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 5)
                         ->get();
@@ -195,7 +195,7 @@ class GerenciarEncaminhamentoController extends Controller
         $contgrsab = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
-                        ->where('gr.data_fim', null)
+                        ->where('reu.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 6)
                         ->get();
@@ -214,7 +214,7 @@ class GerenciarEncaminhamentoController extends Controller
         $contgrdom = DB::table('cronograma AS reu')
                         ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
-                        ->where('gr.data_fim', null)
+                        ->where('reu.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia', 0)
                         ->get();
@@ -230,7 +230,7 @@ class GerenciarEncaminhamentoController extends Controller
 
         $contcap = DB::table('cronograma AS reu')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
-                        ->where('gr.data_fim', null)
+                        ->where('reu.data_fim', null)
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->sum('reu.max_atend');
 

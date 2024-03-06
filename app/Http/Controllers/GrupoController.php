@@ -146,6 +146,7 @@ class Grupocontroller extends Controller
     public function update(Request $request, $id)
 {
 
+    $now =  Carbon::now()->format('Y-m-d');
     DB::table('grupo')->where('id', $id)->update([
         'nome' => $request->input('nome'),
         'data_inicio' => $request->input('data_inicio'),
@@ -156,6 +157,17 @@ class Grupocontroller extends Controller
 
 
     ]);
+
+    if($request->input('status_grupo') == 2){
+
+
+                DB::table('cronograma as cro')
+                       ->where('cro.id_grupo', $id)
+                 ->update([
+                'status_reuniao' => 2,
+                'data_fim' => $now
+            ]);
+    }
 
     app('flasher')->addSuccess("Alterado com Sucesso");
 
@@ -191,6 +203,13 @@ class Grupocontroller extends Controller
             'obs' => $id
 
         ]);
+
+        $reuniao = DB::table('cronograma')->where('id_grupo', $id)->delete();
+
+
+
+
+
 
         DB::table('grupo')->where('id', $id)->delete();
 

@@ -231,6 +231,9 @@ Route::put('/k', [GerenciarTratamentosController::class, ''])->name('');
 Route::get('/gerenciar-reunioes', [ReuniaoMediunicaController::class, 'index'])->name('remdex');
 Route::get('/criar-reuniao', [ReuniaoMediunicaController::class, 'create'])->name('remcre');
 Route::post('/nova-reuniao', [ReuniaoMediunicaController::class, 'store'])->name('remore');
+Route::get('/editar-reuniao/{id}', [ReuniaoMediunicaController::class, 'edit']);
+Route::any('/atualizar-reuniao/{id}', [ReuniaoMediunicaController::class, 'update']);
+Route::any('/excluir-reuniao/{id}', [ReuniaoMediunicaController::class, 'destroy']);
 
 
 

@@ -43,7 +43,7 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
-                                        <button class="btn btn-outline-primary bi bi-eye" type="button" id="buttonEye"></button>
+                                        <button class="btn btn-primary bi bi-eye" type="button" id="buttonEye"></button>
                                     </div>
                                     <br>
                                     <div class="form-group row mt-4">

@@ -16,24 +16,24 @@
             <div>
                 <form action="{{route('remdex')}}" class="form-horizontal mt-4" method="GET" >
                 <div class="row">
-                    <div class="col-1">Dia
-                        <select class="form-select" id="4" name="semana" type="number">
-                            <option value=""></option>                        
+                    <div class="col-2">Dia
+                        <select class="form-select semana" id="4" name="semana" type="number">
+
                             @foreach ($tpdia as $dias)
                             <option value="{{$dias->idtd}}" {{$dias->idtd == $semana ? 'selected': ''}}>{{$dias->nomed}}</option>
-                            @endforeach               
-                        </select>       
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-4">Grupo
                         <input class="form-control" type="text" id="" name="grupo" value="{{$grupo}}">
                     </div>
                     <div class="col-2">Status
-                    <select class="form-select" id="4" name="status" type="number">
-                            <option value=""></option>
+                    <select class="form-select status" id="4" name="status" type="number">
+
                             @foreach ($situacao as $situ)
                             <option value="{{$situ->ids}}" {{$situ->ids == $status ? 'selected': ''}}>{{$situ->descs}}</option>
-                            @endforeach               
-                        </select>                   
+                            @endforeach
+                        </select>
                     </div>
                         <div class="col"><br/>
                             <input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
@@ -64,7 +64,7 @@
                     <tbody style="font-size: 14px; color:#000000; text-align: center;">
                         <tr>
                         @foreach($reuniao as $reuni)
-                            <td>{{$reuni->idr}}</td>   
+                            <td>{{$reuni->idr}}</td>
                             <td>{{$reuni->nomeg}}</td>
                             <td>{{$reuni->nomed}}</td>
                             <td>{{$reuni->numero}}</td>
@@ -72,12 +72,11 @@
                             <td>{{date('H:i:s', strtotime($reuni->h_inicio))}}</td>
                             <td>{{date('H:i:s', strtotime($reuni->h_fim))}}</td>
                             <td>{{$reuni->max_atend}}</td>
-                            <td>{{$reuni->descst}}</td>    
-                            <td>                                
-                                <!--<a href="/agenda/{{$reuni->idr}}"><button type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Agendar"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button></a>-->
-                                <a href="/editar/{{$reuni->idr}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar"><i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i></button></a>
+                            <td>{{$reuni->descst}}</td>
+                            <td>
+                                <a href="/editar-reuniao/{{ $reuni->idr }}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar"><i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/visualizar/{{$reuni->idr}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/inativar/{{$reuni->idr}}"><button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
+                                <a href="/excluir-reuniao/{{$reuni->idr}}"><button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>
                             </td>
                         </tr>
                         @endforeach
@@ -98,13 +97,22 @@
     return new bootstrap.Tooltip(tooltipTriggerEl)
     })
 
+
+
+    if ( typeof {{ $semana}} === 'undefined' ) {//Deixa o select status como padrao vazio
+        $(".semana").prop("selectedIndex", -1);
+        }
+
+        if ( typeof {{ $status}} === 'undefined' ) {//Deixa o select status como padrao vazio
+            $(".status").prop("selectedIndex", -1);
+            }
 </script>
 
 
 
 @endsection
 
-@section('footerScript')  
+@section('footerScript')
 
 
 @endsection

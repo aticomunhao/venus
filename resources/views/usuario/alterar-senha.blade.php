@@ -1,75 +1,117 @@
+
 @extends('auth.app')
 
-@section('title') Alterar senha @endsection
+@section('title') Vênus @endsection
 
 @section('content')
-
- <div class="account-pages my-5 pt-sm-5">
+ <div class="account-pages my-4 pt-sm-4">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8 col-lg-6 col-xl-5">
                     <div class="card overflow-hidden">
                         <div class="card-body pt-0">
+                            <h3 class="text-center mt-4">
+                                <a href="/" class="logo logo-admin"><img src="{{ URL::asset('/images/logo150px.ico')}}" height="100" alt="logo"></a>
+                            </h3>
                             <div class="p-3">
-                                <h4 class="text-muted font-size-18 mb-1 text-center" style="color:#f90505 !important; font-family:tahoma;">ALTERAR SENHA</h4>
-                                <!-- <p class="text-muted text-center">Sign in to continue to Lexa.</p> -->
+
                                 <form method="POST" class="form-horizontal mt-4" action="/usuario/gravaSenha">
-                                       @csrf
-                                    <div class="form-group" style="color:#0000FF;">
-                                        Usuário - {{session()->get('usuario.nome')}}
-                                    </div>
-                                    <hr>
+                                    @csrf
 
-                                    @if(session('mensagem'))
-                                        <div class="alert alert-success">
-                                            <p>{{session('mensagem')}}</p>
-                                        </div>
-                                    @endif
 
-                                    @if(session('mensagemErro'))
-                                        <div class="alert alert-danger">
-                                            <p>{{session('mensagemErro')}}</p>
-                                        </div>
-                                    @endif
 
-                                    <div class="form-group" style="font-weight: bolder;">
-                                        <label for="senhaAtual">Senha Atual</label>
-                                        <input id="senhaAtual" type="password" class="form-control @error('password') is-invalid @enderror" name="senhaAtual" required autocomplete="current-password" placeholder="">
-                                        @error('msg_erro')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{$message}}</strong>
+                                     <input  class="form-control" name="senhaNova"  value="{{session()->get('usuario.nome')}}" disabled>
 
-                                        </span>
-                                        @enderror
-                                    </div>
-                                    <br>
+                                     <br />
+                                 @if(session('mensagem'))
+                                     <div class="alert alert-success">
+                                         <p>{{session('mensagem')}}</p>
+                                     </div>
+                                 @endif
 
-                                    <div class="form-group" style="font-weight: bolder;">
-                                        <label for="senhaNova">Nova Senha</label>
-                                        <input id="senhaNova" type="password" class="form-control @error('password') is-invalid @enderror" name="senhaNova" required autocomplete="current-password" placeholder="">
-                                        @error('password')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
+                                 @if(session('mensagemErro'))
+                                     <div class="alert alert-danger">
+                                         <p>{{session('mensagemErro')}}</p>
+                                     </div>
+                                 @endif
 
-                                    <div class="form-group row mt-4">
-                                        <div class="d-grid mx-auto">
-                                            <button class="btn btn-primary " type="submit">Confirmar</button>
-                                        </div>
-                                    </div>
-                                    <!-- <div class="form-group mb-0 row">
-                                        <div class="col-12 mt-4">
-                                            <a href="{{ route('password.request') }}" class="text-muted"><i class="mdi mdi-lock"></i> Forgot your password?</a>
-                                        </div>
-                                    </div> -->
-                                </form>
+                                 <label for="userpassword">Senha Atual</label>
+                                 <div class="input-group">
+                                     <input id="senhaAtual" type="password" class="form-control @error('password') is-invalid @enderror" name="senhaAtual" required autocomplete="current-password" placeholder="">
+                                     @error('password')
+                                     <span class="invalid-feedback" role="alert">
+                                         <strong>{{ $message }}</strong>
+                                     </span>
+                                     @enderror
+                                     <button class="btn btn-primary bi bi-eye" type="button" id="buttonEye"></button>
+                                 </div>
+                                 <br>
+
+                                 <label for="userpassword">Nova Senha</label>
+                                 <div class="input-group">
+                                    <input id="senhaNova" type="password" class="form-control @error('password') is-invalid @enderror" name="senhaNova" required autocomplete="current-password" placeholder="">
+                                     @error('password')
+                                     <span class="invalid-feedback" role="alert">
+                                         <strong>{{ $message }}</strong>
+                                     </span>
+                                     @enderror
+                                     <button class="btn btn-primary bi bi-eye" type="button" id="buttonEye2"></button>
+                                 </div>
+                                 <br>
+
+                                 <div class="form-group row mt-4">
+                                     <div class="d-grid mx-auto">
+                                         <button class="btn btn-primary " type="submit">Alterar Senha</button>
+                                     </div>
+                                 </div>
+                                 <!-- <div class="form-group mb-0 row">
+                                     <div class="col-12 mt-4">
+                                         <a href="{{ route('password.request') }}" class="text-muted"><i class="mdi mdi-lock"></i> Forgot your password?</a>
+                                     </div>
+                                 </div> -->
+                             </form>
+
                             </div>
                         </div>
+                    </div>
+                    <div class="mt-5 text-center">
+                        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+                        <script>
+                            $("#buttonEye").click(function(){
+
+                                $("#buttonEye").toggleClass("bi-eye");
+                                $("#buttonEye").toggleClass("bi-eye-slash");
+
+                                if($('#senhaAtual').attr('type') == "password"){
+                                    $("#senhaAtual").attr("type", "text");
+                                }else{
+                                    $("#senhaAtual").attr("type", "password");
+                                }
+
+                            })
+
+                            $("#buttonEye2").click(function(){
+
+                                $("#buttonEye2").toggleClass("bi-eye");
+                                $("#buttonEye2").toggleClass("bi-eye-slash");
+
+                                if($('#senhaNova').attr('type') == "password"){
+                                    $("#senhaNova").attr("type", "text");
+                                }else{
+                                    $("#senhaNova").attr("type", "password");
+                                }
+
+                            })
+
+                        </script>
+
+                         {{-- <p>© {{  date('Y', strtotime('-2 year')) }} - {{  date('Y') }} Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p> --> --}}
+                        <p>© Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 @stop
+
