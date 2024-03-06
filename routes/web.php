@@ -24,7 +24,7 @@ use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\GerenciarEncaminhamentoController;
 use App\Http\Controllers\GerenciarTratamentosController;
 use App\Http\Controllers\GerenciarEntrevistaController;
-use App\Http\Controllers\GerenciarEntrevistadorController;
+use App\Http\Controllers\GerenciarEntrevistaevangelhoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -129,14 +129,15 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 |--------------------------------------------------------------------------
 */
 
-//Entrevistador
-Route::get('/gerenciar-entrevistador', [EntrevistadorController::class, 'index'])->name('');
-Route::get('/criar-entrevistador', [EntrevistadorController::class, 'create'])->name('');
-Route::post('/incluir-entrevistador', [EntrevistadorController::class, 'store'])->name('');
-Route::get('/editar-entrevistador/{id}', [EntrevistadorController::class, 'edit'])->name('');
-Route::post('/atualizar-entrevistador/{id}', [EntrevistadorController::class, 'update'])->name('');
-Route::get('/visualizar-entrevistador/{id}', [EntrevistadorController::class, 'show'])->name('');
-Route::any('/excluir-entrevistador/{id}', [EntrevistadorController::class, 'destroy'])->name('');
+//Entrevista-evangelho
+Route::get('/gerenciar-evangelho', [GerenciarEntrevistaevangelhoController::class, 'index'])->name('start');
+Route::get('/criar-evangelho', [GerenciarEntrevistaevangelhoController::class, 'create'])->name('');
+Route::post('/incluir-evangelho', [GerenciarEntrevistaevangelhoController::class, 'store'])->name('');
+Route::get('/editar-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'edit'])->name('');
+Route::post('/atualizar-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'update'])->name('');
+Route::get('/visualizar-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'show'])->name('');
+Route::any('/excluir-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'destroy'])->name('');
+
 
 
 //Entrevista
