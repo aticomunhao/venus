@@ -57,10 +57,35 @@
                             <a href="/visualizar-grupos/{{$grupos->id}}" type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">
                                 <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
                             </a>
-                            <a href="/deletar-grupos" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao" onclick="confirmarExclusao('{{ $grupos->id }}', '{{ $grupos->nome }}')" data-tt="tooltip" data-placement="top" title="Deletar">
+                            <a href="/deletar-grupos" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{$grupos->id}}"  data-tt="tooltip" data-placement="top" title="Deletar">
                                 <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                             </a>
-
+ {{--  Modal de Exclusao --}}
+ <div class="modal fade" id="modal{{$grupos->id}}" tabindex="-1"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel" style="color:red;">Confirmação de
+                    Exclusão</h5>
+                <button type="button" class="btn-close"
+                    data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                Tem certeza que deseja excluir o grupo <p
+                    style="color:red;">{{$grupos->nome}}&#63;</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancelar</button>
+                <a type="button" class="btn btn-danger"
+                    href="/deletar-grupos/{{$grupos->id}}">Confirmar
+                    Exclusão</a>
+            </div>
+        </div>
+    </div>
+</div>
+{{-- Fim Modal de Exclusao --}}
                         </td>
                     </tr>
                     @endforeach
@@ -70,24 +95,7 @@
     </div>
 </div>
 
-<!-- Modal de Confirmação de Exclusão -->
-<div class="modal fade" id="confirmacaoDelecao" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Confirmação de Exclusão</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Tem certeza que deseja excluir o grupo "<span id="modal-body-text"></span>"?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="btn-confirmar-exclusao" onclick="confirmarDelecao()">Confirmar Exclusão</button>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
 <link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -100,15 +108,10 @@
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
 
-    function confirmarExclusao(id, nome) {
-        document.getElementById('btn-confirmar-exclusao').setAttribute('data-id', id);
-        document.getElementById('modal-body-text').innerText = nome;
-        $('#confirmacaoDelecao').modal('show');
-    }
 
-    function confirmarDelecao() {
-        var id = document.getElementById('btn-confirmar-exclusao').getAttribute('data-id');
-        window.location.href = '/deletar-grupos/' + id;
-    }
+
+
+
+
 </script>
 @endsection

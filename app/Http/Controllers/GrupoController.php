@@ -204,7 +204,7 @@ class Grupocontroller extends Controller
 
         ]);
 
-        $reuniao = DB::table('cronograma')->where('id_grupo', $id)->delete();
+         DB::table('cronograma')->where('id_grupo', $id)->delete();
 
 
 

@@ -26,58 +26,68 @@
 
 
                         <div class="row">
-                            <div class="col-4">Grupo
+                            <div class="col-xl-4 col-md-6">Grupo
                                 <select class="form-select slct" id="" type="number" name="grupo" required="required">
+                                    
 
                                     @foreach($grupo as $grupos)
-                                    <option value="{{$grupos->idg}}">{{$grupos->nome}}</option>
+                                    <option value="{{$grupos->idg}}"  >{{$grupos->nome}}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-2">Dia da semana
-                                <select class="form-select slct" id="" type="number" name="dia" required="required">
-
-                                    @foreach($dia as $dias)
-                                    <option value="{{$dias->idd}}">{{$dias->nome}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-4">Tipo de Tratamento
+                            <div class="col-xl-4 col-md-6 mt-md-0 mt-4">Tipo de Tratamento
                                 <select class="form-select slct" id="" type="number" name="tratamento" required="required">
+                                    
 
                                     @foreach($tratamento as $tratamentos)
-                                    <option value="{{$tratamentos->idt}}">{{$tratamentos->descricao}}</option>
+                                    <option value="{{$tratamentos->idt}}" >{{$tratamentos->descricao}}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col">Max atendimentos
-                                <input type="number" class="form-control" id="" min="1" max="800" name="max_atend" required="required">
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="col">Número Sala
-                                <select class="form-select slct" id="" type="number" name="numero" required="required">
-                              
-                                    @foreach($sala as $salas)
-                                    <option value="{{$salas->ids}}">{{$salas->numero}}</option>
+                            <div class="col-xl-2 col-lg-3 col-md-6 mt-xl-0 mt-4">Dia da semana
+                                <select class="form-select slct" id="" type="number" name="dia" required="required">
+                                    
+
+                                    @foreach($dia as $dias)
+                                    <option value="{{$dias->idd}}" >{{$dias->nome}}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-4">Nome Sala
-                                <select class="form-select slct" id="" type="number" name="nome" required="required" >
+
+                            <div class="col-xl-2 col-lg-3 col-md-6 mt-xl-0 mt-4">Max atendimentos
+                                <input type="number" class="form-control" id="" min="1" max="800" name="max_atend" required="required" value="">
+                                
+                            </div>
+                            <br>
+
+
+                            <div class="col-lg-4 col-md-6 mt-4 mt-4">Nome Sala
+                                <select class="form-select slct" id="" type="number" name="nome" required="required">
+                                    
 
                                     @foreach($sala as $salas)
-                                    <option value="{{$salas->ids}}">{{$salas->nome}}</option>
+                                    <option value="{{$salas->ids}}" >{{$salas->nome}}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col">Hora de início
-                                <input class="form-control" type="time"   name="h_inicio" required="required">
+                            <div class="col-xl-3 col-lg-2 col-md-6 mt-4">Número Sala
+                                <select class="form-select slct" id="" type="number" name="numero" required="required">
+                                    
+
+                                    @foreach($sala as $salas)
+                                    <option value="{{$salas->ids}}" >{{$salas->numero}}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                            <div class="col">Hora de fim
-                                <input class="form-control" type="time"  " name="h_fim" required="required">
+                            <div class=" col-md col-12 mt-4">Hora de início
+                                <input class="form-control" type="time"   name="h_inicio" required="required" value="">
+                                
                             </div>
+                            <div class="col-xl  col mt-4">Hora de fim
+                                <input class="form-control" type="time"   name="h_fim" required="required" value="">
+                                
+                            </div>
+
                         </div>
                     </div>
                 <div class="row">

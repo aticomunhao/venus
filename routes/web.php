@@ -235,6 +235,7 @@ Route::post('/nova-reuniao', [ReuniaoMediunicaController::class, 'store'])->name
 Route::get('/editar-reuniao/{id}', [ReuniaoMediunicaController::class, 'edit']);
 Route::any('/atualizar-reuniao/{id}', [ReuniaoMediunicaController::class, 'update']);
 Route::any('/excluir-reuniao/{id}', [ReuniaoMediunicaController::class, 'destroy']);
+Route::any('/visualizar-reuniao/{id}', [ReuniaoMediunicaController::class, 'show']);
 
 
 

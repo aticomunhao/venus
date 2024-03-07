@@ -22,19 +22,11 @@
                                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                 id="2" name="cpf" value="{{ $cpf }}">
                         </div>
-                        {{-- <div class="col">Grupo
-                        <select class="form-select" id="3" name="grupo" type="numeric" >
-                            <option value=""></option>
-                            @foreach ($grupos as $gr)
-                            <option value="{{$gr->id}}">{{$gr->nome}}</option>
-                            @endforeach
-                        </select>
-                    </div> --}}
+
                         <div class="col-2">Status
-                            <select class="form-select" id="4" name="status" type="numeric" required="required">
-                                <option value="1">Ativo</option>
-                                <option value="">Todos</option>
-                                <option value="2">Inativo</option>
+                            <select class="form-select status" id="4" name="status" type="numeric" >
+                                <option value="1" {{ $status == 1 ? 'selected' : '' }}>Ativo</option>
+                                <option value="2" {{ $status == 2 ? 'selected' : '' }}>Inativo</option>
                             </select>
                         </div>
                         <div class="col"><br>
@@ -99,29 +91,6 @@
                              <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                          </a>
 
-                         <!-- Modal de Confirmação -->
-                         <div class="modal fade" id="confirmarExclusao{{ $atendentes->id }}" tabindex="-1"
-                             aria-labelledby="confirmarExclusao{{ $atendentes->id}}Label" aria-hidden="true">
-                             <div class="modal-dialog">
-                                 <div class="modal-content">
-                                     <div class="modal-header">
-                                         <h5 class="modal-title" id="confirmarExclusao{{ $atendentes->id }}Label">
-                                             Confirmar Exclusão</h5>
-                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                             aria-label="Fechar"></button>
-                                     </div>
-                                     <div class="modal-body">
-                                         Tem certeza que deseja excluir este atendente?
-                                     </div>
-                                     <div class="modal-footer">
-                                         <button type="button" class="btn btn-secondary"
-                                             data-bs-dismiss="modal">Cancelar</button>
-                                         <a href="/excluir-atendente/{{ $atendentes->id }}" type="button"
-                                             class="btn btn-danger">Excluir</a>
-                                     </div>
-                                 </div>
-                             </div>
-                         </div>
 
                             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -130,6 +99,11 @@
                                 var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                                     return new bootstrap.Tooltip(tooltipTriggerEl)
                                 })
+
+                                if (typeof {{ $status }} === 'undefined') { //Deixa o select status como padrao vazio
+                                    $(".status").prop("selectedIndex", -1);
+                                }
+
                             </script>
 
                         </td>
