@@ -15,7 +15,7 @@
                     <form action="{{ route('start') }}" class="form-horizontal mt-4" method="GET">
                         <div class="row">
                             <div class="col"><br />
-                              
+
                             </div>
                         </div>
                     </form>
@@ -45,12 +45,12 @@
                                     {{-- Valida a hora e transforma para o formato 24h --}}
                                     <td>{{ $informacao->status }}</td>
                                     <td>
-                                        <a href="/agendar-evangelho/{{ $informacao->ide }}" type="button"
+                                        <a href="{{ route('criar-evangelho', ['id' => $informacao->ide]) }}" type="button"
                                             class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top"
                                             title="Agendar">
-                                           <i class="bi bi-clipboard-check"style="font-size: 1rem; color:#000;"
-                                                data-bs-target="#pessoa"></i>
-                                        </a>
+                                            <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
+                                         </a>
+
                                         <a href="/editar-evangelho/{{ $informacao->ide }}" type="button"
                                             class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
                                             title="Editar">
@@ -59,8 +59,7 @@
                                         <a href="/visualizar-evangelho/{{ $informacao->ide }}" type="button"
                                             class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                             title="Visualizar">
-                                            <i class="bi bi-search" style="font-size: 1rem; color:#000;"
-                                                data-bs-target="#pessoa"></i>
+                                            <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
                                         </a>
 
                                         <a href="/inativar-evangelho" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
