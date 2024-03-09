@@ -11,19 +11,18 @@
             </div>
             <br>
             <div class="card-body">
-                <form class="form-horizontal mt-2" method="post"
-                    action="{{ url("/incluir-evangelho/" . $encaminhamento->id) }}">
+                <form class="form-horizontal mt-2" method="post" action="{{ route('agendar') }}">
                     @csrf
-                    <div class="row mb-5">
+                    {{-- <div class="row mb-5">
                         <div class="col">
                             <label for="id_encaminhamento" class="form-label">Nome</label>
                             <select class="form-control" id="id_encaminhamento" name="id_encaminhamento" disabled>
                                 @foreach ($informacoes as $informacao)
-                                    <option value="{{ $informacao->id_pessoa }}">{{ $informacao->nome_pessoa }}</option>
+                                    <option value="{{ $informacao->id_assistido }}">{{ $informacao->nome_pessoa }}</option>
                                 @endforeach
                             </select>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="row mb-3">
                         <div class="col">
                             <label for="number" class="form-label">Quantidade de adultos</label>

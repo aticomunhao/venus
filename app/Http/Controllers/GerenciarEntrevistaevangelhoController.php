@@ -17,59 +17,77 @@ class GerenciarEntrevistaevangelhoController extends Controller
 
 
     public function index(Request $request)
-    {
-        $informacoes = DB::table('encaminhamento')
-            ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
-            ->leftJoin('evangelho', 'encaminhamento.id', '=', 'evangelho.id_encaminhamento')
-            ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
-            ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
-            ->where('encaminhamento.id_tipo_encaminhamento', 1)
-            ->where('encaminhamento.status_encaminhamento', '<>', 4)
-            ->select(
-                'evangelho.data',
-                'evangelho.hora',
-                'evangelho.status',
-                'evangelho.qtd_adultos',
-                'evangelho.qtd_criancas',
-                'encaminhamento.id as ide',
-                'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
-                'encaminhamento.id_tipo_encaminhamento',
-                'pessoa_pessoa.nome_completo as nome_pessoa',
-                'atendimentos.id_representante as id_representante'
-            )
-            ->get();
+{
+    $informacoes = DB::table('encaminhamento')
+        ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
+        ->leftJoin('evangelho', 'encaminhamento.id', '=', 'evangelho.id_encaminhamento')
+        ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
+        ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
+        ->where('encaminhamento.id_tipo_encaminhamento', 1)
+        ->where('encaminhamento.status_encaminhamento', '<>', 4)
+        ->select(
+            'evangelho.data',
+            'evangelho.hora',
+            'evangelho.status',
+            'evangelho.qtd_adultos',
+            'evangelho.qtd_criancas',
+            'encaminhamento.id as ide',
+            'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
+            'encaminhamento.id_tipo_encaminhamento',
+            'pessoa_pessoa.nome_completo as nome_pessoa',
+            'atendimentos.id_representante as id_representante'
+        )
+        ->get();
 
-        return view('Evangelho.gerenciar-evangelho', compact('informacoes'));
+
+    foreach ($informacoes as $info) {
+        $info->status = 'Aguardando agendamento';
     }
 
+    return view('Evangelho.gerenciar-evangelho', compact('informacoes'));
+}
 
 
-
-
-
-
-
-
-    public function create(Request $request)
+public function create(Request $request, $id)
 {
+    $pessoas = DB::select('SELECT id, nome_completo FROM pessoas');
+    $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
+    $evangelho = DB::table('evangelho')->where('id', $id)->first();
 
-    $dadosNovoRegistro = [
+    $informacoes_banco = [];
+    if ($encaminhamento) {
+        $info = DB::table('encaminhamento')
+            ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
+            ->leftJoin('pessoas AS pessoa_atendente', 'atendimentos.id_usuario', '=', 'pessoa_atendente.id')
+            ->leftJoin('pessoas AS pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
+            ->select(
+                'atendimentos.id_assistido AS id_pessoa',
+                'pessoa_pessoa.nome_completo AS nome_pessoa',
+                'atendimentos.id_representante as id_representante'
+            )
+            ->where('encaminhamento.id', $encaminhamento->id)
+            ->distinct()
+            ->first();
+
+        if ($info) {
+            $informacoes_banco[] = $info;
+        } else {
+
+        }
+    }
+
+    $informacoes_request = [
         'data' => $request->input('data'),
         'hora' => $request->input('hora'),
         'status' => $request->input('status'),
         'qtd_adultos' => $request->input('qtd_adultos'),
-        'qtd_criancas' => $request->input('qtd_criancas'),
-
+        'qtd_criancas' => $request->input('qtd_criancas')
     ];
 
 
-    DB::table('evangelho')->insert($dadosNovoRegistro);
+    $informacoes = array_merge($informacoes_banco, $informacoes_request);
 
-
-
-
-
-    return redirect('entrevistas/criar-evangelho');
+    return view('Evangelho/criar-evangelho', compact('encaminhamento', 'evangelho', 'informacoes', 'pessoas'));
 }
 
 
