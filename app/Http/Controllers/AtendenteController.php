@@ -62,7 +62,7 @@ class AtendenteController extends Controller
             $atendente->where('p.cpf', 'ilike', "%$request->cpf%");
         }
 
-        $status = $request->status;
+        $status = $request->status == null ? "undefined" : $request->status;
         if ($request->status) {
             $atendente->where('p.status', $request->status);
         }
@@ -75,7 +75,7 @@ class AtendenteController extends Controller
         $soma = DB::table('atendentes')->count();
 
 
-        return view('/atendentes-fraterno/gerenciar-atendentes', compact('atendente', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome', 'grupos'));
+        return view('/atendentes-fraterno/gerenciar-atendentes', compact('atendente', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome', 'grupos', 'status'));
     }
 
 
@@ -122,18 +122,7 @@ class AtendenteController extends Controller
             }
 
 
-            if ($request->has('additional_id_grupo')) {
-                $additionalGroups = $request->input('additional_id_grupo');
 
-
-                foreach ($additionalGroups as $additionalGroupId) {
-                    DB::table('atendente_grupo')->insert([
-                        'id_atendente' => $atendenteId,
-                        'id_grupo' => (int) $additionalGroupId,
-                        'dt_inicio' => $data,
-                    ]);
-                }
-            }
         } catch (\Exception $e) {
             app('flasher')->addError("Erro ao inserir grupos: " . $e->getMessage());
 
@@ -150,6 +139,7 @@ class AtendenteController extends Controller
     public function edit($id)
     {
         $gruposAtendente = DB::table('atendente_grupo')
+            ->select('id')
             ->where('id_atendente', $id)
             ->get();
 
@@ -161,9 +151,9 @@ class AtendenteController extends Controller
         $pessoas = DB::select('select id as idp, nome_completo from pessoas');
         $tipo_status_pessoa = DB::select('select * from tipo_status_pessoa');
         $grupo = DB::select('select id, nome from grupo');
+
         $atendentes = DB::select('select * from atendentes');
         $atendente_grupo = DB::select('select * from atendente_grupo');
-
         $atendente = DB::table('atendentes AS ad')
             ->select(
                 'ad.id',
@@ -204,7 +194,14 @@ class AtendenteController extends Controller
             ->leftJoin('grupo AS g', 'ag.id_grupo', '=', 'g.id')
             ->first();
 
-        return view('atendentes-fraterno/editar-atendente', compact('tipo_motivo_status_pessoa', 'gruposAtendente', 'pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente'));
+            $info = [];
+                foreach($gruposAtendente as $gr){
+                    $info[] = $gr;
+
+                }
+
+
+        return view('atendentes-fraterno/editar-atendente', compact('tipo_motivo_status_pessoa', 'gruposAtendente', 'pessoas', 'tipo_status_pessoa', 'grupo', 'atendentes', 'atendente_grupo', 'atendente', 'info'));
     }
 
 
