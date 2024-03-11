@@ -132,7 +132,7 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 //Entrevista-evangelho
 Route::get('/gerenciar-evangelho', [GerenciarEntrevistaevangelhoController::class, 'index'])->name('start');
 Route::get('/criar-evangelho/{ide}', [GerenciarEntrevistaevangelhoController::class, 'create'])->name('criar');
-Route::post('/incluir-evangelho', [GerenciarEntrevistaevangelhoController::class, 'store'])->name('agendar');
+Route::post('/incluir-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'store'])->name('agendar');
 Route::get('/editar-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'edit'])->name('');
 Route::post('/atualizar-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'update'])->name('');
 Route::get('/visualizar-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'show'])->name('');

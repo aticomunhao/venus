@@ -40,52 +40,38 @@ class GerenciarEntrevistaevangelhoController extends Controller
         ->get();
 
 
-    foreach ($informacoes as $info) {
-        $info->status = 'Aguardando agendamento';
-    }
+        foreach ($informacoes as $info) {
+            if ($info->status != 'Agendado') {
+                $info->status = 'Aguardando agendamento';
+            }
+        }
 
     return view('Evangelho.gerenciar-evangelho', compact('informacoes'));
 }
 
-
 public function create(Request $request, $id)
 {
-    $pessoas = DB::select('SELECT id, nome_completo FROM pessoas');
+    $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->get();
     $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
     $evangelho = DB::table('evangelho')->where('id', $id)->first();
 
-    $informacoes_banco = [];
+    $informacoes = [];
     if ($encaminhamento) {
         $info = DB::table('encaminhamento')
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
             ->leftJoin('pessoas AS pessoa_atendente', 'atendimentos.id_usuario', '=', 'pessoa_atendente.id')
             ->leftJoin('pessoas AS pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
             ->select(
-                'atendimentos.id_assistido AS id_pessoa',
-                'pessoa_pessoa.nome_completo AS nome_pessoa',
-                'atendimentos.id_representante as id_representante'
+                'pessoa_pessoa.id AS id_pessoa',
+                'pessoa_pessoa.nome_completo AS nome_pessoa'
             )
             ->where('encaminhamento.id', $encaminhamento->id)
-            ->distinct()
             ->first();
 
         if ($info) {
-            $informacoes_banco[] = $info;
-        } else {
-
+            $informacoes[] = $info;
         }
     }
-
-    $informacoes_request = [
-        'data' => $request->input('data'),
-        'hora' => $request->input('hora'),
-        'status' => $request->input('status'),
-        'qtd_adultos' => $request->input('qtd_adultos'),
-        'qtd_criancas' => $request->input('qtd_criancas')
-    ];
-
-
-    $informacoes = array_merge($informacoes_banco, $informacoes_request);
 
     return view('Evangelho/criar-evangelho', compact('encaminhamento', 'evangelho', 'informacoes', 'pessoas'));
 }
@@ -94,28 +80,30 @@ public function create(Request $request, $id)
 
 
 
-
-
-
-public function store(Request $request,$id)
+public function store(Request $request, String $id)
 {
 
-    $request->validate([
-        'data' => 'required|date',
-        'hora' => 'required',
-    ]);
+
+
+    $data = $request->input('data');
+    $hora = $request->input('hora');
+    $status = $request->input('status');
+    $qtd_adultos = $request->input('qtd_adultos');
+    $qtd_criancas = $request->input('qtd_criancas');
+
+
 
 
     DB::table('evangelho')->insert([
         'id_encaminhamento' => $id,
-        'id_grupo' => $request->id_grupo,
-        'qtd_adultos' => $request->qtd_adultos,
-        'qtd_criancas' => $request->qtd_criancas,
-        'data' => $request->data,
-        'hora' => $request->hora,
+        'data' => $data,
+        'hora' => $hora,
+        'status' => $status,
+        'qtd_adultos' => $qtd_adultos,
+        'qtd_criancas' => $qtd_criancas,
         'status' => 'Agendado',
-    ]);
 
+    ]);
 
 
     return redirect()->route('start')->with('success', 'Entrevista evangelho criada com sucesso!');
@@ -125,10 +113,17 @@ public function store(Request $request,$id)
 
 
 
+
+
+
+
+
+
+
 public function show($id)
 {
-    $evangelho = DB::table('envangelho AS evan')
-        ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
+    $evangelho = DB::table('evangelho AS evan')
+        ->leftJoin('encaminhamento AS enc', 'evan.id_encaminhamento', 'enc.id')
         ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
         ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
         ->select('p.nome_completo','enc.id','evan.id','evan.id_grupo','evan.data','evan.hora','evan.qtd_adultos','evan.qtd_criancas')
@@ -147,7 +142,7 @@ public function show($id)
 
 
 
-    return view('evangelho/visualizar-evangelho', compact('evangelho', 'encaminhamento', 'pessoas'));
+    return view('evangelho/visualizar-evangelho', compact('evangelho', 'encaminhamento'));
 }
 
 
@@ -159,20 +154,18 @@ public function show($id)
     public function edit($id)
     {
 
+
         $evangelho = DB::table('evangelho AS evan')
-        ->leftJoin('encaminhamento AS enc', 'evan.id_encaminhamento', 'evan.id')
+        ->leftJoin('encaminhamento AS enc', 'evan.id_encaminhamento', 'enc.id')
         ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
         ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-        ->select('p.nome_completo','evan.staus','evan.qtd_adultos','evan.qtd.criancas','enc.id','evan.data','evan.hora')
-        ->where('entre.id_encaminhamento', $id)
+        ->select('p.nome_completo','enc.id','evan.id','evan.id_grupo','evan.data','evan.hora','evan.qtd_adultos','evan.qtd_criancas')
+        ->where('evan.id_encaminhamento', $id)
         ->first();
-
 
         if (!$evangelho) {
 
         }
-
-
 
 
         $encaminhamento = DB::table('encaminhamento')->find($id);
@@ -181,7 +174,7 @@ public function show($id)
 
 
 
-    return view('evangelho/editar-evangelho', compact('evangelho', 'encaminhamento', 'pessoas'));
+    return view('evangelho/editar-evangelho', compact('evangelho', 'encaminhamento'));
 }
 
 
