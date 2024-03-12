@@ -41,7 +41,7 @@ class GerenciarEntrevistaevangelhoController extends Controller
 
 
         foreach ($informacoes as $info) {
-            if ($info->status != 'Agendado') {
+            if ($info->status != 'Agendado' && $info->status != 'Entrevistado') {
                 $info->status = 'Aguardando agendamento';
             }
         }
@@ -185,13 +185,12 @@ public function update(Request $request, $id)
 {
 
     $evangelho = DB::table('evangelho AS evan')
-        ->leftJoin('encaminhamento AS enc', 'evan.id_encaminhamento', 'evan.id')
-        ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
-        ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-        ->select('p.nome_completo','evan.staus','evan.qtd_adultos','evan.qtd.criancas','enc.id','evan.data','evan.hora')
-        ->where('entre.id_encaminhamento', $id)
-        ->first();
-
+    ->leftJoin('encaminhamento AS enc', 'evan.id_encaminhamento', 'enc.id')
+    ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+    ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
+    ->select('p.nome_completo','enc.id','evan.id','evan.id_grupo','evan.data','evan.hora','evan.qtd_adultos','evan.qtd_criancas')
+    ->where('evan.id_encaminhamento', $id)
+    ->first();
 
 
     if (!$evangelho) {
@@ -205,7 +204,6 @@ public function update(Request $request, $id)
     ->update([
         'data' => $request->input('data'),
         'hora' => $request->input('hora'),
-        'id_grupo' => $request->input('id_grupo'),
         'qtd_adultos' => $request->input('qtd_adultos'),
         'qtd_criancas' => $request->input('qtd_criancas'),
 
@@ -227,11 +225,11 @@ public function finalizar($id)
 {
 
 
-    DB::table('entrevistas')
+    DB::table('evangelho')
         ->where('id_encaminhamento', $id)
         ->update(['status' => 'Entrevistado']);
 
-    return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
+    return redirect()->route('start')->with('success', 'Entrevista finalizada com sucesso!');
 }
 
 public function inativar($id){
@@ -248,7 +246,7 @@ public function inativar($id){
 
     ]);
 
-   $entrevistas= DB::table('entrevistas')->where('id_encaminhamento','=', $id)->first();
+   $entrevistas= DB::table('evangelho')->where('id_encaminhamento','=', $id)->first();
 
 
 if(!is_null($entrevistas) and $entrevistas->status =='Agendado'){
@@ -263,7 +261,7 @@ if(!is_null($entrevistas) and $entrevistas->status =='Agendado'){
         ->update(['status_encaminhamento' => 4]);
 
 
-    return redirect()->route('gerenciamento')->with('danger', 'Entrevista inativada!');
+    return redirect()->route('start')->with('danger', 'Entrevista finalizada!');
 }
 
 }

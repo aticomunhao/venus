@@ -57,28 +57,58 @@
                             {{-- Valida a hora e transforma para o formato 24h --}}
                             <td>{{ $informacao->status }}</td>
                             <td>
-                                <a href="{{ route('criar', ['ide' => $informacao->ide]) }}" type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Agendar">
-                                    <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
+
+                                @if ($informacao->status !== 'Agendado' && $informacao->status !== 'Entrevistado')
+                                <a href="{{ route('criar', ['ide' => $informacao->ide]) }}" type="button"
+                                        class="btn btn-outline-success btn-sm " data-tt="tooltip"
+                                        data-placement="top" title="Agendar">
+                                        <i class=" bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
+                                    </a>
+                                @else
+
+                                <a href="{{ route('criar', ['ide' => $informacao->ide]) }}" type="button"
+                                    class="btn btn-outline-success btn-sm disabled" data-tt="tooltip"
+                                    data-placement="top" title="Agendar" >
+                                    <i class=" bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
                                 </a>
+                                @endif
 
-
-                                <a href="/editar-evangelho/{{ $informacao->ide }}" type="button"
-                                    class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Editar">
+                                @if ($informacao->status == 'Aguardando agendamento')
+                                <a href="#" type="button" class="btn btn-outline-warning btn-sm disabled"
+                                    data-tt="tooltip" data-placement="top" title="Editar" disabled>
                                     <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
                                 </a>
-                                <a href="/visualizar-evangelho/{{ $informacao->ide }}" type="button"
-                                    class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Visualizar">
-                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                            @else
+                                <a href="/editar-evangelho/{{ $informacao->ide }}" type="button"
+                                    class="btn btn-outline-warning btn-sm" data-tt="tooltip"
+                                    data-placement="top" title="Editar">
+                                    <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
                                 </a>
-
-                                <a href="/inativar-evangelho" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#confirmacaoDelecao"
-                                    onclick="confirmarExclusao('{{ $informacao->ide }}', '{{ $informacao->nome_pessoa }}')"
-                                    data-tt="tooltip" data-placement="top" title="Deletar">
-                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
-                                </a>
+                            @endif
+                            @if ($informacao->status == 'Aguardando agendamento')
+                            <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
+                                data-tt="tooltip" data-placement="top" title="Historico" disabled>
+                                <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                            </a>
+                        @else
+                            <a href="/visualizar-evangelho/{{ $informacao->ide }}" type="button"
+                                class="btn btn-outline-primary btn-sm" data-tt="tooltip"
+                                data-placement="top" title="Histórico">
+                                <i class="bi bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                            </a>
+                        @endif
+                        <a href="/finalizar-evangelho/{{ $informacao->ide }}" type="button"
+                            class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top"
+                            title="Finalizar">
+                            <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"
+                                data-bs-target="#pessoa"></i>
+                        </a>
+                            <a href="/inativar-evangelho/{{ $informacao->ide }}" type="button"
+                                class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top"
+                                title="Inativar">
+                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"
+                                    data-bs-target="#pessoa"></i>
+                            </a>
 
                             </td>
                         </tr>
