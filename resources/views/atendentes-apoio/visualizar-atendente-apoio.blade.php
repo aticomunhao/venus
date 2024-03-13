@@ -53,6 +53,7 @@
                                                         <div class="data_io">
                                                             {{ !is_null( $history->dt_fim ) ? date('d-m-Y', strtotime( $history->dt_fim ))  : '--' }}
                                                         </div>
+
                                                     </td>
                                                     <td>
                                                         <div class="data_io">

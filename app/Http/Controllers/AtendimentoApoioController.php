@@ -67,37 +67,68 @@ class AtendimentoApoioController extends Controller
      */
     public function store(Request $request)
     {
-        $req = $request->all();
-        $dataHoje = Carbon::today()->toDateString();
 
-        $idAtendente = DB::table('atendente_apoio')->insertGetId([
-            'id_pessoa' => $request->input('nome'),
-        ]);
+        DB::beginTransaction();
+        try{
 
-        $i = 0;
+            $req = $request->all();
+            $dataHoje = Carbon::today()->toDateString();
 
-        foreach ($request->checkbox as $checked) {
-            DB::table('atendente_apoio_dia')->insert([
-                'id_atendente' => $idAtendente,
-                'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
-                'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
-                'dh_fim' => $req['dhFim'][$i], // Se você também tiver um array para dhFim
+
+
+
+
+            $idAtendente = DB::table('atendente_apoio')->insertGetId([
+                'id_pessoa' => $request->input('nome'),
             ]);
-            $i += 1;
-        }
-        $i = 0;
-        foreach ($request->checkbox as $checked) {
-            DB::table('historico_atendente_apoio')->insert([
-                'id_atendente_apoio' => $idAtendente,
-                'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
-                'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
-                'dh_fim' => $req['dhFim'][$i],
-                'dt_inicio' => $dataHoje, // Se você também tiver um array para dhFim
-            ]);
-            $i += 1;
+
+            $i = 0;
+
+            foreach ($request->checkbox as $checked) {
+                $horaInicio = Carbon::createFromFormat(' G:i', ($req['dhFim'][$i]));
+                $horaFim =  Carbon::createFromFormat(' G:i', ($req['dhInicio'][$i]));
+                $horas = $horaFim->diffInMinutes($horaInicio, false);
+
+                if($horas <= 0){
+
+                    app('flasher')->addError("Um dos horários é inválido!");
+                    DB::rollBack();
+                    return redirect()->back();
+                }
+
+                DB::table('atendente_apoio_dia')->insert([
+                    'id_atendente' => $idAtendente,
+                    'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
+                    'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
+                    'dh_fim' => $req['dhFim'][$i], // Se você também tiver um array para dhFim
+                ]);
+                $i += 1;
+            }
+            $i = 0;
+            foreach ($request->checkbox as $checked) {
+                DB::table('historico_atendente_apoio')->insert([
+                    'id_atendente_apoio' => $idAtendente,
+                    'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
+                    'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
+                    'dh_fim' => $req['dhFim'][$i],
+                    'dt_inicio' => $dataHoje, // Se você também tiver um array para dhFim
+                ]);
+                $i += 1;
+            }
+
+            return redirect()->route('indexAtendenteApoio');
+
+DB::commit();
+}
+
+catch(\Exception $e){
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
         }
 
-        return redirect()->route('indexAtendenteApoio');
     }
 
     /**
