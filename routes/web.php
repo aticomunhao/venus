@@ -261,6 +261,8 @@ Route::any('/visualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaCont
 Route::any('/editar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'edit']);
 Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'update']);
 
+Route::fallback(function() {
+    return view('tratamento-erro.erro-404');});
 
     Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
     Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);

@@ -63,7 +63,7 @@
 
                                 <div class="col-12 mt-3 mb-3">
                                     <label for="id_grupo" class="form-label">Nome grupo</label>
-                                    <select class="form-select select2" aria-label=".form-select-lg example" name="id_grupo[]" id="id_grupo" multiple>
+                                    <select class="form-select select2" aria-label=".form-select-lg example" name="id_grupo[]" id="id_grupo" multiple required>
                                         @foreach ($grupo as $grupos)
                                             <option value="{{ $grupos->id }}" >{{ $grupos->nome }}</option>
                                         @endforeach
@@ -95,19 +95,26 @@
 
                             <script>
                                 $(document).ready(function() {
-
-                                    var infos = <?php echo json_encode($info); ?>;
                                     $('.select2').select2( { theme: 'bootstrap-5'});
+                                        var infos = <?php echo json_encode($info); ?>; //codifica a variavel do PHP para ser aceita pelo JavaScript
 
-                                    $('.select2').val();
-                                    });
-                                    $('.select2').trigger('change');
-
-                                    $.each(infos, function( index, value ) {
-                                        alert( index + ": " + value );
-                                      });
+                                        var keys = Object.entries(infos); //Pega os valores do JSON e transforma em um array
+                                        var len = Object.keys(keys).length; // Pega apenas as Keys do Array e conta a quantidade
+                                        const arr = []; //Inicializa uma variavel vetor vazia
 
 
+                                        for (var i = 0; i < len ; i++) {//Loop de 0 ao tamanho descoberto acima
+
+                                            var key = Object.values(keys[i][1]);//pega o valor do array de duas dimensões e armazena numa variavel
+                                            arr.push(key);//Adiciona o valor armazenado ao array vazio
+
+                                          }
+
+                                      $('.select2').val(arr).trigger('change');//pega o Array completo, força como valor do Select e atualiza o campo
+
+
+
+                                })
 
                             </script>
 

@@ -7,7 +7,8 @@
 @section('content')
     <div class="container";>
 
-        <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ATENDENTES FRATERNOS</h4>
+        <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
+            GERENCIAR ATENDENTES FRATERNOS</h4>
         <div class="col-12">
             <div class="row justify-content-center">
                 <form action="{{ route('list') }}" class="form-horizontal mt-4" method="GET">
@@ -24,7 +25,7 @@
                         </div>
 
                         <div class="col-2">Status
-                            <select class="form-select status" id="4" name="status" type="numeric" >
+                            <select class="form-select status1" id="4" name="status" type="numeric">
                                 <option value="1" {{ $status == 1 ? 'selected' : '' }}>Ativo</option>
                                 <option value="2" {{ $status == 2 ? 'selected' : '' }}>Inativo</option>
                             </select>
@@ -84,27 +85,40 @@
                                 title="Visualizar">
                                 <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
                             </a>
-                             <!-- Botão de Exclusão com Modal de Confirmação -->
-                             <a href="/excluir-atendente/ class="btn btn-outline-danger btn-sm data-bs-toggle="modal"
-                             data-bs-target="#confirmarExclusao{{ $atendentes->id }}" data-tt="tooltip"
-                             data-placement="top" title="Excluir"  class="btn btn-outline-danger btn-sm">
-                             <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
-                         </a>
+                            <button btn btn-outline-danger btn-sm data-bs-toggle="modal"
+                            data-bs-target="#confirmarExclusao{{ $atendentes->id }}" data-tt="tooltip"
+                            data-placement="top" title="Excluir" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                        </button>
 
 
-                            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+                            <div class="modal fade" id="confirmarExclusao{{ $atendentes->id }}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel" style="color:red;">Confirmação
+                                                de
+                                                Exclusão</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Tem certeza que deseja excluir o atendente <p style="color:red;">
+                                                {{ $atendentes->nome_completo }}&#63;</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancelar</button>
+                                            <a type="button" class="btn btn-danger"
+                                                href="/excluir-atendente/{{ $atendentes->id }}">Confirmar
+                                                Exclusão</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <script>
-                                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
-                                var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-                                    return new bootstrap.Tooltip(tooltipTriggerEl)
-                                })
 
-                                if (typeof {{ $status }} === 'undefined') { //Deixa o select status como padrao vazio
-                                    $(".status").prop("selectedIndex", -1);
-                                }
-
-                            </script>
 
                         </td>
 
@@ -117,6 +131,18 @@
     </div>
     </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+                            <script>
+                                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
+                                var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                                    return new bootstrap.Tooltip(tooltipTriggerEl)
+                                })
+
+                                if (typeof {{ $status }} === 'undefined') { //Deixa o select status como padrao vazio
+                                    $(".status1").prop("selectedIndex", -1);
+                                }
+                            </script>
 @endsection
 
 @section('footerScript')
