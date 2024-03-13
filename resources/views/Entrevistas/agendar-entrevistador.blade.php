@@ -74,6 +74,13 @@
                 </div>
             </form>
         </div>
+        <script>
+            // Obtém a data mínima no formato AAAA-MM-DD
+            var dataMinima = new Date("2024-01-01").toISOString().split('T')[0];
+
+            // Define a data mínima no campo de entrada
+            document.getElementById("data").setAttribute("min", dataMinima);
+        </script>
     </div>
 </div>
 @endsection

@@ -27,11 +27,11 @@
                 <div class="row mb-3">
                     <div class="col">
                         <label for="qtd_adultos" class="form-label">Quantidade de adultos</label>
-                        <input type="number" class="form-control" id="qtd_adultos" name="qtd_adultos">
+                        <input type="number" class="form-control" id="qtd_adultos"  name="qtd_adultos" min="1" max="300" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3); validarNumero(this);" required="required">
                     </div>
                     <div class="col">
                         <label for="qtd_criancas" class="form-label">Quantidade de crianças</label>
-                        <input type="number" class="form-control" id="qtd_criancas" name="qtd_criancas">
+                        <input type="number" class="form-control" id="qtd_criancas"  min="1" max="800" name="qtd_criancas"min="1" max="300" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3); validarNumero(this);" required="required">
                     </div>
                 </div>
 
@@ -40,6 +40,7 @@
                         <label for="data" class="form-label">Data</label>
                         <input type="date" class="form-control" id="data" name="data">
                     </div>
+
                     <div class="col">
                         <label for="hora" class="form-label">Hora</label>
                         <input type="time" class="form-control" id="hora" name="hora">
@@ -57,5 +58,12 @@
             </form>
         </div>
     </div>
+    <script>
+        // Obtém a data mínima no formato AAAA-MM-DD
+        var dataMinima = new Date("2024-01-01").toISOString().split('T')[0];
+
+        // Define a data mínima no campo de entrada
+        document.getElementById("data").setAttribute("min", dataMinima);
+    </script>
 </div>
 @endsection

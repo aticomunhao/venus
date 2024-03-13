@@ -18,6 +18,7 @@ class GerenciarEntrevistaevangelhoController extends Controller
 
     public function index(Request $request)
     {
+
         $informacoes = DB::table('encaminhamento')
         ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
         ->leftJoin('evangelho', 'encaminhamento.id', '=', 'evangelho.id_encaminhamento')
@@ -26,7 +27,7 @@ class GerenciarEntrevistaevangelhoController extends Controller
         ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
         ->where('encaminhamento.id_tipo_encaminhamento', 1)
         ->where('encaminhamento.status_encaminhamento', '<>', 4)
-        ->where('tipo_entrevista.id', 8) 
+        ->where('tipo_entrevista.id', 8)
         ->select(
             'evangelho.data',
             'evangelho.hora',
@@ -39,16 +40,18 @@ class GerenciarEntrevistaevangelhoController extends Controller
             'pessoa_pessoa.nome_completo as nome_pessoa',
             'atendimentos.id_representante as id_representante'
         )
+        ->orderBy('evangelho.status', 'asc')
+        ->orderBy('pessoa_pessoa.nome_completo')
         ->get();
 
-        foreach ($informacoes as $info) {
-            if ($info->status != 'Agendado' && $info->status != 'Entrevistado') {
-                $info->status = 'Aguardando agendamento';
-            }
+    foreach ($informacoes as $info) {
+        if ($info->status != 'Agendado' && $info->status != 'Entrevistado') {
+            $info->status = 'Aguardando agendamento';
         }
-
-        return view('Evangelho.gerenciar-evangelho', compact('informacoes'));
     }
+
+    return view('Evangelho.gerenciar-evangelho', compact('informacoes'));
+}
 
 
 public function create(Request $request, $id)

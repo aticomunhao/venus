@@ -24,11 +24,11 @@
                 <div class="row mb-3">
                     <div class="col">
                         <label for="qtd_adultos" class="form-label">Quantidade de adultos</label>
-                        <input type="number" class="form-control" id="qtd_adultos" name="qtd_adultos" value="{{ $evangelho->qtd_adultos }}">
+                        <input type="number" class="form-control" id="qtd_adultos"  min="1" max="800" name="qtd_adultos" value="{{ $evangelho->qtd_adultos }}">
                     </div>
                     <div class="col">
                         <label for="qtd_criancas" class="form-label">Quantidade de crianças</label>
-                        <input type="number" class="form-control" id="qtd_criancas" name="qtd_criancas" value="{{ $evangelho->qtd_criancas }}">
+                        <input type="number" class="form-control" id="qtd_criancas"  min="1" max="800" name="qtd_criancas" value="{{ $evangelho->qtd_criancas }}">
                     </div>
                 </div>
 
