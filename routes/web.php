@@ -34,6 +34,8 @@ use App\Http\Controllers\GerenciarEntrevistaevangelhoController;
 Auth::routes();
 Route::get('/logout', 'LexaAdmin@logout');
 
+Route::fallback(function() {
+    return view('tratamento-erro.erro-404');});
 
 Route::get('/email/remessa-email', 'RecuperaSenhaController@index');
 Route::post('/email/remessa-email', 'RecuperaSenhaController@validar');
@@ -46,6 +48,7 @@ Route::any('/login/home', [LoginController::class, 'valida']);
 //Route::name('usuario')->middleware('validaUsuario')->group(function () {
     Route::any('/login/valida', [LoginController::class, 'validaUserLogado'])->name('home.post');
     Route::get('/gerenciar-usuario', [UsuarioController::class, 'index']);
+    
     Route::get('/usuario-incluir', [UsuarioController::class, 'create']);
     Route::get('/cadastrar-usuarios/configurar/{id}', [UsuarioController::class, 'configurarUsuario']);
     Route::post('/cad-usuario/inserir', [UsuarioController::class, 'store']);
@@ -263,8 +266,7 @@ Route::any('/visualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaCont
 Route::any('/editar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'edit']);
 Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'update']);
 
-Route::fallback(function() {
-    return view('tratamento-erro.erro-404');});
+
 
     Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
     Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);

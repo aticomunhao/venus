@@ -17,8 +17,7 @@
                         <div class="row col-10 offset-1" style="margin-top:none">
                             <div class="col-md-6 col-12">
                                 <div>Nome</div>
-                                <select class="form-select" aria-label="Default select example" required name="nome">
-                                    <option value=""></option>
+                                <select class="form-select select2" aria-label="Default select example" required name="nome">
                                     @foreach ($nomes as $nome)
                                         <option value="{{ $nome->id }}">{{ $nome->nome_completo }}</option>
                                     @endforeach
@@ -95,7 +94,7 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function() {
             $('.checkbox-trigger').change(function() {
@@ -108,6 +107,11 @@
                     $('#data_inicio_' + id + ' input').prop('disabled', true);
                 }
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({ theme: 'bootstrap-5'});
         });
     </script>
 @endsection

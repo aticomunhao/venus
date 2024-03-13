@@ -13,16 +13,20 @@ class AtendenteController extends Controller
 {
     public function index(Request $request)
     {
-
+//tratamento de excessão para testar as variaveis
         try{
 
-        $ddd = DB::select('select id, descricao from tp_ddd');
-        $grupos = DB::select('select id, nome from grupo order by nome');
+        $ddd = DB::select('select id, descricao from tp_ddd');//Pega o DDD, uso desconhecido
+        $grupos = DB::select('select id, nome from grupo  order by nome ');
         $sexo = DB::select('select id, tipo from tp_sexo');
 
+        //Armazena as informaçoes importantes para o Gerenciar
         $atendente = DB::table('atendentes AS ad')->select('ad.id', 'p.id AS idp', 'p.nome_completo', 'p.cpf', 'tps.tipo', 'p.cpf', 'p.ddd', 'p.email', 'p.celular', 'p.dt_nascimento', 'p.sexo', 'p.email', 'p.ddd', 'p.celular', 'tsp.id AS idtps', 'p.status', 'tsp.tipo AS tpsta', 'd.id as did', 'd.descricao as ddesc', 'p.motivo_status')->leftJoin('pessoas AS p', 'ad.id_pessoa', '=', 'p.id')->leftJoin('tipo_status_pessoa AS tsp', 'p.status', '=', 'tsp.id')->leftJoin('tp_sexo AS tps', 'p.sexo', '=', 'tps.id')->leftJoin('tp_ddd AS d', 'p.ddd', '=', 'd.id');
 
+        //Value do input de pesquisa
         $nome = $request->nome;
+
+        //Pesquisa
         if ($request->nome) {
             $atendente->where('p.nome_completo', 'ilike', "%$request->nome%");
         }
@@ -37,6 +41,7 @@ class AtendenteController extends Controller
             $atendente->where('p.status', $request->status);
         }
 
+        //Organiza primeiramente por Status, deixando inativo no final, depois por ondem Alfabética
         $atendente = $atendente->orderBy('p.status', 'desc')->orderBy('p.nome_completo', 'asc')->get();
 
         $stap = DB::select('select id as ids, tipo from tipo_status_pessoa t');
@@ -48,7 +53,9 @@ class AtendenteController extends Controller
 
         catch(\Exception $e){
 
+            //Armazena o código de erro em uma variavel
             $code = $e->getCode( );
+            //Retorna a tela de erro 500 com o número do erro ocorrido
             return view('tratamento-erro.erro-inesperado', compact('code'));
                 }
 
@@ -56,12 +63,11 @@ class AtendenteController extends Controller
 
     public function create(Request $request)
     {
-        $selecionados = 1;
+
         $pessoas = DB::select('select id as idp, nome_completo from pessoas');
-        $tipo_status_pessoa = DB::select('select * from tipo_status_pessoa');
-        $grupo = DB::select('select id, nome from grupo');
-        $atendentes = DB::select('select * from atendentes');
-        $atendente_grupo = DB::select('select * from atendente_grupo');
+        $grupo = DB::select('select id, nome from grupo where status_grupo <> 2');
+        $atendentes = DB::select('select * from atendentes');//Variavel sem uso aparente
+        $atendente_grupo = DB::select('select * from atendente_grupo');//Variavel sem uso aparente
 
         return view('atendentes-fraterno/criar-atendente', compact('pessoas', 'grupo', 'atendentes', 'atendente_grupo'));
     }
@@ -69,6 +75,7 @@ class AtendenteController extends Controller
     public function store(Request $request)
     {
 
+        //Com tratamento de erro inicialzia a transação
         DB::beginTransaction();
         try{
 
@@ -77,16 +84,18 @@ class AtendenteController extends Controller
             $id_pessoa = $request->input('id_pessoa');
             $selectedGroups = $request->input('id_grupo');
 
+            //Testa se os valores de ID pessoa são validos
             if (!is_numeric($id_pessoa) || $id_pessoa <= 0) {
                 app('flasher')->addError('ID de pessoa inválido.');
                 return redirect()->back();
             }
-
+                //insere um novo atendente na tabela de atendentes
             $atendenteId = DB::table('atendentes')->insertGetId([
                 'id_pessoa' => (int) $id_pessoa,
             ]);
 
-            try {
+
+                //Loop de repetição de inserção de grupos
                 foreach ($selectedGroups as $groupId) {
                     DB::table('atendente_grupo')->insert([
                         'id_atendente' => $atendenteId,
@@ -94,12 +103,6 @@ class AtendenteController extends Controller
                         'dt_inicio' => $data,
                     ]);
                 }
-            } catch (\Exception $e) {
-                app('flasher')->addError('Erro ao inserir grupos: ' . $e->getMessage());
-
-                DB::table('atendentes')->where('id', $atendenteId)->delete();
-                return redirect()->back();
-            }
 
             app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
 
@@ -108,6 +111,7 @@ DB::commit();
 
 catch(\Exception $e){
 
+            //Retorna uma mensagem flasher com o código do erro
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
             DB::rollBack();
 
@@ -128,7 +132,7 @@ catch(\Exception $e){
 
             $pessoas = DB::select('select id as idp, nome_completo from pessoas');
             $tipo_status_pessoa = DB::select('select * from tipo_status_pessoa');
-            $grupo = DB::select('select id, nome from grupo');
+            $grupo = DB::select('select id, nome from grupo where status_grupo <> 2');
 
             $atendentes = DB::select('select * from atendentes');
             $atendente_grupo = DB::select('select * from atendente_grupo');
@@ -145,8 +149,9 @@ catch(\Exception $e){
 
         catch(\Exception $e){
 
+                    //Retorna um flasher de Erro Caso ocorra Algum erro
                     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
-
+                    return redirect()->back();
                 }
 
     }
@@ -157,6 +162,8 @@ catch(\Exception $e){
         $dt_fim = $request->input('dt_fim');
         $motivo = $request->input('motivo_status');
         $status = $request->input('status');
+
+        //Inicializa a transação
         DB::beginTransaction();
 
         try {
@@ -215,10 +222,14 @@ catch(\Exception $e){
                     }
                 }
             }
+            //Se tudo estiver correto, salve as informações em banco
             DB::commit();
         } catch (\Exception $e) {
+
+            //Retorna um Flasher de erro, retorna o banco para a posição inicical e volta para a situação correta
             app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
             DB::rollBack();
+            return redirect()->back();
         }
         return redirect('gerenciar-atendentes');
     }
