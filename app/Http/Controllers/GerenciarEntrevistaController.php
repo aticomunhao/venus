@@ -40,20 +40,21 @@ class GerenciarEntrevistaController extends Controller
 
     public function index(Request $request)
     {
-    $informacoes = DB::table('encaminhamento')
-    ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
-    ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
-    ->leftJoin('salas AS s', 'entrevistas.id_sala', 's.id')
-    ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-    ->leftJoin('pessoas as pessoa_entrevistas', 'entrevistas.id_entrevistador', '=', 'pessoa_entrevistas.id')
-    ->leftJoin('pessoas as pessoa_representante', 'atendimentos.id_representante', '=', 'pessoa_representante.id')
-    ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
-    ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
-    ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
-    ->where('encaminhamento.id_tipo_encaminhamento', 1)
-    ->where('encaminhamento.status_encaminhamento','<>',4 )
-    ->select(
-        'entrevistas.id_entrevistador',
+        $informacoes = DB::table('encaminhamento')
+        ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
+        ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
+        ->leftJoin('salas AS s', 'entrevistas.id_sala', 's.id')
+        ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
+        ->leftJoin('pessoas as pessoa_entrevistas', 'entrevistas.id_entrevistador', '=', 'pessoa_entrevistas.id')
+        ->leftJoin('pessoas as pessoa_representante', 'atendimentos.id_representante', '=', 'pessoa_representante.id')
+        ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
+        ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
+        ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
+        ->where('encaminhamento.id_tipo_encaminhamento', 1)
+        ->where('encaminhamento.status_encaminhamento', '<>', 4)
+        ->whereNotIn('tipo_entrevista.id', [8])
+        ->select(
+            'entrevistas.id_entrevistador',
         DB::raw("CASE
                     WHEN entrevistas.status IS NULL THEN 'Aguardando agendamento'
                     ELSE entrevistas.status

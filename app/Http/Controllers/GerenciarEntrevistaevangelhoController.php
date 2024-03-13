@@ -19,27 +19,27 @@ class GerenciarEntrevistaevangelhoController extends Controller
     public function index(Request $request)
     {
         $informacoes = DB::table('encaminhamento')
-            ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
-            ->leftJoin('evangelho', 'encaminhamento.id', '=', 'evangelho.id_encaminhamento')
-            ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
-            ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
-            ->where('encaminhamento.id_tipo_encaminhamento', 1)
-            ->where('encaminhamento.status_encaminhamento', '<>', 4)
-            ->select(
-                'evangelho.data',
-                'evangelho.hora',
-                'evangelho.status',
-                'evangelho.qtd_adultos',
-                'evangelho.qtd_criancas',
-                'encaminhamento.id as ide',
-                'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
-                'encaminhamento.id_tipo_encaminhamento',
-                'pessoa_pessoa.nome_completo as nome_pessoa',
-                'atendimentos.id_representante as id_representante'
-            )
-            ->orderBy('evangelho.status', 'desc')
-            ->orderBy('pessoa_pessoa.nome_completo', 'asc')
-            ->get();
+        ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
+        ->leftJoin('evangelho', 'encaminhamento.id', '=', 'evangelho.id_encaminhamento')
+        ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
+        ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
+        ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
+        ->where('encaminhamento.id_tipo_encaminhamento', 1)
+        ->where('encaminhamento.status_encaminhamento', '<>', 4)
+        ->where('tipo_entrevista.id', 8) 
+        ->select(
+            'evangelho.data',
+            'evangelho.hora',
+            'evangelho.status',
+            'evangelho.qtd_adultos',
+            'evangelho.qtd_criancas',
+            'encaminhamento.id as ide',
+            'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
+            'encaminhamento.id_tipo_encaminhamento',
+            'pessoa_pessoa.nome_completo as nome_pessoa',
+            'atendimentos.id_representante as id_representante'
+        )
+        ->get();
 
         foreach ($informacoes as $info) {
             if ($info->status != 'Agendado' && $info->status != 'Entrevistado') {
