@@ -137,6 +137,8 @@ Route::get('/editar-evangelho/{id}', [GerenciarEntrevistaevangelhoController::cl
 Route::post('/atualizar-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'update'])->name('');
 Route::get('/visualizar-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'show'])->name('');
 Route::any('/excluir-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'destroy'])->name('');
+Route::any('/finalizar-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'finalizar'])->name('');
+Route::any('/inativar-evangelho/{id}', [GerenciarEntrevistaevangelhoController::class, 'inativar'])->name('');
 
 
 

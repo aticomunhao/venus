@@ -17,37 +17,39 @@ class GerenciarEntrevistaevangelhoController extends Controller
 
 
     public function index(Request $request)
-{
-    $informacoes = DB::table('encaminhamento')
-        ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
-        ->leftJoin('evangelho', 'encaminhamento.id', '=', 'evangelho.id_encaminhamento')
-        ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
-        ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
-        ->where('encaminhamento.id_tipo_encaminhamento', 1)
-        ->where('encaminhamento.status_encaminhamento', '<>', 4)
-        ->select(
-            'evangelho.data',
-            'evangelho.hora',
-            'evangelho.status',
-            'evangelho.qtd_adultos',
-            'evangelho.qtd_criancas',
-            'encaminhamento.id as ide',
-            'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
-            'encaminhamento.id_tipo_encaminhamento',
-            'pessoa_pessoa.nome_completo as nome_pessoa',
-            'atendimentos.id_representante as id_representante'
-        )
-        ->get();
-
+    {
+        $informacoes = DB::table('encaminhamento')
+            ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
+            ->leftJoin('evangelho', 'encaminhamento.id', '=', 'evangelho.id_encaminhamento')
+            ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
+            ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
+            ->where('encaminhamento.id_tipo_encaminhamento', 1)
+            ->where('encaminhamento.status_encaminhamento', '<>', 4)
+            ->select(
+                'evangelho.data',
+                'evangelho.hora',
+                'evangelho.status',
+                'evangelho.qtd_adultos',
+                'evangelho.qtd_criancas',
+                'encaminhamento.id as ide',
+                'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
+                'encaminhamento.id_tipo_encaminhamento',
+                'pessoa_pessoa.nome_completo as nome_pessoa',
+                'atendimentos.id_representante as id_representante'
+            )
+            ->orderBy('evangelho.status', 'desc')
+            ->orderBy('pessoa_pessoa.nome_completo', 'asc')
+            ->get();
 
         foreach ($informacoes as $info) {
-            if ($info->status != 'Agendado') {
+            if ($info->status != 'Agendado' && $info->status != 'Entrevistado') {
                 $info->status = 'Aguardando agendamento';
             }
         }
 
-    return view('Evangelho.gerenciar-evangelho', compact('informacoes'));
-}
+        return view('Evangelho.gerenciar-evangelho', compact('informacoes'));
+    }
+
 
 public function create(Request $request, $id)
 {
@@ -185,13 +187,12 @@ public function update(Request $request, $id)
 {
 
     $evangelho = DB::table('evangelho AS evan')
-        ->leftJoin('encaminhamento AS enc', 'evan.id_encaminhamento', 'evan.id')
-        ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
-        ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-        ->select('p.nome_completo','evan.staus','evan.qtd_adultos','evan.qtd.criancas','enc.id','evan.data','evan.hora')
-        ->where('entre.id_encaminhamento', $id)
-        ->first();
-
+    ->leftJoin('encaminhamento AS enc', 'evan.id_encaminhamento', 'enc.id')
+    ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+    ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
+    ->select('p.nome_completo','enc.id','evan.id','evan.id_grupo','evan.data','evan.hora','evan.qtd_adultos','evan.qtd_criancas')
+    ->where('evan.id_encaminhamento', $id)
+    ->first();
 
 
     if (!$evangelho) {
@@ -205,7 +206,6 @@ public function update(Request $request, $id)
     ->update([
         'data' => $request->input('data'),
         'hora' => $request->input('hora'),
-        'id_grupo' => $request->input('id_grupo'),
         'qtd_adultos' => $request->input('qtd_adultos'),
         'qtd_criancas' => $request->input('qtd_criancas'),
 
@@ -227,11 +227,11 @@ public function finalizar($id)
 {
 
 
-    DB::table('entrevistas')
+    DB::table('evangelho')
         ->where('id_encaminhamento', $id)
         ->update(['status' => 'Entrevistado']);
 
-    return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
+    return redirect()->route('start')->with('success', 'Entrevista finalizada com sucesso!');
 }
 
 public function inativar($id){
@@ -248,7 +248,7 @@ public function inativar($id){
 
     ]);
 
-   $entrevistas= DB::table('entrevistas')->where('id_encaminhamento','=', $id)->first();
+   $entrevistas= DB::table('evangelho')->where('id_encaminhamento','=', $id)->first();
 
 
 if(!is_null($entrevistas) and $entrevistas->status =='Agendado'){
@@ -263,7 +263,7 @@ if(!is_null($entrevistas) and $entrevistas->status =='Agendado'){
         ->update(['status_encaminhamento' => 4]);
 
 
-    return redirect()->route('gerenciamento')->with('danger', 'Entrevista inativada!');
+    return redirect()->route('start')->with('danger', 'Entrevista finalizada!');
 }
 
 }
