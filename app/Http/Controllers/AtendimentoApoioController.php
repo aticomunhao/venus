@@ -93,21 +93,11 @@ class AtendimentoApoioController extends Controller
 
                     app('flasher')->addError("Um dos horários é inválido!");
                     DB::rollBack();
-                    return redirect()->back();
+                    return back()->withInput();
                 }
 
                 DB::table('atendente_apoio_dia')->insert([
                     'id_atendente' => $idAtendente,
-                    'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
-                    'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
-                    'dh_fim' => $req['dhFim'][$i], // Se você também tiver um array para dhFim
-                ]);
-                $i += 1;
-            }
-            $i = 0;
-            foreach ($request->checkbox as $checked) {
-                DB::table('historico_atendente_apoio')->insert([
-                    'id_atendente_apoio' => $idAtendente,
                     'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
                     'dh_inicio' => $req['dhInicio'][$i], // Use o array $req para obter os horários
                     'dh_fim' => $req['dhFim'][$i],
@@ -115,17 +105,19 @@ class AtendimentoApoioController extends Controller
                 ]);
                 $i += 1;
             }
+            $i = 0;
 
+
+            DB::commit();
             return redirect()->route('indexAtendenteApoio');
 
-DB::commit();
 }
 
 catch(\Exception $e){
 
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
             DB::rollBack();
-	    return redirect()->back();
+            return redirect()->back();
 
         }
 
@@ -144,10 +136,10 @@ catch(\Exception $e){
             ->where('id', '=', $idp[0]->id_pessoa)
             ->get();
 
-        $historico = DB::table('historico_atendente_apoio as hs')
+        $historico = DB::table('atendente_apoio_dia as hs')
             ->select(['hs.dt_inicio', 'hs.dt_fim', 'hs.dh_inicio', 'hs.dh_fim', 'd.nome'])
             ->leftJoin('tipo_dia as d', 'hs.id_dia', '=', 'd.id')
-            ->where('id_atendente_apoio', '=', $id, 'and', 'dt_fim', '=', null)
+            ->where('id_atendente', '=', $id, 'and', 'dt_fim', '=', null)
             ->get();
 
         $dias = DB::table('tipo_dia')->get();
@@ -186,47 +178,46 @@ catch(\Exception $e){
      */
     public function update(Request $request, string $id)
     {
-        $dataHoje = Carbon::today()->toDateString();
-        $req = $request->all();
-        $hist = DB::table('historico_atendente_apoio')->get();
+
+        DB::beginTransaction();
+        try{
+
+            DB::table('atendente_apoio_dia')->where('id_atendente', '=', $id)->delete();
+            $req = $request->all();
+            $dataHoje = Carbon::today()->toDateString();
+
+            $idAtendente = $id;
+
+            $i = 0;
+
+            foreach ($request->checkbox as $checked) {
 
 
-        $diasHorarios = DB::table('atendente_apoio_dia')
-        ->where('id_atendente', '=', $id)
-        ->get();
+                DB::table('atendente_apoio_dia')->insert([
+                    'id_atendente' => $idAtendente,
+                    'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
+                    'dh_inicio' => $req['dhInicio'][$checked], // Use o array $req para obter os horários
+                    'dh_fim' => $req['dhFim'][$checked],
+                    'dt_inicio' => $dataHoje, // Se você também tiver um array para dhFim
+                ]);
+                $i += 1;
+            }
+            $i = 0;
 
 
+            DB::commit();
+            return redirect()->route('indexAtendenteApoio');
 
+}
 
-        DB::table('atendente_apoio_dia')
-            ->where('id_atendente', '=', $id)
-            ->delete();
+catch(\Exception $e){
 
-            DB::table('historico_atendente_apoio')
-            ->where('id_atendente', '=', $id)
-            ->delete();
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+            return redirect()->back();
 
-
-
-
-        foreach ($request->checkbox as $checked) {
-            DB::table('atendente_apoio_dia')->insert([
-                'id_atendente' => $id,
-                'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
-                'dh_inicio' => $req['dhInicio'][$checked], // Use o array $req para obter os horários
-                'dh_fim' => $req['dhFim'][$checked], // Se você também tiver um array para dhFim
-            ]);
-
-            DB::table('historico_atendente_apoio')->insert([
-                'id_atendente_apoio' => $id,
-                'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
-                'dh_inicio' => $req['dhInicio'][$checked], // Use o array $req para obter os horários
-                'dh_fim' => $req['dhFim'][$checked],
-                'dt_inicio' => $dataHoje, // Se você também tiver um array para dhFim
-            ]);
         }
 
-        return redirect()->route('indexAtendenteApoio');
     }
 
     /**

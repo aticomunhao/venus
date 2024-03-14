@@ -58,7 +58,7 @@
                                                             <input type="time" class="form-control"
                                                                 aria-label="Sizing example input" name="dhInicio[]"
                                                                 required="Required" id="data_ini_{{ $diaSemana->id }}"
-                                                                disabled>
+                                                                disabled value="{{ old('dhInicio[]') }}">
                                                         </div>
                                                     </td>
 
