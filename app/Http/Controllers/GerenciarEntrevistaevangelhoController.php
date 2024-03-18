@@ -18,7 +18,7 @@ class GerenciarEntrevistaevangelhoController extends Controller
 
     public function index(Request $request)
     {
-
+        $i = 0;
         $informacoes = DB::table('encaminhamento')
         ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
         ->leftJoin('evangelho', 'encaminhamento.id', '=', 'evangelho.id_encaminhamento')
@@ -41,8 +41,46 @@ class GerenciarEntrevistaevangelhoController extends Controller
             'atendimentos.id_representante as id_representante'
         )
         ->orderBy('evangelho.status', 'asc')
-        ->orderBy('pessoa_pessoa.nome_completo')
-        ->get();
+        ->orderBy('pessoa_pessoa.nome_completo');
+
+            $pesquisaNome = $request->nome;
+            if($request->nome){
+
+                $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome%");
+            }
+
+
+            $pesquisaValue = 0;
+            if($request->status){
+                $pesquisaValue = $request->status;
+
+                if($request->status == 2){
+
+                    $informacoes->where('evangelho.status', 'ilike', "Agendado");
+                }
+                if($request->status == 3){
+
+                    $informacoes->where('evangelho.status', 'ilike', "Entrevistado");
+                }
+            }
+            $informacoes = $informacoes->get();
+
+
+            if($request->status == 1){
+
+                $info = [];
+                foreach ($informacoes as $dia) {
+                    $info[] = $dia;
+                }
+        foreach($info as $check){
+            if($check->status == "Agendado" or $check->status == "Entrevistado"){
+                unset($info[$i]);
+            }
+        $i = $i +1;
+        }
+        $informacoes = $info;
+
+            }
 
     foreach ($informacoes as $info) {
         if ($info->status != 'Agendado' && $info->status != 'Entrevistado') {
@@ -50,7 +88,7 @@ class GerenciarEntrevistaevangelhoController extends Controller
         }
     }
 
-    return view('Evangelho.gerenciar-evangelho', compact('informacoes'));
+    return view('Evangelho.gerenciar-evangelho', compact('informacoes', 'pesquisaNome', 'pesquisaValue'));
 }
 
 

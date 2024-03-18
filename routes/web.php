@@ -25,6 +25,7 @@ use App\Http\Controllers\GerenciarEncaminhamentoController;
 use App\Http\Controllers\GerenciarTratamentosController;
 use App\Http\Controllers\GerenciarEntrevistaController;
 use App\Http\Controllers\GerenciarEntrevistaevangelhoController;
+use App\Http\Controllers\GerenciarDirigentesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +49,7 @@ Route::any('/login/home', [LoginController::class, 'valida']);
 //Route::name('usuario')->middleware('validaUsuario')->group(function () {
     Route::any('/login/valida', [LoginController::class, 'validaUserLogado'])->name('home.post');
     Route::get('/gerenciar-usuario', [UsuarioController::class, 'index']);
-    
+
     Route::get('/usuario-incluir', [UsuarioController::class, 'create']);
     Route::get('/cadastrar-usuarios/configurar/{id}', [UsuarioController::class, 'configurarUsuario']);
     Route::post('/cad-usuario/inserir', [UsuarioController::class, 'store']);
@@ -265,6 +266,29 @@ Route::any('/armazenar-atendentes-plantonistas', [AtendentePlantonistaController
 Route::any('/visualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'show']);
 Route::any('/editar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'edit']);
 Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'update']);
+
+
+//Dirigentes
+
+Route::get('/gerenciar-dirigentes', [GerenciarDirigentesController::class, 'index'])->name('indexDirigente');
+Route::get('/incluir-dirigentes', [GerenciarDirigentesController::class, 'create']);
+Route::any('/armazenar-dirigentes', [GerenciarDirigentesController::class, 'store']);
+Route::any('/visualizar-dirigentes/{id}', [GerenciarDirigentesController::class, 'show']);
+Route::any('/editar-dirigentes/{id}', [GerenciarDirigentesController::class, 'edit']);
+Route::any('/atualizar-dirigentes/{id}', [GerenciarDirigentesController::class, 'update']);
+Route::any('/excluir-dirigentes/{id}', [GerenciarDirigentesController::class, 'destroy']);
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
