@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use PhpParser\Node\Expr\AssignOp\Coalesce;
 use PhpParser\Node\Expr\BinaryOp\Coalesce as BinaryOpCoalesce;
 
-class GerenciarTratamentosController extends Controller
+class GerenciarTratamentoPTIController extends Controller
 {
     public function index(Request $request){
 
@@ -35,7 +35,7 @@ class GerenciarTratamentosController extends Controller
                     ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
                     ->where('enc.id_tipo_encaminhamento', 2)
                     ->where('enc.id_tipo_tratamento', '<>', 3)
-                    ->where('rm.id_tipo_tratamento', '<>', 2)
+                    ->where('rm.id_tipo_tratamento', '=', 2)
                     ;
 
         $data_enc = $request->dt_enc;
@@ -83,7 +83,7 @@ class GerenciarTratamentosController extends Controller
 
 
 
-        return view ('/recepcao-integrada/gerenciar-tratamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'dia'));
+        return view ('/recepcao-integrada/gerenciar-tratamento-pti', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'dia'));
 
 
     }

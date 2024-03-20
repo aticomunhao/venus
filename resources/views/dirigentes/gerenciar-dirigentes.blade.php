@@ -66,7 +66,7 @@
                             </a>
 
                             <a href="/visualizar-dirigentes/{{ $dirigentes->id }}" type="button"
-                                class="btn btn-outline-primary btn-sm"  data-tt="tooltip" data-placement="top" title="Editar">
+                                class="btn btn-outline-primary btn-sm"  data-tt="tooltip" data-placement="top" title="Visualizar">
                                 <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
                             </a>
 

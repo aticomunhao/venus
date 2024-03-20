@@ -23,6 +23,7 @@ use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\GerenciarEncaminhamentoController;
 use App\Http\Controllers\GerenciarTratamentosController;
+use App\Http\Controllers\GerenciarTratamentoPTIController;
 use App\Http\Controllers\GerenciarEntrevistaController;
 use App\Http\Controllers\GerenciarEntrevistaevangelhoController;
 use App\Http\Controllers\GerenciarDirigentesController;
@@ -227,9 +228,12 @@ Route::post('/inativar/{ide}', [GerenciarEncaminhamentoController::class, 'inati
 
 Route::get('/gerenciar-tratamentos', [GerenciarTratamentosController::class, 'index'])->name('gtcdex');
 Route::get('/visualizar-trat/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
-
 Route::post('/presenca/{idtr}', [GerenciarTratamentosController::class, 'presenca'])->name('gtcpre');
 Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
+
+
+
+Route::get('/gerenciar-tratamentos-pti', [GerenciarTratamentoPTIController::class, 'index'])->name('gtcpdx');
 
 
 Route::put('/k', [GerenciarTratamentosController::class, ''])->name('');

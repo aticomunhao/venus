@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Editar Dirigentes
+    Visualizar Dirigentes
 @endsection
 
 @section('content')
@@ -11,7 +11,7 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col">
-                        EDITAR DIRIGENTE
+                    VISUALIZAR DIRIGENTE
                     </div>
                 </div>
             </div>
@@ -59,11 +59,9 @@
                     {{-- Botões Cancelar e Confirmar --}}
                     <div class="row mt-4 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-dirigentes" role="button">Cancelar</a>
+                            <a class="btn btn-primary" href="/gerenciar-dirigentes" role="button">Retornar</a>
                         </div>
-                        <div class="d-grid gap-2 col-4 mx-auto">
-                            <button type="submit" class="btn btn-primary">Confirmar</button>
-                        </div>
+
                     </div>
                     {{-- Fim botões Cancelar e Confirmar --}}
                 </form>

@@ -14,6 +14,7 @@
                             <li><a class="dropdown-item" href="/gerenciar-atendimentos">Recepção Atendimento Fraterno</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Recepção Integrada - Encaminhamentos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-tratamentos">Recepção Integrada - Tratamentos</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-tratamentos-pti">Recepção Integrada - Tratamentos PTI</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-atendente-dia">Gerenciar Atendentes do dia</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-entrevistas">Gerenciar Entrevistas</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-evangelho">Entrevista Evangelho</a></li>

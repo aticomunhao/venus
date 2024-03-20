@@ -82,7 +82,7 @@ class GerenciarDirigentesController extends Controller
                 DB::table('dirigentes_grupo')->insert([
                     'id_dirigente' => $dirigenteID,
                     'id_grupo' => (int) $groupId,
-                    'dt_inicio' => $data,
+
                 ]);
             }
 
@@ -166,14 +166,19 @@ class GerenciarDirigentesController extends Controller
     public function update(Request $request, string $id)
     {
 
+        DB::table('dirigentes_grupo')->where('id_dirigente', $id)->delete();
+
+        $selectedGroups = $request->input('id_grupo');
 
 
-        DB::table('dirigentes as drg')
-        ->where('drg.id', $id)->
-        update([
-            'id_grupo' => $request->input('id_grupo')
-        ]);
 
+        foreach ($selectedGroups as $groupId) {
+            DB::table('dirigentes_grupo')->insert([
+                'id_dirigente' => $id,
+                'id_grupo' => (int) $groupId,
+
+            ]);
+        }
         return redirect('gerenciar-dirigentes');
     }
 
