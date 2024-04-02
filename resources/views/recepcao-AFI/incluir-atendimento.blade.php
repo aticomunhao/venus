@@ -10,7 +10,7 @@
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<link href="/node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />  
+<link href="/node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 
@@ -41,7 +41,7 @@
                                 <option value="{{$prioris->prid}}">{{$prioris->prdesc}}</option>
                                 @endforeach
                             </select>
-                        </div>         
+                        </div>
                         <div class="col">Atendido
                             <select class="form-select lista" id="" name="assist" required="required">
                                 <option value=""></option>
@@ -52,8 +52,8 @@
                         </div>
                         <div class="col-1">Menor Auto
                             <label for="menor" class="form-check-label"></label>
-                            <input id="menor" type="checkbox" name="menor" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">                            
-                        </div>                              
+                            <input id="menor" type="checkbox" name="menor" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                        </div>
                     </div>
                     <br>
                     <div class="form-group row">
@@ -64,7 +64,7 @@
                                 <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
                                 @endforeach
                             </select>
-                        </div>     
+                        </div>
                         <div class="col">Parentesco
                             <select class="form-select" id="" name="parent" >
                                 <option value=""></option>
@@ -79,13 +79,13 @@
                                 @foreach($sexo as $sexos)
                                 <option value="{{$sexos->id}}">{{$sexos->tipo}}</option>
                                 @endforeach
-                            </select>                                                 
+                            </select>
                         </div>
                         <div class="col-1">Ped especial
                             <label for="especial" class="form-check-label"></label>
                             <input id="especial" type="checkbox" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" >
-                            
-                        </div>                    
+
+                        </div>
                         <div class="col" id="hiddenField" style="display: none;">AFI preferido
                             <select class="form-select" id="afi_p" name="afi_p" >
                                 <option value=""></option>
@@ -93,8 +93,8 @@
                                 <option value="{{$afis->idatt}}">{{$afis->nm_1}}</option>
                                 @endforeach
                             </select>
-                        </div> 
-                    </div>                   
+                        </div>
+                    </div>
                     <br>
                 </div>
                 <div class="row">
@@ -105,7 +105,7 @@
                             <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>
                         </div>
                         </form>
-                        
+
                     </div>
                     <br>
             </div>
@@ -128,9 +128,8 @@
 <script>
     jQuery(document).ready(function() {
         jQuery('.lista').select2({
-    
-            height: '150%',
-            width: "100%",           
+
+            theme: 'bootstrap-5'
         });
     });
 </script>

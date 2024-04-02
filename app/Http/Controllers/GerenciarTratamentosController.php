@@ -91,10 +91,20 @@ class GerenciarTratamentosController extends Controller
 
     public function presenca(Request $request, $idtr){
 
+        $infoTrat = DB::table('tratamento')->where('id', $idtr)->first();
+
 
         $data_atual = Carbon::now();
+        $dia_atual = $data_atual->weekday();
 
         $confere = DB::table('dias_tratamento AS ds')->where('ds.data', $data_atual)->where('ds.id_tratamento', $idtr)->count();
+
+        $lista = DB::table('tratamento AS tr')
+        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+        ->where('tr.id', $idtr)
+        ->first();
+
+  
 
         if($confere > 0){
 
@@ -102,7 +112,20 @@ class GerenciarTratamentosController extends Controller
 
             return Redirect('/gerenciar-tratamentos');
 
+        }
+        else if($lista->dia != $dia_atual){
+
+            app('flasher')->addError('Este assistido não corresponde ao dia de hoje.');
+
+            return Redirect('/gerenciar-tratamentos');
+
         }else{
+
+            if($infoTrat->status == 1){
+                DB::table('tratamento')->where('id', $idtr)->update([
+                    'status' => 2
+                ]);
+            }
 
         $presenca = isset($request->presenca) ? true : false;
 

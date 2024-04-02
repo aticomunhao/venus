@@ -5,6 +5,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
+
+
+
+
+
 // Controllers
 use App\Http\Controllers\AtendenteController;
 use App\Http\Controllers\AtendimentoApoioController;
@@ -33,6 +38,9 @@ use App\Http\Controllers\GerenciarDirigentesController;
 | Web Routes
 |--------------------------------------------------------------------------
 */
+
+
+
 Auth::routes();
 Route::get('/logout', 'LexaAdmin@logout');
 

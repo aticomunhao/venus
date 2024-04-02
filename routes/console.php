@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Console\Scheduling\Schedule;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Artisan;
 | simple approach to interacting with each command's IO methods.
 |
 */
+
+Schedule::call(function () {
+    DB::table('recent_users')->delete();
+})->daily();
+
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());

@@ -23,8 +23,8 @@
                     <div class="row">
                         {{-- Select2 Nome  --}}
                         <div class="col-12 ">
-                        <label for="id_pessoa" class="form-label">Nome</label>
-                        <select class="form-select status " id="4" name="id_pessoa" disabled>
+                        <label for="id_pessoa" clas4s="form-label">Nome</label>
+                        <select class="form-selec41t status " id="4" name="id_pessoa" disabled>
                             <option>{{ $dirigente->nome_completo }}</option>
                             </select>
                     </div>
