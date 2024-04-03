@@ -15,9 +15,6 @@ use Illuminate\Console\Scheduling\Schedule;
 |
 */
 
-Schedule::call(function () {
-    DB::table('recent_users')->delete();
-})->daily();
 
 
 Artisan::command('inspire', function () {
