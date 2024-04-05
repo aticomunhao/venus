@@ -18,7 +18,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\GrupoController;
-use App\Http\Controllers\MediumController;
+use App\Http\Controllers\MembroController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\GerenciarEncaminhamentoController;
@@ -164,14 +164,7 @@ Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, '
 
 
 
-// Atendentes
-Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('list');
-Route::get('/criar-atendente', [AtendenteController::class, 'create'])->name('atualizar');
-Route::post('/incluir-atendente', [AtendenteController::class, 'store'])->name('cadastrar');
-Route::get('/editar-atendente/{id}', [AtendenteController::class, 'edit'])->name('');
-Route::post('/atualizar-atendente/{id}', [AtendenteController::class, 'update'])->name('atualize');
-Route::get('/visualizar-atendente/{id}', [AtendenteController::class, 'show'])->name('');
-Route::any('/excluir-atendente/{id}', [AtendenteController::class, 'destroy'])->name('');
+  
 
 // Grupos
 Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
@@ -201,14 +194,14 @@ Route::post('/incluir-salas', [SalaController::class, 'store']);
 Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
 Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 
-//Médiuns
-Route::get('/gerenciar-mediuns', [MediumController::class, 'index'])->name('lista');
-Route::get('/editar-mediuns/{id}', [MediumController::class, 'edit'])->name('');
-Route::post('/atualizar-mediuns/{id}', [MediumController::class, 'update'])->name('');
-Route::get('/criar-mediuns', [MediumController::class, 'create'])->name('');
-Route::post('/incluir-mediuns', [MediumController::class, 'store'])->name('medium.store');
-Route::any('/deletar-mediuns/{id}', [MediumController::class, 'destroy'])->name('');
-Route::get('/visualizar-mediuns/{id}', [MediumController::class, 'show'])->name('');
+//Membros
+Route::get('/gerenciar-membros', [MembroController::class, 'index'])->name('lista');
+Route::get('/editar-membro/{id}', [MembroController::class, 'edit'])->name('');
+Route::post('/atualizar-membros/{id}', [MembroController::class, 'update'])->name('');
+Route::get('/criar-membros', [MembroController::class, 'create'])->name('');
+Route::post('/incluir-membros', [MembroController::class, 'store'])->name('membro.store');
+Route::any('/deletar-membros/{id}', [MembroController::class, 'destroy'])->name('');
+Route::get('/visualizar-membro/{id}', [MembroController::class, 'show'])->name('');
 
 
 /*
