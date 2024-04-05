@@ -170,13 +170,6 @@ Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, '
 
 
 
-<<<<<<< HEAD
-
-
-  
-
-=======
->>>>>>> d653e1537252771cfa0e99658304025dfce13584
 // Grupos
 Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
 Route::get('criar-grupos', [GrupoController::class,'create'])->name('');
@@ -205,7 +198,6 @@ Route::post('/incluir-salas', [SalaController::class, 'store']);
 Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
 Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 
-<<<<<<< HEAD
 //Médiuns
 Route::get('/gerenciar-membro', [MembroController::class, 'index'])->name('lista');
 Route::get('/editar-membro/{id}', [MembroController::class, 'edit'])->name('');
@@ -213,15 +205,6 @@ Route::post('/atualizar-membro/{id}', [MembroController::class, 'update'])->name
 Route::get('/criar-membro', [MembroController::class, 'create'])->name('');
 Route::post('/incluir-membro', [MembroController::class, 'store'])->name('membro.store');
 Route::any('/deletar-membro/{id}', [MembroController::class, 'destroy'])->name('');
-=======
-//Membros
-Route::get('/gerenciar-membros', [MembroController::class, 'index'])->name('lista');
-Route::get('/editar-membro/{id}', [MembroController::class, 'edit'])->name('');
-Route::post('/atualizar-membros/{id}', [MembroController::class, 'update'])->name('');
-Route::get('/criar-membros', [MembroController::class, 'create'])->name('');
-Route::post('/incluir-membros', [MembroController::class, 'store'])->name('membro.store');
-Route::any('/deletar-membros/{id}', [MembroController::class, 'destroy'])->name('');
->>>>>>> 91ab8e4904c028789725058c627c71fa56f645e2
 Route::get('/visualizar-membro/{id}', [MembroController::class, 'show'])->name('');
 
 
