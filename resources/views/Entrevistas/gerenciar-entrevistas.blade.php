@@ -47,6 +47,7 @@
                                 <th class="col">NOME</th>
                                 <th class="col">DATA </th>
                                 <th class="col">HORA </th>
+                                <th class="col">TIPO ENTREVISTA</th>
                                 <th class="col">ENTREVISTADOR</th>
                                 <th class="col">SALA</th>
                                 <th class="col">STATUS</th>
@@ -62,6 +63,7 @@
                                     </td>
                                     <td>{{ !is_null($informacao->hora) ? date('G:i', strtotime($informacao->hora)) : '--' }}{{-- Valida a hora e transforma parar o forrmato 24h --}}
                                     </td>
+                                    <td>{{ $informacao->entrevista_sigla }}</td>
                                     <td>{{ $informacao->nome_entrevistador }}</td>{{-- Quando existente, traz o nome do entrevistador --}}
                                     <td>{{ $informacao->local }}</td>{{-- Sala que foi agendada a entrevista --}}
                                     <td>

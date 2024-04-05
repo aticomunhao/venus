@@ -20,7 +20,6 @@ class GerenciarEntrevistaevangelhoController extends Controller
     {
         $i = 0;
         $informacoes = DB::table('encaminhamento')
-<<<<<<< Updated upstream
         ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
         ->leftJoin('evangelho', 'encaminhamento.id', '=', 'evangelho.id_encaminhamento')
         ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
@@ -93,7 +92,7 @@ class GerenciarEntrevistaevangelhoController extends Controller
 }
 
 
-public function create(Request $request, $id)
+public function create1(Request $request, $id)
 {
     $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->get();
     $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
@@ -102,8 +101,6 @@ public function create(Request $request, $id)
     $informacoes = [];
     if ($encaminhamento) {
         $info = DB::table('encaminhamento')
-=======
->>>>>>> Stashed changes
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
             ->leftJoin('evangelho', 'encaminhamento.id', '=', 'evangelho.id_encaminhamento')
             ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
@@ -136,11 +133,12 @@ public function create(Request $request, $id)
 
         return view('Evangelho.gerenciar-evangelho', compact('informacoes'));
     }
-
+}
 
     public function create(Request $request, $id)
     {
-        $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->get();
+   
+     $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->get();
         $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
         $evangelho = DB::table('evangelho')->where('id', $id)->first();
 
@@ -166,8 +164,7 @@ public function create(Request $request, $id)
     }
 
 
-
-
+    
 
     public function store(Request $request, String $id)
     {

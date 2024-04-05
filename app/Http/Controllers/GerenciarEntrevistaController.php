@@ -38,6 +38,9 @@ class GerenciarEntrevistaController extends Controller
         return $resultado;
     }
 
+ 
+
+
     public function index(Request $request)
     {
         $informacoes = DB::table('encaminhamento')
@@ -124,10 +127,8 @@ $pesquisaValue = 1;
 
 
 
-
 return view('entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue'));
     }
-
 
 
 
@@ -189,7 +190,6 @@ return view('entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquis
 
         return view('entrevistas/criar-entrevista', compact('salas','entrevista','encaminhamento', 'informacoes', 'pessoas', 'tipo_tratamento', 'tipo_entrevista'));
     }
-
 
 
 
@@ -269,8 +269,7 @@ public function criar($id)
 
 
 
-
-
+  
 
 public function show($id)
 {
@@ -280,7 +279,7 @@ public function show($id)
         ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
         ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
         ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-        ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local','enc.id','entre.id','entre.id_entrevistador','entre.data','entre.hora')
+        ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local','enc.id','entre.id','entre.id_entrevistador','entre.data','entre.hora',)
         ->where('entre.id_encaminhamento', $id)
         ->first();
 
@@ -298,8 +297,6 @@ public function show($id)
 
     return view('entrevistas.visualizar-entrevista', compact('entrevistas', 'encaminhamento', 'pessoas', 'salas'));
 }
-
-
 
 
 
@@ -384,18 +381,52 @@ public function update(Request $request, $id)
 }
 
 
-
-
 public function finalizar($id)
 {
-
-
+    // Atualizar o status da entrevista para "Entrevistado"
     DB::table('entrevistas')
         ->where('id_encaminhamento', $id)
         ->update(['status' => 'Entrevistado']);
 
+    // Buscar informações sobre a entrevista
+    $entrevista = DB::table('entrevistas')->where('id_encaminhamento', $id)->first();
+
+    // Verificar se a entrevista existe e se é do tipo "NUTRES"
+    if ($entrevista && $entrevista->id_tipo_entrevista == 'NUTRES') {
+        // Atualizar o status na tabela de encaminhamento para "inativado"
+        DB::table('encaminhamentos')
+            ->where('id_atendimento', $entrevista->id_atendimento)
+            ->update(['status' => 3]); // Status 3 para "inativado"
+
+        // Criar um novo encaminhamento com o mesmo nome
+        $novoEncaminhamento = [
+            'id_atendimento' => $entrevista->id_atendimento,
+            'tipo_encaminhamento' => 3, // Tipo 3 para "finalizado"
+            // Outros campos necessários para o novo encaminhamento
+            // Adicione conforme necessário
+        ];
+
+        // Insira o novo encaminhamento no banco de dados
+        DB::table('encaminhamento')->insert($novoEncaminhamento);
+    }
+
+    // Redirecionar de volta para a página de gerenciamento
     return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
 }
+
+
+
+
+// public function finalizar($id)
+// {
+
+
+//     DB::table('entrevistas')
+//         ->where('id_encaminhamento', $id)
+//         ->update(['status' => 'Entrevistado']);
+
+//     return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
+// }
 
 public function inativar($id){
 
