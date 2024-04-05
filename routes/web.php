@@ -23,7 +23,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\GrupoController;
-use App\Http\Controllers\MediumController;
+use App\Http\Controllers\MembroController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\GerenciarEncaminhamentoController;
@@ -199,13 +199,13 @@ Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
 Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 
 //Médiuns
-Route::get('/gerenciar-mediuns', [MediumController::class, 'index'])->name('lista');
-Route::get('/editar-mediuns/{id}', [MediumController::class, 'edit'])->name('');
-Route::post('/atualizar-mediuns/{id}', [MediumController::class, 'update'])->name('');
-Route::get('/criar-mediuns', [MediumController::class, 'create'])->name('');
-Route::post('/incluir-mediuns', [MediumController::class, 'store'])->name('medium.store');
-Route::any('/deletar-mediuns/{id}', [MediumController::class, 'destroy'])->name('');
-Route::get('/visualizar-mediuns/{id}', [MediumController::class, 'show'])->name('');
+Route::get('/gerenciar-membro', [MembroController::class, 'index'])->name('lista');
+Route::get('/editar-membro/{id}', [MembroController::class, 'edit'])->name('');
+Route::post('/atualizar-membro/{id}', [MembroController::class, 'update'])->name('');
+Route::get('/criar-membro', [MembroController::class, 'create'])->name('');
+Route::post('/incluir-membro', [MembroController::class, 'store'])->name('membro.store');
+Route::any('/deletar-membro/{id}', [MembroController::class, 'destroy'])->name('');
+Route::get('/visualizar-membro/{id}', [MembroController::class, 'show'])->name('');
 
 
 /*

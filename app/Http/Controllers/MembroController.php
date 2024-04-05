@@ -8,17 +8,16 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
 use function Laravel\Prompts\select;
 
-class MediumController extends Controller
+class membroController extends Controller
 {
 
 
 
     public function index(Request $request)
     {
-        $mediumQuery = DB::table('medium AS m')
+        $membroQuery = DB::table('membro AS m')
             ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-            ->leftJoin('setor AS s', 'm.id_setor', '=', 's.id')
             ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
             ->select(
                 'p.nome_completo',
@@ -30,7 +29,6 @@ class MediumController extends Controller
                 'p.motivo_status',
                 'tf.nome as nome_funcao',
                 'm.id_grupo',
-                's.nome as nome_setor',
                 'g.nome as nome_grupo'
             )
             ->orderBy('p.nome_completo', 'ASC');
@@ -38,13 +36,12 @@ class MediumController extends Controller
         $nome = $request->nome_pesquisa;
         $cpf = $request->cpf_pesquisa;
         $grupoPesquisa = $request->grupo_pesquisa;
-        $setorPesquisa = $request->setor_pesquisa;
-
+        
         $grupos = DB::table('grupo')->pluck('nome', 'id');
-        $setores = DB::table('setor')->pluck('nome', 'id');
+        
 
-        if ($nome || $cpf || $grupoPesquisa || $setorPesquisa) {
-            $mediumQuery->where(function ($query) use ($nome, $cpf, $grupoPesquisa, $setorPesquisa) {
+        if ($nome || $cpf || $grupoPesquisa) {
+            $membroQuery->where(function ($query) use ($nome, $cpf, $grupoPesquisa) {
                 if ($nome) {
                     $query->where('p.nome_completo', 'ilike', "%$nome%")
                         ->orWhere('p.cpf', 'ilike', "%$nome%");
@@ -58,17 +55,14 @@ class MediumController extends Controller
                     $query->orWhere('g.id', '=', $grupoPesquisa);
                 }
 
-                if ($setorPesquisa) {
-                    $query->orWhere('s.id', '=', $setorPesquisa);
-                }
             });
         }
 
-        $medium = $mediumQuery->orderBy('p.status', 'asc')
+        $membro = $membroQuery->orderBy('p.status', 'asc')
             ->orderBy('p.nome_completo', 'asc')
             ->paginate(50);
 
-        return view('medium.gerenciar-mediuns', compact('grupos', 'setores', 'nome', 'cpf', 'grupoPesquisa', 'setorPesquisa', 'medium'));
+        return view('membro.gerenciar-membro', compact('grupos', 'nome', 'cpf', 'grupoPesquisa','membro'));
     }
 
 
@@ -76,18 +70,17 @@ class MediumController extends Controller
 
     public function create()
     {
-        $id_medium = 1;
+        $id_membro = 1;
         $grupo = DB::select('select id, nome from grupo');
-        $medium = DB::select('select * from medium');
+        $membro = DB::select('select * from membro');
         $tipo_mediunidade = DB::select('select id, tipo from tipo_mediunidade');
         $pessoas = DB::select('select id as idp, nome_completo, motivo_status, status from pessoas');
         $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao');
-        $setor = DB::select('select id as ids, nome from setor');
-        $mediunidade_medium = DB::select('select id as idme, data_inicio from mediunidade_medium');
+        $mediunidade_membro = DB::select('select id as idme, data_inicio from mediunidade_membro');
         $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
 
 
-        return view('medium/criar-mediuns', compact('tipo_status_pessoa', 'grupo', 'id_medium', 'medium', 'tipo_mediunidade', 'pessoas', 'tipo_funcao', 'setor', 'mediunidade_medium'));
+        return view('membro/criar-membro', compact('tipo_status_pessoa', 'grupo', 'id_membro', 'membro', 'tipo_mediunidade', 'pessoas', 'tipo_funcao', 'mediunidade_membro'));
     }
 
 
@@ -96,22 +89,21 @@ class MediumController extends Controller
     {
 
         $id_pessoa = $request->input('id_pessoa');
-        $id_setor = $request->input('id_setor');
         $id_funcao = $request->input('id_funcao');
         $tipo_ids = $request->input('id_tp_mediunidade');
         $id_grupo = $request->input('id_grupo');
 
-        $existingMedium = DB::table('medium')
+        $existingmembro = DB::table('membro')
             ->where('id_pessoa', $id_pessoa)
             ->first();
 
 
         $isValidPerson = DB::table('pessoas')->where('id', $id_pessoa)->exists();
 
-        if ($existingMedium || !$isValidPerson) {
+        if ($existingmembro || !$isValidPerson) {
 
-            if ($existingMedium) {
-                app('flasher')->addError("Medium já cadastrado");
+            if ($existingmembro) {
+                app('flasher')->addError("membro já cadastrado");
             }
             if (!$isValidPerson) {
                 app('flasher')->addError("Nome de pessoa inválido");
@@ -120,9 +112,8 @@ class MediumController extends Controller
         }
 
 
-        $mediumId = DB::table('medium')->insertGetId([
+        $membroId = DB::table('membro')->insertGetId([
             'id_pessoa' => $id_pessoa,
-            'id_setor' => $id_setor,
             'id_funcao' => $id_funcao,
             'id_grupo' => $id_grupo,
         ]);
@@ -132,8 +123,8 @@ class MediumController extends Controller
             $datas_inicio = $request->input("data_inicio.{$tipo_id}");
 
             foreach ($datas_inicio as $data_inicio) {
-                DB::table('mediunidade_medium')->insert([
-                    'id_medium' => $mediumId,
+                DB::table('mediunidade_membro')->insert([
+                    'id_membro' => $membroId,
                     'id_mediunidade' => $tipo_id,
                     'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
                 ]);
@@ -141,7 +132,7 @@ class MediumController extends Controller
         }
 
         app('flasher')->addSuccess("Cadastrado com Sucesso");
-        return redirect('gerenciar-mediuns');
+        return redirect('gerenciar-membro');
     }
 
 
@@ -151,13 +142,12 @@ class MediumController extends Controller
 
     public function edit($id)
     {
-        $medium = DB::table('medium AS m')
+        $membro = DB::table('membro AS m')
             ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
             ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
-            ->leftJoin('setor AS s', 'm.id_setor', '=', 's.id')
-            ->leftJoin('mediunidade_medium AS mm', 'm.id', '=', 'mm.id_medium')
-            ->select('p.nome_completo', 'm.id AS idm', 'p.id AS id_pessoa', 'p.motivo_status', 'p.status', 'm.id_setor', 'm.id_grupo', 'g.nome AS nome_grupo', 'tf.nome AS nome_funcao', 'm.id_funcao', 's.nome AS nome_setor', 'mm.id_mediunidade', 'mm.data_inicio')
+            ->leftJoin('mediunidade_membro AS mm', 'm.id', '=', 'mm.id_membro')
+            ->select('p.nome_completo', 'm.id AS idm', 'p.id AS id_pessoa', 'p.motivo_status', 'p.status', 'm.id_grupo', 'g.nome AS nome_grupo', 'tf.nome AS nome_funcao', 'm.id_funcao', 'mm.id_mediunidade', 'mm.data_inicio')
             ->where('m.id', $id)
             ->first();
 
@@ -167,12 +157,11 @@ class MediumController extends Controller
         $pessoas = DB::table('pessoas')->get();
         $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
         $tipo_funcao = DB::table('tipo_funcao')->get();
-        $setor = DB::table('setor')->get();
-        $mediunidade_medium = DB::table('mediunidade_medium')->select('id_mediunidade', 'data_inicio', 'id_medium as id_mediuns')->where('id_medium', $medium->idm)->get();
+        $mediunidade_membro = DB::table('mediunidade_membro')->select('id_mediunidade', 'data_inicio', 'id_membro as id_membro')->where('id_membro', $membro->idm)->get();
 
 
-        $createdMediunidades = DB::table('mediunidade_medium')
-            ->where('id_medium', $medium->idm)
+        $createdMediunidades = DB::table('mediunidade_membro')
+            ->where('id_membro', $membro->idm)
             ->get();
 
 
@@ -187,7 +176,7 @@ class MediumController extends Controller
 
 
 
-        return view('medium.editar-mediuns', compact('tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo', 'createdMediunidadeData', 'createdMediunidadeIds', 'tipo_mediunidade', 'mediunidade_medium', 'medium', 'pessoas', 'tipo_funcao', 'setor', 'tipo_mediunidade'));
+        return view('membro.editar-membro', compact('tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo', 'createdMediunidadeData', 'createdMediunidadeIds', 'tipo_mediunidade', 'mediunidade_membro', 'membro', 'pessoas', 'tipo_funcao', 'tipo_mediunidade'));
     }
 
 
@@ -200,13 +189,13 @@ class MediumController extends Controller
         $tiposMediunidade = $input['mediunidades'] ?? [];
 
 
-        DB::table('mediunidade_medium')->where('id_medium', $id)->delete();
+        DB::table('mediunidade_membro')->where('id_membro', $id)->delete();
 
 
         foreach ($tiposMediunidade as $tipo) {
 
-            DB::table('mediunidade_medium')->insert([
-                'id_medium' => $id,
+            DB::table('mediunidade_membro')->insert([
+                'id_membro' => $id,
                 'id_mediunidade' => $tipo,
                 'data_inicio' => isset($dataManifestacao[$tipo]) ? date('Y-m-d', strtotime($dataManifestacao[$tipo])) : null,
             ]);
@@ -216,10 +205,9 @@ class MediumController extends Controller
         $dataToUpdate = [
             'id_pessoa' => $input['id_pessoa'],
             'id_funcao' => $input['id_funcao'],
-            'id_setor' => $input['setor'],
             'id_grupo' => $input['id_grupo'],
         ];
-        DB::table('medium')->where('id', $id)->update($dataToUpdate);
+        DB::table('membro')->where('id', $id)->update($dataToUpdate);
 
 
         $dataToUpdatePessoas = [
@@ -231,7 +219,7 @@ class MediumController extends Controller
 
         app('flasher')->addSuccess("Alterado com Sucesso");
 
-        return redirect('gerenciar-mediuns');
+        return redirect('gerenciar-membro');
     }
 
 
@@ -241,13 +229,12 @@ class MediumController extends Controller
     public function show($id)
     {
 
-        $medium = DB::table('medium AS m')
+        $membro = DB::table('membro AS m')
             ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
             ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
-            ->leftJoin('setor AS s', 'm.id_setor', '=', 's.id')
-            ->leftJoin('mediunidade_medium AS mm', 'm.id', '=', 'mm.id_medium')
-            ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'm.id_setor', 'p.motivo_status', 'm.id_grupo', 'g.nome AS nome_grupo', 'tf.nome AS nome_funcao', 'm.id_funcao', 's.nome AS nome_setor', 'mm.id_mediunidade', 'mm.data_inicio')
+            ->leftJoin('mediunidade_membro AS mm', 'm.id', '=', 'mm.id_membro')
+            ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'm.id_grupo', 'g.nome AS nome_grupo', 'tf.nome AS nome_funcao', 'm.id_funcao', 'mm.id_mediunidade', 'mm.data_inicio')
             ->where('m.id', $id)
             ->first();
 
@@ -258,12 +245,11 @@ class MediumController extends Controller
         $pessoas = DB::table('pessoas')->get();
         $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
         $tipo_funcao = DB::table('tipo_funcao')->get();
-        $setor = DB::table('setor')->get();
-        $mediunidade_medium = DB::table('mediunidade_medium')->select('id_mediunidade', 'data_inicio', 'id_medium as id_mediuns')->where('id_medium', $id)->get();
+        $mediunidade_membro = DB::table('mediunidade_membro')->select('id_mediunidade', 'data_inicio', 'id_membro as id_membro')->where('id_membro', $id)->get();
 
 
 
-        return view('medium.visualizar-mediuns', compact('tipo_motivo_status_pessoa', 'tipo_status_pessoa', 'grupo', 'tipo_mediunidade', 'medium', 'pessoas', 'tipo_funcao', 'setor', 'mediunidade_medium'));
+        return view('membro.visualizar-membro', compact('tipo_motivo_status_pessoa', 'tipo_status_pessoa', 'grupo', 'tipo_mediunidade', 'membro', 'pessoas', 'tipo_funcao', 'mediunidade_membro'));
     }
 
 
@@ -281,19 +267,19 @@ class MediumController extends Controller
 
         ]);
 
-        $medium = DB::table('medium')->where('id', $id)->first();
+        $membro = DB::table('membro')->where('id', $id)->first();
 
 
-        if (!$medium) {
-            app('flasher')->addError('A medium não foi encontrada.');
-            return redirect('/gerenciar-mediuns');
+        if (!$membro) {
+            app('flasher')->addError('A membro não foi encontrada.');
+            return redirect('/gerenciar-membro');
         }
-        DB::table('mediunidade_medium')->where('id_medium', $id)->delete();
+        DB::table('mediunidade_membro')->where('id_membro', $id)->delete();
 
-        DB::table('medium')->where('id', $id)->delete();
+        DB::table('membro')->where('id', $id)->delete();
 
 
         app('flasher')->addError('Excluído com sucesso.');
-        return redirect('/gerenciar-mediuns');
+        return redirect('/gerenciar-membro');
     }
 }

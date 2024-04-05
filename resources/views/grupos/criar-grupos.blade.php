@@ -61,7 +61,7 @@
 
                                         <div class="col">
                                             Motivo
-                                            <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_motivo" id="tipo_motivo" disabled>
+                                            <select class="form-select" aria-label=".form-select-lg example" name="id_motivo_inativacao" id="tipo_motivo" disabled>
                                                 <option value=""> </option>
                                                 @foreach ($tipo_motivo as $tipo_motivos)
                                                     <option value="{{ $tipo_motivos->id }}"> {{ $tipo_motivos->tipo }} </option>
@@ -79,6 +79,15 @@
                                             <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_grupo" required="required">
                                                 @foreach ($tipo_grupo as $item)
                                                     <option value="{{ $item->idg }}">{{ $item->nm_tipo_grupo }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <br>
+                                            Setor
+                                            <select class="form-select" aria-label=".form-select-lg example" name="setor" required="required">
+                                                @foreach ($setor as $setors)
+                                                    <option value="{{ $setors->id}}">{{ $setors->nome}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -121,22 +130,22 @@
 <script>
 
         const status_grupo = document.getElementById('status_grupo');
-        const id_tipo_motivo = document.getElementById('id_tipo_grupo');
+        const id_motivo_inativacao = document.getElementById('id_tipo_grupo');
 
         // Adiciona um ouvinte de eventos para o campo1
         status_grupo.addEventListener('input', function() {
-            // Se status_grupo estiver preenchido, desabilita o id_tipo_motivo
+            // Se status_grupo estiver preenchido, desabilita o id_motivo_inativacao
             if (status_grupo.value.trim() !== '') {
-                id_tipo_motivo.disabled = true;
+                id_motivo_inativacao.disabled = true;
             } else {
-                id_tipo_motivo.disabled = false;
+                id_motivo_inativacao.disabled = false;
             }
         });
 
         // Adiciona um ouvinte de eventos para o campo2
-        id_tipo_motivo.addEventListener('input', function() {
-            // Se id_tipo_motivo estiver preenchido, desabilita o status_grupo
-            if (id_tipo_motivo.value.trim() !== '') {
+        id_motivo_inativacao.addEventListener('input', function() {
+            // Se id_motivo_inativacao estiver preenchido, desabilita o status_grupo
+            if (id_motivo_inativacao.value.trim() !== '') {
                 status_grupo.disabled = true;
             } else {
                 status_grupo.disabled = false;

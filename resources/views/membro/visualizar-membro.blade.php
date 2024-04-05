@@ -12,15 +12,15 @@
             </div>
 
             <div class="card-body">
-                <form class="form-horizontal mt-2" method="post" action="/atualizar-mediuns/{{ $medium->idm }}"
-                    id="mediumForm">
+                <form class="form-horizontal mt-2" method="post" action="/atualizar-membro/{{ $membro->idm }}"
+                    id="membroForm">
                     @csrf
 
                     <div class="row mt-3">
                         <div class="col-5">
                             <label for="id_pessoa" class="form-label">Nome</label>
                             <select name="id_pessoa" class="form-control" disabled>
-                                <option value="{{ $medium->id_pessoa }}"> {{ $medium->nome_completo }}</option>
+                                <option value="{{ $membro->id_pessoa }}"> {{ $membro->nome_completo }}</option>
                                 @foreach ($pessoas as $pessoa)
                                     <option value="{{ $pessoa->id }}"> {{ $pessoa->nome_completo }} </option>
                                 @endforeach
@@ -32,7 +32,7 @@
                                 required="required" disabled>
                                 @foreach ($tipo_status_pessoa as $tipos)
                                     <option value="{{ $tipos->id }}"
-                                        {{ $medium->status == $tipos->id ? 'selected' : '' }}>
+                                        {{ $membro->status == $tipos->id ? 'selected' : '' }}>
                                         {{ $tipos->tipos }}
                                     </option>
                                 @endforeach
@@ -46,7 +46,7 @@
                                 <option value=""></option>
                                 @foreach ($tipo_motivo_status_pessoa as $motivo)
                                     <option value="{{ $motivo->id }}"
-                                        {{ $medium->motivo_status == $motivo->id ? 'selected' : '' }}>
+                                        {{ $membro->motivo_status == $motivo->id ? 'selected' : '' }}>
                                         {{ $motivo->motivo }}
                                     </option>
                                 @endforeach
@@ -57,7 +57,7 @@
                         <div class="col">
                             <label for="id_setor" class="form-label">Setor</label>
                             <select name="id_setor" class="form-control" disabled>
-                                <option value="{{ $medium->id_setor }}"> {{ $medium->nome_setor }}</option>
+                                <option value="{{ $membro->id_setor }}"> {{ $membro->nome_setor }}</option>
                                 @foreach ($setor as $setores)
                                     <option value="{{ $setores->id }}"> {{ $setores->nome }} </option>
                                 @endforeach
@@ -67,7 +67,7 @@
                         <div class="col">
                             <label for="id_funcao" class="form-label">Função</label>
                             <select name="id_funcao" class="form-control" disabled>
-                                <option value="{{ $medium->id_funcao }}"> {{ $medium->nome_funcao }}</option>
+                                <option value="{{ $membro->id_funcao }}"> {{ $membro->nome_funcao }}</option>
                                 @foreach ($tipo_funcao as $funcao)
                                     <option value="{{ $funcao->id }}"> {{ $funcao->nome }} </option>
                                 @endforeach
@@ -77,7 +77,7 @@
                         <div class="col">
                             <label for="id_grupo" class="form-label">Nome grupo</label>
                             <select name="id_grupo" class="form-control" disabled>
-                                <option value="{{ $medium->id_grupo }}"> {{ $medium->nome_grupo }}</option>
+                                <option value="{{ $membro->id_grupo }}"> {{ $membro->nome_grupo }}</option>
                                 @foreach ($grupo as $grupos)
                                     <option value="{{ $grupos->id }}"> {{ $grupos->nome }} </option>
                                 @endforeach
@@ -104,13 +104,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($mediunidade_medium as $mediuns)
+                                @foreach ($mediunidade_membro as $membro)
                                     <tr>
                                         <td class="text-center">
                                             <select name="id" class="form-control" disabled>
                                                 @foreach ($tipo_mediunidade as $tipos)
                                                     <option value="{{ $tipos->id }}"
-                                                        @if ($tipos->id == $mediuns->id_mediunidade) selected @endif>
+                                                        @if ($tipos->id == $membro->id_mediunidade) selected @endif>
                                                         {{ $tipos->tipo }}
                                                     </option>
                                                 @endforeach
@@ -118,8 +118,8 @@
                                         </td>
                                         <td class="text-center">
                                             <select name="data_inicio" class="form-control" disabled>
-                                                <option value="{{ $mediuns->id_mediuns }}" selected>
-                                                    {{ $mediuns->data_inicio }}
+                                                <option value="{{ $membro->id_membro }}" selected>
+                                                    {{ $membro->data_inicio }}
                                                 </option>
                                             </select>
                                         </td>
@@ -131,7 +131,7 @@
 
                     <div class="row mt-1 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-mediuns" role="button">Cancelar</a>
+                            <a class="btn btn-danger" href="/gerenciar-membro" role="button">Cancelar</a>
                         </div>
                         <div class="d-grid gap-2 col-4 mx-auto">
                             <button class="btn btn-primary">Confirmar</button>

@@ -46,10 +46,10 @@
                         <input class="btn btn-light btn-sm me-md-2"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
                             value="Pesquisar">
-                        <a href="/gerenciar-mediuns"><input class="btn btn-light btn-sm me-md-2"
+                        <a href="/gerenciar-membro"><input class="btn btn-light btn-sm me-md-2"
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Limpar"></a>
-                        <a href="/criar-mediuns"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
+                        <a href="/criar-membro"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
                                 type="button" value="Novo médium +"></a>
                     </div>
                 </div>
@@ -74,30 +74,30 @@
                 </tr>
 
                 <tbody>
-                    @foreach ($medium as $mediuns)
+                    @foreach ($membro as $membros)
                         <tr>
-                            <td>{{ $mediuns->idm }}</td>
-                            <td>{{ $mediuns->nome_completo }}</td>
-                            <td>{{ $mediuns->nome_grupo }}</td>
-                            <td>{{ $mediuns->nome_funcao }}</td>
-                            <td>{{ $mediuns->nome_setor }}</td>
-                            <td>{{ $mediuns->status ? 'Ativo' : 'Inativo' }}</td>
+                            <td>{{ $membros->idm }}</td>
+                            <td>{{ $membros->nome_completo }}</td>
+                            <td>{{ $membros->nome_grupo }}</td>
+                            <td>{{ $membros->nome_funcao }}</td>
+                            <td>{{ $membros->nome_setor }}</td>
+                            <td>{{ $membros->status ? 'Ativo' : 'Inativo' }}</td>
                             <td>
 
-                                <a href="/editar-mediuns/{{ $mediuns->idm }}" type="button"
+                                <a href="/editar-membro/{{ $membro->idm }}" type="button"
                                     class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Editar">
                                     <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
                                 </a>
-                                <a href="/visualizar-mediuns/{{ $mediuns->idm }}" type="button"
+                                <a href="/visualizar-membro/{{ $membro->idm }}" type="button"
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Visualizar">
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
                                         data-bs-target="#pessoa"></i>
                                 </a>
-                                <a href="/deletar-mediuns" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                <a href="/deletar-membro" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#confirmacaoDelecao"
-                                    onclick="confirmarExclusao('{{ $mediuns->idm }}', '{{ $mediuns->nome_completo }}')"
+                                    onclick="confirmarExclusao('{{ $membro->idm }}', '{{ $membro->nome_completo }}')"
                                     data-tt="tooltip" data-placement="top" title="Deletar">
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </a>
@@ -146,7 +146,7 @@
 
         function confirmarDelecao() {
             var id = document.getElementById('btn-confirmar-exclusao').getAttribute('data-id');
-            window.location.href = '/deletar-mediuns/' + id;
+            window.location.href = '/deletar-membro/' + id;
         }
     </script>
 @endsection
