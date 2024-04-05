@@ -53,15 +53,16 @@ class Grupocontroller extends Controller
     public function create()
     {
         $grupos = DB::select('select * from grupo');
-        $tipo_grupo = DB::select('select id as idg,nm_tipo_grupo from tipo_grupo ');
+        $tipo_grupo = DB::select('select id as idg,nm_tipo_grupo from tipo_grupo order by nm_tipo_grupo asc');
         // $tipo_tratamento = DB::select('select id, descricao from tipo_tratamento');
         $tipo_status_grupo = DB::select('select id as ids, descricao as descricao from tipo_status_grupo');
         $tipo_motivo = DB::select('select id id,tipo from tipo_motivo');
+        $setor = DB::select('select id, nome  from setor order by nome asc');
 
 
 
 
-        return view('grupos/criar-grupos', compact('grupos','tipo_grupo','tipo_status_grupo','tipo_motivo'));
+        return view('grupos/criar-grupos', compact('grupos','tipo_grupo','tipo_status_grupo','tipo_motivo', 'setor'));
 
     }
 

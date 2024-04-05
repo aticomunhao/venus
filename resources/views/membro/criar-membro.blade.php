@@ -16,7 +16,7 @@
             </div>
 
             <div class="card-body">
-                <form class="form-horizontal mt-2" method="post" action="{{ route('medium.store') }}">
+                <form class="form-horizontal mt-2" method="post" action="{{ route('membro.store') }}">
                     @csrf
 
                     <div class="row">
@@ -97,9 +97,9 @@
                                                         {{ $tipo->tipo }}
                                                     </td>
                                                     <td>
-                                                        <div class="form-group data_manifestou" name="id_mediunidade_medium"
+                                                        <div class="form-group data_manifestou" name="id_mediunidade_membro"
                                                             id="data_inicio_{{ $tipo->id }}">
-                                                            <input type="hidden" name="id_medium" value="{{ $id_medium }}">
+                                                            <input type="hidden" name="id_membro" value="{{ $id_membro }}">
                                                             @if (old("data_inicio.$tipo->id"))
                                                                 @foreach (old("data_inicio.$tipo->id") as $oldDate)
                                                                     <input type="date" class="form-control form-control-sm"

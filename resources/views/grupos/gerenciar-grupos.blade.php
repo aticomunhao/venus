@@ -38,6 +38,7 @@
                         <th class="col"> DATA INÍCIO</th>
                         <th class="col"> DATA FIM</th>
                         <th class="col">TIPO GRUPO</th>
+                        <th class="col">SETOR</th>
                         <th class="col">STATUS GRUPO</th>
                         <th class="col">AÇÕES</th>
                     </tr>
@@ -46,9 +47,10 @@
                     @foreach ($grupo as $grupos)
                     <tr>
                         <td> {{$grupos->nome}} </td>
-                        <td> {{$grupos->data_inicio}} </td>
+                        <td> {{date('d/m/Y', strtotime($grupos->data_inicio))}} </td>
                         <td> {{$grupos->data_fim}} </td>
                         <td> {{$grupos->nm_tipo_grupo}} </td>
+                        <td> {{$grupos->nm_setor}} </td>
                         <td> {{$grupos->descricao1}} </td>
                         <td>
                             <a href="/editar-grupos/{{$grupos->id}}" type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar">
