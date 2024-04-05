@@ -32,14 +32,14 @@ class GerenciarAtendimentoController extends Controller
                     p.ddd,
                     p.celular,
                     a.id_pessoa
-                    from atendentes a
+                    from membro a
                     left join pessoas p on (a.id_pessoa = p.id)
                     ");
 
         $lista = DB::table('atendimentos AS at')
                     ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'att.id as idatt','at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento', 's.numero AS nr_sala' )
                     ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
-                    ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id')
+                    ->leftJoin('membro AS att', 'at.id_atendente', 'att.id')
                     ->leftJoin('pessoas AS p', 'att.id_pessoa', 'p.id')
                     ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                     ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
@@ -101,7 +101,7 @@ class GerenciarAtendimentoController extends Controller
         p.nome_completo,
         a.id_pessoa
         from pessoas p
-        left join atendentes a on (p.id = a.id_pessoa)
+        left join membro a on (p.id = a.id_pessoa)
         group by pid, a.id_pessoa
         order by nome_completo
         ");
@@ -120,7 +120,7 @@ class GerenciarAtendimentoController extends Controller
         p.ddd,
         p.celular,
         a.id_pessoa
-        from atendentes a
+        from membro a
         left join pessoas p on (a.id_pessoa = p.id)
         ");
 
@@ -172,7 +172,6 @@ class GerenciarAtendimentoController extends Controller
             DB::table('atendimentos AS atd')->insert([
                     'dh_chegada'=> ($dt_hora->toDateTimeString() . PHP_EOL),
                     'id_usuario'=> $usuario,
-                    'id_atendente_usuario_tem_perfil'=>2,
                     'id_assistido'=>$request->input('assist'),
                     'id_representante'=>$request->input('repres'),
                     'parentesco'=>$request->input('parent'),
@@ -346,7 +345,7 @@ class GerenciarAtendimentoController extends Controller
                     ->where('at.id', $ida)
                     ->select('at.id AS ida', 'p1.id as idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente as idaf', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tp.nome',  'at.parentesco', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo', 'at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla' )
                     ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
-                    ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id')
+                    ->leftJoin('membro AS att', 'at.id_atendente', 'att.id_associado')
                     ->leftJoin('pessoas AS p', 'att.id_pessoa', 'p.id')
                     ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                     ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
@@ -364,7 +363,7 @@ class GerenciarAtendimentoController extends Controller
                     p.nome_completo,
                     a.id_pessoa
                     from pessoas p
-                    left join atendentes a on (p.id = a.id_pessoa)
+                    left join membro a on (a.id_pessoa = p.id)
                     order by nome_completo
                     ");
 
@@ -377,7 +376,7 @@ class GerenciarAtendimentoController extends Controller
                     p.celular,
                     a.id_pessoa,
                     a.id
-                    from atendentes a
+                    from membro a
                     left join pessoas p on (a.id_pessoa = p.id)
                     order by nm_afi
                     ");
@@ -437,7 +436,7 @@ class GerenciarAtendimentoController extends Controller
                     ->where('p1.id', $idas)
                     ->select('at.id AS ida', 'at.pref_tipo_atendente', 'p1.dt_nascimento', 'at.dh_chegada',  'at.dh_fim', 'at.dh_inicio', 'at.id_assistido', 'at.id_representante', 'at.id_atendente_pref', 'at.id_atendente', 'at.parentesco', 'tdd.descricao AS ddd', 'p1.celular', 'p1.id AS idas', 'p1.nome_completo AS nm_1',  'p2.nome_completo as nm_2',  'p3.id AS idp', 'p3.nome_completo as nm_3',  'p4.nome_completo as nm_4',  'ts.descricao', 'tp.nome',   'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo')
                     ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
-                    ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id')
+                    ->leftJoin('membro AS att', 'at.id_atendente', 'att.id')
                     ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                     ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
                     ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
@@ -516,8 +515,8 @@ class GerenciarAtendimentoController extends Controller
                //dd($now);
 
         $atende = DB::table('atendente_dia AS atd')
-                ->select('atd.id AS nr','att.id_pessoa AS idp', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')
-                ->leftJoin('atendentes AS att', 'atd.id_atendente','att.id_pessoa')
+                ->select('atd.id AS nr','att.id_pessoa AS idp', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')
+                ->leftJoin('membro AS att', 'atd.id_atendente','att.id_pessoa')
                 ->leftjoin('pessoas AS p', 'att.id_pessoa', 'p.id' )
                 ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
                 ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
@@ -537,7 +536,7 @@ class GerenciarAtendimentoController extends Controller
        // dd($status);
 
         if ($request->data){
-            $atende->where('atd.data_hora', '=', $request->data);
+            $atende->where('atd.dh_inicio', '=', $request->data);
         }
 
         if ($request->grupo){
@@ -553,7 +552,7 @@ class GerenciarAtendimentoController extends Controller
         }
 
 
-        $atende = $atende->orderby('atd.data_hora', 'DESC')->orderby('nm_sala', 'ASC')->get();
+        $atende = $atende->orderby('atd.dh_inicio', 'DESC')->orderby('nm_sala', 'ASC')->get();
 
         //dd($atende);
 
@@ -586,8 +585,8 @@ class GerenciarAtendimentoController extends Controller
         $now =  Carbon::now()->format('Y-m-d');
 
         $atende = DB::table('atendente_dia AS atd')
-        ->select('att.id AS ida', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.data_hora', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala')
-        ->leftJoin('atendentes AS att', 'atd.id_atendente','att.id_pessoa')
+        ->select('att.id AS ida', 'atd.id AS idatd', 'atd.id_atendente AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala')
+        ->leftJoin('membro AS att', 'atd.id_atendente','att.id_pessoa')
         ->leftjoin('pessoas AS p', 'atd.id_atendente', 'p.id' )
         ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
         ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
@@ -614,7 +613,7 @@ class GerenciarAtendimentoController extends Controller
 
         $sala_ocupada = DB::table('atendente_dia AS atd')
                         ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
-                        ->where('atd.data_hora', $now)
+                        ->where('atd.dh_inicio', $now)
                         ->pluck('id_sala');
         
    
@@ -624,7 +623,7 @@ class GerenciarAtendimentoController extends Controller
                     ->where( 's.id_finalidade', 2)
                     ->where('s.status_sala', 1)
                     ->whereNotIn('s.id', DB::table('atendente_dia AS atd')
-                        ->where('atd.data_hora', $now)
+                        ->where('atd.dh_inicio', $now)
                         ->pluck('atd.id_sala'))
                     ->orderBy('numero', 'asc')
                     ->get();
@@ -648,7 +647,7 @@ class GerenciarAtendimentoController extends Controller
 
 
 
-            $sala_dia = DB::table('atendente_dia AS atd')->where('atd.id_sala', $request->sala)->where('atd.data_hora', $now)->count('atd.id');
+            $sala_dia = DB::table('atendente_dia AS atd')->where('atd.id_sala', $request->sala)->where('atd.dh_inicio', $now)->count('atd.id');
 
             if ($sala_dia == 0){
 
@@ -683,11 +682,11 @@ class GerenciarAtendimentoController extends Controller
         
         $now = Carbon::now()->format('Y-m-d');
 
-        $aten = DB::table('atendente_dia AS atd')->select('id_atendente')->where('data_hora', $now)->pluck('id_atendente');
+        $aten = DB::table('atendente_dia AS atd')->select('id_atendente')->where('dh_inicio', $now)->pluck('id_atendente');
 
         //dd($aten);
 
-                $atende = DB::table('atendentes AS att')
+                $atende = DB::table('membro AS att')
                 ->select('att.id AS idat', 'att.id_pessoa AS idp', 'p.nome_completo AS nm_4',  'p.id AS pid', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg')
                 ->leftjoin('pessoas AS p', 'att.id_pessoa', 'p.id' )
                 ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
@@ -740,7 +739,7 @@ class GerenciarAtendimentoController extends Controller
                 foreach($atende as $key => $lista){
                 $result = DB::table('atendente_grupo AS ag')
                         ->leftJoin('grupo AS g', 'ag.id_grupo', 'g.id')
-                        ->leftJoin('atendentes AS att', 'ag.id_atendente', 'att.id_pessoa')
+                        ->leftJoin('membro AS att', 'ag.id_atendente', 'att.id_pessoa')
                         ->select('ag.id_grupo', 'g.nome')
                         ->where('g.id_tipo_grupo', 3)
                         ->where('g.data_fim', null)
@@ -755,7 +754,7 @@ class GerenciarAtendimentoController extends Controller
                         ->where( 's.id_finalidade', 2)
                         ->where('s.status_sala', 1)
                         ->whereNotIn('s.id', DB::table('atendente_dia AS atd')
-                            ->where('atd.data_hora', $now)
+                            ->where('atd.dh_inicio', $now)
                             ->pluck('atd.id_sala'))
                         ->orderBy('numero', 'asc')
                         ->get();
@@ -813,7 +812,7 @@ class GerenciarAtendimentoController extends Controller
 
         $now = Carbon::now()->format('d/m/Y');
 
-        $sit_afi = DB::table('atendente_dia AS atd')->select('id_atendente')->where('atd.data_hora', $now)->count();
+        $sit_afi = DB::table('atendente_dia AS atd')->select('id_atendente')->where('atd.dh_inicio', $now)->count();
 
 
 

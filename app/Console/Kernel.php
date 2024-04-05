@@ -4,15 +4,23 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Jobs\Faltas;
+use Illuminate\Support\Facades\DB;
+
+
+
+
 
 class Kernel extends ConsoleKernel
 {
     /**
      * Define the application's command schedule.
      */
+    private $id;
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+
+          $schedule->job( new Faltas())->dailyAt('01:00');
     }
 
     /**

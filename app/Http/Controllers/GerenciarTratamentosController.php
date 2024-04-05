@@ -91,10 +91,20 @@ class GerenciarTratamentosController extends Controller
 
     public function presenca(Request $request, $idtr){
 
+        $infoTrat = DB::table('tratamento')->where('id', $idtr)->first();
+
 
         $data_atual = Carbon::now();
+        $dia_atual = $data_atual->weekday();
 
         $confere = DB::table('dias_tratamento AS ds')->where('ds.data', $data_atual)->where('ds.id_tratamento', $idtr)->count();
+
+        $lista = DB::table('tratamento AS tr')
+        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+        ->where('tr.id', $idtr)
+        ->first();
+
+
 
         if($confere > 0){
 
@@ -102,7 +112,20 @@ class GerenciarTratamentosController extends Controller
 
             return Redirect('/gerenciar-tratamentos');
 
+        }
+        else if($lista->dia != $dia_atual){
+
+            app('flasher')->addError('Este assistido não corresponde ao dia de hoje.');
+
+            return Redirect('/gerenciar-tratamentos');
+
         }else{
+
+            if($infoTrat->status == 1){
+                DB::table('tratamento')->where('id', $idtr)->update([
+                    'status' => 2
+                ]);
+            }
 
         $presenca = isset($request->presenca) ? true : false;
 
@@ -123,63 +146,7 @@ class GerenciarTratamentosController extends Controller
         return Redirect('/gerenciar-tratamentos');
     }
 
-    public function falta(){
-
-
-
-        $data_atual = Carbon::now();
-
-        $dia_atual = $data_atual->weekday();
-
-        $lista = DB::table('tratamento AS tr')
-        ->leftjoin('dias_tratamento AS dt', 'tr.id', 'dt.id_tratamento')
-        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-        ->where('tr.status', 2)
-        ->where('rm.dia', $dia_atual)
-        ->where('rm.id_tipo_tratamento', '<>', 2)
-        ->get();
-
-        dd($lista);
-
-        $confere = DB::table('tratamento AS tr')
-        ->leftjoin('dias_tratamento AS dt', 'tr.id', 'dt.id_tratamento')
-        ->where('tr.status', 2)
-        ->where('dt.data', $data_atual)
-        ->count('dt.id_tratamento');
-
-
-        if($confere < 0){
-
-            app('flasher')->addError('Não existem tratamentos sem o registro de presença no dia.');
-
-            return Redirect('/gerenciar-tratamentos');
-
-        }else{
-
-            foreach ($lista as $item){
-            DB::table('dias_tratamento AS dt')
-            ->leftJoin('tratamento AS tr', 'dt.id', 'dt.id_tratamento')
-            ->where('tr.status', 2)
-            ->whereNotIn('tr.id', 'dt.id_tratamento')
-            ->whereNotIn($data_atual,'dt.data')
-            ->insert([
-                'data' =>  $data_atual,
-                'id_tratamento' => $item,
-                'presenca' => false
-            ]);
-            }
-
-
-        app('flasher')->addSuccess('Todas as faltas foram registradas.');
-
-        return Redirect('/gerenciar-tratamentos');
-
-        }
-
-        app('flasher')->addError('Aconteceu um erro inesperado.');
-
-        return Redirect('/gerenciar-tratamentos');
-    }
+    
 
     public function visualizar($idtr){
 
