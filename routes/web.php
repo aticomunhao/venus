@@ -170,10 +170,13 @@ Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, '
 
 
 
+<<<<<<< HEAD
 
 
   
 
+=======
+>>>>>>> 9413b07a17534db1e22bba0ed6049b177d8cac55
 // Grupos
 Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
 Route::get('criar-grupos', [GrupoController::class,'create'])->name('');

@@ -10,13 +10,13 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col">
-                        EDITAR MÉDIUM
+                        EDITAR MEMBRO
                     </div>
                 </div>
             </div>
 
             <div class="card-body">
-                <form class="form-horizontal mt-2" method="post" action="/atualizar-mediuns/{{ $medium->idm }}"
+                <form class="form-horizontal mt-2" method="post" action="/atualizar-membro/{{ $membro->idm }}"
                     id="mediumForm">
                     @csrf
 
@@ -24,14 +24,14 @@
                         <div class="col-4">
                             <label for="id_pessoa" class="form-label">Nome</label>
                             <input type="text" class="form-control" id="searchInput" disabled
-                                placeholder="Pesquisar nome..." value="{{ $medium->nome_completo }}">
+                                placeholder="Pesquisar nome..." value="{{ $membro->nome_completo }}">
                             <ul id="pessoaList" class="list-group" style="display: none;">
                                 @foreach ($pessoas as $pessoa)
                                     <li class="list-group-item" data-id="{{ $pessoa->id }}">{{ $pessoa->nome_completo }}
                                     </li>
                                 @endforeach
                             </ul>
-                            <input type="hidden" name="id_pessoa" id="selectedId" value="{{ $medium->id_pessoa }}">
+                            <input type="hidden" name="id_pessoa" id="selectedId" value="{{ $membro->id_pessoa }}">
                         </div>
                         <div class="col">
                             <label for="status" class="form-label">Status</label>
@@ -59,16 +59,6 @@
                             </select>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col">
-                                <label for="id_setor" class="form-label">Setor</label>
-                                <select class="form-select" aria-label=".form-select-lg example" name="setor">
-                                    <option value="{{ $medium->id_setor }}">{{ $medium->nome_setor }}</option>
-                                    @foreach ($setor as $setores)
-                                        <option value="{{ $setores->id }}">{{ $setores->nome }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
 
                             <div class="col">
                                 <label for="id_funcao" class="form-label">Função</label>

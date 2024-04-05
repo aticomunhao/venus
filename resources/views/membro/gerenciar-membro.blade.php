@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR MÉDIUNS
+        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR MEMBRO
         </h4>
 
         <div class="col-12">
@@ -18,29 +18,7 @@
                         <input class="form-control" type="text" id="cpf_pesquisa" name="cpf_pesquisa"
                              value="{{ request('cpf_pesquisa') }}">
                     </div>
-                    {{-- <div class="col-2">
-                        Grupo
-                        <select class="form-select" id="grupo_pesquisa" name="grupo_pesquisa">
-                            <option value="" selected>Selecione o grupo</option>
-                            @foreach ($grupos as $grupoId => $grupoNome)
-                                <option value="{{ $grupoId }}" {{ $grupoPesquisa == $grupoId ? 'selected' : '' }}>
-                                    {{ $grupoNome }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div> --}}
-                    {{-- <div class="col-2">
-                        Setor
-                        <select class="form-select" id="setor_pesquisa" name="setor_pesquisa">
-                            <option value="" selected>Selecione o setor</option>
-                            @foreach ($setores as $setorId => $setorNome)
-                                <option value="{{ $setorId }}" {{ $setorPesquisa == $setorId ? 'selected' : '' }}>
-                                    {{ $setorNome }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div> --}}
-
+            
                     <div class="col">
                         <br>
                         <input class="btn btn-light btn-sm me-md-2"
@@ -50,7 +28,7 @@
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Limpar"></a>
                         <a href="/criar-membro"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
-                                type="button" value="Novo médium +"></a>
+                                type="button" value="Novo membro +"></a>
                     </div>
                 </div>
 
@@ -68,7 +46,6 @@
                     <th>NOME</th>
                     <th>NOME GRUPO</th>
                     <th>FUNÇÃO</th>
-                    <th>SETOR</th>
                     <th>STATUS</th>
                     <th>AÇÕES</th>
                 </tr>
@@ -80,16 +57,15 @@
                             <td>{{ $membros->nome_completo }}</td>
                             <td>{{ $membros->nome_grupo }}</td>
                             <td>{{ $membros->nome_funcao }}</td>
-                            <td>{{ $membros->nome_setor }}</td>
                             <td>{{ $membros->status ? 'Ativo' : 'Inativo' }}</td>
                             <td>
 
-                                <a href="/editar-membro/{{ $membro->idm }}" type="button"
+                                <a href="/editar-membro/{{ $membros->idm }}" type="button"
                                     class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Editar">
                                     <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
                                 </a>
-                                <a href="/visualizar-membro/{{ $membro->idm }}" type="button"
+                                <a href="/visualizar-membro/{{ $membros->idm }}" type="button"
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Visualizar">
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
@@ -97,7 +73,7 @@
                                 </a>
                                 <a href="/deletar-membro" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#confirmacaoDelecao"
-                                    onclick="confirmarExclusao('{{ $membro->idm }}', '{{ $membro->nome_completo }}')"
+                                    onclick="confirmarExclusao('{{ $membros->idm }}', '{{ $membros->nome_completo }}')"
                                     data-tt="tooltip" data-placement="top" title="Deletar">
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </a>
@@ -116,7 +92,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Tem certeza que deseja excluir o Médium "<span id="modal-body-text"></span>"?
+                    Tem certeza que deseja excluir o Membro "<span id="modal-body-text"></span>"?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

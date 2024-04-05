@@ -20,10 +20,11 @@ class Grupocontroller extends Controller
 
 
             $grupo = DB::table('grupo AS g')
-                ->select('g.id', 'g.nome', 'g.data_inicio', 'g.data_fim', 'g.status_grupo','g.id_motivo_inativacao', 'tg.nm_tipo_grupo', 'tg.id AS idg' ,'ts.descricao as descricao1','tm.tipo')
+            ->select('g.id', 'g.nome', 'g.data_inicio', 'g.data_fim', 'g.status_grupo','g.id_motivo_inativacao', 'tg.nm_tipo_grupo', 'tg.id AS idg' ,'ts.descricao as descricao1','tm.tipo', 'g.id_setor', 'st.nome AS nm_setor')
                 ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
                 ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
-                ->leftJoin('tipo_motivo AS tm', 'g.id_motivo_inativacao', 'tm.id');
+                ->leftJoin('tipo_motivo AS tm', 'g.id_motivo_inativacao', 'tm.id')
+                ->leftJoin('setor AS st', 'g.id_setor', 'st.id');
 
 
                 $nome = $request->nome_pesquisa;
@@ -107,14 +108,16 @@ class Grupocontroller extends Controller
         $grupo = DB::table('grupo AS g')
         ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
         ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
-        ->leftJoin('tipo_motivo AS tm', 'g.id_tipo_motivo', 'tm.id')
-        ->select('g.id', 'g.nome', 'g.data_inicio', 'g.data_fim', 'g.status_grupo','g.id_motivo_inativacao', 'tg.nm_tipo_grupo','ts.descricao as descricao1','tm.tipo')->where('g.id', $id)
+        ->leftJoin('tipo_motivo AS tm', 'g.id_motivo_inativacao', 'tm.id')
+        ->leftJoin('setor AS st', 'g.id_setor', 'st.id')
+        ->select('g.id', 'g.nome', 'g.data_inicio', 'g.data_fim', 'g.status_grupo','g.id_motivo_inativacao', 'tg.nm_tipo_grupo','ts.descricao as descricao1','tm.tipo','g.id_setor', 'st.nome AS nm_setor')->where('g.id', $id)
         ->get();
         $tipo_grupo = DB::table('tipo_grupo')->get();
         $tipo_status_grupo = DB::table('tipo_status_grupo')->select('descricao as descricao1','id')->get();
         $tipo_motivo = DB::table('tipo_motivo')->get();
+        $setor = DB::table('setor')->get();
 
-        return view('grupos/visualizar-grupos', compact('grupo','tipo_grupo','tipo_status_grupo','tipo_motivo'));
+        return view('grupos/visualizar-grupos', compact('setor','grupo','tipo_grupo','tipo_status_grupo','tipo_motivo'));
 
     }
 
@@ -129,15 +132,17 @@ class Grupocontroller extends Controller
         $grupo = DB::table('grupo AS g')
         ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
         ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
-        ->leftJoin('tipo_motivo AS tm', 'g.id_tipo_motivo', 'tm.id')
-        ->select('g.id', 'g.nome', 'g.data_inicio', 'g.data_fim', 'g.status_grupo', 'tg.nm_tipo_grupo as nmg','ts.descricao as descricao1','g.id_tipo_grupo','g.status_grupo','g.id_motivo_inativacao','tm.tipo')->where('g.id', $id)
+        ->leftJoin('tipo_motivo AS tm', 'g.id_motivo_inativacao', 'tm.id')
+        ->leftJoin('setor AS st', 'g.id_setor', 'st.id')
+        ->select('g.id', 'g.nome', 'g.data_inicio', 'g.data_fim', 'g.status_grupo', 'tg.nm_tipo_grupo as nmg','ts.descricao as descricao1','g.id_tipo_grupo','g.status_grupo','g.id_motivo_inativacao','tm.tipo','g.id_setor', 'st.nome AS nm_setor')->where('g.id', $id)
         ->get();
         $tipo_grupo = DB::table('tipo_grupo')->get();
         $tipo_status_grupo = DB::table('tipo_status_grupo')->select('descricao as descricao1','id')->get();
         $tipo_motivo = DB::table('tipo_motivo')->get();
+        $setor = DB::table('setor')->get();
 
 
-        return view('grupos/editar-grupos', compact('grupo','tipo_grupo','tipo_status_grupo','tipo_motivo'));
+        return view('grupos/editar-grupos', compact('setor','grupo','tipo_grupo','tipo_status_grupo','tipo_motivo'));
 
     }
 

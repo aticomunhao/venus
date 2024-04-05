@@ -55,14 +55,13 @@
                                     <div class="col-3">
                                         Motivo
                                         <select class="form-select" aria-label=".form-select-lg example" name="id_motivo_inativacao" id="id_motivo_inativacao" required="required" disabled>
-                                            <option value="{{ $grupo[0]->id_tipo_motivo }}"> {{ $grupo[0]->tipo }}</option>
+                                            <option value="{{ $grupo[0]->id_motivo_inativacao }}"> {{ $grupo[0]->tipo }}</option>
                                             @foreach ($tipo_motivo as $tipo_motivos)
                                                 <option value="{{ $tipo_motivos->id }}"> {{ $tipo_motivos->tipo }} </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
-
                                 <div class="row">
                                     <div class="col-3">
                                         <br>
@@ -83,6 +82,16 @@
                                         <br>
                                         Data fim
                                         <input type="date" class="form-control" id="h_fim" name="data_fim" value="{{ $grupo[0]->data_fim }}" disabled>
+                                    </div>
+                                        <div class="col">
+                                            <br>
+                                            Setor
+                                            <select class="form-select" aria-label=".form-select-lg example" name="setor" required="required">
+                                                @foreach ($setor as $setors)
+                                                    <option value="{{ $setors->id}}">{{ $setors->nome}}</option>
+                                                @endforeach
+                                            </select>
+                                       
                                     </div>
 
 

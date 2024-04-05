@@ -46,8 +46,8 @@
 
                                     <div class="col-3">
                                         Motivo
-                                        <select name="id_tipo_motivo" class="form-control" disabled>
-                                            <option value="{{ $grupo[0]->id_tipo_motivo }}"> {{ $grupo[0]->tipo }}</option>
+                                        <select name="id_motivo_inativacao" class="form-control" disabled>
+                                            <option value="{{ $grupo[0]->id_motivo_inativacao }}"> {{ $grupo[0]->tipo }}</option>
                                             @foreach ($tipo_motivo as $tipo_motivos)
                                                 <option value="{{ $tipo_motivos->id }}"> {{ $tipo_motivos->tipo }}</option>
                                             @endforeach
@@ -77,6 +77,16 @@
                                         Data fim
                                         <input type="date" class="form-control" id="h_fim" name="data_fim" value="{{ $grupo[0]->data_fim }}" disabled>
                                     </div>
+                                    <div class="col">
+                                        <br>
+                                        Setor
+                                        <select class="form-control" aria-label=".form-select-lg example" name="setor" disabled>
+                                            @foreach ($setor as $setors)
+                                                <option value="{{ $setors->id}}">{{ $setors->nome}}</option>
+                                            @endforeach
+                                        </select>
+                                   
+                                </div>
                                 <div class="row justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">
                                         <br>
