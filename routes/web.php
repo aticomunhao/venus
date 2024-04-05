@@ -170,17 +170,6 @@ Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, '
 
 
 
-
-
-// Atendentes
-Route::get('/gerenciar-atendentes', [AtendenteController::class, 'index'])->name('list');
-Route::get('/criar-atendente', [AtendenteController::class, 'create'])->name('atualizar');
-Route::post('/incluir-atendente', [AtendenteController::class, 'store'])->name('cadastrar');
-Route::get('/editar-atendente/{id}', [AtendenteController::class, 'edit'])->name('');
-Route::post('/atualizar-atendente/{id}', [AtendenteController::class, 'update'])->name('atualize');
-Route::get('/visualizar-atendente/{id}', [AtendenteController::class, 'show'])->name('');
-Route::any('/excluir-atendente/{id}', [AtendenteController::class, 'destroy'])->name('');
-
 // Grupos
 Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
 Route::get('criar-grupos', [GrupoController::class,'create'])->name('');

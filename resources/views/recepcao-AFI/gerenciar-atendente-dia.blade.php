@@ -55,7 +55,8 @@
                     <thead style="text-align: center;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             <th class="col">Nr</th>
-                            <th class="col">DATA</th>
+                            <th class="col">INÍCIO</th>
+                            <th class="col">FIM</th>
                             <th class="col">GRUPO</th>                                               
                             <th class="col">ATENDENTE</th>
                             <th class="col">SALA</th>                           
@@ -67,13 +68,14 @@
                         <tr>
                         @foreach($atende as $atendes)
                             <td scope="">{{$atendes->nr}}</td>
-                            <td scope="">{{date( 'd/m/Y', strtotime($atendes->data_hora))}}</td>                                                       
+                            <td scope="">{{date( 'd/m/Y', strtotime($atendes->dh_inicio))}}</td> 
+                            <td scope="">{{date( 'd/m/Y', strtotime($atendes->dh_fim))}}</td>                                                       
                             <td scope="">{{$atendes->nomeg}}</td>
                             <td scope="">{{$atendes->nm_4}}</td>                            
                             <td scope="">{{$atendes->nm_sala}}</td>
                             <td scope="">{{$atendes->tipo}}</td>
                             <td scope="">
-                                @if (date( 'Y-m-d', strtotime($atendes->data_hora)) < $now)
+                                @if (date( 'Y-m-d', strtotime($atendes->dh_fim)) < $now)
                                     <button disabled type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button>           
                                     <button disabled class="btn btn-outline-danger btn-sm"  style="font-size: 1rem; color:#000;" type="button" id="" data-bs-toggle="modal" data-bs-target="#delete{{$atendes->idatd}}" data-tt="tooltip" data-placement="top" title="Excluir"><i class="bi bi-trash3" style="font-size: 1rem; color:#000;"></i></button>                                
                                 @else
