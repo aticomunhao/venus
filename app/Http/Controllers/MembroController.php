@@ -119,29 +119,30 @@ class membroController extends Controller
 
 
 
+  
     public function edit($id)
 {
-    $membro= DB::table('membro AS m')
-    ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
-    ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
-    ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-    ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
-    ->select(
-        'p.nome_completo',
-        'm.id AS idm',
-        'm.id_associado',
-        'm.id_funcao',
-        'p.cpf',
-        'p.status',
-        'p.motivo_status',
-        'tf.nome as nome_funcao',
-        'm.id_grupo',
-        'g.nome as nome_grupo'
-    )
+    $membro = DB::table('membro AS m')
+        ->leftJoin('associado AS a', 'a.id', '=', 'm.id_associado') 
+        ->leftJoin('pessoas AS p', 'a.id_pessoa', '=', 'p.id') 
+        ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+        ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
+        ->leftJoin('pessoas', 'p.id', '=', 'a.id_pessoa')  
+        ->select(
+            'p.nome_completo',
+            'm.id AS idm',
+            'm.id_associado',
+            'm.id_funcao',
+            'p.cpf',
+            'p.status',
+            'p.motivo_status',
+            'tf.nome as nome_funcao',
+            'm.id_grupo',
+            'g.nome as nome_grupo'
+        )
         ->where('m.id', $id)
         ->first();
 
-      
     $tipo_status_pessoa = DB::table('tipo_status_pessoa')->select('id', 'tipo as tipos')->get();
     $tipo_motivo_status_pessoa = DB::table('tipo_motivo_status_pessoa')->select('id', 'motivo')->get();
     $grupo = DB::table('grupo')->get();
@@ -149,8 +150,12 @@ class membroController extends Controller
     $tipo_funcao = DB::table('tipo_funcao')->get();
     $associado = DB::table('associado')->get();
 
-    return view('membro.editar-membro', compact('associado', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo',  'membro', 'pessoas', 'tipo_funcao'));
+    return view('membro.editar-membro', compact('associado','membro', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo', 'pessoas', 'tipo_funcao'));
 }
+
+    
+
+
 
 
 
