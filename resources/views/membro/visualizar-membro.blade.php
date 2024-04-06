@@ -1,140 +1,78 @@
 @extends('layouts.app')
 
 @section('content')
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="/venus/node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <div class="container mt-4">
         <div class="card">
             <div class="card-header">
                 <div class="row">
                     <div class="col">
-                        VISUALIZAR MÉDIUM
+                        EDITAR MEMBRO
                     </div>
                 </div>
             </div>
 
             <div class="card-body">
                 <form class="form-horizontal mt-2" method="post" action="/atualizar-membro/{{ $membro->idm }}"
-                    id="membroForm">
                     @csrf
 
-                    <div class="row mt-3">
-                        <div class="col-5">
-                            <label for="id_pessoa" class="form-label">Nome</label>
-                            <select name="id_pessoa" class="form-control" disabled>
-                                <option value="{{ $membro->id_pessoa }}"> {{ $membro->nome_completo }}</option>
-                                @foreach ($pessoas as $pessoa)
-                                    <option value="{{ $pessoa->id }}"> {{ $pessoa->nome_completo }} </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-4">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-control" aria-label=".form-select-lg example" name="id_pessoa" id="status"
-                                required="required" disabled>
-                                @foreach ($tipo_status_pessoa as $tipos)
-                                    <option value="{{ $tipos->id }}"
-                                        {{ $membro->status == $tipos->id ? 'selected' : '' }}>
-                                        {{ $tipos->tipos }}
-                                    </option>
-                                @endforeach
-                            </select>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="id_pessoa" class="form-label">Nome</label>
+                                <select class="form-select" aria-label=".form-select-lg example" name="id_associado">
+                                    @foreach ($associado as $associados)
+                                        <option value="{{ $associados->id}}">{{ $associados->id}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
                         <div class="col">
-                            <label for="motivo_status" class="form-label">Motivo status</label>
-                            <select class="form-control" aria-label=".form-select-lg example" name="motivo_status"
-                                id="motivo_status" required="required" disabled>
-                                <option value=""></option>
-                                @foreach ($tipo_motivo_status_pessoa as $motivo)
-                                    <option value="{{ $motivo->id }}"
-                                        {{ $membro->motivo_status == $motivo->id ? 'selected' : '' }}>
-                                        {{ $motivo->motivo }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="form-group">
+                                <label for="tipo_status_pessoa" class="form-label">Status</label>
+                                <select class="form-control" aria-label=".form-select-lg example" name="tipo_status_pessoa">
+                                    @foreach ($tipo_status_pessoa as $tipo)
+                                        <option value="{{ $tipo->id }}">{{ $tipo->tipos }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="row mt-3">
+                    <br>
+                    <div class="row">
                         <div class="col">
-                            <label for="id_setor" class="form-label">Setor</label>
-                            <select name="id_setor" class="form-control" disabled>
-                                <option value="{{ $membro->id_setor }}"> {{ $membro->nome_setor }}</option>
-                                @foreach ($setor as $setores)
-                                    <option value="{{ $setores->id }}"> {{ $setores->nome }} </option>
-                                @endforeach
-                            </select>
+                            <div class="form-group">
+                                <label for="id_funcao" class="form-label">Função</label>
+                                <select class="form-select" aria-label=".form-select-lg example" name="id_funcao">
+                                    @foreach ($tipo_funcao as $funcao)
+                                        <option value="{{ $funcao->id }}">{{ $funcao->nome }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
                         <div class="col">
-                            <label for="id_funcao" class="form-label">Função</label>
-                            <select name="id_funcao" class="form-control" disabled>
-                                <option value="{{ $membro->id_funcao }}"> {{ $membro->nome_funcao }}</option>
-                                @foreach ($tipo_funcao as $funcao)
-                                    <option value="{{ $funcao->id }}"> {{ $funcao->nome }} </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col">
-                            <label for="id_grupo" class="form-label">Nome grupo</label>
-                            <select name="id_grupo" class="form-control" disabled>
-                                <option value="{{ $membro->id_grupo }}"> {{ $membro->nome_grupo }}</option>
-                                @foreach ($grupo as $grupos)
-                                    <option value="{{ $grupos->id }}"> {{ $grupos->nome }} </option>
-                                @endforeach
-                            </select>
+                            <div class="form-group">
+                                <label for="id_grupo" class="form-label">Nome grupo</label>
+                                <select class="form-select" aria-label=".form-select-lg example" name="id_grupo">
+                                    @foreach ($grupo as $grupos)
+                                        <option value="{{ $grupos->id }}">{{ $grupos->nome }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="row mt-3">
-                        <div class="col">
-                            <label for="id_mediunidade" class="form-label"></label>
-                        </div>
-                        <div class="col">
-                            <label for="data_inicio" class="form-label"></label>
-                        </div>
-                    </div>
-
-                    <div class="table-responsive mt-3">
-                        <table
-                            class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th class="text-center">Mediunidades</th>
-                                    <th class="text-center">Data que manifestou</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($mediunidade_membro as $membro)
-                                    <tr>
-                                        <td class="text-center">
-                                            <select name="id" class="form-control" disabled>
-                                                @foreach ($tipo_mediunidade as $tipos)
-                                                    <option value="{{ $tipos->id }}"
-                                                        @if ($tipos->id == $membro->id_mediunidade) selected @endif>
-                                                        {{ $tipos->tipo }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td class="text-center">
-                                            <select name="data_inicio" class="form-control" disabled>
-                                                <option value="{{ $membro->id_membro }}" selected>
-                                                    {{ $membro->data_inicio }}
-                                                </option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
+                    <br>
                     <div class="row mt-1 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
                             <a class="btn btn-danger" href="/gerenciar-membro" role="button">Cancelar</a>
                         </div>
                         <div class="d-grid gap-2 col-4 mx-auto">
-                            <button class="btn btn-primary">Confirmar</button>
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
                         </div>
                     </div>
                 </form>

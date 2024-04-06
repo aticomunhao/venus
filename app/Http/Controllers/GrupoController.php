@@ -55,7 +55,6 @@ class Grupocontroller extends Controller
     {
         $grupos = DB::select('select * from grupo');
         $tipo_grupo = DB::select('select id as idg,nm_tipo_grupo from tipo_grupo order by nm_tipo_grupo asc');
-        // $tipo_tratamento = DB::select('select id, descricao from tipo_tratamento');
         $tipo_status_grupo = DB::select('select id as ids, descricao as descricao from tipo_status_grupo');
         $tipo_motivo = DB::select('select id id,tipo from tipo_motivo');
         $setor = DB::select('select id, nome  from setor order by nome asc');
@@ -81,7 +80,6 @@ class Grupocontroller extends Controller
             'nome' => $request->input('nome'),
             'data_inicio' => $data,
             'id_tipo_grupo' => $request->input('id_tipo_grupo'),
-            // 'id_tipo_tratamento'=>$request->input('id_tipo_tratamento'),
             'id_motivo_inativacao'=>$request->input('id_motivo_inativacao'),
 
         ]);

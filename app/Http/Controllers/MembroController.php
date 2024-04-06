@@ -16,13 +16,14 @@ class membroController extends Controller
     public function index(Request $request)
     {
         $membroQuery = DB::table('membro AS m')
-            ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
+            ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
+            ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
             ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
             ->select(
                 'p.nome_completo',
                 'm.id AS idm',
-                'm.id_pessoa',
+                'm.id_associado',
                 'm.id_funcao',
                 'p.cpf',
                 'p.status',
@@ -36,9 +37,9 @@ class membroController extends Controller
         $nome = $request->nome_pesquisa;
         $cpf = $request->cpf_pesquisa;
         $grupoPesquisa = $request->grupo_pesquisa;
-        
+
         $grupos = DB::table('grupo')->pluck('nome', 'id');
-        
+
 
         if ($nome || $cpf || $grupoPesquisa) {
             $membroQuery->where(function ($query) use ($nome, $cpf, $grupoPesquisa) {
@@ -54,7 +55,6 @@ class membroController extends Controller
                 if ($grupoPesquisa) {
                     $query->orWhere('g.id', '=', $grupoPesquisa);
                 }
-
             });
         }
 
@@ -62,7 +62,7 @@ class membroController extends Controller
             ->orderBy('p.nome_completo', 'asc')
             ->paginate(50);
 
-        return view('membro.gerenciar-membro', compact('membroQuery','grupos', 'nome', 'cpf', 'grupoPesquisa','membro'));
+        return view('membro.gerenciar-membro', compact('membroQuery', 'grupos', 'nome', 'cpf', 'grupoPesquisa', 'membro'));
     }
 
 
@@ -70,16 +70,25 @@ class membroController extends Controller
 
     public function create()
     {
-        $id_membro = 1;
+  
         $grupo = DB::select('select id, nome from grupo');
         $membro = DB::select('select * from membro');
         $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas');
         $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao');
         $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-        $associado = DB::select('select id as ida,id_pessoa from associado');
+        $associado = DB::table('associado')
+            ->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')
+            ->select(
+                'pessoas.nome_completo',
+                'associado.nr_associado'
+            )
+            ->get();
+           
 
 
-        return view('membro/criar-membro', compact('associado','tipo_status_pessoa', 'grupo', 'id_membro', 'membro', 'pessoas', 'tipo_funcao'));
+
+
+        return view('membro/criar-membro', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao'));
     }
 
 
@@ -88,17 +97,20 @@ class membroController extends Controller
     public function store(Request $request)
     {
 
-        
+
+
+        $data = date("Y-m-d H:i:s");
         DB::table('membro')->insert([
-            'id_pessoa' =>$request->input('id_pessoa'),
+            'id_associado' => $request->input('id_associado'),
             'id_funcao' => $request->input('id_funcao'),
             'id_grupo' => $request->input('id_grupo'),
-            
+            'dt_inicio' => $data,
+
 
         ]);
+        
 
 
-      
 
         app('flasher')->addSuccess("Cadastrado com Sucesso");
         return redirect('gerenciar-membro');
@@ -107,69 +119,55 @@ class membroController extends Controller
 
 
 
-
-
     public function edit($id)
-    {
-        $membro = DB::table('membro AS m')
-            ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-            ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
-            ->select('p.nome_completo', 'm.id AS idm', 'p.id AS id_pessoa', 'p.motivo_status', 'p.status', 'm.id_grupo', 'g.nome AS nome_grupo', 'tf.nome AS nome_funcao', 'm.id_funcao','mm.data_inicio')
-            ->where('m.id', $id)
-            ->first();
+{
+    $membro= DB::table('membro AS m')
+    ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
+    ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
+    ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+    ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
+    ->select(
+        'p.nome_completo',
+        'm.id AS idm',
+        'm.id_associado',
+        'm.id_funcao',
+        'p.cpf',
+        'p.status',
+        'p.motivo_status',
+        'tf.nome as nome_funcao',
+        'm.id_grupo',
+        'g.nome as nome_grupo'
+    )
+        ->where('m.id', $id)
+        ->first();
 
-        $tipo_status_pessoa = DB::table('tipo_status_pessoa')->select('id', 'tipo as tipos')->get();
-        $tipo_motivo_status_pessoa = DB::table('tipo_motivo_status_pessoa')->select('id', 'motivo')->get();
-        $grupo = DB::table('grupo')->get();
-        $pessoas = DB::table('pessoas')->get();
-        $tipo_funcao = DB::table('tipo_funcao')->get();
-    
+      
+    $tipo_status_pessoa = DB::table('tipo_status_pessoa')->select('id', 'tipo as tipos')->get();
+    $tipo_motivo_status_pessoa = DB::table('tipo_motivo_status_pessoa')->select('id', 'motivo')->get();
+    $grupo = DB::table('grupo')->get();
+    $pessoas = DB::table('pessoas')->get();
+    $tipo_funcao = DB::table('tipo_funcao')->get();
+    $associado = DB::table('associado')->get();
 
+    return view('membro.editar-membro', compact('associado', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo',  'membro', 'pessoas', 'tipo_funcao'));
+}
 
-    
-
-
-        return view('membro.editar-membro', compact('tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo',  'membro', 'pessoas', 'tipo_funcao'));
-    }
 
 
 
     public function update(Request $request, string $id)
     {
-        $input = $request->all();
-
-        $dataManifestacao = $input['datas_manifestou'] ?? [];
-        $tiposMediunidade = $input['mediunidades'] ?? [];
 
 
-        DB::table('mediunidade_membro')->where('id_membro', $id)->delete();
+        DB::table('membro')->where('id', $id)->update([
+            'id_pessoa' => $request->input('id_pessoa'),
+            'id_funcao' => $request->input('id_funcao'),
+            'id_grupo' => $request->input('id_grupo'),
 
 
-        foreach ($tiposMediunidade as $tipo) {
 
-            DB::table('mediunidade_membro')->insert([
-                'id_membro' => $id,
-                'id_mediunidade' => $tipo,
-                'data_inicio' => isset($dataManifestacao[$tipo]) ? date('Y-m-d', strtotime($dataManifestacao[$tipo])) : null,
-            ]);
-        }
+        ]);
 
-
-        $dataToUpdate = [
-            'id_pessoa' => $input['id_pessoa'],
-            'id_funcao' => $input['id_funcao'],
-            'id_grupo' => $input['id_grupo'],
-        ];
-        DB::table('membro')->where('id', $id)->update($dataToUpdate);
-
-
-        $dataToUpdatePessoas = [
-            'status' => $input['status'] ?? null,
-            'motivo_status' => $input['motivo_status'] ?? null,
-        ];
-
-        DB::table('pessoas')->where('id', $input['id_pessoa'])->update($dataToUpdatePessoas);
 
         app('flasher')->addSuccess("Alterado com Sucesso");
 
@@ -181,30 +179,37 @@ class membroController extends Controller
 
 
     public function show($id)
-    {
+{
+    $membro= DB::table('membro AS m')
+    ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
+    ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
+    ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+    ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
+    ->select(
+        'p.nome_completo',
+        'm.id AS idm',
+        'm.id_associado',
+        'm.id_funcao',
+        'p.cpf',
+        'p.status',
+        'p.motivo_status',
+        'tf.nome as nome_funcao',
+        'm.id_grupo',
+        'g.nome as nome_grupo'
+    )
+        ->where('m.id', $id)
+        ->first();
 
-        $membro = DB::table('membro AS m')
-            ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-            ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
-            ->leftJoin('mediunidade_membro AS mm', 'm.id', '=', 'mm.id_membro')
-            ->select('p.nome_completo', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'm.id_grupo', 'g.nome AS nome_grupo', 'tf.nome AS nome_funcao', 'm.id_funcao', 'mm.id_mediunidade', 'mm.data_inicio')
-            ->where('m.id', $id)
-            ->first();
+      
+    $tipo_status_pessoa = DB::table('tipo_status_pessoa')->select('id', 'tipo as tipos')->get();
+    $tipo_motivo_status_pessoa = DB::table('tipo_motivo_status_pessoa')->select('id', 'motivo')->get();
+    $grupo = DB::table('grupo')->get();
+    $pessoas = DB::table('pessoas')->get();
+    $tipo_funcao = DB::table('tipo_funcao')->get();
+    $associado = DB::table('associado')->get();
 
-
-        $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
-        $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-        $grupo = DB::table('grupo')->get();
-        $pessoas = DB::table('pessoas')->get();
-        $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
-        $tipo_funcao = DB::table('tipo_funcao')->get();
-        $mediunidade_membro = DB::table('mediunidade_membro')->select('id_mediunidade', 'data_inicio', 'id_membro as id_membro')->where('id_membro', $id)->get();
-
-
-
-        return view('membro.visualizar-membro', compact('tipo_motivo_status_pessoa', 'tipo_status_pessoa', 'grupo', 'tipo_mediunidade', 'membro', 'pessoas', 'tipo_funcao', 'mediunidade_membro'));
-    }
+    return view('membro.visualizar-membro', compact('associado', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo',  'membro', 'pessoas', 'tipo_funcao'));
+}
 
 
     public function destroy(string $id)
@@ -228,7 +233,7 @@ class membroController extends Controller
             app('flasher')->addError('A membro não foi encontrada.');
             return redirect('/gerenciar-membro');
         }
-    
+
 
         DB::table('membro')->where('id', $id)->delete();
 

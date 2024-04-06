@@ -22,10 +22,10 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="id_pessoa" class="form-label">Nome</label>
-                                <select class="form-select" aria-label=".form-select-lg example" name="id_pessoa">
+                                <label for="id_associado" class="form-label">Nome</label>
+                                <select class="form-select" aria-label=".form-select-lg example" name="id_associado">
                                     @foreach ($associado as $associados)
-                                        <option value="{{ $associados->id_pessoa}}">{{ $associados->id_pessoa}}</option>
+                                        <option value="{{ $associados->nr_associado}}">{{ $associados->nome_completo}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -34,7 +34,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="tipo_status_pessoa" class="form-label">Status</label>
-                                <select class="form-control" aria-label=".form-select-lg example" name="tipo_status_pessoa">
+                                <select class="form-select" aria-label=".form-select-lg example" name="tipo_status_pessoa">
                                     @foreach ($tipo_status_pessoa as $tipo)
                                         <option value="{{ $tipo->id }}">{{ $tipo->tipos }}</option>
                                     @endforeach
