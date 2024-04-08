@@ -25,7 +25,7 @@
                                 <label for="id_associado" class="form-label">Nome</label>
                                 <select class="form-control" aria-label=".form-select-lg example" name="id_associado" disabled>
                                     @foreach ($associado as $associados)
-                                        <option value="{{ $associados->id }}" @if($membro->id_associado == $associados->id) selected @endif>{{ $associados->id_pessoa }}</option>
+                                        <option value="{{ $associados->id }}" @if($membro->id_associado == $associados->id) selected @endif>{{ $associados->nome_completo}}</option>
                                     @endforeach
                                 </select>
                             </div>

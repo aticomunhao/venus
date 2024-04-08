@@ -23,7 +23,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="id_associado" class="form-label">Nome</label>
-                                <select class="form-select" aria-label=".form-select-lg example" name="id_associado">
+                                <select class="form-select select2" aria-label=".form-select-lg example" name="id_associado">
                                     @foreach ($associado as $associados)
                                         <option value="{{ $associados->nr_associado}}">{{ $associados->nome_completo}}</option>
                                     @endforeach
@@ -79,4 +79,10 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({ theme: 'bootstrap-5'});
+        });
+    </script>
 @endsection

@@ -69,27 +69,24 @@ class membroController extends Controller
 
 
     public function create()
-    {
-  
-        $grupo = DB::select('select id, nome from grupo');
-        $membro = DB::select('select * from membro');
-        $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas');
-        $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao');
-        $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-        $associado = DB::table('associado')
-            ->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')
-            ->select(
-                'pessoas.nome_completo',
-                'associado.nr_associado'
-            )
-            ->get();
-           
+{
+    $grupo = DB::select('select id, nome from grupo order by nome asc');
+    $membro = DB::select('select * from membro');
+    $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas order by nome_completo asc');
+    $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao order by nome asc');
+    $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
+    $associado = DB::table('associado')
+        ->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')
+        ->select(
+            'pessoas.nome_completo',
+            'associado.nr_associado'
+        )
+        ->orderBy('pessoas.nome_completo', 'asc')
+        ->get();
 
+    return view('membro/criar-membro', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao'));
+}
 
-
-
-        return view('membro/criar-membro', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao'));
-    }
 
 
 
@@ -148,7 +145,14 @@ class membroController extends Controller
     $grupo = DB::table('grupo')->get();
     $pessoas = DB::table('pessoas')->get();
     $tipo_funcao = DB::table('tipo_funcao')->get();
-    $associado = DB::table('associado')->get();
+    $associado = DB::table('associado')  ->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')
+    ->select(
+        'associado.id',
+        'pessoas.nome_completo',
+        'associado.nr_associado'
+    )
+    ->orderBy('pessoas.nome_completo', 'asc')
+    ->get();
 
     return view('membro.editar-membro', compact('associado','membro', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo', 'pessoas', 'tipo_funcao'));
 }
@@ -165,7 +169,7 @@ class membroController extends Controller
 
 
         DB::table('membro')->where('id', $id)->update([
-            'id_pessoa' => $request->input('id_pessoa'),
+            'id_associado' => $request->input('id_associado'),
             'id_funcao' => $request->input('id_funcao'),
             'id_grupo' => $request->input('id_grupo'),
 
@@ -211,7 +215,14 @@ class membroController extends Controller
     $grupo = DB::table('grupo')->get();
     $pessoas = DB::table('pessoas')->get();
     $tipo_funcao = DB::table('tipo_funcao')->get();
-    $associado = DB::table('associado')->get();
+    $associado = DB::table('associado')  ->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')
+    ->select(
+        'associado.id',
+        'pessoas.nome_completo',
+        'associado.nr_associado'
+    )
+    ->orderBy('pessoas.nome_completo', 'asc')
+    ->get();
 
     return view('membro.visualizar-membro', compact('associado', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo',  'membro', 'pessoas', 'tipo_funcao'));
 }

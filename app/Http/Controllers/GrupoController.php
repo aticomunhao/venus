@@ -43,8 +43,6 @@ class Grupocontroller extends Controller
 
 
 
-    //
-
 
 
 
@@ -77,7 +75,7 @@ class Grupocontroller extends Controller
         $data = date("Y-m-d H:i:s");
         DB::table('grupo')->insert([
             'status_grupo' =>$request->input('status_grupo'),
-            'nome' => $request->input('nome'),
+            'nome' => ucwords(trans($request->input('nome'))),
             'data_inicio' => $data,
             'id_tipo_grupo' => $request->input('id_tipo_grupo'),
             'id_motivo_inativacao'=>$request->input('id_motivo_inativacao'),
