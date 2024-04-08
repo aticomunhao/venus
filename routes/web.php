@@ -24,6 +24,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\MembroController;
+use App\Http\Controllers\MediunidadePessoaController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\GerenciarEncaminhamentoController;
@@ -202,7 +203,7 @@ Route::post('/incluir-salas', [SalaController::class, 'store']);
 Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
 Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 
-//Médiuns
+//Membros
 Route::get('/gerenciar-membro', [MembroController::class, 'index'])->name('lista');
 Route::get('/editar-membro/{id}', [MembroController::class, 'edit'])->name('');
 Route::post('/atualizar-membro/{id}', [MembroController::class, 'update'])->name('');
@@ -210,6 +211,15 @@ Route::get('/criar-membro', [MembroController::class, 'create'])->name('');
 Route::post('/incluir-membro', [MembroController::class, 'store'])->name('membro.store');
 Route::any('/deletar-membro/{id}', [MembroController::class, 'destroy'])->name('');
 Route::get('/visualizar-membro/{id}', [MembroController::class, 'show'])->name('');
+
+//Mediunidades
+Route::get('/gerenciar-mediunidades', [MediunidadePessoaController::class, 'index'])->name('names');
+Route::get('/editar-mediunidade/{id}', [MediunidadePessoaController::class, 'edit'])->name('');
+Route::post('/atualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'update'])->name('atualizar-mediunidade');
+Route::get('/criar-mediunidade', [MediunidadePessoaController::class, 'create'])->name('');
+Route::post('/incluir-mediunidade', [MediunidadePessoaController::class, 'store'])->name('');
+Route::any('/deletar-mediunidade/{id}', [MediunidadePessoaController::class, 'destroy'])->name('');
+Route::get('/visualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'show'])->name('');
 
 
 /*

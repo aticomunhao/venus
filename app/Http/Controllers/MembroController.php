@@ -114,8 +114,6 @@ class membroController extends Controller
     }
 
 
-
-
   
     public function edit($id)
 {
@@ -158,7 +156,6 @@ class membroController extends Controller
 }
 
     
-
 
 
 
