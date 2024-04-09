@@ -27,6 +27,7 @@ class LoginController extends Controller
                         select
                         u.id id_usuario,
                         p.id id_pessoa,
+                        a.id id_associado,
                         p.cpf,
                         p.sexo,
                         p.nome_completo,
@@ -35,10 +36,11 @@ class LoginController extends Controller
                         string_agg(distinct u_d.id_deposito::text, ',') depositos
                         from usuario u
                         left join pessoas p on u.id_pessoa = p.id
+                        left join associado a on a.id_pessoa = p.id
                         left join usuario_perfil u_p on u.id = u_p.id_usuario
                         left join usuario_deposito u_d on u.id = u_d.id_usuario
                         where u.ativo is true and p.cpf = '$cpf'
-                        group by u.id, p.id
+                        group by u.id, p.id, a.id
                         ");
 
      
@@ -53,6 +55,7 @@ class LoginController extends Controller
                session()->put('usuario', [
                              'id_usuario'=> $result[0]->id_usuario,
                              'id_pessoa' => $result[0]->id_pessoa,
+                             'id_associado' => $result[0]->id_associado,
                              'nome'=> $result[0]->nome_completo,
                              'cpf' => $result[0]->cpf,
                              'sexo' =>$result[0]->sexo,

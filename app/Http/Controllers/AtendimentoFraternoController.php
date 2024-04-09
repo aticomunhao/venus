@@ -19,9 +19,9 @@ class AtendimentoFraternoController extends Controller
     {
 
      
-        $atendente = session()->get('usuario.id_pessoa');
+        $atendente = session()->get('usuario.id_associado');
 
-        $pref_att = session()->get('usuario.sexo');
+        $pref_m = session()->get('usuario.sexo');
 
         $nome = session()->get('usuario.nome');
 
@@ -29,8 +29,8 @@ class AtendimentoFraternoController extends Controller
         //dd($atendente);
 
         $assistido = DB::table('atendimentos AS at')
-                            ->select('at.id AS idat', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo','pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento')
-                            ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id_pessoa')
+                            ->select('at.id AS idat', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido AS idas', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo','pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento')
+                            ->leftJoin('associado AS a', 'at.id_atendente', 'a.id')
                             ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                             ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                             ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
@@ -55,11 +55,21 @@ class AtendimentoFraternoController extends Controller
         {
 
             $now =  Carbon::now()->format('Y-m-d');
-            $atendente = session()->get('usuario.id_pessoa');
-            $pref_att = session()->get('usuario.sexo');
-            $atendendo = DB::table('atendimentos')->where('id_atendente', $atendente)->where('status_atendimento', '<', 5)->count();
+            $atendente = session()->get('usuario.id_associado');
+            $pref_m = session()->get('usuario.sexo');
+
+            $atendendo = DB::table('atendimentos AS at')
+            ->leftjoin('membro AS m', 'at.id_atendente', 'm.id' )
+            ->leftjoin('associado AS a', 'm.id_associado', 'a.id' )
+            ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
+            ->where('id_associado', $atendente)
+            ->where('status_atendimento', '<', 5)
+            ->count();
+
+            //dd($atendente);
+            
             $assistido = DB::table('atendimentos')->where('status_atendimento', 1)->count();
-            $sala = DB::table('atendente_dia AS atd')->where('data_hora', $now )->where('id_atendente', $atendente )->value('id_sala');
+            $sala = DB::table('atendente_dia AS atd')->where('dh_inicio', $now )->where('id_associado', $atendente )->value('id_sala');
             
           
             if ($atendendo > 0){
@@ -86,7 +96,7 @@ class AtendimentoFraternoController extends Controller
                             ->whereNull('id_atendente_pref')
                             ->orWhere('id_atendente_pref', $atendente)           
                             ->whereNull('pref_tipo_atendente')
-                            ->orWhere('pref_tipo_atendente', $pref_att )
+                            ->orWhere('pref_tipo_atendente', $pref_m )
                             ->orderby('status_atendimento', 'ASC')->orderby('id_prioridade')->orderBy('dh_chegada')
                             ->limit(1)
                             ->update([
@@ -114,7 +124,7 @@ class AtendimentoFraternoController extends Controller
             
             $analisa = DB::table('atendimentos AS at')
                         ->select('at.id AS ida', 'at.observacao', 'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao AS tst', 'tsx.tipo', 'pa.nome', 'p1.dt_nascimento',  't.nm_tca', 't1.nm_tca AS t1', 't2.nm_tca AS t2', 't3.nm_tca AS t3','t4.nm_tca AS t4','t5.nm_tca AS t5','t6.nm_tca AS t6','t7.nm_tca AS t7','t8.nm_tca AS t8','t9.nm_tca AS t9','t10.nm_tca AS t10','t11.nm_tca AS t11','t12.nm_tca AS t12','t13.nm_tca AS t13','t14.nm_tca AS t14','t15.nm_tca AS t15','t16.nm_tca AS t16','t17.nm_tca AS t17','t18.nm_tca AS t18','t19.nm_tca AS t19')
-                        ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id_pessoa', 'enc.')
+                        ->leftJoin('membro AS m', 'at.id_atendente', 'm.id_associado', 'enc.')
                         ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                         ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                         ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
@@ -694,7 +704,7 @@ class AtendimentoFraternoController extends Controller
 
             $assistido = DB::table('atendimentos AS at')
                     ->select('at.id AS ida', 'at.observacao',   'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao AS tst', 'tsx.tipo', 'pa.nome', 'at.status_atendimento', 'p1.dt_nascimento',  't.nm_tca', 't1.nm_tca AS t1', 't2.nm_tca AS t2', 't3.nm_tca AS t3','t4.nm_tca AS t4','t5.nm_tca AS t5','t6.nm_tca AS t6','t7.nm_tca AS t7','t8.nm_tca AS t8','t9.nm_tca AS t9','t10.nm_tca AS t10','t11.nm_tca AS t11','t12.nm_tca AS t12','t13.nm_tca AS t13','t14.nm_tca AS t14','t15.nm_tca AS t15','t16.nm_tca AS t16','t17.nm_tca AS t17','t18.nm_tca AS t18','t19.nm_tca AS t19')
-                    ->leftJoin('atendentes AS att', 'at.id_atendente', 'att.id_pessoa', 'enc.')
+                    ->leftJoin('membro AS m', 'at.id_atendente', 'm.id_associado', 'enc.')
                     ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                     ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')

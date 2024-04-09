@@ -12,19 +12,19 @@
             <div>
                 <form class="form-horizontal mt-4" method="GET" >
                 <div class="row">
-                    <div class="col-2">Grupo
-                        <select class="form-select" id="" name="grupo" type="number">                           
+                {{--<div class="col-2">Grupo
+                       <select class="form-select" id="" name="grupo" type="number">                           
                             <option value=""></option>
                             @foreach ($grupo as $grupos)
                             <option @if(old('grupo')==$grupos->id) {{'selected="selected"'}} @endif value="{{ $grupos->id }}">{{$grupos->nome}}</option>
                             @endforeach               
                         </select>                       
-                    </div>
+                    </div>--}}
                     <div class="col-2">Atendente
                         <select class="form-select" id="" name="atendente" type="number">                           
                             <option value=""></option>
                             @foreach ($atende as $atendes)
-                            <option @if(old('atendente')==$atendes->idp) {{'selected="selected"'}} @endif value="{{ $atendes->idp}}">{{$atendes->nm_4}}</option>
+                            <option @if(old('atendente')==$atendes->ida) {{'selected="selected"'}} @endif value="{{ $atendes->ida}}">{{$atendes->nm_4}}</option>
                             @endforeach               
                         </select>                       
                     </div>
@@ -32,7 +32,7 @@
                         <select class="form-select" id="" name="status" type="number">                           
                             <option value="">Todos</option>
                             @foreach ($situacao as $sit)
-                            <option @if(old('status')==$sit->id) {{'selected="selected"'}} @endif value="{{ $sit->id }}">{{$sit->tipo}}</option>
+                            <option value="{{$sit->ids}}">{{$sit->tipo}}</option>
                             @endforeach               
                         </select>                       
                     </div>
@@ -64,15 +64,18 @@
                         </thead>
                         <tbody style="font-size: 14px; color:#000000; text-align: center;">
                         @foreach($atende as $atendes)
-                        <form class="form-horizontal mt-4" method="POST" >
+                        <form class="form-horizontal mt-4" method="POST">
                             @csrf 
                             <tr>
-                                <td>{{$atendes->idp}}</td>
-                                <td><select class="form-select" id="" name="grupo" type="number">
-                                @foreach ($grupo as $grupos)
-                                <option value="{{ $grupos->id }}">{{$grupos->nome}}</option>
-                                @endforeach               
-                                </select></td>                                                      
+                                <td>{{$atendes->ida}}</td>
+                                <td>
+                                <select class="form-select" id="" name="grupo" type="number">
+                                
+                                    @foreach ($atendes->grup as $results)
+                                    <option value="{{ $results->id_grupo }}">{{$results->gnome}}</option>
+                                    @endforeach               
+                                </select>
+                            </td>                                                      
                                 <td>{{$atendes->nm_4}}</td>                            
                                 <td><select class="form-select" id="" name="sala" type="number">
                                 @foreach ($sala as $salas)
@@ -81,8 +84,8 @@
                                 </select></td>
                                 <td>{{$atendes->tipo}}</td>
                                 <td>                                
-                                <button type="submit" formaction="/incluir-afi-sala/{{$atendes->idp}}/{{$atendes->idg}}" class="btn btn-success btn-sm" style="color:#fff;">Confirmar</button>                           
-                                <!--<a href="/incluir-afi-sala/{{$atendes->idp}}"><input class="btn btn-light btn-sm me-md-2" formaction="/incluir-afi-sala/{{$atendes->idp}}" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="cONFIRMAR"></a>                                                  -->
+                                <button type="submit" formaction="/incluir-afi-sala/{{$atendes->ida}}" class="btn btn-success btn-sm" style="color:#fff;">Confirmar</button>                           
+                                <!--<a href="/incluir-afi-sala/{{$atendes->idat}}"><input class="btn btn-light btn-sm me-md-2" formaction="/incluir-afi-sala/{{$atendes->idat}}" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="cONFIRMAR"></a>                                                  -->
                                 </td>                                
                             </tr>
                             </form>

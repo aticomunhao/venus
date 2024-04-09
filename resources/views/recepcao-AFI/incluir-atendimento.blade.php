@@ -90,7 +90,7 @@
                             <select class="form-select" id="afi_p" name="afi_p" >
                                 <option value=""></option>
                                 @foreach($afi as $afis)
-                                <option value="{{$afis->idatt}}">{{$afis->nm_1}}</option>
+                                <option value="{{$afis->ida}}">{{$afis->nm_1}}</option>
                                 @endforeach
                             </select>
                         </div>

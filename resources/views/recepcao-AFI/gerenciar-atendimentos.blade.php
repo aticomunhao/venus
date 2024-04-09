@@ -70,7 +70,7 @@
                             <td scope="">{{$listas->tipo}}</td>
                             <td scope="">{{date( 'd/m/Y H:i:s', strtotime($listas->dh_chegada))}}</td>
                             <td scope="">{{$listas->prdesc}}</td>
-                            <td scope="" >{{$listas->nm_1}}</td>
+                            <td scope="">{{$listas->nm_1}}</td>
                             <td scope="">{{$listas->nm_2}}</td>                                                        
                             <td scope="">{{$listas->nm_4}}</td>                            
                             <td scope="">{{$listas->nr_sala}}</td>
