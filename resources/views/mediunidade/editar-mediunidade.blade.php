@@ -25,11 +25,11 @@
                             <option value="{{ $pessoa->id }}"> {{ $pessoa->nome_completo }} </option>
                             @endforeach
                         </select>
-                        
+                       
                     </div>
                     <div class="col">
-                        <label for="tipo_status_pessoa" class="form-label">Status</label>
-                        <select class="form-select" aria-label=".form-select-lg example" name="tipo_status_pessoa">
+                        <label for="tipo_status_pessoa" class="form-label ">Status</label>
+                        <select class="form-select status" aria-label=".form-select-lg example" name="tipo_status_pessoa">
                             @foreach ($tipo_status_pessoa as $tipo)
                             <option value="{{ $tipo->id }}" {{ $mediunidade->tipo == $tipo->tipos ? 'selected' : '' }}>{{ $tipo->tipos }}</option>
                     
@@ -39,15 +39,14 @@
 
                     <div class="col">
                         <label for="motivo_status" class="form-label">Motivo status</label>
-                        <select class="form-select" aria-label=".form-select-lg example" name="motivo_status"
-                            id="motivo_status" required="required" >
-                      
+                        <select class="form-select motivo" aria-label=".form-select-lg example" name="motivo_status" id="motivo_status" required="required" disabled>
                             @foreach ($tipo_motivo_status_pessoa as $motivo)
-                            <option value="{{ $motivo->id }}">{{ $motivo->motivo }}</option>
+                                <option value="{{ $motivo->id }}" {{  $motivo->id == $mediunidade->motivo_status ? 'selected': '' }}>{{ $motivo->motivo }}</option>
                             @endforeach
                         </select>
                     </div>
-                </div>
+                    </div>
+                    
 
                 <div class="row mt-3">
                     <div class="col">
@@ -152,11 +151,41 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+
 <script>
     $(document).ready(function() {
         $('.select2').select2({ theme: 'bootstrap-5'});
+
     });
+
+
+   
 </script>
+
+<script>
+  $(document).ready(function() {
+    $('.status').change(function(){
+       
+        let status = $('.status').val()
+    
+
+        if(status == 1){
+            $('.motivo').prop('disabled', true)
+            $('.motivo').prop("selectedIndex", -1);
+        }
+        else{
+            $('.motivo').prop('disabled', false)
+            $('.motivo').prop("selectedIndex", {{ $mediunidade->motivo_status }} - 1)
+            
+        }
+       
+        
+   })
+
+   $('.status').change()
+  })
+</script>
+
 
 <script>
     $(document).ready(function() {

@@ -146,6 +146,7 @@ class MediunidadePessoaController extends Controller
                     'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
                 ]);
             }
+            
         }
 
         return redirect('gerenciar-mediunidades');
