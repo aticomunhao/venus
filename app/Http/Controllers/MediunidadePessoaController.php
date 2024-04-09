@@ -15,16 +15,16 @@ class MediunidadePessoaController extends Controller
 
     public function index(Request $request)
     {
-       $tipos= DB::table('mediunidade_pessoa')
-       ->select('id_pessoa')->groupBy('id_pessoa')->get();
+        $tipos = DB::table('mediunidade_pessoa')
+            ->select('id_pessoa')->groupBy('id_pessoa')->get();
 
-       $array = json_decode(json_encode($tipos), true);
-       
-      
+        $array = json_decode(json_encode($tipos), true);
+
+
         $mediunidade = DB::table('pessoas AS p')
-        ->select('id as idm', 'nome_completo', 'cpf', 'status')
-        ->whereIn('id',$array)
-        ->orderBy('p.nome_completo', 'ASC');
+            ->select('id as idp', 'nome_completo', 'cpf', 'status')
+            ->whereIn('id', $array)
+            ->orderBy('p.nome_completo', 'ASC');
 
         $nome = $request->nome_pesquisa;
         $cpf = $request->cpf_pesquisa;
@@ -73,7 +73,7 @@ class MediunidadePessoaController extends Controller
         $id_pessoa = $request->input('id_pessoa');
         $tipo_ids = $request->input('id_tp_mediunidade');
 
-        // Inserir dados na tabela 'mediunidade_medium'
+        // Inserir dados na tabela 'mediunidade_pessoa'
         foreach ($tipo_ids as $tipo_id) {
             $datas_inicio = $request->input("data_inicio.{$tipo_id}");
 
@@ -95,65 +95,60 @@ class MediunidadePessoaController extends Controller
 
 
     public function edit($id)
-{
+    {
 
-    $id_mediunidade = 1;
-    $mediunidade = DB::table('mediunidade_pessoa AS m')
-        ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-        ->select('p.nome_completo', 'm.id_pessoa','m.id_mediunidade','m.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'm.data_inicio')
-        ->where('m.id', $id)
-        ->first();
-  
-    $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
-    $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-    $pessoas = DB::table('pessoas')->get();
-    $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
+        $id_mediunidade = 1;
+        $mediunidade = DB::table('mediunidade_pessoa AS m')
+            ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
+            ->leftJoin('tipo_status_pessoa as tsp', 'p.status', '=', 'tsp.id')
+            ->select('p.nome_completo', 'm.id_pessoa', 'm.id_mediunidade', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'm.data_inicio', 'tsp.tipo')
+            ->where('m.id_pessoa', $id)
+            ->first();
 
-    return view('mediunidade.editar-mediunidade', compact('id_mediunidade','mediunidade','tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_mediunidade', 'pessoas'));
-}
+        $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
+        $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
+        $pessoas = DB::table('pessoas')->get();
+        $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
+
+        $mediunidadesIds = DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->get();
+
+        $arrayChecked = [];
+
+        foreach ($mediunidadesIds as $ids) {
+            $arrayChecked[] = $ids->id_mediunidade;
+        }
+
+        return view('mediunidade.editar-mediunidade', compact('mediunidadesIds', 'arrayChecked', 'id_mediunidade', 'mediunidade', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_mediunidade', 'pessoas'));
+    }
 
 
 
     public function update(Request $request, string $id)
     {
-        $input = $request->all();
 
-        $dataManifestacao = $input['datas_manifestou'] ?? [];
-        $tiposMediunidade = $input['mediunidades'] ?? [];
 
-        // Limpar todas as datas de manifestação existentes para esse médium
-        DB::table('mediunidade_medium')->where('id_medium', $id)->delete();
+        DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->delete();
 
-        // Iterar sobre os tipos de mediunidades e datas fornecidas
-        foreach ($tiposMediunidade as $tipo) {
-            // Inserir a nova entrada na tabela intermediária
-            DB::table('mediunidade_medium')->insert([
-                'id_medium' => $id,
-                'id_mediunidade' => $tipo,
-                'data_inicio' => isset($dataManifestacao[$tipo]) ? date('Y-m-d', strtotime($dataManifestacao[$tipo])) : null,
-            ]);
+        
+
+        // Obter os dados do formulário
+        $id_pessoa = $request->input('id_pessoa');
+        $tipo_ids = $request->input('id_tp_mediunidade');
+
+        // Inserir dados na tabela 'mediunidade_medium'
+        foreach ($tipo_ids as $tipo_id) {
+            $datas_inicio = $request->input("data_inicio.{$tipo_id}");
+
+            foreach ($datas_inicio as $data_inicio) {
+                DB::table('mediunidade_pessoa')->insert([
+                    'id_pessoa' => $id,
+                    'id_mediunidade' => $tipo_id,
+                    'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
+                ]);
+            }
         }
 
-        // Atualizar os dados do médium na tabela 'medium'
-        $dataToUpdate = [
-            'id_pessoa' => $input['id_pessoa'],
-            'id_funcao' => $input['id_funcao'],
-            'id_setor' => $input['setor'],
-            'id_grupo' => $input['id_grupo'],
-        ];
-        DB::table('medium')->where('id', $id)->update($dataToUpdate);
-
-        // Verificar se a chave 'motivo_status' está presente em $input antes de acessá-la
-        $dataToUpdatePessoas = [
-            'status' => $input['status'] ?? null,
-            'motivo_status' => $input['motivo_status'] ?? null,
-        ];
-
-        DB::table('pessoas')->where('id', $input['id_pessoa'])->update($dataToUpdatePessoas);
-
-        app('flasher')->addSuccess("Alterado com Sucesso");
-
-        return redirect('gerenciar-mediuns');
+        return redirect('gerenciar-mediunidades');
     }
 
 
@@ -161,21 +156,29 @@ class MediunidadePessoaController extends Controller
 
 
     public function show($id)
-{
-    $id_mediunidade = 1;
-    $mediunidade_pessoa = DB::table('mediunidade_pessoa AS m')
-        ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-        ->select('p.nome_completo', 'm.id_pessoa','m.id_mediunidade','m.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'm.data_inicio')
-        ->where('m.id', $id)
-        ->first();
-  
-    $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
-    $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-    $pessoas = DB::table('pessoas')->get();
-    $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
+    {
+        $id_mediunidade = 1;
+        $mediunidade = DB::table('mediunidade_pessoa AS m')
+            ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
+            ->leftJoin('tipo_status_pessoa as tsp', 'p.status', '=', 'tsp.id')
+            ->select('p.nome_completo', 'm.id_pessoa', 'm.id_mediunidade', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'm.data_inicio', 'tsp.tipo')
+            ->where('m.id_pessoa', $id)
+            ->first();
 
-    return view('mediunidade.visualizar-mediunidade', compact('id_mediunidade','tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_mediunidade', 'mediunidade_pessoa', 'pessoas'));
-}
+        $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
+        $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
+        $pessoas = DB::table('pessoas')->get();
+        $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
+
+        $mediunidadesIds = DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->get();
+
+        $arrayChecked = [];
+
+        foreach ($mediunidadesIds as $ids) {
+            $arrayChecked[] = $ids->id_mediunidade;
+        }
+        return view('mediunidade.visualizar-mediunidade', compact('mediunidadesIds', 'arrayChecked', 'id_mediunidade', 'mediunidade', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_mediunidade', 'pessoas'));
+    }
 
 
 
@@ -208,7 +211,4 @@ class MediunidadePessoaController extends Controller
         app('flasher')->addError('Excluído com sucesso.');
         return redirect('/gerenciar-mediunidades');
     }
-       
-       
-       
 }

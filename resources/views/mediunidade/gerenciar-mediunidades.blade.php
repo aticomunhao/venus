@@ -51,18 +51,18 @@
                 <tbody>
                     @foreach ($mediunidade as $mediunidades)
                         <tr>
-                            <td>{{ $mediunidades->idm}}</td>
+                            <td>{{ $mediunidades->idp}}</td>
                             <td>{{ $mediunidades->nome_completo }}</td>
                             <td>{{ $mediunidades->cpf }}</td>
                             <td>{{ $mediunidades->status ? 'Ativo' : 'Inativo' }}</td>
                             <td>
 
-                                <a href="/editar-mediunidade/{{ $mediunidades->idm}}" type="button"
+                                <a href="/editar-mediunidade/{{ $mediunidades->idp}}" type="button"
                                     class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Editar">
                                     <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
                                 </a>
-                                <a href="/visualizar-mediunidade/{{ $mediunidades->idm}}" type="button"
+                                <a href="/visualizar-mediunidade/{{ $mediunidades->idp}}" type="button"
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Visualizar">
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
@@ -70,7 +70,7 @@
                                 </a>
                                 <a href="/deletar-mediunidade" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#confirmacaoDelecao"
-                                    onclick="confirmarExclusao('{{ $mediunidades->idm}}', '{{ $mediunidades->nome_completo }}')"
+                                    onclick="confirmarExclusao('{{ $mediunidades->idp}}', '{{ $mediunidades->nome_completo }}')"
                                     data-tt="tooltip" data-placement="top" title="Deletar">
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </a>
