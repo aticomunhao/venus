@@ -27,8 +27,8 @@
                             <option value=""></option>
                             @foreach ($dia as $dias)
                             <option value="{{$dias->id}}">{{$dias->nome}}</option>
-                            @endforeach               
-                        </select>                       
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col">Assistido
                         <input class="form-control" type="text" id="3" name="assist" value="{{$assistido}}">
@@ -38,14 +38,14 @@
                             <option value="{{$situacao}}"></option>
                             @foreach ($stat as $status)
                             <option value="{{$status->id}}">{{$status->nome}}</option>
-                            @endforeach               
-                        </select>                       
+                            @endforeach
+                        </select>
                     </div>
                         <div class="col"><br/>
                             <input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
                             <a href="/gerenciar-tratamentos"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
                     </form>
-                            <a href="/registrar-falta"><input class="btn btn-danger btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Registrar faltas"></a>
+                    
                         </div>
                 </div>
                 <br/>
@@ -56,14 +56,14 @@
                     <thead style="text-align: center;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             <th class="col">Nr</th>
-                            
+
                             <th class="col">PRIORIDADE</th>
                             <th class="col">ASSISTIDO</th>
                             <th class="col">REPRESENTANTE</th>
                             <th class="col">DIA</th>
                             <th class="col">HORÁRIO</th>
                             <th class="col">TRATAMENTO</th>
-                            <th class="col">GRUPO</th>                                                                          
+                            <th class="col">GRUPO</th>
                             <th class="col">STATUS</th>
                             <th class="col">AÇÕES</th>
                         </tr>
@@ -71,19 +71,19 @@
                     <tbody style="font-size: 14px; color:#000000; text-align: center;">
                         <tr>
                         @foreach($lista as $listas)
-                            <td>{{$listas->idtr}}</td>                            
+                            <td>{{$listas->idtr}}</td>
                             <td>{{$listas->prdesc}}</td>
                             <td>{{$listas->nm_1}}</td>
                             <td>{{$listas->nm_2}}</td>
                             <td>{{$listas->nomed}}</td>
                             <td>{{date ('H:m:s', strtotime($listas->h_inicio))}}</td>
                             <td>{{$listas->sigla}}</td>
-                            <td>{{$listas->nomeg}}</td>                            
+                            <td>{{$listas->nomeg}}</td>
                             <td>{{$listas->tst}}</td>
-                            <td>                               
+                            <td>
                                 <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#presenca{{$listas->idtr}}" data-tt="tooltip" data-placement="top" title="Presença"><i class="bi bi bi-exclamation-triangle" style="font-size: 1rem; color:#000;"></i></button>
                                 <a href="/visualizar-trat/{{$listas->idtr}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Histórico"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/inativar/{{$listas->idtr}}"><button type="button" class="btn btn-outline-danger btn-sm"  data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
+                                <a href="/inativar/{{$listas->idtr}}"><button type="button" class="btn btn-outline-danger btn-sm"  data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>
                             </td>
                             @include('recepcao-integrada/pop-up-presenca')
                         </tr>
@@ -93,7 +93,7 @@
             </div class="d-flex justify-content-center">
             {{$lista->withQueryString()->links()}}
         </div>
-        
+
     </div>
 </div>
 
@@ -114,7 +114,7 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 
 @endsection
 
-@section('footerScript')  
+@section('footerScript')
 
 
 @endsection

@@ -8,21 +8,17 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 
-
-class Faltas implements ShouldQueue
+class LimiteFalta implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    private $info;
+
     /**
      * Create a new job instance.
      */
-
     public function __construct()
     {
-
+        //
     }
 
     /**
@@ -30,7 +26,6 @@ class Faltas implements ShouldQueue
      */
     public function handle(): void
     {
-
         $data_atual = Carbon::yesterday();
 
         $dia_atual = $data_atual->weekday();
@@ -77,9 +72,5 @@ class Faltas implements ShouldQueue
             ]);}
 
         }
-
-        return;
-
-}
-
+    }
 }

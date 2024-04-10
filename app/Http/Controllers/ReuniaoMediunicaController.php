@@ -19,13 +19,13 @@ class ReuniaoMediunicaController extends Controller
 
 
             $reuniao = DB::table('cronograma AS cro')
-                        ->select('cro.id AS idr', 'gr.nome AS nomeg', 'cro.dia AS idd', 'cro.dia', 'cro.id_sala', 'cro.id_tipo_tratamento', 'cro.id_tipo_tratamento', 'cro.h_inicio','td.nome AS nomed', 'cro.h_fim', 'cro.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao as descst', 'tst.descricao AS tstd', 'sa.numero' )
+                        ->select('cro.id AS idr', 'gr.nome AS nomeg', 'cro.dia_semana AS idd', 'cro.id_sala', 'cro.id_tipo_tratamento', 'cro.id_tipo_tratamento', 'cro.h_inicio','td.nome AS nomed', 'cro.h_fim', 'cro.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao as descst', 'tst.descricao AS tstd', 'sa.numero' )
                         ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
                         ->leftjoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
                         ->leftjoin('tipo_status_grupo AS tsg', 'cro.status_reuniao', 'tsg.id')
-                        ->leftJoin('medium AS me', 'gr.id', 'me.id_grupo')
+                        ->leftJoin('membro AS me', 'gr.id', 'me.id_grupo')
                         ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
-                        ->leftJoin('tipo_dia AS td', 'cro.dia', 'td.id');
+                        ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id');
 
 
             $semana = $request->semana == null ? "undefined" : $request->semana  ;
@@ -36,7 +36,7 @@ class ReuniaoMediunicaController extends Controller
 
 
             if ($request->semana != null){
-                $reuniao->where('cro.dia', '=', $request->semana);
+                $reuniao->where('cro.dia_semana', '=', $request->semana);
             }
 
             if ($request->grupo){
@@ -114,7 +114,7 @@ class ReuniaoMediunicaController extends Controller
             $repeat = DB::table('cronograma AS rm')
             ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
             ->leftJoin('salas AS s', 'rm.id_sala', 's.id')
-            ->where('rm.dia', $dia)
+            ->where('rm.dia_semana', $dia)
             ->where('rm.data_fim', null)
             ->where('rm.id_sala', $numero)
             ->where(function ($query) use ($h_inicio, $h_fim) {
@@ -142,11 +142,11 @@ class ReuniaoMediunicaController extends Controller
 
            DB::table('cronograma AS rm')->insert([
                     'id_grupo'=>$request->input('grupo'),
-                    'id_sala'=>$request->input('numero'),
+                    'id_sala'=>$request->input('id_sala'),
                     'h_inicio'=>$request->input('h_inicio'),
                     'h_fim'=>$request->input('h_fim'),
                     'max_atend'=>$request->input('max_atend'),
-                    'dia'=>$request->input('dia'),
+                    'dia_semana'=>$request->input('dia'),
                     'id_tipo_tratamento'=>$request->input('tratamento'),
                     'data_inicio' => $now,
                     'status_reuniao' => 1
@@ -197,7 +197,7 @@ class ReuniaoMediunicaController extends Controller
             $info = DB::table('cronograma as crn')
             ->select('crn.id','gr.nome', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim')
             ->leftJoin('grupo as gr', 'crn.id_grupo', 'gr.id')
-            ->leftJoin('tipo_dia as tpd', 'crn.dia', 'tpd.id')
+            ->leftJoin('tipo_dia as tpd', 'crn.dia_semana', 'tpd.id')
             ->leftJoin('tipo_tratamento as tpt', 'crn.id_tipo_tratamento', 'tpt.id')
             ->leftJoin('salas as sl', 'crn.id_sala', 'sl.id')
             ->where('crn.id', "$id")
@@ -241,7 +241,7 @@ return view ('/reuniao-mediunica/visualizar-reuniao', compact('info','sala', 'gr
             $info = DB::table('cronograma as crn')
             ->select('crn.id','gr.nome', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim')
             ->leftJoin('grupo as gr', 'crn.id_grupo', 'gr.id')
-            ->leftJoin('tipo_dia as tpd', 'crn.dia', 'tpd.id')
+            ->leftJoin('tipo_dia as tpd', 'crn.dia_semana', 'tpd.id')
             ->leftJoin('tipo_tratamento as tpt', 'crn.id_tipo_tratamento', 'tpt.id')
             ->leftJoin('salas as sl', 'crn.id_sala', 'sl.id')
             ->where('crn.id', "$id")
@@ -273,7 +273,7 @@ return view ('/reuniao-mediunica/editar-reuniao', compact('info','sala', 'grupo'
             ->where('rm.id','!=', $id)
             ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
             ->leftJoin('salas AS s', 'rm.id_sala', 's.id')
-            ->where('rm.dia', $dia)
+            ->where('rm.dia_semana', $dia)
             ->where('rm.data_fim', null)
             ->where('rm.id_sala', $numero)
             ->where(function ($query) use ($h_inicio, $h_fim) {
@@ -305,7 +305,7 @@ return view ('/reuniao-mediunica/editar-reuniao', compact('info','sala', 'grupo'
                     'h_inicio'=>$request->input('h_inicio'),
                     'h_fim'=>$request->input('h_fim'),
                     'max_atend'=>$request->input('max_atend'),
-                    'dia'=>$request->input('dia'),
+                    'dia_semana'=>$request->input('dia'),
                     'id_tipo_tratamento'=>$request->input('tratamento'),
                     'data_inicio' => $now
                 ]);

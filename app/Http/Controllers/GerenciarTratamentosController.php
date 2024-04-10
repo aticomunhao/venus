@@ -31,7 +31,7 @@ class GerenciarTratamentosController extends Controller
                     ->leftJoin('tipo_status_tratamento AS tst', 'tr.status', 'tst.id')
                     ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
                     ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-                    ->leftjoin('tipo_dia AS td', 'rm.dia','td.id')
+                    ->leftjoin('tipo_dia AS td', 'rm.dia_semana','td.id')
                     ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
                     ->where('enc.id_tipo_encaminhamento', 2)
                     ->where('enc.id_tipo_tratamento', '<>', 3)
@@ -146,7 +146,7 @@ class GerenciarTratamentosController extends Controller
         return Redirect('/gerenciar-tratamentos');
     }
 
-    
+
 
     public function visualizar($idtr){
 
