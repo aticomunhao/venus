@@ -26,7 +26,11 @@ class AtendimentoFraternoController extends Controller
         $nome = session()->get('usuario.nome');
 
         $now =  Carbon::now()->format('Y-m-d');
-        //dd($atendente);
+
+        $grupo = DB::table('atendente_dia AS ad')
+        ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id' )
+        ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
+        //dd($grupo);
 
         $assistido = DB::table('atendimentos AS at')
                             ->select('at.id AS idat', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido AS idas', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo','pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento')
@@ -47,7 +51,7 @@ class AtendimentoFraternoController extends Controller
 
                     
 
-            return view ('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome'));
+            return view ('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
 
         }
 
@@ -189,12 +193,13 @@ class AtendimentoFraternoController extends Controller
 
              
             //dd($analisa);
-                       
+            $now = Carbon::now()->format('Y-m-d H:m:s'); 
+            
             $atendente = session()->get('usuario.id_associado');
 
             $nome = DB::table('atendimentos AS at')->select('at.id_atendente')->where('at.id', $idat);
 
-            $grupo = DB::table('atendente_dia AS ad')->select('ad.id_grupo')->where('ad.id_associado', $atendente);
+            $grupo = DB::table('atendente_dia AS ad')->select('ad.id_grupo')->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente);
 
             $atendendo = DB::table('atendimentos AS at')->where('at.id', $idat)->value('id_atendente');
         //dd($atendendo);
@@ -781,11 +786,13 @@ class AtendimentoFraternoController extends Controller
                   $teste->entrevistas=$entre; 
             }
 
-            $now = Carbon::now()->format('Y-m-d H:m:s');
+            $now = Carbon::now()->format('Y-m-d');
 
-            $grupo = DB::table('atendente_dia AS ad')->select('ad.id_grupo')->where('dh_inicio', $now)->where('ad.id_associado', $atendente)->get();
+            $grupo = DB::table('atendente_dia AS ad')
+            ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id' )
+            ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
 
-           dd($grupo);
+          // dd($grupo);
            
 
            return view ('/atendimento-assistido/meus-atendimentos', compact('assistido', 'atendente', 'nome', 'grupo'));
