@@ -69,7 +69,11 @@ class AtendimentoFraternoController extends Controller
             //dd($atendente);
             
             $assistido = DB::table('atendimentos')->where('status_atendimento', 1)->count();
-            $sala = DB::table('atendente_dia AS atd')->where('dh_inicio', $now )->where('id_associado', $atendente )->value('id_sala');
+
+            $sala = DB::table('atendente_dia AS atd')
+            ->where('dh_inicio', $now )
+            ->where('id_associado', $atendente )
+            ->value('id_sala');
             
           
             if ($atendendo > 0){

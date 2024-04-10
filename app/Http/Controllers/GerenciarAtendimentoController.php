@@ -27,24 +27,27 @@ class GerenciarAtendimentoController extends Controller
 
 
         $atende = DB::select("select
-                    p.id as idatt,
-                    p.nome_completo as nm_1,
-                    p.ddd,
-                    p.celular,
-                    a.id_associado
-                    from membro a
-                    left join pessoas p on (a.id_associado = p.id)
+                    m.id_associado
+                    from membro m
+                    left join associado ad on (m.id_associado = ad.id) 
+                    left join pessoas p on (ad.id_pessoa = p.id)
+                    where m.id_funcao = 6
                     ");
 
+
         $lista = DB::table('atendimentos AS at')
-                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS idp', 'p3.nome_completo as nm_3', 'at.id_atendente AS idat', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento', 's.numero AS nr_sala' )
-                    
-                    ->leftJoin('associado AS ad', 'at.id_atendente', 'ad.id')                                        
-                    ->leftJoin('pessoas AS p', 'ad.id_pessoa', 'p.id')                                        
+        ->distinct()
+                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo as nm_2', 'ps2.nome_completo as nm_4','at.id_atendente_pref AS idp', 'ps1.nome_completo as nm_3', 'at.id_atendente AS idat', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento', 's.numero AS nr_sala' )
                     ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                    ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')                    
-                    ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-                    ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
+                    ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+
+                    ->leftJoin('membro AS m', 'at.id_atendente', 'm.id_associado')
+                    ->leftJoin('associado AS ad1', 'm.id_associado', 'ad1.id')
+                    ->leftJoin('pessoas AS ps1', 'ad1.id_pessoa', 'ps1.id')
+                    ->leftJoin('membro AS m1', 'at.id_atendente_pref', 'm1.id_associado')
+                    ->leftJoin('associado AS ad2', 'm1.id_associado', 'ad2.id')
+                    ->leftJoin('pessoas AS ps2', 'ad1.id_pessoa', 'ps2.id')  
+
                     ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftjoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
                     ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
@@ -71,7 +74,7 @@ class GerenciarAtendimentoController extends Controller
         }
 
 
-        $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy( 'at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC')->paginate(50);
+        $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy( 'at.id_prioridade', 'ASC') ->orderby('at.dh_chegada', 'ASC', 'at.id','ASC')->paginate(50);
 
 //dd($lista);
 
@@ -116,13 +119,16 @@ class GerenciarAtendimentoController extends Controller
         ");
 
         $afi = DB::select("select
+        distinct(m.id_associado),
         p.id as idp,
         p.nome_completo as nm_1,
         p.ddd,
         p.celular,
-        a.id_associado as ida
-        from associado a
+        m.id_associado as ida
+        from membro m
+        left join associado a on (m.id_associado = a.id)
         left join pessoas p on (a.id_pessoa = p.id)
+        order by p.nome_completo
         ");
 
         $sexo = DB::select("select
