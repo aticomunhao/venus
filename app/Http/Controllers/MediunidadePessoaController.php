@@ -81,7 +81,7 @@ class MediunidadePessoaController extends Controller
                 DB::table('mediunidade_pessoa')->insert([
                     'id_pessoa' => $id_pessoa,
                     'id_mediunidade' => $tipo_id,
-                    'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
+                      'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
                 ]);
             }
         }
@@ -122,23 +122,19 @@ class MediunidadePessoaController extends Controller
     }
 
 
-
     public function update(Request $request, string $id)
     {
-
-
+        // Excluir registros anteriores na tabela 'mediunidade_pessoa' para o mesmo id_pessoa
         DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->delete();
-
-        
-
+    
         // Obter os dados do formulário
         $id_pessoa = $request->input('id_pessoa');
         $tipo_ids = $request->input('id_tp_mediunidade');
-
+    
         // Inserir dados na tabela 'mediunidade_medium'
         foreach ($tipo_ids as $tipo_id) {
             $datas_inicio = $request->input("data_inicio.{$tipo_id}");
-
+    
             foreach ($datas_inicio as $data_inicio) {
                 DB::table('mediunidade_pessoa')->insert([
                     'id_pessoa' => $id,
@@ -146,13 +142,26 @@ class MediunidadePessoaController extends Controller
                     'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
                 ]);
             }
-            
         }
-
+    
+        // Atualizar o status e motivo na tabela 'pessoas'
+        $status = $request->input('tipo_status_pessoa');
+        $motivo = $request->input('motivo_status');
+        DB::table('pessoas')->where('id', $id)->update(['status' => $status, 'motivo_status' => $motivo]);
+    
+        $ida = session()->get('usuario.id_pessoa');
+        // Gravar no histórico
+        $data=Carbon::today();
+        DB::table('historico_venus')->insert([
+            'id_usuario' => $ida,
+            'data' => $data,
+            'fato' => 38,
+            'pessoa' => $id
+        ]);
+    
         return redirect('gerenciar-mediunidades');
     }
-
-
+    
 
 
 
@@ -162,7 +171,7 @@ class MediunidadePessoaController extends Controller
         $mediunidade = DB::table('mediunidade_pessoa AS m')
             ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_status_pessoa as tsp', 'p.status', '=', 'tsp.id')
-            ->select('p.nome_completo', 'm.id_pessoa', 'm.id_mediunidade', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'm.data_inicio', 'tsp.tipo')
+            ->select('p.nome_completo', 'm.id_pessoa', 'm.id_mediunidade', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'tsp.tipo')
             ->where('m.id_pessoa', $id)
             ->first();
 
@@ -172,6 +181,7 @@ class MediunidadePessoaController extends Controller
         $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
 
         $mediunidadesIds = DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->get();
+     
 
         $arrayChecked = [];
 
@@ -192,7 +202,7 @@ class MediunidadePessoaController extends Controller
 
             'id_usuario' => session()->get('pessoa.id_pessoa'),
             'data' => $data,
-            'fato' => 0,
+            'fato' => 1,
             'obs' => $id
 
         ]);

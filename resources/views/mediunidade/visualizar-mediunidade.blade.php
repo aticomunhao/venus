@@ -12,35 +12,34 @@
         </div>
 
         <div class="card-body">
-            <form class="form-horizontal mt-2" method="post" action="/atualizar-mediunidade/" id="mediumForm">
+            <form class="form-horizontal mt-2" method="post" action="/atualizar-mediunidade/{{ $mediunidade->id_pessoa}}/">
                 @csrf
 
                 <div class="row mt-3">
                     <div class="col-5">
                         <label for="id_pessoa" class="form-label">Nome</label>
                         <select name="id_pessoa" class="form-control" disabled>
+                            <option value="{{ $mediunidade->idm }}"> {{ $mediunidade->nome_completo }} </option>
                             @foreach ($pessoas as $pessoa)
                             <option value="{{ $pessoa->id }}"> {{ $pessoa->nome_completo }} </option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col">
-                        <label for="tipo_status_pessoa" class="form-label">Status</label>
-                        <select class="form-control" aria-label=".form-select-lg example" name="tipo_status_pessoa"
-                            disabled>
+                        <label for="tipo_status_pessoa" class="form-label ">Status</label>
+                        <select class="form-control status" aria-label=".form-select-lg example" name="tipo_status_pessoa" disabled>
                             @foreach ($tipo_status_pessoa as $tipo)
-                            <option value="{{ $tipo->id }}">{{ $tipo->tipos }}</option>
+                            <option value="{{ $tipo->id }}" {{ $mediunidade->tipo == $tipo->tipos ? 'selected' : '' }}>{{ $tipo->tipos }}</option>
+                    
                             @endforeach
                         </select>
                     </div>
-
                     <div class="col">
                         <label for="motivo_status" class="form-label">Motivo status</label>
-                        <select class="form-control" aria-label=".form-select-lg example" name="motivo_status"
-                            id="motivo_status" required="required" disabled>
-                            <option value=""></option>
+                        <select class="form-control motivo" aria-label=".form-select-lg example" name="motivo_status" id="motivo_status" required="required" disabled>
+                            <option value=""></option> 
                             @foreach ($tipo_motivo_status_pessoa as $motivo)
-                            <option value="{{ $motivo->id }}">{{ $motivo->motivo }}</option>
+                                <option value="{{ $motivo->id }}" {{  $motivo->id == $mediunidade->motivo_status ? 'selected': '' }}>{{ $motivo->motivo }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -84,13 +83,12 @@
                                                     
                                                         @if ($dhi->id_mediunidade == $tipo->id)
                                                         <?php $i = 1; ?>
-                                                                {{ $dhi->data_inicio }}
+                                                        {{ $dhi->data_inicio ? date('d/m/Y', strtotime($dhi->data_inicio)) : '--' }}
                                                           @endif
                                                           @endforeach
                                                                     @if($i == 0)
-                                                            --
+                                                                    --
                                                         @endif
-
                                                        
                                                     </div>
                                                 </td>
