@@ -25,7 +25,7 @@
                         <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{date( 'd/m/Y' , strtotime ($now))}}" type="text" name="data" id="" disabled>
                     </div>
                     <div class="col-3">Grupo
-                        <input class="form-control" style="text-align:left; font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="" name="nome" id="" type="text" disabled>
+                        <input class="form-control" style="text-align:left; font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{$grupo}}" name="nome" id="" type="text" disabled>
                     </div>
 
                     <div class="col-2">Código Atendente

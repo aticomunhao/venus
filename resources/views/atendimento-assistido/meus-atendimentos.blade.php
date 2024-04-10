@@ -22,7 +22,7 @@
                     <fieldset class="border rounded border-secondary p-4">
                     <div class="row">
                         <div class="col-3">Grupo do atendente
-                            <input class="form-control" style="text-align:left; font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="" name="nome" id="" type="text" disabled>
+                            <input class="form-control" style="text-align:left; font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{$grupo}}" name="nome" id="" type="text" disabled>
                         </div>
                     
                         <div class="col-2">Código Atendente                    
