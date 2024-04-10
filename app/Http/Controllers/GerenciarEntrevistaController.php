@@ -222,7 +222,8 @@ public function criar($id)
 {
 
 
-    $pessoas = DB::select('SELECT id, nome_completo FROM pessoas');
+    $pessoas = DB::table('associado')->select('associado.id', 'pessoas.nome_completo')->leftJoin('pessoas', 'associado.id_pessoa', 'pessoas.id')->get();
+    
     $entrevistas = DB::table('entrevistas AS entre')
         ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
         ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
@@ -325,6 +326,7 @@ public function show($id)
         $entrevistador=DB::table('pessoas')->get();
         $encaminhamento = DB::table('encaminhamento')->find($id);
         $pessoas = DB::table('pessoas')->where('id', '=', $entrevistas->id_entrevistador)->first();
+        $associado = DB::table('associado')->where('id', '=', $entrevistas->id_entrevistador)->first();
         $salas = DB::table('salas')
         ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
         ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
@@ -332,7 +334,7 @@ public function show($id)
 
 
 
-    return view('entrevistas.editar-entrevista', compact('entrevistador','entrevistas', 'encaminhamento', 'pessoas', 'salas'));
+    return view('entrevistas.editar-entrevista', compact('associado','entrevistador','entrevistas', 'encaminhamento', 'pessoas', 'salas'));
 }
 
 

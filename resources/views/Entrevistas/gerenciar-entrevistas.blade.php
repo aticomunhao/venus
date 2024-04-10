@@ -45,8 +45,6 @@
                             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                                 <th class="col">Nr</th>
                                 <th class="col">NOME</th>
-                                <th class="col">DATA </th>
-                                <th class="col">HORA </th>
                                 <th class="col">TIPO ENTREVISTA</th>
                                 <th class="col">ENTREVISTADOR</th>
                                 <th class="col">SALA</th>
@@ -59,10 +57,6 @@
                                 <tr>
                                     <td>{{ $informacao->ide }}</td>{{-- Traz o ID do encaminhamento --}}
                                     <td>{{ $informacao->nome_pessoa }}</td>{{-- Traz o nome do encaminhado --}}
-                                    <td>{{ !is_null($informacao->data) ? date('d-m-Y', strtotime($informacao->data)) : '--' }}{{-- Valida a data e transforma para o padrao brasileiro --}}
-                                    </td>
-                                    <td>{{ !is_null($informacao->hora) ? date('G:i', strtotime($informacao->hora)) : '--' }}{{-- Valida a hora e transforma parar o forrmato 24h --}}
-                                    </td>
                                     <td>{{ $informacao->entrevista_sigla }}</td>
                                     <td>{{ $informacao->nome_entrevistador }}</td>{{-- Quando existente, traz o nome do entrevistador --}}
                                     <td>{{ $informacao->local }}</td>{{-- Sala que foi agendada a entrevista --}}
