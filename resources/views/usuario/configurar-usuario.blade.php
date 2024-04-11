@@ -96,36 +96,67 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">                       
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped mb-0">
-                                  @foreach($resultDeposito as $resultDepositos)
-                                    <tr>
-                                        <td>
-                                            {{$resultDepositos->nome}}
-                                        </td>
-                                        <td>
-                                            <input id="{{$resultDepositos->nome}}" type="checkbox" name="{{$resultDepositos->nome}}" value="{{$resultDepositos->id}}" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped mb-0">
+                                    @foreach($resultDeposito as $resultDepositos)
+                                        <tr>
+                                            <td>
+                                                {{$resultDepositos->nome}}
+                                            </td>
+                                            <td>
+                                                <input id="{{$resultDepositos->nome}}" type="checkbox" name="{{$resultDepositos->nome}}" value="{{$resultDepositos->id}}" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </table>
+                                </div>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
-                
-            </div>
-            
-        </div>
-        <br>
-        <div class="row">
-                    <div class="col">
-                        <button type="submit" class="btn btn-success btn-block">Cadastrar</button>
+            <div class="card m-1">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            SETOR
+                        </div>
                     </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">                       
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped mb-0">
+                                    @foreach($resultSetor as $resultSetors)
+                                        <tr>
+                                            <td>
+                                                {{$resultSetors->nome}}
+                                            </td>
+                                            <td>
+                                                <input id="{{$resultSetors->nome}}" type="checkbox" name="{{$resultSetors->nome}}" value="{{$resultSetors->id}}" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+        </div>            
+    </div>
+        <br>
+        <div class="row">                    
                     <div class="col">
                         <a href="/gerenciar-usuario">
                             <input class="btn btn-danger btn-block" type="button" value="Cancelar">
                         </a>
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>
                     </div>
                 </div>
                 </form>

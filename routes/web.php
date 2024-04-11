@@ -67,6 +67,7 @@ Route::any('/login/home', [LoginController::class, 'valida']);
     Route::get('/usuario/alterar/{id}', [UsuarioController::class, 'edit']);
     Route::put('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
     Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
+    
 
 //});
 

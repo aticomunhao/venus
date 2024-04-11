@@ -4,63 +4,61 @@
 
 @section('content')
 
-    <div class="row">
-        <div class="col-lg-6">
+<br>
+<div class="container">
+    <div class="row align-items-start">
+        <div class="col">       
             <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Usuário  <i class="ti-user"></i></h4>
-                    <hr>
-                    <div class="card-body">
-                        <p>Nome:<strong> {{$result[0]->nome_completo}}</strong></p>
-                        <p>Cpf: <strong> {{$result[0]->cpf}}</strong> </p>
-                        <p>Identidade:<strong>  {{$result[0]->idt}}</strong> </p>
-                        <p>Data de Nascimento:<strong>  {{$result[0]->dt_nascimento}}</strong> </p>
-                        <p>Email: <strong> {{$result[0]->email}}</strong> </p>
-                    </div>
-
-                <form class="form-horizontal mt-4" method="POST" action="/usuario-atualizar/{{$resultUsuario[0]->id}}">
-                 @method('PUT')
-                 @csrf
-                <input type="hidden" name="idPessoa" value="{{$result[0]->id}}">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped mb-0">
-                            <tr>
-                                <td>
-                                    Ativo
-                                </td>
-                                <td>
-
-                                    <input type="checkbox" id="ativo" name="ativo" switch="bool" {{$resultUsuario[0]->ativo ? 'checked' : ''}} />
-                                    <label for="ativo" data-on-label="Sim" data-off-label="Não"></label>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    Bloqueado
-                                </td>
-                                <td>
-                                    <input type="checkbox" id="bloqueado" name="bloqueado" switch="bool" {{$resultUsuario[0]->bloqueado ? 'checked' : ''}}/>
-                                    <label for="bloqueado" data-on-label="Sim" data-off-label="Não"></label>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="card" >
-                <div class="card-body" >
+                <div class="card-header">
                     <div class="row">
-                        <div class="col-sm">
-                            <h4 class="card-title">Selecionar Perfis <i class="ti-key" ></i></h4>
+                        <div class="col">
+                            <h4 class="fs-5 fw-bold">USUÁRIO   <i class="bi bi-people-fill"></i></h4>
                         </div>
                     </div>
-
-                    <hr>
-                    <div>
+                </div>
+                <div class="card-body">                                       
+                    <p>Nome:<strong> {{$result[0]->nome_completo}}</strong></p>
+                    <p>Cpf: <strong> {{$result[0]->cpf}}</strong> </p>
+                    <p>Identidade:<strong>  {{$result[0]->idt}}</strong> </p>
+                    <p>Data de Nascimento:<strong>  {{$result[0]->dt_nascimento}}</strong> </p>
+                    <p>Email: <strong> {{$result[0]->email}}</strong> </p>            
+                    <form class="form-horizontal mt-4" method="POST" action="/usuario-atualizar/{{$resultUsuario[0]->id}}">
+                    @method('PUT')
+                    @csrf
+                    <input type="hidden" name="idPessoa" value="{{$result[0]->id}}">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped mb-0">
+                        <tr>
+                            <td>
+                                Ativo
+                            </td>
+                            <td>
+                                <input type="checkbox" id="ativo" name="ativo" switch="bool" {{$resultUsuario[0]->ativo ? 'checked' : ''}} />
+                                <label for="ativo" data-on-label="Sim" data-off-label="Não"></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Bloqueado
+                            </td>
+                            <td>
+                                <input type="checkbox" id="bloqueado" name="bloqueado" switch="bool" {{$resultUsuario[0]->bloqueado ? 'checked' : ''}}/>
+                                <label for="bloqueado" data-on-label="Sim" data-off-label="Não"></label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                </br>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="col">
+                            <div class="row">                            
+                                <h4 class="fs-5 fw-bold">PERFIS  <i class="bi bi-key-fill" ></i></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped mb-0">
                                 @foreach($resultPerfil as $resultPerfils)
@@ -75,11 +73,20 @@
                                 </tr>
                                 @endforeach
                             </table>
-                        </div><br><br>
-
-                                <h4 class="card-title">Configurar Estoque  <i class="ti-unlock" ></i> </h4>
-                                <hr>
-                            <div class="table-responsive">
+                        </div>
+                    </div>
+                </div>
+                </br>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="col">
+                            <div class="row">                            
+                                <h4 class="fs-5 fw-bold">DEPÓSITOS  <i class="bi bi-safe-fill" ></i></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
                             <table class="table table-bordered table-striped mb-0">
                                 @foreach($resultDeposito as $resultDepositos)
                                 <tr>
@@ -87,27 +94,62 @@
                                         {{$resultDepositos->nome}}
                                     </td>
                                     <td>
-                                        <input type="checkbox" id="{{$resultDepositos->nome}}" name="{{$resultDepositos->nome}}" value="{{$resultDepositos->id}}" {{in_array($resultDepositos->id,$resultDepositoUsuarioArray) ? 'checked' : ''}}>
+
+                                        <input type="checkbox" id="{{$resultDepositos->nome}}" name="{{$resultDepositos->nome}}" value="{{$resultDepositos->id}}"  {{in_array($resultDepositos->id,$resultDepositoUsuarioArray) ? 'checked' : ''}}/>
                                     </td>
                                 </tr>
                                 @endforeach
                             </table>
-                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="col">         
+            <div class="card">
+                <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            <a href="/gerenciar-usuario"><input class="btn btn-danger btn-block" type="button" value="Cancelar">
-                            </a>
-                        </div>
-                        <div class="col">
-                            <button type="submit" class="btn btn-success btn-block">Confirmar</button>
+                            <h4 class="fs-5 fw-bold">SETORES  <i class="bi bi-intersect"></i></h4>
                         </div>
                     </div>
-                </form>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped mb-0">
+                            @foreach($resultSetor as $resultSetor)
+                            <tr>
+                                <td>
+                                    {{$resultSetor->nome}}
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="{{$resultSetor->nome}}" name="{{$resultSetor->nome}}" value="{{$resultSetor->id}}" {{in_array($resultSetor->id,$resultSetorUsuarioArray) ? 'checked' : ''}}>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</br>
+    <div class="row">
+        <div class="col">
+            <a href="/gerenciar-usuario"><input class="btn btn-danger btn-block" type="button" value="Cancelar">
+            </a>
+        </div>
+        <div class="col">
+            <button type="submit" class="btn btn-primary btn-block">Confirmar</button>
+        </div>
+    </div>
+    </form>
+</div>
+</br>
+
+
+
+
 @endsection
 
 @section('footerScript')
