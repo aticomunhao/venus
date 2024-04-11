@@ -38,7 +38,6 @@ class GerenciarEntrevistaController extends Controller
         return $resultado;
     }
 
- 
 
 
     public function index(Request $request)
@@ -222,7 +221,8 @@ public function criar($id)
 {
 
 
-    $pessoas = DB::table('associado')->select('associado.id', 'pessoas.nome_completo')->leftJoin('pessoas', 'associado.id_pessoa', 'pessoas.id')->get();
+    $associado = DB::table('membro')->select('membro.id',)
+    ->leftJoin('associado', 'membro.id_associado', 'associado.id')->get();
     
     $entrevistas = DB::table('entrevistas AS entre')
         ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
@@ -240,11 +240,17 @@ public function criar($id)
 
         $salas = DB::table('salas')->get();
         $encaminhamento = DB::table('encaminhamento')->find($id);
+        $pessoas= DB::table('pessoas')->get();
+        $membros = DB::table('membro')
+        ->join('associado', 'membro.id_associado', '=', 'associado.id')
+        ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
+        ->select('membro.*', 'pessoas.nome_completo')
+        ->get();
+    
 
 
 
-
-        return view('entrevistas.agendar-entrevistador', compact('entrevistas', 'encaminhamento', 'pessoas', 'salas'));
+        return view('entrevistas.agendar-entrevistador', compact('membros','entrevistas', 'encaminhamento', 'pessoas', 'salas'));
     }
 
 
@@ -290,13 +296,16 @@ public function show($id)
 
         $salas = DB::table('salas')->get();
         $encaminhamento = DB::table('encaminhamento')->find($id);
-        $pessoas = DB::table('pessoas')->where('id', '=', $entrevistas->id_entrevistador)->first();
+        $membros = DB::table('membro')
+        ->join('associado', 'membro.id_associado', '=', 'associado.id')
+        ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
+        ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
+        ->get();
+      
 
+ 
 
-
-
-
-    return view('entrevistas.visualizar-entrevista', compact('entrevistas', 'encaminhamento', 'pessoas', 'salas'));
+    return view('entrevistas.visualizar-entrevista', compact('membros','entrevistas', 'encaminhamento',  'salas'));
 }
 
 
@@ -383,52 +392,50 @@ public function update(Request $request, $id)
 }
 
 
-public function finalizar($id)
-{
-    // Atualizar o status da entrevista para "Entrevistado"
-    DB::table('entrevistas')
-        ->where('id_encaminhamento', $id)
-        ->update(['status' => 'Entrevistado']);
-
-    // Buscar informações sobre a entrevista
-    $entrevista = DB::table('entrevistas')->where('id_encaminhamento', $id)->first();
-
-    // Verificar se a entrevista existe e se é do tipo "NUTRES"
-    if ($entrevista && $entrevista->id_tipo_entrevista == 'NUTRES') {
-        // Atualizar o status na tabela de encaminhamento para "inativado"
-        DB::table('encaminhamentos')
-            ->where('id_atendimento', $entrevista->id_atendimento)
-            ->update(['status' => 3]); // Status 3 para "inativado"
-
-        // Criar um novo encaminhamento com o mesmo nome
-        $novoEncaminhamento = [
-            'id_atendimento' => $entrevista->id_atendimento,
-            'tipo_encaminhamento' => 3, // Tipo 3 para "finalizado"
-            // Outros campos necessários para o novo encaminhamento
-            // Adicione conforme necessário
-        ];
-
-        // Insira o novo encaminhamento no banco de dados
-        DB::table('encaminhamento')->insert($novoEncaminhamento);
-    }
-
-    // Redirecionar de volta para a página de gerenciamento
-    return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
-}
-
-
-
-
 // public function finalizar($id)
 // {
-
-
+//     // Atualizar o status da entrevista para "Entrevistado"
 //     DB::table('entrevistas')
 //         ->where('id_encaminhamento', $id)
 //         ->update(['status' => 'Entrevistado']);
 
+//     // Buscar informações sobre a entrevista
+//     $entrevista = DB::table('entrevistas')->where('id_encaminhamento', $id)->first();
+
+//     // Verificar se a entrevista existe e se é do tipo "NUTRES"
+//     if ($entrevista && $entrevista->id_tipo_entrevista == 'NUTRES') {
+//         // Atualizar o status na tabela de encaminhamento para "inativado"
+//         DB::table('encaminhamentos')
+//             ->where('id_atendimento', $entrevista->id_atendimento)
+//             ->update(['status' => 3]); // Status 3 para "inativado"
+
+//         // Criar um novo encaminhamento com o mesmo nome
+//         $novoEncaminhamento = [
+//             'id_atendimento' => $entrevista->id_atendimento,
+//             'tipo_encaminhamento' => 3, // Tipo 3 para "finalizado"
+//             // Outros campos necessários para o novo encaminhamento
+//             // Adicione conforme necessário
+//         ];
+
+//         // Insira o novo encaminhamento no banco de dados
+//         DB::table('encaminhamento')->insert($novoEncaminhamento);
+//     }
+
+//     // Redirecionar de volta para a página de gerenciamento
 //     return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
 // }
+
+
+public function finalizar($id)
+{
+
+
+    DB::table('entrevistas')
+        ->where('id_encaminhamento', $id)
+        ->update(['status' => 'Entrevistado']);
+
+    return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
+}
 
 public function inativar($id){
 
