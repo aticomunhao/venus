@@ -18,6 +18,7 @@ class SalaController extends Controller
 {
     public function index(Request $request)
 {
+
     $sala = DB::table('salas AS s')
         ->select(
             's.id AS ids',
