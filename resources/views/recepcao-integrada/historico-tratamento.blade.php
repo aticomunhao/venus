@@ -8,7 +8,7 @@
 <br>
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-12">            
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
@@ -16,8 +16,8 @@
                             HISTÓRICO DO TRATAMENTO
                         </div>
                     </div>
-                </div>                
-                <div class="card-body">                    
+                </div>
+                <div class="card-body">
                     <fieldset class="border rounded border-secondary p-4">
                     <div class="form-group row">
                         <div class="col">
@@ -36,90 +36,92 @@
                     </fieldset>
                     <br>
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Atendimento Fraterno</legend>
-                    @foreach($result as $results) 
+                    @foreach($result as $results)
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
-                                <td class="col">NR</td>    
+                                <td class="col">NR</td>
                                 <td class="col-3">REPRESENTANTE</td>
                                 <td class="col-1">PARENTESCO</td>
                                 <td class="col-3">ATENDENTE</td>
                                 <td class="col-1">DT/H INÍCIO</td>
                                 <td class="col-1">DT/H FIM</td>
-                                <td class="col-2">STATUS</td>                                
+                                <td class="col-2">STATUS</td>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr style="text-align:center;font-size:13px">       
+                            <tr style="text-align:center;font-size:13px">
                                 <td>{{$results->ida}}</td>
                                 <td>{{$results->nm_2}}</td>
                                 <td>{{$results->nome}}</td>
                                 <td>{{$results->nm_4}}</td>
                                 <td>{{$results->dh_inicio}}</td>
                                 <td>{{$results->dh_fim}}</td>
-                                <td>{{$results->statat}}</td>                                
-                            </tr>                                          
+                                <td>{{$results->statat}}</td>
+                            </tr>
                         </tbody>
-                    </table>       
+                    </table>
                     @endforeach
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Tratamento</legend>
-                    @foreach($result as $results) 
+                    @foreach($result as $results)
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
-                                <td class="col">NR</td>    
+                                <td class="col">NR</td>
                                 <td class="col">DATA</td>
                                 <td class="col">TRATAMENTO</td>
                                 <td class="col">GRUPO</td>
                                 <td class="col">HORÁRIO</td>
                                 <td class="col">STATUS</td>
-                                <td class="col">MOTIVO</td>                                
+                                <td class="col">MOTIVO</td>
                             </tr>
 
                         </thead>
                         <tbody>
-                            <tr style="text-align:center;font-size:13px">       
+                            <tr style="text-align:center;font-size:13px">
                                 <td>{{$results->ide}}</td>
-                                <td>{{date ('d-m-Y', strtotime($results->dh_enc))}}</td>                          
+                                <td>{{date ('d-m-Y', strtotime($results->dh_enc))}}</td>
                                 <td>{{$results->desctrat}}</td>
                                 <td>{{$results->nomeg}}</td>
                                 <td>{{$results->rm_inicio}}</td>
                                 <td>{{$results->tsenc}}</td>
                                 <td>{{$results->tpmotivo}}</td>
-                            </tr>                                          
+                            </tr>
                         </tbody>
-                    </table>       
+                    </table>
                     @endforeach
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de presenças</legend>
                     Nr de faltas: {{$faul}}
-                    @foreach($list as $lists) 
+                    @foreach($list as $lists)
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
-                                <td class="col">NR</td>    
-                                <td class="col">DATA</td>
+                                <td class="col">NR</td>
+                               <td class="col">DATA</td>
+                               <td class="col">GRUPO</td>
                                 <td class="col">PRESENÇA</td>
                             </tr>
 
                         </thead>
                         <tbody>
-                            <tr style="text-align:center;font-size:13px">       
+                            <tr style="text-align:center;font-size:13px">
                                 <td>{{$lists->idp}}</td>
-                                <td>{{$lists->data}}</td>
+                                 <td>{{$lists->data}}</td>
+                                 <td>{{$lists->nome}}</td>
                                 @if ($lists->presenca == 1)
                                 <td style="background-color:#90EE90;">Sim</td>
                                 @elseif ($lists->presenca == 0)
-                                <td style="background-color:#FA8072;">Não</td>   
+                                <td style="background-color:#FA8072;">Não</td>
                                 @endif
-                            </tr>                                          
+                            </tr>
                         </tbody>
                     </table>
-                    <br/>         
+                    <br/>
                     @endforeach
                     <div class="row">
-                        <div class="col">    
-                            <a class="btn btn-danger" href="/gerenciar-tratamentos" style="text-align:right;" role="button">Fechar</a>                            
-                        </div>                        
+                        <div class="col">
+                            <a class="btn btn-danger" href="/gerenciar-tratamentos" style="text-align:right;" role="button">Fechar</a>
+                        </div>
                     </div>
                 </div>
             </div>

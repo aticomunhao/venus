@@ -173,7 +173,7 @@ Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, '
 
 
 
-  
+
 
 // Grupos
 Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
@@ -360,3 +360,4 @@ Route::any('/excluir-dirigentes/{id}', [GerenciarDirigentesController::class, 'd
 
 
 
+    Route::any('/job', [GerenciarTratamentosController::class, 'job']);

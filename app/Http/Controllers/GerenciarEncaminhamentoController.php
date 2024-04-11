@@ -383,12 +383,7 @@ class GerenciarEncaminhamentoController extends Controller
 
         ]);
 
-        DB::table('dias_tratamento AS dt')
-                            ->insert([
-                            'id_tratamento' => $id_trata,
-                            'data' => $prox
-
-        ]);
+        
 
         DB::table('encaminhamento AS enc')
                                     ->where('enc.id', $ide)
