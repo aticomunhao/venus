@@ -33,12 +33,14 @@ class LoginController extends Controller
                         p.nome_completo,
                         u.hash_senha,
                         string_agg(distinct u_p.id_tp_perfil::text, ',') perfis,
-                        string_agg(distinct u_d.id_deposito::text, ',') depositos
+                        string_agg(distinct u_d.id_deposito::text, ',') depositos,
+                        string_agg(distinct u_s.id_setor::text, ',') setor
                         from usuario u
                         left join pessoas p on u.id_pessoa = p.id
                         left join associado a on a.id_pessoa = p.id
                         left join usuario_perfil u_p on u.id = u_p.id_usuario
                         left join usuario_deposito u_d on u.id = u_d.id_usuario
+                        left join usuario_setor u_s on u.id = u_s.id_usuario
                         where u.ativo is true and p.cpf = '$cpf'
                         group by u.id, p.id, a.id
                         ");
@@ -60,7 +62,8 @@ class LoginController extends Controller
                              'cpf' => $result[0]->cpf,
                              'sexo' =>$result[0]->sexo,
                              'perfis' => $result[0]->perfis,
-                             'depositos' => $result[0]->depositos
+                             'depositos' => $result[0]->depositos,
+                             'setor' => $result[0]->setor
                     ]);
 
             
@@ -90,11 +93,13 @@ class LoginController extends Controller
         p.nome_completo,
         u.hash_senha,
         string_agg(distinct u_p.id_tp_perfil::text, ',') perfis,
-        string_agg(distinct u_d.id_deposito::text, ',') depositos
+        string_agg(distinct u_d.id_deposito::text, ',') depositos,
+        string_agg(distinct u_s.id_setor::text, ',') setor
         from usuario u
         left join pessoas p on u.id_pessoa = p.id
         left join usuario_perfil u_p on u.id = u_p.id_usuario
         left join usuario_deposito u_d on u.id = u_d.id_usuario
+        left join usuario_setor u_s on u.id = u_s.id_usuario
         where u.ativo is true and p.cpf = '$cpf'
         group by u.id, p.id
         ");
@@ -109,7 +114,8 @@ class LoginController extends Controller
                 'cpf' => $result[0]->cpf,
                 'sexo' => $result[0]->sexo,
                 'perfis' => $result[0]->perfis,
-                'depositos' => $result[0]->depositos
+                'depositos' => $result[0]->depositos,
+                'setor' => $result[0]->setor
             ]);
             return view('/login/home');
         }else{

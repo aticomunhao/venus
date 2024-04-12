@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\DiasCronograma;
+use App\Jobs\FaLtas;
+use App\Jobs\LimiteFalta;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -171,18 +174,21 @@ class GerenciarTratamentosController extends Controller
                         ->get();
 
         $list = DB::table('tratamento AS tr')
-                        ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.data', 'dt.presenca' )
+                        ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.presenca', 'dc.data', 'gp.nome')
                         ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id' )
                         ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-                        ->leftJoin('dias_tratamento AS dt', 'tr.id', 'dt.id_tratamento')
+                        ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
+                        ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
+                        ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
+                        ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
                         ->where('tr.id', $idtr)
                         ->get();
 
         $faul = DB::table('tratamento AS tr')
-                        ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.data', 'dt.presenca')
+                        ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp',  'dt.presenca')
                         ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id' )
                         ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-                        ->leftJoin('dias_tratamento AS dt', 'tr.id', 'dt.id_tratamento')
+                        ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
                         ->where('tr.id', $idtr)
                         ->where('dt.presenca', 0)
                         ->count();
@@ -190,6 +196,13 @@ class GerenciarTratamentosController extends Controller
 
         return view('/recepcao-integrada/historico-tratamento', compact('result', 'list', 'faul'));
 
+    }
+
+    public function job() {
+        //Faltas::dispatch();
+        //LimiteFalta::dispatch();
+        //DiasCronograma::dispatch();
+        return redirect()->back();
     }
 
 

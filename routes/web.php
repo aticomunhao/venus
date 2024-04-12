@@ -67,6 +67,7 @@ Route::any('/login/home', [LoginController::class, 'valida']);
     Route::get('/usuario/alterar/{id}', [UsuarioController::class, 'edit']);
     Route::put('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
     Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
+    
 
 //});
 
@@ -164,7 +165,7 @@ Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, '
 
 
 
-  
+
 
 // Grupos
 Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
@@ -351,3 +352,4 @@ Route::any('/excluir-dirigentes/{id}', [GerenciarDirigentesController::class, 'd
 
 
 
+    Route::any('/job', [GerenciarTratamentosController::class, 'job']);

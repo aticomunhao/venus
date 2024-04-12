@@ -8,6 +8,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 class DiasCronograma implements ShouldQueue
 {
@@ -26,6 +28,17 @@ class DiasCronograma implements ShouldQueue
      */
     public function handle(): void
     {
-        //
+        $dia_hoje = Carbon::today();
+        $dia_semana_hoje = $dia_hoje->weekday();
+
+
+        $reunioes_hoje = DB::table('cronograma')->where('dia_semana', $dia_semana_hoje)->where('status_reuniao', '<>', 2)->get();
+
+        foreach($reunioes_hoje as $reuniao){
+            DB::table('dias_cronograma')->insert([
+                'data' => $dia_hoje,
+                'id_cronograma' => $reuniao->id,
+            ]);
+        }
     }
 }

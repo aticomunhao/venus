@@ -2,9 +2,11 @@
 
 namespace App\Console;
 
+use App\Jobs\DiasCronograma;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\Faltas;
+use App\Jobs\LimiteFalta;
 use Illuminate\Support\Facades\DB;
 
 
@@ -21,6 +23,8 @@ class Kernel extends ConsoleKernel
     {
 
           $schedule->job( new Faltas())->dailyAt('01:00');
+          $schedule->job( new LimiteFalta())->dailyAt('01:01');
+          $schedule->job( new DiasCronograma())->dailyAt('01:00');
     }
 
     /**

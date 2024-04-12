@@ -44,8 +44,9 @@
                         <div class="col"><br/>
                             <input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
                             <a href="/gerenciar-tratamentos"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
+                            <a href="/job"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Job"></a>
                     </form>
-                    
+
                         </div>
                 </div>
                 <br/>
