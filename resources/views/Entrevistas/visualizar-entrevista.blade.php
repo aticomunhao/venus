@@ -27,7 +27,7 @@
                     <div class="col">
                         <label for="id_entrevistador" class="form-label">Entrevistador</label>
                         <select class="form-control" id="id_entrevistador" name="id_entrevistador" disabled>
-                            <option value="{{ $entrevistas->id_entrevistador }}">{{ $entrevistas->id_entrevistador }}</option>
+                            <option value="{{ $membros->id }}">{{ $membros->nome_entrevistador }}</option>
                        
                         </select>
                     </div>

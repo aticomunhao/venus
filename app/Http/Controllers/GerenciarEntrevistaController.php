@@ -47,34 +47,41 @@ class GerenciarEntrevistaController extends Controller
         ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
         ->leftJoin('salas AS s', 'entrevistas.id_sala', 's.id')
         ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-        ->leftJoin('pessoas as pessoa_entrevistas', 'entrevistas.id_entrevistador', '=', 'pessoa_entrevistas.id')
         ->leftJoin('pessoas as pessoa_representante', 'atendimentos.id_representante', '=', 'pessoa_representante.id')
         ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
         ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
         ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
+        ->leftJoin('membro', 'entrevistas.id_entrevistador', '=', 'membro.id')
+        ->leftJoin('associado', 'membro.id_associado', '=', 'associado.id')
+        ->leftJoin('pessoas as pessoa_entrevistador', 'associado.id_pessoa', '=', 'pessoa_entrevistador.id')
         ->where('encaminhamento.id_tipo_encaminhamento', 1)
         ->where('encaminhamento.status_encaminhamento', '<>', 4)
         ->whereNotIn('tipo_entrevista.id', [8])
         ->select(
             'entrevistas.id_entrevistador',
-        DB::raw("CASE
-                    WHEN entrevistas.status IS NULL THEN 'Aguardando agendamento'
-                    ELSE entrevistas.status
-                END as status"),
-        'entrevistas.data',
-        'entrevistas.hora',
-        'encaminhamento.id as ide',
-        'tipo_encaminhamento.descricao',
-        'encaminhamento.id_tipo_encaminhamento',
-        'pessoa_pessoa.nome_completo as nome_pessoa',
-        'pessoa_entrevistas.nome_completo as nome_entrevistador',
-        'pessoa_representante.nome_completo as nome_representante',
-        'atendimentos.id_representante as id_representante',
-        'tipo_entrevista.descricao as entrevista_descricao',
-        'tipo_entrevista.sigla as entrevista_sigla',
-        'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
-        's.nome as local'
-    );
+            DB::raw("CASE
+                        WHEN entrevistas.status IS NULL THEN 'Aguardando agendamento'
+                        ELSE entrevistas.status
+                    END as status"),
+            'entrevistas.data',
+            'entrevistas.hora',
+            'encaminhamento.id as ide',
+            'tipo_encaminhamento.descricao',
+            'encaminhamento.id_tipo_encaminhamento',
+            'pessoa_pessoa.nome_completo as nome_pessoa',
+            'pessoa_entrevistador.nome_completo as nome_entrevistador',
+            'pessoa_representante.nome_completo as nome_representante',
+            'atendimentos.id_representante as id_representante',
+            'tipo_entrevista.descricao as entrevista_descricao',
+            'tipo_entrevista.sigla as entrevista_sigla',
+            'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
+            's.nome as local',
+            'pessoa_entrevistador.nome_completo as nome_entrevistador'
+          
+        
+      
+        );
+  
 $i = 0;
 $pesquisaNome = null;
 $pesquisaStatus = 0;
@@ -162,7 +169,7 @@ return view('entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquis
             $info = DB::table('encaminhamento')
                 ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
                 ->leftJoin('pessoas AS pessoa_atendente', 'atendimentos.id_usuario', '=', 'pessoa_atendente.id')
-                ->leftJoin('pessoas as pessoa_representante', 'atendimentos.id_representante', '=', 'pessoa_representante.id')
+
                 ->leftJoin('pessoas AS pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
                 ->leftJoin('tipo_tratamento', 'encaminhamento.id_tipo_tratamento', '=', 'tipo_tratamento.id')
                 ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
@@ -170,8 +177,8 @@ return view('entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquis
                     'atendimentos.id_assistido AS id_pessoa',
                     'pessoa_pessoa.nome_completo AS nome_pessoa',
                     'encaminhamento.id_tipo_tratamento',
-                    'pessoa_representante.nome_completo as nome_representante',
-                    'atendimentos.id_representante as id_representante',
+                 
+                   
                     'tipo_tratamento.descricao AS tratamento_descricao',
                     'tipo_tratamento.sigla AS tratamento_sigla',
                     'tipo_entrevista.descricao AS entrevista_descricao',
@@ -300,7 +307,9 @@ public function show($id)
         ->join('associado', 'membro.id_associado', '=', 'associado.id')
         ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
         ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
-        ->get();
+        ->where('membro.id' , $entrevistas->id_entrevistador)
+        ->first();
+     
       
 
  
@@ -333,17 +342,23 @@ public function show($id)
 
 
         $entrevistador=DB::table('pessoas')->get();
+        $pessoas=DB::table('pessoas')->get();
         $encaminhamento = DB::table('encaminhamento')->find($id);
-        $pessoas = DB::table('pessoas')->where('id', '=', $entrevistas->id_entrevistador)->first();
-        $associado = DB::table('associado')->where('id', '=', $entrevistas->id_entrevistador)->first();
         $salas = DB::table('salas')
         ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
         ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
         ->get();
+        $membros = DB::table('membro')
+        ->join('associado', 'membro.id_associado', '=', 'associado.id')
+        ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
+        ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
+        ->where('membro.id' , $entrevistas->id_entrevistador)
+        ->first();
+     
 
 
 
-    return view('entrevistas.editar-entrevista', compact('associado','entrevistador','entrevistas', 'encaminhamento', 'pessoas', 'salas'));
+    return view('entrevistas.editar-entrevista', compact('membros','entrevistador','entrevistas', 'encaminhamento', 'pessoas', 'salas'));
 }
 
 

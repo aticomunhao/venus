@@ -26,6 +26,16 @@
                 <div class="row mb-5">
                     <div class="col">
                         <label for="id_entrevistador" class="form-label">Entrevistador</label>
+                        <select class="form-control" id="id_entrevistador" name="id_entrevistador" disabled>
+                            <option value="{{ $membros->id }}">{{ $membros->nome_entrevistador }}</option>
+                       
+                        </select>
+                    </div>
+                </div>
+
+                {{-- <div class="row mb-5">
+                    <div class="col">
+                        <label for="id_entrevistador" class="form-label">Entrevistador</label>
                         <select class="form-select" id="id_entrevistador" name="id_entrevistador" {{ is_null($pessoas) ? 'disabled' : ""}}>
 
                             <option value={{ !is_null($pessoas) ? $pessoas->id : ""}}>{{!is_null($pessoas) ? $pessoas->nome_completo : ""  }}</option>
@@ -34,7 +44,7 @@
                             @endforeach
                         </select>
                     </div>
-                </div>
+                </div> --}}
 
                  <div class="row mb-5">
                     <div class="col">
