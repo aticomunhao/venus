@@ -16,41 +16,55 @@
 
                 <div class="row mb-5">
                     <div class="col">
-                        <label for="id_encaminhamento" class="form-label">Nome</label>
+                        <label for="id_encaminhamento" class="form-label">Nome assistido</label>
                         <select class="form-control" id="id_encaminhamento" name="id_encaminhamento" disabled>
                             <option value="{{ $encaminhamento->id }}">{{ $entrevistas->nome_completo }}</option>
                         </select>
                     </div>
-                </div>
-
+                </div>    
                 <div class="row mb-5">
                     <div class="col">
                         <label for="id_entrevistador" class="form-label">Entrevistador</label>
                         <select class="form-control" id="id_entrevistador" name="id_entrevistador" disabled>
-                            <option value="{{ $membros->id }}">{{ $membros->nome_entrevistador }}</option>
-                       
+                            @if (!is_null($membros))
+                                <option value="">{{ $membros->nome_entrevistador }}</option>
+                                <option value="{{ $membros->id }}">{{ $membros->nome_entrevistador }}</option>
+                            @else
+                                <option value=""></option>
+                            @endif
                         </select>
                     </div>
                 </div>
-                
-                
-                <div class="row mb-5">
-                    <div class="col">
-                        <label for="id_sala" class="form-label">Sala</label>
-                        <select class="form-control" id="id_sala" name="id_sala" disabled>
-                            <option >{{ $entrevistas->nome }}</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <label for="numero" class="form-label">Número</label>
-                        <input type="text" class="form-control" id="numero" name="numero" value="{{ $entrevistas ? $entrevistas->numero : '' }}" readonly disabled>
-                    </div>
-                    <div class="col">
-                        <label for="localizacao" class="form-label">Localização</label>
-                        <input type="text" class="form-control" id="localizacao" name="localizacao" value="{{ $entrevistas ? $entrevistas->local : '' }}" readonly disabled>
+                <div class="form-group">
+                    <div id="accordion">
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                      Sala
+                                </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <label for="numero" class="form-label">Número </label>
+                                            <input type="text" class="form-control" id="numero" name="numero" value="{{ $entrevistas ? $entrevistas->numero : '' }}" readonly disabled>
+                                        </div>
+                                        <div class="col">
+                                            <label for="nome" class="form-label">Nome </label>
+                                            <input type="text" class="form-control" id="nome" name="nome" value="{{ $entrevistas ? $entrevistas->nome : '' }}" readonly disabled>
+                                        </div>
+                                        <div class="col">
+                                            <label for="localizacao" class="form-label">Localização</label>
+                                            <input type="text" class="form-control" id="localizacao" name="localizacao" value="{{ $entrevistas ? $entrevistas->local : '' }}" readonly disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
+                <br>
                 <div class="row mb-3">
                     <div class="col">
                         <label for="data" class="form-label">Data</label>
@@ -61,6 +75,8 @@
                         <input type="time" class="form-control" id="hora" name="hora" value="{{ $entrevistas->hora }}" disabled>
                     </div>
                 </div>
+                
+                <br>
                 <br>
 
                 <div class="row mt-4 justify-content-center">

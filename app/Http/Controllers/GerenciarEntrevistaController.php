@@ -43,97 +43,91 @@ class GerenciarEntrevistaController extends Controller
     public function index(Request $request)
     {
         $informacoes = DB::table('encaminhamento')
-        ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
-        ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
-        ->leftJoin('salas AS s', 'entrevistas.id_sala', 's.id')
-        ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-        ->leftJoin('pessoas as pessoa_representante', 'atendimentos.id_representante', '=', 'pessoa_representante.id')
-        ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
-        ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
-        ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
-        ->leftJoin('membro', 'entrevistas.id_entrevistador', '=', 'membro.id')
-        ->leftJoin('associado', 'membro.id_associado', '=', 'associado.id')
-        ->leftJoin('pessoas as pessoa_entrevistador', 'associado.id_pessoa', '=', 'pessoa_entrevistador.id')
-        ->where('encaminhamento.id_tipo_encaminhamento', 1)
-        ->where('encaminhamento.status_encaminhamento', '<>', 4)
-        ->whereNotIn('tipo_entrevista.id', [8])
-        ->select(
-            'entrevistas.id_entrevistador',
-            DB::raw("CASE
+            ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
+            ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
+            ->leftJoin('salas AS s', 'entrevistas.id_sala', 's.id')
+            ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
+            ->leftJoin('pessoas as pessoa_representante', 'atendimentos.id_representante', '=', 'pessoa_representante.id')
+            ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
+            ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
+            ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', '=', 'tipo_encaminhamento.id')
+            ->leftJoin('membro', 'entrevistas.id_entrevistador', '=', 'membro.id')
+            ->leftJoin('associado', 'membro.id_associado', '=', 'associado.id')
+            ->leftJoin('pessoas as pessoa_entrevistador', 'associado.id_pessoa', '=', 'pessoa_entrevistador.id')
+            ->where('encaminhamento.id_tipo_encaminhamento', 1)
+            ->where('encaminhamento.status_encaminhamento', '<>', 4)
+            ->whereNotIn('tipo_entrevista.id', [8])
+            ->select(
+                'entrevistas.id_entrevistador',
+                DB::raw("CASE
                         WHEN entrevistas.status IS NULL THEN 'Aguardando agendamento'
                         ELSE entrevistas.status
                     END as status"),
-            'entrevistas.data',
-            'entrevistas.hora',
-            'encaminhamento.id as ide',
-            'tipo_encaminhamento.descricao',
-            'encaminhamento.id_tipo_encaminhamento',
-            'pessoa_pessoa.nome_completo as nome_pessoa',
-            'pessoa_entrevistador.nome_completo as nome_entrevistador',
-            'pessoa_representante.nome_completo as nome_representante',
-            'atendimentos.id_representante as id_representante',
-            'tipo_entrevista.descricao as entrevista_descricao',
-            'tipo_entrevista.sigla as entrevista_sigla',
-            'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
-            's.nome as local',
-            'pessoa_entrevistador.nome_completo as nome_entrevistador'
-          
-        
-      
-        );
-  
-$i = 0;
-$pesquisaNome = null;
-$pesquisaStatus = 0;
-$pesquisaValue = 0;
-    if($request->nome_pesquisa){
+                'entrevistas.data',
+                'entrevistas.hora',
+                'encaminhamento.id as ide',
+                'tipo_encaminhamento.descricao',
+                'encaminhamento.id_tipo_encaminhamento',
+                'pessoa_pessoa.nome_completo as nome_pessoa',
+                'pessoa_entrevistador.nome_completo as nome_entrevistador',
+                'pessoa_representante.nome_completo as nome_representante',
+                'atendimentos.id_representante as id_representante',
+                'tipo_entrevista.descricao as entrevista_descricao',
+                'tipo_entrevista.sigla as entrevista_sigla',
+                'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
+                's.nome as local',
+                's.numero',
+                'pessoa_entrevistador.nome_completo as nome_entrevistador'
 
-        $informacoes = $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome_pesquisa%");
-        $pesquisaNome = $request->nome_pesquisa;
-    }
-    if($request->status != 1){
 
-        if($request->status == 2){
-            $informacoes->where('entrevistas.status', "ilike", "Agendado");
-            $pesquisaValue = 2;
+
+            );
+
+        $i = 0;
+        $pesquisaNome = null;
+        $pesquisaStatus = 0;
+        $pesquisaValue = 0;
+        if ($request->nome_pesquisa) {
+
+            $informacoes = $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome_pesquisa%");
+            $pesquisaNome = $request->nome_pesquisa;
+        }
+        if ($request->status != 1) {
+
+            if ($request->status == 2) {
+                $informacoes->where('entrevistas.status', "ilike", "Agendado");
+                $pesquisaValue = 2;
+            } elseif ($request->status == 3) {
+                $informacoes->where('entrevistas.status', "ilike", "Entrevistado");
+                $pesquisaValue = 3;
+            } elseif ($request->status == 4) {
+                $informacoes->where('entrevistas.status', "ilike", "Aguardando entrevistador");
+                $pesquisaValue = 4;
+            }
+        }
+
+        $informacoes = $informacoes->orderBy('status', 'asc')->orderBy('pessoa_pessoa.nome_completo')->get();
+
+        if ($request->status == 1) {
+            $info = [];
+            foreach ($informacoes as $dia) {
+                $info[] = $dia;
+            }
+            foreach ($info as $check) {
+                if ($check->status != "Aguardando agendamento") {
+                    unset($info[$i]);
+                }
+                $i = $i + 1;
+            }
+            $informacoes = $info;
+            $pesquisaStatus = "Aguardando agendamento";
+            $pesquisaValue = 1;
         }
 
 
-    elseif($request->status == 3){
-        $informacoes->where('entrevistas.status', "ilike", "Entrevistado");
-    $pesquisaValue = 3;
-}
-
-elseif($request->status == 4){
-    $informacoes->where('entrevistas.status', "ilike", "Aguardando entrevistador");
-$pesquisaValue = 4;
-}
 
 
-    }
-
-    $informacoes = $informacoes->orderBy('status', 'asc')->orderBy('pessoa_pessoa.nome_completo')->get();
-
-    if($request->status == 1){
-        $info = [];
-        foreach ($informacoes as $dia) {
-            $info[] = $dia;
-        }
-foreach($info as $check){
-    if($check->status != "Aguardando agendamento"){
-        unset($info[$i]);
-    }
-$i = $i +1;
-}
-$informacoes = $info;
-$pesquisaStatus = "Aguardando agendamento";
-$pesquisaValue = 1;
-}
-
-
-
-
-return view('entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue'));
+        return view('entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue'));
     }
 
 
@@ -148,13 +142,13 @@ return view('entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquis
         $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
         $entrevista = DB::table('entrevistas')->where('id', $id)->first();
         $salas = DB::table('salas')
-        ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
-        ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
-        ->get();
+            ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
+            ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
+            ->get();
 
 
 
-        if(request()->isMethod('post')) {
+        if (request()->isMethod('post')) {
 
             $entrevistadorId = request()->input('entrevistador');
             DB::table('entrevistas')->where('id', $id)->update(['id_entrevistador' => $entrevistadorId]);
@@ -177,8 +171,8 @@ return view('entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquis
                     'atendimentos.id_assistido AS id_pessoa',
                     'pessoa_pessoa.nome_completo AS nome_pessoa',
                     'encaminhamento.id_tipo_tratamento',
-                 
-                   
+
+
                     'tipo_tratamento.descricao AS tratamento_descricao',
                     'tipo_tratamento.sigla AS tratamento_sigla',
                     'tipo_entrevista.descricao AS entrevista_descricao',
@@ -194,70 +188,84 @@ return view('entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquis
         }
 
 
-        return view('entrevistas/criar-entrevista', compact('salas','entrevista','encaminhamento', 'informacoes', 'pessoas', 'tipo_tratamento', 'tipo_entrevista'));
+        return view('entrevistas/criar-entrevista', compact('salas', 'entrevista', 'encaminhamento', 'informacoes', 'pessoas', 'tipo_tratamento', 'tipo_entrevista'));
     }
 
 
 
 
 
-public function store(Request $request,$id)
-{
+    public function store(Request $request, $id)
+    {
 
-    $request->validate([
-        'id_sala' => 'required',
-        'data' => 'required|date',
-        'hora' => 'required',
-    ]);
-
-
-    DB::table('entrevistas')->insert([
-        'id_encaminhamento' => $id,
-        'id_sala' => $request->id_sala,
-        'data' => $request->data,
-        'hora' => $request->hora,
-        'status' => 'Aguardando entrevistador',
-    ]);
+        $request->validate([
+            'id_sala' => 'required',
+            'data' => 'required|date',
+            'hora' => 'required',
+        ]);
 
 
+        DB::table('entrevistas')->insert([
+            'id_encaminhamento' => $id,
+            'id_sala' => $request->id_sala,
+            'data' => $request->data,
+            'hora' => $request->hora,
+            'status' => 'Aguardando entrevistador',
+        ]);
 
-    return redirect()->route('gerenciamento')->with('success', 'Entrevista criada com sucesso!');
-}
-
-public function criar($id)
-{
 
 
-    $associado = DB::table('membro')->select('membro.id',)
-    ->leftJoin('associado', 'membro.id_associado', 'associado.id')->get();
-    
-    $entrevistas = DB::table('entrevistas AS entre')
-        ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
-        ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-        ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
-        ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
-        ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-        ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local','enc.id','entre.id','entre.id_entrevistador','entre.data','entre.hora')
-        ->where('entre.id_encaminhamento', $id)
-        ->first();
+        return redirect()->route('gerenciamento')->with('success', 'Entrevista criada com sucesso!');
+    }
+
+    public function criar($id)
+    {
+
+
+        $associado = DB::table('membro')->select('membro.id',)
+            ->leftJoin('associado', 'membro.id_associado', 'associado.id')->get();
+
+        $entrevistas = DB::table('entrevistas AS entre')
+
+            ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
+            ->leftJoin('pessoas as pessoa_entrevistador', 'entre.id_entrevistador', '=', 'pessoa_entrevistador.id')
+            ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
+            ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+            ->leftJoin('pessoas AS pessoa_assitido', 'atd.id_assistido', 'pessoa_assitido.id')
+            ->select(
+                'pessoa_assitido.nome_completo',
+                's.nome',
+                's.numero',
+                'tpl.nome as local',
+                'enc.id',
+                'entre.id',
+                'entre.id_entrevistador',
+                'entre.data',
+                'entre.hora',
+                'pessoa_entrevistador.nome_completo as nome_completo_pessoa_entrevistador'
+            )
+            ->where('entre.id_encaminhamento', $id)
+            ->first();
+
+
 
         if (!$entrevistas) {
-
         }
 
         $salas = DB::table('salas')->get();
         $encaminhamento = DB::table('encaminhamento')->find($id);
-        $pessoas= DB::table('pessoas')->get();
+        $pessoas = DB::table('pessoas')->get();
         $membros = DB::table('membro')
-        ->join('associado', 'membro.id_associado', '=', 'associado.id')
-        ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
-        ->select('membro.*', 'pessoas.nome_completo')
-        ->get();
-    
+            ->join('associado', 'membro.id_associado', '=', 'associado.id')
+            ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
+            ->select('membro.*', 'pessoas.nome_completo')
+            ->get();
 
 
 
-        return view('entrevistas.agendar-entrevistador', compact('membros','entrevistas', 'encaminhamento', 'pessoas', 'salas'));
+
+        return view('entrevistas.agendar-entrevistador', compact('membros', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
     }
 
 
@@ -266,7 +274,7 @@ public function criar($id)
     {
 
         DB::table('entrevistas')->where('id_encaminhamento', $id)->update([
-            'id_entrevistador' =>$request->input('id_entrevistador'),
+            'id_entrevistador' => $request->input('id_entrevistador'),
             'status' => 'Agendado',
 
         ]);
@@ -283,39 +291,38 @@ public function criar($id)
 
 
 
-  
 
-public function show($id)
-{
-    $entrevistas = DB::table('entrevistas AS entre')
-        ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
-        ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-        ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
-        ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
-        ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-        ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local','enc.id','entre.id','entre.id_entrevistador','entre.data','entre.hora',)
-        ->where('entre.id_encaminhamento', $id)
-        ->first();
+
+    public function show($id)
+    {
+        $entrevistas = DB::table('entrevistas AS entre')
+            ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
+            ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
+            ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+            ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
+            ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
+            ->where('entre.id_encaminhamento', $id)
+            ->first();
 
         if (!$entrevistas) {
-
         }
 
         $salas = DB::table('salas')->get();
         $encaminhamento = DB::table('encaminhamento')->find($id);
         $membros = DB::table('membro')
-        ->join('associado', 'membro.id_associado', '=', 'associado.id')
-        ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
-        ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
-        ->where('membro.id' , $entrevistas->id_entrevistador)
-        ->first();
-     
-      
+            ->join('associado', 'membro.id_associado', '=', 'associado.id')
+            ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
+            ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
+            ->where('membro.id', $entrevistas->id_entrevistador)
+            ->first();
 
- 
 
-    return view('entrevistas.visualizar-entrevista', compact('membros','entrevistas', 'encaminhamento',  'salas'));
-}
+
+
+
+        return view('entrevistas.visualizar-entrevista', compact('membros', 'entrevistas', 'encaminhamento',  'salas'));
+    }
 
 
 
@@ -325,163 +332,120 @@ public function show($id)
     {
 
         $entrevistas = DB::table('entrevistas AS entre')
-        ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
-        ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-        ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
-        ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
-        ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-        ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local','enc.id','entre.id','entre.id_entrevistador','entre.data','entre.hora')
-        ->where('entre.id_encaminhamento', $id)
-        ->first();
+            ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
+            ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
+            ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+            ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
+            ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora')
+            ->where('entre.id_encaminhamento', $id)
+            ->first();
 
 
         if (!$entrevistas) {
-
         }
-
-
-
-        $entrevistador=DB::table('pessoas')->get();
-        $pessoas=DB::table('pessoas')->get();
+        $entrevistador = DB::table('pessoas')->get();
+        $pessoas = DB::table('pessoas')->get();
         $encaminhamento = DB::table('encaminhamento')->find($id);
         $salas = DB::table('salas')
-        ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
-        ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
-        ->get();
-        $membros = DB::table('membro')
-        ->join('associado', 'membro.id_associado', '=', 'associado.id')
-        ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
-        ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
-        ->where('membro.id' , $entrevistas->id_entrevistador)
-        ->first();
-     
+            ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
+            ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
+            ->get();
+            $membros = DB::table('membro')
+            ->join('associado', 'membro.id_associado', '=', 'associado.id')
+            ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
+            ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
+            ->where('membro.id' , $entrevistas->id_entrevistador)
+            ->first();
+         
+    
+          
 
 
 
-    return view('entrevistas.editar-entrevista', compact('membros','entrevistador','entrevistas', 'encaminhamento', 'pessoas', 'salas'));
-}
+        return view('entrevistas.editar-entrevista', compact('membros', 'entrevistador', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
+    }
 
 
 
 
 
-public function update(Request $request, $id)
-{
-
-    $entrevista = DB::table('entrevistas AS entre')
-        ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
-        ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-        ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
-        ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
-        ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-        ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local','enc.id','entre.id','entre.id_entrevistador','entre.data','entre.hora')
-        ->where('entre.id_encaminhamento', $id)
-        ->first();
-
+    public function update(Request $request, $id)
+    {
+        $entrevista = DB::table('entrevistas AS entre')
+            ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
+            ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
+            ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+            ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
+            ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora')
+            ->where('entre.id_encaminhamento', $id)
+            ->first();
 
 
-    if (!$entrevista) {
+        if (!$entrevista) {
+            app('flasher')->addError("Entrevista não encontrada");
+            return redirect('gerenciar-entrevistas');
+        }
 
-        app('flasher')->addError("Entrevista não encontrada");
+        DB::table('entrevistas')
+            ->where('id_encaminhamento', $id)
+            ->update([
+                'id_entrevistador' => $request->input('id_entrevistador'),
+                'data' => $request->input('data'),
+                'hora' => $request->input('hora'),
+                'id_sala' => $request->input('numero_sala'),
+            ]);
+
+        app('flasher')->addSuccess("Entrevista atualizada com sucesso");
         return redirect('gerenciar-entrevistas');
     }
 
-    DB::table('entrevistas')
-    ->where('id_encaminhamento', $id)
-    ->update([
-        'id_entrevistador' => $request->input('id_entrevistador'),
-        'data' => $request->input('data'),
-        'hora' => $request->input('hora'),
-        'id_sala' => $request->id_sala,
-        'id_grupo' => $request->input('id_grupo'),
-        'id_sala' => $request->input('id_sala'),
-    ]);
 
 
 
 
-    app('flasher')->addSuccess("Entrevista alterada com sucesso");
+    public function finalizar($id)
+    {
 
 
-    return redirect('gerenciar-entrevistas');
-}
+        DB::table('entrevistas')
+            ->where('id_encaminhamento', $id)
+            ->update(['status' => 'Entrevistado']);
+
+        return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
+    }
+
+    public function inativar($id)
+    {
 
 
-// public function finalizar($id)
-// {
-//     // Atualizar o status da entrevista para "Entrevistado"
-//     DB::table('entrevistas')
-//         ->where('id_encaminhamento', $id)
-//         ->update(['status' => 'Entrevistado']);
+        $data = date("Y-m-d H:i:s");
 
-//     // Buscar informações sobre a entrevista
-//     $entrevista = DB::table('entrevistas')->where('id_encaminhamento', $id)->first();
+        DB::table('historico_venus')->insert([
 
-//     // Verificar se a entrevista existe e se é do tipo "NUTRES"
-//     if ($entrevista && $entrevista->id_tipo_entrevista == 'NUTRES') {
-//         // Atualizar o status na tabela de encaminhamento para "inativado"
-//         DB::table('encaminhamentos')
-//             ->where('id_atendimento', $entrevista->id_atendimento)
-//             ->update(['status' => 3]); // Status 3 para "inativado"
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'fato' => 37,
+            'obs' => $id
 
-//         // Criar um novo encaminhamento com o mesmo nome
-//         $novoEncaminhamento = [
-//             'id_atendimento' => $entrevista->id_atendimento,
-//             'tipo_encaminhamento' => 3, // Tipo 3 para "finalizado"
-//             // Outros campos necessários para o novo encaminhamento
-//             // Adicione conforme necessário
-//         ];
+        ]);
 
-//         // Insira o novo encaminhamento no banco de dados
-//         DB::table('encaminhamento')->insert($novoEncaminhamento);
-//     }
-
-//     // Redirecionar de volta para a página de gerenciamento
-//     return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
-// }
+        $entrevistas = DB::table('entrevistas')->where('id_encaminhamento', '=', $id)->first();
 
 
-public function finalizar($id)
-{
+        if (!is_null($entrevistas) and $entrevistas->status == 'Agendado') {
+
+            DB::table('entrevistas')
+                ->where('id_encaminhamento', '=', $id)
+                ->delete();
+        }
+
+        DB::table('encaminhamento')
+            ->where('id', $id)
+            ->update(['status_encaminhamento' => 4]);
 
 
-    DB::table('entrevistas')
-        ->where('id_encaminhamento', $id)
-        ->update(['status' => 'Entrevistado']);
-
-    return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
-}
-
-public function inativar($id){
-
-
-    $data = date("Y-m-d H:i:s");
-
-    DB::table('historico_venus')->insert([
-
-        'id_usuario' => session()->get('usuario.id_usuario'),
-        'data' => $data,
-        'fato' => 37,
-        'obs' => $id
-
-    ]);
-
-   $entrevistas= DB::table('entrevistas')->where('id_encaminhamento','=', $id)->first();
-
-
-if(!is_null($entrevistas) and $entrevistas->status =='Agendado'){
-
-    DB::table('entrevistas')
-    ->where('id_encaminhamento','=', $id)
-    ->delete();
-}
-
-    DB::table('encaminhamento')
-        ->where('id', $id)
-        ->update(['status_encaminhamento' => 4]);
-
-
-    return redirect()->route('gerenciamento')->with('danger', 'Entrevista inativada!');
-}
-
+        return redirect()->route('gerenciamento')->with('danger', 'Entrevista inativada!');
+    }
 }

@@ -59,7 +59,7 @@
                                     <td>{{ $informacao->nome_pessoa }}</td>{{-- Traz o nome do encaminhado --}}
                                     <td>{{ $informacao->entrevista_sigla }}</td>
                                     <td>{{ $informacao->nome_entrevistador }}</td>{{-- Quando existente, traz o nome do entrevistador --}}
-                                    <td>{{ $informacao->local }}</td>{{-- Sala que foi agendada a entrevista --}}
+                                    <td>{{ $informacao->numero }}</td>{{-- Sala que foi agendada a entrevista --}}
                                     <td>
                                         @if ($informacao->status === 'Aguardando agendamento')
                                             Aguardando agendamento
@@ -97,28 +97,15 @@
                                         @if ($informacao->status !== 'Aguardando entrevistador'){{-- Inicio botao agendar entrevistador --}}
                                             <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
                                                 data-tt="tooltip" data-placement="top" title="historico" disabled>
-                                                <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
+                                                <i class="bi bi-person-add" style="font-size: 1rem; color:#000;"></i> 
                                             </a>
                                         @else
                                             <a href="{{ route('agendar-entrevistador', ['id' => $informacao->ide]) }}"
                                                 type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip"
                                                 data-placement="top" title="Agendar entrevistador">
-                                                <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
+                                                <i class="bi bi-person-add" style="font-size: 1rem; color:#000;"></i> 
                                             </a>
                                         @endif{{-- Fim aguardando entrevistador --}}
-
-                                        @if ($informacao->status == 'Aguardando agendamento'){{-- Inicio visualizar --}}
-                                            <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
-                                                data-tt="tooltip" data-placement="top" title="historico" disabled>
-                                                <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
-                                            </a>
-                                        @else
-                                            <a href="/visualizar-entrevista/{{ $informacao->ide }}" type="button"
-                                                class="btn btn-outline-primary btn-sm" data-tt="tooltip"
-                                                data-placement="top" title="Histórico">
-                                                <i class="bi bi bi-search" style="font-size: 1rem; color:#000;"></i>
-                                            </a>
-                                        @endif{{-- Fim visualizar --}}
 
                                         @if ($informacao->status !== 'Agendado'){{-- Inicio Finalizar --}}
                                             <a href="#" type="button"
@@ -134,6 +121,18 @@
                                             </button>
                                         @endif{{-- Fim Finalizar --}}
 
+                                        @if ($informacao->status == 'Aguardando agendamento'){{-- Inicio visualizar --}}
+                                        <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
+                                            data-tt="tooltip" data-placement="top" title="historico" disabled>
+                                            <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                                        </a>
+                                    @else
+                                        <a href="/visualizar-entrevista/{{ $informacao->ide }}" type="button"
+                                            class="btn btn-outline-primary btn-sm" data-tt="tooltip"
+                                            data-placement="top" title="Histórico">
+                                            <i class="bi bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                                        </a>
+                                    @endif{{-- Fim visualizar --}}
 
                                         @if ($informacao->status == 'Entrevistado'){{-- Inicio excluir --}}
                                             <i href="#" type="button"
