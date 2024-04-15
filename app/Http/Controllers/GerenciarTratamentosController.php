@@ -37,9 +37,7 @@ class GerenciarTratamentosController extends Controller
                     ->leftjoin('tipo_dia AS td', 'rm.dia_semana','td.id')
                     ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
                     ->where('enc.id_tipo_encaminhamento', 2)
-                    ->where('enc.id_tipo_tratamento', '<>', 3)
-                    ->where('rm.id_tipo_tratamento', '<>', 2)
-                    ;
+                    ->where('enc.id_tipo_tratamento', '<>', 3);
 
         $data_enc = $request->dt_enc;
 
