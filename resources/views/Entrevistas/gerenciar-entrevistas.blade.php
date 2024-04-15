@@ -68,7 +68,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if ($informacao->status == 'Aguardando agendamento' or $informacao->status == 'Entrevistado'){{-- Inicio botao editar --}}
+                                        @if ($informacao->status == 'Aguardando agendamento' or $informacao->status == 'Entrevistado' or $informacao->status == 'Entrevistado Aceito'){{-- Inicio botao editar --}}
                                             <a href="#" type="button" class="btn btn-outline-warning btn-sm disabled"
                                                 data-tt="tooltip" data-placement="top" title="Editar" disabled>
                                                 <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
@@ -136,7 +136,8 @@
                                         </a>
                                     @endif{{-- Fim visualizar --}}
 
-                                        @if ($informacao->status == 'Entrevistado'){{-- Inicio excluir --}}
+                                        {{-- Inicio excluir --}}
+                                        @if ($informacao->status == 'Entrevistado' or $informacao->status == 'Entrevistado Aceito' or $informacao->status == 'Entrevistado Recusado')
                                             <i href="#" type="button"
                                                 class="btn btn-outline-danger btn-sm disabled" data-tt="tooltip"
                                                 data-placement="top" title="Inativar" disabled>

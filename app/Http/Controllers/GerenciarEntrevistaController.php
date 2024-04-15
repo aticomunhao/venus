@@ -486,7 +486,7 @@ public function fim($id)
 
 
 
-    return redirect()->route('gerenciamento')->with('success', 'Entrevista recusada com sucesso!');
+    return redirect()->route('gerenciamento')->with('danger', 'Entrevista recusada!');
 
 
 }
