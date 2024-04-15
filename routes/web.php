@@ -31,7 +31,6 @@ use App\Http\Controllers\GerenciarEncaminhamentoController;
 use App\Http\Controllers\GerenciarTratamentosController;
 use App\Http\Controllers\GerenciarTratamentoPTIController;
 use App\Http\Controllers\GerenciarEntrevistaController;
-use App\Http\Controllers\GerenciarEntrevistaevangelhoController;
 use App\Http\Controllers\GerenciarDirigentesController;
 
 /*
@@ -159,6 +158,7 @@ Route::get('/editar-entrevista/{id}', [GerenciarEntrevistaController::class, 'ed
 Route::post('/atualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'update'])->name('');
 Route::get('/visualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'show'])->name('');
 Route::any('/finalizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'finalizar'])->name('finalizar.entrevista');
+Route::any('/nao-aceito-entrevista/{id}', [GerenciarEntrevistaController::class, 'fim'])->name('');
 Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, 'inativar'])->name('');
 
 

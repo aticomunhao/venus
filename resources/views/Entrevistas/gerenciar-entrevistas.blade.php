@@ -119,14 +119,16 @@
                                                 data-bs-toggle="modal" data-bs-target="#modalF{{ $informacao->ide }}">
                                                 <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i>
                                             </button>
-                                        @endif{{-- Fim Finalizar --}}
 
-                                        @if ($informacao->status == 'Aguardando agendamento'){{-- Inicio visualizar --}}
-                                        <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
+                                            @endif{{-- Fim Finalizar --}}
+                                            
+                                            @if ($informacao->status == 'Aguardando agendamento'){{-- Inicio visualizar --}}
+                                            <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
                                             data-tt="tooltip" data-placement="top" title="historico" disabled>
                                             <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
                                         </a>
-                                    @else
+
+                                        @else
                                         <a href="/visualizar-entrevista/{{ $informacao->ide }}" type="button"
                                             class="btn btn-outline-primary btn-sm" data-tt="tooltip"
                                             data-placement="top" title="Histórico">
@@ -148,35 +150,28 @@
                                         </button>{{-- Fim excluir --}}
                                         @endif
 
-
-
+                                        
                                             {{--  Modal de Finalizacao --}}
-                                            <div class="modal fade" id="modalF{{ $informacao->ide }}" tabindex="-1"
-                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel" style="color: green;">Confirmação de
-                                                                Finalização</h5>
-                                                            <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            Tem certeza que deseja finalizar a entrevista de <p
-                                                                style="color: green;">{{ $informacao->nome_pessoa }}&#63;</p>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Cancelar</button>
-                                                            <a type="button" class="btn btn-success"
-                                                                href="/finalizar-entrevista/{{ $informacao->ide }}">Confirmar
-                                                                Finalização</a>
-                                                        </div>
+                                        <div class="modal fade" id="modalF{{ $informacao->ide }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel" style="color: green;">Confirmação de Finalização</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Tem certeza que deseja finalizar a entrevista de <p style="color: green;">{{ $informacao->nome_pessoa }}&#63;</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                        <a type="button" class="btn btn-danger" href="/nao-aceito-entrevista/{{ $informacao->ide }}">Cancelar PTI/NUTRES</a>
+                                                        <a type="button" class="btn btn-success" href="/finalizar-entrevista/{{ $informacao->ide }}">Confirmar entrevista</a>
                                                     </div>
                                                 </div>
                                             </div>
-                                            {{-- Fim Modal de Finalizacao --}}
-
+                                        </div>
+                                        {{-- Fim Modal de Finalizacao --}}
+                                         
                                             {{--  Modal de Exclusao --}}
                                             <div class="modal fade" id="modal{{ $informacao->ide }}" tabindex="-1"
                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">

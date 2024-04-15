@@ -23,20 +23,35 @@
                         </div>
                     </div>
 
+                   
                     <div class="row mb-5">
                         <div class="col">
                             <label for="id_entrevistador" class="form-label">Entrevistador</label>
-                            <select class="form-control" id="id_entrevistador" name="id_entrevistador">
-                                @if (!is_null($membros))
-                                    <option value="">{{ $membros->nome_entrevistador }}</option>
-                                    <option value="{{ $membros->id }}">{{ $membros->nome_entrevistador }}</option>
-                                @else
-                                    <option value=""></option>
-                                @endif
+                            <select class="form-control" id="id_entrevistador" name="id_entrevistador">                              
+                                 @foreach ($membros as $membro )
+                                 <option value="{{ $membro->id }}">{{ $membro->nome_entrevistador }}</option>
+                                 @endforeach
+                                 
+                     
+                                
                             </select>
                         </div>
                     </div>
                     <fieldset>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="data" class="form-label">Data</label>
+                                <input type="date" class="form-select" id="data" name="data"
+                                    value="{{ $entrevistas->data }}">
+                            </div>
+                            <div class="col">
+                                <label for="hora" class="form-label">Hora</label>
+                                <input type="time" class="form-select" id="hora" name="hora"
+                                    value="{{ $entrevistas->hora }}">
+                            </div>
+                        </div>
+
+                        <br>
                         <div class="form-group row">
                             <div class="col">
                                 <div id="accordion" class="card">
@@ -78,18 +93,7 @@
                     </fieldset>
 
                     <br>
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label for="data" class="form-label">Data</label>
-                            <input type="date" class="form-select" id="data" name="data"
-                                value="{{ $entrevistas->data }}">
-                        </div>
-                        <div class="col">
-                            <label for="hora" class="form-label">Hora</label>
-                            <input type="time" class="form-select" id="hora" name="hora"
-                                value="{{ $entrevistas->hora }}">
-                        </div>
-                    </div>
+                  
                     <br>
                     <div class="row mt-4 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">

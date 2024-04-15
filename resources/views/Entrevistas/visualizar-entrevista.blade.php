@@ -35,6 +35,17 @@
                         </select>
                     </div>
                 </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="data" class="form-label">Data</label>
+                        <input type="date" class="form-control" id="data" name="data"  value="{{ $entrevistas->data }}"  disabled>
+                    </div>
+                    <div class="col">
+                        <label for="hora" class="form-label">Hora</label>
+                        <input type="time" class="form-control" id="hora" name="hora" value="{{ $entrevistas->hora }}" disabled>
+                    </div>
+                </div>
+                <br>
                 <div class="form-group">
                     <div id="accordion">
                         <div class="card">
@@ -63,20 +74,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <br>
-                <div class="row mb-3">
-                    <div class="col">
-                        <label for="data" class="form-label">Data</label>
-                        <input type="date" class="form-control" id="data" name="data"  value="{{ $entrevistas->data }}"  disabled>
-                    </div>
-                    <div class="col">
-                        <label for="hora" class="form-label">Hora</label>
-                        <input type="time" class="form-control" id="hora" name="hora" value="{{ $entrevistas->hora }}" disabled>
-                    </div>
-                </div>
-                
-                <br>
+                </div>  
                 <br>
 
                 <div class="row mt-4 justify-content-center">

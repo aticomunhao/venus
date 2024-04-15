@@ -24,7 +24,17 @@
                         </select>
                     </div>
                 </div>
-
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="data" class="form-label">Data</label>
+                        <input type="date" class="form-control" id="data" name="data">
+                    </div>
+                    <div class="col">
+                        <label for="hora" class="form-label">Hora</label>
+                        <input type="time" class="form-control" id="hora" name="hora">
+                    </div>
+                </div>
+                <br>
                 <fieldset>
                     <div class="form-group row">
                         <div class="col">
@@ -63,16 +73,7 @@
                     </div>
                 </fieldset>
                 <br>
-                <div class="row mb-3">
-                    <div class="col">
-                        <label for="data" class="form-label">Data</label>
-                        <input type="date" class="form-control" id="data" name="data">
-                    </div>
-                    <div class="col">
-                        <label for="hora" class="form-label">Hora</label>
-                        <input type="time" class="form-control" id="hora" name="hora">
-                    </div>
-                </div>
+                
                 <br>
                 <div class="row mt-4 justify-content-center">
                     <div class="d-grid gap-1 col-4 mx-auto">

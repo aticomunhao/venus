@@ -56,7 +56,8 @@ class GerenciarEntrevistaController extends Controller
             ->leftJoin('pessoas as pessoa_entrevistador', 'associado.id_pessoa', '=', 'pessoa_entrevistador.id')
             ->where('encaminhamento.id_tipo_encaminhamento', 1)
             ->where('encaminhamento.status_encaminhamento', '<>', 4)
-            ->whereNotIn('tipo_entrevista.id', [8])
+            ->whereNotIn('tipo_entrevista.id', [8]) // Exclui o tipo de entrevista 8
+            ->whereBetween('tipo_entrevista.id', [1, 7]) // Inclui os tipos de entrevista de 1 a 7
             ->select(
                 'entrevistas.id_entrevistador',
                 DB::raw("CASE
@@ -355,8 +356,10 @@ class GerenciarEntrevistaController extends Controller
             ->join('associado', 'membro.id_associado', '=', 'associado.id')
             ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
             ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
-            ->where('membro.id' , $entrevistas->id_entrevistador)
-            ->first();
+            // ->where('membro.id' , $entrevistas->id_entrevistador)
+            ->get();
+
+           
          
     
           
@@ -403,18 +406,91 @@ class GerenciarEntrevistaController extends Controller
 
 
 
-
-
     public function finalizar($id)
-    {
 
+{
+    
+    $novo_encaminhamento=Carbon::today(); 
+    $id_usuario=session()->get('usuario.id_usuario');
+   $encaminhamento= DB::table('encaminhamento')->where('id', $id)->first();
 
-        DB::table('entrevistas')
-            ->where('id_encaminhamento', $id)
-            ->update(['status' => 'Entrevistado']);
+   
 
-        return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
+    // Obter informações sobre a entrevista
+    $entrevista = DB::table('entrevistas')
+        ->where('id_encaminhamento', $id)
+        ->first();
+
+    if (!$entrevista) {
+        return redirect()->route('gerenciamento')->with('error', 'Entrevista não encontrada!');
     }
+
+
+    // Criar um novo registro na tabela de encaminhamento
+     $nova=DB::table('encaminhamento')->insertGetId([
+        // Defina os valores adequados para o novo registro na tabela de encaminhamento
+        'dh_enc'=>$novo_encaminhamento,
+        'id_usuario'=>$id_usuario,
+        'id_tipo_encaminhamento'=>2,
+        'id_atendimento'=>$encaminhamento->id_atendimento,
+        'status_encaminhamento'=>1,
+
+        
+    ]);
+
+    if($encaminhamento->id_tipo_entrevista == 4){ 
+
+        DB::table('encaminhamento')->where('id',$nova)->update([  'id_tipo_tratamento'=>2,]);
+      
+    }
+
+    if($encaminhamento->id_tipo_entrevista == 5){ 
+
+        DB::table('encaminhamento')->where('id',$nova)->update([  'id_tipo_tratamento'=>6,]);
+      
+    }
+
+    // Atualizar o status da entrevista para 'Entrevistado' e remover o ID de encaminhamento
+    DB::table('entrevistas')
+        ->where('id_encaminhamento', $id)
+        ->update(['status' => 'Entrevistado Aceito',]);
+
+
+        DB::table('encaminhamento')->where('id',$id)->update(['status_encaminhamento' =>3]);;
+       
+
+
+
+
+
+    return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
+
+
+}
+   
+
+public function fim($id)
+
+{
+
+    
+    DB::table('entrevistas')
+        ->where('id_encaminhamento', $id)
+        ->update(['status' => 'Entrevistado Recusado',]);
+
+
+        DB::table('encaminhamento')->where('id',$id)->update(['status_encaminhamento' =>3]);;
+       
+
+
+
+
+
+    return redirect()->route('gerenciamento')->with('success', 'Entrevista recusada com sucesso!');
+
+
+}
+
 
     public function inativar($id)
     {
@@ -446,6 +522,8 @@ class GerenciarEntrevistaController extends Controller
             ->update(['status_encaminhamento' => 4]);
 
 
+
         return redirect()->route('gerenciamento')->with('danger', 'Entrevista inativada!');
     }
+
 }
