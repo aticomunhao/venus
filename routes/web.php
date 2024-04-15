@@ -28,6 +28,7 @@ use App\Http\Controllers\MediunidadePessoaController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\GerenciarEncaminhamentoController;
+use App\Http\Controllers\GerenciarEncaminhamentoPTIController;
 use App\Http\Controllers\GerenciarTratamentosController;
 use App\Http\Controllers\GerenciarTratamentoPTIController;
 use App\Http\Controllers\GerenciarEntrevistaController;
@@ -67,7 +68,7 @@ Route::any('/login/home', [LoginController::class, 'valida']);
     Route::get('/usuario/alterar/{id}', [UsuarioController::class, 'edit']);
     Route::put('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
     Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
-    
+
 
 //});
 
@@ -274,6 +275,14 @@ Route::any('/visualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaCont
 Route::any('/editar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'edit']);
 Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'update']);
 
+//Encaminhamento PTI
+
+Route::get('/gerenciar-encaminhamentos-pti', [GerenciarEncaminhamentoPTIController::class, 'index']);
+Route::get('/agendar-pti/{ide}/{idtt}', [GerenciarEncaminhamentoPTIController::class, 'agenda']);
+Route::get('/agendar-tratamento-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'tratamento']);
+Route::post('incluir-tratamento-pti/{idtr}', [GerenciarEncaminhamentoPTIController::class, 'tratar']);
+Route::get('/visualizar-enc-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'visualizar']);
+Route::post('/inativar-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'inative']);
 
 //Dirigentes
 

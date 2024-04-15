@@ -62,7 +62,6 @@
                         </tbody>
                     </table>
                     @endforeach
-
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Encaminhamento</legend>
                     @foreach($result as $results)
                     <table class="table table-sm table-bordered table-striped">
@@ -93,6 +92,8 @@
                     @endforeach
                     @if(sizeof($list) != 0)
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de presenças</legend>
+
+
                     Nr de faltas: {{$faul}}
                     @foreach($list as $lists)
                     <table class="table table-sm table-bordered table-striped">
@@ -122,7 +123,7 @@
                     @endif
                     <div class="row">
                         <div class="col">
-                            <a class="btn btn-danger" href="/gerenciar-encaminhamentos" style="text-align:right;" role="button">Fechar</a>
+                            <a class="btn btn-danger" href="/gerenciar-encaminhamentos-pti" style="text-align:right;" role="button">Fechar</a>
                         </div>
                     </div>
                 </div>

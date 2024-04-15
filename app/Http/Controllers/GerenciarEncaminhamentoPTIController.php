@@ -14,7 +14,7 @@ use PhpParser\Node\Expr\AssignOp\ShiftLeft;
 use PhpParser\Node\Expr\BinaryOp\Coalesce as BinaryOpCoalesce;
 
 
-class GerenciarEncaminhamentoController extends Controller
+class GerenciarEncaminhamentoPTIController extends Controller
 {
     public function index(Request $request){
 
@@ -35,7 +35,7 @@ class GerenciarEncaminhamentoController extends Controller
                     ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
                     ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                     ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
-                    ->where('enc.id_tipo_tratamento', 1)
+                    ->where('enc.id_tipo_tratamento', 2)
                     ->where('enc.id_tipo_encaminhamento', 2);
 
 
@@ -79,7 +79,7 @@ class GerenciarEncaminhamentoController extends Controller
         ");
 
 
-        return view ('/recepcao-integrada/gerenciar-encaminhamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'motivo'));
+        return view ('/encaminhamento-pti/gerenciar-encaminhamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'motivo'));
 
 
     }
@@ -241,7 +241,7 @@ class GerenciarEncaminhamentoController extends Controller
 
 //dd($contcap);
 
-        return view('/recepcao-integrada/agendar-dia', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
+        return view('/encaminhamento-pti/agendar-dia', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
 
     }
 
@@ -305,7 +305,7 @@ class GerenciarEncaminhamentoController extends Controller
                         ->orderBy('h_inicio')
                         ->get();
 
-        return view('/recepcao-integrada/agendar-tratamento', compact('result', 'trata', 'dia'));
+        return view('/encaminhamento-pti/agendar-tratamento', compact('result', 'trata', 'dia'));
 
 
     }
@@ -363,7 +363,7 @@ class GerenciarEncaminhamentoController extends Controller
 
             app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
 
-            return redirect('/gerenciar-encaminhamentos');
+            return redirect('/gerenciar-encaminhamentos-pti');
 
 
         }elseif($dia_atual > $dia_semana){
@@ -393,13 +393,13 @@ class GerenciarEncaminhamentoController extends Controller
 
         app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
 
-        return redirect('/gerenciar-encaminhamentos');
+        return redirect('/gerenciar-encaminhamentos-pti');
 
         }
 
         app('flasher')->addError('Aconteceu um erro ao criar o tratamento contate a ATI.');
 
-        return redirect('/gerenciar-encaminhamentos');
+        return redirect('/gerenciar-encaminhamentos-pti');
 
     }
 
@@ -446,7 +446,7 @@ class GerenciarEncaminhamentoController extends Controller
         ->count();
 
 
-        return view('/recepcao-integrada/historico-encaminhamento', compact('result', 'list', 'faul'));
+        return view('/encaminhamento-pti/historico-encaminhamento', compact('result', 'list', 'faul'));
 
     }
 
@@ -477,7 +477,7 @@ class GerenciarEncaminhamentoController extends Controller
         app('flasher')->addSuccess('O encaminhamento foi inativado.');
 
 
-        return redirect('/gerenciar-encaminhamentos');
+        return redirect('/gerenciar-encaminhamentos-pti');
 
     }
 
