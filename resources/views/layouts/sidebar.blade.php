@@ -14,8 +14,8 @@
                             <li><a class="dropdown-item" href="/gerenciar-atendimentos">Recepção Atendimento Fraterno</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Recepção Integrada - Encaminhamentos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-pti">Encaminhamentos PTI</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-integral">Encaminhamentos Integral</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-tratamentos">Recepção Integrada - Tratamentos</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-tratamentos-pti">Recepção Integrada - Tratamentos PTI</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-atendente-dia">Gerenciar Atendentes do dia</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-entrevistas">Gerenciar Entrevistas</a></li>
                         </ul>
@@ -28,7 +28,6 @@
                             <li><a class="dropdown-item" href="/gerenciar-atendentes-apoio">Gerenciar Atendente de Apoio</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-dirigentes">Gerenciar Dirigentes</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -37,6 +36,7 @@
                         <a class="nav-link dropdown-toggle" href="#" id="2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Gerenciamento DAE</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                             <li><a class="dropdown-item" href="/gerenciar-atendentes-plantonistas">Gerenciar Plantonistas</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-dirigente">Gerenciar Dirigente</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-membro">Gerenciar Membros</a></li>

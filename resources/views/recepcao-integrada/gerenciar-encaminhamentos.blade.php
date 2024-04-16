@@ -30,8 +30,8 @@
                             <option value="{{$situacao}}"></option>
                             @foreach ($stat as $status)
                             <option value="{{$status->id}}">{{$status->descricao}}</option>
-                            @endforeach               
-                        </select>                       
+                            @endforeach
+                        </select>
                     </div>
                         <div class="col"><br/>
                             <input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
@@ -51,7 +51,7 @@
                             <th class="col">PRIORIDADE</th>
                             <th class="col">ASSISTIDO</th>
                             <th class="col">REPRESENTANTE</th>
-                            <th class="col">TIPO TRATAMENTO</th>                                                                                                              
+                            <th class="col">TIPO TRATAMENTO</th>
                             <th class="col">STATUS</th>
                             <th class="col">AÇÕES</th>
                         </tr>
@@ -59,15 +59,15 @@
                     <tbody style="font-size: 14px; color:#000000; text-align: center;">
                         <tr>
                         @foreach($lista as $listas)
-                            <td>{{$listas->ide}}</td>           
-                            <td>{{date ('d/m/Y H:m:s', strtotime($listas->dh_enc))}}</td>
+                            <td>{{$listas->ide}}</td>
+                            <td>{{date ('d/m/Y ', strtotime($listas->dh_enc))}}</td>
                             <td>{{$listas->prdesc}}</td>
                             <td>{{$listas->nm_1}}</td>
                             <td>{{$listas->nm_2}}</td>
                             <td>{{$listas->desctrat}}</td>
                             <td>{{$listas->tsenc}}</td>
                             <td>
-                                @if ($listas->status_encaminhamento == 1)                              
+                                @if ($listas->status_encaminhamento == 1)
                                 <a href="/agendar/{{$listas->ide}}/{{$listas->idtt}}"><button type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Agendar"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button></a>
                                 @else
                                 <button type="button" class="btn btn-outline-success btn-sm disabled" data-tt="tooltip" data-placement="top" title="Agendar" aria-disabled="true"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button>
@@ -87,7 +87,7 @@
             </div class="d-flex justify-content-center">
             {{$lista->withQueryString()->links()}}
         </div>
-        
+
     </div>
 </div>
 
@@ -108,7 +108,7 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 
 @endsection
 
-@section('footerScript')  
+@section('footerScript')
 
 
 @endsection

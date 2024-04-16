@@ -235,7 +235,7 @@
                     <br/>
                     <div class="row">
                         <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-tratamentos" role="button">Cancelar</a>
+                            <a class="btn btn-danger" href="/gerenciar-encaminhamentos" role="button">Cancelar</a>
                         </div>
                         <div class="d-grid gap-2 col-4 mx-auto" >
                             <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>

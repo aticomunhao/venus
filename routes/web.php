@@ -296,16 +296,10 @@ Route::post('incluir-tratamento-integral/{idtr}', [GerenciarEncaminhamentoIntegr
 Route::get('/visualizar-enc-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'visualizar']);
 Route::post('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'inative']);
 
-//Dirigentes
 
-Route::get('/gerenciar-dirigentes', [GerenciarDirigentesController::class, 'index'])->name('indexDirigente');
-Route::get('/incluir-dirigentes', [GerenciarDirigentesController::class, 'create']);
-Route::any('/armazenar-dirigentes', [GerenciarDirigentesController::class, 'store']);
-Route::any('/visualizar-dirigentes/{id}', [GerenciarDirigentesController::class, 'show']);
-Route::any('/editar-dirigentes/{id}', [GerenciarDirigentesController::class, 'edit']);
-Route::any('/atualizar-dirigentes/{id}', [GerenciarDirigentesController::class, 'update']);
-Route::any('/excluir-dirigentes/{id}', [GerenciarDirigentesController::class, 'destroy']);
+// Dirigente
 
+Route::get('/gerenciar-dirigente', [GerenciarDirigentesController::class, 'index']);
 
 
 

@@ -3,40 +3,40 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class GerenciarDirigentesController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
+        $dirigentes = DB::table('membro as mem')
+        ->select('ass.id_pessoa', 'gr.nome', 'gr.id')
+        ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
+        ->leftJoin('grupo as gr', 'mem.id_grupo', 'gr.id')
+        ->leftJoin('cronograma as cr', 'gr.id', 'cr.id_grupo')
+        ->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
+        ->where('id_funcao', 1)
+        ->where('cr.id_tipo_tratamento', 2)
+        ->where('cr.status_reuniao', '<>', 2)
+        ->distinct('gr.id')
+        ->get();
 
-        $dirigente = DB::table('dirigentes as drg')
-        ->select('drg.id','p.nome_completo','p.cpf')
-        ->leftJoin('pessoas as p', 'drg.id_pessoa', '=', 'p.id');
+        $encaminhamentos = DB::table('tratamento as tr')
+        ->select('tr.id','p.nome_completo', 'cro.h_inicio', 'cro.h_fim', 'gr.nome')
+        ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+        ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
+        ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+        ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+        ->leftJoin('pessoas as p','atd.id_assistido', 'p.id')
+        ->where('enc.id_tipo_tratamento', 2)
+        ->where('tr.status', 2)
+        ->get();
 
-        $pesquisaNome = $request->input('nome');
-        if($request->nome){
-
-            $dirigente =   $dirigente->where('p.nome_completo', 'ilike', "%$request->nome%");
-
-        }
-
-        $pesquisaCpf = $request->input('cpf');
-        if($request->cpf){
-
-            $dirigente = $dirigente->where('p.cpf', 'ilike', "%$request->cpf%");
-
-        }
-
-        $conta = $dirigente->count();
-        $dirigente = $dirigente->orderBy('p.nome_completo')->get();
-
-        return view('dirigentes.gerenciar-dirigentes', compact('dirigente', 'pesquisaNome', 'pesquisaCpf', 'conta'));
+        return view('dirigentes.gerenciar-dirigente', compact('encaminhamentos'));
     }
 
     /**
@@ -44,12 +44,7 @@ class GerenciarDirigentesController extends Controller
      */
     public function create()
     {
-
-        $pessoas = DB::table('pessoas')->get();
-        $grupo = DB::table('grupo')->get();
-
-
-        return view('dirigentes.incluir-dirigentes', compact('pessoas', 'grupo'));
+        //
     }
 
     /**
@@ -57,57 +52,7 @@ class GerenciarDirigentesController extends Controller
      */
     public function store(Request $request)
     {
-
-         //Com tratamento de erro inicialzia a transação
-         DB::beginTransaction();
-         try{
-
-             $data = date('Y-m-d H:i:s');
-
-             $id_pessoa = $request->input('id_pessoa');
-             $selectedGroups = $request->input('id_grupo');
-
-             //Testa se os valores de ID pessoa são validos
-             if (!is_numeric($id_pessoa) || $id_pessoa <= 0) {
-                 app('flasher')->addError('ID de pessoa inválido.');
-                 return redirect()->back();
-             }
-                 //insere um novo dirigente
-               $dirigenteID = DB::table('dirigentes')->insertGetId([
-                 'id_pessoa' =>  $id_pessoa
-             ]);
-
-
-             foreach ($selectedGroups as $groupId) {
-                DB::table('dirigentes_grupo')->insert([
-                    'id_dirigente' => $dirigenteID,
-                    'id_grupo' => (int) $groupId,
-
-                ]);
-            }
-
-
-
-             app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
-
- DB::commit();
- }
-
- catch(\Exception $e){
-
-             //Retorna uma mensagem flasher com o código do erro
-             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
-             DB::rollBack();
-
-         }
-
-
-
-         return redirect('gerenciar-dirigentes');
-
-
-
-
+        //
     }
 
     /**
@@ -115,49 +60,15 @@ class GerenciarDirigentesController extends Controller
      */
     public function show(string $id)
     {
-
-
-        $dirigente = DB::table('dirigentes as drg')
-        ->select('drg.id','p.nome_completo')
-        ->leftJoin('pessoas as p', 'drg.id_pessoa', '=', 'p.id')
-        ->where('drg.id', $id)->first();
-
-        $grupos = DB::table('dirigentes_grupo as dg')
-        ->leftJoin('grupo as gr', 'dg.id_grupo', 'gr.id')
-        ->select('gr.nome')
-        ->where('dg.id_dirigente', $id)
-        ->get();
-
-
-
-
-
-        return view('dirigentes.visualizar-dirigentes', compact('grupos', 'dirigente'));
+        //
     }
 
-
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(string $id)
     {
-
-
-
-
-        $dirigente = DB::table('dirigentes as dr')->select('dr.id', 'p.nome_completo')->leftJoin('pessoas as p', 'id_pessoa', 'p.id')->where('dr.id', $id)->first();
-
-        $grupo = DB::table('grupo')->get();
-
-
-
-        $selectedGroups = DB::table('dirigentes_grupo')->select('id_grupo as id')->where('id_dirigente', $id)->get();
-
-            $info = [];
-            foreach ($selectedGroups as $gr) {
-                $info[] = $gr;
-            }
-
-
-
-        return view('dirigentes.editar-dirigentes', compact('grupo', 'dirigente', 'info'));
+        //
     }
 
     /**
@@ -165,21 +76,7 @@ class GerenciarDirigentesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
-        DB::table('dirigentes_grupo')->where('id_dirigente', $id)->delete();
-
-        $selectedGroups = $request->input('id_grupo');
-
-
-
-        foreach ($selectedGroups as $groupId) {
-            DB::table('dirigentes_grupo')->insert([
-                'id_dirigente' => $id,
-                'id_grupo' => (int) $groupId,
-
-            ]);
-        }
-        return redirect('gerenciar-dirigentes');
+        //
     }
 
     /**
@@ -187,10 +84,6 @@ class GerenciarDirigentesController extends Controller
      */
     public function destroy(string $id)
     {
-
-        DB::table('dirigentes')->where('id', $id)->delete();
-
-        return back();
-
+        //
     }
 }

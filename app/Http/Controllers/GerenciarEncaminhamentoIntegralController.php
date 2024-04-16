@@ -35,7 +35,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
                     ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
                     ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                     ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
-                    ->where('enc.id_tipo_tratamento', 2)
+                    ->where('enc.id_tipo_tratamento', 6)
                     ->where('enc.id_tipo_encaminhamento', 2);
 
 
@@ -79,7 +79,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
         ");
 
 
-        return view ('/encaminhamento-pti/gerenciar-encaminhamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'motivo'));
+        return view ('/encaminhamento-integral/gerenciar-encaminhamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'motivo'));
 
 
     }
@@ -241,7 +241,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
 
 //dd($contcap);
 
-        return view('/encaminhamento-pti/agendar-dia', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
+        return view('/encaminhamento-integral/agendar-dia', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
 
     }
 
@@ -287,9 +287,9 @@ class GerenciarEncaminhamentoIntegralController extends Controller
                         ->get();
 
 
-        $trata = DB::table('cronograma AS reu')
+                        $trata = DB::table('cronograma AS reu')
 
-                        ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'),'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
+                        ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'),'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero', 'reu.status_reuniao')
                         ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
                         ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
@@ -297,6 +297,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
                         ->leftJoin('membro AS me', 'gr.id', 'me.id_grupo')
                         ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
                         ->leftJoin('tipo_dia AS td', 'reu.dia_semana', 'td.id')
+                        ->where('reu.status_reuniao', '<>', 2)
                         ->where('reu.dia_semana', $dia)
                         ->where('reu.id_tipo_tratamento', $tp_trat)
                         ->orWhere('tr.status', null)
@@ -305,7 +306,12 @@ class GerenciarEncaminhamentoIntegralController extends Controller
                         ->orderBy('h_inicio')
                         ->get();
 
-        return view('/encaminhamento-pti/agendar-tratamento', compact('result', 'trata', 'dia'));
+        if(sizeof($trata) == 0){
+            app('flasher')->addWarning('Não existem grupos para este dia');
+            return redirect()->back();
+        }
+
+        return view('/encaminhamento-integral/agendar-tratamento', compact('result', 'trata', 'dia'));
 
 
     }
@@ -363,7 +369,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
 
             app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
 
-            return redirect('/gerenciar-encaminhamentos-pti');
+            return redirect('/gerenciar-encaminhamentos-integral');
 
 
         }elseif($dia_atual > $dia_semana){
@@ -393,13 +399,13 @@ class GerenciarEncaminhamentoIntegralController extends Controller
 
         app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
 
-        return redirect('/gerenciar-encaminhamentos-pti');
+        return redirect('/gerenciar-encaminhamentos-integral');
 
         }
 
         app('flasher')->addError('Aconteceu um erro ao criar o tratamento contate a ATI.');
 
-        return redirect('/gerenciar-encaminhamentos-pti');
+        return redirect('/gerenciar-encaminhamentos-integral');
 
     }
 
@@ -407,23 +413,24 @@ class GerenciarEncaminhamentoIntegralController extends Controller
     public function visualizar($ide){
 
         $result = DB::table('encaminhamento AS enc')
-                        ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido','p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo')
-                        ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-                        ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                        ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                        ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-                        ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-                        ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                        ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-                        ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
-                        ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-                        ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
-                        ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
-                        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-                        ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
-                        ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
-                        ->where('enc.id', $ide)
-                        ->get();
+        ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido','p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo','p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'tse.descricao AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo')
+        ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+        ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+        ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+        ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+        ->leftjoin('associado AS ass', 'at.id_atendente', 'ass.id')
+        ->leftjoin('pessoas AS p4', 'ass.id_pessoa', 'p4.id')
+        ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+        ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+        ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
+        ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+        ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
+        ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
+        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+        ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
+        ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
+        ->where('enc.id', $ide)
+        ->get();
 
 
 
@@ -446,7 +453,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
         ->count();
 
 
-        return view('/encaminhamento-pti/historico-encaminhamento', compact('result', 'list', 'faul'));
+        return view('/encaminhamento-integral/historico-encaminhamento', compact('result', 'list', 'faul'));
 
     }
 
@@ -477,7 +484,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
         app('flasher')->addSuccess('O encaminhamento foi inativado.');
 
 
-        return redirect('/gerenciar-encaminhamentos-pti');
+        return redirect('/gerenciar-encaminhamentos-integral');
 
     }
 

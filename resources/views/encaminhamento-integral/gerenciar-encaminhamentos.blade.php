@@ -13,7 +13,7 @@
 ?>
 
 <div class="container";>
-<h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ENCAMINHAMENTOS PTI</h4>
+<h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ENCAMINHAMENTOS INTEGRAL</h4>
     <div class="col-12">
         <div class="row justify-content-center">
             <div>
@@ -35,7 +35,7 @@
                     </div>
                         <div class="col"><br/>
                             <input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
-                            <a href="/gerenciar-encaminhamentos-pti"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
+                            <a href="/gerenciar-encaminhamentos-integral"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
                     </form>
                         </div>
                 </div>
@@ -60,7 +60,7 @@
                         <tr>
                         @foreach($lista as $listas)
                             <td>{{$listas->ide}}</td>
-                            <td>{{date ('d/m/Y H:m:s', strtotime($listas->dh_enc))}}</td>
+                            <td>{{date ('d/m/Y ', strtotime($listas->dh_enc))}}</td>
                             <td>{{$listas->prdesc}}</td>
                             <td>{{$listas->nm_1}}</td>
                             <td>{{$listas->nm_2}}</td>
@@ -68,11 +68,11 @@
                             <td>{{$listas->tsenc}}</td>
                             <td>
                                 @if ($listas->status_encaminhamento == 1)
-                                <a href="/agendar-pti/{{$listas->ide}}/{{$listas->idtt}}"><button type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Agendar"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/agendar-integral/{{$listas->ide}}/{{$listas->idtt}}"><button type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Agendar"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button></a>
                                 @else
                                 <button type="button" class="btn btn-outline-success btn-sm disabled" data-tt="tooltip" data-placement="top" title="Agendar" aria-disabled="true"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button>
                                 @endif
-                                <a href="/visualizar-enc-pti/{{$listas->ide}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Histórico"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/visualizar-enc-integral/{{$listas->ide}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Histórico"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
                                 @if ($listas->status_encaminhamento < 2)
                                 <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#inativar{{$listas->ide}}" data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>
                                 @else

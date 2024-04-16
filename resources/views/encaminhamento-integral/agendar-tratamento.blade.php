@@ -5,7 +5,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-12">
-            <div class="card">               
+            <div class="card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
@@ -20,35 +20,35 @@
                         <div class="col-2">Encaminhamento
                             <input class="form-control" style="text-align:left; font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{$result[0]->ide}}" name="" id="" type="text" disabled>
                         </div>
-                    
-                        <div class="col">Assistido                    
+
+                        <div class="col">Assistido
                             <input class="form-control" style="font-weight:bold; background:#f3f3f3; color:#000;" type="text" name="" id="" value="{{$result[0]->nm_1}}" disabled>
                         </div>
-                                    
-                        <div class="col">Representante                   
+
+                        <div class="col">Representante
                             <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{$result[0]->nm_2}}" name="" id="" type="text" disabled>
-                        </div>     
-                        <div class="col">Tratamento                   
+                        </div>
+                        <div class="col">Tratamento
                             <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{$result[0]->desctrat}}" name="" id="" type="text" disabled>
-                        </div>                       
+                        </div>
                     </div>
-                    </fieldset> 
+                    </fieldset>
                     <div class="row">
-                        <div class="col">Dia da semana:                   
+                        <div class="col">Dia da semana:
                             <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{$trata[0]->nomed}}" name="" id="" type="text" disabled>
                         </div>
-                        <form class="form-horizontal mt-4" method="POST" action="/incluir-tratamento/{{$result[0]->ide}}" >
-                        @csrf      
+                        <form class="form-horizontal mt-4" method="POST" action="/incluir-tratamento-integral/{{$result[0]->ide}}" >
+                        @csrf
                         <legend style="color:#525252; font-size:12px; font-family:sans-serif">Reuniões do dia:</legend>
-                       
-                        <?php 
+
+                        <?php
                         $trataPorHorario = $trata->groupBy('h_inicio');
 
-                        $a=1; $b=1; $c=1; $d=1; $e=1;                        
+                        $a=1; $b=1; $c=1; $d=1; $e=1;
                         ?>
 
                         @foreach($trataPorHorario as $horario => $tratasDoHorario)
-                        <div class="accordion accordion-flush" id="accordionFlushExample"> 
+                        <div class="accordion accordion-flush" id="accordionFlushExample">
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="{{$a++}}">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{$b++}}" aria-expanded="false" aria-controls="flush-collapse{{$c++}}">
@@ -74,16 +74,16 @@
                                             </thead>
                                             <tbody>
                                                 <tr style="text-align:center;font-size:14px">
-                                                <td>{{$tratas->idr}}</td>         
+                                                <td>{{$tratas->idr}}</td>
                                                 <td>{{$tratas->nomeg}}</td>
                                                 <td>{{$tratas->numero}}</td>
                                                 <td>{{$tratas->tstd}}</td>
                                                 <td>{{date('H:i:s', strtotime($tratas->h_inicio))}}</td>
                                                 <td>{{date('H:i:s', strtotime($tratas->h_fim))}}</td>
-                                                <td>{{$tratas->max_atend}}</td>                                            
-                                                <td>{{$tratas->trat}}</td>                                    
+                                                <td>{{$tratas->max_atend}}</td>
+                                                <td>{{$tratas->trat}}</td>
                                                 <td><center><input type="radio" class="form-check" name="reuniao" id="" value="{{$tratas->idr}}" autocomplete="off"></center>
-                                                    </td>    
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -92,18 +92,18 @@
                                 </div>
                             </div>
 
-                        @endforeach                   
+                        @endforeach
                     <br>
                 </div>
                 <div class="row">
                         <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-encaminhamentos"  role="button">Cancelar</a>
+                            <a class="btn btn-danger" href="/gerenciar-encaminhamentos-integral"  role="button">Cancelar</a>
                         </div>
                         <div class="d-grid gap-2 col-4 mx-auto" >
                             <button type="submit" class="btn btn-primary" >Confirmar</button>
                         </div>
                         </form>
-                        
+
                     </div>
                     <br>
             </div>
