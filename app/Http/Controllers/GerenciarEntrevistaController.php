@@ -83,7 +83,7 @@ class GerenciarEntrevistaController extends Controller
 
 
             );
-
+      
         $i = 0;
         $pesquisaNome = null;
         $pesquisaStatus = 0;
@@ -112,8 +112,19 @@ class GerenciarEntrevistaController extends Controller
             } elseif ($request->status == 4) {
                 $informacoes->where('entrevistas.status', "ilike", "Aguardando entrevistador");
                 $pesquisaValue = 4;
-            }
+            }elseif ($request->status == 5) {
+                $informacoes->where('entrevistas.status', "ilike", "Entrevistado Aceito");
+                $pesquisaValue = 5;
+            } elseif ($request->status == 6) {
+                $informacoes->where('entrevistas.status', "ilike", "Entrevistado Recusado");
+                $pesquisaValue = 6;
+                 }
+
         }
+
+          
+
+         
 
         $informacoes = $informacoes->orderBy('status', 'asc')->orderBy('pessoa_pessoa.nome_completo')->get();
 

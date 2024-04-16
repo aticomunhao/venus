@@ -24,7 +24,8 @@
                                     <option value=1 {{ $pesquisaValue == 1 ? 'selected' : '' }}>Aguardando agendamento</option>{{-- Se auto seleciona de acordo com o valor anterior --}}
                                     <option value=4 {{ $pesquisaValue == 4 ? 'selected' : '' }}>Aguardando entrevistador</option>
                                     <option value=2 {{ $pesquisaValue == 2 ? 'selected' : '' }}>Agendado</option>
-                                    <option value=3 {{ $pesquisaValue == 3 ? 'selected' : '' }}>Entrevistado</option>
+                                    <option value=5 {{ $pesquisaValue == 5 ? 'selected' : '' }}>Entrevistado Aceito</option>
+                                    <option value=6 {{ $pesquisaValue == 6 ? 'selected' : '' }}>Entrevistado Recusado</option>
                                 </select>
                             </div>
                             <div class="col"><br />
