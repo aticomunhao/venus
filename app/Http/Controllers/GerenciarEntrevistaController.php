@@ -88,6 +88,14 @@ class GerenciarEntrevistaController extends Controller
         $pesquisaNome = null;
         $pesquisaStatus = 0;
         $pesquisaValue = 0;
+
+        if(session()->get('usuario.setor') == 38){
+            $informacoes = $informacoes->where('encaminhamento.id_tipo_entrevista', 5);
+        }
+        if(session()->get('usuario.setor') == 7){
+            $informacoes = $informacoes->where('encaminhamento.id_tipo_entrevista', 3);
+        }
+
         if ($request->nome_pesquisa) {
 
             $informacoes = $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome_pesquisa%");
@@ -359,10 +367,10 @@ class GerenciarEntrevistaController extends Controller
             // ->where('membro.id' , $entrevistas->id_entrevistador)
             ->get();
 
-           
-         
-    
-          
+
+
+
+
 
 
 
@@ -391,6 +399,8 @@ class GerenciarEntrevistaController extends Controller
             return redirect('gerenciar-entrevistas');
         }
 
+
+
         DB::table('entrevistas')
             ->where('id_encaminhamento', $id)
             ->update([
@@ -409,12 +419,12 @@ class GerenciarEntrevistaController extends Controller
     public function finalizar($id)
 
 {
-    
-    $novo_encaminhamento=Carbon::today(); 
+
+    $novo_encaminhamento=Carbon::today();
     $id_usuario=session()->get('usuario.id_usuario');
    $encaminhamento= DB::table('encaminhamento')->where('id', $id)->first();
 
-   
+
 
     // Obter informações sobre a entrevista
     $entrevista = DB::table('entrevistas')
@@ -435,19 +445,19 @@ class GerenciarEntrevistaController extends Controller
         'id_atendimento'=>$encaminhamento->id_atendimento,
         'status_encaminhamento'=>1,
 
-        
+
     ]);
 
-    if($encaminhamento->id_tipo_entrevista == 4){ 
+    if($encaminhamento->id_tipo_entrevista == 4){
 
         DB::table('encaminhamento')->where('id',$nova)->update([  'id_tipo_tratamento'=>2,]);
-      
+
     }
 
-    if($encaminhamento->id_tipo_entrevista == 5){ 
+    if($encaminhamento->id_tipo_entrevista == 5){
 
         DB::table('encaminhamento')->where('id',$nova)->update([  'id_tipo_tratamento'=>6,]);
-      
+
     }
 
     // Atualizar o status da entrevista para 'Entrevistado' e remover o ID de encaminhamento
@@ -457,7 +467,7 @@ class GerenciarEntrevistaController extends Controller
 
 
         DB::table('encaminhamento')->where('id',$id)->update(['status_encaminhamento' =>3]);;
-       
+
 
 
 
@@ -467,20 +477,20 @@ class GerenciarEntrevistaController extends Controller
 
 
 }
-   
+
 
 public function fim($id)
 
 {
 
-    
+
     DB::table('entrevistas')
         ->where('id_encaminhamento', $id)
         ->update(['status' => 'Entrevistado Recusado',]);
 
 
         DB::table('encaminhamento')->where('id',$id)->update(['status_encaminhamento' =>3]);;
-       
+
 
 
 

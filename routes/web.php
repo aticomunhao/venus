@@ -29,8 +29,8 @@ use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\GerenciarEncaminhamentoController;
 use App\Http\Controllers\GerenciarEncaminhamentoPTIController;
+use App\Http\Controllers\GerenciarEncaminhamentoIntegralController;
 use App\Http\Controllers\GerenciarTratamentosController;
-use App\Http\Controllers\GerenciarTratamentoPTIController;
 use App\Http\Controllers\GerenciarEntrevistaController;
 use App\Http\Controllers\GerenciarDirigentesController;
 
@@ -234,10 +234,13 @@ Route::get('/gerenciar-tratamentos', [GerenciarTratamentosController::class, 'in
 Route::get('/visualizar-trat/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
 Route::post('/presenca/{idtr}', [GerenciarTratamentosController::class, 'presenca'])->name('gtcpre');
 Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
+Route::get('/alterar-grupo-tratamento/{id}', [GerenciarTratamentosController::class, 'escolherGrupo']);
+Route::get('/escolher-horario/{id}', [GerenciarTratamentosController::class, 'escolherHorario']);
+Route::any('/trocar-grupo-tratamento/{id}', [GerenciarTratamentosController::class, 'trocarGrupo']);
 
 
 
-Route::get('/gerenciar-tratamentos-pti', [GerenciarTratamentoPTIController::class, 'index'])->name('gtcpdx');
+
 
 
 Route::put('/k', [GerenciarTratamentosController::class, ''])->name('');
@@ -283,6 +286,15 @@ Route::get('/agendar-tratamento-pti/{ide}', [GerenciarEncaminhamentoPTIControlle
 Route::post('incluir-tratamento-pti/{idtr}', [GerenciarEncaminhamentoPTIController::class, 'tratar']);
 Route::get('/visualizar-enc-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'visualizar']);
 Route::post('/inativar-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'inative']);
+
+//Encaminhamento Integral
+
+Route::get('/gerenciar-encaminhamentos-integral', [GerenciarEncaminhamentoIntegralController::class, 'index']);
+Route::get('/agendar-integral/{ide}/{idtt}', [GerenciarEncaminhamentoIntegralController::class, 'agenda']);
+Route::get('/agendar-tratamento-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'tratamento']);
+Route::post('incluir-tratamento-integral/{idtr}', [GerenciarEncaminhamentoIntegralController::class, 'tratar']);
+Route::get('/visualizar-enc-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'visualizar']);
+Route::post('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'inative']);
 
 //Dirigentes
 

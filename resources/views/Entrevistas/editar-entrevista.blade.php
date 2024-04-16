@@ -23,17 +23,17 @@
                         </div>
                     </div>
 
-                   
+
                     <div class="row mb-5">
                         <div class="col">
                             <label for="id_entrevistador" class="form-label">Entrevistador</label>
-                            <select class="form-control" id="id_entrevistador" name="id_entrevistador">                              
+                            <select class="form-control teste" id="id_entrevistador" name="id_entrevistador" {{ $entrevistas->id_entrevistador == null ? 'disabled' : '' }}>
                                  @foreach ($membros as $membro )
-                                 <option value="{{ $membro->id }}">{{ $membro->nome_entrevistador }}</option>
+                                 <option value="{{ $membro->id }}" {{$membro->id == $entrevistas->id_entrevistador ? 'selected' : '' }}>{{ $membro->nome_entrevistador }}</option>
                                  @endforeach
-                                 
-                     
-                                
+
+
+
                             </select>
                         </div>
                     </div>
@@ -93,7 +93,7 @@
                     </fieldset>
 
                     <br>
-                  
+
                     <br>
                     <div class="row mt-4 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
@@ -115,5 +115,9 @@
             document.getElementById('nome').value = selectedOption.getAttribute('data-nome');
             document.getElementById('localizacao').value = selectedOption.getAttribute('data-localizacao');
         });
+
+        if ( {{ $entrevistas->id_entrevistador == null ? 1 : 0}} ) { //Deixa o select status como padrao vazio
+            $(".teste").prop("selectedIndex", -1);
+        }
     </script>
 @endsection
