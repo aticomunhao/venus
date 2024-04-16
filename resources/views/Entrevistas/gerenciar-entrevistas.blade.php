@@ -22,10 +22,10 @@
                             <div class="col">Status
                                 <select class="form-select teste" id="4" name="status" type="number">{{-- Select de pesquisa de status --}}
                                     <option value=1 {{ $pesquisaValue == 1 ? 'selected' : '' }}>Aguardando agendamento</option>{{-- Se auto seleciona de acordo com o valor anterior --}}
-                                    <option value=4 {{ $pesquisaValue == 4 ? 'selected' : '' }}>Aguardando entrevistador</option>
+                                    <option value=4 {{ $pesquisaValue == 4 ? 'selected' : '' }}>Completar registro de marcação</option>
                                     <option value=2 {{ $pesquisaValue == 2 ? 'selected' : '' }}>Agendado</option>
-                                    <option value=5 {{ $pesquisaValue == 5 ? 'selected' : '' }}>Entrevistado Aceito</option>
-                                    <option value=6 {{ $pesquisaValue == 6 ? 'selected' : '' }}>Entrevistado Recusado</option>
+                                    <option value=5 {{ $pesquisaValue == 5 ? 'selected' : '' }}>Entrevista Marcada </option>
+                                    <option value=6 {{ $pesquisaValue == 6 ? 'selected' : '' }}>Entrevista Cancelada</option>
                                 </select>
                             </div>
                             <div class="col"><br />
@@ -70,7 +70,7 @@
                                     </td>
                                     <td>
                                         {{-- Inicio botao editar --}}
-                                        @if ($informacao->status == 'Aguardando agendamento' or $informacao->status == 'Entrevistado' or $informacao->status == 'Entrevistado Aceito' or $informacao->status == 'Entrevistado Recusado')
+                                        @if ($informacao->status == 'Aguardando agendamento' or $informacao->status == 'Entrevistado' or $informacao->status == 'Entrevista Marcada' or $informacao->status == 'Entrevista Cancelada')
                                             <a href="#" type="button" class="btn btn-outline-warning btn-sm disabled"
                                                 data-tt="tooltip" data-placement="top" title="Editar" disabled>
                                                 <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
@@ -96,7 +96,7 @@
                                             </a>
                                         @endif{{-- Fim botao agendar --}}
 
-                                        @if ($informacao->status !== 'Aguardando entrevistador'){{-- Inicio botao agendar entrevistador --}}
+                                        @if ($informacao->status !== 'Completar registro de marcação'){{-- Inicio botao agendar entrevistador --}}
                                             <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
                                                 data-tt="tooltip" data-placement="top" title="historico" disabled>
                                                 <i class="bi bi-person-add" style="font-size: 1rem; color:#000;"></i> 
@@ -111,15 +111,15 @@
 
                                         @if ($informacao->status !== 'Agendado'){{-- Inicio Finalizar --}}
                                             <a href="#" type="button"
-                                                class="btn btn-outline-success btn-sm disabled" data-tt="tooltip"
+                                                class="btn btn-outline-danger btn-sm disabled" data-tt="tooltip"
                                                 data-placement="top" title="Finalizar" disabled>
-                                                <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i>
+                                               <i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @else
                                             <button type="button" class="btn btn-outline-success btn-sm"
                                                 data-tt="tooltip" data-placement="top" title="Finalizar"
                                                 data-bs-toggle="modal" data-bs-target="#modalF{{ $informacao->ide }}">
-                                                <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i>
+                                                <i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i>
                                             </button>
 
                                             @endif{{-- Fim Finalizar --}}
@@ -139,7 +139,7 @@
                                     @endif{{-- Fim visualizar --}}
 
                                         {{-- Inicio excluir --}}
-                                        @if ($informacao->status == 'Entrevistado' or $informacao->status == 'Entrevistado Aceito' or $informacao->status == 'Entrevistado Recusado' )
+                                        @if ($informacao->status == 'Agendado' or $informacao->status == 'Entrevista Marcada' or $informacao->status == 'Entrevista Cancelada' )
                                             <i href="#" type="button"
                                                 class="btn btn-outline-danger btn-sm disabled" data-tt="tooltip"
                                                 data-placement="top" title="Inativar" disabled>

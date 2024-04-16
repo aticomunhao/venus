@@ -110,13 +110,13 @@ class GerenciarEntrevistaController extends Controller
                 $informacoes->where('entrevistas.status', "ilike", "Entrevistado");
                 $pesquisaValue = 3;
             } elseif ($request->status == 4) {
-                $informacoes->where('entrevistas.status', "ilike", "Aguardando entrevistador");
+                $informacoes->where('entrevistas.status', "ilike", "Completar registro de marcação");
                 $pesquisaValue = 4;
             }elseif ($request->status == 5) {
-                $informacoes->where('entrevistas.status', "ilike", "Entrevistado Aceito");
+                $informacoes->where('entrevistas.status', "ilike", "Entrevista Marcada");
                 $pesquisaValue = 5;
             } elseif ($request->status == 6) {
-                $informacoes->where('entrevistas.status', "ilike", "Entrevistado Recusado");
+                $informacoes->where('entrevistas.status', "ilike", "Entrevista Cancelada");
                 $pesquisaValue = 6;
                  }
 
@@ -230,7 +230,7 @@ class GerenciarEntrevistaController extends Controller
             'id_sala' => $request->id_sala,
             'data' => $request->data,
             'hora' => $request->hora,
-            'status' => 'Aguardando entrevistador',
+            'status' => 'Completar registro de marcação',
         ]);
 
 
@@ -300,13 +300,11 @@ class GerenciarEntrevistaController extends Controller
         ]);
 
 
-        app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
+       
 
 
 
-
-
-        return redirect()->route('gerenciamento')->with('success', 'Entrevista criada com sucesso!');
+        return redirect()->route('gerenciamento')->with('success', 'O cadastro foi realizado com sucesso!');
     }
 
 
@@ -474,7 +472,7 @@ class GerenciarEntrevistaController extends Controller
     // Atualizar o status da entrevista para 'Entrevistado' e remover o ID de encaminhamento
     DB::table('entrevistas')
         ->where('id_encaminhamento', $id)
-        ->update(['status' => 'Entrevistado Aceito',]);
+        ->update(['status' => 'Entrevista Marcada',]);
 
 
         DB::table('encaminhamento')->where('id',$id)->update(['status_encaminhamento' =>3]);;
@@ -482,6 +480,16 @@ class GerenciarEntrevistaController extends Controller
 
 
 
+        $data = date("Y-m-d H:i:s");
+
+        DB::table('historico_venus')->insert([
+
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'fato' => 40,
+            'obs' => $id
+
+        ]);
 
 
     return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
@@ -497,7 +505,7 @@ public function fim($id)
 
     DB::table('entrevistas')
         ->where('id_encaminhamento', $id)
-        ->update(['status' => 'Entrevistado Recusado',]);
+        ->update(['status' => 'Entrevistada Cancelada',]);
 
 
         DB::table('encaminhamento')->where('id',$id)->update(['status_encaminhamento' =>3]);;
@@ -507,7 +515,7 @@ public function fim($id)
 
 
 
-    return redirect()->route('gerenciamento')->with('danger', 'Entrevista recusada!');
+    return redirect()->route('gerenciamento')->with('sucess', 'Entrevista cancelada!');
 
 
 }

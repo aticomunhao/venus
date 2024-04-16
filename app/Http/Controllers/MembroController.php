@@ -160,19 +160,19 @@ class membroController extends Controller
 
 
 
-
     public function update(Request $request, string $id)
     {
+        // dd($request->all('id_associado'));
 
-
-        DB::table('membro')->where('id', $id)->update([
-            'id_associado' => $request->input('id_associado'),
+        DB::table('membro')->where('id_associado', $id)->update([
+            'id_associado' => $request->input($id),
             'id_funcao' => $request->input('id_funcao'),
             'id_grupo' => $request->input('id_grupo'),
 
 
 
         ]);
+
 
 
         app('flasher')->addSuccess("Alterado com Sucesso");
