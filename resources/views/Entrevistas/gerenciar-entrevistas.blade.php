@@ -116,7 +116,7 @@
                                                <i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @else
-                                            <button type="button" class="btn btn-outline-success btn-sm"
+                                            <button type="button" class="btn btn-outline-danger btn-sm"
                                                 data-tt="tooltip" data-placement="top" title="Finalizar"
                                                 data-bs-toggle="modal" data-bs-target="#modalF{{ $informacao->ide }}">
                                                 <i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i>
