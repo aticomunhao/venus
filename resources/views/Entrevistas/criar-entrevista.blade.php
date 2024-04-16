@@ -29,6 +29,7 @@
                         <label for="data" class="form-label">Data</label>
                         <input type="date" class="form-control" id="data" name="data">
                     </div>
+                
                     <div class="col">
                         <label for="hora" class="form-label">Hora</label>
                         <input type="time" class="form-control" id="hora" name="hora">
@@ -89,12 +90,21 @@
 </div>
 
 <script>
-    // Obtém a data mínima no formato AAAA-MM-DD
-    var dataMinima = new Date("2024-01-01").toISOString().split('T')[0];
+    // Obtém a data atual no formato 'YYYY-MM-DD'
+    var dataAtual = new Date().toISOString().split('T')[0];
 
     // Define a data mínima no campo de entrada
-    document.getElementById("data").setAttribute("min", dataMinima);
+    document.getElementById('data').setAttribute('min', dataAtual);
 </script>
+
+<script>
+    // Obtém a data atual no formato 'YYYY-MM-DD'
+    var dataAtual = new Date().toISOString().split('T')[0];
+
+    // Define a data mínima no campo de entrada
+    document.getElementById('data').setAttribute('min', dataAtual);
+</script>
+
 <script>
     document.getElementById('id_sala').addEventListener('change', function() {
         var selectedOption = this.options[this.selectedIndex];

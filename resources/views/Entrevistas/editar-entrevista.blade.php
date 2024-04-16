@@ -108,7 +108,21 @@
             </div>
         </div>
     </div>
-
+    <script>
+        // Obtém a data atual no formato 'YYYY-MM-DD'
+        var dataAtual = new Date().toISOString().split('T')[0];
+    
+        // Define a data mínima no campo de entrada
+        document.getElementById('data').setAttribute('min', dataAtual);
+    </script>
+    
+    <script>
+        // Obtém a data atual no formato 'YYYY-MM-DD'
+        var dataAtual = new Date().toISOString().split('T')[0];
+    
+        // Define a data mínima no campo de entrada
+        document.getElementById('data').setAttribute('min', dataAtual);
+    </script>
     <script>
         document.getElementById('numero_sala').addEventListener('change', function() {
             var selectedOption = this.options[this.selectedIndex];

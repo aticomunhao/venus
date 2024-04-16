@@ -451,6 +451,16 @@ class GerenciarTratamentosController extends Controller
             return redirect()->back();
         }
 
+        $data = date("Y-m-d H:i:s");
+
+        DB::table('historico_venus')->insert([
+
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'fato' => 39,
+            'obs' => $ide
+
+        ]);
 
      DB::table('tratamento')->where('id_encaminhamento', $ide)->update(['id_reuniao'=> $reu]);
 
