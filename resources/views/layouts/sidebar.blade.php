@@ -36,7 +36,7 @@
                         <a class="nav-link dropdown-toggle" href="#" id="2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Gerenciamento DAE</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                             <li><a class="dropdown-item" href="/gerenciar-atendentes-plantonistas">Gerenciar Plantonistas</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-dirigente">Gerenciar Dirigente</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-dirigente">Gerenciar PTI</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-membro">Gerenciar Membros</a></li>

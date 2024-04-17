@@ -32,7 +32,7 @@ use App\Http\Controllers\GerenciarEncaminhamentoPTIController;
 use App\Http\Controllers\GerenciarEncaminhamentoIntegralController;
 use App\Http\Controllers\GerenciarTratamentosController;
 use App\Http\Controllers\GerenciarEntrevistaController;
-use App\Http\Controllers\GerenciarDirigentesController;
+use App\Http\Controllers\GerenciarPTIController;
 
 /*
 |--------------------------------------------------------------------------
@@ -299,7 +299,7 @@ Route::post('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralControll
 
 // Dirigente
 
-Route::get('/gerenciar-dirigente', [GerenciarDirigentesController::class, 'index']);
+Route::get('/gerenciar-dirigente', [GerenciarPTIController::class, 'index']);
 
 
 

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class GerenciarDirigentesController extends Controller
+class GerenciarPTIController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -25,6 +25,14 @@ class GerenciarDirigentesController extends Controller
         ->distinct('gr.id')
         ->get();
 
+        $grupos_autorizados = [];
+        foreach($dirigentes as $dir){
+            $grupos_autorizados[] = $dir->id;
+        }
+
+
+            
+
         $encaminhamentos = DB::table('tratamento as tr')
         ->select('tr.id','p.nome_completo', 'cro.h_inicio', 'cro.h_fim', 'gr.nome')
         ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
@@ -34,9 +42,12 @@ class GerenciarDirigentesController extends Controller
         ->leftJoin('pessoas as p','atd.id_assistido', 'p.id')
         ->where('enc.id_tipo_tratamento', 2)
         ->where('tr.status', 2)
+        ->whereIn('gr.id', $grupos_autorizados)
         ->get();
 
-        return view('dirigentes.gerenciar-dirigente', compact('encaminhamentos'));
+
+
+        return view('pti.gerenciar-pti', compact('encaminhamentos', 'dirigentes'));
     }
 
     /**

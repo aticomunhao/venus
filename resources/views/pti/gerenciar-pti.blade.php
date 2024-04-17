@@ -2,21 +2,26 @@
 
 @section('content')
     <div class="container">
-        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR MEMBRO
+        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR PTI
         </h4>
 
         <div class="col-12">
-            <form action="{{ route('lista') }}" class="form-horizontal mt-4" method="GET">
+            <form action="/gerenciar-pti" class="form-horizontal mt-4" method="GET">
                 <div class="row">
                     <div class="col-4">
                         Nome
                         <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa"
                              value="{{ request('nome_pesquisa') }}">
                     </div>
-                    <div class="col-2">
-                        CPF
-                        <input class="form-control" type="text" id="cpf_pesquisa" name="cpf_pesquisa"
-                             value="{{ request('cpf_pesquisa') }}">
+                    <div class="col-4">
+                        Grupos
+
+                        <select class="form-select status" id="4" name="status" type="number">
+                            @foreach ($dirigentes as $dirigente)
+                                <option value="{{ $dirigente->id }}"
+                                    >{{ $dirigente->nome }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="col">
@@ -27,8 +32,8 @@
                         <a href="/gerenciar-membro"><input class="btn btn-light btn-sm me-md-2"
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Limpar"></a>
-                        <a href="/criar-membro"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
-                                type="button" value="Novo membro +"></a>
+                        <a href=""><input class="btn btn-danger btn-sm me-md-2" style="font-size: 0.9rem;"
+                                type="button" value="Declarar Férias"></a>
                     </div>
                 </div>
 
@@ -45,8 +50,8 @@
                     <th>ID</th>
                     <th>NOME</th>
                     <th>NOME GRUPO</th>
-                    <th>FUNÇÃO</th>
-                    <th>STATUS</th>
+                    <th>HORÁRIO INÍCIO</th>
+                    <th>HORÁRIO FIM</th>
                     <th>AÇÕES</th>
                 </tr>
 
