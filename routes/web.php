@@ -298,7 +298,10 @@ Route::post('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralControll
 
 // Dirigente
 
-Route::get('/gerenciar-dirigente', [GerenciarPTIController::class, 'index']);
+Route::get('/gerenciar-pti', [GerenciarPTIController::class, 'index']);
+Route::get('/alta-pti', [GerenciarPTIController::class, 'update']);
+Route::get('/visualizar-pti/{id}', [GerenciarPTIController::class, 'show']);
+Route::get('/ferias-pti/{id}/{tp}', [GerenciarPTIController::class, 'ferias']);
 
 
 

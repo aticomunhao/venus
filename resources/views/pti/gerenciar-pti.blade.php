@@ -16,10 +16,9 @@
                     <div class="col-4">
                         Grupos
 
-                        <select class="form-select status" id="4" name="status" type="number">
+                        <select class="form-select status" id="4" name="grupo" type="number">
                             @foreach ($dirigentes as $dirigente)
-                                <option value="{{ $dirigente->id }}"
-                                    >{{ $dirigente->nome }}</option>
+                                <option value="{{ $dirigente->id }}" {{ $dirigente->id == $selected_grupo ? 'selected' : '' }}>{{ $dirigente->nome }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -29,11 +28,24 @@
                         <input class="btn btn-light btn-sm me-md-2"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
                             value="Pesquisar">
-                        <a href="/gerenciar-membro"><input class="btn btn-light btn-sm me-md-2"
+                        <a href="/gerenciar-pti"><input class="btn btn-light btn-sm me-md-2"
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Limpar"></a>
-                        <a href=""><input class="btn btn-danger btn-sm me-md-2" style="font-size: 0.9rem;"
+
+                        @foreach ($dirigentes as $dirigente)
+                        @if($selected_grupo == $dirigente->id)
+
+                            @if($dirigente->status_grupo == 4)
+                            <a href="/ferias-pti/{{ request('grupo') }}/2"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
+                                type="button" value="Retomar de Férias"></a>
+                            @else
+                            <a href="/ferias-pti/{{ request('grupo') }}/1"><input class="btn btn-danger btn-sm me-md-2" style="font-size: 0.9rem;"
                                 type="button" value="Declarar Férias"></a>
+                            @endif
+
+
+                            @endif
+                                @endforeach
                     </div>
                 </div>
 
@@ -64,26 +76,22 @@
                             <td>{{ $encaminhamento->h_inicio }}</td>
                             <td>{{ $encaminhamento->h_fim }}</td>
 
-                            {{--  <td>
 
-                                <a href="/editar-membro/{{ $membros->idm }}" type="button"
+                              <td>
+
+                                <a href="/alta-pti" type="button"
                                     class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Editar">
-                                    <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                                    title="Declarar Alta">
+                                    <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
                                 </a>
-                                <a href="/visualizar-membro/{{ $membros->idm }}" type="button"
+                                <a href="/visualizar-pti/{{ $encaminhamento->id }}" type="button"
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Visualizar">
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
                                         data-bs-target="#pessoa"></i>
                                 </a>
-                                <a href="/deletar-membro" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#confirmacaoDelecao"
-                                    onclick="confirmarExclusao('{{ $membros->idm }}', '{{ $membros->nome_completo }}')"
-                                    data-tt="tooltip" data-placement="top" title="Deletar">
-                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
-                                </a>
-                            </td>  --}}
+
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
