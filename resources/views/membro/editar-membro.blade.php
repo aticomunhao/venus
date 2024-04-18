@@ -30,16 +30,24 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class="col">
                             <div class="form-group">
                                 <label for="tipo_status_pessoa" class="form-label">Status</label>
-                                <select class="form-control" aria-label=".form-select-lg example" name="tipo_status_pessoa">
+                                <select class="form-select" aria-label=".form-select-lg example" name="tipo_status_pessoa">
                                     @foreach ($tipo_status_pessoa as $tipo)
                                         <option value="{{ $tipo->id }}" @if($membro->id_associado == $tipo->id) selected @endif>{{ $tipo->tipos }}</option>
                                     @endforeach
                                 </select>
                             </div>
+                            {{-- <div class="col">
+                                <div class="form-group">
+                                    <label for="tipo_status_pessoa" class="form-label">Motivo inativação</label>
+                                    <select class="form-select" aria-label=".form-select-lg example" name="tipo_status_pessoa">
+                                        @foreach ($tipo_status_pessoa as $tipo)
+                                            <option value="{{ $tipo->id }}" @if($membro->id_associado == $tipo->id) selected @endif>{{ $tipo->tipos }}</option>
+                                        @endforeach
+                                    </select>
+                                </div> --}}
                         </div>
                     </div>
                     <br>
@@ -54,13 +62,13 @@
                                 </select>
                             </div>
                         </div>
-
-                        <div class="col">
+                        <br>
+                        <div class="col-12 mt-3">
                             <div class="form-group">
-                                <label for="id_grupo" class="form-label">Nome grupo</label>
-                                <select class="form-select" aria-label=".form-select-lg example" name="id_grupo">
+                                <label for="id_grupo" class="form-label">Nome Reunião Mediunica</label>
+                                <select class="form-select select2" aria-label=".form-select-lg example" name="id_reuniao">
                                     @foreach ($grupo as $grupos)
-                                        <option value="{{ $grupos->id }}" @if($membro->id_grupo == $grupos->id) selected @endif>{{ $grupos->nome }}</option>
+                                        <option value="{{ $grupos->id }}">{{ $grupos->nome }} - {{ $grupos->dia }}- {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim ))}} - Sala {{ $grupos->numero }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -79,4 +87,9 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({ theme: 'bootstrap-5'});
+        });
+    </script>
 @endsection

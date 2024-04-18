@@ -39,7 +39,7 @@
                             <li><a class="dropdown-item" href="/gerenciar-dirigente">Gerenciar PTI</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-membro">Gerenciar Membros</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Gerenciar Membros</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-reunioes">Gerenciar Reuniões Mediúnicas</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-mediunidades">Gerenciar Mediunidades</a></li>
                         </ul>

@@ -505,7 +505,7 @@ public function fim($id)
 
     DB::table('entrevistas')
         ->where('id_encaminhamento', $id)
-        ->update(['status' => 'Entrevistada Cancelada',]);
+        ->update(['status' => 'Entrevista Cancelada',]);
 
 
         DB::table('encaminhamento')->where('id',$id)->update(['status_encaminhamento' =>3]);;

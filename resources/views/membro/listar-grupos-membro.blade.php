@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR MEMBRO
+        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPOS MEMBRO
         </h4>
 
         <div class="col-12">
@@ -24,11 +24,10 @@
                         <input class="btn btn-light btn-sm me-md-2"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
                             value="Pesquisar">
-                        <a href="/gerenciar-membro"><input class="btn btn-light btn-sm me-md-2"
+                        <a href="/gerenciar-grupo-membro"><input class="btn btn-light btn-sm me-md-2"
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Limpar"></a>
-                        <a href="/criar-membro"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
-                                type="button" value="Novo membro +"></a>
+
                     </div>
                 </div>
 
@@ -43,39 +42,39 @@
                 class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                     <th>ID</th>
-                    <th>NOME</th>
-                    <th>NOME GRUPO</th>
-                    <th>FUNÇÃO</th>
-                    <th>STATUS</th>
+                    <th>GRUPO</th>
+                    <th>DIA</th>
+                    <th>HORÁRIO INICIO</th>
+                    <th>HORÁRIO FIM</th>
+                    <th>SALA</th>
                     <th>AÇÕES</th>
                 </tr>
 
                 <tbody>
-                    @foreach ($membro as $membros)
+                    @foreach ($membro_cronograma as $membros)
                         <tr>
-                            <td>{{ $membros->idm }}</td>
-                            <td>{{ $membros->nome_completo }}</td>
-                            <td>{{ $membros->id_cronograma}}</td>
-                            <td>{{ $membros->nome_funcao }}</td>
-                            <td>{{ $membros->status ? 'Ativo' : 'Inativo' }}</td>
+                            <td>{{ $membros->id}}</td>
+                            <td>{{ $membros->nome_grupo }}</td>
+                            <td>{{ $membros->dia }}</td>
+                            <td>{{ $membros->h_inicio }}</td>
+                            <td>{{ $membros->h_fim }}</td>
+                            <td>{{ $membros->sala }}</td>
+                      
                             <td>
 
-                                <a href="/editar-membro/{{ $membros->idm }}" type="button"
-                                    class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Editar">
-                                    <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
-                                </a>
-                                <a href="/visualizar-membro/{{ $membros->idm }}" type="button"
+                                <a href="{{ route('lista') }}" type="button"
+                                class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
+                                title="Membro">
+                                <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                             </a>
+                             
+                                <a href="/visualizar-membro/{{ $membros->id }}" type="button"
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Visualizar">
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
                                         data-bs-target="#pessoa"></i>
                                 </a>
-                                <a href="/deletar-membro" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#confirmacaoDelecao"
-                                    onclick="confirmarExclusao('{{ $membros->idm }}', '{{ $membros->nome_completo }}')"
-                                    data-tt="tooltip" data-placement="top" title="Deletar">
-                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+        
                                 </a>
                             </td>
                         </tr>

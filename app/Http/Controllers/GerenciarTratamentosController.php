@@ -443,7 +443,8 @@ class GerenciarTratamentosController extends Controller
         $countVagas = DB::table('tratamento')->where('id_reuniao', '=', "$reu")->where('status', '<', '3' )->count();
         $maxAtend = DB::table('cronograma')->where('id', '=', "$reu")->get();
         $tratID = DB::table('encaminhamento')->where('id', '=', $ide)->get();
-
+        $idt = DB::table('tratamento')->where('id_encaminhamento', $ide)->first();
+        $data_ontem = Carbon::yesterday();
 
         if ($tratID[0]->id_tipo_tratamento == 2 and $countVagas >= $maxAtend[0]->max_atend){
 
@@ -461,6 +462,27 @@ class GerenciarTratamentosController extends Controller
             'obs' => $ide
 
         ]);
+
+        $data = date("Y-m-d H:i:s");
+        
+
+        DB::table('tratamento_grupos')
+        ->where('dt_fim', null)
+        ->where('id_tratamento', $idt->id)
+        ->update([
+            'dt_fim' => $data_ontem,
+        ]);
+
+       
+        DB::table('tratamento_grupos')
+        ->insert([
+            'id_cronograma' => $reu,
+            'id_tratamento' => $idt->id,
+            'dt_inicio' => $data,
+        ]);
+        
+        
+
 
      DB::table('tratamento')->where('id_encaminhamento', $ide)->update(['id_reuniao'=> $reu]);
 

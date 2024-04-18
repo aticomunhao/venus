@@ -11,15 +11,54 @@ use function Laravel\Prompts\select;
 class membroController extends Controller
 {
 
+    public function grupos(Request $request){
+        $cronogramas = DB::table('membro')->select('id_cronograma')->get();
+        $array_cro = [];
+
+        foreach($cronogramas as $cro){
+            $array_cro[] = $cro->id_cronograma;
+        }
 
 
+        $membro_cronograma = DB::table('cronograma as cro')
+        ->select('cro.id', 'gr.nome as nome_grupo', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 'sl.numero as sala')
+        ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+        ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+        ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+        ->whereIn('cro.id', $array_cro)
+        ->get();
+       
+
+        $nome = $request->nome_pesquisa;
+        $cpf = $request->cpf_pesquisa;
+        $grupoPesquisa = $request->grupo_pesquisa;
+
+        $grupos = DB::table('grupo')->pluck('nome', 'id');
+
+
+        
+      
+        return view('membro.listar-grupos-membro', compact('membro_cronograma'));
+    }
+
+
+       
     public function index(Request $request)
     {
+
+
+        $grupo = DB::table('cronograma as cro')
+    ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia')
+    ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
+    ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+    ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+    ->get();
+    
         $membroQuery = DB::table('membro AS m')
             ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
             ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-            ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
+            ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
             ->select(
                 'p.nome_completo',
                 'm.id AS idm',
@@ -29,48 +68,55 @@ class membroController extends Controller
                 'p.status',
                 'p.motivo_status',
                 'tf.nome as nome_funcao',
-                'm.id_grupo',
+                'm.id_cronograma',
                 'g.nome as nome_grupo'
             )
+            
             ->orderBy('p.nome_completo', 'ASC');
-
+    
         $nome = $request->nome_pesquisa;
         $cpf = $request->cpf_pesquisa;
         $grupoPesquisa = $request->grupo_pesquisa;
-
+    
         $grupos = DB::table('grupo')->pluck('nome', 'id');
-
-
+    
         if ($nome || $cpf || $grupoPesquisa) {
             $membroQuery->where(function ($query) use ($nome, $cpf, $grupoPesquisa) {
                 if ($nome) {
                     $query->where('p.nome_completo', 'ilike', "%$nome%")
                         ->orWhere('p.cpf', 'ilike', "%$nome%");
                 }
-
+    
                 if ($cpf) {
                     $query->orWhere('p.cpf', 'ilike', "%$cpf%");
                 }
-
+    
                 if ($grupoPesquisa) {
                     $query->orWhere('g.id', '=', $grupoPesquisa);
                 }
             });
         }
-
+    
         $membro = $membroQuery->orderBy('p.status', 'asc')
             ->orderBy('p.nome_completo', 'asc')
             ->paginate(50);
-
-        return view('membro.gerenciar-membro', compact('membroQuery', 'grupos', 'nome', 'cpf', 'grupoPesquisa', 'membro'));
+    
+        return view('membro.gerenciar-membro', compact('membro'));
     }
+    
 
-
-
+    
 
     public function create()
 {
-    $grupo = DB::select('select id, nome from grupo order by nome asc');
+    $grupo = DB::table('cronograma as cro')
+    ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia')
+    ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
+    ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+    ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+    ->get();
+
+
     $membro = DB::select('select * from membro');
     $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas order by nome_completo asc');
     $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao order by nome asc');
@@ -100,7 +146,7 @@ class membroController extends Controller
         DB::table('membro')->insert([
             'id_associado' => $request->input('id_associado'),
             'id_funcao' => $request->input('id_funcao'),
-            'id_grupo' => $request->input('id_grupo'),
+            'id_cronograma' => $request->input('id_reuniao'),
             'dt_inicio' => $data,
 
 
@@ -117,11 +163,18 @@ class membroController extends Controller
   
     public function edit($id)
 {
+    $grupo = DB::table('cronograma as cro')
+    ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia')
+    ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
+    ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+    ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+    ->get();
+
     $membro = DB::table('membro AS m')
         ->leftJoin('associado AS a', 'a.id', '=', 'm.id_associado') 
         ->leftJoin('pessoas AS p', 'a.id_pessoa', '=', 'p.id') 
         ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-        ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
+        ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
         ->leftJoin('pessoas', 'p.id', '=', 'a.id_pessoa')  
         ->select(
             'p.nome_completo',
@@ -132,7 +185,7 @@ class membroController extends Controller
             'p.status',
             'p.motivo_status',
             'tf.nome as nome_funcao',
-            'm.id_grupo',
+            'm.id_cronograma',
             'g.nome as nome_grupo'
         )
         ->where('m.id', $id)
@@ -140,7 +193,6 @@ class membroController extends Controller
 
     $tipo_status_pessoa = DB::table('tipo_status_pessoa')->select('id', 'tipo as tipos')->get();
     $tipo_motivo_status_pessoa = DB::table('tipo_motivo_status_pessoa')->select('id', 'motivo')->get();
-    $grupo = DB::table('grupo')->get();
     $pessoas = DB::table('pessoas')->get();
     $tipo_funcao = DB::table('tipo_funcao')->get();
     $associado = DB::table('associado')  ->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')
@@ -166,7 +218,7 @@ class membroController extends Controller
 
         DB::table('membro')->where('id', $id)->update([
             'id_funcao' => $request->input('id_funcao'),
-            'id_grupo' => $request->input('id_grupo'),
+            'id_cronograma' => $request->input('id_cronograma'),
 
 
 
@@ -185,11 +237,19 @@ class membroController extends Controller
 
     public function show($id)
 {
+
+    $grupo = DB::table('cronograma as cro')
+    ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia')
+    ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
+    ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+    ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+    ->get();
+
     $membro= DB::table('membro AS m')
     ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
     ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
     ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-    ->leftJoin('grupo AS g', 'm.id_grupo', '=', 'g.id')
+    ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
     ->select(
         'p.nome_completo',
         'm.id AS idm',
@@ -199,7 +259,7 @@ class membroController extends Controller
         'p.status',
         'p.motivo_status',
         'tf.nome as nome_funcao',
-        'm.id_grupo',
+        'm.id_cronograma',
         'g.nome as nome_grupo'
     )
         ->where('m.id', $id)
@@ -208,7 +268,6 @@ class membroController extends Controller
       
     $tipo_status_pessoa = DB::table('tipo_status_pessoa')->select('id', 'tipo as tipos')->get();
     $tipo_motivo_status_pessoa = DB::table('tipo_motivo_status_pessoa')->select('id', 'motivo')->get();
-    $grupo = DB::table('grupo')->get();
     $pessoas = DB::table('pessoas')->get();
     $tipo_funcao = DB::table('tipo_funcao')->get();
     $associado = DB::table('associado')  ->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')

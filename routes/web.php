@@ -165,9 +165,6 @@ Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, '
 
 
 
-
-
-
 // Grupos
 Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
 Route::get('criar-grupos', [GrupoController::class,'create'])->name('');
@@ -204,6 +201,8 @@ Route::get('/criar-membro', [MembroController::class, 'create'])->name('');
 Route::post('/incluir-membro', [MembroController::class, 'store'])->name('membro.store');
 Route::any('/deletar-membro/{id}', [MembroController::class, 'destroy'])->name('');
 Route::get('/visualizar-membro/{id}', [MembroController::class, 'show'])->name('');
+Route::get('/gerenciar-grupos-membro', [MembroController::class, 'grupos'])->name('');
+
 
 //Mediunidades
 Route::get('/gerenciar-mediunidades', [MediunidadePessoaController::class, 'index'])->name('names');

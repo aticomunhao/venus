@@ -9,7 +9,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            AGENDAR HoRáRIO - TRATAMENTO
+                            AGENDAR HORÁRIO - TRATAMENTO
                         </div>
                     </div>
                 </div>

@@ -140,7 +140,7 @@
 
                                         {{-- Inicio excluir --}}
                                         @if ($informacao->status == 'Agendado' or $informacao->status == 'Entrevista Marcada' or $informacao->status == 'Entrevista Cancelada' )
-                                            <i href="#" type="button"
+                                            <a href="#" type="button"
                                                 class="btn btn-outline-danger btn-sm disabled" data-tt="tooltip"
                                                 data-placement="top" title="Inativar" disabled>
                                                 <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>

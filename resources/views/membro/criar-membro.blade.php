@@ -55,12 +55,12 @@
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col-12 mt-3">
                             <div class="form-group">
-                                <label for="id_grupo" class="form-label">Nome grupo</label>
-                                <select class="form-select" aria-label=".form-select-lg example" name="id_grupo">
+                                <label for="id_grupo" class="form-label">Nome Reunião Mediunica</label>
+                                <select class="form-select select2" aria-label=".form-select-lg example" name="id_reuniao">
                                     @foreach ($grupo as $grupos)
-                                        <option value="{{ $grupos->id }}">{{ $grupos->nome }}</option>
+                                        <option value="{{ $grupos->id }}">{{ $grupos->nome }} - {{ $grupos->dia }}- {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim ))}} - Sala {{ $grupos->numero }}</option>
                                     @endforeach
                                 </select>
                             </div>
