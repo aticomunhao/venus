@@ -88,6 +88,23 @@
         </div>
     </div>
 </div>
+<script>
+    // Obtém a hora atual
+    var now = new Date();
+    var currentHour = now.getHours();
+    var currentMinute = now.getMinutes();
+
+    // Formata a hora atual como HH:MM
+    var formattedTime = (currentHour < 10 ? '0' : '') + currentHour + ':' +
+                        (currentMinute < 10 ? '0' : '') + currentMinute;
+
+    // Define a hora atual como o valor mínimo para o input de hora
+    document.getElementById('hora').setAttribute('min', formattedTime);
+    // Define a hora atual como o valor padrão para o input de hora
+    document.getElementById('hora').setAttribute('value', formattedTime);
+</script>
+
+
 
 <script>
     // Obtém a data atual no formato 'YYYY-MM-DD'

@@ -9,14 +9,14 @@
             <form action="{{ route('lista') }}" class="form-horizontal mt-4" method="GET">
                 <div class="row">
                     <div class="col-4">
-                        Nome
-                        <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa"
-                             value="{{ request('nome_pesquisa') }}">
+                        Grupo
+                        <input class="form-select select2" type="text" id="nome_grupo" name="nome_grupo"
+                             value="{{ request('nome_grupo') }}">
                     </div>
                     <div class="col-2">
-                        CPF
-                        <input class="form-control" type="text" id="cpf_pesquisa" name="cpf_pesquisa"
-                             value="{{ request('cpf_pesquisa') }}">
+                        Membro
+                        <input class="form-select select2" type="text" id="nome_membri" name="nome_membro"
+                             value="{{ request('nome_membro') }}">
                     </div>
             
                     <div class="col">
@@ -104,7 +104,11 @@
 
     <script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
     <link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({ theme: 'bootstrap-5'});
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>

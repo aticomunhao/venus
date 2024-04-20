@@ -17,6 +17,7 @@ use App\Http\Controllers\AtendentePlantonistaController;
 use App\Http\Controllers\TesteController;
 use App\Http\Controllers\GerenciarAtendimentoController;
 use App\Http\Controllers\AtendimentoFraternoController;
+use App\Http\Controllers\AtendimentoFraternoEspecificoController;
 use App\Http\Controllers\PessoaController;
 use App\Http\Controllers\FatosController;
 use App\Http\Controllers\UsuarioController;
@@ -144,8 +145,24 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 |--------------------------------------------------------------------------
 */
 
+//Atendimento Fraterno Específico
 
-
+Route::get('/gerenciar-afe', [AtendimentoFraternoEspecificoController::class, 'index'])->name('');
+// Route::get('/historico/{idat}/{idas}', [AtendimentoFraternoController::class, 'history'])->name('afihis');
+// Route::get('/fim-analise/{idat}', [AtendimentoFraternoController::class, 'fimanalise'])->name('afifna');
+// Route::get('/iniciar-atendimento/{idat}', [AtendimentoFraternoController::class, 'inicio'])->name('afiini');
+// Route::get('/gerar-enc_entre/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiene');
+// Route::get('/gerar-enc_trata/{idat}', [AtendimentoFraternoController::class, 'enc_trata'])->name('afient');
+// Route::get('/meus-atendimentos', [AtendimentoFraternoController::class, 'meus_atendimentos'])->name('afimeu');
+// Route::get('/tratar/{idat}/{idas}', [AtendimentoFraternoController::class, 'tratar'])->name('afitra');
+// Route::post('/tratamentos/{idat}/{idas}', [AtendimentoFraternoController::class, 'enc_trat'])->name('afitra');
+// Route::get('/entrevistar/{idat}/{idas}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
+// Route::post('/entrevistas/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
+// Route::get('/temas/{idat}', [AtendimentoFraternoController::class, 'pre_tema'])->name('afi');
+// Route::post('/tematicas/{idat}', [AtendimentoFraternoController::class, 'tematica'])->name('afitem');
+// Route::get('/atender', [AtendimentoFraternoController::class, 'atende_agora'])->name('afiini');
+// Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
+// Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
 
 
 //Entrevista
@@ -192,6 +209,7 @@ Route::get('/criar-salas', [SalaController::class, 'criar'])->name('');
 Route::post('/incluir-salas', [SalaController::class, 'store']);
 Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
 Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
+
 
 //Membros
 Route::get('/gerenciar-membro', [MembroController::class, 'index'])->name('lista');

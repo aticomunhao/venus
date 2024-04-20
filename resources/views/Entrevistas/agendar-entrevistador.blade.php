@@ -93,6 +93,7 @@
         </div>
     </div>
 </div>
+
 <script>
     // Obtém a data atual no formato 'YYYY-MM-DD'
     var dataAtual = new Date().toISOString().split('T')[0];

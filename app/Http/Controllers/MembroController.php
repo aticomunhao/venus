@@ -15,30 +15,32 @@ class membroController extends Controller
         $cronogramas = DB::table('membro')->select('id_cronograma')->get();
         $array_cro = [];
 
+
         foreach($cronogramas as $cro){
             $array_cro[] = $cro->id_cronograma;
         }
 
 
         $membro_cronograma = DB::table('cronograma as cro')
-        ->select('cro.id', 'gr.nome as nome_grupo', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 'sl.numero as sala')
+        ->select('cro.id', 'gr.nome as nome_grupo', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 'sl.numero as sala','m.nome_membro','')
         ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
         ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
         ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
         ->whereIn('cro.id', $array_cro)
         ->get();
        
-
-        $nome = $request->nome_pesquisa;
-        $cpf = $request->cpf_pesquisa;
-        $grupoPesquisa = $request->grupo_pesquisa;
+       
+    
+        $nome = $request->nome_grupo;
+        $membro = $request->nome;
+     
 
         $grupos = DB::table('grupo')->pluck('nome', 'id');
 
 
         
       
-        return view('membro.listar-grupos-membro', compact('membro_cronograma'));
+        return view('membro.listar-grupos-membro', compact('membro_cronograma','grupos'));
     }
 
 
