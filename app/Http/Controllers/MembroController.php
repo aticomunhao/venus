@@ -15,39 +15,67 @@ class membroController extends Controller
         $cronogramas = DB::table('membro')->select('id_cronograma')->get();
         $array_cro = [];
 
+        if($request->nome_membro){
+            $cronogramas = DB::table('membro AS m')
+            ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
+            ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
+            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+            ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
+            ->where('id_associado', $request->nome_membro)
+            ->select(
+                'p.nome_completo',
+                'm.id_cronograma',
+              
+            )->distinct()->get();}
+        
 
         foreach($cronogramas as $cro){
             $array_cro[] = $cro->id_cronograma;
         }
 
+       // dd($request->all());
 
         $membro_cronograma = DB::table('cronograma as cro')
-        ->select('cro.id', 'gr.nome as nome_grupo', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 'sl.numero as sala','m.nome_membro','')
+        ->select('cro.id', 'gr.nome as nome_grupo', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 'sl.numero as sala', 'tpg.descricao')
         ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
         ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
         ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
-        ->whereIn('cro.id', $array_cro)
-        ->get();
-       
-       
-    
-        $nome = $request->nome_grupo;
-        $membro = $request->nome;
+        ->leftJoin('tipo_status_grupo as tpg', 'cro.status_reuniao', 'tpg.id')
+        ->whereIn('cro.id', $array_cro);
+        
+
+
+
+        $membro = DB::table('membro AS m')
+            ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
+            ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
+            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+            ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
+            ->select(
+                'p.nome_completo',
+                'm.id_associado',
+              
+            )->distinct()->get();
+
+
+          if($request->nome_grupo){
+            $membro_cronograma = $membro_cronograma->where('cro.id', $request->nome_grupo);
+          }
+
+                $membro_cronograma = $membro_cronograma->orderBy('tpg.descricao')->orderBy('nome_grupo')->get();
+            
+            $nome = $request->nome_grupo;
+            $membroPesquisa = $request->nome_membro;
+            
      
 
-        $grupos = DB::table('grupo')->pluck('nome', 'id');
-
-
+         
         
       
-        return view('membro.listar-grupos-membro', compact('membro_cronograma','grupos'));
+        return view('membro.listar-grupos-membro', compact('membro_cronograma', 'nome', 'membro', 'membroPesquisa'));
     }
 
-
-       
-    public function index(Request $request)
-    {
-
+    public function createGrupo(Request $request, String $id){
 
         $grupo = DB::table('cronograma as cro')
     ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia')
@@ -55,12 +83,60 @@ class membroController extends Controller
     ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
     ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
     ->get();
+
+
+    $membro = DB::select('select * from membro');
+    $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas order by nome_completo asc');
+    $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao order by nome asc');
+    $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
+    $associado = DB::table('associado')
+        ->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')
+        ->select(
+            'pessoas.nome_completo',
+            'associado.nr_associado'
+        )
+        ->orderBy('pessoas.nome_completo', 'asc')
+        ->get();
+
+    return view('membro/criar-membro-grupo', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao', 'id'));
+
+    }
     
+    public function storeGrupo(Request $request, String $id){
+
+        $data = date("Y-m-d H:i:s");
+        DB::table('membro')->insert([
+            'id_associado' => $request->input('id_associado'),
+            'id_funcao' => $request->input('id_funcao'),
+            'id_cronograma' => $id,
+            'dt_inicio' => $data,
+
+
+        ]);
+
+
+        app('flasher')->addSuccess("Cadastrado com Sucesso");
+        return redirect("gerenciar-membro/$id");
+    }
+       
+    public function index(Request $request, String $id)
+    {
+
+
+        $grupo = DB::table('cronograma as cro')
+    ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.status_reuniao')
+    ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
+    ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+    ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+    ->where('cro.id', $id)
+    ->first();
+
         $membroQuery = DB::table('membro AS m')
             ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
             ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
             ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
+            ->where('m.id_cronograma', $id)
             ->select(
                 'p.nome_completo',
                 'm.id AS idm',
@@ -103,7 +179,7 @@ class membroController extends Controller
             ->orderBy('p.nome_completo', 'asc')
             ->paginate(50);
     
-        return view('membro.gerenciar-membro', compact('membro'));
+        return view('membro.gerenciar-membro', compact('membro', 'id', 'grupo'));
     }
     
 
@@ -158,12 +234,12 @@ class membroController extends Controller
 
 
         app('flasher')->addSuccess("Cadastrado com Sucesso");
-        return redirect('gerenciar-membro');
+        return redirect('gerenciar-grupos-membro');
     }
 
 
   
-    public function edit($id)
+    public function edit(String $idcro, String $id)
 {
     $grupo = DB::table('cronograma as cro')
     ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia')
@@ -206,7 +282,7 @@ class membroController extends Controller
     ->orderBy('pessoas.nome_completo', 'asc')
     ->get();
 
-    return view('membro.editar-membro', compact('associado','membro', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo', 'pessoas', 'tipo_funcao'));
+    return view('membro.editar-membro', compact('associado','membro', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo', 'pessoas', 'tipo_funcao', 'idcro'));
 }
 
     
@@ -214,30 +290,27 @@ class membroController extends Controller
 
 
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $idcro, String $id)
     {
       
 
         DB::table('membro')->where('id', $id)->update([
             'id_funcao' => $request->input('id_funcao'),
-            'id_cronograma' => $request->input('id_cronograma'),
-
-
-
+            'id_cronograma' => $idcro,
         ]);
 
 
 
         app('flasher')->addSuccess("Alterado com Sucesso");
 
-        return redirect('gerenciar-membro');
+        return redirect("gerenciar-membro/$idcro");
     }
 
 
 
 
 
-    public function show($id)
+    public function show(string $idcro, string $id)
 {
 
     $grupo = DB::table('cronograma as cro')
@@ -281,11 +354,11 @@ class membroController extends Controller
     ->orderBy('pessoas.nome_completo', 'asc')
     ->get();
 
-    return view('membro.visualizar-membro', compact('associado', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo',  'membro', 'pessoas', 'tipo_funcao'));
+    return view('membro.visualizar-membro', compact('associado', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo',  'membro', 'pessoas', 'tipo_funcao', 'idcro'));
 }
 
 
-    public function destroy(string $id)
+    public function destroy(string $idcro, string $id)
     {
 
         $data = date("Y-m-d H:i:s");
@@ -304,7 +377,7 @@ class membroController extends Controller
 
         if (!$membro) {
             app('flasher')->addError('A membro não foi encontrada.');
-            return redirect('/gerenciar-membro');
+            return redirect("/gerenciar-membro/$idcro");
         }
 
 
@@ -312,6 +385,31 @@ class membroController extends Controller
 
 
         app('flasher')->addError('Excluído com sucesso.');
-        return redirect('/gerenciar-membro');
+        return redirect("/gerenciar-membro/$idcro");
+    }
+
+    public function ferias(string $id, string $tp){
+
+        if($tp == 1){
+
+            DB::table('cronograma')->where('id', $id)->update([
+            'status_reuniao' => 4
+         ]);
+
+    
+
+        }
+        else if($tp == 2){
+
+            DB::table('cronograma')->where('id', $id)->update([
+            'status_reuniao' => 1
+         ]);
+
+
+        }
+        return redirect()->back();
+
+
+
     }
 }

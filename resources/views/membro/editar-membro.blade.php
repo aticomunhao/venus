@@ -16,7 +16,7 @@
             </div>
 
             <div class="card-body">
-                <form class="form-horizontal mt-2" method="post" action="/atualizar-membro/{{ $membro->idm }}">
+                <form class="form-horizontal mt-2" method="post" action="/atualizar-membro/{{ $idcro }}/{{ $membro->idm }}">
                     @csrf
 
                     <div class="row">
@@ -33,7 +33,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="tipo_status_pessoa" class="form-label">Status</label>
-                                <select class="form-select" aria-label=".form-select-lg example" name="tipo_status_pessoa">
+                                <select class="form-control" aria-label=".form-select-lg example" name="tipo_status_pessoa" disabled>
                                     @foreach ($tipo_status_pessoa as $tipo)
                                         <option value="{{ $tipo->id }}" @if($membro->id_associado == $tipo->id) selected @endif>{{ $tipo->tipos }}</option>
                                     @endforeach
@@ -63,21 +63,12 @@
                             </div>
                         </div>
                         <br>
-                        <div class="col-12 mt-3">
-                            <div class="form-group">
-                                <label for="id_grupo" class="form-label">Nome Reunião Mediunica</label>
-                                <select class="form-select select2" aria-label=".form-select-lg example" name="id_reuniao">
-                                    @foreach ($grupo as $grupos)
-                                        <option value="{{ $grupos->id }}">{{ $grupos->nome }} - {{ $grupos->dia }}- {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim ))}} - Sala {{ $grupos->numero }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                       
                     </div>
                     <br>
                     <div class="row mt-1 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-membro" role="button">Cancelar</a>
+                            <a class="btn btn-danger" href="/gerenciar-membro/{{ $idcro }}" role="button">Cancelar</a>
                         </div>
                         <div class="d-grid gap-2 col-4 mx-auto">
                             <button type="submit" class="btn btn-primary">Confirmar</button>

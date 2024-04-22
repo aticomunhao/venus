@@ -16,8 +16,8 @@ class GerenciarPTIController extends Controller
         $dirigentes = DB::table('membro as mem')
         ->select('ass.id_pessoa', 'gr.nome', 'gr.id', 'gr.status_grupo')
         ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
-        ->leftJoin('grupo as gr', 'mem.id_grupo', 'gr.id')
-        ->leftJoin('cronograma as cr', 'gr.id', 'cr.id_grupo')
+        ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
+        ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
         ->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
         ->where('id_funcao', 1)
         ->where('cr.id_tipo_tratamento', 2)
@@ -156,8 +156,7 @@ class GerenciarPTIController extends Controller
             'status_grupo' => 4
          ]);
 
-          $a =  DB::table('cronograma')->where('id_grupo', $id)->get();
-          dd($a);
+    
 
         }
         else if($tp == 2){

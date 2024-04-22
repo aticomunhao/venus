@@ -1,22 +1,32 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPOS MEMBRO
+    <div class="container fluid">
+        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR CONTROLE GRUPO
         </h4>
 
         <div class="col-12">
-            <form action="{{ route('lista') }}" class="form-horizontal mt-4" method="GET">
+            <form action="/gerenciar-grupos-membro" class="form-horizontal mt-4" method="GET">
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-6">
                         Grupo
-                        <input class="form-select select2" type="text" id="nome_grupo" name="nome_grupo"
+                        <select class="form-select select2 grupo" type="text" id="nome_grupo" name="nome_grupo"
                              value="{{ request('nome_grupo') }}">
+                           <option></option>
+                             @foreach($membro_cronograma as $grupos)
+                             <option value="{{ $grupos->id }}">{{ $grupos->nome_grupo }} - {{ $grupos->dia }}- {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim ))}} - Sala {{ $grupos->sala }}</option>>
+                            @endforeach
+                            </select>
                     </div>
                     <div class="col-2">
                         Membro
-                        <input class="form-select select2" type="text" id="nome_membri" name="nome_membro"
-                             value="{{ request('nome_membro') }}">
+                        <select class="form-select select2 membro" type="text" id="nome_membro" name="nome_membro"
+                             value="{{ request('nome_grupo') }}">
+                           <option></option>
+                             @foreach($membro as $membros)
+                             <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }}</option>>
+                            @endforeach
+                            </select>
                     </div>
             
                     <div class="col">
@@ -24,9 +34,12 @@
                         <input class="btn btn-light btn-sm me-md-2"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
                             value="Pesquisar">
-                        <a href="/gerenciar-grupo-membro"><input class="btn btn-light btn-sm me-md-2"
+                        <a href="/gerenciar-grupos-membro"><input class="btn btn-light btn-sm me-md-2"
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Limpar"></a>
+
+                                <a href="/criar-membro"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
+                                    type="button" value="Novo membro +"></a>
 
                     </div>
                 </div>
@@ -47,6 +60,7 @@
                     <th>HORÁRIO INICIO</th>
                     <th>HORÁRIO FIM</th>
                     <th>SALA</th>
+                    <th>STATUS</th>
                     <th>AÇÕES</th>
                 </tr>
 
@@ -59,23 +73,16 @@
                             <td>{{ $membros->h_inicio }}</td>
                             <td>{{ $membros->h_fim }}</td>
                             <td>{{ $membros->sala }}</td>
+                            <td>{{ $membros->descricao }}</td>
                       
                             <td>
-
-                                <a href="{{ route('lista') }}" type="button"
+                              
+                                <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
                                 class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                title="Membro">
-                                <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                                title="Gerenciar">
+                                <i class="bi bi-three-dots" style="font-size: 1rem; color:#000;"></i>
                              </a>
                              
-                                <a href="/visualizar-membro/{{ $membros->id }}" type="button"
-                                    class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Visualizar">
-                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"
-                                        data-bs-target="#pessoa"></i>
-                                </a>
-        
-                                </a>
                             </td>
                         </tr>
                     @endforeach
@@ -83,30 +90,18 @@
             </table>
         </div>
     </div>
-    <div class="modal fade" id="confirmacaoDelecao" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Confirmação de Exclusão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Tem certeza que deseja excluir o Membro "<span id="modal-body-text"></span>"?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="btn-confirmar-exclusao"
-                        onclick="confirmarDelecao()">Confirmar Exclusão</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     <script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
     <link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <script>
         $(document).ready(function() {
             $('.select2').select2({ theme: 'bootstrap-5'});
+
+             //Deixa o select status como padrao vazio
+            $(".grupo").prop("selectedIndex", 0);
+            $(".membro").prop("selectedIndex", 0);
+ 
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

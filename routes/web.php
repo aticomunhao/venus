@@ -212,15 +212,17 @@ Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 
 
 //Membros
-Route::get('/gerenciar-membro', [MembroController::class, 'index'])->name('lista');
-Route::get('/editar-membro/{id}', [MembroController::class, 'edit'])->name('');
-Route::post('/atualizar-membro/{id}', [MembroController::class, 'update'])->name('');
+Route::get('/gerenciar-membro/{id}', [MembroController::class, 'index'])->name('lista');
+Route::get('/editar-membro/{idcro}/{id}', [MembroController::class, 'edit'])->name('');
+Route::any('/atualizar-membro/{idcro}/{id}', [MembroController::class, 'update'])->name('');
 Route::get('/criar-membro', [MembroController::class, 'create'])->name('');
 Route::post('/incluir-membro', [MembroController::class, 'store'])->name('membro.store');
-Route::any('/deletar-membro/{id}', [MembroController::class, 'destroy'])->name('');
-Route::get('/visualizar-membro/{id}', [MembroController::class, 'show'])->name('');
+Route::any('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('');
+Route::get('/visualizar-membro/{idcro}/{id}', [MembroController::class, 'show'])->name('');
 Route::get('/gerenciar-grupos-membro', [MembroController::class, 'grupos'])->name('');
-
+Route::get('/criar-membro-grupo/{id}', [MembroController::class, 'createGrupo'])->name('');
+Route::any('/incluir-membro-grupo/{id}', [MembroController::class, 'storeGrupo'])->name('');
+Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
 
 //Mediunidades
 Route::get('/gerenciar-mediunidades', [MediunidadePessoaController::class, 'index'])->name('names');
@@ -319,7 +321,7 @@ Route::post('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralControll
 Route::get('/gerenciar-pti', [GerenciarPTIController::class, 'index']);
 Route::get('/alta-pti', [GerenciarPTIController::class, 'update']);
 Route::get('/visualizar-pti/{id}', [GerenciarPTIController::class, 'show']);
-Route::get('/ferias-pti/{id}/{tp}', [GerenciarPTIController::class, 'ferias']);
+
 
 
 
