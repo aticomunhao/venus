@@ -147,22 +147,22 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 
 //Atendimento Fraterno Específico
 
-Route::get('/gerenciar-afe', [AtendimentoFraternoEspecificoController::class, 'index'])->name('');
-// Route::get('/historico/{idat}/{idas}', [AtendimentoFraternoController::class, 'history'])->name('afihis');
-// Route::get('/fim-analise/{idat}', [AtendimentoFraternoController::class, 'fimanalise'])->name('afifna');
-// Route::get('/iniciar-atendimento/{idat}', [AtendimentoFraternoController::class, 'inicio'])->name('afiini');
-// Route::get('/gerar-enc_entre/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiene');
-// Route::get('/gerar-enc_trata/{idat}', [AtendimentoFraternoController::class, 'enc_trata'])->name('afient');
-// Route::get('/meus-atendimentos', [AtendimentoFraternoController::class, 'meus_atendimentos'])->name('afimeu');
-// Route::get('/tratar/{idat}/{idas}', [AtendimentoFraternoController::class, 'tratar'])->name('afitra');
-// Route::post('/tratamentos/{idat}/{idas}', [AtendimentoFraternoController::class, 'enc_trat'])->name('afitra');
-// Route::get('/entrevistar/{idat}/{idas}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
-// Route::post('/entrevistas/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
-// Route::get('/temas/{idat}', [AtendimentoFraternoController::class, 'pre_tema'])->name('afi');
-// Route::post('/tematicas/{idat}', [AtendimentoFraternoController::class, 'tematica'])->name('afitem');
-// Route::get('/atender', [AtendimentoFraternoController::class, 'atende_agora'])->name('afiini');
-// Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
-// Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
+Route::get('/atendendo-afe', [AtendimentoFraternoEspecificoController::class, 'index'])->name('');
+Route::get('/historico-afe/{idat}/{idas}', [AtendimentoFraternoController::class, 'history'])->name('afihis');
+Route::get('/fim-analise-afe/{idat}', [AtendimentoFraternoController::class, 'fimanalise'])->name('afifna');
+Route::get('/iniciar-atendimento-afe/{idat}', [AtendimentoFraternoController::class, 'inicio'])->name('afiini');
+Route::get('/gerar-enc_entre-afe/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiene');
+Route::get('/gerar-enc_trata-afe/{idat}', [AtendimentoFraternoController::class, 'enc_trata'])->name('afient');
+Route::get('/meus-atendimentos-afe', [AtendimentoFraternoController::class, 'meus_atendimentos'])->name('afimeu');
+Route::get('/tratar-afe/{idat}/{idas}', [AtendimentoFraternoController::class, 'tratar'])->name('afitra');
+Route::post('/tratamentos-afe/{idat}/{idas}', [AtendimentoFraternoController::class, 'enc_trat'])->name('afitra');
+Route::get('/entrevistar-afe/{idat}/{idas}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
+Route::post('/entrevistas-afe/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
+Route::get('/temas-afe/{idat}', [AtendimentoFraternoController::class, 'pre_tema'])->name('afi');
+Route::post('/tematicas-afe/{idat}', [AtendimentoFraternoController::class, 'tematica'])->name('afitem');
+Route::get('/atender-afe', [AtendimentoFraternoController::class, 'atende_agora'])->name('afiini');
+Route::get('/final-afe/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
+Route::post('/finalizar-afe/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
 
 
 //Entrevista

@@ -75,7 +75,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->where('status_atendimento', '<', 5)
             ->count();
 
-            //dd($atendente);
+            
             
             $assistido = DB::table('atendimentos')->where('status_atendimento', 1)->count();
 
@@ -89,19 +89,19 @@ class AtendimentoFraternoEspecificoController extends Controller
 
                 app('flasher')->addError('Você não pode atender dois assistidos ao mesmo tempo.');
 
-                return redirect('/atendendo');
+                return redirect('/atendendo-afe');
 
             }elseif ($assistido < 1){
 
                 app('flasher')->addError('Todos os assistidos foram atendidos.');
 
-                return redirect('/atendendo');
+                return redirect('/atendendo-afe');
                 
             }elseif($atendendo < 1 && $sala == null) {
 
                 app('flasher')->addError('O atendente deve estar designado para o trabalho de hoje.');
 
-                return redirect('/atendendo');
+                return view ('/atendente-fraterno-especifico/atendendo-afe', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
             
             }elseif ($atendendo < 1 && $sala > 0){
 
@@ -121,7 +121,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
                 app('flasher')->addSuccess('O assistido foi selecionado com sucesso.');
 
-                return redirect('/atendendo');
+                return redirect('/atendendo-afe');
 
             } 
 
@@ -217,7 +217,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             {
                 app('flasher')->addError('Não é permitido atender dois assistidos ao mesmo tempo.');
 
-                return redirect('/atendendo');
+                return redirect('/atendendo-afe');
 
             }
 
@@ -225,7 +225,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             {
                 app('flasher')->addInfo('Retomando análise.');
 
-                return view ('/atendimento-assistido/historico-assistido', compact('atendente', 'analisa'));
+                return view ('/atendimento-assistido-afe/historico-assistido-afe', compact('atendente', 'analisa'));
 
             }
 
@@ -243,7 +243,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
             }
 
-            return view ('/atendimento-assistido/historico-assistido', compact('atendente', 'analisa', 'grupo'));
+            return view ('/atendimento-assistido-afe/historico-assistido-afe', compact('atendente', 'analisa', 'grupo'));
         }           
 //dd($assistido);
             
@@ -435,7 +435,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->where('at.id', $idat)
             ->get();
 
-            return view('/atendimento-assistido/finalizar', compact('assistido'));
+            return view('/atendimento-assistido-afe/finalizar-afe', compact('assistido'));
 
             }
 
@@ -462,7 +462,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
             //dd($result);
 
-            return view('/atendimento-assistido/tematicas', compact('assistido', 'result', 'verifi'));
+            return view('/atendimento-assistido-afe/tematicas-afe', compact('assistido', 'result', 'verifi'));
 
         }
 
@@ -584,7 +584,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
             }
 
-            return Redirect('/atendendo');
+            return Redirect('/atendendo-afe');
             
         }
 
@@ -713,7 +713,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
             app('flasher')->addSuccess('O status do atendimento foi alterado para "Finalizado".');
         
-            return redirect('/atendendo');
+            return redirect('/atendendo-afe');
 
         }
 
@@ -800,7 +800,7 @@ class AtendimentoFraternoEspecificoController extends Controller
           // dd($grupo);
            
 
-           return view ('/atendimento-assistido/meus-atendimentos', compact('assistido', 'atendente', 'nome', 'grupo'));
+           return view ('/atendimento-assistido-afe/meus-atendimentos-afe', compact('assistido', 'atendente', 'nome', 'grupo'));
 
         }
 
@@ -848,7 +848,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
                 app('flasher')->addError("As temáticas do atendimento $idat já foram registradas.");
 
-                return Redirect('/atendendo');
+                return Redirect('/atendendo-afe');
 
             }else{
 
@@ -881,7 +881,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
             app('flasher')->addSuccess('Os temas foram salvos com sucesso.');
 
-            return Redirect('/atendendo');
+            return Redirect('/atendendo-afe');
             }
 
         }
