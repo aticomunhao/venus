@@ -382,13 +382,14 @@ class GerenciarAtendimentoController extends Controller
                //dd($now);
 
         $atende = DB::table('atendente_dia AS atd')
-                ->select('atd.id AS nr', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status', 'm.id_grupo')
+                ->select('atd.id AS nr', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status', 'cro.id_grupo')
                 ->leftJoin('membro AS m', 'atd.id_associado','m.id_associado')
                 ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
                 ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id' )
                 ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
                 ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
-                ->leftJoin('grupo AS g', 'm.id_grupo', 'g.id');
+                ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+                ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id');
                 
         //dd($atende);
 
@@ -606,13 +607,15 @@ class GerenciarAtendimentoController extends Controller
                 ->get();
 
         foreach($atende as $key => $lista){
+            
             $result = DB::table('membro AS m')
-                ->leftJoin('grupo AS g', 'm.id_grupo', 'g.id')
+                ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+                ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')
                 ->where('m.id_associado', '=', $lista->ida) // Filtro para o ID de associado atual
                 ->where('g.id_tipo_grupo', 3)
                 ->whereNull('g.data_fim')
-                ->select('m.id_associado', 'm.id_grupo', 'g.nome AS gnome')
-                ->groupBy('m.id_associado', 'm.id_grupo', 'g.nome')
+                ->select('m.id_associado', 'cro.id_grupo', 'g.nome AS gnome')
+                ->groupBy('m.id_associado', 'cro.id_grupo', 'g.nome')
                 ->get();
             $lista->grup = $result;
         }
