@@ -27,7 +27,7 @@
 
                         <div class="row">
                             <div class="col-xl-4 col-md-6">Grupo
-                                <select class="form-select slct" id="" type="number" name="grupo" required="required" disabled>
+                                <select class="form-control slct" id="" type="number" name="grupo" required="required" disabled>
 
                                     @foreach($grupo as $grupos)
                                     <option value="{{$grupos->idg}}" {{$grupos->nome == $info->nome ? 'selected': ''}} >{{$grupos->nome}}</option>
@@ -35,7 +35,7 @@
                                 </select>
                             </div>
                             <div class="col-xl-4 col-md-6 mt-md-0 mt-4">Tipo de Tratamento
-                                <select class="form-select slct" id="" type="number" name="tratamento" required="required" disabled>
+                                <select class="form-control slct" id="" type="number" name="tratamento" required="required" disabled>
 
                                     @foreach($tratamento as $tratamentos)
                                     <option value="{{$tratamentos->idt}}" {{$tratamentos->descricao == $info->descricao ? 'selected': ''}}>{{$tratamentos->descricao}}</option>
@@ -43,7 +43,7 @@
                                 </select>
                             </div>
                             <div class="col-xl-2 col-lg-3 col-md-6 mt-xl-0 mt-4">Dia da semana
-                                <select class="form-select slct" id="" type="number" name="dia" required="required" disabled>
+                                <select class="form-control slct" id="" type="number" name="dia" required="required" disabled>
 
                                     @foreach($dia as $dias)
                                     <option value="{{$dias->idd}}" {{$dias->nome == $info->dia ? 'selected': ''}}>{{$dias->nome}}</option>
@@ -58,7 +58,7 @@
 
 
                             <div class="col-lg-4 col-md-6 mt-4 mt-4">Nome Sala
-                                <select class="form-select slct" id="" type="number" name="nome" required="required" disabled>
+                                <select class="form-control slct" id="" type="number" name="nome" required="required" disabled>
 
                                     @foreach($sala as $salas)
                                     <option value="{{$salas->ids}}" {{$salas->nome == $info->sala ? 'selected': ''}}>{{$salas->nome}}</option>
@@ -66,7 +66,7 @@
                                 </select>
                             </div>
                             <div class="col-xl-3 col-lg-2 col-md-6 mt-4">Número Sala
-                                <select class="form-select slct" id="" type="number" name="numero" required="required" disabled>
+                                <select class="form-control slct" id="" type="number" name="numero" required="required" disabled>
 
                                     @foreach($sala as $salas)
                                     <option value="{{$salas->ids}}" {{$salas->numero == $info->numero ? 'selected': ''}}>{{$salas->numero}}</option>

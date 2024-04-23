@@ -23,7 +23,7 @@ class ReuniaoMediunicaController extends Controller
                         ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
                         ->leftjoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
                         ->leftjoin('tipo_status_grupo AS tsg', 'cro.status_reuniao', 'tsg.id')
-                        ->leftJoin('membro AS me', 'gr.id', 'me.id_grupo')
+                        ->leftJoin('membro AS me', 'gr.id', 'me.id_cronograma')
                         ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
                         ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id');
 
