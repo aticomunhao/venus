@@ -56,7 +56,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
                     
 
-            return view ('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
+                     return view ('/atendente-fraterno-especifico/atendendo-afe', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
 
         }
 

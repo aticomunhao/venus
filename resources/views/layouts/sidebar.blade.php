@@ -11,6 +11,7 @@
                         <a class="nav-link dropdown-toggle" href="#" id="1" role="button" data-bs-toggle="dropdown" aria-expanded="false">Atendimento Espírita</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                             <li><a class="dropdown-item" href="/atendendo">Atendimento Fraterno Individual</a></li>
+                            <li><a class="dropdown-item" href="/atendendo-afe">Atendimento Fraterno Especifico</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-atendimentos">Recepção Atendimento Fraterno</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Recepção Integrada - Encaminhamentos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-pti">Encaminhamentos PTI</a></li>
@@ -28,7 +29,7 @@
                             <li><a class="dropdown-item" href="/gerenciar-atendentes-apoio">Gerenciar Atendente de Apoio</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-afe">Gerenciar AFE</a></li>
+    
                         </ul>
                     </li>
                 </ul>
