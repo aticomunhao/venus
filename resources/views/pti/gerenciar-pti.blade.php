@@ -18,7 +18,7 @@
 
                         <select class="form-select status" id="4" name="grupo" type="number">
                             @foreach ($dirigentes as $dirigente)
-                                <option value="{{ $dirigente->id }}" {{ $dirigente->id == $selected_grupo ? 'selected' : '' }}>{{ $dirigente->nome }}</option>
+                                <option value="{{ $dirigente->id }}" {{ $dirigente->id == $selected_grupo ? 'selected' : '' }}>{{ $dirigente->nome }} - {{ $dirigente->dia }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -31,21 +31,11 @@
                         <a href="/gerenciar-pti"><input class="btn btn-light btn-sm me-md-2"
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Limpar"></a>
-
-                        @foreach ($dirigentes as $dirigente)
-                        @if($selected_grupo == $dirigente->id)
-
-                            @if($dirigente->status_grupo == 4)
-                            <a href="/ferias-pti/{{ request('grupo') }}/2"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
-                                type="button" value="Retomar de Férias"></a>
-                            @else
-                            <a href="/ferias-pti/{{ request('grupo') }}/1"><input class="btn btn-danger btn-sm me-md-2" style="font-size: 0.9rem;"
-                                type="button" value="Declarar Férias"></a>
-                            @endif
+                        <a href="/gerenciar-membro/{{ $selected_grupo }}"><input class="btn btn-primary btn-sm me-md-2"
+                                style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
+                                value="Gerenciar Grupo"></a>
 
 
-                            @endif
-                                @endforeach
                     </div>
                 </div>
 
@@ -79,11 +69,11 @@
 
                               <td>
 
-                                <a href="/alta-pti" type="button"
+                                <button type="button"
                                     class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Declarar Alta">
+                                    title="Declarar Alta" data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
                                     <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
-                                </a>
+                                </button>
                                 <a href="/visualizar-pti/{{ $encaminhamento->id }}" type="button"
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Visualizar">
@@ -91,6 +81,38 @@
                                         data-bs-target="#pessoa"></i>
                                 </a>
 
+
+
+                            </a>
+
+
+                            {{--  Modal de Exclusao --}}
+                            <div class="modal fade" id="modal{{ $encaminhamento->id }}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel" style="color:orange;">Confirmação de
+                                                Alta</h5>
+                                            <button type="button" class="btn-close"
+                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Tem certeza que deseja declarar alta para <br /><span
+                                                style="color:orange;">{{ $encaminhamento->nome_completo }}</span>&#63;
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancelar</button>
+                                            <a type="button" class="btn btn-warning"
+                                                href="/alta-pti/{{ $encaminhamento->id }}">Confirmar
+                                                Alta</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- Fim Modal de Exclusao --}}
                             </td>
                         </tr>
                     @endforeach
@@ -98,24 +120,7 @@
             </table>
         </div>
     </div>
-    <div class="modal fade" id="confirmacaoDelecao" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Confirmação de Exclusão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Tem certeza que deseja excluir o Membro "<span id="modal-body-text"></span>"?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="btn-confirmar-exclusao"
-                        onclick="confirmarDelecao()">Confirmar Exclusão</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
     <link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">

@@ -319,7 +319,7 @@ Route::post('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralControll
 // Dirigente
 
 Route::get('/gerenciar-pti', [GerenciarPTIController::class, 'index']);
-Route::get('/alta-pti', [GerenciarPTIController::class, 'update']);
+Route::get('/alta-pti/{id}', [GerenciarPTIController::class, 'update']);
 Route::get('/visualizar-pti/{id}', [GerenciarPTIController::class, 'show']);
 
 

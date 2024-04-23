@@ -14,10 +14,11 @@ class GerenciarPTIController extends Controller
     public function index(Request $request)
     {
         $dirigentes = DB::table('membro as mem')
-        ->select('ass.id_pessoa', 'gr.nome', 'gr.id', 'gr.status_grupo')
+        ->select('ass.id_pessoa', 'gr.nome', 'cr.id', 'gr.status_grupo', 'd.nome as dia')
         ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
         ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
         ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
+        ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
         ->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
         ->where('id_funcao', 1)
         ->where('cr.id_tipo_tratamento', 2)
@@ -27,8 +28,7 @@ class GerenciarPTIController extends Controller
 
         $grupos_autorizados = [];
         foreach($dirigentes as $dir){
-            $grupos_autorizados[] = $dir->id;
-        }
+            $grupos_autorizados[] = $dir->id;        }
 
 
 
@@ -40,9 +40,10 @@ class GerenciarPTIController extends Controller
         ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
         ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
         ->leftJoin('pessoas as p','atd.id_assistido', 'p.id')
+
         ->where('enc.id_tipo_tratamento', 2)
         ->where('tr.status', 2)
-        ->whereIn('gr.id', $grupos_autorizados);
+        ->whereIn('tr.id_reuniao', $grupos_autorizados);
 
 
         if($request->nome_pesquisa){
@@ -50,11 +51,11 @@ class GerenciarPTIController extends Controller
         }
         $selected_grupo = $request->grupo;
         if($request->grupo){
-            $encaminhamentos = $encaminhamentos->where('gr.id', $request->grupo);
+            $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', $request->grupo);
         }
         if(!$request->grupo){
             $selected_grupo = $grupos_autorizados[0];
-            $encaminhamentos = $encaminhamentos->where('gr.id', $grupos_autorizados[0]);
+            $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', $grupos_autorizados[0]);
         }
 
         $encaminhamentos = $encaminhamentos->get();
@@ -140,38 +141,42 @@ class GerenciarPTIController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $hoje = Carbon::today();
+
+
+dd($hoje);
+
+        $id_encaminhamento = DB::table('tratamento')->where('id', $id)->first();
+        DB::table('tratamento')->where('id', $id)->update(['status' => 4]);
+        $id_atendimento = DB::table('encaminhamento')->where('id', $id_encaminhamento->id_encaminhamento)->first();
+        DB::table('encaminhamento')->where('id', $id_encaminhamento->id_encaminhamento)->update(['status_encaminhamento'=> 3]);
+
+
+        DB::table('encaminhamento')->insert([
+            'dh_enc' => $hoje,
+            'id_usuario' => session()->get('usuario.id_pessoa'),
+            'status_encaminhamento' => 1,
+            'id_tipo_encaminhamento' => 1,
+            'id_atendimento' => $id_atendimento->id_atendimento,
+            'id_tipo_entrevista' => 4
+
+        ]);
+
+        DB::table('encaminhamento')->insert([
+            'dh_enc' => $hoje,
+            'id_usuario' => session()->get('usuario.id_pessoa'),
+            'status_encaminhamento' => 1,
+            'id_tipo_encaminhamento' => 2,
+            'id_atendimento' => $id_atendimento->id_atendimento,
+            'id_tipo_tratamento' => 1
+
+        ]);
+
+        return redirect()->back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function ferias(string $id, String $tp)
-    {
 
-
-        if($tp == 1){
-
-            DB::table('grupo')->where('id', $id)->update([
-            'status_grupo' => 4
-         ]);
-
-    
-
-        }
-        else if($tp == 2){
-
-            DB::table('grupo')->where('id', $id)->update([
-            'status_grupo' => 1
-         ]);
-
-
-        }
-
-
-
-
-
-        return redirect()->back();
-    }
 }

@@ -13,8 +13,8 @@
                         <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa"
                              value="{{ request('nome_pesquisa') }}">
                     </div>
-                 
-            
+
+
                     <div class="col">
                         <br>
                         <input class="btn btn-light btn-sm me-md-2"
@@ -25,7 +25,7 @@
 
 
 
-                        <a href="/gerenciar-grupos-membro" class="btn btn-primary btn-sm me-md-2  offset-0 offset-lg-1 offset-xl-3"
+                        <a href="/gerenciar-grupos-membro" class="btn btn-primary btn-sm me-md-2  offset-2"
                          type="button">Retornar para tela inicial</a>
                          @if($grupo->status_reuniao == 4)
                          <a href="/ferias-reuniao/{{ $id }}/2"><input class="btn btn-warning btn-sm me-md-2" style="font-size: 0.9rem;"
@@ -51,7 +51,7 @@
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                     <th>ID</th>
                     <th>NOME</th>
-                    
+
                     <th>FUNÇÃO</th>
                     <th>STATUS PESSOA</th>
                     <th>AÇÕES</th>
@@ -106,7 +106,7 @@
             </table>
         </div>
     </div>
-    
+
 
     <script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
     <link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -119,7 +119,7 @@
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
 
-      
+
     </script>
 @endsection
 
