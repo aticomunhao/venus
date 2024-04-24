@@ -32,7 +32,9 @@ class Faltas implements ShouldQueue
     public function handle(): void
     {
 
-        $data_atual = Carbon::yesterday();
+        // Tratamentos, integral, pti ou ptd, cujas reunioes não estejam de férias
+
+        $data_atual = Carbon::tomorrow();
 
         $dia_atual = $data_atual->weekday();
 
@@ -50,9 +52,10 @@ class Faltas implements ShouldQueue
         ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
         ->where('tr.status', 2)
         ->where('rm.dia_semana', $dia_atual)
-        ->where('rm.id_tipo_tratamento', '<>', 2)
+        ->where('rm.status_reuniao', '<>', 4)
         ->whereNotIn('tr.id', $inseridos )
         ->get();
+
 
 
 

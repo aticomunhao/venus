@@ -77,6 +77,7 @@ class ReuniaoMediunicaController extends Controller
             $grupo = DB::table('grupo AS gr')
                         ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
                         ->where('id_tipo_grupo', 1)
+                       ->orWhere('id_tipo_grupo', 3)
                         ->orderBy('gr.nome')
                         ->get();
 

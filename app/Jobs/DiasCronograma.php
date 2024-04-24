@@ -28,7 +28,7 @@ class DiasCronograma implements ShouldQueue
      */
     public function handle(): void
     {
-        $dia_hoje = Carbon::today();
+        $dia_hoje = Carbon::tomorrow();
         $dia_semana_hoje = $dia_hoje->weekday();
 
 

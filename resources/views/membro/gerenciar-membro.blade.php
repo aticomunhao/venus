@@ -25,7 +25,7 @@
 
 
 
-                        <a href="/gerenciar-grupos-membro" class="btn btn-primary btn-sm me-md-2  offset-2"
+                        <a href="/gerenciar-grupos-membro" class="btn btn-primary btn-sm me-md-2  offset-1"
                          type="button">Retornar para tela inicial</a>
                          @if($grupo->status_reuniao == 4)
                          <a href="/ferias-reuniao/{{ $id }}/2"><input class="btn btn-warning btn-sm me-md-2" style="font-size: 0.9rem;"

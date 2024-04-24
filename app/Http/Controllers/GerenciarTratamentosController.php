@@ -48,7 +48,7 @@ class GerenciarTratamentosController extends Controller
         $situacao = $request->status;
 
         if ($request->dia){
-            $lista->where('rm.dia', '=', $request->dia);
+            $lista->where('rm.dia_semana', '=', $request->dia);
         }
 
         if ($request->dt_enc){
@@ -198,7 +198,7 @@ class GerenciarTratamentosController extends Controller
 
     public function job() {
         //Faltas::dispatch();
-        //LimiteFalta::dispatch();
+        LimiteFalta::dispatch();
         //DiasCronograma::dispatch();
         return redirect()->back();
     }
@@ -464,7 +464,7 @@ class GerenciarTratamentosController extends Controller
         ]);
 
         $data = date("Y-m-d H:i:s");
-        
+
 
         DB::table('tratamento_grupos')
         ->where('dt_fim', null)
@@ -473,15 +473,15 @@ class GerenciarTratamentosController extends Controller
             'dt_fim' => $data_ontem,
         ]);
 
-       
+
         DB::table('tratamento_grupos')
         ->insert([
             'id_cronograma' => $reu,
             'id_tratamento' => $idt->id,
             'dt_inicio' => $data,
         ]);
-        
-        
+
+
 
 
      DB::table('tratamento')->where('id_encaminhamento', $ide)->update(['id_reuniao'=> $reu]);

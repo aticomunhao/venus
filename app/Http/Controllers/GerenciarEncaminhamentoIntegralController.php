@@ -294,7 +294,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
                         ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->leftJoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
-                        ->leftJoin('membro AS me', 'gr.id', 'me.id_grupo')
+                        ->leftJoin('membro AS me', 'reu.id', 'me.id_cronograma')
                         ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
                         ->leftJoin('tipo_dia AS td', 'reu.dia_semana', 'td.id')
                         ->where('reu.status_reuniao', '<>', 2)
