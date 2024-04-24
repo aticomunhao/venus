@@ -218,6 +218,9 @@ class GerenciarEntrevistaController extends Controller
     public function store(Request $request, $id)
     {
 
+     
+        
+
         $request->validate([
             'id_sala' => 'required',
             'data' => 'required|date',
@@ -232,6 +235,7 @@ class GerenciarEntrevistaController extends Controller
             'hora' => $request->hora,
             'status' => 'Completar registro de marcação',
         ]);
+        
 
 
 
@@ -241,6 +245,8 @@ class GerenciarEntrevistaController extends Controller
     public function criar($id)
     {
 
+    
+       
 
         $associado = DB::table('membro')->select('membro.id',)
             ->leftJoin('associado', 'membro.id_associado', 'associado.id')->get();
@@ -280,22 +286,57 @@ class GerenciarEntrevistaController extends Controller
             ->join('associado', 'membro.id_associado', '=', 'associado.id')
             ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
             ->select('membro.*', 'pessoas.nome_completo')
+            ->distinct('membro.id_associado')
             ->get();
 
 
-
-
+            $encaminhamento = DB::table('encaminhamento')->find($id);
+     
+            // Verificando se o tipo de entrevista é 3 (tipo_entrevista 3, afe)
+            if ($encaminhamento && $encaminhamento->id_tipo_entrevista === 3) {
+                // Obtendo informações dos atendentes (caso o tipo de entrevista seja afe)
+                $membros = DB::table('membro')
+                    ->join('associado', 'membro.id_associado', '=', 'associado.id')
+                    ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
+                    ->select('membro.*', 'pessoas.nome_completo')
+                    ->distinct('membro.id_associado')
+                    ->where('membro.id_funcao', 5)
+                    ->get();
+        
+            }
         return view('entrevistas.agendar-entrevistador', compact('membros', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
     }
 
-
+   
 
     public function incluir(Request $request, string $id)
     {
 
+
+
+        $dateTime = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)
+        ->select('ent.data', 'ent.hora', 'enc.id_tipo_entrevista')
+        ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
+        ->first();
+    
+
+        $dt = Carbon::createFromFormat('Y-m-d H:i:s', $dateTime->data . ' ' . $dateTime->hora);
+        
+
         DB::table('entrevistas')->where('id_encaminhamento', $id)->update([
             'id_entrevistador' => $request->input('id_entrevistador'),
             'status' => 'Agendado',
+
+            DB::table('atendimento')->insert([
+                'dh_chegada' => Carbon::now(), 
+                'dh_inicio' => Carbon::now(),
+                'dh_fim' => Carbon::now(),
+                'id_assistido' => 'id_assistido',
+                'status' => 7,
+                'afe' => true
+            ])
+            
+               
 
         ]);
 
@@ -336,8 +377,8 @@ class GerenciarEntrevistaController extends Controller
             ->first();
 
 
-
-
+  
+    
 
         return view('entrevistas.visualizar-entrevista', compact('membros', 'entrevistas', 'encaminhamento',  'salas'));
     }
@@ -376,6 +417,21 @@ class GerenciarEntrevistaController extends Controller
             // ->where('membro.id' , $entrevistas->id_entrevistador)
             ->get();
 
+            
+            $encaminhamento = DB::table('encaminhamento')->find($id);
+     
+            // Verificando se o tipo de entrevista é 3 (tipo_entrevista 3, afe)
+            if ($encaminhamento && $encaminhamento->id_tipo_entrevista === 3) {
+                // Obtendo informações dos atendentes (caso o tipo de entrevista seja afe)
+                $membros = DB::table('membro')
+                    ->join('associado', 'membro.id_associado', '=', 'associado.id')
+                    ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
+                    ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
+                    ->distinct('membro.id_associado')
+                    ->where('membro.id_funcao', 5)
+                    ->get();
+        
+            }
 
 
 
