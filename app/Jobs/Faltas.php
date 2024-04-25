@@ -34,7 +34,7 @@ class Faltas implements ShouldQueue
 
         // Tratamentos, integral, pti ou ptd, cujas reunioes não estejam de férias
 
-        $data_atual = Carbon::tomorrow();
+        $data_atual = Carbon::yesterday();
 
         $dia_atual = $data_atual->weekday();
 

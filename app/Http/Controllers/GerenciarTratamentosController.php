@@ -198,7 +198,7 @@ class GerenciarTratamentosController extends Controller
 
     public function job() {
         //Faltas::dispatch();
-        LimiteFalta::dispatch();
+        //LimiteFalta::dispatch();
         //DiasCronograma::dispatch();
         return redirect()->back();
     }
