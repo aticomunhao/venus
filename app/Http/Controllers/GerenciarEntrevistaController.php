@@ -315,30 +315,44 @@ class GerenciarEntrevistaController extends Controller
 
 
         $dateTime = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)
-        ->select('ent.data', 'ent.hora', 'enc.id_tipo_entrevista')
+        ->select('ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id_sala')
         ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
         ->first();
     
 
         $dt = Carbon::createFromFormat('Y-m-d H:i:s', $dateTime->data . ' ' . $dateTime->hora);
-        
+        $atendimentos=DB::table('encaminhamento as enc')
+        ->select('id_assistido')
+        ->leftJoin('atendimentos as at','enc.id_atendimento','at.id')
+        ->where('enc.id', $id)
+        ->first();
+        $id_entrevistador=DB::table('membro')->where('id', $request->id_entrevistador)->select('id_associado')->first();
+       
 
         DB::table('entrevistas')->where('id_encaminhamento', $id)->update([
             'id_entrevistador' => $request->input('id_entrevistador'),
             'status' => 'Agendado',
-
-            DB::table('atendimento')->insert([
-                'dh_chegada' => Carbon::now(), 
-                'dh_inicio' => Carbon::now(),
-                'dh_fim' => Carbon::now(),
-                'id_assistido' => 'id_assistido',
-                'status' => 7,
+        ]);
+          
+        
+     
+        if($dateTime->id_tipo_entrevista == 3){
+           
+            DB::table('atendimentos')->insert([
+                'dh_marcada' => $dt, 
+                'id_assistido' => $atendimentos->id_assistido,
+                'id_atendente' => $id_entrevistador->id_associado,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_sala'=> $dateTime->id_sala,
+                'status_atendimento' => 7,
                 'afe' => true
-            ])
+            ]);
+        }
+           
             
                
 
-        ]);
+       
 
 
        

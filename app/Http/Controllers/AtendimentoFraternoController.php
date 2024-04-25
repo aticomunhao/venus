@@ -99,7 +99,7 @@ class AtendimentoFraternoController extends Controller
                 return redirect('/atendendo');
             
             }elseif ($atendendo < 1 && $sala > 0){
-
+             
                     DB::table('atendimentos')
                             ->whereNull('id_atendente_pref')
                             ->orWhere('id_atendente_pref', $atendente)           
