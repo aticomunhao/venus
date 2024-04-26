@@ -123,10 +123,26 @@ class GerenciarEntrevistaController extends Controller
         }
 
           
+        $informacoes = $informacoes->orderBy('entrevistas.status')->orderBy('pessoa_pessoa.nome_completo')->get();
 
-         
+        // Mapear os status para a ordem desejada
+        $statusOrder = [
+            'Aguardando agendamento' => 1,
+            'Completar registro de marcação' => 2,
+            'Agendado' => 3,
+            'Entrevista Marcada' => 4,
+            'Entrevista Cancelada' => 5
+        ];
+        
+        // Ordenar os resultados de acordo com o mapeamento de status
+        $informacoes = $informacoes->sortBy(function ($item) use ($statusOrder) {
+            return $statusOrder[$item->status] ?? PHP_INT_MAX;
+        });
+        
+        
+        
 
-        $informacoes = $informacoes->orderBy('status', 'asc')->orderBy('pessoa_pessoa.nome_completo')->get();
+
 
         if ($request->status == 1) {
             $info = [];

@@ -37,7 +37,7 @@
                     <hr>
                     <div class="row">
                         <div class="col" style="text-align: center;">
-                                <a class="btn btn-danger" href="/atendendo" style="text-align:right;" role="button">Cancelar</a>
+                                <a class="btn btn-danger" href="/atendendo-afe" style="text-align:right;" role="button">Cancelar</a>
                         </div>
                         <div class="col" style="text-align: center;">                              
                         </div>

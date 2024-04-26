@@ -16,8 +16,7 @@ use function Laravel\Prompts\select;
 
 class AtendimentoFraternoEspecificoController extends Controller
 {
-    //
-
+    
 
 
     public function index(Request $request)
@@ -35,7 +34,7 @@ class AtendimentoFraternoEspecificoController extends Controller
         $grupo = DB::table('atendente_dia AS ad')
             ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id')
             ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
-        //dd($grupo);
+        
 
         $assistido = DB::table('atendimentos AS at')
             ->select('at.id AS idat', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido AS idas', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento')
@@ -111,6 +110,7 @@ class AtendimentoFraternoEspecificoController extends Controller
                 ->update([
                     'id_atendente' => $atendente,
                     'id_sala' => $sala,
+                    'dh_chegada' => $now,
                     'status_atendimento' => 2
                 ]);
 
@@ -126,7 +126,7 @@ class AtendimentoFraternoEspecificoController extends Controller
     {
 
         $atendimentos = DB::table('atendimentos AS at')->where('id_assistido', $idas)->get('id');
-        //dd($atendimentos);
+       
 
 
         $analisa = DB::table('atendimentos AS at')
@@ -191,7 +191,7 @@ class AtendimentoFraternoEspecificoController extends Controller
         }
 
 
-        //dd($analisa);
+      
         $now = Carbon::now()->format('Y-m-d H:m:s');
 
         $atendente = session()->get('usuario.id_associado');
@@ -201,7 +201,7 @@ class AtendimentoFraternoEspecificoController extends Controller
         $grupo = DB::table('atendente_dia AS ad')->select('ad.id_grupo')->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente);
 
         $atendendo = DB::table('atendimentos AS at')->where('at.id', $idat)->value('id_atendente');
-        //dd($atendendo);
+      
         $status = DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento');
 
         $sit = DB::table('atendimentos AS at')->where('at.id_atendente', $atendente)->where('at.status_atendimento', '<', 5)->count();
@@ -233,7 +233,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
         return view('/atendimento-assistido-afe/historico-assistido-afe', compact('atendente', 'analisa', 'grupo'));
     }
-    //dd($assistido);
+    
 
 
     public function fimanalise($idat)
@@ -362,7 +362,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->where('at.id', $idat)
             ->where('id_tipo_encaminhamento', [1])
             ->count();
-        //dd($verifi);
+      
 
         if ($sit > 0) {
 
@@ -429,7 +429,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->select('rt.ies', 'rt.obs', 'rt.coj', 'rt.fam', 'rt.soc', 'rt.prf', 'rt.sau', 'rt.pdg', 'rt.sex', 'rt.adp', 'rt.deq', 'rt.est', 'rt.abo', 'rt.sui', 'rt.dou', 'rt.son', 'rt.esp', 'rt.dpr', 'rt.dqu', 'rt.dts', 'rt.maf')
             ->get();
 
-        //dd($result);
+      
 
         return view('/atendimento-assistido-afe/tematicas-afe', compact('assistido', 'result', 'verifi'));
     }
@@ -447,13 +447,12 @@ class AtendimentoFraternoEspecificoController extends Controller
 
         $harmonia = isset($request->pph) ? 1 : 0;
         $desobsessivo = isset($request->ptd) ? 1 : 0;
-        // $integral = isset($request->ptig) ? 1 : 0;
-        // $intensivo = isset($request->pti) ? 1 : 0;
+      
         $acolher = isset($request->ga) ? 1 : 0;
         $viver = isset($request->gv) ? 1 : 0;
-        //$evangelho = isset($request->gel) ? 1 : 0;
+        
         $quimica = isset($request->gdq) ? 1 : 0;
-        //dd($harmonia, $desobsessivo, $integral);
+      
 
         $atendido = DB::table('pessoas AS p')
             ->select('nome_completo AS nm')
@@ -468,7 +467,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->where('tr.status', '<', 4)
             ->count();
 
-        //dd($result > 0 && $desobsessivo > 0);
+       
         if ($result > 0 && $desobsessivo > 0) {
 
             app('flasher')->addError('Existem tratamentos ativos para ' . $atendido[0]->nm);
@@ -556,7 +555,6 @@ class AtendimentoFraternoEspecificoController extends Controller
         $nutres = isset($request->nutres) ? 1 : 0;
         $evangelho = isset($request->gel) ? 1 : 0;
 
-        //  dd($ame, $afe, $diamo, $nutres  );
 
 
         if ($ame == 1) {
@@ -681,8 +679,6 @@ class AtendimentoFraternoEspecificoController extends Controller
 
 
 
-
-
             ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
             ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
             ->leftJoin('tp_sexo AS tsx', 'p1.sexo', 'tsx.id')
@@ -737,7 +733,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id')
             ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
 
-        // dd($grupo);
+ 
 
 
         return view('/atendimento-assistido-afe/meus-atendimentos-afe', compact('assistido', 'atendente', 'nome', 'grupo'));
@@ -776,7 +772,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
 
 
-        // dd($ies, $obs, $coj);
+        
 
         DB::table('atendimentos AS at')->where('id', $idat)->update([
 

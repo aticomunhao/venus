@@ -73,7 +73,7 @@
                     <hr>
                     <div class="row">
                         <div class="col" style="text-align: right;">
-                            <a class="btn btn-danger" href="/atendendo" style="text-align:right; margin-right: 10px" role="button">Cancelar</a>
+                            <a class="btn btn-danger" href="/atendendo-afe" style="text-align:right; margin-right: 10px" role="button">Cancelar</a>
                             <button type="submit" class="btn" style="background-color:#007bff; color:#fff;" data-bs-dismiss="modal">Confirmar</button>
                             </form>
                         </div>
