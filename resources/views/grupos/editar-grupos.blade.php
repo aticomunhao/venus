@@ -86,9 +86,10 @@
                                         <div class="col">
                                             <br>
                                             Setor
-                                            <select class="form-select" aria-label=".form-select-lg example" name="setor" required="required">
-                                                @foreach ($setor as $setors)
-                                                    <option value="{{ $setors->id}}">{{ $setors->nome}}</option>
+                                            <select class="form-select" aria-label=".form-select-lg example" name="id_setor" required="required">
+                                                @foreach ($setor as $setores)
+                                                <option value="{{ $grupo[0]->id_setor}}" > {{ $grupo[0]->nm_setor}}</option>
+                                                    <option value="{{ $setores->id}}">{{ $setores->nome}}</option>
                                                 @endforeach
                                             </select>
                                        
@@ -124,10 +125,10 @@
 
                 // Habilita ou desabilita o campo "Motivo" com base na seleção
                 if (selectedStatus === '2') {
-                    $('#tipo_motivo').prop('disabled', false);
+                    $('#id_motivo_inativacao').prop('disabled', false);
                 } else {
-                    $('#tipo_motivo').prop('disabled', true);
-                    $('#tipo_motivo').val(''); // Limpa a seleção quando desabilitado
+                    $('#id_motivo_inativacao').prop('disabled', true);
+                    $('#id_motivo_inativacao').val(''); // Limpa a seleção quando desabilitado
                 }
             });
 

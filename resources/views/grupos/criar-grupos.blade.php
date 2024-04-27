@@ -85,9 +85,9 @@
                                         <div class="col">
                                             <br>
                                             Setor
-                                            <select class="form-select" aria-label=".form-select-lg example" name="setor" required="required">
+                                            <select class="form-select" aria-label=".form-select-lg example" name="id_setor" required="required">
                                                 @foreach ($setor as $setors)
-                                                    <option value="{{ $setors->id}}">{{ $setors->nome}}</option>
+                                                    <option value="{{ $setors->id}}">{{ $setors->nm_setor}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
