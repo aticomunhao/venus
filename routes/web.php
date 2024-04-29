@@ -261,12 +261,14 @@ Route::post('/inativar/{ide}', [GerenciarEncaminhamentoController::class, 'inati
 
 
 Route::get('/gerenciar-tratamentos', [GerenciarTratamentosController::class, 'index'])->name('gtcdex');
-Route::get('/visualizar-trat/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
-Route::post('/presenca/{idtr}', [GerenciarTratamentosController::class, 'presenca'])->name('gtcpre');
+Route::get('/visualizar-tratatamento/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
+Route::any('/presenca-tratatamento/{idtr}', [GerenciarTratamentosController::class, 'presenca']);
 Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
 Route::get('/alterar-grupo-tratamento/{id}', [GerenciarTratamentosController::class, 'escolherGrupo']);
 Route::get('/escolher-horario/{id}', [GerenciarTratamentosController::class, 'escolherHorario']);
 Route::any('/trocar-grupo-tratamento/{id}', [GerenciarTratamentosController::class, 'trocarGrupo']);
+Route::any('/incluir-avulso', [GerenciarTratamentosController::class, 'createAvulso']);
+Route::any('/armazenar-avulso', [GerenciarTratamentosController::class, 'storeAvulso']);
 
 
 

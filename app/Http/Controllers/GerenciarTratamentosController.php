@@ -41,13 +41,13 @@ class GerenciarTratamentosController extends Controller
 
         $data_enc = $request->dt_enc;
 
-        $dia = $request->dia;
+        $diaP = $request->dia;
 
         $assistido = $request->assist;
 
         $situacao = $request->status;
 
-        if ($request->dia){
+        if ($request->dia != null){
             $lista->where('rm.dia_semana', '=', $request->dia);
         }
 
@@ -62,7 +62,6 @@ class GerenciarTratamentosController extends Controller
         if ($request->status){
             $lista->where('tr.status', $request->status);
         }
-
 
         $lista = $lista->orderby('tr.status', 'ASC')->orderby('at.id_prioridade', 'ASC')->orderby('nm_1', 'ASC')->paginate(50);
         //dd($lista)->get();
@@ -84,13 +83,14 @@ class GerenciarTratamentosController extends Controller
 
 
 
-        return view ('/recepcao-integrada/gerenciar-tratamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'dia'));
+        return view ('/recepcao-integrada/gerenciar-tratamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'dia', 'diaP'));
 
 
     }
 
 
     public function presenca(Request $request, $idtr){
+        dd($request->all());
 
         $infoTrat = DB::table('tratamento')->where('id', $idtr)->first();
 
@@ -98,12 +98,18 @@ class GerenciarTratamentosController extends Controller
         $data_atual = Carbon::now();
         $dia_atual = $data_atual->weekday();
 
-        $confere = DB::table('dias_tratamento AS ds')->where('ds.data', $data_atual)->where('ds.id_tratamento', $idtr)->count();
+        $confere = DB::table('presenca_cronograma AS ds')
+        ->leftJoin('dias_cronograma as dc', 'ds.id_dias_cronograma', 'dc.id')
+        ->where('dc.data', $data_atual)
+        ->where('ds.id_tratamento', $idtr)
+        ->count();
 
         $lista = DB::table('tratamento AS tr')
         ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
         ->where('tr.id', $idtr)
         ->first();
+
+        $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $data_atual)->first();
 
 
 
@@ -114,7 +120,7 @@ class GerenciarTratamentosController extends Controller
             return Redirect('/gerenciar-tratamentos');
 
         }
-        else if($lista->dia != $dia_atual){
+        else if($lista->dia_semana != $dia_atual){
 
             app('flasher')->addError('Este assistido não corresponde ao dia de hoje.');
 
@@ -128,6 +134,7 @@ class GerenciarTratamentosController extends Controller
                 ]);
             }
 
+
         $presenca = isset($request->presenca) ? true : false;
 
         DB::table('dias_tratamento AS dt')
@@ -136,6 +143,18 @@ class GerenciarTratamentosController extends Controller
             'id_tratamento' => $idtr,
             'presenca' =>$presenca
         ]);
+
+        $nrAcomp = $acompanhantes->nr_acompanhantes + $request->acompanhantes;
+
+
+        DB::table('dias_cronograma')
+        ->where('id_cronograma', $request->reuniao)
+        ->where('data', $data_atual)
+        ->update([
+            'nr_acompanhantes' => $nrAcomp
+        ]);
+
+
 
         app('flasher')->addSuccess('Foi registrada a presença com sucesso.');
 
@@ -199,7 +218,7 @@ class GerenciarTratamentosController extends Controller
     public function job() {
         //Faltas::dispatch();
         //LimiteFalta::dispatch();
-        //DiasCronograma::dispatch();
+        DiasCronograma::dispatch();
         return redirect()->back();
     }
 
@@ -493,6 +512,49 @@ class GerenciarTratamentosController extends Controller
 
     }
 
+    public function createAvulso(){
 
+        //dd($request->all());
+        $dia = Carbon::today()->weekday();
+
+       $assistidos = DB::table('pessoas')->select('id', 'nome_completo')->orderBy('nome_completo')->get();
+
+       $reuniao = DB::table('cronograma as cro')
+       ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+       ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+       ->where('cro.dia_semana', $dia)
+       ->where('cro.status_reuniao', '<>', 2)
+       ->select('cro.id', 'cro.h_inicio', 'cro.h_fim', 'gr.nome', 'sl.numero as sala')
+       ->get();
+
+   // dd($reuniao);
+
+
+
+        return view('recepcao-integrada.incluir-avulso', compact('assistidos', 'reuniao'));
+    }
+
+    public function storeAvulso(Request $request){
+
+        $hoje = Carbon::today();
+        $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $hoje)->first();
+        $nrAcomp = $acompanhantes->nr_acompanhantes + $request->acompanhantes;
+
+
+        DB::table('dias_cronograma')
+        ->where('id_cronograma', $request->reuniao)
+        ->where('data', $hoje)
+        ->update([
+            'nr_acompanhantes' => $nrAcomp
+        ]);
+
+        DB::table('presenca_cronograma')
+        ->insert([
+            'presenca' => true,
+            'id_pessoa' => $request->assistido,
+            'id_dias_cronograma' => $acompanhantes->id
+        ]);
+        return redirect('/gerenciar-tratamentos');
+    }
 
 }

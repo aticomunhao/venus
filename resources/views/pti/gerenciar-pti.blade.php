@@ -91,21 +91,21 @@
                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel" style="color:orange;">Confirmação de
+                                        <div class="modal-header" style="background-color:rgb(196, 27, 27);">
+                                            <h5 class="modal-title" id="exampleModalLabel" style=" color:white">Confirmação de
                                                 Alta</h5>
                                             <button type="button" class="btn-close"
                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             Tem certeza que deseja declarar alta para <br /><span
-                                                style="color:orange;">{{ $encaminhamento->nome_completo }}</span>&#63;
+                                                style="color:rgb(196, 27, 27);">{{ $encaminhamento->nome_completo }}</span>&#63;
 
                                         </div>
-                                        <div class="modal-footer">
+                                        <div class="modal-footer mt-2">
                                             <button type="button" class="btn btn-secondary"
                                                 data-bs-dismiss="modal">Cancelar</button>
-                                            <a type="button" class="btn btn-warning"
+                                            <a type="button" class="btn btn-danger"
                                                 href="/alta-pti/{{ $encaminhamento->id }}">Confirmar
                                                 Alta</a>
                                         </div>
