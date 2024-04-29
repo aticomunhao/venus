@@ -34,6 +34,7 @@ use App\Http\Controllers\GerenciarEncaminhamentoIntegralController;
 use App\Http\Controllers\GerenciarTratamentosController;
 use App\Http\Controllers\GerenciarEntrevistaController;
 use App\Http\Controllers\GerenciarPTIController;
+use App\Http\Controllers\PresencaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -144,6 +145,16 @@ Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name(
 | David Routes
 |--------------------------------------------------------------------------
 */
+
+//Presença
+
+Route::get('/gerenciar-presenca', [PresencaController::class, 'index'])->name('listas');
+Route::get('/editar-presenca/{id}', [PresencaController::class, 'edit'])->name('');
+Route::post('/atualizar-presenca/{id}', [PresencaController::class, 'update'])->name('');
+Route::any('/incluir-presenca', [PresencaController::class, 'incluir']);
+Route::get('/criar-presenca/{id}', [PresencaController::class, 'criar'])->name('');
+Route::get('/visualizar-presenca/{id}', [PresencaController::class, 'show'])->name('');
+Route::any('/deletar-presenca/{id}', [PresencaController::class, 'destroy'])->name('');
 
 //Atendimento Fraterno Específico
 
@@ -256,7 +267,6 @@ Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])
 Route::get('/alterar-grupo-tratamento/{id}', [GerenciarTratamentosController::class, 'escolherGrupo']);
 Route::get('/escolher-horario/{id}', [GerenciarTratamentosController::class, 'escolherHorario']);
 Route::any('/trocar-grupo-tratamento/{id}', [GerenciarTratamentosController::class, 'trocarGrupo']);
-
 
 
 

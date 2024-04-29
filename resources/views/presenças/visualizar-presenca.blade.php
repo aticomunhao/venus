@@ -13,7 +13,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            HISTÓRICO DO ENCAMINHAMENTO
+                            HISTÓRICO DO TRATAMENTO
                         </div>
                     </div>
                 </div>
@@ -57,13 +57,12 @@
                                 <td>{{$results->nm_4}}</td>
                                 <td>{{$results->dh_inicio}}</td>
                                 <td>{{$results->dh_fim}}</td>
-                                <td>{{$results->tst}}</td>
+                                <td>{{$results->statat}}</td>
                             </tr>
                         </tbody>
                     </table>
                     @endforeach
-
-                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Encaminhamento</legend>
+                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Tratamento</legend>
                     @foreach($result as $results)
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
@@ -91,7 +90,6 @@
                         </tbody>
                     </table>
                     @endforeach
-                    @if(sizeof($list) != 0)
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de presenças</legend>
                     Nr de faltas: {{$faul}}
                     @foreach($list as $lists)
@@ -99,7 +97,8 @@
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
                                 <td class="col">NR</td>
-                                <td class="col">DATA</td>
+                               <td class="col">DATA</td>
+                               <td class="col">GRUPO</td>
                                 <td class="col">PRESENÇA</td>
                             </tr>
 
@@ -107,11 +106,11 @@
                         <tbody>
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$lists->idp}}</td>
-                                <td>{{date ('d-m-Y', strtotime($lists->data))}}</td>
-
-                                @if ($lists->presenca == true)
+                                 <td>{{$lists->data}}</td>
+                                 <td>{{$lists->nome}}</td>
+                                @if ($lists->presenca == 1)
                                 <td style="background-color:#90EE90;">Sim</td>
-                                @else
+                                @elseif ($lists->presenca == 0)
                                 <td style="background-color:#FA8072;">Não</td>
                                 @endif
                             </tr>
@@ -119,10 +118,9 @@
                     </table>
                     <br/>
                     @endforeach
-                    @endif
                     <div class="row">
                         <div class="col">
-                            <a class="btn btn-danger" href="/gerenciar-presenca-" style="text-align:right;" role="button">Fechar</a>
+                            <a class="btn btn-danger" href="/gerenciar-tratamentos" style="text-align:right;" role="button">Fechar</a>
                         </div>
                     </div>
                 </div>
