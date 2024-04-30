@@ -23,6 +23,7 @@ use Illuminate\Support\Carbon;
             $lista = DB::table('atendimentos as atd')
             ->select('p.nome_completo', 'p.cpf', 'atd.id', 'atd.dh_marcada')
             ->leftJoin('pessoas as p', 'atd.id_assistido', 'p.id')
+            ->where('status_atendimento',7)
             ->where('afe', true)->get();
 
         
@@ -62,7 +63,7 @@ use Illuminate\Support\Carbon;
         public function criar(Request $request, string $idtr) {
             
         
-            $now = Carbon::now()->format('Y-m-d');
+            $now = Carbon::now();
             $presenca = isset($request->presenca) ? true : false;
         
             DB::table('atendimentos')

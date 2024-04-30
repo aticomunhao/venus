@@ -42,26 +42,37 @@
                             <td>
                                 
                                
-                                    <a href="/criar-presenca/{{ $listas->id }}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Histórico"><i class="bi bi-exclamation-triangle" style="font-size: 1rem; color:#000;"></i></button></a>
-                        </div>
-                                <div class="modal fade" id="modalF{{ $listas->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel" style="color: green;">Confirmação de Finalização</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Tem certeza que deseja registrar presença <p style="color: green;">{{ $listas->nome_completo }}&#63;</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                <a type="button" class="btn btn-danger" href="/deletar-presenca/{{ $listas->id }}">Cancelar </a>
-                                                <a type="button" class="btn btn-success" href="/criar-presenca/{{ $listas->id }}">Confirmar </a>
-                                            </div>
+                                <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ $listas->id }}" data-tt="tooltip" data-placement="top" title="Presença">
+                                    <i class="bi bi-exclamation-triangle" style="font-size: 1rem; color:#000;"></i>
+                                </button>
+                                
+                               {{--  Modal de Exclusao --}}
+                               <div class="modal fade" id="modal{{ $listas->id }}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background-color:rgb(196, 27, 27);">
+                                            <h5 class="modal-title" id="exampleModalLabel" style=" color:white">Confirmação de
+                                                Presença </h5>
+                                            <button type="button" class="btn-close"
+                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Tem certeza que deseja declarar alta para <br /><span
+                                                style="color:rgb(196, 27, 27);">{{ $listas->nome_completo }}</span>&#63;
+
+                                        </div>
+                                        <div class="modal-footer mt-2">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancelar</button>
+                                            <a type="button" class="btn btn-danger"
+                                                href="/criar-presenca/{{ $listas->id }}">Confirmar
+                                                Presença </a>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            {{-- Fim Modal de Exclusao --}}
                                  
                                 <a href="/visualizar-presenca/{{$listas->id}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Histórico"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/inativar/{{$listas->id}}"><button type="button" class="btn btn-outline-danger btn-sm"  data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>

@@ -13,7 +13,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            HISTÓRICO DO TRATAMENTO
+                            VISUALIZAR PRESENÇA
                         </div>
                     </div>
                 </div>

@@ -30,7 +30,7 @@ class AtendimentoFraternoController extends Controller
         $grupo = DB::table('atendente_dia AS ad')
         ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id' )
         ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
-        //dd($grupo);
+  
 
         $assistido = DB::table('atendimentos AS at')
                             ->select('at.id AS idat', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido AS idas', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo','pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento')
@@ -44,6 +44,7 @@ class AtendimentoFraternoController extends Controller
                             ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
                             ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')                    
                             ->where('at.status_atendimento', '<', 5 )
+                            ->where('at.afe',  null)
                             ->Where('at.id_atendente', $atendente)                                                                                 
                             ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
                             ->orderby('status_atendimento', 'ASC')
@@ -66,12 +67,10 @@ class AtendimentoFraternoController extends Controller
             ->leftjoin('membro AS m', 'at.id_atendente', 'm.id' )
             ->leftjoin('associado AS a', 'm.id_associado', 'a.id' )
             ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
-            ->where('id_associado', $atendente)
-            ->where('status_atendimento', '<', 5)
+            ->where('at.id_atendente', $atendente)
+            ->where('at.status_atendimento', '<', 5)
             ->count();
 
-            //dd($atendente);
-            
             $assistido = DB::table('atendimentos')->where('status_atendimento', 1)->count();
 
             $sala = DB::table('atendente_dia AS atd')
@@ -106,6 +105,7 @@ class AtendimentoFraternoController extends Controller
                             ->whereNull('pref_tipo_atendente')
                             ->orWhere('pref_tipo_atendente', $pref_m )
                             ->orderby('status_atendimento', 'ASC')->orderby('id_prioridade')->orderBy('dh_chegada')
+                            ->where('afe', '<>', true)
                             ->limit(1)
                             ->update([
                                     'id_atendente' => $atendente,
