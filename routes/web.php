@@ -261,7 +261,7 @@ Route::post('/inativar/{ide}', [GerenciarEncaminhamentoController::class, 'inati
 
 
 Route::get('/gerenciar-tratamentos', [GerenciarTratamentosController::class, 'index'])->name('gtcdex');
-Route::get('/visualizar-tratatamento/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
+Route::get('/visualizar-tratamento/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
 Route::any('/presenca-tratatamento/{idtr}', [GerenciarTratamentosController::class, 'presenca']);
 Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
 Route::get('/alterar-grupo-tratamento/{id}', [GerenciarTratamentosController::class, 'escolherGrupo']);

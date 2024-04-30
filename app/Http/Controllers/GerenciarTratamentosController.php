@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rules\Exists;
 use PhpParser\Node\Expr\AssignOp\Coalesce;
 use PhpParser\Node\Expr\BinaryOp\Coalesce as BinaryOpCoalesce;
 
@@ -90,7 +91,7 @@ class GerenciarTratamentosController extends Controller
 
 
     public function presenca(Request $request, $idtr){
-        dd($request->all());
+
 
         $infoTrat = DB::table('tratamento')->where('id', $idtr)->first();
 
@@ -109,8 +110,9 @@ class GerenciarTratamentosController extends Controller
         ->where('tr.id', $idtr)
         ->first();
 
-        $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $data_atual)->first();
+        $dia_cronograma = DB::table('dias_cronograma')->where('id_cronograma', $lista->id_reuniao)->where('data', $data_atual)->first();
 
+        $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $data_atual)->first();
 
 
         if($confere > 0){
@@ -137,22 +139,25 @@ class GerenciarTratamentosController extends Controller
 
         $presenca = isset($request->presenca) ? true : false;
 
-        DB::table('dias_tratamento AS dt')
-        ->insert([
-            'data' =>  $data_atual,
-            'id_tratamento' => $idtr,
-            'presenca' =>$presenca
-        ]);
-
-        $nrAcomp = $acompanhantes->nr_acompanhantes + $request->acompanhantes;
+        $acompanhantes = isset($acompanhantes->nr_acompanhantes)  ? $acompanhantes->nr_acompanhantes : 0;
+        $nrAcomp = $acompanhantes + $request->acompanhantes;
 
 
         DB::table('dias_cronograma')
-        ->where('id_cronograma', $request->reuniao)
+        ->where('id_cronograma', $lista->id_reuniao)
         ->where('data', $data_atual)
         ->update([
             'nr_acompanhantes' => $nrAcomp
         ]);
+
+        DB::table('presenca_cronograma')
+        ->insert([
+            'id_tratamento' => $idtr,
+            'presenca' => true,
+            'id_dias_cronograma' => $dia_cronograma->id
+        ]);
+
+
 
 
 
@@ -230,6 +235,7 @@ class GerenciarTratamentosController extends Controller
         ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')->select('id_tipo_tratamento')->first();
 
         $idtt = $idtt->id_tipo_tratamento;
+
 
         $result = DB::table('encaminhamento AS enc')
                         ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat' )
@@ -382,10 +388,10 @@ class GerenciarTratamentosController extends Controller
                         ->sum('reu.max_atend');
 
 
+                        $dia_hoje = Carbon::today()->weekday();
 
-//dd($contcap);
 
-        return view('recepcao-integrada/agendar-grupo-tratamento', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
+        return view('recepcao-integrada/agendar-grupo-tratamento', compact('dia_hoje','result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
 
     }
 
@@ -438,7 +444,8 @@ class GerenciarTratamentosController extends Controller
                         ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->leftJoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
-                        ->leftJoin('membro AS me', 'gr.id', 'me.id_grupo')
+                        ->leftJoin('cronograma as cro', 'gr.id', 'cro.id_grupo')
+                        ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
                         ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
                         ->leftJoin('tipo_dia AS td', 'reu.dia_semana', 'td.id')
                         ->where('reu.dia_semana', $dia)

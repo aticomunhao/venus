@@ -160,7 +160,7 @@
 
 
 
-                                <a href="/visualizar-trat/{{ $listas->idtr }}" type="button"
+                                <a href="/visualizar-tratamento/{{ $listas->idtr }}" type="button"
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Histórico"><i class="bi bi-search"
                                         style="font-size: 1rem; color:#000;"></i></a>
