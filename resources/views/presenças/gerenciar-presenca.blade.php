@@ -16,9 +16,21 @@
 <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR PRESENÇA</h4>
     <div class="col-12">
         <div class="row justify-content-center">
-                <br/>
-            </div style="text-align:right;">
-            <hr/>
+            <form action="{{ route('listas') }}" class="form-horizontal mt-4" method="GET">
+                <div class="row align-items-center">
+                    <div class="col-5">
+                        <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa" placeholder="Pesquisar nome" value="{{ request('nome_pesquisa') }}">
+                    </div>
+                    <div class="col-auto">
+                        <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;" type="submit" value="Pesquisar">
+                        <a href="/gerenciar-presenca">
+                            <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;" type="button" value="Limpar">
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <br>
             {{-- <div class="table">Total assistidos: {{$contar}} --}}
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                     <thead style="text-align: center;">
@@ -45,14 +57,17 @@
                                 <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ $listas->id }}" data-tt="tooltip" data-placement="top" title="Presença">
                                     <i class="bi bi-exclamation-triangle" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                                
-                               {{--  Modal de Exclusao --}}
+
+                               <button type="button" class="btn btn-outline-danger btn-sm"  data-tt="tooltip" data-placement="top" data-bs-toggle="modal" data-bs-target="#modalp{{ $listas->id }}" title="Inativar">
+                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>
+                               {{--  Modal de Presença --}}
                                <div class="modal fade" id="modal{{ $listas->id }}" tabindex="-1"
                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <div class="modal-header" style="background-color:rgb(196, 27, 27);">
-                                            <h5 class="modal-title" id="exampleModalLabel" style=" color:white">Confirmação de
+                                        <div class="modal-header" style="background-color: rgba(255, 165, 0, 1);">
+
+                                            <h5 class="modal-title" id="exampleModalLabel" >Confirmação de
                                                 Presença </h5>
                                             <button type="button" class="btn-close"
                                                 data-bs-dismiss="modal" aria-label="Close"></button>
@@ -72,10 +87,39 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- Fim Modal de Exclusao --}}
+                            {{-- Fim Modal de Presença --}}
                                  
-                                <a href="/visualizar-presenca/{{$listas->id}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Histórico"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/inativar/{{$listas->id}}"><button type="button" class="btn btn-outline-danger btn-sm"  data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>
+
+                               {{--  Modal de exclusão --}}
+                               <div class="modal fade" id="modalp{{ $listas->id }}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background-color:rgb(196, 27, 27);">
+                                            <h5 class="modal-title" id="exampleModalLabel" style=" color:white">Confirmar
+                                                Exclusão </h5>
+                                            <button type="button" class="btn-close"
+                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Tem certeza que deseja declarar alta para <br /><span
+                                                style="color:rgb(196, 27, 27);">{{ $listas->nome_completo }}</span>&#63;
+
+                                        </div>
+                                        <div class="modal-footer mt-2">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancelar</button>
+                                            <a type="button" class="btn btn-danger"
+                                                href="/inativar-presenca/{{$listas->id}}">Confirmar
+                                                Exclusão </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- Fim Modal de exclusao --}}
+                                 
+                              {{-- Conferir se realmente é necesssário botão de inativar --}}
+                               
                             </td>
                        
                         </tr>

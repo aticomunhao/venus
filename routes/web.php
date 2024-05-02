@@ -154,7 +154,7 @@ Route::post('/atualizar-presenca/{id}', [PresencaController::class, 'update'])->
 Route::any('/incluir-presenca', [PresencaController::class, 'incluir']);
 Route::get('/criar-presenca/{id}', [PresencaController::class, 'criar'])->name('');
 Route::get('/visualizar-presenca/{id}', [PresencaController::class, 'show'])->name('');
-Route::any('/deletar-presenca/{id}', [PresencaController::class, 'destroy'])->name('');
+Route::any('/inativar-presenca/{id}', [PresencaController::class, 'destroy'])->name('');
 
 //Atendimento Fraterno Específico
 
@@ -174,6 +174,7 @@ Route::post('/tematicas-afe/{idat}', [AtendimentoFraternoEspecificoController::c
 Route::get('/atender-afe', [AtendimentoFraternoEspecificoController::class, 'atende_agora'])->name('Atender-afe');
 Route::get('/final-afe/{idat}', [AtendimentoFraternoController::class, 'final'])->name('');
 Route::post('/finalizar-afe/{idat}', [AtendimentoFraternoEspecificoController::class, 'finaliza'])->name('');
+Route::any('/reset/{idat}', [AtendimentoFraternoEspecificoController::class, 'reset'])->name('');
 
 
 //Entrevista
@@ -397,7 +398,7 @@ Route::get('/visualizar-pti/{id}', [GerenciarPTIController::class, 'show']);
     Route::get('/atender', [AtendimentoFraternoController::class, 'atende_agora'])->name('afiini');
     Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
     Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
-
+    Route::any('/reset/{idat}', [AtendimentoFraternoController::class, 'reset'])->name('');
 
 
 

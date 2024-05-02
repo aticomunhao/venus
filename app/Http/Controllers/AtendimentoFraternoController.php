@@ -45,7 +45,7 @@ class AtendimentoFraternoController extends Controller
                             ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')                    
                             ->where('at.status_atendimento', '<', 5 )
                             ->where('at.afe',  null)
-                            ->Where('at.id_atendente', $atendente)                                                                                 
+                            ->Where('at.id_atendente', $atendente)                                                                           
                             ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
                             ->orderby('status_atendimento', 'ASC')
                             ->get();
@@ -68,10 +68,11 @@ class AtendimentoFraternoController extends Controller
             ->leftjoin('associado AS a', 'm.id_associado', 'a.id' )
             ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
             ->where('at.id_atendente', $atendente)
+            ->where('afe', null)
             ->where('at.status_atendimento', '<', 5)
             ->count();
 
-            $assistido = DB::table('atendimentos')->where('status_atendimento', 1)->count();
+            $assistido = DB::table('atendimentos')->where('status_atendimento', 1)->where('afe', null)->count();
 
             $sala = DB::table('atendente_dia AS atd')
             ->where('dh_inicio', $now )
@@ -100,12 +101,12 @@ class AtendimentoFraternoController extends Controller
             }elseif ($atendendo < 1 && $sala > 0){
              
                     DB::table('atendimentos')
+                            ->where('afe', null)
                             ->whereNull('id_atendente_pref')
                             ->orWhere('id_atendente_pref', $atendente)           
                             ->whereNull('pref_tipo_atendente')
                             ->orWhere('pref_tipo_atendente', $pref_m )
                             ->orderby('status_atendimento', 'ASC')->orderby('id_prioridade')->orderBy('dh_chegada')
-                            ->where('afe', '<>', true)
                             ->limit(1)
                             ->update([
                                     'id_atendente' => $atendente,
@@ -882,5 +883,18 @@ class AtendimentoFraternoController extends Controller
         }
 
 
+        public function reset(string $idat) {
+
+            DB::table('encaminhamento')->where('id_atendimento',$idat)->delete();
+
+            DB::table('registro_tema')->where('id_atendimento',$idat)->delete();
+
+            $c = DB::table('atendimentos')->where('id', $idat)->update([
+                'observacao' => null
+            ]);
+
+            app('flasher')->addSuccess('Todos os dados foram apagados com sucesso!');
+            return redirect()->back();
+        }
 
 }

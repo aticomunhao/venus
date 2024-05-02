@@ -53,7 +53,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->where('at.status_atendimento', '<', 5)
             ->whereNotNull('dh_chegada') // Garante que a pessoa já chegou
             ->whereNotNull('dh_marcada')
-            ->where('afe', true) // Garante que a pessoa ainda não foi atendida
+            ->where('at.afe', true) 
             ->Where('at.id_atendente', $afe->nr_associado)
             ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
             ->orderby('status_atendimento', 'ASC')
@@ -69,7 +69,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
         $now =  Carbon::now()->format('Y-m-d');
         $atendente = session()->get('usuario.id_associado');
-        $pref_m = session()->get('usuario.sexo');
+    
 
         $atendendo = DB::table('atendimentos AS at')
             ->leftjoin('membro AS m', 'at.id_atendente', 'm.id')
@@ -91,12 +91,8 @@ class AtendimentoFraternoEspecificoController extends Controller
 
 
 
-        if ($atendendo > 0) {
-
-            app('flasher')->addError('Você não pode atender dois assistidos ao mesmo tempo.');
-
-            return redirect('/atendendo-afe');
-        } elseif ($assistido < 1) {
+        
+        if ($assistido < 1) {
 
             app('flasher')->addError('Todos os assistidos foram atendidos.');
 
@@ -104,7 +100,6 @@ class AtendimentoFraternoEspecificoController extends Controller
         } elseif ($atendendo < 1 && $sala == null) {
 
             app('flasher')->addError('O atendente deve estar designado para o trabalho de hoje.');
-
             return Redirect()->back();
         } elseif ($atendendo < 1 && $sala > 0) {
 
@@ -112,11 +107,11 @@ class AtendimentoFraternoEspecificoController extends Controller
             DB::table('atendimentos')
                 ->orderby('status_atendimento', 'ASC')->orderby('id_prioridade')->orderBy('dh_marcada')
                 ->where('afe', true)
+                ->where('id_atendente', $atendente)
                 ->where('status_atendimento', '<', 5)
                 ->update([
-                    'id_atendente' => $atendente,
                     'id_sala' => $sala,
-                    'dh_chegada' => $now,
+                    'status_atendimento' => 2
                     
                 ]);
 
@@ -213,11 +208,7 @@ class AtendimentoFraternoEspecificoController extends Controller
         $sit = DB::table('atendimentos AS at')->where('at.id_atendente', $atendente)->where('at.status_atendimento', '<', 5)->count();
 
 
-        if ($sit > 0 && $atendendo == null) {
-            app('flasher')->addError('Não é permitido atender dois assistidos ao mesmo tempo.');
-
-            return redirect('/atendendo-afe');
-        }
+   
 
         if ($atendendo = $atendente && $status > 1) {
             app('flasher')->addInfo('Retomando análise.');
@@ -825,4 +816,20 @@ class AtendimentoFraternoEspecificoController extends Controller
             return Redirect('/atendendo-afe');
         }
     }
+
+    public function reset(string $idat) {
+
+        DB::table('encaminhamento')->where('id_atendimento',$idat)->delete();
+
+        DB::table('registro_tema')->where('id_atendimento',$idat)->delete();
+
+        $c = DB::table('atendimentos')->where('id', $idat)->update([
+            'observacao' => null
+        ]);
+
+        app('flasher')->addSuccess('Todos os dados foram apagados com sucesso!');
+        return redirect()->back();
+    }
+
 }
+

@@ -365,15 +365,6 @@ class GerenciarEntrevistaController extends Controller
             ]);
         }
            
-            
-               
-
-       
-
-
-       
-
-
 
         return redirect()->route('gerenciamento')->with('success', 'O cadastro foi realizado com sucesso!');
     }
