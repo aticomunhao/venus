@@ -90,7 +90,7 @@ use Illuminate\Database\DBAL\TimestampType;
                     DB::table('historico_venus')->insert([
                         'id_usuario' => session()->get('usuario.id_usuario'),
                         'data' => $data,
-                        'fato' => 6
+                        'fato' => 41
 
                     ]);
 

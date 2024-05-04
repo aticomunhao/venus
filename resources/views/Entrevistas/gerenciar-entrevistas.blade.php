@@ -180,8 +180,8 @@
                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel" style="color:red;">Confirmação de
+                                                        <div class="modal-header" style="background-color:rgb(196, 27, 27);">
+                                                            <h5 class="modal-title" id="exampleModalLabel" style="color:rgb(255, 255, 255);">Confirmar
                                                                 Exclusão</h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
@@ -191,11 +191,11 @@
                                                                 style="color:red;">{{ $informacao->nome_pessoa }}&#63;</p>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
+                                                            <button type="button" class="btn btn-danger"
                                                                 data-bs-dismiss="modal">Cancelar</button>
-                                                            <a type="button" class="btn btn-danger"
+                                                            <a type="button" class="btn btn-primary"
                                                                 href="/inativar-entrevista/{{ $informacao->ide }}">Confirmar
-                                                                Exclusão</a>
+                                                                </a>
                                                         </div>
                                                     </div>
                                                 </div>

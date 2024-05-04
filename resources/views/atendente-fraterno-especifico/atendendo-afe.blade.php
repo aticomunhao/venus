@@ -92,7 +92,7 @@
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header" style="background-color:rgb(196, 27, 27);">
-                                                        <h5 class="modal-title" id="exampleModalLabel" style=" color:white">Confirmação de RTeset</h5>
+                                                        <h5 class="modal-title" id="exampleModalLabel" style=" color:rgb(255, 255, 255)">Reiniciar</h5>
                                                         <button type="button" class="btn-close"
                                                             data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
@@ -102,10 +102,10 @@
             
                                                     </div>
                                                     <div class="modal-footer mt-2">
-                                                        <button type="button" class="btn btn-secondary"
+                                                        <button type="button" class="btn btn-danger"
                                                             data-bs-dismiss="modal">Cancelar</button>
-                                                        <a type="button" class="btn btn-danger"
-                                                            href="/reset/{{$assistidos->idat}}">Confirmar Reset
+                                                        <a type="button" class="btn btn-primary" 
+                                                            href="/reset/{{$assistidos->idat}}">Confirmar
                                                             </a>
                                                     </div>
                                                 </div>

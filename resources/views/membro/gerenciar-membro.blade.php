@@ -87,16 +87,16 @@
                         <div class="modal fade" id="confirmacaoDelecao{{ $membros->idm }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Confirmação de Exclusão</h5>
+                                    <div class="modal-header" style="background-color:rgb(196, 27, 27);">
+                                        <h5 class="modal-title" style= " color:rgb(255, 255, 255)" id="exampleModalLabel">Confirmar Exclusão</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         Tem certeza que deseja excluir o Membro "{{ $membros->nome_completo }}"?
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                        <a href="/deletar-membro/{{ $id }}/{{ $membros->idm }}" class="btn btn-danger">Excluir Permanentemente</a>
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                        <a href="/deletar-membro/{{ $id }}/{{ $membros->idm }}" class="btn btn-primary">Confirmar</a>
                                     </div>
                                 </div>
                             </div>
