@@ -326,6 +326,9 @@ class GerenciarEncaminhamentoIntegralController extends Controller
 
         $dia_atual = $data_atual->weekday();
 
+        $data_fim_antes = Carbon::today()->weekday($dia_semana)->addWeek(6);
+        $data_fim_depois = Carbon::today()->weekday($dia_semana)->addWeek(5);
+
         //dd($dia_atual);
         $countVagas = DB::table('tratamento')->where('id_reuniao', '=', "$reu")->where('status', '<', '3' )->count();
         $maxAtend = DB::table('cronograma')->where('id', '=', "$reu")->get();
@@ -353,7 +356,9 @@ class GerenciarEncaminhamentoIntegralController extends Controller
                                 ->insert([
                                 'id_reuniao' => $reu,
                                 'id_encaminhamento' => $ide,
-                                'status' => 1
+                                'status' => 1,
+                                'dt_fim' => $data_fim_depois,
+
 
             ]);
 
@@ -385,7 +390,8 @@ class GerenciarEncaminhamentoIntegralController extends Controller
                             ->insert([
                             'id_reuniao' => $reu,
                             'id_encaminhamento' => $ide,
-                            'status' => 1
+                            'status' => 1,
+                            'dt_fim' => $data_fim_antes
 
         ]);
 

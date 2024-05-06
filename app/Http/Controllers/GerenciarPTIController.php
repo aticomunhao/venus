@@ -24,7 +24,7 @@ class GerenciarPTIController extends Controller
         ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
         ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
         ->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
-        ->where('id_funcao', 1)
+        ->where('id_funcao', '<', 3)
         ->where('cr.id_tipo_tratamento', 2)
         ->where('cr.status_reuniao', '<>', 2)
         ->distinct('gr.id')
@@ -63,16 +63,16 @@ class GerenciarPTIController extends Controller
         }
 
         $encaminhamentos = $encaminhamentos->get();
-        
+
         }
-        
+
         catch(\Exception $e){
-        
+
                     app('flasher')->addError("Você não tem autorização para acessar esta página");
                     return redirect('/login/valida');
-                    
-                } 
-       
+
+                }
+
 
 
         return view('pti.gerenciar-pti', compact('encaminhamentos', 'dirigentes', 'selected_grupo'));

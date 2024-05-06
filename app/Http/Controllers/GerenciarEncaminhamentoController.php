@@ -320,12 +320,14 @@ class GerenciarEncaminhamentoController extends Controller
     public function tratar(Request $request, $ide){
 
         $reu = intval($request->reuniao);
-
         $dia_semana = DB::table('cronograma AS reu')->where('id', $reu)->value('dia_semana');
-
         $data_atual = Carbon::now();
-
         $dia_atual = $data_atual->weekday();
+
+
+
+        $data_fim_antes = Carbon::today()->weekday($dia_semana)->addWeek(8);
+        $data_fim_depois = Carbon::today()->weekday($dia_semana)->addWeek(7);
 
         //dd($dia_atual);
         $countVagas = DB::table('tratamento')->where('id_reuniao', '=', "$reu")->where('status', '<', '3' )->count();
@@ -354,7 +356,8 @@ class GerenciarEncaminhamentoController extends Controller
                                 ->insert([
                                 'id_reuniao' => $reu,
                                 'id_encaminhamento' => $ide,
-                                'status' => 1
+                                'status' => 1,
+                                'dt_fim' => $data_fim_depois
 
             ]);
 
@@ -386,7 +389,8 @@ class GerenciarEncaminhamentoController extends Controller
                             ->insert([
                             'id_reuniao' => $reu,
                             'id_encaminhamento' => $ide,
-                            'status' => 1
+                            'status' => 1,
+                            'dt_fim' => $data_fim_antes
 
         ]);
 

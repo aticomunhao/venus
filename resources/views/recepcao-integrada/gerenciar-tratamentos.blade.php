@@ -73,7 +73,13 @@
 
                 </div>
             </div>
+
+
+
+
             <br />
+
+
 
         </div style="text-align:right;">
         <hr />
@@ -107,13 +113,16 @@
                             <td>{{ $listas->tst }}</td>
                             <td>
 
+
+
+
                                 <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
                                     data-tt="tooltip" data-placement="top" title="Presença"
                                     data-bs-target="#presenca{{ $listas->idtr }}"><i class="bi bi bi-exclamation-triangle"
                                         style="font-size: 1rem; color:#000;"></i></button>
 
 
-                                <div class="modal fade" id="presenca{{ $listas->idtr }}" tabindex="-1"
+                                <div class="modal fade closes" id="presenca{{ $listas->idtr }}" tabindex="-1"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <form method="post" action="/presenca-tratatamento/{{ $listas->idtr }}">
                                         @csrf
@@ -145,17 +154,45 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-danger"
                                                         data-bs-dismiss="modal">Cancelar</button>
-                                                    <button type="submit" class="btn btn-primary">Registrar
+
+                                                        @if($listas->dt_fim == $now)
+
+                                                        <button type="button" class="btn btn-primary openModal" id="openModal" data-bs-toggle="modal" data-bs-dismiss="modal" data-bs-target="#staticBackdrop{{ $listas->idtr }}">
+                                                            Registrar Presença
+                                                          </button>
+
+
+                                                        @else
+                                                        <button type="submit" class="btn btn-primary">Registrar
                                                         Presença</button>
+                                                        @endif
                                                 </div>
                                             </div>
                                         </div>
-                                    </form>
                                 </div>
 
+                                <div class="modal fade" id="staticBackdrop{{ $listas->idtr }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                        <div class="modal-header" style="background-color:rgb(39, 91, 189);color:white">
+                                          <h1 class="modal-title fs-5" id="staticBackdropLabel">ATENÇÃO!</h1>
+                                          <a href="/gerenciar-tratamentos" type="button" class="btn-close" aria-label="Close"></a>
+                                        </div>
+                                        <div class="modal-body">
+                                            <label for="recipient-name" class="col-form-label"
+                                            style="font-size:17px">Este é o último dia de tratamento de:<br /><span
+                                                style="color: rgb(39, 91, 189)">{{ $listas->nm_1 }}</span></label>
+                                                <br />
 
-
-
+                                        </div>
+                                        <div class="modal-footer">
+                                          <a href="/gerenciar-tratamentos" type="button" class="btn btn-danger" >Cancelar Presença</a>
+                                          <button type="type" class="btn btn-primary" >Confirmar</button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </form>
 
 
 
@@ -183,12 +220,12 @@
         </div class="d-flex justify-content-center">
         {{ $lista->withQueryString()->links() }}
     </div>
-
     </div>
     </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         $(document).ready(function() {
             if ({{ $diaP == null }}) { //Deixa o select status como padrao vazio
