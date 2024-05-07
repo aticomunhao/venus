@@ -230,6 +230,9 @@ dd($request->all());
 
     public function escolherGrupo($id){
 
+
+
+
         $ide = DB::table('tratamento')->where('id', $id)->first();
         $idtt = DB::table('tratamento as tr')->where('tr.id', $id)
         ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')->select('id_tipo_tratamento')->first();
@@ -463,18 +466,35 @@ dd($request->all());
 
     public function trocarGrupo(Request $request, $ide){
 
+
+
         $reu = intval($request->reuniao);
 
         //dd($dia_atual);
         $countVagas = DB::table('tratamento')->where('id_reuniao', '=', "$reu")->where('status', '<', '3' )->count();
-        $maxAtend = DB::table('cronograma')->where('id', '=', "$reu")->get();
+        $maxAtend = DB::table('cronograma')->where('id', '=', "$reu")->first();
         $tratID = DB::table('encaminhamento')->where('id', '=', $ide)->get();
         $idt = DB::table('tratamento')->where('id_encaminhamento', $ide)->first();
         $data_ontem = Carbon::yesterday();
+        $data_hoje = Carbon::today();
+        $dia_fim = Carbon::createFromFormat('Y-m-d G:i:s', "$idt->dt_fim 00:00:00");
+        $dia_fim->weekday($maxAtend->dia_semana);
 
-        if ($tratID[0]->id_tipo_tratamento == 2 and $countVagas >= $maxAtend[0]->max_atend){
+
+        if ($tratID[0]->id_tipo_tratamento == 2 and $countVagas >= $maxAtend->max_atend){
 
             app('flasher')->addError('Número de vagas insuficientes');
+            return redirect()->back();
+        }
+
+        if($data_hoje->weekOfYear == $dia_fim->weekOfYear and $data_hoje->diffInDays($dia_fim, false) < 0){
+
+            app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
+            return redirect()->back();
+
+        }
+        elseif($data_hoje->weekOfYear == ($dia_fim->weekOfYear + 1) and $data_hoje->diffInDays($dia_fim, false) < 0 and $maxAtend->dia_semana == 0){
+            app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
             return redirect()->back();
         }
 
@@ -510,8 +530,12 @@ dd($request->all());
 
 
 
-     DB::table('tratamento')->where('id_encaminhamento', $ide)->update(['id_reuniao'=> $reu]);
-
+     DB::table('tratamento')
+     ->where('id_encaminhamento', $ide)
+     ->update([
+        'id_reuniao'=> $reu,
+        'dt_fim' => $dia_fim
+    ]);
 
 
 

@@ -29,7 +29,7 @@ class GerenciarAtendimentoController extends Controller
         $atende = DB::select("select
                     m.id_associado
                     from membro m
-                    left join associado ad on (m.id_associado = ad.id) 
+                    left join associado ad on (m.id_associado = ad.id)
                     left join pessoas p on (ad.id_pessoa = p.id)
                     where m.id_funcao = 6
                     ");
@@ -46,13 +46,14 @@ class GerenciarAtendimentoController extends Controller
                     ->leftJoin('pessoas AS ps1', 'ad1.id_pessoa', 'ps1.id')
                     ->leftJoin('membro AS m1', 'at.id_atendente_pref', 'm1.id_associado')
                     ->leftJoin('associado AS ad2', 'm1.id_associado', 'ad2.id')
-                    ->leftJoin('pessoas AS ps2', 'ad1.id_pessoa', 'ps2.id')  
+                    ->leftJoin('pessoas AS ps2', 'ad1.id_pessoa', 'ps2.id')
 
                     ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftjoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
                     ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
                     ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
                     ->leftJoin('salas AS s', 'at.id_sala', 's.id');
+
 
         $data_inicio = $request->dt_ini;
 
@@ -74,9 +75,10 @@ class GerenciarAtendimentoController extends Controller
         }
 
 
-        $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy( 'at.id_prioridade', 'ASC') ->orderby('at.dh_chegada', 'ASC', 'at.id','ASC')->paginate(50);
 
-//dd($lista);
+        $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy( 'at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC', 'at.id','ASC');
+
+        $lista = $lista->paginate(50);
 
         $contar = $lista->count('at.id');
 
@@ -315,7 +317,7 @@ class GerenciarAtendimentoController extends Controller
                     from tipo_prioridade pr
                     order by id
                     ");
-        
+
 
         return view ('/recepcao-AFI/editar-atendimento', compact('result', 'priori', 'sexo', 'pare', 'afi', 'lista'));
         }
@@ -368,7 +370,7 @@ class GerenciarAtendimentoController extends Controller
 
     }
 
-    
+
 
 
     //===============================================================//
@@ -390,7 +392,7 @@ class GerenciarAtendimentoController extends Controller
                 ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
                 ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
                 ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id');
-                
+
         //dd($atende);
 
         $data = $request->data;
@@ -444,7 +446,7 @@ class GerenciarAtendimentoController extends Controller
 
     ////PREPARA INFORMAÇÕES DO FORMULÁRIO DE EDIÇÃO DA SALA
 
-    
+
 
     public function editar_afi($idatd){
 
@@ -481,8 +483,8 @@ class GerenciarAtendimentoController extends Controller
                         ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
                         ->where('atd.dh_inicio', $now)
                         ->pluck('id_sala');
-        
-   
+
+
 
         $sala = DB::table('salas AS s')
                     ->select('s.id', 's.numero')
@@ -493,7 +495,7 @@ class GerenciarAtendimentoController extends Controller
                         ->pluck('atd.id_sala'))
                     ->orderBy('numero', 'asc')
                     ->get();
-      
+
 
           // dd($sala);
 
@@ -505,9 +507,9 @@ class GerenciarAtendimentoController extends Controller
     //// SALVAR EM BANCO A EDIÇÃO DA SALA DO AFI
 
     public function update_afi(Request $request, $idatd){
-            
+
             $now = Carbon::now()->format('Y-m-d');
- 
+
 
             $sala = $request->sala;
 
@@ -520,7 +522,7 @@ class GerenciarAtendimentoController extends Controller
                 DB::table('atendente_dia AS atd')->where('id', $idatd)->update([
                             'id_sala' => $request->input('sala')
                         ]);
-                        
+
 
                 app('flasher')->addSuccess('A sala foi alterada com sucesso.');
 
@@ -528,12 +530,12 @@ class GerenciarAtendimentoController extends Controller
 
             }else{
 
-                app('flasher')->addError('A sala está ocupada.'); 
+                app('flasher')->addError('A sala está ocupada.');
 
                 return redirect ('/gerenciar-atendente-dia');
             }
 
-            app('flasher')->addError('Saiu aqui deu erro.'); 
+            app('flasher')->addError('Saiu aqui deu erro.');
 
             return redirect ('/gerenciar-atendente-dia');
 
@@ -542,10 +544,10 @@ class GerenciarAtendimentoController extends Controller
 
 
     //////GERENCIAR/DEFINIR OS AFI E SALAS DE ATENDIMENTO DO DIA
-            
+
     public function definir_sala(Request $request){
 
-        
+
         $now = Carbon::now()->format('Y-m-d');
 
         $aten = DB::table('atendente_dia AS atd')
@@ -560,10 +562,10 @@ class GerenciarAtendimentoController extends Controller
         ->select('m.id AS idat', 'm.id_associado AS ida', 'p.nome_completo AS nm_4',  'p.id AS pid', 'tsp.tipo')
         ->leftjoin('associado AS a', 'm.id_associado', 'a.id' )
         ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id' )
-        ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')                
+        ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
         ->where('p.status', 1)
         ->whereNotIn('m.id_associado', $aten);
-    
+
 
         //$grupo = $request->grupo;
 
@@ -607,7 +609,7 @@ class GerenciarAtendimentoController extends Controller
                 ->get();
 
         foreach($atende as $key => $lista){
-            
+
             $result = DB::table('membro AS m')
                 ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
                 ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')
@@ -671,7 +673,7 @@ class GerenciarAtendimentoController extends Controller
 
             return redirect()->back() ;
         }
-        
+
     }
 
 
@@ -701,7 +703,7 @@ class GerenciarAtendimentoController extends Controller
             'id_sala'=>$request->input('sala'),
             'dh_inicio'=> $now
         ]);
-        
+
         }
 
 

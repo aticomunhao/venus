@@ -34,6 +34,7 @@ use App\Http\Controllers\GerenciarEncaminhamentoIntegralController;
 use App\Http\Controllers\GerenciarTratamentosController;
 use App\Http\Controllers\GerenciarEntrevistaController;
 use App\Http\Controllers\GerenciarPTIController;
+use App\Http\Controllers\GerenciarIntegralController;
 use App\Http\Controllers\PresencaController;
 
 /*
@@ -329,11 +330,17 @@ Route::get('/visualizar-enc-integral/{ide}', [GerenciarEncaminhamentoIntegralCon
 Route::post('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'inative']);
 
 
-// Dirigente
+// Dirigente PTI
 
 Route::get('/gerenciar-pti', [GerenciarPTIController::class, 'index']);
 Route::get('/alta-pti/{id}', [GerenciarPTIController::class, 'update']);
 Route::get('/visualizar-pti/{id}', [GerenciarPTIController::class, 'show']);
+
+// Dirigente Integral
+
+Route::get('/gerenciar-integral', [GerenciarIntegralController::class, 'index']);
+Route::get('/alta-integral/{id}', [GerenciarIntegralController::class, 'update']);
+Route::get('/visualizar-integral/{id}', [GerenciarIntegralController::class, 'show']);
 
 
 

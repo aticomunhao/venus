@@ -30,7 +30,7 @@
                             <li><a class="dropdown-item" href="/gerenciar-atendentes-apoio">Gerenciar Atendente de Apoio</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
-    
+
                         </ul>
                     </li>
                 </ul>
@@ -40,6 +40,7 @@
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                             <li><a class="dropdown-item" href="/gerenciar-atendentes-plantonistas">Gerenciar Plantonistas</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pti">Gerenciar PTI</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-integral">Gerenciar Integral</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Gerenciar Controle de Grupo</a></li>

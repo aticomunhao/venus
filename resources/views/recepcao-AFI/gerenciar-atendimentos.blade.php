@@ -26,12 +26,12 @@
                         <input class="form-control" type="text" id="3" name="assist" value="{{$assistido}}">
                     </div>
                     <div class="col-2">Status
-                        <select class="form-select" id="4" name="status" type="number">                           
+                        <select class="form-select" id="4" name="status" type="number">
                             <option value=""></option>
                             @foreach ($st_atend as $statusz)
                                 <option @if(old('status')==$statusz->id) {{'selected="selected"'}} @endif value="{{ $statusz->id }}">{{$statusz->descricao}}</option>
-                            @endforeach               
-                        </select>                       
+                            @endforeach
+                        </select>
                     </div>
                         <div class="col"><br>
                             <input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
@@ -55,9 +55,9 @@
                             <th class="col">HORÁRIO CHEGADA</th>
                             <th class="col">PRIOR</th>
                             <th class="col">ATENDIDO</th>
-                            <th class="col">REPRESENTANTE</th>                                                        
+                            <th class="col">REPRESENTANTE</th>
                             <th class="col">ATENDENTE</th>
-                            <th class="col">SALA</th>                           
+                            <th class="col">SALA</th>
                             <th class="col">STATUS</th>
                             <th class="col">AÇÕES</th>
                         </tr>
@@ -71,25 +71,25 @@
                             <td scope="">{{date( 'd/m/Y H:i:s', strtotime($listas->dh_chegada))}}</td>
                             <td scope="">{{$listas->prdesc}}</td>
                             <td scope="">{{$listas->nm_1}}</td>
-                            <td scope="">{{$listas->nm_2}}</td>                                                        
-                            <td scope="">{{$listas->nm_3}}</td>                            
+                            <td scope="">{{$listas->nm_2}}</td>
+                            <td scope="">{{$listas->nm_3}}</td>
                             <td scope="">{{$listas->nr_sala}}</td>
                             <td scope="">{{$listas->descricao}}</td>
-                            <td scope="">                                
+                            <td scope="">
                                 <!--<a href="/desce-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-left-square" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <button class="btn btn-outline-warning btn-sm" style="font-size: 1rem; color:#000;" type="button" id="" data-bs-toggle="modal" data-bs-target="#atendimento{{$listas->ida}}"><i class="bi bi-person" style="font-size: 1rem; color:#000;"></i></button>
                                 @include('recepcao-AFI.popUp-sel-atendente')
                                 <a href="/sobe-status/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-right-square" style="font-size: 1rem; color:#000;"></i></button></a>-->
                                 <a href="/editar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/visualizar-atendimentos/{{$listas->idas}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/cancelar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top" title="Cancelar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>    
+                                <a href="/cancelar-atendimento/{{$listas->ida}}"><button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top" title="Cancelar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div class="d-flex justify-content-center">
-            {{$lista->links('pagination::bootstrap-5')}}
+            {{$lista->withQueryString()->links('pagination::bootstrap-5')}}
         </div>
     </div>
 </div>
@@ -107,7 +107,7 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 
 @endsection
 
-@section('footerScript')  
+@section('footerScript')
 
 
 @endsection

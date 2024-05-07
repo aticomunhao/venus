@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class GerenciarPTIController extends Controller
+class GerenciarIntegralController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -25,27 +25,27 @@ class GerenciarPTIController extends Controller
         ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
         ->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
         ->where('id_funcao', '<', 3)
-        ->where('cr.id_tipo_tratamento', 2)
+        ->where('cr.id_tipo_tratamento', 6)
         ->where('cr.status_reuniao', '<>', 2)
         ->distinct('gr.id')
         ->get();
 
         $grupos_autorizados = [];
         foreach($dirigentes as $dir){
-            $grupos_autorizados[] = $dir->id;        }
+            $grupos_autorizados[] = $dir->id;
+        }
 
 
 
 
         $encaminhamentos = DB::table('tratamento as tr')
-        ->select('tr.id','p.nome_completo', 'cro.h_inicio', 'cro.h_fim', 'gr.nome')
+        ->select('tr.id','p.nome_completo', 'cro.h_inicio', 'cro.h_fim', 'gr.nome', 'tr.dt_fim')
         ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
         ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
         ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
         ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
         ->leftJoin('pessoas as p','atd.id_assistido', 'p.id')
-
-        ->where('enc.id_tipo_tratamento', 2)
+        ->where('enc.id_tipo_tratamento', 6)
         ->where('tr.status', 2)
         ->whereIn('tr.id_reuniao', $grupos_autorizados);
 
@@ -75,7 +75,7 @@ class GerenciarPTIController extends Controller
 
 
 
-        return view('pti.gerenciar-pti', compact('encaminhamentos', 'dirigentes', 'selected_grupo'));
+        return view('integral.gerenciar-integral', compact('encaminhamentos', 'dirigentes', 'selected_grupo'));
     }
 
     /**
@@ -139,7 +139,7 @@ class GerenciarPTIController extends Controller
                         ->where('dt.presenca', 0)
                         ->count();
 
-        return view('pti.historico-pti', compact('result', 'list', 'faul'));
+        return view('integral.historico-integral', compact('result', 'list', 'faul'));
     }
 
     /**
@@ -157,32 +157,21 @@ class GerenciarPTIController extends Controller
     {
         $hoje = Carbon::today();
 
+        $tratamento = DB::table('tratamento')->where('id', $id)->first();
+
+        if($tratamento->dt_fim != null){
+            DB::table('tratamento')->where('id', $id)->update(['dt_fim' => null]);
+        }
+        elseif($tratamento->dt_fim == null){
 
         $id_encaminhamento = DB::table('tratamento')->where('id', $id)->first();
-        DB::table('tratamento')->where('id', $id)->update(['status' => 4]);
-        $id_atendimento = DB::table('encaminhamento')->where('id', $id_encaminhamento->id_encaminhamento)->first();
+        DB::table('tratamento')->where('id', $id)->update(['status' => 4, 'dt_fim' => $hoje]);
         DB::table('encaminhamento')->where('id', $id_encaminhamento->id_encaminhamento)->update(['status_encaminhamento'=> 3]);
 
-
-        DB::table('encaminhamento')->insert([
-            'dh_enc' => $hoje,
-            'id_usuario' => session()->get('usuario.id_pessoa'),
-            'status_encaminhamento' => 1,
-            'id_tipo_encaminhamento' => 1,
-            'id_atendimento' => $id_atendimento->id_atendimento,
-            'id_tipo_entrevista' => 4
-
-        ]);
-
-        DB::table('encaminhamento')->insert([
-            'dh_enc' => $hoje,
-            'id_usuario' => session()->get('usuario.id_pessoa'),
-            'status_encaminhamento' => 1,
-            'id_tipo_encaminhamento' => 2,
-            'id_atendimento' => $id_atendimento->id_atendimento,
-            'id_tipo_tratamento' => 1
-
-        ]);
+        }
+        else{
+            app('flasher')->addError('Houve um erro inesperado');
+        }
 
         return redirect()->back();
     }
