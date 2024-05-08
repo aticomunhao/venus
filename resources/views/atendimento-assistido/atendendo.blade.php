@@ -32,7 +32,7 @@
                         <input class="form-control" style="font-weight:bold; background:#f3f3f3; color:#000;" type="text" name="id_atendene" id="" value="{{$atendente}}" disabled>
                     </div>
 
-                    <div class="col-5">Nome do Atendete
+                    <div class="col-5">Nome do Atendente
                         <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);" value="{{$nome}}" name="nome_usuario" id="" type="text" disabled>
                     </div>
                 </div>
