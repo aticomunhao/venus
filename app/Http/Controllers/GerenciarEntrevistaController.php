@@ -83,7 +83,7 @@ class GerenciarEntrevistaController extends Controller
 
 
             );
-      
+
         $i = 0;
         $pesquisaNome = null;
         $pesquisaStatus = 0;
@@ -122,8 +122,8 @@ class GerenciarEntrevistaController extends Controller
 
         }
 
-          
-        $informacoes = $informacoes->orderBy('entrevistas.status')->orderBy('pessoa_pessoa.nome_completo')->get();
+
+        $informacoes = $informacoes->orderBy('Entrevistas.status')->orderBy('pessoa_pessoa.nome_completo')->get();
 
         // Mapear os status para a ordem desejada
         $statusOrder = [
@@ -133,14 +133,14 @@ class GerenciarEntrevistaController extends Controller
             'Entrevista Marcada' => 4,
             'Entrevista Cancelada' => 5
         ];
-        
+
         // Ordenar os resultados de acordo com o mapeamento de status
         $informacoes = $informacoes->sortBy(function ($item) use ($statusOrder) {
             return $statusOrder[$item->status] ?? PHP_INT_MAX;
         });
-        
-        
-        
+
+
+
 
 
 
@@ -163,7 +163,7 @@ class GerenciarEntrevistaController extends Controller
 
 
 
-        return view('entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue'));
+        return view('Entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue'));
     }
 
 
@@ -224,7 +224,7 @@ class GerenciarEntrevistaController extends Controller
         }
 
 
-        return view('entrevistas/criar-entrevista', compact('salas', 'entrevista', 'encaminhamento', 'informacoes', 'pessoas', 'tipo_tratamento', 'tipo_entrevista'));
+        return view('Entrevistas/criar-entrevista', compact('salas', 'entrevista', 'encaminhamento', 'informacoes', 'pessoas', 'tipo_tratamento', 'tipo_entrevista'));
     }
 
 
@@ -234,8 +234,8 @@ class GerenciarEntrevistaController extends Controller
     public function store(Request $request, $id)
     {
 
-     
-        
+
+
 
         $request->validate([
             'id_sala' => 'required',
@@ -251,7 +251,7 @@ class GerenciarEntrevistaController extends Controller
             'hora' => $request->hora,
             'status' => 'Completar registro de marcação',
         ]);
-        
+
 
 
 
@@ -261,8 +261,8 @@ class GerenciarEntrevistaController extends Controller
     public function criar($id)
     {
 
-    
-       
+
+
 
         $associado = DB::table('membro')->select('membro.id',)
             ->leftJoin('associado', 'membro.id_associado', 'associado.id')->get();
@@ -307,7 +307,7 @@ class GerenciarEntrevistaController extends Controller
 
 
             $encaminhamento = DB::table('encaminhamento')->find($id);
-     
+
             // Verificando se o tipo de entrevista é 3 (tipo_entrevista 3, afe)
             if ($encaminhamento && $encaminhamento->id_tipo_entrevista === 3) {
                 // Obtendo informações dos atendentes (caso o tipo de entrevista seja afe)
@@ -318,12 +318,12 @@ class GerenciarEntrevistaController extends Controller
                     ->distinct('membro.id_associado')
                     ->where('membro.id_funcao', 5)
                     ->get();
-        
+
             }
-        return view('entrevistas.agendar-entrevistador', compact('membros', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
+        return view('Entrevistas.agendar-entrevistador', compact('membros', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
     }
 
-   
+
 
     public function incluir(Request $request, string $id)
     {
@@ -334,7 +334,7 @@ class GerenciarEntrevistaController extends Controller
         ->select('ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id_sala')
         ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
         ->first();
-    
+
 
         $dt = Carbon::createFromFormat('Y-m-d H:i:s', $dateTime->data . ' ' . $dateTime->hora);
         $atendimentos=DB::table('encaminhamento as enc')
@@ -343,19 +343,19 @@ class GerenciarEntrevistaController extends Controller
         ->where('enc.id', $id)
         ->first();
         $id_entrevistador=DB::table('membro')->where('id', $request->id_entrevistador)->select('id_associado')->first();
-       
+
 
         DB::table('entrevistas')->where('id_encaminhamento', $id)->update([
             'id_entrevistador' => $request->input('id_entrevistador'),
             'status' => 'Agendado',
         ]);
-          
-        
-     
+
+
+
         if($dateTime->id_tipo_entrevista == 3){
-           
+
             DB::table('atendimentos')->insert([
-                'dh_marcada' => $dt, 
+                'dh_marcada' => $dt,
                 'id_assistido' => $atendimentos->id_assistido,
                 'id_atendente' => $id_entrevistador->id_associado,
                 'id_usuario' => session()->get('usuario.id_usuario'),
@@ -364,7 +364,7 @@ class GerenciarEntrevistaController extends Controller
                 'afe' => true
             ]);
         }
-           
+
 
         return redirect()->route('gerenciamento')->with('success', 'O cadastro foi realizado com sucesso!');
     }
@@ -398,10 +398,10 @@ class GerenciarEntrevistaController extends Controller
             ->first();
 
 
-  
-    
 
-        return view('entrevistas.visualizar-entrevista', compact('membros', 'entrevistas', 'encaminhamento',  'salas'));
+
+
+        return view('Entrevistas.visualizar-entrevista', compact('membros', 'entrevistas', 'encaminhamento',  'salas'));
     }
 
 
@@ -438,9 +438,9 @@ class GerenciarEntrevistaController extends Controller
             // ->where('membro.id' , $entrevistas->id_entrevistador)
             ->get();
 
-            
+
             $encaminhamento = DB::table('encaminhamento')->find($id);
-     
+
             // Verificando se o tipo de entrevista é 3 (tipo_entrevista 3, afe)
             if ($encaminhamento && $encaminhamento->id_tipo_entrevista === 3) {
                 // Obtendo informações dos atendentes (caso o tipo de entrevista seja afe)
@@ -451,7 +451,7 @@ class GerenciarEntrevistaController extends Controller
                     ->distinct('membro.id_associado')
                     ->where('membro.id_funcao', 5)
                     ->get();
-        
+
             }
 
 
@@ -460,7 +460,7 @@ class GerenciarEntrevistaController extends Controller
 
 
 
-        return view('entrevistas.editar-entrevista', compact('membros', 'entrevistador', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
+        return view('Entrevistas.editar-entrevista', compact('membros', 'entrevistador', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
     }
 
 
