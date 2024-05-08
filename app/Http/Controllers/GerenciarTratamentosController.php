@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\DiasCronograma;
+use App\Jobs\DiasCronogramaOntem;
 use App\Jobs\FaLtas;
+use App\Jobs\FimSemanas;
 use App\Jobs\LimiteFalta;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
@@ -94,7 +96,6 @@ class GerenciarTratamentosController extends Controller
 
 
         $infoTrat = DB::table('tratamento')->where('id', $idtr)->first();
-dd($request->all());
 
         $data_atual = Carbon::now();
         $dia_atual = $data_atual->weekday();
@@ -221,9 +222,11 @@ dd($request->all());
     }
 
     public function job() {
-        //Faltas::dispatch();
-        //LimiteFalta::dispatch();
+        Faltas::dispatch();
+        LimiteFalta::dispatch();
         DiasCronograma::dispatch();
+        DiasCronogramaOntem::dispatch();
+        FimSemanas::dispatch();
         return redirect()->back();
     }
 

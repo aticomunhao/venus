@@ -53,15 +53,12 @@ class LimiteFalta implements ShouldQueue
         ->whereNotIn('at.id_assistido', $aguardando_pti)
         ->get();
 
-dd($tratamentos_faltas);
+
 
         foreach($tratamentos_faltas as $faltas){
             if($faltas->total >= 3){
 
                 $id_encaminhamento = DB::table('tratamento')->select('id_encaminhamento')->where('id', $faltas->id_tratamento)->first();
-
-
-
 
 
                 DB::table('tratamento')

@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 
-class DiasCronograma implements ShouldQueue
+class DiasCronogramaOntem implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -28,7 +28,7 @@ class DiasCronograma implements ShouldQueue
      */
     public function handle(): void
     {
-        $dia_hoje = Carbon::today();
+        $dia_hoje = Carbon::yesterday();
         $dia_semana_hoje = $dia_hoje->weekday();
 
 
