@@ -16,7 +16,7 @@
             <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            Editar Reunião Mediúnica
+                            Editar Reunião 
                         </div>
                     </div>
                 </div>

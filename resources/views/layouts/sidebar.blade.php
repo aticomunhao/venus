@@ -8,18 +8,15 @@
             <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="1" role="button" data-bs-toggle="dropdown" aria-expanded="false">Atendimento Espírita</a>
+                        <a class="nav-link dropdown-toggle" href="#" id="1" role="button" data-bs-toggle="dropdown" aria-expanded="false">Gerenciamento AME</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                            <li><a class="dropdown-item" href="/atendendo">Atendimento Fraterno Individual</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a></li>
                             <li><a class="dropdown-item" href="/atendendo-afe">Atendimento Fraterno Especifico</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-atendimentos">Recepção Atendimento Fraterno</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Recepção Integrada - Encaminhamentos</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-pti">Encaminhamentos PTI</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-integral">Encaminhamentos Integral</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-tratamentos">Recepção Integrada - Tratamentos</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-atendente-dia">Gerenciar Atendentes do dia</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-integral">Gerenciar Tratamento Integral</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-reunioes">Gerenciar Reuniões </a></li>
                             <li><a class="dropdown-item" href="/gerenciar-entrevistas">Gerenciar Entrevistas</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-presenca">Gerenciar Presença</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -27,9 +24,18 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Gerenciamento DAO</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                            <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a></li>
+                            <li><a class="dropdown-item" href="/atendendo">Atendimento Fraterno Individual</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Gerenciar Encaminhamentos</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-atendimentos">Gerenciar Atendimento Fraterno</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-atendentes-apoio">Gerenciar Atendente de Apoio</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-reunioes">Gerenciar Reuniões </a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-atendente-dia">Gerenciar Atendentes do dia</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-tratamentos">Gerenciar Tratamentos</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-presenca">Gerenciar Presença Entrevista</a></li>
+                            
 
                         </ul>
                     </li>
@@ -39,13 +45,12 @@
                         <a class="nav-link dropdown-toggle" href="#" id="2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Gerenciamento DAE</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                             <li><a class="dropdown-item" href="/gerenciar-atendentes-plantonistas">Gerenciar Plantonistas</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-pti">Gerenciar PTI</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-integral">Gerenciar Integral</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-pti">Gerenciar Assistidos PTI</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Gerenciar Controle de Grupo</a></li>
-                            <li><a class="dropdown-item" href="/gerenciar-reunioes">Gerenciar Reuniões Mediúnicas</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-reunioes">Gerenciar Reuniões </a></li>
                             <li><a class="dropdown-item" href="/gerenciar-mediunidades">Gerenciar Mediunidades</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-pti">Encaminhamentos PTI</a></li>
                         </ul>
                     </li>
                 </ul>

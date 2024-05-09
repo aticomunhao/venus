@@ -13,7 +13,7 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                CADASTRAR REUNIÃO MEDIÚNICA
+                                CADASTRAR REUNIÃO 
                             </div>
                         </div>
                     </div>

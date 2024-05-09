@@ -2,13 +2,11 @@
 
 @section('head')
 
-<title>Visualizar Reunião Mediúnica</title>
+<title>Visualizar Reunião </title>
 
 @endsection
 
 @section('content')
-
-<br>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-12">
@@ -16,7 +14,7 @@
             <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            Visualizar Reunião Mediúnica
+                            Visualizar Reunião
                         </div>
                     </div>
                 </div>

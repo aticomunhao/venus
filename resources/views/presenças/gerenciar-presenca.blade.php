@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title') Gerenciar Presença @endsection
+@section('title') Gerenciar Presença Entrevista @endsection
 
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,7 +13,7 @@
 ?>
 
 <div class="container";>
-<h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR PRESENÇA</h4>
+<h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR PRESENÇA ENTREVISTA</h4>
     <div class="col-12">
         <div class="row justify-content-center">
             <form action="{{ route('listas') }}" class="form-horizontal mt-4" method="GET">

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title') Atendimento Fraterno @endsection
+@section('title') Atendimento Fraterno Individual @endsection
 
 @section('content')
 
@@ -15,7 +15,7 @@
 ?>
 
 <div class="container" ;>
-    <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">ATENDIMENTO FRATERNO</h4>
+    <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">ATENDIMENTO FRATERNO INDIVIDUAL</h4>
     <div class="col-12">
         <hr>
         <div class="card">

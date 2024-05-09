@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Gerenciar Reuniões mediúnicas
+    Gerenciar Reuniões 
 @endsection
 
 @section('content')
@@ -13,7 +13,7 @@
     <br />
     <div class="container";>
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
-            GERENCIAR REUNIÕES MEDIÚNICAS</h4>
+            GERENCIAR REUNIÕES </h4>
         <div class="col-12">
             <div class="row justify-content-center">
                 <div>
