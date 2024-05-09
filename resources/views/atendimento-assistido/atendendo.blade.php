@@ -82,11 +82,11 @@
                                         <a href="/fim-analise/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Chamar assistido"><i class="bi bi-bell" style="font-size: 1rem; color:#000;"></i></button></a>
                                         <a href="/iniciar-atendimento/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Iniciar"><i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button></a>
                                         <a href="/tratar/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Tratamento"><i class="bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/entrevistar/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Entrevista"><i class="bi bi-mic" style="font-size: 1rem; color:#000;"></i></button></a>                                   
+                                        <a href="/entrevistar/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Entrevista"><i class="bi bi-mic" style="font-size: 1rem; color:#000;"></i></button></a>
                                         <a href="/temas/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Temática"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button></a>
                                         <a href="/final/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top" title="Finalizar"><i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i></button></a>
                                         <button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top" title="Reset"><i class="bi bi-arrow-repeat" style="font-size: 1rem; color:#000;" data-bs-toggle="modal" data-bs-target="#modal{{ $assistidos->idat }}"></i></button>
-                                        
+
                                         <div class="modal fade" id="modal{{ $assistidos->idat }}" tabindex="-1"
                                             aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
@@ -99,7 +99,7 @@
                                                     <div class="modal-body">
                                                         Tem certeza que deseja resetar? <br /><span
                                                             style="color:rgb(196, 27, 27);">Todo o progresso feito até aqui será apagado!</span>&#63;
-            
+
                                                     </div>
                                                     <div class="modal-footer mt-2">
                                                         <button type="button" class="btn btn-secondary"
@@ -111,23 +111,23 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
+
+
+
+
+
+
                                         <!--<button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#tratamento{{$assistidos->idat}}" data-toggle="tooltip" data-placement="top" title="Tratamentos"><i class="bi bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button>
-                                        <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#entrevista{{$assistidos->idat}}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi bi-mic" style="font-size: 1rem; color:#000;"></i></button>                                        
+                                        <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#entrevista{{$assistidos->idat}}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi bi-mic" style="font-size: 1rem; color:#000;"></i></button>
                                         <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#anotacoes{{$assistidos->idat}}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button>
                                         <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#finalizar{{$assistidos->idat}}" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i></button>-->
                                     </td>
                                 </tr>
                                 @endforeach
                             </tbody>
-                            
+
                         </table>
-                        
+
                     </div>
 
                 </div>
