@@ -19,8 +19,8 @@
                     <div class="col-2">Status
                         <select class="form-select" id="3" name="status" type="numeric" required="required">
                             <option value="1">Ativo</option>
-                            <option value="">Todos</option>
-                            <option value="2">Inativo</option>
+                            <option value="0">Inativo</option>
+                            <option value="*">Todos</option>
                         </select>
                     </div>
                     <div class="col-5"><br>
@@ -56,24 +56,70 @@
                             <td scope="" >{{$pessoas->tipo}}</td>
                             <td scope="" >{{$pessoas->tpsta}}</td>
                             <td scope="">
-                                <a href="/editar-pessoa/{{$pessoas->idp}}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/excluir-pessoa/{{$pessoas->idp}}"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i></button></a>
-                            </td>
+                                <a href="/editar-pessoa/{{ $pessoas->idp }}" type="button"
+                                    class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
+                                    title="Editar">
+                                    <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                                <a href="/visualizar-pessoa/{{ $pessoas->idp }}" type="button"
+                                    class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
+                                    title="Visualizar">
+                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"
+                                        data-bs-target="#pessoa"></i>
+                                </a>
+                             
+                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ $pessoas->idp }}">
+                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;" data-tt="tooltip" data-placement="top" title="Deletar"></i>
+                                </button>
+                                
+                                
+                                <!-- Modal de Exclusao -->
+                                <div class="modal fade" id="modal{{ $pessoas->idp }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header" style="background-color:#DC4C64">
+                                                <h5 class="modal-title" id="exampleModalLabel" style="color:white">Exclusão de pessoa </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Tem certeza que deseja excluir essa pessoa? <br /><span style="color:#DC4C64; font-weight: bold;">{{ $pessoas->nome_completo }}</span>&#63;
+                                            </div>
+                                            <div class="modal-footer mt-2">
+                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                                <a type="button" class="btn btn-primary" href="/excluir-pessoa/{{ $pessoas->idp }}">Confirmar</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            {{-- Fim Modal de Exclusao --}}
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div class="d-flex justify-content-center">
             {{ $pessoa->links('pagination::bootstrap-5') }}
-            <br />
-            <br />
-            <br />
-            <br />
+            <br/>
+            <br/>
+            <br/>
+            <br/>
         </div>
     </div>
 </div>
+<script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
+<link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
+
+</script>
 
 
 @endsection
