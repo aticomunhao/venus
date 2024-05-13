@@ -70,7 +70,7 @@
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom06" class="form-label">Motivo</label>
                                         <select class="form-select" id="tp_motivo" name="motivo" required="required">
-                                            <option value="{{ $lista[0]->motivo_status }}">{{ $lista[0]->tipo_motivo_status_pessoa }}</option>
+                                            <option value="{{ $lista[0]->tipo_motivo_status_pessoa }}">{{ $lista[0]->motivo_status_pessoa_tipo_motivo }}</option>
                                             @foreach($motivo as $motivos)
                                                 <option @if(old('motivo') == $motivos->id) selected @endif value="{{ $motivos->id }}">{{ $motivos->motivo }}</option>
                                             @endforeach

@@ -158,12 +158,13 @@ class PessoaController extends Controller
 
 
 
-        $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.motivo_status,p.sexo, p.status ,tipo_motivo_status_pessoa, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
+        $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.motivo_status,p.sexo, p.status ,tipo_motivo_status_pessoa.id as tipo_motivo_status_pessoa,tipo_motivo_status_pessoa.motivo as motivo_status_pessoa_tipo_motivo, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
         left join tp_sexo tps on (p.sexo = tps.id)
         left join tp_ddd d on (p.ddd = d.id)
         left join tipo_status_pessoa on (tipo_status_pessoa.id = p.status )
         left join tipo_motivo_status_pessoa on (tipo_motivo_status_pessoa.id = p.motivo_status )
         where p.id = $idp");
+
 
 
 
@@ -184,7 +185,7 @@ class PessoaController extends Controller
        
         
 
-        $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.sexo, p.status ,tipo_motivo_status_pessoa, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
+        $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.motivo_status,p.sexo, p.status ,tipo_motivo_status_pessoa.id as tipo_motivo_status_pessoa,tipo_motivo_status_pessoa.motivo as motivo_status_pessoa_tipo_motivo, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
         left join tp_sexo tps on (p.sexo = tps.id)
         left join tp_ddd d on (p.ddd = d.id)
         left join tipo_status_pessoa on (tipo_status_pessoa.id = p.status )

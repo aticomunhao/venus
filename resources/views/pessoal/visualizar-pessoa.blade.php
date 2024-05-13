@@ -70,10 +70,7 @@
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom06" class="form-label">Motivo</label>
                                         <select class="form-control" id="tp_motivo" name="motivo" required="required" disabled>
-                                            <option value="{{$lista[0]->idp}}" selected>{{$lista[0]->tipo_motivo_status_pessoa}}</option>
-                                        <@foreach($motivo as $motivos)
-                                        <option @if(old ('motivo') == $motivos->id)  @endif value="{{ $motivos->id }}">{{$motivos->motivo}}</option>
-                                        @endforeach
+                                            <option value="{{ $lista[0]->tipo_motivo_status_pessoa }}">{{ $lista[0]->motivo_status_pessoa_tipo_motivo }}</option>
                                     </select>
                                     </div>
                                 </div>
@@ -95,26 +92,6 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Função para verificar e habilitar/desabilitar o campo "Motivo"
-        function verificarStatusMotivo() {
-            var statusPessoa = document.getElementById('status_pessoa');
-            var motivo = document.getElementById('tp_motivo');
 
-            // Se o status for "Inativo", habilitar o campo "Motivo", caso contrário, desabilitar
-            motivo.disabled = statusPessoa.value !== '0';
-        }
-
-        // Adicionar um ouvinte de eventos ao campo "Status" para verificar mudanças
-        var statusPessoa = document.getElementById('status_pessoa');
-        statusPessoa.addEventListener('change', verificarStatusMotivo);
-
-        // Chamar a função inicialmente para configurar o estado inicial
-        verificarStatusMotivo();
-    });
-</script>
 
 @endsection
