@@ -180,7 +180,7 @@
                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header" style="background-color:rgb(196, 27, 27);">
+                                                        <div class="modal-header" style="background-color:#DC4C64">
                                                             <h5 class="modal-title" id="exampleModalLabel" style="color:rgb(255, 255, 255);">Confirmar
                                                                 Exclusão</h5>
                                                             <button type="button" class="btn-close"
@@ -188,7 +188,7 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             Tem certeza que deseja excluir a entrevista de <p
-                                                                style="color:red;">{{ $informacao->nome_pessoa }}&#63;</p>
+                                                            style="color:#DC4C64; font-weight">{{ $informacao->nome_pessoa }}&#63;</p>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-danger"
