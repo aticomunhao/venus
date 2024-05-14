@@ -75,7 +75,7 @@ class GerenciarIntegralController extends Controller
 
 
 
-        return view('Integral.gerenciar-Integral', compact('encaminhamentos', 'dirigentes', 'selected_grupo'));
+        return view('Integral.gerenciar-integral', compact('encaminhamentos', 'dirigentes', 'selected_grupo'));
     }
 
     /**

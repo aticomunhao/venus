@@ -139,6 +139,7 @@ Route::get('/dados-pessoa', [PessoaController::class, 'store'])->name('pesdap');
 Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
 Route::get('/excluir-pessoa', [PessoaController::class, 'destroy'])->name('pesdes');
 Route::get('/editar-pessoa/{idp}', [PessoaController::class, 'edit'])->name('pesedt');
+Route::get('/visualizar-pessoa/{idp}', [PessoaController::class, 'show'])->name('pesedt');
 Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name('pesexe');
 
 /*

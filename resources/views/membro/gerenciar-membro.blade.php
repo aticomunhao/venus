@@ -83,20 +83,21 @@
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </a>
                             </td>
-                        </tr>
+                        </tr>                     
+                        </div> 
                         <div class="modal fade" id="confirmacaoDelecao{{ $membros->idm }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <div class="modal-header" style="background-color:rgb(196, 27, 27);">
-                                        <h5 class="modal-title" style= " color:rgb(255, 255, 255)" id="exampleModalLabel">Confirmar Exclusão</h5>
+                                    <div class="modal-header" style="background-color:#DC4C64">
+                                        <h5 class="modal-title" id="exampleModalLabel" style="color:white">Exclusão de membro </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        Tem certeza que deseja excluir o Membro "{{ $membros->nome_completo }}"?
+                                        Tem certeza que deseja excluir o membro<br /><span style="color:#DC4C64; font-weight: bold;">{{ $membros->nome_completo }}</span>&#63;
                                     </div>
-                                    <div class="modal-footer">
+                                    <div class="modal-footer mt-3">
                                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                                        <a href="/deletar-membro/{{ $id }}/{{ $membros->idm }}" class="btn btn-primary">Confirmar</a>
+                                        <a type="button" class="btn btn-primary" href="/deletar-membro/{{ $id }}/{{ $membros->idm }}">Confirmar</a>
                                     </div>
                                 </div>
                             </div>

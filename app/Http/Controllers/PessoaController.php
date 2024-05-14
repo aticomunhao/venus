@@ -21,32 +21,43 @@ class PessoaController extends Controller
         $sexo = DB::select('select id, tipo from tp_sexo');
 
         $pessoa = DB::table('pessoas AS p')
-                    ->select('p.id AS idp', 'p.nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'email', 'ddd', 'celular', 'tsp.id AS idtps', 'p.status', 'tsp.tipo AS tpsta', 'd.id as did', 'd.descricao as ddesc')
-                    ->leftjoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
-                    ->leftJoin('tp_sexo AS tps', 'p.sexo', 'tps.id')
-                    ->leftJoin('tp_ddd AS d', 'p.ddd', 'd.id');
+            ->select('p.id AS idp', 'p.nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'email', 'ddd', 'celular', 'tsp.id AS idtps', 'p.status', 'tsp.tipo AS tpsta', 'd.id as did', 'd.descricao as ddesc')
+            ->leftjoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
+            ->leftJoin('tp_sexo AS tps', 'p.sexo', 'tps.id')
+            ->leftJoin('tp_ddd AS d', 'p.ddd', 'd.id');
+
+
+
+
 
         $nome = $request->nome;
 
         if ($request->nome) {
-                $pessoa->where('p.nome_completo', 'ilike', "%$request->nome%");
+            $pessoa->where('p.nome_completo', 'ilike', "%$request->nome%");
         }
 
         $cpf = $request->cpf;
 
         if ($request->cpf) {
-                $pessoa->where('p.cpf', $request->cpf);
+            $pessoa->where('p.cpf', $request->cpf);
         }
 
         $status = $request->status;
+        //
 
-        if ($request->status) {
-                $pessoa->where('p.status', $request->status);
+
+        if ($request->has('status') && $request->status !== "") {
+            if($request->status == "*"){
+                $pessoa = $pessoa;
+            }else{
+                $pessoa = $pessoa->where('p.status', '=', $request->status);
+            }
+            
         }
 
-        $pessoa = $pessoa->orderBy('p.status','desc')->orderBy('p.nome_completo', 'asc')->Paginate(30);
+        $pessoa = $pessoa->orderBy('p.status', 'desc')->orderBy('p.nome_completo', 'asc')->Paginate(30);
 
-        //dd($pessoa);
+
         $stap = DB::select("select
                         id as ids,
                         tipo
@@ -57,8 +68,7 @@ class PessoaController extends Controller
 
 
 
-        return view ('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
-
+        return view('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
     }
 
     public function store()
@@ -67,7 +77,7 @@ class PessoaController extends Controller
 
         $sexo = DB::select('select id, tipo from tp_sexo');
 
-        return view ('/pessoal/incluir-pessoa', compact('ddd', 'sexo'));
+        return view('/pessoal/incluir-pessoa', compact('ddd', 'sexo'));
     }
 
 
@@ -82,7 +92,7 @@ class PessoaController extends Controller
 
         //dd($vercpf);
 
-        try{
+        try {
             $validated = $request->validate([
                 //'telefone' => 'required|telefone',
                 'cpf' => 'required|cpf',
@@ -103,33 +113,29 @@ class PessoaController extends Controller
             app('flasher')->addError('Existe outro cadastro usando este número de CPF');
 
             return redirect()->back()->withInput();
-        }
-        else
-        {
+        } else {
 
-        DB::table('pessoas')->insert([
+            DB::table('pessoas')->insert([
 
-            'nome_completo' => ucwords(trans($request->input('nome'))),
-            'cpf' => $request->input('cpf'),
-            'dt_nascimento' => $request->input('dt_na'),
-            'sexo' => $request->input('sex'),
-            'ddd' => $request->input('ddd'),
-            'celular' => $request->input('celular'),
-            'email' => $request->input('email'),
-            'status' => 1
+                'nome_completo' => ucwords(trans($request->input('nome'))),
+                'cpf' => $request->input('cpf'),
+                'dt_nascimento' => $request->input('dt_na'),
+                'sexo' => $request->input('sex'),
+                'ddd' => $request->input('ddd'),
+                'celular' => $request->input('celular'),
+                'email' => $request->input('email'),
+                'status' => 1
 
-        ]);
+            ]);
 
-        $pessoa = DB::table('pessoas')->max('id');
+            $pessoa = DB::table('pessoas')->max('id');
 
-        DB::table('historico_venus')->insert([
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $today,
-            'fato' => 2,
-            'pessoa' => $request->input('nome')
-        ]);
-
-
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $today,
+                'fato' => 2,
+                'pessoa' => $request->input('nome')
+            ]);
         }
 
         app('flasher')->addSuccess('O cadastro foi realizado com sucesso');
@@ -152,19 +158,45 @@ class PessoaController extends Controller
 
 
 
-        $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.sexo, p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
+        $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.motivo_status,p.sexo, p.status ,tipo_motivo_status_pessoa.id as tipo_motivo_status_pessoa,tipo_motivo_status_pessoa.motivo as motivo_status_pessoa_tipo_motivo, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
         left join tp_sexo tps on (p.sexo = tps.id)
         left join tp_ddd d on (p.ddd = d.id)
+        left join tipo_status_pessoa on (tipo_status_pessoa.id = p.status )
+        left join tipo_motivo_status_pessoa on (tipo_motivo_status_pessoa.id = p.motivo_status )
         where p.id = $idp");
 
-        return view ('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p', 'motivo'));
 
+
+
+
+        return view('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p', 'motivo'));
     }
 
-    public function show()
+    public function show($idp)
     {
+        $ddd = DB::select('select id, descricao from tp_ddd');
 
+        $sexo = DB::select('select id, tipo from tp_sexo');
+
+        $status_p = DB::select('select id, tipo from tipo_status_pessoa');
+
+        $motivo = DB::select('select id, motivo from tipo_motivo_status_pessoa order by id');
+
+       
+        
+
+        $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.motivo_status,p.sexo, p.status ,tipo_motivo_status_pessoa.id as tipo_motivo_status_pessoa,tipo_motivo_status_pessoa.motivo as motivo_status_pessoa_tipo_motivo, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
+        left join tp_sexo tps on (p.sexo = tps.id)
+        left join tp_ddd d on (p.ddd = d.id)
+        left join tipo_status_pessoa on (tipo_status_pessoa.id = p.status )
+        left join tipo_motivo_status_pessoa on (tipo_motivo_status_pessoa.id = p.motivo_status )
+        where p.id = $idp");
+
+
+
+        return view('/pessoal/visualizar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p','motivo'));
     }
+    
 
 
     public function update(Request $request, $idp)
@@ -180,7 +212,7 @@ class PessoaController extends Controller
         $vercpf = DB::table('pessoas')->where('cpf', $cpf)->count();
 
 
-        try{
+        try {
             $validated = $request->validate([
                 //'telefone' => 'required|telefone',
                 'cpf' => 'required|cpf',
@@ -201,93 +233,84 @@ class PessoaController extends Controller
             app('flasher')->addError('Existe outro cadastro usando este número de CPF');
 
             return redirect()->back()->withInput();
-        }
-        else
-        {
+        } else {
 
-        DB::table('pessoas AS p')->where('p.id', $idp)->update([
-                    'nome_completo' => ucwords(trans($request->input('nome'))),
-                    'cpf' => $request->input('cpf'),
-                    'dt_nascimento' => $request->input('dt_nasc'),
-                    'sexo' => $request->input('sex'),
-                    'ddd' => $request->input('ddd'),
-                    'celular' => $request->input('celular'),
-                    'email' => $request->input('email'),
-                    'status' => $request->input('status'),
-                    'motivo_status' => $request->input('motivo')
+            DB::table('pessoas AS p')->where('p.id', $idp)->update([
+                'nome_completo' => ucwords(trans($request->input('nome'))),
+                'cpf' => $request->input('cpf'),
+                'dt_nascimento' => $request->input('dt_nasc'),
+                'sexo' => $request->input('sex'),
+                'ddd' => $request->input('ddd'),
+                'celular' => $request->input('celular'),
+                'email' => $request->input('email'),
+                'status' => $request->input('status'),
+                'motivo_status' => $request->input('motivo')
             ]);
 
-        //dd($pessoa);
-        DB::table('historico_venus')->insert([
-                    'id_usuario' => $usuario,
-                    'data' => $today,
-                    'fato' => 3,
-                    'pessoa' => $idp
-                ]);
+            //dd($pessoa);
+            DB::table('historico_venus')->insert([
+                'id_usuario' => $usuario,
+                'data' => $today,
+                'fato' => 3,
+                'pessoa' => $idp
+            ]);
 
 
-        app('flasher')->addSuccess('O cadastro da pessoa foi alterado com sucesso');
+            app('flasher')->addSuccess('O cadastro da pessoa foi alterado com sucesso');
 
-        return redirect('/gerenciar-pessoas');
+            return redirect('/gerenciar-pessoas');
         }
-
     }
 
 
     public function destroy($idp)
     {
 
-        if(is_null(session()->get('usuario.id_usuario'))){
+        if (is_null(session()->get('usuario.id_usuario'))) {
 
 
             app('flasher')->addError('É necessário fazer Login!');
             return redirect()->route('homeLogin');
-
         }
         $data = date("Y-m-d H:i:s");
 
         $pessoa = DB::table('pessoas')->select('nome_completo')->where('id', $idp)->get();
 
         $funcionario = DB::table('funcionarios')
-        ->where('id_pessoa', $idp)
-        ->count('id_pessoa');
+            ->where('id_pessoa', $idp)
+            ->count('id_pessoa');
 
         $assistido = DB::table('atendimentos')
-        ->where('id_assistido', $idp)
-        ->count('id_assistido');
+            ->where('id_assistido', $idp)
+            ->count('id_assistido');
 
         //dd($assistido);
 
-        if ($funcionario > 0){
+        if ($funcionario > 0) {
 
             app('flasher')->addError('Essa pessoa não pode ser excluída porque é um funcionário.');
-            return redirect ('/gerenciar-pessoas');
+            return redirect('/gerenciar-pessoas');
+        }
+        if ($assistido > 0) {
 
-        }if($assistido > 0){
-
-                app('flasher')->addError('Essa pessoa não pode ser excluída porque passou por atendimento.');
-                return redirect ('/gerenciar-pessoas');
-
-        }else{
+            app('flasher')->addError('Essa pessoa não pode ser excluída porque passou por atendimento.');
+            return redirect('/gerenciar-pessoas');
+        } else {
 
             // dd($pessoa);
-           DB::delete('delete from pessoas where id = ?', [$idp]);
+            DB::delete('delete from pessoas where id = ?', [$idp]);
 
-           DB::table('historico_venus')->insert([
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $data,
-            'fato' => 1,
-            'pessoa' => $pessoa
-        ]);
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $data,
+                'fato' => 1,
+                'pessoa' => $pessoa
+            ]);
 
 
             app('flasher')->addSuccess('O cadastro da pessoa foi excluido com sucesso.');
 
-            return redirect ('/gerenciar-pessoas');
-
-
-
-
-    }
+            return redirect('/gerenciar-pessoas');
+        }
     }
 }

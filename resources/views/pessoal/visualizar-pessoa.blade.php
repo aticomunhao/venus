@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title') Editar Pessoa @endsection
+@section('title') Visualizar Pessoa @endsection
 
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
@@ -14,7 +14,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="col">
-                                    EDITAR PESSOA
+                                   VISUALIZAR PESSOA
                                 </div>
                             </div>
                         </div>
@@ -26,7 +26,7 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom01" class="form-label">Nome completo</label>
-                                        <input class="form-control" type="text" maxlength="40" id="" name="nome" value="{{$lista[0]->nome_completo}}" required="required">
+                                        <input class="form-control" type="text" maxlength="40" id="" name="nome" value="{{$lista[0]->nome_completo}}" required="required" disabled>
                                     </div>
                                 </div>
                             </div>
@@ -34,13 +34,13 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom02" class="form-label">CPF</label>
-                                        <input class="form-control" type="numeric" maxlength="11" value="{{$lista[0]->cpf}}" id="" name="cpf" required="required" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
+                                        <input class="form-control" type="numeric" maxlength="11" value="{{$lista[0]->cpf}}" id="" name="cpf" required="required" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" disabled>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom04" class="form-label">Sexo</label>
-                                        <select class="form-select" id="" name="sex" required="required">
+                                        <select class="form-control" id="" name="sex" required="required" disabled>
                                             <option value="{{$lista[0]->sexo}}">{{$lista[0]->tipo}}</option>
                                             @foreach($sexo as $sexos)
                                             <option @if (old ('sex') == $sexos->id) {{'selected="selected"'}} @endif value="{{ $sexos->id }}">{{$sexos->tipo}}</option>
@@ -51,7 +51,7 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom03" class="form-label">Data Nascimento</label>
-                                        <input class="form-control" type="date" value="{{$lista[0]->dt_nascimento}}" id="" name="dt_nasc" required="required">
+                                        <input class="form-control" type="date" value="{{$lista[0]->dt_nascimento}}" id="" name="dt_nasc" required="required" disabled>
                                     </div>
                                 </div>
                             </div>
@@ -59,7 +59,7 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom05" class="form-label">Status</label>
-                                        <select class="form-select" id="status_pessoa" name="status" required="required">
+                                        <select class="form-control" id="status_pessoa" name="status" required="required" disabled>
                                             <option value="{{$lista[0]->status}}" selected>{{$lista[0]->tipo_status_pessoa}}</option>
                                             <option value="1">Ativo</option>
                                             <option value="0">Inativo</option>
@@ -69,15 +69,12 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom06" class="form-label">Motivo</label>
-                                        <select class="form-select" id="tp_motivo" name="motivo" required="required">
+                                        <select class="form-control" id="tp_motivo" name="motivo" required="required" disabled>
                                             <option value="{{ $lista[0]->tipo_motivo_status_pessoa }}">{{ $lista[0]->motivo_status_pessoa_tipo_motivo }}</option>
-                                            @foreach($motivo as $motivos)
-                                                <option @if(old('motivo') == $motivos->id) selected @endif value="{{ $motivos->id }}">{{ $motivos->motivo }}</option>
-                                            @endforeach
-                                        </select>
+                                    </select>
                                     </div>
                                 </div>
-                                
+                            </div>
                             <br>
                                 <div class="row mt-2 justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">
@@ -95,26 +92,6 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Função para verificar e habilitar/desabilitar o campo "Motivo"
-        function verificarStatusMotivo() {
-            var statusPessoa = document.getElementById('status_pessoa');
-            var motivo = document.getElementById('tp_motivo');
 
-            // Se o status for "Inativo", habilitar o campo "Motivo", caso contrário, desabilitar
-            motivo.disabled = statusPessoa.value !== '0';
-        }
-
-        // Adicionar um ouvinte de eventos ao campo "Status" para verificar mudanças
-        var statusPessoa = document.getElementById('status_pessoa');
-        statusPessoa.addEventListener('change', verificarStatusMotivo);
-
-        // Chamar a função inicialmente para configurar o estado inicial
-        verificarStatusMotivo();
-    });
-</script>
 
 @endsection
