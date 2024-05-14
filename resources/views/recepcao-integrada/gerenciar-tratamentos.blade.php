@@ -50,6 +50,8 @@
                                         <option value="{{ $status->id }}"
                                             {{ $situacao == $status->id ? 'selected' : '' }}> {{ $status->nome }} </option>
                                     @endforeach
+                                    <option value="all"
+                                        {{ $situacao == 'all' ? 'selected' : '' }}> Todos os Status </option>
                                 </select>
                             </div>
 
@@ -116,11 +118,19 @@
 
 
 
-                                <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
-                                    data-tt="tooltip" data-placement="top" title="Presença"
-                                    data-bs-target="#presenca{{ $listas->idtr }}"><i class="bi bi bi-exclamation-triangle"
-                                        style="font-size: 1rem; color:#000;"></i></button>
-
+                                @if ($listas->status == 1 or $listas->status == 2)
+                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
+                                        data-tt="tooltip" data-placement="top" title="Presença"
+                                        data-bs-target="#presenca{{ $listas->idtr }}"><i
+                                            class="bi bi bi-exclamation-triangle"
+                                            style="font-size: 1rem; color:#000;"></i></button>
+                                @else
+                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
+                                        data-tt="tooltip" data-placement="top" title="Presença"
+                                        data-bs-target="#presenca{{ $listas->idtr }}" disabled><i
+                                            class="bi bi bi-exclamation-triangle"
+                                            style="font-size: 1rem; color:#000;"></i></button>
+                                @endif
 
                                 <div class="modal fade closes" id="presenca{{ $listas->idtr }}" tabindex="-1"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -206,43 +216,70 @@
                                     title="Histórico"><i class="bi bi-search"
                                         style="font-size: 1rem; color:#000;"></i></a>
 
-                                <a href="/alterar-grupo-tratamento/{{ $listas->idtr }}"type="button"
-                                    class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Alterar Grupo"><i class="bi bi-arrow-left-right"
-                                        style="font-size: 1rem; color:#000;"></i></a>
+                                @if ($listas->status == 1 or $listas->status == 2)
+                                    <a href="/alterar-grupo-tratamento/{{ $listas->idtr }}"type="button"
+                                        class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
+                                        title="Alterar Grupo"><i class="bi bi-arrow-left-right"
+                                            style="font-size: 1rem; color:#000;"></i></a>
+                                @else
+                                    <button type="button"
+                                        class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
+                                        title="Alterar Grupo" disabled><i class="bi bi-arrow-left-right"
+                                            style="font-size: 1rem; color:#000;"></i></button>
+                                @endif
 
-                                <a type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip"
-                                    data-placement="top" data-bs-target="#inativa{{ $listas->idtr }}"
-                                    data-bs-toggle="modal" title="Inativar"><i class="bi bi-x-circle"
-                                        style="font-size: 1rem; color:#000;"></i></a>
+                                @if ($listas->status == 1 or $listas->status == 2)
+                                    <a type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip"
+                                        data-placement="top" data-bs-target="#inativa{{ $listas->idtr }}"
+                                        data-bs-toggle="modal" title="Inativar"><i class="bi bi-x-circle"
+                                            style="font-size: 1rem; color:#000;"></i></a>
+                                @else
+                                    <button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip"
+                                        data-placement="top" data-bs-target="#inativa{{ $listas->idtr }}"
+                                        data-bs-toggle="modal" title="Inativar" disabled><i class="bi bi-x-circle"
+                                            style="font-size: 1rem; color:#000;"></i></button>
+                                @endif
 
-
-                                <div class="modal fade" id="inativa{{ $listas->idtr }}" data-bs-keyboard="false"
-                                    tabindex="-1" aria-labelledby="inativarLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header"
-                                                style="background-color:#DC4C64;color:white">
-                                                <h1 class="modal-title fs-5" id="inativarLabel">Inativação</h1>
-                                                <button data-bs-dismiss="modal" type="button" class="btn-close"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <label for="recipient-name" class="col-form-label"
-                                                    style="font-size:17px">Tem certeza que deseja inativar:<br /><span
-                                                        style="color:#DC4C64; font-weight: bold;">{{ $listas->nm_1 }}</span></label>
+                                <form action="/inativar-tratamento/{{ $listas->idtr }}">
+                                    <div class="modal fade" id="inativa{{ $listas->idtr }}" data-bs-keyboard="false"
+                                        tabindex="-1" aria-labelledby="inativarLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header" style="background-color:#DC4C64;color:white">
+                                                    <h1 class="modal-title fs-5" id="inativarLabel">Inativação</h1>
+                                                    <button data-bs-dismiss="modal" type="button" class="btn-close"
+                                                        aria-label="Close"></button>
+                                                </div>
                                                 <br />
+                                                <div class="modal-body">
+                                                    <label for="recipient-name" class="col-form-label"
+                                                        style="font-size:17px">Tem certeza que deseja inativar:<br /><span
+                                                            style="color:#DC4C64; font-weight: bold;">{{ $listas->nm_1 }}</span>&#63;</label>
+                                                    <br />
 
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" data-bs-dismiss="modal"
-                                                    class="btn btn-danger">Cancelar</button>
-                                                <a href="/inativar-tratamento/{{ $listas->idtr }}" type="type"
-                                                    class="btn btn-primary">Confirmar</a>
+                                                    <center>
+                                                        <div class="mb-2 col-10">
+                                                            <label class="col-form-label">Insira o motivo da
+                                                                <span style="color:#DC4C64">inativação:</span></label>
+                                                            <select class="form-select teste1" name="motivo" required>
+
+                                                                @foreach ($motivo as $motivos)
+                                                                    <option value="{{ $motivos->id }}">
+                                                                        {{ $motivos->tipo }} </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </center>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" data-bs-dismiss="modal"
+                                                        class="btn btn-danger">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </form>
 
                             </td>
                     </tr>
@@ -269,7 +306,7 @@
     <script>
         $(document).ready(function() {
             if ({{ $situacao == null }}) { //Deixa o select status como padrao vazio
-                $(".teste1").prop("selectedIndex", -1);
+                $(".teste1").prop("selectedIndex", 1);
             }
 
         });

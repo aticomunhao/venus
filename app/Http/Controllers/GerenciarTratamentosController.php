@@ -25,7 +25,7 @@ class GerenciarTratamentosController extends Controller
 
 
         $lista = DB::table('tratamento AS tr')
-                    ->select('tr.id AS idtr', 'enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tst.nome AS tst', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla', 'tr.id AS idtr', 'gr.nome AS nomeg', 'td.nome AS nomed', 'rm.h_inicio', 'tr.dt_fim' )
+                    ->select('tr.id AS idtr', 'tr.status','enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tst.nome AS tst', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla', 'tr.id AS idtr', 'gr.nome AS nomeg', 'td.nome AS nomed', 'rm.h_inicio', 'tr.dt_fim' )
                     ->leftJoin('encaminhamento AS enc',  'tr.id_encaminhamento', 'enc.id')
                     ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
                     ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
@@ -62,8 +62,14 @@ class GerenciarTratamentosController extends Controller
             $lista->where('p1.nome_completo', 'ilike', "%$request->assist%");
         }
 
-        if ($request->status){
+        if ($request->status and $request->status != 'all'){
             $lista->where('tr.status', $request->status);
+        }
+        elseif($request->status == 'all'){
+
+        }
+        else{
+            $lista->where('tr.status', 2);
         }
 
         $lista = $lista->orderby('tr.status', 'ASC')->orderby('at.id_prioridade', 'ASC')->orderby('nm_1', 'ASC')->paginate(50);
@@ -84,22 +90,24 @@ class GerenciarTratamentosController extends Controller
         from tipo_dia
         ");
 
+        $motivo = DB::table('tipo_motivo')->get();
 
-
-        return view ('/recepcao-integrada/gerenciar-tratamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'dia', 'diaP'));
+        return view ('/recepcao-integrada/gerenciar-tratamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'dia', 'diaP', 'motivo'));
 
 
     }
 
-    public function destroy(string $id){
+    public function destroy(Request $request, string $id){
 
+
+        $hoje = Carbon::today();
         $tratamento = DB::table('tratamento')->where('id', $id)->first();
 
 
-        DB::table('tratamento')->where('id', $id)->update(['status' => 6]);
+        DB::table('tratamento')->where('id', $id)->update(['status' => 6, 'motivo' => $request->motivo, 'dt_fim' => $hoje]);
         DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 4]);
 
-       
+
         return redirect()->back();
 
 
