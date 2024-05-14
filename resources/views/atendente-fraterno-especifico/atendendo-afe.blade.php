@@ -41,7 +41,7 @@
         <br>
         <div class="row" style="text-align:right;">
             <div class="col-6">
-                <a href="/meus-atendimentos"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Meus atendimentos"></a>
+                <a href="/meus-atendimentos-afe"><input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Meus atendimentos"></a>
             </div>
             <div class="col-6">
                 <a href="{{ route('Atender-afe') }}"><input class="btn btn-success btn-sm me-md-2" type="button" value="Atender agora"></a>

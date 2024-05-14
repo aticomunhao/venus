@@ -145,8 +145,8 @@
                                                         <div class="mb-2 col-10">
                                                             <label class="col-form-label">Insira o número de acompanhantes,
                                                                 <span style="color:orange">se necessário:</span></label>
-                                                            <input type="number" class="form-control"  name="acompanhantes"
-                                                                placeholder="0" min="0">
+                                                            <input type="number" class="form-control"
+                                                                name="acompanhantes" placeholder="0" min="0">
                                                         </div>
                                                     </center>
 
@@ -155,43 +155,47 @@
                                                     <button type="button" class="btn btn-danger"
                                                         data-bs-dismiss="modal">Cancelar</button>
 
-                                                        @if($listas->dt_fim == $now)
-
-                                                        <button type="button" class="btn btn-primary openModal" id="openModal" data-bs-toggle="modal" data-bs-dismiss="modal" data-bs-target="#staticBackdrop{{ $listas->idtr }}">
+                                                    @if ($listas->dt_fim == $now)
+                                                        <button type="button" class="btn btn-primary openModal"
+                                                            id="openModal" data-bs-toggle="modal" data-bs-dismiss="modal"
+                                                            data-bs-target="#staticBackdrop{{ $listas->idtr }}">
                                                             Registrar Presença
-                                                          </button>
-
-
-                                                        @else
+                                                        </button>
+                                                    @else
                                                         <button type="submit" class="btn btn-primary">Registrar
-                                                        Presença</button>
-                                                        @endif
+                                                            Presença</button>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
                                 </div>
 
-                                <div class="modal fade" id="staticBackdrop{{ $listas->idtr }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal fade" id="staticBackdrop{{ $listas->idtr }}" data-bs-backdrop="static"
+                                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                    aria-hidden="true">
                                     <div class="modal-dialog">
-                                      <div class="modal-content">
-                                        <div class="modal-header" style="background-color:rgb(39, 91, 189);color:white">
-                                          <h1 class="modal-title fs-5" id="staticBackdropLabel">ATENÇÃO!</h1>
-                                          <a href="/gerenciar-tratamentos" type="button" class="btn-close" aria-label="Close"></a>
-                                        </div>
-                                        <div class="modal-body">
-                                            <label for="recipient-name" class="col-form-label"
-                                            style="font-size:17px">Este é o último dia de tratamento de:<br /><span
-                                                style="color: rgb(39, 91, 189)">{{ $listas->nm_1 }}</span></label>
+                                        <div class="modal-content">
+                                            <div class="modal-header"
+                                                style="background-color:rgb(39, 91, 189);color:white">
+                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">ATENÇÃO!</h1>
+                                                <a href="/gerenciar-tratamentos" type="button" class="btn-close"
+                                                    aria-label="Close"></a>
+                                            </div>
+                                            <div class="modal-body">
+                                                <label for="recipient-name" class="col-form-label"
+                                                    style="font-size:17px">Este é o último dia de tratamento de:<br /><span
+                                                        style="color: rgb(39, 91, 189)">{{ $listas->nm_1 }}</span></label>
                                                 <br />
 
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="/gerenciar-tratamentos" type="button"
+                                                    class="btn btn-danger">Cancelar Presença</a>
+                                                <button type="type" class="btn btn-primary">Confirmar</button>
+                                            </div>
                                         </div>
-                                        <div class="modal-footer">
-                                          <a href="/gerenciar-tratamentos" type="button" class="btn btn-danger" >Cancelar Presença</a>
-                                          <button type="type" class="btn btn-primary" >Confirmar</button>
-                                        </div>
-                                      </div>
                                     </div>
-                                  </div>
+                                </div>
                                 </form>
 
 
@@ -207,10 +211,38 @@
                                     title="Alterar Grupo"><i class="bi bi-arrow-left-right"
                                         style="font-size: 1rem; color:#000;"></i></a>
 
-                                <a href="/inativar/{{ $listas->idtr }}" type="button"
-                                    class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Inativar"><i class="bi bi-x-circle"
+                                <a type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip"
+                                    data-placement="top" data-bs-target="#inativa{{ $listas->idtr }}"
+                                    data-bs-toggle="modal" title="Inativar"><i class="bi bi-x-circle"
                                         style="font-size: 1rem; color:#000;"></i></a>
+
+
+                                <div class="modal fade" id="inativa{{ $listas->idtr }}" data-bs-keyboard="false"
+                                    tabindex="-1" aria-labelledby="inativarLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header"
+                                                style="background-color:#DC4C64;color:white">
+                                                <h1 class="modal-title fs-5" id="inativarLabel">Inativação</h1>
+                                                <button data-bs-dismiss="modal" type="button" class="btn-close"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <label for="recipient-name" class="col-form-label"
+                                                    style="font-size:17px">Tem certeza que deseja inativar:<br /><span
+                                                        style="color:#DC4C64; font-weight: bold;">{{ $listas->nm_1 }}</span></label>
+                                                <br />
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" data-bs-dismiss="modal"
+                                                    class="btn btn-danger">Cancelar</button>
+                                                <a href="/inativar-tratamento/{{ $listas->idtr }}" type="type"
+                                                    class="btn btn-primary">Confirmar</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </td>
                     </tr>

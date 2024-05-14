@@ -271,6 +271,7 @@ Route::get('/escolher-horario/{id}', [GerenciarTratamentosController::class, 'es
 Route::any('/trocar-grupo-tratamento/{id}', [GerenciarTratamentosController::class, 'trocarGrupo']);
 Route::any('/incluir-avulso', [GerenciarTratamentosController::class, 'createAvulso']);
 Route::any('/armazenar-avulso', [GerenciarTratamentosController::class, 'storeAvulso']);
+Route::any('/inativar-tratamento/{id}', [GerenciarTratamentosController::class, 'destroy']);
 
 
 

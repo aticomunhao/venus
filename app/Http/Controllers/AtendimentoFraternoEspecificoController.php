@@ -53,7 +53,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->where('at.status_atendimento', '<', 5)
             ->whereNotNull('dh_chegada') // Garante que a pessoa já chegou
             ->whereNotNull('dh_marcada')
-            ->where('at.afe', true) 
+            ->where('at.afe', true)
             ->Where('at.id_atendente', $afe->nr_associado)
             ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
             ->orderby('status_atendimento', 'ASC')
@@ -69,7 +69,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
         $now =  Carbon::now()->format('Y-m-d');
         $atendente = session()->get('usuario.id_associado');
-    
+
 
         $atendendo = DB::table('atendimentos AS at')
             ->leftjoin('membro AS m', 'at.id_atendente', 'm.id')
@@ -91,7 +91,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
 
 
-        
+
         if ($assistido < 1) {
 
             app('flasher')->addError('Todos os assistidos foram atendidos.');
@@ -112,7 +112,7 @@ class AtendimentoFraternoEspecificoController extends Controller
                 ->update([
                     'id_sala' => $sala,
                     'status_atendimento' => 2
-                    
+
                 ]);
 
 
@@ -208,7 +208,7 @@ class AtendimentoFraternoEspecificoController extends Controller
         $sit = DB::table('atendimentos AS at')->where('at.id_atendente', $atendente)->where('at.status_atendimento', '<', 5)->count();
 
 
-   
+
 
         if ($atendendo = $atendente && $status > 1) {
             app('flasher')->addInfo('Retomando análise.');
@@ -733,7 +733,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
 
 
-        return view('/atendimento-assistido-afe/meus-atendimentos-afe', compact('assistido', 'atendente', 'nome', 'grupo'));
+        return view('/atendente-fraterno-especifico/meus-atendimentos-afe', compact('assistido', 'atendente', 'nome', 'grupo'));
     }
 
 

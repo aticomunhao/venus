@@ -91,6 +91,20 @@ class GerenciarTratamentosController extends Controller
 
     }
 
+    public function destroy(string $id){
+
+        $tratamento = DB::table('tratamento')->where('id', $id)->first();
+
+
+        DB::table('tratamento')->where('id', $id)->update(['status' => 6]);
+        DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 4]);
+
+       
+        return redirect()->back();
+
+
+    }
+
 
     public function presenca(Request $request, $idtr){
 
