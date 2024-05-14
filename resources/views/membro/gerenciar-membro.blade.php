@@ -92,7 +92,7 @@
                                         <h5 class="modal-title" id="exampleModalLabel" style="color:white">Exclusão de membro </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body">
+                                    <div class="modal-body" style="text-align: center; ">
                                         Tem certeza que deseja excluir o membro<br /><span style="color:#DC4C64; font-weight: bold;">{{ $membros->nome_completo }}</span>&#63;
                                     </div>
                                     <div class="modal-footer mt-3">

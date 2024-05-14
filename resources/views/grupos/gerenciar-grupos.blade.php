@@ -62,33 +62,27 @@
                             <a href="/deletar-grupos" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{$grupos->id}}"  data-tt="tooltip" data-placement="top" title="Deletar">
                                 <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                             </a>
- {{--  Modal de Exclusao --}}
- <div class="modal fade" id="modal{{$grupos->id}}" tabindex="-1"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel" style="color:red;">Confirmação de
-                    Exclusão</h5>
-                <button type="button" class="btn-close"
-                    data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" style="text-align: center">
-                Tem certeza que deseja excluir o grupo <p
-                    style="color:red;">{{$grupos->nome}}&#63;</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary"
-                    data-bs-dismiss="modal">Cancelar</button>
-                <a type="button" class="btn btn-danger"
-                    href="/deletar-grupos/{{$grupos->id}}">Confirmar
-                    Exclusão</a>
-            </div>
-        </div>
-    </div>
-</div>
-{{-- Fim Modal de Exclusao --}}
+                            {{--  Modal de Exclusao --}}
+                            <div class="modal fade" id="modal{{$grupos->id}}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background-color:#DC4C64">
+                                            <h5 class="modal-title" id="exampleModalLabel" style="color:white">Exclusão de grupo </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" style="text-align: center; ">
+                                            Tem certeza que deseja excluir o grupo<br /><span style="color:#DC4C64; font-weight: bold;">{{ $grupos->nome }}</span>&#63;
+                                        </div>
+                                        <div class="modal-footer mt-3">
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                            <a type="button" class="btn btn-primary" href="/deletar-grupos/{{ $grupos->id }}">Confirmar</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
+                        {{--  Fim do modal de Exclusao --}}
                     </tr>
                     @endforeach
                 </tbody>

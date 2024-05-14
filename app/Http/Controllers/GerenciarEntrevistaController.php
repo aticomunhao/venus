@@ -54,6 +54,7 @@ class GerenciarEntrevistaController extends Controller
             ->leftJoin('membro', 'entrevistas.id_entrevistador', '=', 'membro.id')
             ->leftJoin('associado', 'membro.id_associado', '=', 'associado.id')
             ->leftJoin('pessoas as pessoa_entrevistador', 'associado.id_pessoa', '=', 'pessoa_entrevistador.id')
+            ->leftJoin('tipo_status_entrevista as tse', 'entrevistas.status', '=', 'tse.id')
             ->where('encaminhamento.id_tipo_encaminhamento', 1)
             ->where('encaminhamento.status_encaminhamento', '<>', 4)
             ->whereNotIn('tipo_entrevista.id', [8]) // Exclui o tipo de entrevista 8
@@ -61,9 +62,10 @@ class GerenciarEntrevistaController extends Controller
             ->select(
                 'entrevistas.id_entrevistador',
                 DB::raw("CASE
-                        WHEN entrevistas.status IS NULL THEN 'Aguardando agendamento'
+                        WHEN entrevistas.status IS NULL THEN 1
                         ELSE entrevistas.status
                     END as status"),
+                'tse.descricao as d1',
                 'entrevistas.data',
                 'entrevistas.hora',
                 'encaminhamento.id as ide',
@@ -87,7 +89,7 @@ class GerenciarEntrevistaController extends Controller
         $i = 0;
         $pesquisaNome = null;
         $pesquisaStatus = 0;
-        $pesquisaValue = 0;
+        $pesquisaValue = $request->status == null ? 'limpo' : $request->status;
 
         if(session()->get('usuario.setor') == 38){
             $informacoes = $informacoes->where('encaminhamento.id_tipo_entrevista', 5);
@@ -101,24 +103,11 @@ class GerenciarEntrevistaController extends Controller
             $informacoes = $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome_pesquisa%");
             $pesquisaNome = $request->nome_pesquisa;
         }
-        if ($request->status != 1) {
+        if ($request->status != 1 and $pesquisaValue != 'limpo') {
 
-            if ($request->status == 2) {
-                $informacoes->where('entrevistas.status', "ilike", "Agendado");
-                $pesquisaValue = 2;
-            } elseif ($request->status == 3) {
-                $informacoes->where('entrevistas.status', "ilike", "Entrevistado");
-                $pesquisaValue = 3;
-            } elseif ($request->status == 4) {
-                $informacoes->where('entrevistas.status', "ilike", "Completar registro de marcação");
-                $pesquisaValue = 4;
-            }elseif ($request->status == 5) {
-                $informacoes->where('entrevistas.status', "ilike", "Entrevista Marcada");
-                $pesquisaValue = 5;
-            } elseif ($request->status == 6) {
-                $informacoes->where('entrevistas.status', "ilike", "Entrevista Cancelada");
-                $pesquisaValue = 6;
-                 }
+            
+                $informacoes->where('entrevistas.status', $pesquisaValue);
+               
 
         }
 
@@ -127,11 +116,12 @@ class GerenciarEntrevistaController extends Controller
 
         // Mapear os status para a ordem desejada
         $statusOrder = [
-            'Aguardando agendamento' => 1,
-            'Completar registro de marcação' => 2,
-            'Agendado' => 3,
-            'Entrevista Marcada' => 4,
-            'Entrevista Cancelada' => 5
+            1 => 1,
+            2 => 2,
+            3 => 3,
+            4 => 4,
+            5 => 5,
+            6 => 6
         ];
 
         // Ordenar os resultados de acordo com o mapeamento de status
@@ -150,7 +140,7 @@ class GerenciarEntrevistaController extends Controller
                 $info[] = $dia;
             }
             foreach ($info as $check) {
-                if ($check->status != "Aguardando agendamento") {
+                if ($check->status != 1) {
                     unset($info[$i]);
                 }
                 $i = $i + 1;
@@ -160,10 +150,13 @@ class GerenciarEntrevistaController extends Controller
             $pesquisaValue = 1;
         }
 
+    
 
 
+        $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get();
+        
 
-        return view('Entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue'));
+        return view('Entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status'));
     }
 
 
@@ -184,14 +177,6 @@ class GerenciarEntrevistaController extends Controller
 
 
 
-        if (request()->isMethod('post')) {
-
-            $entrevistadorId = request()->input('entrevistador');
-            DB::table('entrevistas')->where('id', $id)->update(['id_entrevistador' => $entrevistadorId]);
-
-
-            return redirect()->route('sua.rota.aqui')->with('success', 'Entrevistador salvo com sucesso!');
-        }
 
 
         $informacoes = [];
@@ -249,7 +234,7 @@ class GerenciarEntrevistaController extends Controller
             'id_sala' => $request->id_sala,
             'data' => $request->data,
             'hora' => $request->hora,
-            'status' => 'Completar registro de marcação',
+            'status' => 2,
         ]);
 
 
@@ -330,40 +315,14 @@ class GerenciarEntrevistaController extends Controller
 
 
 
-        $dateTime = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)
-        ->select('ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id_sala')
-        ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
-        ->first();
-
-
-        $dt = Carbon::createFromFormat('Y-m-d H:i:s', $dateTime->data . ' ' . $dateTime->hora);
-        $atendimentos=DB::table('encaminhamento as enc')
-        ->select('id_assistido')
-        ->leftJoin('atendimentos as at','enc.id_atendimento','at.id')
-        ->where('enc.id', $id)
-        ->first();
-        $id_entrevistador=DB::table('membro')->where('id', $request->id_entrevistador)->select('id_associado')->first();
-
-
         DB::table('entrevistas')->where('id_encaminhamento', $id)->update([
             'id_entrevistador' => $request->input('id_entrevistador'),
-            'status' => 'Agendado',
+            'status' => 4,
         ]);
 
 
 
-        if($dateTime->id_tipo_entrevista == 3){
-
-            DB::table('atendimentos')->insert([
-                'dh_marcada' => $dt,
-                'id_assistido' => $atendimentos->id_assistido,
-                'id_atendente' => $id_entrevistador->id_associado,
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_sala'=> $dateTime->id_sala,
-                'status_atendimento' => 7,
-                'afe' => true
-            ]);
-        }
+        
 
 
         return redirect()->route('gerenciamento')->with('success', 'O cadastro foi realizado com sucesso!');
@@ -459,7 +418,6 @@ class GerenciarEntrevistaController extends Controller
 
 
 
-
         return view('Entrevistas.editar-entrevista', compact('membros', 'entrevistador', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
     }
 
@@ -522,6 +480,36 @@ class GerenciarEntrevistaController extends Controller
     }
 
 
+
+
+
+    $dateTime = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)
+    ->select('ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id_sala')
+    ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
+    ->first();
+
+
+    $dt = Carbon::createFromFormat('Y-m-d H:i:s', $dateTime->data . ' ' . $dateTime->hora);
+    $atendimentos=DB::table('encaminhamento as enc')
+    ->select('id_assistido')
+    ->leftJoin('atendimentos as at','enc.id_atendimento','at.id')
+    ->where('enc.id', $id)
+    ->first();
+    $id_entrevistador=DB::table('membro')->where('id', $dateTime->id_entrevistador)->select('id_associado')->first();
+
+    if($dateTime->id_tipo_entrevista == 3){
+
+        DB::table('atendimentos')->insert([
+            'dh_marcada' => $dt,
+            'id_assistido' => $atendimentos->id_assistido,
+            'id_atendente' => $id_entrevistador->id_associado,
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'id_sala'=> $dateTime->id_sala,
+            'status_atendimento' => 7,
+            'afe' => true
+        ]);
+    }
+
     // Criar um novo registro na tabela de encaminhamento
      $nova=DB::table('encaminhamento')->insertGetId([
         // Defina os valores adequados para o novo registro na tabela de encaminhamento
@@ -533,6 +521,11 @@ class GerenciarEntrevistaController extends Controller
 
 
     ]);
+
+
+
+
+
 
     if($encaminhamento->id_tipo_entrevista == 4){
 
@@ -549,7 +542,7 @@ class GerenciarEntrevistaController extends Controller
     // Atualizar o status da entrevista para 'Entrevistado' e remover o ID de encaminhamento
     DB::table('entrevistas')
         ->where('id_encaminhamento', $id)
-        ->update(['status' => 'Entrevista Marcada',]);
+        ->update(['status' => 5,]);
 
 
         DB::table('encaminhamento')->where('id',$id)->update(['status_encaminhamento' =>3]);;
@@ -582,7 +575,7 @@ public function fim($id)
 
     DB::table('entrevistas')
         ->where('id_encaminhamento', $id)
-        ->update(['status' => 'Entrevista Cancelada',]);
+        ->update(['status' => 6,]);
 
 
         DB::table('encaminhamento')->where('id',$id)->update(['status_encaminhamento' =>3]);;

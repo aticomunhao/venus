@@ -10,7 +10,6 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 
-    <br />
     <div class="container";>
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
             GERENCIAR REUNIÕES </h4>
@@ -104,32 +103,8 @@
                             </td>
                     </tr>
                     
-                    <div class="modal fade" id="modal{{ $reuni->idr }}" tabindex="-1"
-                        aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                                <div class="modal-header" style="background-color:#DC4C64">
-                                    <h5 class="modal-title" id="exampleModalLabel" style="color:rgb(255, 255, 255); margin: 10px">
-                                        Confirmar
-                                        Exclusão</h5>
-                                    <button type="button" class="btn-close"
-                                        data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body" style="text-align: center; ">
-                                    Tem certeza que deseja inativar a reunião de
-                                    <p style="color:#DC4C64; font-weight">{{ $reuni->nomeg }}?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger"
-                                        data-bs-dismiss="modal">Cancelar</button>
-                                    <a type="button" class="btn btn-primary"
-                                        href="/inativar-entrevista/{{ $reuni->idr }}">Confirmar
-                                        </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                      {{-- <!-- Modal de Exclusao -->
+                     <!-- Modal de Exclusao -->
                       <div class="modal fade" id="modal{{ $reuni->idr }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -137,7 +112,7 @@
                                     <h5 class="modal-title" id="exampleModalLabel" style="color:white">Confirmação de inativação </h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
+                                <div class="modal-body" style="text-align: center; ">
                                     Tem certeza que deseja inativar a reunião de <br /><span style="color:#DC4C64; font-weight: bold;">{{ $reuni->nomeg }}</span>&#63;
                                 </div>
                                 <div class="modal-footer mt-2">
@@ -146,7 +121,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div> --}}
+                    </div> 
                     
                 {{-- Fim Modal de Exclusao --}}
            

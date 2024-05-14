@@ -80,16 +80,16 @@
 <div class="modal fade" id="confirmacaoDelecao" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Confirmação de Exclusão</h5>
+            <div class="modal-header" style="background-color:#DC4C64">
+                <h5 class="modal-title" id="exampleModalLabel" style="color:white">Confirmação de Exclusão </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                Tem certeza que deseja excluir a sala "<span id="modal-body-text"></span>"?
+            <div class="modal-body" style="text-align: center; ">
+                Tem certeza que deseja excluir essa sala? <br /><span id="modal-body-text" style="color:#DC4C64; font-weight: bold;"></span>&#63;
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="btn-confirmar-exclusao" onclick="confirmarDelecao()">Confirmar Exclusão</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                <a type="button" class="btn btn-primary"  id="btn-confirmar-exclusao" onclick="confirmarDelecao()">Confirmar </a>
             </div>
         </div>
     </div>

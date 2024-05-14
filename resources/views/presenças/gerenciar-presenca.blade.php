@@ -91,34 +91,29 @@
                                  
 
                                {{--  Modal de exclusão --}}
-                               <div class="modal fade" id="modalp{{ $listas->id }}" tabindex="-1"
+
+                                 <div class="modal fade" id="modalp{{ $listas->id }}" tabindex="-1"
                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
+                                <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <div class="modal-header" style="background-color:rgb(196, 27, 27);">
-                                            <h5 class="modal-title" id="exampleModalLabel" style=" color:white">Confirmar
-                                                Exclusão </h5>
-                                            <button type="button" class="btn-close"
-                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <div class="modal-header" style="background-color:#DC4C64">
+                                            <h5 class="modal-title" id="exampleModalLabel" style="color:white">Confirmar Inativação</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <div class="modal-body">
-                                            Tem certeza que deseja declarar alta para <br /><span
-                                                style="color:rgb(196, 27, 27);">{{ $listas->nome_completo }}</span>&#63;
-
+                                        <div class="modal-body" style="text-align: center; ">
+                                            Tem certeza que deseja declarar alta para <br /><span style="color:#DC4C64; font-weight: bold;">{{ $listas->nome_completo }}</span>&#63;
                                         </div>
-                                        <div class="modal-footer mt-2">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Cancelar</button>
-                                            <a type="button" class="btn btn-danger"
-                                                href="/inativar-presenca/{{$listas->id}}">Confirmar
-                                                Exclusão </a>
+                                        <div class="modal-footer mt-3">
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                            <a type="button" class="btn btn-primary" href="/inativar-presenca/{{ $listas->id }}">Confirmar</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            {{-- Fim Modal de exclusao --}}
-                                 
-                              {{-- Conferir se realmente é necesssário botão de inativar --}}
+                        </td>
+
+                               
                                
                             </td>
                        

@@ -82,9 +82,9 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                Tem certeza que deseja excluir essa pessoa? <br /><span style="color:#DC4C64; font-weight: bold;">{{ $pessoas->nome_completo }}</span>&#63;
+                                                Tem certeza que deseja excluir essa pessoa <br /><span style="color:#DC4C64; font-weight: bold;">{{ $pessoas->nome_completo }}</span>&#63;
                                             </div>
-                                            <div class="modal-footer mt-2">
+                                            <div class="modal-footer mt-3">
                                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
                                                 <a type="button" class="btn btn-primary" href="/excluir-pessoa/{{ $pessoas->idp }}">Confirmar</a>
                                             </div>

@@ -69,7 +69,7 @@ class ReuniaoMediunicaController extends Controller
         public function create(){
 
             $sala = DB::table('salas AS sl')
-                        ->select('sl.id AS ids', 'sl.nome', 'sl.numero', 'sl.nr_lugares')
+                        ->select('sl.id AS ids', 'sl.nome', 'sl.numero', 'sl.nr_lugares','sl.id_localizacao')
                         ->where('id_finalidade', 6)
                         ->orderBy('numero', 'asc')
                         ->get();
@@ -93,9 +93,12 @@ class ReuniaoMediunicaController extends Controller
                         ->select('td.id AS idd', 'td.nome', 'td.sigla')
                         ->get();
 
+            $salas = DB::table('salas')
+                        ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
+                        ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
+                        ->get();
 
-
-            return view ('/reuniao-mediunica/criar-reuniao', compact('sala', 'grupo', 'tipo',  'tratamento',  'dia'));
+            return view ('/reuniao-mediunica/criar-reuniao', compact('sala', 'grupo', 'tipo',  'tratamento',  'dia','salas'));
 
 
         }
