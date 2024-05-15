@@ -27,13 +27,10 @@
                     <div class="row mb-5">
                         <div class="col">
                             <label for="id_entrevistador" class="form-label">Entrevistador</label>
-                            <select class="form-control teste" id="id_entrevistador" name="id_entrevistador" {{ $entrevistas->id_entrevistador == null ? 'disabled' : '' }}>
+                            <select class="form-control teste" id="id_entrevistador" name="entrevistador" {{ $entrevistas->id_entrevistador == null ? 'disabled' : '' }}>
                                  @foreach ($membros as $membro )
                                  <option value="{{ $membro->id }}" {{$membro->id == $entrevistas->id_entrevistador ? 'selected' : '' }}>{{ $membro->nome_entrevistador }}</option>
                                  @endforeach
-
-
-
                             </select>
                         </div>
                     </div>
@@ -65,7 +62,7 @@
                                             <div class="col">
                                                 <label for="numero_sala" class="form-label">Número</label>
                                                 <select class="form-select" id="numero_sala" name="numero_sala">
-                                                    <option>{{ $entrevistas ? $entrevistas->numero : '' }}</option>
+                                                    <option value="{{ $entrevistas->sala_id }}">{{ $entrevistas ? $entrevistas->numero : '' }}</option>
                                                     @foreach ($salas as $sala)
                                                         <option value="{{ $sala->id }}" data-nome="{{ $sala->nome }}"
                                                             data-localizacao="{{ $sala->nome_localizacao }}">
@@ -123,6 +120,7 @@
         // Define a data mínima no campo de entrada
         document.getElementById('data').setAttribute('min', dataAtual);
     </script>
+    
     <script>
         document.getElementById('numero_sala').addEventListener('change', function() {
             var selectedOption = this.options[this.selectedIndex];

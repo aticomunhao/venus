@@ -164,6 +164,26 @@
                                                         Tem certeza que deseja finalizar a entrevista de <p style="color: green;">{{ $informacao->nome_pessoa }}&#63;</p>
                                                     </div>
                                                     <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sair</button>
+                                                        <a type="button" class="btn btn-danger" href="/nao-aceito-entrevista/{{ $informacao->ide }}">Cancelar entrevista</a>
+                                                        <a type="button" class="btn btn-primary" href="/finalizar-entrevista/{{ $informacao->ide }}">Confirmar entrevista</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{-- Fim Modal de Finalizacao --}}
+                                        {{-- Modal AFE --}}
+                                        <div class="modal fade" id="modalAFE{{ $informacao->ide }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel" style="color: green;">Confirmação de Finalização</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Tem certeza que deseja finalizar a entrevista de <p style="color: green;">{{ $informacao->nome_pessoa }}&#63;</p>
+                                                    </div>
+                                                    <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                                                         <a type="button" class="btn btn-danger" href="/nao-aceito-entrevista/{{ $informacao->ide }}">Cancelar PTI/NUTRES</a>
                                                         <a type="button" class="btn btn-success" href="/finalizar-entrevista/{{ $informacao->ide }}">Confirmar entrevista</a>
@@ -171,7 +191,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- Fim Modal de Finalizacao --}}
+                                        {{-- Fim Modal AFE --}}
+                                        
                                          
                                             {{--  Modal de Exclusao --}}
                                             <div class="modal fade" id="modal{{ $informacao->ide }}" tabindex="-1"
