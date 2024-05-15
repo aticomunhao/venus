@@ -320,7 +320,7 @@ return view ('/reuniao-mediunica/editar-reuniao', compact('info','salas', 'grupo
 
            DB::table('cronograma AS rm')->where('id', $id)->update([
                     'id_grupo'=>$request->input('grupo'),
-                    'id_sala'=>$request->input('numero'),
+                    'id_sala'=>$request->input('numero_sala'),
                     'h_inicio'=>$request->input('h_inicio'),
                     'h_fim'=>$request->input('h_fim'),
                     'max_atend'=>$request->input('max_atend'),

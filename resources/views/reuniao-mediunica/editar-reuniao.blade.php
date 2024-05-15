@@ -72,7 +72,7 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <label for="id_sala" class="form-label">Número</label>
-                                                <select class="form-select" id="id_sala" name="id_sala">
+                                                <select class="form-select" id="id_sala" name="numero_sala">
                                                     <option value=""></option>
                                                     @foreach ($salas as $sala)
                                                         <option value="{{ $sala->id }}" 
