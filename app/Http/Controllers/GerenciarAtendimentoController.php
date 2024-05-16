@@ -384,7 +384,8 @@ class GerenciarAtendimentoController extends Controller
                //dd($now);
 
         $atende = DB::table('atendente_dia AS atd')
-                ->select('atd.id AS nr', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status', 'cro.id_grupo')
+
+                ->select('atd.id AS nr', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')
                 ->leftJoin('membro AS m', 'atd.id_associado','m.id_associado')
                 ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
                 ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id' )
@@ -393,7 +394,8 @@ class GerenciarAtendimentoController extends Controller
                 ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
                 ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id');
 
-        //dd($atende);
+
+
 
         $data = $request->data;
 
@@ -422,7 +424,7 @@ class GerenciarAtendimentoController extends Controller
         }
 
 
-        $atende = $atende->orderby('atd.dh_inicio', 'DESC')->orderby('nm_sala', 'ASC')->get();
+        $atende = $atende->orderby('nr', 'DESC')->orderby('nm_sala', 'ASC')->distinct('nr')->get();
 
         //dd($atende);
 
@@ -548,12 +550,16 @@ class GerenciarAtendimentoController extends Controller
     public function definir_sala(Request $request){
 
 
-        $now = Carbon::now()->format('Y-m-d');
+        $now = Carbon::today();
+        $no = Carbon::today()->addDay(1);
 
         $aten = DB::table('atendente_dia AS atd')
-                ->leftjoin('associado AS a', 'atd.id_associado', 'a.id' )
-                ->where('dh_inicio', $now)
+                ->leftjoin('associado AS a', 'atd.id_associado', 'a.id',  )
+                ->where('dh_inicio','>=', $now)
+                ->where('dh_inicio','<', $no)
+                ->where('dh_fim', '=', null)
                 ->pluck('id_associado');
+
 
         //dd($aten);
 
@@ -622,14 +628,29 @@ class GerenciarAtendimentoController extends Controller
             $lista->grup = $result;
         }
 
+        $salaAtendendo = DB::table('atendente_dia AS atd')
+                         ->leftjoin('associado AS a', 'atd.id_associado', 'a.id',  )
+                         ->where('dh_inicio','>=', $now)
+                         ->where('dh_inicio','<', $no)
+                         ->where('dh_fim', '=', null)
+                         ->pluck('id_sala');
+
+        $salaAFE = DB::table('atendimentos')
+        ->where('dh_marcada','>=', $now)
+        ->where('dh_marcada','<', $no)
+        ->where('status_atendimento', 7)
+        ->pluck('id_sala');
+
+   
+
+
         $sala = DB::table('salas AS s')
                 ->select('s.id', 's.numero')
                 ->where( 's.id_finalidade', 2)
                 ->where('s.status_sala', 1)
-                ->whereNotIn('s.id', DB::table('atendente_dia AS atd')
-                    ->where('atd.dh_inicio', $now)
-                    ->pluck('atd.id_sala'))
-                ->orderBy('numero', 'asc')
+                ->whereNotIn('id', $salaAtendendo)
+                ->whereNotIn('id', $salaAFE)
+                ->orderBy('numero')
                 ->get();
 
 
@@ -646,7 +667,7 @@ class GerenciarAtendimentoController extends Controller
 
         $sala = $request->sala;
 
-        $now = Carbon::now()->format('Y-m-d');
+        $now = Carbon::now();
 
         //$atendente = DB::table('atendentes AS a')->select('a.id AS ida')->where('id_pessoa', $idat)->get();
 
@@ -730,6 +751,15 @@ class GerenciarAtendimentoController extends Controller
 
         return redirect('/gerenciar-atendente-dia');
 
+    }
+
+    public function finaliza_afi(string $id) {
+
+        $now = Carbon::now();
+         DB::table('atendente_dia')->where('id', $id)->update(['dh_fim' => $now]);
+
+         app('flasher')->addSuccess('Turno Finalizado com Sucesso.');
+         return redirect()->back();
     }
 
 }

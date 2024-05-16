@@ -101,6 +101,7 @@ Route::put('/atendente-atualizar/{ida}', [GerenciarAtendimentoController::class,
 Route::get('/gerenciar-atendente-dia', [GerenciarAtendimentoController::class, 'atendente_dia'])->name('afidia');
 Route::get('/definir-sala-atendente', [GerenciarAtendimentoController::class, 'definir_sala'])->name('afisal');
 Route::get('/editar-atendente-dia/{idatd}', [GerenciarAtendimentoController::class, 'editar_afi'])->name('afiedt');
+Route::get('/finalizar-atendente-dia/{idatd}', [GerenciarAtendimentoController::class, 'finaliza_afi'])->name('afiedt');
 Route::post('/altera-atendente-dia/{idatd}', [GerenciarAtendimentoController::class, 'update_afi'])->name('afiupt');
 Route::post('/incluir-afi-sala/{ida}', [GerenciarAtendimentoController::class, 'salva_afi'])->name('afidef');
 Route::post('/gravar-escolha/{idatd}', [GerenciarAtendimentoController::class, 'gravar_sala'])->name('ategrv');
