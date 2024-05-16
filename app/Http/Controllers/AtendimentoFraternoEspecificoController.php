@@ -733,7 +733,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
 
 
-        return view('/atendimento-assistido-afe/meus-atendimentos-afe', compact('assistido', 'atendente', 'nome', 'grupo'));
+        return view('/atendente-fraterno-especifico/meus-atendimentos-afe', compact('assistido', 'atendente', 'nome', 'grupo'));
     }
 
 

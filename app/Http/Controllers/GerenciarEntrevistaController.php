@@ -76,15 +76,16 @@ class GerenciarEntrevistaController extends Controller
                 'pessoa_representante.nome_completo as nome_representante',
                 'atendimentos.id_representante as id_representante',
                 'tipo_entrevista.descricao as entrevista_descricao',
+                'tipo_entrevista.id as id_tipo_entrevista',
                 'tipo_entrevista.sigla as entrevista_sigla',
                 'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
                 's.nome as local',
                 's.numero',
                 'pessoa_entrevistador.nome_completo as nome_entrevistador'
-
-
-
             );
+
+   
+          
 
         $i = 0;
         $pesquisaNome = null;
