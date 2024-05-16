@@ -68,11 +68,11 @@ class ReuniaoMediunicaController extends Controller
 
         public function create(){
 
-            $sala = DB::table('salas AS sl')
-                        ->select('sl.id AS ids', 'sl.nome', 'sl.numero', 'sl.nr_lugares','sl.id_localizacao')
-                        ->where('id_finalidade', 6)
-                        ->orderBy('numero', 'asc')
-                        ->get();
+            // $sala = DB::table('salas AS sl')
+            //             ->select('sl.id AS ids', 'sl.nome', 'sl.numero', 'sl.nr_lugares','sl.id_localizacao')
+            //             ->where('id_finalidade', 6)
+            //             ->orderBy('numero', 'asc')
+            //             ->get();
 
             $grupo = DB::table('grupo AS gr')
                         ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
@@ -95,10 +95,11 @@ class ReuniaoMediunicaController extends Controller
 
             $salas = DB::table('salas')
                         ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
+                        ->where('id_finalidade', 6)
                         ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
                         ->get();
 
-            return view ('/reuniao-mediunica/criar-reuniao', compact('sala', 'grupo', 'tipo',  'tratamento',  'dia','salas'));
+            return view ('/reuniao-mediunica/criar-reuniao', compact( 'grupo', 'tipo',  'tratamento',  'dia','salas'));
 
 
         }
@@ -174,11 +175,11 @@ class ReuniaoMediunicaController extends Controller
 
         public function show(string $id)
         {
-            $sala = DB::table('salas AS sl')
-            ->select('sl.id AS ids', 'sl.nome', 'sl.numero', 'sl.nr_lugares')
-            ->where('id_finalidade', 6)
-            ->orderBy('numero', 'asc')
-            ->get();
+            // $sala = DB::table('salas AS sl')
+            // ->select('sl.id AS ids', 'sl.nome', 'sl.numero', 'sl.nr_lugares')
+            // ->where('id_finalidade', 6)
+            // ->orderBy('numero', 'asc')
+            // ->get();
 
             $grupo = DB::table('grupo AS gr')
             ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
@@ -194,12 +195,19 @@ class ReuniaoMediunicaController extends Controller
             ->select('tt.id AS idt', 'tt.descricao', 'tt.sigla')
             ->get();
 
+            $salas = DB::table('salas')
+            ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
+            ->where('id_finalidade', 6)
+            ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
+            ->orderBy('numero', 'asc')
+            ->get();
+
             $dia = DB::table('tipo_dia AS td')
             ->select('td.id AS idd', 'td.nome', 'td.sigla')
             ->get();
 
             $info = DB::table('cronograma as crn')
-            ->select('crn.id','gr.nome', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim')
+            ->select('crn.id','gr.nome', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim','crn.id_sala','sl.id_localizacao as nome_localizacao')
             ->leftJoin('grupo as gr', 'crn.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as tpd', 'crn.dia_semana', 'tpd.id')
             ->leftJoin('tipo_tratamento as tpt', 'crn.id_tipo_tratamento', 'tpt.id')
@@ -209,7 +217,7 @@ class ReuniaoMediunicaController extends Controller
 
 
 
-return view ('/reuniao-mediunica/visualizar-reuniao', compact('info','sala', 'grupo', 'tipo',  'tratamento',  'dia'));
+return view ('/reuniao-mediunica/visualizar-reuniao', compact('info','salas', 'grupo', 'tipo',  'tratamento',  'dia'));
         }
 
         /**
@@ -218,11 +226,11 @@ return view ('/reuniao-mediunica/visualizar-reuniao', compact('info','sala', 'gr
         public function edit(string $id)
         {
 
-            $sala = DB::table('salas AS sl')
-            ->select('sl.id AS ids', 'sl.nome', 'sl.numero', 'sl.nr_lugares')
-            ->where('id_finalidade', 6)
-            ->orderBy('numero', 'asc')
-            ->get();
+            // $sala = DB::table('salas AS sl')
+            // ->select('sl.id AS ids', 'sl.nome', 'sl.numero', 'sl.nr_lugares','sl.id_localizacao')
+            // ->where('id_finalidade', 6)
+            // ->orderBy('numero', 'asc')
+            // ->get();
 
             $grupo = DB::table('grupo AS gr')
             ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
@@ -242,8 +250,15 @@ return view ('/reuniao-mediunica/visualizar-reuniao', compact('info','sala', 'gr
             ->select('td.id AS idd', 'td.nome', 'td.sigla')
             ->get();
 
+            $salas = DB::table('salas')
+            ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
+            ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
+            ->where('id_finalidade', 6)
+            ->orderBy('numero', 'asc')
+            ->get();
+
             $info = DB::table('cronograma as crn')
-            ->select('crn.id','gr.nome', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim')
+            ->select('crn.id','gr.nome', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim','crn.id_sala','sl.id_localizacao as nome_localizacao')
             ->leftJoin('grupo as gr', 'crn.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as tpd', 'crn.dia_semana', 'tpd.id')
             ->leftJoin('tipo_tratamento as tpt', 'crn.id_tipo_tratamento', 'tpt.id')
@@ -253,7 +268,7 @@ return view ('/reuniao-mediunica/visualizar-reuniao', compact('info','sala', 'gr
 
 
 
-return view ('/reuniao-mediunica/editar-reuniao', compact('info','sala', 'grupo', 'tipo',  'tratamento',  'dia'));
+return view ('/reuniao-mediunica/editar-reuniao', compact('info','salas', 'grupo', 'tipo',  'tratamento',  'dia'));
 
         }
 
@@ -305,7 +320,7 @@ return view ('/reuniao-mediunica/editar-reuniao', compact('info','sala', 'grupo'
 
            DB::table('cronograma AS rm')->where('id', $id)->update([
                     'id_grupo'=>$request->input('grupo'),
-                    'id_sala'=>$request->input('numero'),
+                    'id_sala'=>$request->input('numero_sala'),
                     'h_inicio'=>$request->input('h_inicio'),
                     'h_fim'=>$request->input('h_fim'),
                     'max_atend'=>$request->input('max_atend'),

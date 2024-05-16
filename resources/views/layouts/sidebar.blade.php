@@ -44,6 +44,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Gerenciamento DAE</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                            <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-pti">Encaminhamentos PTI</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pti">Gerenciar Assistidos PTI</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-entrevistas">Gerenciar Entrevistas</a></li>
