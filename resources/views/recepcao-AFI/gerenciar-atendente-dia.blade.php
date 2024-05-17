@@ -75,13 +75,14 @@
                             <td scope="">{{$atendes->nm_sala}}</td>
                             <td scope="">{{$atendes->tipo}}</td>
                             <td scope="">
-                                @if (date( 'Y-m-d', strtotime($atendes->dh_fim)) > $now)
+                                @if ($atendes->dh_inicio < $now)
                                     <button disabled type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button>
-                                    <button disabled class="btn btn-outline-danger btn-sm"  style="font-size: 1rem; color:#000;" type="button" id="" data-bs-toggle="modal" data-bs-target="#delete{{$atendes->idatd}}" data-tt="tooltip" data-placement="top" title="Excluir"><i class="bi bi-trash3" style="font-size: 1rem; color:#000;"></i></button>
+                                    <a href="/finalizar-atendente-dia/{{$atendes->idatd}}"><button  type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Finalizar" disabled><i class="bi bi-calendar2-check" style="font-size: 1rem; color:#000;"></i></button></a>
+                                    
                                 @else
                                     <a href="/editar-atendente-dia/{{$atendes->idatd}}"><button  type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
                                     <a href="/finalizar-atendente-dia/{{$atendes->idatd}}"><button  type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Finalizar"><i class="bi bi-calendar2-check" style="font-size: 1rem; color:#000;"></i></button></a>
-                                    <button class="btn btn-outline-danger btn-sm" style="font-size: 1rem; color:#000;" type="button" id="" data-bs-toggle="modal" data-bs-target="#delete{{$atendes->idatd}}" data-tt="tooltip" data-placement="top" title="Excluir"><i class="bi bi-trash3" style="font-size: 1rem; color:#000;"></i></button>
+
                                 @endif
                             </td>
                             @include('recepcao-AFI/pop-up-delete')

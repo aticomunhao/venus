@@ -56,7 +56,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->where('at.afe', true)
             ->Where('at.id_atendente', $afe->nr_associado)
             ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
-            ->orderby('status_atendimento', 'ASC')
+            ->orderby('status_atendimento', 'DESC')
             ->get();
 
 
@@ -97,11 +97,8 @@ class AtendimentoFraternoEspecificoController extends Controller
             app('flasher')->addError('Todos os assistidos foram atendidos.');
 
             return redirect('/atendendo-afe');
-        } elseif ($atendendo < 1 && $sala == null) {
 
-            app('flasher')->addError('O atendente deve estar designado para o trabalho de hoje.');
-            return Redirect()->back();
-        } elseif ($atendendo < 1 && $sala > 0) {
+        } elseif ($atendendo < 1) {
 
 
             DB::table('atendimentos')
@@ -330,7 +327,7 @@ class AtendimentoFraternoEspecificoController extends Controller
                 ->where('at.id', $idat)
                 ->get();
 
-            return view('/atendimento-assistido/tratamentos', compact('assistido'));
+            return view('/atendente-fraterno-especifico/tratamentos-afe', compact('assistido'));
         } elseif ($verifi > 0) {
 
             app('flasher')->addError('Os tratamentos já foram registrados para o atendido ' . $atendido[0]->nm);
@@ -403,7 +400,7 @@ class AtendimentoFraternoEspecificoController extends Controller
                 ->where('at.id', $idat)
                 ->get();
 
-            return view('/atendente-fraterno-especificofinalizar-afe', compact('assistido'));
+            return view('/atendente-fraterno-especifico/finalizar-afe', compact('assistido'));
         }
     }
 

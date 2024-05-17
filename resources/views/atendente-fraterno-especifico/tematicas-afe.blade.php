@@ -6,7 +6,7 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 
-<br>               
+<br>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-12">
@@ -16,7 +16,7 @@
                     </div>
                     <div class="col">Nome assistido
                         <input class="form-control" type="text" name="nome" value="{{$assistido[0]->nm_1}}" disabled>
-                    </div>                   
+                    </div>
             </div>
             <form class="form-horizontal mt-4" method="POST" action="/tematicas/{{$assistido[0]->idat}}">
                     @csrf
@@ -41,7 +41,7 @@
                                 <div class="form-check m-2">
                                     <input id="21" type="checkbox" name="maf" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                     <label for="maf" class="form-check-label" data-tt="tooltip" data-placement="top" title="Mediunidade aflorada" >1.1</label>
-                                </div>  
+                                </div>
                                 <div class="form-check m-2">
                                     <input id="1" type="checkbox" name="ies" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" >
                                     <label for="ies" class="form-check-label" data-tt="tooltip" data-placement="top" title="Influenciação espiritual" >1.2</label>
@@ -51,7 +51,7 @@
                                     <label for="obs" class="form-check-label" data-tt="tooltip" data-placement="top" title="Obsessão" >1.3</label>
                                 </div>
                             </div>
-                            <div class="col" style="text-align:center;">Comportamentais 
+                            <div class="col" style="text-align:center;">Comportamentais
                                 <div class="form-check  m-2">
                                     <input id="3" type="checkbox" name="abo" data-size="small" data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                     <label for="abo" class="form-check-label" data-tt="tooltip" data-placement="top" title="Aborto">5.1</label>
@@ -61,7 +61,7 @@
                                     <label for="sui" class="form-check-label" data-tt="tooltip" data-placement="top" title="Suicídio">5.2</label>
                                 </div>
                             </div>
-                            <div class="col" style="text-align:center;">Relacionamento                   
+                            <div class="col" style="text-align:center;">Relacionamento
                                 <div class="form-check  m-2">
                                     <input id="5" type="checkbox" name="coj" data-size="small" data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                     <label for="coj" class="form-check-label" data-tt="tooltip" data-placement="top" title="Conjugal">2.1</label>
@@ -79,7 +79,7 @@
                                     <label for="prf" class="form-check-label" data-tt="tooltip" data-placement="top" title="Profissional">2.4</label>
                                 </div>
                             </div>
-                            <div class="col" style="text-align:center;">Cotidiano                    
+                            <div class="col" style="text-align:center;">Cotidiano
                                 <div class="form-check  m-2">
                                     <input id="9" type="checkbox"  name="dou" data-size="small" data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                     <label for="dou" class="form-check-label" data-tt="tooltip" data-placement="top" title="Interesse pela Doutrina">6.1</label>
@@ -101,7 +101,7 @@
                                     <label for="dpr" class="form-check-label" data-tt="tooltip" data-placement="top" title="Desencarne de ente querido">6.5</label>
                                 </div>
                             </div>
-                            <div class="col" style="text-align:center;">Físicas/mentais                    
+                            <div class="col" style="text-align:center;">Físicas/mentais
                                 <div class="form-check  m-2">
                                     <input id="14" type="checkbox"  name="sau" data-size="small" data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                     <label for="sau" class="form-check-label" data-tt="tooltip" data-placement="top" title="Saúde">3.1</label>
@@ -125,7 +125,7 @@
                                 <div class="form-check  m-2">
                                     <input id="19" type="checkbox"  name="dqu" data-size="small" data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                     <label for="dqu" class="form-check-label" data-tt="tooltip" data-placement="top" title="Dependência química">4.3</label>
-                                </div>                    
+                                </div>
                                 <div class="form-check  m-2">
                                     <input id="20" type="checkbox"  name="est" data-size="small" data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                     <label for="est" class="form-check-label" data-tt="tooltip" data-placement="top" title="Estresse">4.4</label>
@@ -136,7 +136,7 @@
                                 <div class="form-check m-2">
                                     <input id="21" type="checkbox" name="maf" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" {{$result[0]->maf ? 'checked' : ''}}>
                                     <label for="maf" class="form-check-label" data-tt="tooltip" data-placement="top" title="Mediunidade aflorada" >1.1</label>
-                                </div>    
+                                </div>
                                 <div class="form-check m-2">
                                     <input id="1" type="checkbox" name="ies" data-size="small" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" {{$result[0]->ies ? 'checked' : ''}}>
                                     <label for="ies" class="form-check-label" data-tt="tooltip" data-placement="top" title="Influenciação espiritual" >1.2</label>
@@ -146,7 +146,7 @@
                                     <label for="obs" class="form-check-label" data-tt="tooltip" data-placement="top" title="Obsessão" >1.3</label>
                                 </div>
                             </div>
-                            <div class="col" style="text-align:center;">Comportamentais 
+                            <div class="col" style="text-align:center;">Comportamentais
                                 <div class="form-check  m-2">
                                     <input id="3" type="checkbox" name="abo" data-size="small" data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" {{$result[0]->abo ? 'checked' : ''}}>
                                     <label for="abo" class="form-check-label" data-tt="tooltip" data-placement="top" title="Aborto">5.1</label>
@@ -156,7 +156,7 @@
                                     <label for="sui" class="form-check-label" data-tt="tooltip" data-placement="top" title="Suicídio">5.2</label>
                                 </div>
                             </div>
-                            <div class="col" style="text-align:center;">Relacionamento                   
+                            <div class="col" style="text-align:center;">Relacionamento
                                 <div class="form-check  m-2">
                                     <input id="5" type="checkbox" name="coj" data-size="small" data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" {{$result[0]->coj ? 'checked' : ''}}>
                                     <label for="coj" class="form-check-label" data-tt="tooltip" data-placement="top" title="Conjugal">2.1</label>
@@ -174,7 +174,7 @@
                                     <label for="prf" class="form-check-label" data-tt="tooltip" data-placement="top" title="Profissional">2.4</label>
                                 </div>
                             </div>
-                            <div class="col" style="text-align:center;">Cotidiano                    
+                            <div class="col" style="text-align:center;">Cotidiano
                                 <div class="form-check  m-2">
                                     <input id="9" type="checkbox"  name="dou" data-size="small" data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" {{$result[0]->dou ? 'checked' : ''}}>
                                     <label for="dou" class="form-check-label" data-tt="tooltip" data-placement="top" title="Interesse pela Doutrina">6.1</label>
@@ -196,7 +196,7 @@
                                     <label for="dpr" class="form-check-label" data-tt="tooltip" data-placement="top" title="Desencarne de ente querido">6.5</label>
                                 </div>
                             </div>
-                            <div class="col" style="text-align:center;">Físicas/mentais                    
+                            <div class="col" style="text-align:center;">Físicas/mentais
                                 <div class="form-check  m-2">
                                     <input id="14" type="checkbox"  name="sau" data-size="small" data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" {{$result[0]->sau ? 'checked' : ''}}>
                                     <label for="sau" class="form-check-label" data-tt="tooltip" data-placement="top" title="Saúde">3.1</label>
@@ -220,19 +220,19 @@
                                 <div class="form-check  m-2">
                                     <input id="19" type="checkbox"  name="dqu" data-size="small" data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" {{$result[0]->dqu ? 'checked' : ''}}>
                                     <label for="dqu" class="form-check-label" data-tt="tooltip" data-placement="top" title="Dependência química">4.3</label>
-                                </div>                    
+                                </div>
                                 <div class="form-check  m-2">
                                     <input id="20" type="checkbox"  name="est" data-size="small" data-toggle="toggle"  data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" {{$result[0]->est ? 'checked' : ''}}>
                                     <label for="est" class="form-check-label" data-tt="tooltip" data-placement="top" title="Estresse">4.4</label>
                                 </div>
-                            @endif                                               
+                            @endif
                             </div>
                         </div>
                     <br>
                     <hr>
                         <div class="row">
                             <div class="col" style="text-align: right;">
-                                    <a class="btn btn-danger" href="/atendendo" style="text-align:right; margin-right: 50px" role="button">Cancelar</a>
+                                    <a class="btn btn-danger" href="/atendendo-afe" style="text-align:right; margin-right: 50px" role="button">Cancelar</a>
                                     <button type="submit" class="btn btn-primary" style="background-color:#007bff; color:#fff;" data-bs-dismiss="modal">Confirmar</button>
                                 </form>
                             </div>

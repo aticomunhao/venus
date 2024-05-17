@@ -383,18 +383,13 @@ class GerenciarAtendimentoController extends Controller
 
                //dd($now);
 
-        $atende = DB::table('atendente_dia AS atd')
-
-                ->select('atd.id AS nr', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')
-                ->leftJoin('membro AS m', 'atd.id_associado','m.id_associado')
-                ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
-                ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id' )
-                ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
-                ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
-                ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
-                ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id');
-
-
+        $atende = DB::table('atendente_dia as atd')
+                    ->select('atd.id AS nr', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')
+                    ->leftJoin('associado as a', 'atd.id_associado', '=','a.id')
+                    ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id' )
+                    ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
+                    ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
+                    ->leftJoin('grupo AS g', 'atd.id_grupo', 'g.id');
 
 
         $data = $request->data;
@@ -452,15 +447,16 @@ class GerenciarAtendimentoController extends Controller
 
     public function editar_afi($idatd){
 
-        $now =  Carbon::now()->format('Y-m-d');
+        $now = Carbon::today();
+        $no = Carbon::today()->addDay(1);
 
-        $atende = DB::table('atendente_dia AS atd')
-        ->select('m.id AS ida', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala')
-        ->leftJoin('membro AS m', 'atd.id_associado','m.id_pessoa')
-        ->leftjoin('pessoas AS p', 'atd.id_associado', 'p.id' )
+        $atende = DB::table('atendente_dia as atd')
+        ->select('atd.id AS nr', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4',  'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')
+        ->leftJoin('associado as a', 'atd.id_associado', '=','a.id')
+        ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id' )
         ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
         ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
-        ->leftJoin('grupo AS g', 'm.id_grupo', 'g.id')
+        ->leftJoin('grupo AS g', 'atd.id_grupo', 'g.id')
         ->where('atd.id', $idatd)
         ->get();
 
@@ -481,23 +477,31 @@ class GerenciarAtendimentoController extends Controller
                     ->orderBy('nome')
                     ->get();
 
-        $sala_ocupada = DB::table('atendente_dia AS atd')
-                        ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
-                        ->where('atd.dh_inicio', $now)
-                        ->pluck('id_sala');
+
+         $salaAtendendo = DB::table('atendente_dia AS atd')
+                    ->leftjoin('associado AS a', 'atd.id_associado', 'a.id',  )
+                    ->where('dh_inicio','>=', $now)
+                    ->where('dh_inicio','<', $no)
+                    ->where('dh_fim', '=', null)
+                    ->pluck('id_sala');
+
+       $salaAFE = DB::table('atendimentos')
+       ->where('dh_marcada','>=', $now)
+       ->where('dh_marcada','<', $no)
+       ->where('status_atendimento', 7)
+       ->pluck('id_sala');
 
 
 
-        $sala = DB::table('salas AS s')
-                    ->select('s.id', 's.numero')
-                    ->where( 's.id_finalidade', 2)
-                    ->where('s.status_sala', 1)
-                    ->whereNotIn('s.id', DB::table('atendente_dia AS atd')
-                        ->where('atd.dh_inicio', $now)
-                        ->pluck('atd.id_sala'))
-                    ->orderBy('numero', 'asc')
-                    ->get();
 
+       $sala = DB::table('salas AS s')
+               ->select('s.id', 's.numero')
+               ->where( 's.id_finalidade', 2)
+               ->where('s.status_sala', 1)
+               ->whereNotIn('id', $salaAtendendo)
+               ->whereNotIn('id', $salaAFE)
+               ->orderBy('numero')
+               ->get();
 
           // dd($sala);
 
@@ -641,7 +645,7 @@ class GerenciarAtendimentoController extends Controller
         ->where('status_atendimento', 7)
         ->pluck('id_sala');
 
-   
+
 
 
         $sala = DB::table('salas AS s')

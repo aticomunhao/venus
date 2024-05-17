@@ -17,36 +17,42 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <legend style="color:#525252; font-size:12px; font-family:sans-serif">Dados do AFI</legend>
-                    <fieldset class="border rounded border-secondary p-4">
+
                         <div class="form-group row">
-                            <div class="col-2">
+                            <div class="col-6">
                                 <label for="disabledTextInput" class="form-label">Número:</label>
                                 <input type="number" id="" value="{{$atende[0]->idatd}}" class="form-control" placeholder="Disabled input" disabled>
                             </div>
-                            <div class="col">
+                            <div class="col-6">
                                 <label for="disabledTextInput" class="form-label">Grupo:</label>
                                 <input type="text" id="" value="{{$atende[0]->nomeg}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
                             </div>
-                            <div class="col">
-                                <label for="disabledTextInput" class="form-label">Nome AFI:</label>
-                                <input type="text" id="" value="{{$atende[0]->nm_4}}"   class="form-control" placeholder="Disabled input" disabled>
-                            </div>
+
+
                         </div>
-                    </fieldset>
+
                 <div>
                 <form  class="form-horizontal mt-4" method="POST" action="/altera-atendente-dia/{{$atende[0]->idatd}}">
                     @csrf
                     <div class="row">
-                        <div class="col"></div>
-                        <div class="col">Número da Sala:
+                        <div class="col-6">
+                            <label for="disabledTextInput" class="form-label">Nome AFI:</label>
+                            <input type="text" id="" value="{{$atende[0]->nm_4}}"   class="form-control" placeholder="Disabled input" disabled>
+                        </div>
+
+                        <div class="col-6 mt-2">Número da Sala:
+                            <?php $i = 0;?>
                             <select class="form-select text-center" id="" name="sala" type="number">
-                                <option value="{{$atende[0]->id_sala}}">{{$atende[0]->nm_sala}}</option>
+
                                 @foreach ($sala as $salas)
-                                <option @if(old('sala')==$salas->id) {{'selected="selected"'}} @endif value="{{ $salas->id }}">{{$salas->numero}}</option>
-                                @endforeach               
+                                @if($salas->numero > $atende[0]->nm_sala and $atende[0]->nm_sala > $i)
+                                <option value="{{$atende[0]->id_sala}}" selected>{{$atende[0]->nm_sala}}</option>
+                                @endif
+                                <option value="{{ $salas->id }}">{{$salas->numero}} </option>
+                                 {{$i = $salas->numero}};
+                                @endforeach
                             </select>
-                        </div>                    
+                        </div>
                         <div class="col"></div>
                     </div>
                     <br/>
@@ -58,16 +64,16 @@
                             <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>
                             </form>
                         </div>
-                    </div>                
+                    </div>
             </div>
         </div>
     </div>
-</div>                       
+</div>
 
 
 @endsection
 
-@section('footerScript')  
+@section('footerScript')
 
 
 @endsection

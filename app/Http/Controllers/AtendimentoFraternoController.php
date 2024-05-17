@@ -59,7 +59,8 @@ class AtendimentoFraternoController extends Controller
         public function atende_agora()
         {
 
-            $now =  Carbon::now()->format('Y-m-d');
+            $now =  Carbon::today();
+            $no =  Carbon::today()->addDay(1);
             $atendente = session()->get('usuario.id_associado');
             $pref_m = session()->get('usuario.sexo');
 
@@ -75,7 +76,8 @@ class AtendimentoFraternoController extends Controller
             $assistido = DB::table('atendimentos')->where('status_atendimento', 1)->where('afe', null)->count();
 
             $sala = DB::table('atendente_dia AS atd')
-            ->where('dh_inicio', $now )
+            ->where('dh_inicio','>', $now )
+            ->where('dh_inicio','<', $no )
             ->where('id_associado', $atendente )
             ->value('id_sala');
 

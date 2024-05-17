@@ -2,11 +2,11 @@
 
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
-<br>               
+<br>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-12">
-            <div class="card">               
+            <div class="card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
@@ -14,7 +14,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body">                
+                <div class="card-body">
                     <div class="row">
                         <div class="col-2">Nr Atendimento
                             <input class="form-control" type="numeric" name="id" value="{{$assistido[0]->idat}}" disabled>
@@ -24,28 +24,28 @@
                         </div>
                     </div>
                     <form class="form-horizontal mt-4" method="POST" action="/tratamentos/{{$assistido[0]->idat}}/{{$assistido[0]->idas}}">
-                    @csrf                
+                    @csrf
                     <div class="row form-group">
                         <div class="col">
-                            <div class="form-check form-check-inline">                        
+                            <div class="form-check form-check-inline">
                                 <input type="checkbox" id="ga" name="ga" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                 <label for="ga" class="form-check-label">Grupo Acolher - GA</label>
                             </div>
                             <br>
-                            <br>                         
-                            <div class="form-check form-check-inline">                        
+                            <br>
+                            <div class="form-check form-check-inline">
                                 <input type="checkbox" id="gv" name="gv" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                 <label for="gv" class="form-check-label">Grupo Viver - GV</label>
                             </div>
                             <br>
                             <br>
-                            <div class="form-check form-check-inline">                        
+                            <div class="form-check form-check-inline">
                                 <input type="checkbox" id="gdq" name="gdq" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                 <label for="gdq" class="form-check-label">Grupo de Dependência Química - GDQ</label>
                             </div>
                         </div>
                         <div class="col">
-                            <div class="form-check form-check-inline">                        
+                            <div class="form-check form-check-inline">
                                 <input type="checkbox" id="pph" name="pph" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                 <label for="pph" class="form-check-label">Palestra/Passe de Harmonização - PPH</label>
                             </div>
@@ -67,7 +67,7 @@
                                 <input type="checkbox" id="pti" name="pti" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                 <label for="pti" class="form-check-label">Passe Tratamento Intensivo - PTI</label>
                             </div> -->
-                        </div>                    
+                        </div>
                     </div>
                     <br>
                     <hr>
