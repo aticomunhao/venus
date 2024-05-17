@@ -192,7 +192,7 @@ Route::post('/atualizar-entrevista/{id}', [GerenciarEntrevistaController::class,
 Route::get('/visualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'show'])->name('');
 Route::any('/finalizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'finalizar'])->name('finalizar.entrevista');
 Route::any('/nao-aceito-entrevista/{id}', [GerenciarEntrevistaController::class, 'fim'])->name('');
-Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, 'inativar'])->name('');
+Route::any('/inativar-entrevista/{id}/{tp}', [GerenciarEntrevistaController::class, 'inativar'])->name('');
 
 
 

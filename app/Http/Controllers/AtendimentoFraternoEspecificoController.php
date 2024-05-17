@@ -98,7 +98,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
             return redirect('/atendendo-afe');
 
-        } elseif ($atendendo < 1) {
+        } else {
 
 
             DB::table('atendimentos')

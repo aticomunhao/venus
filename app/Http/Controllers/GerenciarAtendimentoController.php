@@ -642,8 +642,9 @@ class GerenciarAtendimentoController extends Controller
         $salaAFE = DB::table('atendimentos')
         ->where('dh_marcada','>=', $now)
         ->where('dh_marcada','<', $no)
-        ->where('status_atendimento', 7)
+        ->whereIn('status_atendimento', [1, 7])
         ->pluck('id_sala');
+        
 
 
 

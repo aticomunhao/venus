@@ -574,7 +574,7 @@ class GerenciarEntrevistaController extends Controller
     }
 
 
-    public function inativar($id)
+    public function inativar($id, $tp)
     {
 
 
@@ -592,19 +592,25 @@ class GerenciarEntrevistaController extends Controller
         $entrevistas = DB::table('entrevistas')->where('id_encaminhamento', '=', $id)->first();
 
 
-        if (!is_null($entrevistas) and $entrevistas->status == 'Agendado') {
+        if ($tp == 1) {
 
-            DB::table('entrevistas')
-                ->where('id_encaminhamento', '=', $id)
-                ->delete();
-        }
-
-        DB::table('encaminhamento')
+            DB::table('encaminhamento')
             ->where('id', $id)
             ->update(['status_encaminhamento' => 4]);
 
+           
+        }
+     
+        elseif($tp == 2){
+            DB::table('entrevistas')
+            ->where('id_encaminhamento', '=', $id)
+            ->update(['status' =>6]);    
 
+        }
+        else{
+            return redirect()->route('gerenciamento')->with('danger', 'Erro Inesperado!');
+        }
 
-        return redirect()->route('gerenciamento')->with('danger', 'Entrevista inativada!');
+        return redirect()->route('gerenciamento')->with('success', 'Entrevista Cancelada com Sucesso!');
     }
 }

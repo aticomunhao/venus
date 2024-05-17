@@ -28,16 +28,13 @@ class MediunidadePessoaController extends Controller
 
         $nome = $request->nome_pesquisa;
         $cpf = $request->cpf_pesquisa;
+   
 
-        if ($nome || $cpf) {
-            $mediunidade->where(function ($query) use ($nome, $cpf) {
-                $query->where('p.nome_completo', 'ilike', "%$nome%")
-                    ->orWhere('p.cpf', 'ilike', "%$nome%");
-
-                if ($cpf) {
-                    $query->orWhere('p.cpf', 'ilike', "%$cpf%");
-                }
-            });
+        if($nome){
+            $mediunidade = $mediunidade->where('nome_completo', 'ilike', "%$nome%");
+        }
+        if($cpf){
+            $mediunidade = $mediunidade->where('cpf', 'ilike', "%$cpf%");
         }
 
         $mediunidade = $mediunidade->get();
@@ -200,9 +197,9 @@ class MediunidadePessoaController extends Controller
 
         DB::table('historico_venus')->insert([
 
-            'id_usuario' => session()->get('pessoa.id_pessoa'),
+            'id_usuario' => session()->get('usuario.id_pessoa'),
             'data' => $data,
-            'fato' => 1,
+            'fato' => 43,
             'obs' => $id
 
         ]);

@@ -78,6 +78,7 @@ class AtendimentoFraternoController extends Controller
             $sala = DB::table('atendente_dia AS atd')
             ->where('dh_inicio','>', $now )
             ->where('dh_inicio','<', $no )
+            ->where('dh_fim', '=', null)
             ->where('id_associado', $atendente )
             ->value('id_sala');
 

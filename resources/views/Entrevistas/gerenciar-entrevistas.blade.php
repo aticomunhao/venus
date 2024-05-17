@@ -87,13 +87,13 @@
 
                                         @if ($informacao->status !== 1)
                                             {{-- Inicio botao Agendar --}}
-                                            <a href="#" type="button" class="btn btn-outline-success btn-sm disabled"
+                                            <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
                                                 data-tt="tooltip" data-placement="top" title="Agendar" disabled>
                                                 <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @else
                                             <a href="{{ route('criar-entrevista', ['id' => $informacao->ide]) }}"
-                                                type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip"
+                                                type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip"
                                                 data-placement="top" title="Agendar ">
                                                 <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
                                             </a>
@@ -129,57 +129,32 @@
                                             </a>
                                         @endif{{-- Fim visualizar --}}
 
-                                        @if ($informacao->status !== 4)
-                                            {{-- Inicio FinalizarAFE --}}
+
+                                        @if ($informacao->status !== 3)
+                                            {{-- Inicio Confirmar --}}
                                             <a href="#" type="button"
-                                                class="btn btn-outline-danger btn-sm disabled" data-tt="tooltip"
-                                                data-placement="top" title="Finalizar" disabled>
-                                                <i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i>
+                                                class="btn btn-outline-success btn-sm disabled" data-tt="tooltip"
+                                                data-placement="top" title="Confirmar" disabled>
+                                                <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @else
-                                            @if ($informacao->id_tipo_entrevista == 3)
-                                                <button type="button" class="btn btn-outline-danger btn-sm"
-                                                    data-tt="tooltip" data-placement="top" title="Confirmar"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#modalAFE{{ $informacao->ide }}">
-                                                    <i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i>
-                                                </button>
-                                            @else
-                                                <button type="button" class="btn btn-outline-danger btn-sm"
-                                                    data-tt="tooltip" data-placement="top" title="Confirmar"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#modalF{{ $informacao->ide }}">
-                                                    <i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i>
-                                                </button>
-                                            @endif
-                                        @endif {{-- Fim FinalizarAFE --}}
-
-
-                                        @if ($informacao->status !== 4)
-                                            {{-- Inicio Finalizar --}}
-                                            <a href="#" type="button"
-                                                class="btn btn-outline-danger btn-sm disabled" data-tt="tooltip"
-                                                data-placement="top" title="Finalizar" disabled>
-                                                <i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i>
-                                            </a>
-                                        @else
-                                            <button type="button" class="btn btn-outline-danger btn-sm"
-                                                data-tt="tooltip" data-placement="top" title="Finalizar"
+                                            <button type="button" class="btn btn-outline-success btn-sm"
+                                                data-tt="tooltip" data-placement="top" title="Confirmar"
                                                 data-bs-toggle="modal" data-bs-target="#modalF{{ $informacao->ide }}">
-                                                <i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i>
+                                                <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i>
                                             </button>
-                                        @endif{{-- Fim Finalizar --}}
+                                        @endif{{-- Fim Confirmar --}}
 
                                         {{-- Inicio excluir --}}
-                                        @if ($informacao->status == 4 or $informacao->status == 5 or $informacao->status == 6)
+                                        @if ( $informacao->status == 5 or $informacao->status == 6)
                                             <a href="#" type="button"
                                                 class="btn btn-outline-danger btn-sm disabled" data-tt="tooltip"
-                                                data-placement="top" title="Inativar" disabled>
+                                                data-placement="top" title="Cancelar" disabled>
                                                 <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @else
                                             <button type="button" class="btn btn-outline-danger btn-sm"
-                                                data-tt="tooltip" data-placement="top" title="Inativar"
+                                                data-tt="tooltip" data-placement="top" title="Cancelar"
                                                 data-bs-toggle="modal" data-bs-target="#modal{{ $informacao->ide }}">
                                                 <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                             </button>{{-- Fim excluir --}}
@@ -190,9 +165,9 @@
                                             aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
-                                                    <div class="modal-header">
+                                                    <div class="modal-header" style="background-color: green; color: white">
                                                         <h5 class="modal-title" id="exampleModalLabel"
-                                                            style="color: green;">Confirmação de Finalização</h5>
+                                                            >Confirmação de Finalização</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -249,13 +224,13 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header" style="background-color:#DC4C64">
                                                         <h5 class="modal-title" id="exampleModalLabel"
-                                                            style="color:rgb(255, 255, 255);">Confirmar
-                                                            Inativação</h5>
+                                                            style="color:rgb(255, 255, 255);">Cancelar Tratamento
+                                                            </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        Tem certeza que deseja excluir a entrevista de <p
+                                                        Tem certeza que deseja cancelar o tratamento de <p
                                                             style="color:#DC4C64; font-weight">
                                                             {{ $informacao->nome_pessoa }}&#63;</p>
                                                     </div>
@@ -263,9 +238,16 @@
                                                         <button type="button" class="btn btn-danger"
                                                             data-bs-dismiss="modal">Cancelar</button>
                                                         {{-- <a type="button" class="btn btn-danger" href="/nao-aceito-entrevista/{{ $informacao->ide }}">Cancelar tratamento</a>  --}}
+                                                        
+                                                        @if($informacao->status == 1)
                                                         <a type="button" class="btn btn-primary"
-                                                            href="/inativar-entrevista/{{ $informacao->ide }}">Confirmar
+                                                            href="/inativar-entrevista/{{ $informacao->ide }}/1">Confirmar
                                                         </a>
+                                                        @else
+                                                        <a type="button" class="btn btn-primary"
+                                                            href="/inativar-entrevista/{{ $informacao->ide }}/2">Confirmar
+                                                        </a>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
