@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container fluid">
+    <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR CONTROLE GRUPO
         </h4>
 

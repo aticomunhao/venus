@@ -6,7 +6,7 @@
 
 @section('content')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <div class="container">
+    <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ENTREVISTA
         </h4>
         <div class="col-12">
