@@ -118,20 +118,21 @@
 
 
 
-                                @if ($listas->status == 1 or $listas->status == 2)
+                                @if ($listas->status == 1 or $listas->status == 2){{-- Botão de presença --}}
                                     <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
                                         data-tt="tooltip" data-placement="top" title="Presença"
                                         data-bs-target="#presenca{{ $listas->idtr }}"><i
                                             class="bi bi bi-exclamation-triangle"
                                             style="font-size: 1rem; color:#000;"></i></button>
                                 @else
-                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
+                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" {{-- botão de presença --}}
                                         data-tt="tooltip" data-placement="top" title="Presença"
                                         data-bs-target="#presenca{{ $listas->idtr }}" disabled><i
                                             class="bi bi bi-exclamation-triangle"
                                             style="font-size: 1rem; color:#000;"></i></button>
                                 @endif
 
+                                {{-- inicio da modal de presença --}}
                                 <div class="modal fade closes" id="presenca{{ $listas->idtr }}" tabindex="-1"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <form method="post" action="/presenca-tratatamento/{{ $listas->idtr }}">
@@ -179,44 +180,44 @@
                                             </div>
                                         </div>
                                 </div>
-
                                 <div class="modal fade" id="staticBackdrop{{ $listas->idtr }}" data-bs-backdrop="static"
                                     data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                                     aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header"
-                                                style="background-color:rgb(39, 91, 189);color:white">
-                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">ATENÇÃO!</h1>
-                                                <a href="/gerenciar-tratamentos" type="button" class="btn-close"
-                                                    aria-label="Close"></a>
-                                            </div>
-                                            <div class="modal-body">
-                                                <label for="recipient-name" class="col-form-label"
-                                                    style="font-size:17px">Este é o último dia de tratamento de:<br /><span
-                                                        style="color: rgb(39, 91, 189)">{{ $listas->nm_1 }}</span></label>
-                                                <br />
-
-                                            </div>
-                                            <div class="modal-footer">
-                                                <a href="/gerenciar-tratamentos" type="button"
-                                                    class="btn btn-danger">Cancelar Presença</a>
-                                                <button type="type" class="btn btn-primary">Confirmar</button>
-                                            </div>
+                                            style="background-color:rgb(39, 91, 189);color:white">
+                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">ATENÇÃO!</h1>
+                                            <a href="/gerenciar-tratamentos" type="button" class="btn-close"
+                                            aria-label="Close"></a>
+                                        </div>
+                                        <div class="modal-body">
+                                            <label for="recipient-name" class="col-form-label"
+                                            style="font-size:17px">Este é o último dia de tratamento de:<br /><span
+                                            style="color: rgb(39, 91, 189)">{{ $listas->nm_1 }}</span></label>
+                                            <br />
+                                            
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="/gerenciar-tratamentos" type="button"
+                                            class="btn btn-danger">Cancelar Presença</a>
+                                            <button type="type" class="btn btn-primary">Confirmar</button>
                                         </div>
                                     </div>
                                 </div>
-                                </form>
+                                {{-- fim da modal de presença --}}
+                            </div>
+                        </form>
 
 
 
 
-                                <a href="/visualizar-tratamento/{{ $listas->idtr }}" type="button"
+                                <a href="/visualizar-tratamento/{{ $listas->idtr }}" type="button"{{-- botão de histórico --}}
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Histórico"><i class="bi bi-search"
                                         style="font-size: 1rem; color:#000;"></i></a>
 
-                                @if ($listas->status == 1 or $listas->status == 2)
+                                @if ($listas->status == 1 or $listas->status == 2) {{-- botao de alterar grupo --}}
                                     <a href="/alterar-grupo-tratamento/{{ $listas->idtr }}"type="button"
                                         class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                         title="Alterar Grupo"><i class="bi bi-arrow-left-right"
@@ -228,7 +229,7 @@
                                             style="font-size: 1rem; color:#000;"></i></button>
                                 @endif
 
-                                @if ($listas->status == 1 or $listas->status == 2)
+                                @if ($listas->status == 1 or $listas->status == 2){{-- botao de inativar --}}
                                     <a type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip"
                                         data-placement="top" data-bs-target="#inativa{{ $listas->idtr }}"
                                         data-bs-toggle="modal" title="Inativar"><i class="bi bi-x-circle"
@@ -239,7 +240,7 @@
                                         data-bs-toggle="modal" title="Inativar" disabled><i class="bi bi-x-circle"
                                             style="font-size: 1rem; color:#000;"></i></button>
                                 @endif
-
+                                        {{-- modal de inativação --}}
                                 <form action="/inativar-tratamento/{{ $listas->idtr }}">
                                     <div class="modal fade" id="inativa{{ $listas->idtr }}" data-bs-keyboard="false"
                                         tabindex="-1" aria-labelledby="inativarLabel" aria-hidden="true">
@@ -279,6 +280,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    {{-- fim modal de inativação --}}
                                 </form>
 
                             </td>

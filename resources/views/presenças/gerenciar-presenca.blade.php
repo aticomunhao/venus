@@ -67,8 +67,8 @@
                                     <div class="modal-content">
                                         <div class="modal-header" style="background-color: rgba(255, 165, 0, 1);">
 
-                                            <h5 class="modal-title" id="exampleModalLabel" >Confirmação de
-                                                Presença </h5>
+                                            <h5 class="modal-title" id="exampleModalLabel" style="color:white">Confirmar Presença</h5>
+
                                             <button type="button" class="btn-close"
                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
@@ -78,11 +78,11 @@
 
                                         </div>
                                         <div class="modal-footer mt-2">
-                                            <button type="button" class="btn btn-secondary"
+                                            <button type="button" class="btn btn-danger"
                                                 data-bs-dismiss="modal">Cancelar</button>
-                                            <a type="button" class="btn btn-danger"
+                                            <a type="button" class="btn btn-primary"
                                                 href="/criar-presenca/{{ $listas->id }}">Confirmar
-                                                Presença </a>
+                                                 </a>
                                         </div>
                                     </div>
                                 </div>

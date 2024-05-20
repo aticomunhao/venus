@@ -14,7 +14,7 @@
 //echo "<meta HTTP-EQUIV='refresh' CONTENT='30;URL=gerenciar-atendimentos'>";
 ?>
 
-<div class="container-fluid" ;>
+<div class="container-xxl" ;>
     <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">ATENDIMENTO FRATERNO INDIVIDUAL</h4>
     <div class="col-12">
         <hr>
@@ -92,7 +92,7 @@
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header" style="background-color:rgb(196, 27, 27);">
-                                                        <h5 class="modal-title" id="exampleModalLabel" style=" color:white">Confirmação de RTeset</h5>
+                                                        <h5 class="modal-title" id="exampleModalLabel" style=" color:white">Confirmação de Reset</h5>
                                                         <button type="button" class="btn-close"
                                                             data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
