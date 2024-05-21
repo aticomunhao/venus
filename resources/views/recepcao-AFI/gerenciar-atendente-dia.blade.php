@@ -75,10 +75,10 @@
                             <td scope="">{{$atendes->nm_sala}}</td>
                             <td scope="">{{$atendes->tipo}}</td>
                             <td scope="">
-                                @if ($atendes->dh_inicio < $now)
+                                @if ($atendes->dh_inicio < $now or $atendes->dh_fim)
                                     <button disabled type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button>
-                                    <a href="/finalizar-atendente-dia/{{$atendes->idatd}}"><button  type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Finalizar" disabled><i class="bi bi-calendar2-check" style="font-size: 1rem; color:#000;"></i></button></a>
-                                    
+                                    <button  type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Finalizar" disabled><i class="bi bi-calendar2-check" style="font-size: 1rem; color:#000;"></i></button>
+
                                 @else
                                     <a href="/editar-atendente-dia/{{$atendes->idatd}}"><button  type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
                                     <a href="/finalizar-atendente-dia/{{$atendes->idatd}}"><button  type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Finalizar"><i class="bi bi-calendar2-check" style="font-size: 1rem; color:#000;"></i></button></a>

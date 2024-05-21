@@ -141,8 +141,8 @@ class AtendimentoFraternoController extends Controller
                         ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                         ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
 
-                        ->leftJoin('membro AS m', 'at.id_atendente', 'm.id_associado')
-                        ->leftJoin('associado AS ad1', 'm.id_associado', 'ad1.id')
+
+                        ->leftJoin('associado AS ad1', 'at.id_atendente', 'ad1.id')
                         ->leftJoin('pessoas AS ps1', 'ad1.id_pessoa', 'ps1.id')
                         ->leftJoin('membro AS m1', 'at.id_atendente_pref', 'm1.id_associado')
                         ->leftJoin('associado AS ad2', 'm1.id_associado', 'ad2.id')

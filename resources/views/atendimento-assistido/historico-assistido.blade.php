@@ -6,18 +6,28 @@
 
 
 <br>
+<button
+        type="button"
+        class="btn btn-danger btn-floating btn-lg"
+        id="btn-back-to-top"
+        >
+  <i class="fas fa-arrow-up"></i>
+</button>
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-12">            
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
                             HISTÓRICO DO ASSISTIDO
                         </div>
+                        <div class="d-md-flex justify-content-md-end col">
+                            <a href="/atendendo" type="button" class="btn btn-outline-danger btn-sm" ><i class="bi bi-x-lg"></i></a>
+                        </div>
                     </div>
-                </div>                
-                <div class="card-body">                    
+                </div>
+                <div class="card-body">
                     <fieldset class="border rounded border-secondary p-4">
                     <div class="form-group row">
                         <div class="col">
@@ -36,14 +46,11 @@
                     </fieldset>
                     <br>
                     <div class="row">
-                        <div class="col">    
-                            <a class="btn btn-danger" href="/atendendo" style="text-align:right;" role="button">Fechar</a>                            
-                        </div>                        
                     </div>
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Lista de atendimentos</legend>
                     <?php $a=1; $b=1; $c=1; $d=1; $e=1; ?>
                     @foreach($analisa as $analisas)
-                    <div class="accordion accordion-flush" id="accordionFlushExample"> 
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="{{$a++}}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{$b++}}" aria-expanded="false" aria-controls="flush-collapse{{$c++}}">
@@ -55,19 +62,19 @@
                                     <table class="table table-sm table-bordered table-striped">
                                         <thead style="text-align:center; background: #daffe0;">
                                             <tr style="text-align:center; font-weight: bold; font-size:12px">
-                                                <td class="col">NR</td>    
+                                                <td class="col">NR</td>
                                                 <td class="col-3">REPRESENTANTE</td>
                                                 <td class="col-1">PARENTESCO</td>
                                                 <td class="col-3">ATENDENTE</td>
                                                 <td class="col-1">DT/H INÍCIO</td>
                                                 <td class="col-1">DT/H FIM</td>
                                                 <td class="col-2">STATUS</td>
-                                                
+
                                             </tr>
 
                                         </thead>
                                         <tbody>
-                                            <tr style="text-align:center;font-size:13px">       
+                                            <tr style="text-align:center;font-size:13px">
                                                 <td>{{$analisas->ida}}</td>
                                                 <td>{{$analisas->nm_2}}</td>
                                                 <td>{{$analisas->nome}}</td>
@@ -75,15 +82,15 @@
                                                 <td>{{$analisas->dh_inicio}}</td>
                                                 <td>{{$analisas->dh_fim}}</td>
                                                 <td>{{$analisas->tst}}</td>
-                                                
-                                            </tr>                                          
+
+                                            </tr>
                                         </tbody>
                                     </table>
                                     <br/>
                                     <table class="table table-sm table-bordered table-striped">
                                         <thead style="text-align:center; background: #daffe0;">
                                             <tr style="text-align:center; font-weight: bold; font-size:12px">
-                                                <td class="col">OBSERVAÇÃO</td>                                                                                               
+                                                <td class="col">OBSERVAÇÃO</td>
                                             </tr>
                                             <tr style="text-align:center;font-size:11px">
                                                 <td> {{$analisas->observacao}}</td>
@@ -91,59 +98,59 @@
                                         </thead>
                                         <tbody>
                                         </tbody>
-                                    </table> 
-                                    <br/>                     
+                                    </table>
+                                    <br/>
                                     <table class="table table-sm table-bordered table-striped">
                                         <thead style="text-align:center; background: #daffe0;">
-                                            <tr style="text-align:center; font-weight: bold; font-size:12px">                                
-                                                <td class="col span-1">TEMAS</td>                                                                                               
+                                            <tr style="text-align:center; font-weight: bold; font-size:12px">
+                                                <td class="col span-1">TEMAS</td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr style="text-align:center;font-size:11px">
-                                                
-                                                <td>                                             
-                                                {{$analisas->t1}} {{$analisas->t2}} {{$analisas->t3}} {{$analisas->t4}} {{$analisas->t5}} {{$analisas->t6}} {{$analisas->t7}} {{$analisas->t8}} {{$analisas->t9}} {{$analisas->t10}} {{$analisas->t11}} {{$analisas->t12}} {{$analisas->t13}} {{$analisas->t14}} {{$analisas->t15}} {{$analisas->t16}} {{$analisas->t17}} {{$analisas->t18}} {{$analisas->t19}}                                 
+
+                                                <td>
+                                                {{$analisas->t1}} {{$analisas->t2}} {{$analisas->t3}} {{$analisas->t4}} {{$analisas->t5}} {{$analisas->t6}} {{$analisas->t7}} {{$analisas->t8}} {{$analisas->t9}} {{$analisas->t10}} {{$analisas->t11}} {{$analisas->t12}} {{$analisas->t13}} {{$analisas->t14}} {{$analisas->t15}} {{$analisas->t16}} {{$analisas->t17}} {{$analisas->t18}} {{$analisas->t19}}
                                                 </td>
-                                                                                                    
+
                                             </tr>
-                                            
+
                                         </tbody>
-                                    </table>                             
-                                    <br/>                                
+                                    </table>
+                                    <br/>
                                     <table class="table table-sm table-bordered table-striped">
                                         <thead style="text-align:center; background: #daffe0;">
                                             <tr style="text-align:center; font-weight: bold; font-size:12px">
-                                                <td class="col">ENCAMINHAMENTO TRATAMENTO</td>                                                
+                                                <td class="col">ENCAMINHAMENTO TRATAMENTO</td>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr style="text-align:center;font-size:11px">@foreach($analisas->tratamentos as $tratas)       
+                                            <tr style="text-align:center;font-size:11px">@foreach($analisas->tratamentos as $tratas)
                                                 <td>{{$tratas->tdt}}</td>
                                             @endforeach</tr>
                                         </tbody>
                                     </table>
                                     <table class="table table-sm table-bordered table-striped">
                                         <thead style="text-align:center; background: #daffe0;">
-                                            <tr style="text-align:center; font-weight: bold; font-size:12px">                                                
+                                            <tr style="text-align:center; font-weight: bold; font-size:12px">
                                                 <td class="col">ENCAMINHAMENTO ENTREVISTA</td>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr style="text-align:center;font-size:11px">@foreach($analisas->entrevistas as $entres)                                                
+                                            <tr style="text-align:center;font-size:11px">@foreach($analisas->entrevistas as $entres)
                                                 <td>{{$entres->tde}}</td>
                                                 @endforeach</tr>
                                         </tbody>
-                                    </table>                
+                                    </table>
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
                @endforeach
                     <br>
                     <div class="row">
-                        <div class="col">    
-                            <a class="btn btn-danger" href="/atendendo" style="text-align:right;" role="button">Fechar</a>                            
-                        </div>                        
+                        <div class="col">
+                            <a class="btn btn-danger" href="/atendendo" style="text-align:right;" role="button">Fechar</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -152,6 +159,41 @@
 </div>
 
 
+<style>
+    #btn-back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: none;
+    }
+    </style>
+    <script>
+    //Get the button
+    let mybutton = document.getElementById("btn-back-to-top");
+
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () {
+      scrollFunction();
+    };
+
+    function scrollFunction() {
+      if (
+        document.body.scrollTop > 20 ||
+        document.documentElement.scrollTop > 20
+      ) {
+        mybutton.style.display = "block";
+      } else {
+        mybutton.style.display = "none";
+      }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    mybutton.addEventListener("click", backToTop);
+
+    function backToTop() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+    </script>
 
 @endsection
 

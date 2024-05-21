@@ -122,7 +122,7 @@
                     @endif
                     <div class="row">
                         <div class="col">
-                            <a class="btn btn-danger" href="/gerenciar-presenca-" style="text-align:right;" role="button">Fechar</a>
+                            <a class="btn btn-danger" href="/gerenciar-encaminhamentos" style="text-align:right;" role="button">Fechar</a>
                         </div>
                     </div>
                 </div>

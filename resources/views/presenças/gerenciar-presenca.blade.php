@@ -15,6 +15,7 @@
 <div class="container-fluid";>
 <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR PRESENÇA ENTREVISTA</h4>
     <div class="col-12">
+        <br />
         <div class="row justify-content-center">
             <form action="{{ route('listas') }}" class="form-horizontal mt-4" method="GET">
                 <div class="row align-items-center">
@@ -30,7 +31,8 @@
                 </div>
             </form>
         </div>
-        <br>
+
+        <hr />
             {{-- <div class="table">Total assistidos: {{$contar}} --}}
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                     <thead style="text-align: center;">
@@ -52,8 +54,8 @@
                             <td>{{date ('d/m/Y', strtotime($listas->dh_marcada))}}</td>
                             <td>{{date ('H:i', strtotime($listas->dh_marcada))}}</td>
                             <td>
-                                
-                               
+
+
                                 <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ $listas->id }}" data-tt="tooltip" data-placement="top" title="Presença">
                                     <i class="bi bi-exclamation-triangle" style="font-size: 1rem; color:#000;"></i>
                                 </button>
@@ -88,7 +90,7 @@
                                 </div>
                             </div>
                             {{-- Fim Modal de Presença --}}
-                                 
+
 
                                {{--  Modal de exclusão --}}
 
@@ -113,10 +115,10 @@
                             </div>
                         </td>
 
-                               
-                               
+
+
                             </td>
-                       
+
                         </tr>
                         @endforeach
                     </tbody>

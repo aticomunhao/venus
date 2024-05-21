@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Gerenciar Reuniões 
+    Gerenciar Reuniões
 @endsection
 
 @section('content')
@@ -55,7 +55,8 @@
             <br />
         </div style="text-align:right;">
         <hr />
-        <div class="table">Total reuniões: {{ $contar }}
+        <div class="table">Total reuniões: {{ $contar }}</div>
+        
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                 <thead style="text-align: center;">
                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
@@ -102,7 +103,7 @@
 
                             </td>
                     </tr>
-                    
+
 
                      <!-- Modal de Exclusao -->
                       <div class="modal fade" id="modal{{ $reuni->idr }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -121,10 +122,10 @@
                                 </div>
                             </div>
                         </div>
-                    </div> 
-                    
+                    </div>
+
                 {{-- Fim Modal de Exclusao --}}
-           
+
                     @endforeach
                 </tbody>
             </table>

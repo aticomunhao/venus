@@ -321,7 +321,7 @@ Route::get('/agendar-pti/{ide}/{idtt}', [GerenciarEncaminhamentoPTIController::c
 Route::get('/agendar-tratamento-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'tratamento']);
 Route::post('incluir-tratamento-pti/{idtr}', [GerenciarEncaminhamentoPTIController::class, 'tratar']);
 Route::get('/visualizar-enc-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'visualizar']);
-Route::post('/inativar-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'inative']);
+Route::any('/inativar-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'inative']);
 
 //Encaminhamento Integral
 
@@ -330,7 +330,7 @@ Route::get('/agendar-integral/{ide}/{idtt}', [GerenciarEncaminhamentoIntegralCon
 Route::get('/agendar-tratamento-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'tratamento']);
 Route::post('incluir-tratamento-integral/{idtr}', [GerenciarEncaminhamentoIntegralController::class, 'tratar']);
 Route::get('/visualizar-enc-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'visualizar']);
-Route::post('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'inative']);
+Route::any('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'inative']);
 
 
 // Dirigente PTI
