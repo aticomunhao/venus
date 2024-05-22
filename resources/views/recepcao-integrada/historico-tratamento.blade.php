@@ -85,7 +85,7 @@
                                 <td>{{$results->desctrat}}</td>
                                 <td>{{$results->nomeg}}</td>
                                 <td>{{$results->rm_inicio}}</td>
-                                <td>{{$results->rm_inicio}}</td>
+                                <td>{{$results->sala}}</td>
                                 <td>{{$results->tsenc}}</td>
                                 <td>{{$results->tpmotivo}}</td>
                             </tr>

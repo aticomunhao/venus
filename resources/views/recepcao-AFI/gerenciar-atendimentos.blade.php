@@ -19,11 +19,11 @@
             <div>
                 <form action="{{route('atedex')}}" class="form-horizontal mt-4" method="GET" >
                 <div class="row">
+                 
                     <div class="col-2">Data início
-                        <input class="form-control" type="date" name="dt_ini" value="{{ $data_inicio }}">
+                        <input class="form-control" type="date" id="" name="dt_ini" value="{{ $data_inicio ?? now()->toDateString() }}">
                     </div>
-                  
-                    
+                      
                     <div class="col-2">Atendido
                         <input class="form-control" type="text" id="3" name="assist" value="{{$assistido}}">
                     </div>

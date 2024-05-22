@@ -51,7 +51,12 @@ class GerenciarAtendimentoController extends Controller
                     
         $data_inicio = $request->input('dt_ini', Carbon::today()->toDateString());
 
-    
+       // Filtra pela data de início, se fornecida, caso contrário, usa a data atual
+    if ($request->has('dt_ini') && $request->input('dt_ini') != 'all') {
+        $lista->whereDate('dh_chegada', $request->input('dt_ini'));
+    } else {
+        $lista->whereDate('dh_chegada', Carbon::today()->toDateString());
+    }
 
         $data_inicio = $request->dt_ini;
 
