@@ -36,24 +36,22 @@ class GerenciarAtendimentoController extends Controller
 
 
         $lista = DB::table('atendimentos AS at')
-        ->distinct()
-                    ->select('at.id AS ida', 'p1.id AS idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo as nm_2', 'ps2.nome_completo as nm_4','at.id_atendente_pref AS idp', 'ps1.nome_completo as nm_3', 'at.id_atendente AS idat', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento', 's.numero AS nr_sala' )
-                    ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                    ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+        ->select('at.id as ida','p1.id as idas', 'p.nome_completo as nm_3', 'at.status_atendimento', 'at.id_prioridade', 'at.dh_chegada', 'tx.tipo', 'tp.descricao as prdesc', 'p1.nome_completo as nm_1', 'p2.nome_completo as nm_2', 'p3.nome_completo as nm_4', 'sl.numero as nr_sala', 'ts.descricao')
+        ->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')
+        ->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')
+        ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+        ->leftJoin('pessoas as p3', 'ass1.id_pessoa', 'p3.id')
+        ->leftJoin('tp_sexo as tx', 'at.pref_tipo_atendente', 'tx.id')
+        ->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')
+        ->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')
+        ->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')
+        ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')
+        ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
+  
+                    
+        $data_inicio = $request->input('dt_ini', Carbon::today()->toDateString());
 
-                    ->leftJoin('membro AS m', 'at.id_atendente', 'm.id_associado')
-                    ->leftJoin('associado AS ad1', 'm.id_associado', 'ad1.id')
-                    ->leftJoin('pessoas AS ps1', 'ad1.id_pessoa', 'ps1.id')
-                    ->leftJoin('membro AS m1', 'at.id_atendente_pref', 'm1.id_associado')
-                    ->leftJoin('associado AS ad2', 'm1.id_associado', 'ad2.id')
-                    ->leftJoin('pessoas AS ps2', 'ad1.id_pessoa', 'ps2.id')
-
-                    ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
-                    ->leftjoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
-                    ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                    ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-                    ->leftJoin('salas AS s', 'at.id_sala', 's.id');
-
+    
 
         $data_inicio = $request->dt_ini;
 
@@ -76,7 +74,7 @@ class GerenciarAtendimentoController extends Controller
 
 
 
-        $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy( 'at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC', 'at.id','ASC');
+        $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy( 'at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
 
         $lista = $lista->paginate(50);
 
@@ -247,7 +245,7 @@ class GerenciarAtendimentoController extends Controller
 
     ////PREPARA PARA EDITAR
     public function edit($ida){
-
+    
        $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
         if ($status > 1){
@@ -272,16 +270,7 @@ class GerenciarAtendimentoController extends Controller
                     ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
                     ->get();
 
-        $lista = DB::select("select
-                    p.id,
-                    p.ddd,
-                    p.celular,
-                    p.nome_completo,
-                    a.id_pessoa
-                    from pessoas p
-                    left join membro a on (a.id_pessoa = p.id)
-                    order by nome_completo
-                    ");
+        $lista = DB::table('pessoas')->get();
 
         //dd($lista);
 
@@ -326,13 +315,15 @@ class GerenciarAtendimentoController extends Controller
     ///////ALTERA UM ATENDIMENTO
     public function altera(Request $request, $ida){
 
+        $afi = DB::table('associado')->where('id_pessoa', $request->input('afi_p'))->first();
+   
 
         DB::table('atendimentos AS at')->where('at.id', $ida)->update([
 
             'id_assistido'=>$request->input('assist'),
             'id_representante'=>$request->input('repres'),
             'parentesco'=>$request->input('parent'),
-            'id_atendente_pref'=>$request->input('afi_p'),
+            'id_atendente_pref'=>$afi ? $afi->id : $request->input('afi_p'),
             'pref_tipo_atendente'=>$request->input('tipo_afi'),
             'id_prioridade'=>$request->input('priori')
 

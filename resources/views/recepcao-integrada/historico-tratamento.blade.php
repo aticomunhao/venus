@@ -92,18 +92,18 @@
                     @endforeach
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de presenças</legend>
                     Nr de faltas: {{$faul}}
-                    @foreach($list as $lists)
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
                                 <td class="col">NR</td>
-                               <td class="col">DATA</td>
-                               <td class="col">GRUPO</td>
+                                <td class="col">DATA</td>
+                                <td class="col">GRUPO</td>
                                 <td class="col">PRESENÇA</td>
                             </tr>
-
+                            
                         </thead>
                         <tbody>
+                        @foreach($list as $lists)
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$lists->idp}}</td>
                                  <td>{{$lists->data}}</td>
@@ -114,10 +114,10 @@
                                 <td style="background-color:#FA8072;">Não</td>
                                 @endif
                             </tr>
+                            @endforeach
                         </tbody>
                     </table>
                     <br/>
-                    @endforeach
                     <div class="row">
                         <div class="col">
                             <a class="btn btn-danger" href="/gerenciar-tratamentos" style="text-align:right;" role="button">Fechar</a>
