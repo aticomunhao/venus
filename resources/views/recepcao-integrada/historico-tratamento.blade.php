@@ -72,6 +72,7 @@
                                 <td class="col">TRATAMENTO</td>
                                 <td class="col">GRUPO</td>
                                 <td class="col">HORÁRIO</td>
+                                <td class="col">SALA</td>
                                 <td class="col">STATUS</td>
                                 <td class="col">MOTIVO</td>
                             </tr>
@@ -84,12 +85,14 @@
                                 <td>{{$results->desctrat}}</td>
                                 <td>{{$results->nomeg}}</td>
                                 <td>{{$results->rm_inicio}}</td>
+                                <td>{{$results->rm_inicio}}</td>
                                 <td>{{$results->tsenc}}</td>
                                 <td>{{$results->tpmotivo}}</td>
                             </tr>
                         </tbody>
                     </table>
                     @endforeach
+                    @if($list[0]->data)
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de presenças</legend>
                     Nr de faltas: {{$faul}}
                     <table class="table table-sm table-bordered table-striped">
@@ -117,6 +120,7 @@
                             @endforeach
                         </tbody>
                     </table>
+                    @endif
                     <br/>
                     <div class="row">
                         <div class="col">

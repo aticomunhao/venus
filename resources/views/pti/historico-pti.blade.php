@@ -72,6 +72,7 @@
                                 <td class="col">TRATAMENTO</td>
                                 <td class="col">GRUPO</td>
                                 <td class="col">HORÁRIO</td>
+                                <td class="col">SALA</td>
                                 <td class="col">STATUS</td>
                                 <td class="col">MOTIVO</td>
                             </tr>
@@ -84,26 +85,28 @@
                                 <td>{{$results->desctrat}}</td>
                                 <td>{{$results->nomeg}}</td>
                                 <td>{{$results->rm_inicio}}</td>
+                                <td>{{$results->sala}}</td>
                                 <td>{{$results->tsenc}}</td>
                                 <td>{{$results->tpmotivo}}</td>
                             </tr>
                         </tbody>
                     </table>
                     @endforeach
+                    @if($list[0]->data)
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de presenças</legend>
                     Nr de faltas: {{$faul}}
-                    @foreach($list as $lists)
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
                                 <td class="col">NR</td>
-                               <td class="col">DATA</td>
-                               <td class="col">GRUPO</td>
+                                <td class="col">DATA</td>
+                                <td class="col">GRUPO</td>
                                 <td class="col">PRESENÇA</td>
                             </tr>
-
+                            
                         </thead>
                         <tbody>
+                            @foreach($list as $lists)
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$lists->idp}}</td>
                                  <td>{{$lists->data}}</td>
@@ -114,10 +117,11 @@
                                 <td style="background-color:#FA8072;">Não</td>
                                 @endif
                             </tr>
+                            @endforeach
                         </tbody>
                     </table>
+                    @endif
                     <br/>
-                    @endforeach
                     <div class="row">
                         <div class="col">
                             <a class="btn btn-danger" href="/gerenciar-pti" style="text-align:right;" role="button">Fechar</a>

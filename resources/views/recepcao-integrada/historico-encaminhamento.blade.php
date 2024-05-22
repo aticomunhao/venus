@@ -94,7 +94,6 @@
                     @if(sizeof($list) != 0)
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de presenças</legend>
                     Nr de faltas: {{$faul}}
-                    @foreach($list as $lists)
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
@@ -102,23 +101,24 @@
                                 <td class="col">DATA</td>
                                 <td class="col">PRESENÇA</td>
                             </tr>
-
+                            
                         </thead>
                         <tbody>
+                            @foreach($list as $lists)
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$lists->idp}}</td>
                                 <td>{{date ('d-m-Y', strtotime($lists->data))}}</td>
 
                                 @if ($lists->presenca == true)
                                 <td style="background-color:#90EE90;">Sim</td>
-                                @else
+                                @elseif
                                 <td style="background-color:#FA8072;">Não</td>
                                 @endif
                             </tr>
+                            @endforeach
                         </tbody>
                     </table>
                     <br/>
-                    @endforeach
                     @endif
                     <div class="row">
                         <div class="col">

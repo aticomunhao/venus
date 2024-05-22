@@ -12,40 +12,37 @@ class AtendimentoApoioController extends Controller
      * Display a listing of the resource.
      */
 
-
-/*
-|--------------------------------------------------------------------------
-| Consertar tabela LOG
-|--------------------------------------------------------------------------
+    /*
+/--------------------------------------------------------------------------
+/              Controller de Atendentes de Apoio
+/
+/ #Função de Marcar o Horário ao qual os Atendentes devem comparecer à comunhão
+/--------------------------------------------------------------------------
 */
-
 
     public function index(Request $request)
     {
-        $pesquisaNome = $request->input('nome');
-        $pesquisaCpf = $request->input('cpf');
+        try {
+            $pesquisaNome = $request->input('nome');
+            $pesquisaCpf = $request->input('cpf');
 
-        $atendente = DB::table('atendente_apoio AS at')
-        ->select('at.id', 'p.nome_completo', 'p.cpf', 'tp.tipo')
-        ->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')
-        ->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id');
+            $atendente = DB::table('atendente_apoio AS at')->select('at.id', 'p.nome_completo', 'p.cpf', 'tp.tipo')->leftJoin('pessoas AS p', 'at.id_pessoa', '=', 'p.id')->leftJoin('tipo_status_pessoa AS tp', 'p.status', '=', 'tp.id');
 
+            //Pesquisa Mal Otimisada
+            if ($pesquisaNome) {
+                $atendente = $atendente->where('p.nome_completo', 'ilike', "%$pesquisaNome%");
+            } elseif ($pesquisaCpf) {
+                $atendente = $atendente->where('p.cpf', 'ilike', "%$pesquisaCpf%");
+            }
 
+            $atendente = $atendente->orderBy('p.status', 'desc')->orderBy('nome_completo')->get();
+            $conta = $atendente->count();
 
-        if ($pesquisaNome) {
-            $atendente =
-            $atendente->where('p.nome_completo', 'ilike', "%$pesquisaNome%");
-
-        } elseif ($pesquisaCpf) {
-            $atendente = $atendente
-                ->where('p.cpf', 'ilike', "%$pesquisaCpf%");
-
+            return view('/atendentes-apoio/gerenciar-atendente-apoio', compact('atendente', 'conta', 'pesquisaNome', 'pesquisaCpf'));
+        } catch (\Exception $e) {
+            $code = $e->getCode();
+            return view('tratamento-erro.erro-inesperado', compact('code'));
         }
-
-        $atendente = $atendente->orderBy('p.status', 'desc')->orderBy('nome_completo')->get();
-        $conta = $atendente->count();
-
-        return view('/atendentes-apoio/gerenciar-atendente-apoio', compact('atendente', 'conta', 'pesquisaNome', 'pesquisaCpf'));
     }
 
     /**
@@ -53,13 +50,16 @@ class AtendimentoApoioController extends Controller
      */
     public function create()
     {
-        $nomes = DB::table('pessoas')
-            ->where('status', '=', '1')
-            ->get();
+        try {
+            $nomes = DB::table('pessoas')->where('status', '=', '1')->get();
 
-        $dias = DB::table('tipo_dia')->get();
+            $dias = DB::table('tipo_dia')->get();
 
-        return view('/atendentes-apoio/incluir-atendente-apoio', compact('nomes', 'dias'));
+            return view('/atendentes-apoio/incluir-atendente-apoio', compact('nomes', 'dias'));
+        } catch (\Exception $e) {
+            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
+            return redirect()->back();
+        }
     }
 
     /**
@@ -69,29 +69,25 @@ class AtendimentoApoioController extends Controller
     {
 
         DB::beginTransaction();
-        try{
-
+        try {
             $req = $request->all();
             $dataHoje = Carbon::today()->toDateString();
 
-
-
-
-
+            //Insere o dado na Tabela e Retorna o novo ID
             $idAtendente = DB::table('atendente_apoio')->insertGetId([
                 'id_pessoa' => $request->input('nome'),
             ]);
 
             $i = 0;
 
+            //Para cada CheckBox insere os dados na tabela de dias, com o ID pego anteriormente
             foreach ($request->checkbox as $checked) {
-                $horaInicio = Carbon::createFromFormat(' G:i', ($req['dhFim'][$i]));
-                $horaFim =  Carbon::createFromFormat(' G:i', ($req['dhInicio'][$i]));
+                $horaInicio = Carbon::createFromFormat(' G:i', $req['dhFim'][$i]);
+                $horaFim = Carbon::createFromFormat(' G:i', $req['dhInicio'][$i]);
                 $horas = $horaFim->diffInMinutes($horaInicio, false);
 
-                if($horas <= 0){
-
-                    app('flasher')->addError("Um dos horários é inválido!");
+                if ($horas <= 0) {
+                    app('flasher')->addError('Um dos horários é inválido!');
                     DB::rollBack();
                     return back()->withInput();
                 }
@@ -107,20 +103,13 @@ class AtendimentoApoioController extends Controller
             }
             $i = 0;
 
-
             DB::commit();
             return redirect()->route('indexAtendenteApoio');
-
-}
-
-catch(\Exception $e){
-
-            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        } catch (\Exception $e) {
+            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
             DB::rollBack();
             return redirect()->back();
-
         }
-
     }
 
     /**
@@ -128,23 +117,26 @@ catch(\Exception $e){
      */
     public function show(string $id)
     {
-        $idp = DB::table('atendente_apoio')
-            ->where('id', '=', $id)
-            ->get();
+        try {
+            $idp = DB::table('atendente_apoio')->where('id', '=', $id)->get();
 
-        $nomes = DB::table('pessoas')
-            ->where('id', '=', $idp[0]->id_pessoa)
-            ->get();
+            $nomes = DB::table('pessoas')
+                ->where('id', '=', $idp[0]->id_pessoa)
+                ->get();
 
-        $historico = DB::table('atendente_apoio_dia as hs')
-            ->select(['hs.dt_inicio', 'hs.dt_fim', 'hs.dh_inicio', 'hs.dh_fim', 'd.nome'])
-            ->leftJoin('tipo_dia as d', 'hs.id_dia', '=', 'd.id')
-            ->where('id_atendente', '=', $id, 'and', 'dt_fim', '=', null)
-            ->get();
+            $historico = DB::table('atendente_apoio_dia as hs')
+                ->select(['hs.dt_inicio', 'hs.dt_fim', 'hs.dh_inicio', 'hs.dh_fim', 'd.nome'])
+                ->leftJoin('tipo_dia as d', 'hs.id_dia', '=', 'd.id')
+                ->where('id_atendente', '=', $id, 'and', 'dt_fim', '=', null)
+                ->get();
 
-        $dias = DB::table('tipo_dia')->get();
+            $dias = DB::table('tipo_dia')->get();
 
-        return view('/atendentes-apoio/visualizar-atendente-apoio', compact('nomes', 'dias', 'historico'));
+            return view('/atendentes-apoio/visualizar-atendente-apoio', compact('nomes', 'dias', 'historico'));
+        } catch (\Exception $e) {
+            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
+            return redirect()->back();
+        }
     }
 
     /**
@@ -152,25 +144,25 @@ catch(\Exception $e){
      */
     public function edit(string $id)
     {
-        $nomes = DB::table('atendente_apoio as at')
-            ->select('p.nome_completo', 'at.id', 'p.status')
-            ->leftJoin('pessoas as p', 'at.id_pessoa', '=', 'p.id')
-            ->where('at.id', '=', $id)
-            ->get();
+        try {
+            $nomes = DB::table('atendente_apoio as at')->select('p.nome_completo', 'at.id', 'p.status')->leftJoin('pessoas as p', 'at.id_pessoa', '=', 'p.id')->where('at.id', '=', $id)->get();
             $pessoas = DB::select('select id as idp, nome_completo from pessoas');
-        $tipo_status_pessoa = DB::select('select * from tipo_status_pessoa');
+            $tipo_status_pessoa = DB::select('select * from tipo_status_pessoa');
 
-        $dias = DB::table('tipo_dia')->get();
+            $dias = DB::table('tipo_dia')->get();
 
-        $diasHorarios = DB::table('atendente_apoio_dia')
-            ->where('id_atendente', '=', $id)
-            ->get();
-        $checkTheBox = [];
+            $diasHorarios = DB::table('atendente_apoio_dia')->where('id_atendente', '=', $id)->get();
+            $checkTheBox = [];
 
-        foreach ($diasHorarios as $dia) {
-            $checkTheBox[] = $dia->id_dia;
+            //transforma a variável diasHorarios em Array, substituto mal otimizado do PLUCK, trocar no futuro
+            foreach ($diasHorarios as $dia) {
+                $checkTheBox[] = $dia->id_dia;
+            }
+            return view('atendentes-apoio/editar-atendente-apoio', compact('nomes', 'dias', 'diasHorarios', 'checkTheBox'));
+        } catch (\Exception $e) {
+            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
+            return redirect()->back();
         }
-        return view('atendentes-apoio/editar-atendente-apoio', compact('nomes', 'dias', 'diasHorarios', 'checkTheBox'));
     }
 
     /**
@@ -178,10 +170,9 @@ catch(\Exception $e){
      */
     public function update(Request $request, string $id)
     {
-
         DB::beginTransaction();
-        try{
-
+        try {
+            //Apaga todos os dados da tabela criados com o método CREATE
             DB::table('atendente_apoio_dia')->where('id_atendente', '=', $id)->delete();
             $req = $request->all();
             $dataHoje = Carbon::today()->toDateString();
@@ -190,9 +181,8 @@ catch(\Exception $e){
 
             $i = 0;
 
+            //Refaz todo o Processo de Inserção
             foreach ($request->checkbox as $checked) {
-
-
                 DB::table('atendente_apoio_dia')->insert([
                     'id_atendente' => $idAtendente,
                     'id_dia' => $checked, // Estou assumindo que $checked é o ID do dia
@@ -204,20 +194,13 @@ catch(\Exception $e){
             }
             $i = 0;
 
-
             DB::commit();
             return redirect()->route('indexAtendenteApoio');
-
-}
-
-catch(\Exception $e){
-
-            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        } catch (\Exception $e) {
+            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
             DB::rollBack();
             return redirect()->back();
-
         }
-
     }
 
     /**

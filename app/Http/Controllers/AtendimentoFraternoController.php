@@ -14,56 +14,84 @@ use function Laravel\Prompts\select;
 
 class AtendimentoFraternoController extends Controller
 {
+    /*
+    /--------------------------------------------------------------------------
+    /              Controller de Atendimento Fraterno
+    /
+
+    / #Fuções:
+
+        +Mostrar quem está sendo atendido pelo específico atendente naquele momento
+        +Buscar um novo atendido, se tiver algum em espera, com o botão "Atender Agora" na view
+        +Buscar o hisórico de atendimentos do assistido e o do atendente
+        +Realizar todas as funções: chamar assistido, iniciar, tratamento, entrevistas, temátics, finalizar e reset
+
+    /--------------------------------------------------------------------------
+    */
 
     public function index(Request $request)
     {
 
+        try{
 
-        $atendente = session()->get('usuario.id_associado');
+            $atendente = session()->get('usuario.id_associado');
 
-        $pref_m = session()->get('usuario.sexo');
+            $pref_m = session()->get('usuario.sexo');
 
-        $nome = session()->get('usuario.nome');
+            $nome = session()->get('usuario.nome');
 
-        $now =  Carbon::now()->format('Y-m-d');
+            $now =  Carbon::now()->format('Y-m-d');
 
-        $grupo = DB::table('atendente_dia AS ad')
-        ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id' )
-        ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
+            $grupo = DB::table('atendente_dia AS ad')
+            ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id' )
+            ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
+
+            //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente, que não sejam AFE
+            $assistido = DB::table('atendimentos AS at')
+                                ->select('at.id AS idat', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido AS idas', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo','pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento')
+                                ->leftJoin('associado AS a', 'at.id_atendente', 'a.id')
+                                ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
+                                ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+                                ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+                                ->leftJoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+                                ->leftJoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
+                                ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
+                                ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+                                ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+                                ->where('at.status_atendimento', '<', 5 )
+                                ->where('at.afe',  null)
+                                ->Where('at.id_atendente', $atendente)
+                                ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
+                                ->orderby('status_atendimento', 'ASC')
+                                ->get();
 
 
-        $assistido = DB::table('atendimentos AS at')
-                            ->select('at.id AS idat', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido AS idas', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo','pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento')
-                            ->leftJoin('associado AS a', 'at.id_atendente', 'a.id')
-                            ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
-                            ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                            ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                            ->leftJoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-                            ->leftJoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-                            ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
-                            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                            ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-                            ->where('at.status_atendimento', '<', 5 )
-                            ->where('at.afe',  null)
-                            ->Where('at.id_atendente', $atendente)
-                            ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
-                            ->orderby('status_atendimento', 'ASC')
-                            ->get();
 
+                return view ('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
 
+        }
 
-            return view ('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
+        catch(\Exception $e){
+
+                    $code = $e->getCode( );
+                    return view('tratamento-erro.erro-inesperado', compact('code'));
+                        }
+
 
         }
 
         public function atende_agora()
         {
 
+            DB::beginTransaction();
+        try{
+
             $now =  Carbon::today();
             $no =  Carbon::today()->addDay(1);
             $atendente = session()->get('usuario.id_associado');
             $pref_m = session()->get('usuario.sexo');
 
+            //Conta todos os atendimentos do específico atendente, que não sejam AFE e não estejam finalizados
             $atendendo = DB::table('atendimentos AS at')
             ->leftjoin('membro AS m', 'at.id_atendente', 'm.id' )
             ->leftjoin('associado AS a', 'm.id_associado', 'a.id' )
@@ -73,8 +101,10 @@ class AtendimentoFraternoController extends Controller
             ->where('at.status_atendimento', '<', 5)
             ->count();
 
+            //Conta quantos atendimentos estão Aguardando Atendimento
             $assistido = DB::table('atendimentos')->where('status_atendimento', 1)->where('afe', null)->count();
 
+            //traz os dados de atendente_dia, no intervalo entre o começo do dia de hoje e o fim de ontem, onde não estejam finalizados, para o atendente
             $sala = DB::table('atendente_dia AS atd')
             ->where('dh_inicio','>', $now )
             ->where('dh_inicio','<', $no )
@@ -82,7 +112,7 @@ class AtendimentoFraternoController extends Controller
             ->where('id_associado', $atendente )
             ->value('id_sala');
 
-
+            
             if ($atendendo > 0){
 
                 app('flasher')->addError('Você não pode atender dois assistidos ao mesmo tempo.');
@@ -103,6 +133,7 @@ class AtendimentoFraternoController extends Controller
 
             }elseif ($atendendo < 1 && $sala > 0){
 
+                    //Pega todos os atendimentos em ordem de status, prioridade e chegada, apenas um por vez, e troca o status para analisando e adiciona o atendente a ele
                     DB::table('atendimentos')
                             ->where('afe', null)
                             ->whereNull('id_atendente_pref')
@@ -124,13 +155,27 @@ class AtendimentoFraternoController extends Controller
 
             }
 
+DB::commit();
+}
+
+catch(\Exception $e){
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
         }
 
 
+        }
+
+        //Botão Analisar na VIEW
         public function history($idat, $idas)
         {
+            DB::beginTransaction();
+        try{
 
-           $atendimentos = DB::table('atendimentos AS at')->where('id_assistido', $idas)->get('id');
+            $atendimentos = DB::table('atendimentos AS at')->where('id_assistido', $idas)->get('id');
             //dd($atendimentos);
 
 
@@ -177,6 +222,7 @@ class AtendimentoFraternoController extends Controller
                         ->orderBy('at.dh_chegada', 'desc')
                         ->get();
 
+            //Pega uma variável e popula com dados de duas tabelas diferentes
             foreach($analisa as $key => $teste){
                 $trata = DB::table('encaminhamento AS enc')
                             ->select('tt.descricao AS tdt')
@@ -219,7 +265,7 @@ class AtendimentoFraternoController extends Controller
                 return redirect('/atendendo');
 
             }
-
+            //99% dos casos
             if ($atendendo = $atendente && $status > 1)
             {
                 app('flasher')->addInfo('Retomando análise.');
@@ -227,7 +273,7 @@ class AtendimentoFraternoController extends Controller
                 return view ('/atendimento-assistido/historico-assistido', compact('atendente', 'analisa'));
 
             }
-
+            //Caso inútil, já que é impossivel ter um atendente para um atendimento com atendente em status 1, mas precaução
             if($atendendo = $atendente && $status = 1)
             {
                 DB::table('atendimentos AS at')
@@ -243,12 +289,28 @@ class AtendimentoFraternoController extends Controller
             }
 
             return view ('/atendimento-assistido/historico-assistido', compact('atendente', 'analisa', 'grupo'));
+
+DB::commit();
+}
+
+catch(\Exception $e){
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
+
+           
         }
 //dd($assistido);
 
-
+        //Botão Chamar Assistido na VIEW
         public function fimanalise($idat)
         {
+
+            DB::beginTransaction();
+        try{
 
             $atendente = session()->get('usuario.id_associado');
 
@@ -269,6 +331,8 @@ class AtendimentoFraternoController extends Controller
 
             }
             if ($sit = 1){
+                //Atualiza o status para Aguardando Assistido, atualizar o id_atendente não muda nada, 
+                // logo que o usuário só ve atendimentos dele, atualizando sempre pro mesmo valor original
                 DB::table('atendimentos AS at')
                         ->where('status_atendimento', '=', 2)
                         ->where('at.id', $idat)
@@ -282,10 +346,25 @@ class AtendimentoFraternoController extends Controller
 
             return redirect()->back();
 
-        }
+        DB::commit();
+}
 
+catch(\Exception $e){
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
+            
+
+        }
+        // Botão Iniciar na VIEW
         public function inicio($idat)
         {
+
+            DB::beginTransaction();
+        try{
 
             $now =  Carbon::now()->format('Y-m-d H:m:d');
 
@@ -299,7 +378,8 @@ class AtendimentoFraternoController extends Controller
                 return redirect()->back();
 
             }
-            elseif (DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento') <= 3){
+            // Troca o Status do Atendimento para Em Atendimento
+            elseif (DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento') < 4 ){
 
                 DB::table('atendimentos AS at')
                     ->where('at.id', $idat)
@@ -314,13 +394,28 @@ class AtendimentoFraternoController extends Controller
 
             }
 
+DB::commit();
+}
+
+catch(\Exception $e){
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
+
+            
+
         }
 
-
+        //Método CREATE do BotãoTratamento
         public function tratar($idat, $idas)
         {
 
-            $sit = DB::table('atendimentos AS at')
+            try{
+
+                $sit = DB::table('atendimentos AS at')
                         ->where('at.id', $idat)
                         ->where('status_atendimento', '<', 4)
                         ->count();
@@ -330,6 +425,7 @@ class AtendimentoFraternoController extends Controller
                         ->where('p.id', $idas)
                         ->get();
 
+            // Confere se tem algum encaminhamento de tratamento já criado
             $verifi = DB::table('encaminhamento AS enc')
                         ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
                         ->where('at.id', $idat)
@@ -354,6 +450,7 @@ class AtendimentoFraternoController extends Controller
 
                 return view('/atendimento-assistido/tratamentos', compact('assistido'));
 
+                //Se já tiver encaminhamentos de tratamento, trava para nao reinserir dados 
             }elseif($verifi > 0){
 
                 app('flasher')->addError('Os tratamentos já foram registrados para o atendido '. $atendido[0]->nm);
@@ -361,6 +458,16 @@ class AtendimentoFraternoController extends Controller
                 return redirect()->back();
 
             }
+            
+            }
+            
+            catch(\Exception $e){
+            
+                        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+                    return redirect()->back();
+                        
+                    } 
+            
 
 
         }
