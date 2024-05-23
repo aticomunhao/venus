@@ -245,11 +245,11 @@ class GerenciarTratamentosController extends Controller
     }
 
     public function job() {
-        Faltas::dispatch();
-        LimiteFalta::dispatch();
-        DiasCronograma::dispatch();
         DiasCronogramaOntem::dispatch();
+        DiasCronograma::dispatch();
+        LimiteFalta::dispatch();
         FimSemanas::dispatch();
+        Faltas::dispatch();
         return redirect()->back();
     }
 

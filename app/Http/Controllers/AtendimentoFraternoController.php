@@ -42,6 +42,8 @@ class AtendimentoFraternoController extends Controller
 
             $now =  Carbon::now()->format('Y-m-d');
 
+            
+
             $grupo = DB::table('atendente_dia AS ad')
             ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id' )
             ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
@@ -60,7 +62,7 @@ class AtendimentoFraternoController extends Controller
                                 ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
                                 ->where('at.status_atendimento', '<', 5 )
                                 ->where('at.afe',  null)
-                                ->Where('at.id_atendente', $atendente)
+                                ->where('at.id_atendente', $atendente)
                                 ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
                                 ->orderby('status_atendimento', 'ASC')
                                 ->get();
@@ -83,7 +85,7 @@ class AtendimentoFraternoController extends Controller
         public function atende_agora()
         {
 
-            DB::beginTransaction();
+           DB::beginTransaction();
         try{
 
             $now =  Carbon::today();
@@ -102,7 +104,16 @@ class AtendimentoFraternoController extends Controller
             ->count();
 
             //Conta quantos atendimentos estão Aguardando Atendimento
-            $assistido = DB::table('atendimentos')->where('status_atendimento', 1)->where('afe', null)->count();
+            $atende = DB::table('atendimentos')->where('status_atendimento', 1)->where('afe', null)->where('status_atendimento', 1)->whereNull('id_atendente_pref')->whereNull('pref_tipo_atendente')->pluck('id');
+            $atende=json_decode(json_encode($atende), true);
+            $atende1 = DB::table('atendimentos')->where('status_atendimento', 1)->where('afe', null)->where('id_atendente_pref', $atendente)->pluck('id');
+            $atende1=json_decode(json_encode($atende1), true);
+            $atende2 = DB::table('atendimentos')->where('status_atendimento', 1)->where('afe', null)->where('pref_tipo_atendente', $pref_m )->pluck('id');
+            $atende2=json_decode(json_encode($atende2), true);
+            $atendeFinal = array_merge($atende, $atende1, $atende2);
+            
+            $assistido = count($atendeFinal);
+            
 
             //traz os dados de atendente_dia, no intervalo entre o começo do dia de hoje e o fim de ontem, onde não estejam finalizados, para o atendente
             $sala = DB::table('atendente_dia AS atd')
@@ -134,12 +145,11 @@ class AtendimentoFraternoController extends Controller
             }elseif ($atendendo < 1 && $sala > 0){
 
                     //Pega todos os atendimentos em ordem de status, prioridade e chegada, apenas um por vez, e troca o status para analisando e adiciona o atendente a ele
+                  
+               
+
                     DB::table('atendimentos')
-                            ->where('afe', null)
-                            ->whereNull('id_atendente_pref')
-                            ->orWhere('id_atendente_pref', $atendente)
-                            ->whereNull('pref_tipo_atendente')
-                            ->orWhere('pref_tipo_atendente', $pref_m )
+                            ->whereIn('id',$atendeFinal)
                             ->orderby('status_atendimento', 'ASC')->orderby('id_prioridade')->orderBy('dh_chegada')
                             ->limit(1)
                             ->update([
@@ -151,11 +161,11 @@ class AtendimentoFraternoController extends Controller
 
                 app('flasher')->addSuccess('O assistido foi selecionado com sucesso.');
 
+                DB::commit();
                 return redirect('/atendendo');
 
             }
 
-DB::commit();
 }
 
 catch(\Exception $e){
@@ -172,7 +182,7 @@ catch(\Exception $e){
         //Botão Analisar na VIEW
         public function history($idat, $idas)
         {
-            DB::beginTransaction();
+          
         try{
 
             $atendimentos = DB::table('atendimentos AS at')->where('id_assistido', $idas)->get('id');
@@ -290,13 +300,12 @@ catch(\Exception $e){
 
             return view ('/atendimento-assistido/historico-assistido', compact('atendente', 'analisa', 'grupo'));
 
-DB::commit();
+
 }
 
 catch(\Exception $e){
 
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
-            DB::rollBack();
 	    return redirect()->back();
 
         } 
@@ -340,13 +349,13 @@ catch(\Exception $e){
                 'status_atendimento' => 3,
                 'id_atendente' => $atendente
             ]);
-            }
-
-            app('flasher')->addSuccess('O status do atendimento foi alterado para "Aguardando o assistido".');
-
+        }
+        
+        app('flasher')->addSuccess('O status do atendimento foi alterado para "Aguardando o assistido".');
+        
+        DB::commit();
             return redirect()->back();
 
-        DB::commit();
 }
 
 catch(\Exception $e){
@@ -390,11 +399,11 @@ catch(\Exception $e){
 
             app('flasher')->addSuccess('O status do atendimento foi alterado para "Em atendimento".');
 
+            DB::commit();
             return redirect()->back();
 
             }
 
-DB::commit();
 }
 
 catch(\Exception $e){
