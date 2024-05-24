@@ -37,7 +37,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
         $afe = DB::table('associado')->where('id_pessoa', session()->get('usuario.id_pessoa'))
         ->first();
-    
+
 
         $assistido = DB::table('atendimentos AS at')
             ->select('at.id AS idat', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido AS idas', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento')
@@ -83,7 +83,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
 
 
-        $assistido = DB::table('atendimentos')->where('status_atendimento', '<', 5)->where('afe', true)->count();
+        $assistido = DB::table('atendimentos')->where('status_atendimento', '<', 5)->where('afe', true)->where('id_atendente', $atendente)->count();
 
         $sala = DB::table('atendente_dia AS atd')
             ->where('dh_inicio', $now)
@@ -125,72 +125,73 @@ class AtendimentoFraternoEspecificoController extends Controller
     {
 
         $atendimentos = DB::table('atendimentos AS at')->where('id_assistido', $idas)->get('id');
-
+        //dd($atendimentos);
 
 
         $analisa = DB::table('atendimentos AS at')
-            ->select('at.id AS ida', 'at.observacao', 'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'ps1.nome_completo AS nm_3', 'at.id_atendente', 'ps2.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao AS tst', 'tsx.tipo', 'pa.nome', 'p1.dt_nascimento',  't.nm_tca', 't1.nm_tca AS t1', 't2.nm_tca AS t2', 't3.nm_tca AS t3', 't4.nm_tca AS t4', 't5.nm_tca AS t5', 't6.nm_tca AS t6', 't7.nm_tca AS t7', 't8.nm_tca AS t8', 't9.nm_tca AS t9', 't10.nm_tca AS t10', 't11.nm_tca AS t11', 't12.nm_tca AS t12', 't13.nm_tca AS t13', 't14.nm_tca AS t14', 't15.nm_tca AS t15', 't16.nm_tca AS t16', 't17.nm_tca AS t17', 't18.nm_tca AS t18', 't19.nm_tca AS t19')
+                    ->select('at.id AS ida', 'at.observacao', 'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'ps1.nome_completo AS nm_3', 'at.id_atendente', 'ps2.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao AS tst', 'tsx.tipo', 'pa.nome', 'p1.dt_nascimento',  't.nm_tca', 't1.nm_tca AS t1', 't2.nm_tca AS t2', 't3.nm_tca AS t3','t4.nm_tca AS t4','t5.nm_tca AS t5','t6.nm_tca AS t6','t7.nm_tca AS t7','t8.nm_tca AS t8','t9.nm_tca AS t9','t10.nm_tca AS t10','t11.nm_tca AS t11','t12.nm_tca AS t12','t13.nm_tca AS t13','t14.nm_tca AS t14','t15.nm_tca AS t15','t16.nm_tca AS t16','t17.nm_tca AS t17','t18.nm_tca AS t18','t19.nm_tca AS t19')
 
-            ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
-            ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-            ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+                    ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
+                    ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+                    ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
 
-            ->leftJoin('membro AS m', 'at.id_atendente', 'm.id_associado')
-            ->leftJoin('associado AS ad1', 'm.id_associado', 'ad1.id')
-            ->leftJoin('pessoas AS ps1', 'ad1.id_pessoa', 'ps1.id')
-            ->leftJoin('membro AS m1', 'at.id_atendente_pref', 'm1.id_associado')
-            ->leftJoin('associado AS ad2', 'm1.id_associado', 'ad2.id')
-            ->leftJoin('pessoas AS ps2', 'ad1.id_pessoa', 'ps2.id')
 
-            ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
-            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-            ->leftJoin('tp_sexo AS tsx', 'p1.sexo', 'tsx.id')
-            ->leftJoin('registro_tema AS rt', 'at.id', 'rt.id_atendimento')
-            ->leftJoin('tca AS t', 'rt.ies', 't.id')
-            ->leftJoin('tca AS t1', 'rt.obs', 't1.id')
-            ->leftJoin('tca AS t2', 'rt.coj', 't2.id')
-            ->leftJoin('tca AS t3', 'rt.fam', 't3.id')
-            ->leftJoin('tca AS t4', 'rt.soc', 't4.id')
-            ->leftJoin('tca AS t5', 'rt.prf', 't5.id')
-            ->leftJoin('tca AS t6', 'rt.sau', 't6.id')
-            ->leftJoin('tca AS t7', 'rt.pdg', 't7.id')
-            ->leftJoin('tca AS t8', 'rt.sex', 't8.id')
-            ->leftJoin('tca AS t9', 'rt.adp', 't9.id')
-            ->leftJoin('tca AS t10', 'rt.deq', 't10.id')
-            ->leftJoin('tca AS t11', 'rt.est', 't11.id')
-            ->leftJoin('tca AS t12', 'rt.abo', 't12.id')
-            ->leftJoin('tca AS t13', 'rt.sui', 't13.id')
-            ->leftJoin('tca AS t14', 'rt.dou', 't14.id')
-            ->leftJoin('tca AS t15', 'rt.son', 't15.id')
-            ->leftJoin('tca AS t16', 'rt.esp', 't16.id')
-            ->leftJoin('tca AS t17', 'rt.dpr', 't17.id')
-            ->leftJoin('tca AS t18', 'rt.dqu', 't18.id')
-            ->leftJoin('tca AS t19', 'rt.dts', 't19.id')
-            ->leftJoin('tca AS t20', 'rt.maf', 't20.id')
-            ->where('at.id_assistido', $idas)
-            ->orderBy('at.dh_chegada', 'desc')
-            ->get();
+                    ->leftJoin('associado AS ad1', 'at.id_atendente', 'ad1.id')
+                    ->leftJoin('pessoas AS ps1', 'ad1.id_pessoa', 'ps1.id')
+                    ->leftJoin('membro AS m1', 'at.id_atendente_pref', 'm1.id_associado')
+                    ->leftJoin('associado AS ad2', 'm1.id_associado', 'ad2.id')
+                    ->leftJoin('pessoas AS ps2', 'ad1.id_pessoa', 'ps2.id')
 
-        foreach ($analisa as $key => $teste) {
+                    ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
+                    ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+                    ->leftJoin('tp_sexo AS tsx', 'p1.sexo', 'tsx.id')
+                    ->leftJoin('registro_tema AS rt', 'at.id', 'rt.id_atendimento')
+                    ->leftJoin('tca AS t', 'rt.ies', 't.id')
+                    ->leftJoin('tca AS t1', 'rt.obs', 't1.id')
+                    ->leftJoin('tca AS t2', 'rt.coj', 't2.id')
+                    ->leftJoin('tca AS t3', 'rt.fam', 't3.id')
+                    ->leftJoin('tca AS t4', 'rt.soc', 't4.id')
+                    ->leftJoin('tca AS t5', 'rt.prf', 't5.id')
+                    ->leftJoin('tca AS t6', 'rt.sau', 't6.id')
+                    ->leftJoin('tca AS t7', 'rt.pdg', 't7.id')
+                    ->leftJoin('tca AS t8', 'rt.sex', 't8.id')
+                    ->leftJoin('tca AS t9', 'rt.adp', 't9.id')
+                    ->leftJoin('tca AS t10', 'rt.deq', 't10.id')
+                    ->leftJoin('tca AS t11', 'rt.est', 't11.id')
+                    ->leftJoin('tca AS t12', 'rt.abo', 't12.id')
+                    ->leftJoin('tca AS t13', 'rt.sui', 't13.id')
+                    ->leftJoin('tca AS t14', 'rt.dou', 't14.id')
+                    ->leftJoin('tca AS t15', 'rt.son', 't15.id')
+                    ->leftJoin('tca AS t16', 'rt.esp', 't16.id')
+                    ->leftJoin('tca AS t17', 'rt.dpr', 't17.id')
+                    ->leftJoin('tca AS t18', 'rt.dqu', 't18.id')
+                    ->leftJoin('tca AS t19', 'rt.dts', 't19.id')
+                    ->leftJoin('tca AS t20', 'rt.maf', 't20.id')
+                    ->where('at.id_assistido', $idas)
+                    ->orderBy('at.dh_chegada', 'desc')
+                    ->get();
+
+        //Pega uma variável e popula com dados de duas tabelas diferentes
+        foreach($analisa as $key => $teste){
             $trata = DB::table('encaminhamento AS enc')
-                ->select('tt.descricao AS tdt')
-                ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-                ->where('enc.id_atendimento', $teste->ida)
-                ->whereNotNull('enc.id_tipo_tratamento')
-                ->get();
-            $teste->tratamentos = $trata;
+                        ->select('tt.descricao AS tdt')
+                        ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+                        ->where('enc.id_atendimento', $teste->ida)
+                        ->whereNotNull('enc.id_tipo_tratamento')
+                        ->get();
+             $teste->tratamentos=$trata;
 
-            $entre = DB::table('encaminhamento AS enc')
-                ->select('te.descricao AS tde')
-                ->leftJoin('tipo_entrevista AS te', 'enc.id_tipo_entrevista', 'te.id')
-                ->where('enc.id_atendimento', $teste->ida)
-                ->whereNotNull('enc.id_tipo_entrevista')
-                ->get();
-            $teste->entrevistas = $entre;
+             $entre = DB::table('encaminhamento AS enc')
+                        ->select('te.descricao AS tde')
+                        ->leftJoin('tipo_entrevista AS te', 'enc.id_tipo_entrevista', 'te.id')
+                        ->where('enc.id_atendimento', $teste->ida)
+                        ->whereNotNull('enc.id_tipo_entrevista')
+                        ->get();
+              $teste->entrevistas=$entre;
         }
 
 
-
+        //dd($analisa);
         $now = Carbon::now()->format('Y-m-d H:m:s');
 
         $atendente = session()->get('usuario.id_associado');
@@ -200,34 +201,54 @@ class AtendimentoFraternoEspecificoController extends Controller
         $grupo = DB::table('atendente_dia AS ad')->select('ad.id_grupo')->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente);
 
         $atendendo = DB::table('atendimentos AS at')->where('at.id', $idat)->value('id_atendente');
-
+    //dd($atendendo);
         $status = DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento');
 
-        $sit = DB::table('atendimentos AS at')->where('at.id_atendente', $atendente)->where('at.status_atendimento', '<', 5)->count();
+        $sit = DB::table('atendimentos AS at')->where('at.id_atendente', $atendente)->where('at.status_atendimento','<',5)->count();
 
 
+        if ($sit > 0 && $atendendo == null)
+        {
+            app('flasher')->addError('Não é permitido atender dois assistidos ao mesmo tempo.');
 
+            return redirect('/atendendo-afe');
 
-        if ($atendendo = $atendente && $status > 1) {
+        }
+        //99% dos casos
+        if ($atendendo = $atendente && $status > 1)
+        {
             app('flasher')->addInfo('Retomando análise.');
 
-            return view('/atendente-fraterno-especifico/historico-afe', compact('atendente', 'analisa'));
+            return view ('/atendente-fraterno-especifico/historico-afe', compact('atendente', 'analisa'));
+
         }
-
-        if ($atendendo = $atendente && $status = 1) {
+        //Caso inútil, já que é impossivel ter um atendente para um atendimento com atendente em status 1, mas precaução
+        if($atendendo = $atendente && $status = 1)
+        {
             DB::table('atendimentos AS at')
-                ->where('status_atendimento', '=', 1)
-                ->where('at.id', $idat)
-                ->update([
-                    'status_atendimento' => 2,
-                    'id_atendente' => $atendente
-                ]);
+                    ->where('status_atendimento', '=', 1)
+                    ->where('at.id', $idat)
+                    ->update([
+                        'status_atendimento' => 2,
+                        'id_atendente' => $atendente
+                    ]);
 
-            app('flasher')->addSuccess('O status do atendimento foi alterado para em análise.');
+        app('flasher')->addSuccess('O status do atendimento foi alterado para em análise.');
+
         }
 
         return view('/atendente-fraterno-especifico/historico-afe', compact('atendente', 'analisa', 'grupo'));
+
     }
+
+
+
+
+
+
+
+
+
 
 
 

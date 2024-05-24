@@ -61,7 +61,7 @@ class Faltas implements ShouldQueue
 
         foreach ($lista as $item){
         $id_dia_cronograma =  DB::table('dias_cronograma')->where('data', $data_atual)->select('id')->where('id_cronograma', $item->id_reuniao)->first();
-
+      
         DB::table('presenca_cronograma AS dt')
         ->leftJoin('tratamento AS tr', 'dt.id', 'dt.id_tratamento')
         ->whereNotIn('id_tratamento', $inseridos)

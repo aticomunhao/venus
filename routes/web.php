@@ -5,11 +5,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-
-
-
-
-
 // Controllers
 use App\Http\Controllers\AtendenteController;
 use App\Http\Controllers\AtendimentoApoioController;
@@ -43,47 +38,40 @@ use App\Http\Controllers\PresencaController;
 |--------------------------------------------------------------------------
 */
 
-
-
 Auth::routes();
 Route::get('/logout', 'LexaAdmin@logout');
 
-Route::fallback(function() {
-    return view('tratamento-erro.erro-404');});
+Route::fallback(function () {
+    return view('tratamento-erro.erro-404');
+});
 
 Route::get('/email/remessa-email', 'RecuperaSenhaController@index');
 Route::post('/email/remessa-email', 'RecuperaSenhaController@validar');
 
-
 Route::get('/', [LoginController::class, 'index']);
 Route::any('/login/home', [LoginController::class, 'valida']);
 
-
 //Route::name('usuario')->middleware('validaUsuario')->group(function () {
-    Route::any('/login/valida', [LoginController::class, 'validaUserLogado'])->name('home.post');
-    Route::get('/gerenciar-usuario', [UsuarioController::class, 'index']);
+Route::any('/login/valida', [LoginController::class, 'validaUserLogado'])->name('home.post');
+Route::get('/gerenciar-usuario', [UsuarioController::class, 'index']);
 
-    Route::get('/usuario-incluir', [UsuarioController::class, 'create']);
-    Route::get('/cadastrar-usuarios/configurar/{id}', [UsuarioController::class, 'configurarUsuario']);
-    Route::post('/cad-usuario/inserir', [UsuarioController::class, 'store']);
-    Route::get('/usuario/excluir/{id}', [UsuarioController::class, 'destroy']);
-    Route::get('/usuario/alterar/{id}', [UsuarioController::class, 'edit']);
-    Route::put('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
-    Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
-
+Route::get('/usuario-incluir', [UsuarioController::class, 'create']);
+Route::get('/cadastrar-usuarios/configurar/{id}', [UsuarioController::class, 'configurarUsuario']);
+Route::post('/cad-usuario/inserir', [UsuarioController::class, 'store']);
+Route::get('/usuario/excluir/{id}', [UsuarioController::class, 'destroy']);
+Route::get('/usuario/alterar/{id}', [UsuarioController::class, 'edit']);
+Route::put('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
+Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
 
 //});
 
-    Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
-    Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
+Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
+Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
 
-    // Pessoas
-    Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
-    Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
-    Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name('pesdes');
-
-
-
+// Pessoas
+Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
+Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
+Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name('pesdes');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -125,9 +113,6 @@ Route::get('/atender', [AtendimentoFraternoController::class, 'atende_agora'])->
 Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
 Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
 
-
-
-
 // Atendentes Misc/Testes
 Route::get('/visualizar-atendendes/{id}', [AtendenteController::class, 'show_detalhes_atendente'])->name('show_atendente');
 
@@ -161,7 +146,7 @@ Route::any('/inativar-presenca/{id}', [PresencaController::class, 'destroy'])->n
 
 //Atendimento Fraterno Específico
 
-Route::get('/atendendo-afe', [AtendimentoFraternoEspecificoController::class, 'index'])->name('');
+Route::get('/atendendo-afe', [AtendimentoFraternoEspecificoController::class, 'index'])->name('index.atendendoafe');
 Route::get('/historico-afe/{idat}/{idas}', [AtendimentoFraternoEspecificoController::class, 'history'])->name('');
 Route::get('/fim-analise-afe/{idat}', [AtendimentoFraternoEspecificoController::class, 'fimanalise'])->name('');
 Route::get('/iniciar-atendimento-afe/{idat}', [AtendimentoFraternoEspecificoController::class, 'inicio'])->name('');
@@ -179,7 +164,6 @@ Route::get('/final-afe/{idat}', [AtendimentoFraternoEspecificoController::class,
 Route::post('/finalizar-afe/{idat}', [AtendimentoFraternoEspecificoController::class, 'finaliza'])->name('');
 Route::any('/reset/{idat}', [AtendimentoFraternoEspecificoController::class, 'reset'])->name('');
 
-
 //Entrevista
 
 Route::get('/gerenciar-entrevistas', [GerenciarEntrevistaController::class, 'index'])->name('gerenciamento');
@@ -194,18 +178,14 @@ Route::any('/finalizar-entrevista/{id}', [GerenciarEntrevistaController::class, 
 Route::any('/nao-aceito-entrevista/{id}', [GerenciarEntrevistaController::class, 'fim'])->name('');
 Route::any('/inativar-entrevista/{id}/{tp}', [GerenciarEntrevistaController::class, 'inativar'])->name('');
 
-
-
-
 // Grupos
 Route::get('/gerenciar-grupos', [GrupoController::class, 'index'])->name('nomes');
-Route::get('criar-grupos', [GrupoController::class,'create'])->name('');
-Route::post('incluir-grupos', [GrupoController::class,'store']);
-Route::get('/editar-grupos/{id}', [GrupoController::class,'edit']);
-Route::post('/atualizar-grupos/{id}', [GrupoController::class,'update'])->name('');
-Route::any('/deletar-grupos/{id}', [GrupoController::class,'destroy']);
+Route::get('criar-grupos', [GrupoController::class, 'create'])->name('');
+Route::post('incluir-grupos', [GrupoController::class, 'store']);
+Route::get('/editar-grupos/{id}', [GrupoController::class, 'edit']);
+Route::post('/atualizar-grupos/{id}', [GrupoController::class, 'update'])->name('');
+Route::any('/deletar-grupos/{id}', [GrupoController::class, 'destroy']);
 Route::get('/visualizar-grupos/{id}', [GrupoController::class, 'show'])->name('');
-
 
 // Fato
 
@@ -224,7 +204,6 @@ Route::get('/criar-salas', [SalaController::class, 'criar'])->name('');
 Route::post('/incluir-salas', [SalaController::class, 'store']);
 Route::any('/deletar-salas/{id}', [SalaController::class, 'destroy'])->name('');
 Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
-
 
 //Membros
 Route::get('/gerenciar-membro/{id}', [MembroController::class, 'index'])->name('lista');
@@ -248,7 +227,6 @@ Route::post('/incluir-mediunidade', [MediunidadePessoaController::class, 'store'
 Route::any('/deletar-mediunidade/{id}', [MediunidadePessoaController::class, 'destroy'])->name('');
 Route::get('/visualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'show'])->name('');
 
-
 /*
 |--------------------------------------------------------------------------
 | Moisés Routes
@@ -263,7 +241,6 @@ Route::post('incluir-tratamento/{idtr}', [GerenciarEncaminhamentoController::cla
 Route::get('/visualizar-enc/{ide}', [GerenciarEncaminhamentoController::class, 'visualizar'])->name('gecvis');
 Route::post('/inativar/{ide}', [GerenciarEncaminhamentoController::class, 'inative'])->name('gecina');
 
-
 Route::get('/gerenciar-tratamentos', [GerenciarTratamentosController::class, 'index'])->name('gtcdex');
 Route::get('/visualizar-tratamento/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
 Route::any('/presenca-tratatamento/{idtr}', [GerenciarTratamentosController::class, 'presenca']);
@@ -275,10 +252,6 @@ Route::any('/incluir-avulso', [GerenciarTratamentosController::class, 'createAvu
 Route::any('/armazenar-avulso', [GerenciarTratamentosController::class, 'storeAvulso']);
 Route::any('/inativar-tratamento/{id}', [GerenciarTratamentosController::class, 'destroy']);
 
-
-
-
-
 Route::put('/k', [GerenciarTratamentosController::class, ''])->name('');
 
 //REUNIÃO MEDIÚNICA
@@ -289,8 +262,6 @@ Route::get('/editar-reuniao/{id}', [ReuniaoMediunicaController::class, 'edit']);
 Route::any('/atualizar-reuniao/{id}', [ReuniaoMediunicaController::class, 'update']);
 Route::any('/excluir-reuniao/{id}', [ReuniaoMediunicaController::class, 'destroy']);
 Route::any('/visualizar-reuniao/{id}', [ReuniaoMediunicaController::class, 'show']);
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -332,7 +303,6 @@ Route::post('incluir-tratamento-integral/{idtr}', [GerenciarEncaminhamentoIntegr
 Route::get('/visualizar-enc-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'visualizar']);
 Route::any('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'inative']);
 
-
 // Dirigente PTI
 
 Route::get('/gerenciar-pti', [GerenciarPTIController::class, 'index']);
@@ -345,71 +315,52 @@ Route::get('/gerenciar-integral', [GerenciarIntegralController::class, 'index'])
 Route::get('/alta-integral/{id}', [GerenciarIntegralController::class, 'update']);
 Route::get('/visualizar-integral/{id}', [GerenciarIntegralController::class, 'show']);
 
+Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
+Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
 
+// Pessoas
+Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
+Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
+Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name('pesdes');
 
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+// Rotas da Recepção Atendimento Fraterno DAO:
+Route::get('/gerenciar-atendimentos', [GerenciarAtendimentoController::class, 'index'])->name('atedex');
+Route::get('/criar-atendimento', [GerenciarAtendimentoController::class, 'create'])->name('atecre');
+Route::post('/novo-atendimento', [GerenciarAtendimentoController::class, 'store'])->name('atetore');
+Route::get('/cancelar-atendimento/{ida}', [GerenciarAtendimentoController::class, 'cancelar'])->name('atecan');
+Route::get('/sobe-status/{ida}', [GerenciarAtendimentoController::class, 'sobeStatus'])->name('atess');
+Route::get('/desce-status/{ida}', [GerenciarAtendimentoController::class, 'desceStatus'])->name('ateds');
+Route::get('/editar-atendimento/{ida}', [GerenciarAtendimentoController::class, 'edit'])->name('ateedi');
+Route::post('/grava-atualizacao/{ida}', [GerenciarAtendimentoController::class, 'altera'])->name('atealt');
+Route::get('/visualizar-atendimentos/{idas}', [GerenciarAtendimentoController::class, 'visual'])->name('atevis');
+Route::put('/atendente-atualizar/{ida}', [GerenciarAtendimentoController::class, 'salvaatend'])->name('salate');
+Route::get('/gerenciar-atendente-dia', [GerenciarAtendimentoController::class, 'atendente_dia'])->name('afidia');
+Route::get('/definir-sala-atendente', [GerenciarAtendimentoController::class, 'definir_sala'])->name('afisal');
+Route::get('/editar-atendente-dia/{idatd}', [GerenciarAtendimentoController::class, 'editar_afi'])->name('afiedt');
+Route::post('/altera-atendente-dia/{idatd}', [GerenciarAtendimentoController::class, 'update_afi'])->name('afiupt');
+Route::post('/incluir-afi-sala/{idat}/{idg}', [GerenciarAtendimentoController::class, 'salva_afi'])->name('afidef');
+Route::post('/gravar-escolha/{idatd}', [GerenciarAtendimentoController::class, 'gravar_sala'])->name('ategrv');
+Route::any('/excluir-atendente/{idatd}/{idad}', [GerenciarAtendimentoController::class, 'delete'])->name('atedel');
 
+//Rotas do Atendimento Fraterno:
+Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name('afidex');
+Route::get('/historico/{idat}/{idas}', [AtendimentoFraternoController::class, 'history'])->name('afihis');
+Route::get('/fim-analise/{idat}', [AtendimentoFraternoController::class, 'fimanalise'])->name('afifna');
+Route::get('/iniciar-atendimento/{idat}', [AtendimentoFraternoController::class, 'inicio'])->name('afiini');
+Route::get('/gerar-enc_entre/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiene');
+Route::get('/gerar-enc_trata/{idat}', [AtendimentoFraternoController::class, 'enc_trata'])->name('afient');
+Route::get('/meus-atendimentos', [AtendimentoFraternoController::class, 'meus_atendimentos'])->name('afimeu');
+Route::get('/tratar/{idat}/{idas}', [AtendimentoFraternoController::class, 'tratar'])->name('afitra');
+Route::post('/tratamentos/{idat}/{idas}', [AtendimentoFraternoController::class, 'enc_trat'])->name('afitra');
+Route::get('/entrevistar/{idat}/{idas}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
+Route::post('/entrevistas/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
+Route::get('/temas/{idat}', [AtendimentoFraternoController::class, 'pre_tema'])->name('afi');
+Route::post('/tematicas/{idat}', [AtendimentoFraternoController::class, 'tematica'])->name('afitem');
+Route::get('/atender', [AtendimentoFraternoController::class, 'atende_agora'])->name('afiini');
+Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
+Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
+Route::any('/reset/{idat}', [AtendimentoFraternoController::class, 'reset'])->name('');
 
-
-
-
-
-
-
-
-
-
-    Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
-    Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
-
-    // Pessoas
-    Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
-    Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
-    Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name('pesdes');
-
-
-
-
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-    // Rotas da Recepção Atendimento Fraterno DAO:
-    Route::get('/gerenciar-atendimentos', [GerenciarAtendimentoController::class, 'index'])->name('atedex');
-    Route::get('/criar-atendimento', [GerenciarAtendimentoController::class, 'create'])->name('atecre');
-    Route::post('/novo-atendimento', [GerenciarAtendimentoController::class, 'store'])->name('atetore');
-    Route::get('/cancelar-atendimento/{ida}', [GerenciarAtendimentoController::class, 'cancelar'])->name('atecan');
-    Route::get('/sobe-status/{ida}', [GerenciarAtendimentoController::class, 'sobeStatus'])->name('atess');
-    Route::get('/desce-status/{ida}', [GerenciarAtendimentoController::class, 'desceStatus'])->name('ateds');
-    Route::get('/editar-atendimento/{ida}', [GerenciarAtendimentoController::class, 'edit'])->name('ateedi');
-    Route::post('/grava-atualizacao/{ida}', [GerenciarAtendimentoController::class, 'altera'])->name('atealt');
-    Route::get('/visualizar-atendimentos/{idas}', [GerenciarAtendimentoController::class, 'visual'])->name('atevis');
-    Route::put('/atendente-atualizar/{ida}', [GerenciarAtendimentoController::class, 'salvaatend'])->name('salate');
-    Route::get('/gerenciar-atendente-dia', [GerenciarAtendimentoController::class, 'atendente_dia'])->name('afidia');
-    Route::get('/definir-sala-atendente', [GerenciarAtendimentoController::class, 'definir_sala'])->name('afisal');
-    Route::get('/editar-atendente-dia/{idatd}', [GerenciarAtendimentoController::class, 'editar_afi'])->name('afiedt');
-    Route::post('/altera-atendente-dia/{idatd}', [GerenciarAtendimentoController::class, 'update_afi'])->name('afiupt');
-    Route::post('/incluir-afi-sala/{idat}/{idg}', [GerenciarAtendimentoController::class, 'salva_afi'])->name('afidef');
-    Route::post('/gravar-escolha/{idatd}', [GerenciarAtendimentoController::class, 'gravar_sala'])->name('ategrv');
-    Route::any('/excluir-atendente/{idatd}/{idad}', [GerenciarAtendimentoController::class, 'delete'])->name('atedel');
-
-    //Rotas do Atendimento Fraterno:
-    Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name('afidex');
-    Route::get('/historico/{idat}/{idas}', [AtendimentoFraternoController::class, 'history'])->name('afihis');
-    Route::get('/fim-analise/{idat}', [AtendimentoFraternoController::class, 'fimanalise'])->name('afifna');
-    Route::get('/iniciar-atendimento/{idat}', [AtendimentoFraternoController::class, 'inicio'])->name('afiini');
-    Route::get('/gerar-enc_entre/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiene');
-    Route::get('/gerar-enc_trata/{idat}', [AtendimentoFraternoController::class, 'enc_trata'])->name('afient');
-    Route::get('/meus-atendimentos', [AtendimentoFraternoController::class, 'meus_atendimentos'])->name('afimeu');
-    Route::get('/tratar/{idat}/{idas}', [AtendimentoFraternoController::class, 'tratar'])->name('afitra');
-    Route::post('/tratamentos/{idat}/{idas}', [AtendimentoFraternoController::class, 'enc_trat'])->name('afitra');
-    Route::get('/entrevistar/{idat}/{idas}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
-    Route::post('/entrevistas/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
-    Route::get('/temas/{idat}', [AtendimentoFraternoController::class, 'pre_tema'])->name('afi');
-    Route::post('/tematicas/{idat}', [AtendimentoFraternoController::class, 'tematica'])->name('afitem');
-    Route::get('/atender', [AtendimentoFraternoController::class, 'atende_agora'])->name('afiini');
-    Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
-    Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
-    Route::any('/reset/{idat}', [AtendimentoFraternoController::class, 'reset'])->name('');
-
-
-
-    Route::any('/job', [GerenciarTratamentosController::class, 'job']);
+Route::any('/job', [GerenciarTratamentosController::class, 'job']);

@@ -47,16 +47,12 @@ class GerenciarAtendimentoController extends Controller
         ->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')
         ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')
         ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
-  
-                    
+
+
         $data_inicio = $request->input('dt_ini', Carbon::today()->toDateString());
 
        // Filtra pela data de início, se fornecida, caso contrário, usa a data atual
-    if ($request->has('dt_ini') && $request->input('dt_ini') != 'all') {
-        $lista->whereDate('dh_chegada', $request->input('dt_ini'));
-    } else {
-        $lista->whereDate('dh_chegada', Carbon::today()->toDateString());
-    }
+
 
         $data_inicio = $request->dt_ini;
 
@@ -65,8 +61,13 @@ class GerenciarAtendimentoController extends Controller
         $situacao = $request->status;
 
 
-        if ($request->dt_ini){
-            $lista->where('at.dh_chegada', '>=', $request->dt_ini);
+        if ($request->input('dt_ini')) {
+
+            $lista->whereDate('dh_chegada', $request->input('dt_ini'));
+        } elseif($request->assist or $request->status) {
+            
+        }else{
+            $lista->whereDate('dh_chegada', Carbon::today()->toDateString());
         }
 
         if ($request->assist){
@@ -93,8 +94,7 @@ class GerenciarAtendimentoController extends Controller
 
 
 
-
-        return view ('/recepcao-AFI/gerenciar-atendimentos', compact('lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'situacao'));
+        return view ('/recepcao-AFI/gerenciar-atendimentos', compact('lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'situacao', 'now'));
 
 
     }
@@ -250,7 +250,7 @@ class GerenciarAtendimentoController extends Controller
 
     ////PREPARA PARA EDITAR
     public function edit($ida){
-    
+
        $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
         if ($status > 1){
@@ -321,7 +321,7 @@ class GerenciarAtendimentoController extends Controller
     public function altera(Request $request, $ida){
 
         $afi = DB::table('associado')->where('id_pessoa', $request->input('afi_p'))->first();
-   
+
 
         DB::table('atendimentos AS at')->where('at.id', $ida)->update([
 
@@ -640,7 +640,7 @@ class GerenciarAtendimentoController extends Controller
         ->where('dh_marcada','<', $no)
         ->whereIn('status_atendimento', [1, 7])
         ->pluck('id_sala');
-        
+
 
 
 

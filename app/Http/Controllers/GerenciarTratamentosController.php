@@ -59,7 +59,7 @@ class GerenciarTratamentosController extends Controller
         }
 
         if ($request->assist){
-            $lista->where('p1.nome_completo', 'ilike', "%$request->assist%");
+            $lista->whereRaw("p1.nome_completo ilike '%".$request->assist."%'");
         }
 
         if ($request->status and $request->status != 'all'){

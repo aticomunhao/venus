@@ -24,13 +24,13 @@
                         <div class="row">
 
                             <div class ="col-2">Data início
-                                <input class="form-control" type="date" id="" name="dt_enc"
+                                <input class="form-control pesquisa" type="date" id="dt_enc" name="dt_enc"
                                     value="{{ $data_enc }}">
                             </div>
 
                             <div class="col-1">
                                 Dia
-                                <select class="form-select teste" id="" name="dia" type="number">
+                                <select class="form-select teste pesquisa" id="" name="dia" type="number">
                                     @foreach ($dia as $dias)
                                         <option value="{{ $dias->id }}" {{ $diaP == $dias->id ? 'selected' : '' }}>
                                             {{ $dias->nome }}</option>
@@ -39,7 +39,7 @@
                             </div>
 
                             <div class="col">Assistido
-                                <input class="form-control" type="text" id="3" name="assist"
+                                <input class="form-control pesquisa" type="text" id="3" name="assist"
                                     value="{{ $assistido }}">
                             </div>
 
@@ -196,7 +196,7 @@
                                             style="font-size:17px">Este é o último dia de tratamento de:<br /><span
                                             style="color: rgb(39, 91, 189)">{{ $listas->nm_1 }}</span></label>
                                             <br />
-                                            
+
                                         </div>
                                         <div class="modal-footer">
                                             <a href="/gerenciar-tratamentos" type="button"
@@ -305,14 +305,19 @@
 
         });
     </script>
+  
     <script>
         $(document).ready(function() {
             if ({{ $situacao == null }}) { //Deixa o select status como padrao vazio
                 $(".teste1").prop("selectedIndex", 1);
             }
+            $('.pesquisa').change(function(){
+                $(".teste1").prop("selectedIndex", 6);
+            })
 
         });
     </script>
+
 
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
