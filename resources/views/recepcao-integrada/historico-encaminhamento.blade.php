@@ -111,7 +111,7 @@
 
                                 @if ($lists->presenca == true)
                                 <td style="background-color:#90EE90;">Sim</td>
-                                @elseif
+                                
                                 <td style="background-color:#FA8072;">Não</td>
                                 @endif
                             </tr>

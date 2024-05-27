@@ -104,7 +104,7 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body" style="text-align: center; ">
-                                            Tem certeza que deseja declarar alta para <br /><span style="color:#DC4C64; font-weight: bold;">{{ $listas->nome_completo }}</span>&#63;
+                                            Tem certeza que deseja inativar <br /><span style="color:#DC4C64; font-weight: bold;">{{ $listas->nome_completo }}</span>&#63;
                                         </div>
                                         <div class="modal-footer mt-3">
                                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
