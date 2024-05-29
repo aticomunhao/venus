@@ -7,7 +7,7 @@
 <br>
 <div class="container">
     <div class="row align-items-start">
-        <div class="col">       
+        <div class="col">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
@@ -16,12 +16,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body">                                       
+                <div class="card-body">
                     <p>Nome:<strong> {{$result[0]->nome_completo}}</strong></p>
                     <p>Cpf: <strong> {{$result[0]->cpf}}</strong> </p>
                     <p>Identidade:<strong>  {{$result[0]->idt}}</strong> </p>
                     <p>Data de Nascimento:<strong>  {{$result[0]->dt_nascimento}}</strong> </p>
-                    <p>Email: <strong> {{$result[0]->email}}</strong> </p>            
+                    <p>Email: <strong> {{$result[0]->email}}</strong> </p>
                     <form class="form-horizontal mt-4" method="POST" action="/usuario-atualizar/{{$resultUsuario[0]->id}}">
                     @method('PUT')
                     @csrf
@@ -53,7 +53,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="col">
-                            <div class="row">                            
+                            <div class="row">
                                 <h4 class="fs-5 fw-bold">PERFIS  <i class="bi bi-key-fill" ></i></h4>
                             </div>
                         </div>
@@ -80,7 +80,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="col">
-                            <div class="row">                            
+                            <div class="row">
                                 <h4 class="fs-5 fw-bold">DEPÓSITOS  <i class="bi bi-safe-fill" ></i></h4>
                             </div>
                         </div>
@@ -105,7 +105,7 @@
                 </div>
             </div>
         </div>
-        <div class="col">         
+        <div class="col">
             <div class="card">
                 <div class="card-header">
                     <div class="row">
@@ -146,8 +146,6 @@
     </form>
 </div>
 </br>
-
-
 
 
 @endsection

@@ -92,6 +92,8 @@ class GerenciarTratamentosController extends Controller
 
         $motivo = DB::table('tipo_motivo')->get();
 
+    
+
         return view ('/recepcao-integrada/gerenciar-tratamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'dia', 'diaP', 'motivo'));
 
 

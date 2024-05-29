@@ -13,7 +13,7 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                CADASTRAR REUNIÃO 
+                                CADASTRAR REUNIÃO
                             </div>
                         </div>
                     </div>
@@ -38,9 +38,9 @@
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <br>
-                            
+
                             <div class="row mt-3">
                                 <div class="col">
                                     <label for="dia" class="form-label">Dia da semana</label>
@@ -63,39 +63,36 @@
                                     <input class="form-control" type="time" id="h_fim" name="h_fim" required>
                                 </div>
                             </div>
-                            <br>
-                            <br>
-                            <div class="row mt-3">
-                                <div class="col">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5 class="mb-0">Sala</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <label for="id_sala" class="form-label">Número</label>
-                                                    <select class="form-select" id="id_sala" name="id_sala">
-                                                        <option value=""></option>
-                                                        @foreach ($salas as $sala)
-                                                            <option value="{{ $sala->id }}" data-nome="{{ $sala->nome }}" data-numero="{{ $sala->numero }}" data-localizacao="{{ $sala->nome_localizacao }}">
-                                                                {{ $sala->numero }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="nome" class="form-label">Nome</label>
-                                                    <input type="text" class="form-control" id="nome" name="nome" readonly>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="localizacao" class="form-label">Localização</label>
-                                                    <input type="text" class="form-control" id="localizacao" name="localizacao" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <br />
+                    </div>
+                </div>
+                <br />
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Sala</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="id_sala" class="form-label">Número</label>
+                                <select class="form-select" id="id_sala" name="id_sala">
+                                    <option value=""></option>
+                                    @foreach ($salas as $sala)
+                                        <option value="{{ $sala->id }}" data-nome="{{ $sala->nome }}" data-numero="{{ $sala->numero }}" data-localizacao="{{ $sala->nome_localizacao }}">
+                                            {{ $sala->numero }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="nome" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="nome" name="nome" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="localizacao" class="form-label">Localização</label>
+                                <input type="text" class="form-control" id="localizacao" name="localizacao" readonly>
+
+
                             </div>
                             <div class="row mt-5">
                                 <div class="d-grid gap-1 col-4 mx-auto">
@@ -105,13 +102,46 @@
                                     <button type="submit" class="btn btn-primary">Confirmar</button>
                                 </div>
                             </div>
-                        </form>
-                        <br />
+                        </div>
                     </div>
+                </form>
                 </div>
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+
+        $('#max_atend').prop("disabled", false)
+        $('#tratamento').prop("disabled", false)
+        $('#grupo').change(function(){
+            let grupo = $('#grupo').prop('selectedIndex');
+
+
+            let array = @json($grupo);
+            array = array[grupo]
+
+            if(array.id_tipo_grupo == 3){
+                $('#max_atend').prop("disabled", false)
+
+                $('#tratamento').prop("disabled", false)
+
+
+            }
+            else{
+                bufferM = $('#max_atend').val()
+                bufferT = $('#tratamento').prop("selectedIndex")
+                console.log(bufferM, bufferT)
+                $('#max_atend').prop("disabled", true)
+                $('#max_atend').val('')
+                $('#tratamento').prop("disabled", true)
+                $('#tratamento').prop("selectedIndex", -1)
+            }
+
+        })
+
+    </script>
 
     <script>
         document.getElementById('id_sala').addEventListener('change', function() {
@@ -120,11 +150,7 @@
             document.getElementById('localizacao').value = selectedOption.getAttribute('data-localizacao');
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.slct').forEach(select => {
-                select.selectedIndex = -1;
-            });
-        });
+       
     </script>
 @endsection
 

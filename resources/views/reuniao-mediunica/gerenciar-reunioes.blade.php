@@ -56,7 +56,7 @@
         </div style="text-align:right;">
         <hr />
         <div class="table">Total reuniões: {{ $contar }}</div>
-        
+
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                 <thead style="text-align: center;">
                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
@@ -83,7 +83,7 @@
                             <td>{{ date('H:i:s', strtotime($reuni->h_inicio)) }}</td>
                             <td>{{ date('H:i:s', strtotime($reuni->h_fim)) }}</td>
                             <td>{{ $reuni->max_atend }}</td>
-                            <td>{{ $reuni->descst }}</td>
+                            <td>{{ $reuni->status }}</td>
                             <td>
                                 <a href="/editar-reuniao/{{ $reuni->idr }}"><button type="button"
                                         class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"

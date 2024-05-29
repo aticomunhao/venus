@@ -19,10 +19,9 @@ class ReuniaoMediunicaController extends Controller
 
 
             $reuniao = DB::table('cronograma AS cro')
-                        ->select('cro.id AS idr', 'gr.nome AS nomeg', 'cro.dia_semana AS idd', 'cro.id_sala', 'cro.id_tipo_tratamento', 'cro.id_tipo_tratamento', 'cro.h_inicio','td.nome AS nomed', 'cro.h_fim', 'cro.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao as descst', 'tst.descricao AS tstd', 'sa.numero' )
+                        ->select('cro.id AS idr', 'gr.nome AS nomeg', 'cro.dia_semana AS idd', 'cro.id_sala', 'cro.id_tipo_tratamento', 'cro.id_tipo_tratamento', 'cro.h_inicio','td.nome AS nomed', 'cro.h_fim', 'cro.max_atend', 'gr.status_grupo AS idst', 'tst.descricao AS tstd', 'sa.numero', DB::raw("(CASE WHEN cro.data_fim IS NULL THEN 'Ativo' ELSE 'Inativo' END) as status"))
                         ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
                         ->leftjoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
-                        ->leftjoin('tipo_status_grupo AS tsg', 'cro.status_reuniao', 'tsg.id')
                         ->leftJoin('membro AS me', 'gr.id', 'me.id_cronograma')
                         ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
                         ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id');
@@ -47,7 +46,7 @@ class ReuniaoMediunicaController extends Controller
                 $reuniao->where('tsg.id', '=', $request->status);
             }
 
-            $reuniao = $reuniao->orderby('cro.status_reuniao', 'ASC')->orderby('cro.id_tipo_tratamento', 'ASC')->orderby('nomeg', 'ASC')->paginate(50);
+            $reuniao = $reuniao->orderby('status', 'ASC')->orderby('cro.id_tipo_tratamento', 'ASC')->orderby('nomeg', 'ASC')->paginate(50);
 
              //dd($request->semana);
               //dd($status);
@@ -76,8 +75,6 @@ class ReuniaoMediunicaController extends Controller
 
             $grupo = DB::table('grupo AS gr')
                         ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
-                        ->where('id_tipo_grupo', 1)
-                       ->orWhere('id_tipo_grupo', 3)
                         ->orderBy('gr.nome')
                         ->get();
 
@@ -122,17 +119,10 @@ class ReuniaoMediunicaController extends Controller
             ->where('rm.dia_semana', $dia)
             ->where('rm.data_fim', null)
             ->where('rm.id_sala', $numero)
-            ->where(function ($query) use ($h_inicio, $h_fim) {
-                $query->where('rm.h_inicio', '>=', $h_inicio)
-                      ->where('rm.h_inicio', '<=', $h_fim)
-                      ->orWhere(function ($query) use ($h_inicio, $h_fim) {
-                          $query->where('rm.h_fim', '>=', $h_inicio)
-                                ->where('rm.h_fim', '<=', $h_fim);
-                      });
-            })
+
             ->count();
 
-            //dd($repeat);
+
 
             if($repeat > 0){
 
@@ -153,8 +143,7 @@ class ReuniaoMediunicaController extends Controller
                     'max_atend'=>$request->input('max_atend'),
                     'dia_semana'=>$request->input('dia'),
                     'id_tipo_tratamento'=>$request->input('tratamento'),
-                    'data_inicio' => $now,
-                    'status_reuniao' => 1
+                    'data_inicio' => $now
                 ]);
 
             $result = DB::table('cronograma')->max('id');

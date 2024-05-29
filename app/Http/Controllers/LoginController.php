@@ -19,7 +19,7 @@ class LoginController extends Controller
 
     public function valida(Request $request)
     {
-       
+
         $cpf = $request->input('cpf');
         $senha = $request->input('senha');
 
@@ -45,7 +45,7 @@ class LoginController extends Controller
                         group by u.id, p.id, a.id
                         ");
 
-     
+
 
 
         if (count($result)>0){
@@ -66,7 +66,7 @@ class LoginController extends Controller
                              'setor' => $result[0]->setor
                     ]);
 
-            
+
                app('flasher')->addSuccess('Acesso autorizado');
                return view('login/home');
             }
