@@ -19,7 +19,7 @@ class ReuniaoMediunicaController extends Controller
 
 
             $reuniao = DB::table('cronograma AS cro')
-                        ->select('cro.id AS idr', 'gr.nome AS nomeg', 'cro.dia_semana AS idd', 'cro.id_sala', 'cro.id_tipo_tratamento', 'cro.id_tipo_tratamento', 'cro.h_inicio','td.nome AS nomed', 'cro.h_fim', 'cro.max_atend', 'gr.status_grupo AS idst', 'tst.descricao AS tstd', 'sa.numero', DB::raw("(CASE WHEN cro.data_fim IS NULL THEN 'Ativo' ELSE 'Inativo' END) as status"))
+                        ->select('cro.id AS idr', 'gr.nome AS nomeg', 'cro.dia_semana AS idd', 'cro.id_sala', 'cro.id_tipo_tratamento', 'cro.id_tipo_tratamento', 'cro.h_inicio','td.nome AS nomed', 'cro.h_fim', 'cro.max_atend', 'gr.status_grupo AS idst', 'tst.descricao AS tstd', 'sa.numero', DB::raw("(CASE WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status"))
                         ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
                         ->leftjoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
                         ->leftJoin('membro AS me', 'gr.id', 'me.id_cronograma')
@@ -103,23 +103,34 @@ class ReuniaoMediunicaController extends Controller
 
         public function store(Request $request){
 
-            $usuario = session()->get('usuario.id_pessoa');
 
+            $usuario = session()->get('usuario.id_pessoa');
             $now =  Carbon::now()->format('Y-m-d');
+            $data_inicio = $request->dt_inicio ? $request->dt_inicio : $now;
 
             $grupo = intval($request->grupo);
-            $numero = intval($request->numero);
-            $h_inicio = $request->h_inicio;
-            $h_fim = $request->h_fim;
+            $numero = intval($request->id_sala);
+            $h_inicio = Carbon::createFromFormat('G:i',$request->h_inicio)->subMinutes(30);
+            $h_fim = Carbon::createFromFormat('G:i',$request->h_fim)->addMinutes(30);
             $dia = intval($request->dia);
 
             $repeat = DB::table('cronograma AS rm')
             ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
             ->leftJoin('salas AS s', 'rm.id_sala', 's.id')
             ->where('rm.dia_semana', $dia)
-            ->where('rm.data_fim', null)
+            ->whereNot('rm.data_fim', '<', $now)
             ->where('rm.id_sala', $numero)
+            ->where(function ($query) use ($h_inicio, $h_fim) {
+                $query->where(function ($hour) use ($h_inicio){
+                    $hour->where('rm.h_inicio', '<=', $h_inicio);
+                    $hour->where('rm.h_fim', '>=', $h_inicio);
+                });
+                $query->orWhere(function ($hour) use ($h_fim){
+                    $hour->where('rm.h_inicio', '<=', $h_fim);
+                    $hour->where('rm.h_fim', '>=', $h_fim);
+                });
 
+            })
             ->count();
 
 
@@ -143,7 +154,8 @@ class ReuniaoMediunicaController extends Controller
                     'max_atend'=>$request->input('max_atend'),
                     'dia_semana'=>$request->input('dia'),
                     'id_tipo_tratamento'=>$request->input('tratamento'),
-                    'data_inicio' => $now
+                    'data_inicio' => $data_inicio,
+                    'data_fim' => $request->dt_fim
                 ]);
 
             $result = DB::table('cronograma')->max('id');
@@ -196,7 +208,7 @@ class ReuniaoMediunicaController extends Controller
             ->get();
 
             $info = DB::table('cronograma as crn')
-            ->select('crn.id','gr.nome', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim','crn.id_sala','sl.id_localizacao as nome_localizacao')
+            ->select('crn.id','gr.nome', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim','crn.id_sala','sl.id_localizacao as nome_localizacao', 'crn.data_inicio', 'crn.data_fim')
             ->leftJoin('grupo as gr', 'crn.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as tpd', 'crn.dia_semana', 'tpd.id')
             ->leftJoin('tipo_tratamento as tpt', 'crn.id_tipo_tratamento', 'tpt.id')
@@ -247,7 +259,7 @@ return view ('/reuniao-mediunica/visualizar-reuniao', compact('info','salas', 'g
             ->get();
 
             $info = DB::table('cronograma as crn')
-            ->select('crn.id','gr.nome', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim','crn.id_sala','sl.id_localizacao as nome_localizacao')
+            ->select('crn.id','gr.nome', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim','crn.id_sala','sl.id_localizacao as nome_localizacao', 'crn.data_inicio', 'crn.data_fim')
             ->leftJoin('grupo as gr', 'crn.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as tpd', 'crn.dia_semana', 'tpd.id')
             ->leftJoin('tipo_tratamento as tpt', 'crn.id_tipo_tratamento', 'tpt.id')
@@ -267,34 +279,35 @@ return view ('/reuniao-mediunica/editar-reuniao', compact('info','salas', 'grupo
         public function update(Request $request, string $id)
         {
 
-            $usuario = session()->get('usuario.id_pessoa');
 
+            $usuario = session()->get('usuario.id_pessoa');
             $now =  Carbon::now()->format('Y-m-d');
+            $data_inicio = $request->dt_inicio ? $request->dt_inicio : $now;
 
             $grupo = intval($request->grupo);
-            $numero = intval($request->numero);
-            $h_inicio = $request->h_inicio;
-            $h_fim = $request->h_fim;
+            $numero = intval($request->id_sala);
+            $h_inicio = Carbon::createFromDate($request->h_inicio)->subMinutes(30)->date;
+            $h_fim = Carbon::createFromDate($request->h_fim)->addMinutes(30)->time();
             $dia = intval($request->dia);
-
+            dd($h_inicio, $h_fim);
             $repeat = DB::table('cronograma AS rm')
-            ->where('rm.id','!=', $id)
             ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
             ->leftJoin('salas AS s', 'rm.id_sala', 's.id')
             ->where('rm.dia_semana', $dia)
-            ->where('rm.data_fim', null)
+            ->whereNot('rm.data_fim', '<', $now)
             ->where('rm.id_sala', $numero)
             ->where(function ($query) use ($h_inicio, $h_fim) {
-                $query->where('rm.h_inicio', '>=', $h_inicio)
-                      ->where('rm.h_inicio', '<=', $h_fim)
-                      ->orWhere(function ($query) use ($h_inicio, $h_fim) {
-                          $query->where('rm.h_fim', '>=', $h_inicio)
-                                ->where('rm.h_fim', '<=', $h_fim);
-                      });
+                $query->where(function ($hour) use ($h_inicio){
+                    $hour->where('rm.h_inicio', '<=', $h_inicio);
+                    $hour->where('rm.h_fim', '>=', $h_inicio);
+                });
+                $query->orWhere(function ($hour) use ($h_fim){
+                    $hour->where('rm.h_inicio', '<=', $h_fim);
+                    $hour->where('rm.h_fim', '>=', $h_fim);
+                });
+
             })
             ->count();
-
-            //dd($repeat);
 
             if($repeat > 0){
 
@@ -315,7 +328,8 @@ return view ('/reuniao-mediunica/editar-reuniao', compact('info','salas', 'grupo
                     'max_atend'=>$request->input('max_atend'),
                     'dia_semana'=>$request->input('dia'),
                     'id_tipo_tratamento'=>$request->input('tratamento'),
-                    'data_inicio' => $now
+                    'data_inicio' => $data_inicio,
+                    'data_fim' => $request->dt_fim
                 ]);
 
             $result = DB::table('cronograma')->max('id');
