@@ -100,7 +100,7 @@
                                     data-onlabel="Sim" data-offlabel="Não" data-onstyle="success"
                                     data-offstyle="danger">
                             </div>
-                            <div class="col-1">
+                            <div class="col">
                                 <label for="computador">PC</label>
                                 <input type="checkbox" name="computador" data-toggle="toggle"
                                     data-on="Sim" data-off="Não" data-onstyle="success"

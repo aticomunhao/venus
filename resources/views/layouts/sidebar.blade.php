@@ -30,6 +30,7 @@
                             <li><a class="dropdown-item" href="/gerenciar-atendente-dia">Gerenciar Atendentes do dia</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-atendimentos">Gerenciar Atendimento Fraterno</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Gerenciar Encaminhamentos</a></li>
+                            <li><a class="dropdown-item" href="/gerenciar-entrevistas">Gerenciar Entrevistas</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
                             <li><a class="dropdown-item" href="/gerenciar-presenca">Gerenciar Presença Entrevista</a></li>

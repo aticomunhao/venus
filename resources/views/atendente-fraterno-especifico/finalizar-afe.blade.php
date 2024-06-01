@@ -29,7 +29,7 @@
                         <input class="form-control" style=" height:80px; background-color: #f7ccca; text-align:center; font-size:medium;" type="text" value="Tem certeza que deseja finalizar o atendimento Nr {{$assistido[0]->idat}} ?" disabled>
                     </div>
                 </div>
-                <form class="form-horizontal mt-4" method="POST" action="/finalizar/{{$assistido[0]->idat}}">
+                <form class="form-horizontal mt-4" method="POST" action="/finalizar-afe/{{$assistido[0]->idat}}">
                 @csrf                
                       
             </div>

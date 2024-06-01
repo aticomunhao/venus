@@ -172,6 +172,7 @@ class GerenciarEntrevistaController extends Controller
         $salas = DB::table('salas')
             ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
             ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
+            ->where('id_finalidade', 2)
             ->get();
 
 
@@ -408,6 +409,7 @@ class GerenciarEntrevistaController extends Controller
         $salas = DB::table('salas')
             ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
             ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
+            ->where('id_finalidade', 2)
             ->get();
         $membros = DB::table('membro')
             ->join('associado', 'membro.id_associado', '=', 'associado.id')
