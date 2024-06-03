@@ -81,54 +81,86 @@
                         </div>
                     </div>
                         <br>
+
+                        <div class="row justify-content-center mb-4">
+                            <div class="col text-center">
+                                <h3 class="fw-bold" style="font-size: 24px; color: #333;">Opcionais da sala</h3>
+                            </div>
+                        </div>
+
                         <div class="row mt-3 form-group">
-                            <div class="col">
-                                <label for="ar_condicionado">Ar-cond</label>
+                            <div class="col text-center mb-3">
+                                <label for="ar_condicionado"></label>
                                 <input type="checkbox" name="ar_condicionado" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->ar_condicionado ? 'checked' : ''}}>
+                                <label for="ar_condicionado" class="form-check-label" data-tt="tooltip"
+                                data-placement="top" title="Ar-condicionado">1</label>
                             </div>
-                            <div class="col">
-                                <label for="armarios">Armários</label>
+                            <div class="col text-center mb-3">
+                                <label for="armarios"></label>
                                 <input type="checkbox" name="armarios" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->armarios ? 'checked' : ''}}>
+                                <label for="armarios" class="form-check-label" data-tt="tooltip"
+                                data-placement="top" title="Armários">2</label>
                             </div>
-                            <div class="col">
-                                <label for="bebedouro">Bebedouro</label>
+                            <div class="col text-center mb-3">
+                                <label for="bebedouro"></label>
                                 <input type="checkbox" name="bebedouro" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->bebedouro ? 'checked' : ''}}>
+                                <label for="bebedouro" class="form-check-label" data-tt="tooltip"
+                                data-placement="top" title="Bebedouro">3</label>
                             </div>
-                            <div class="col">
-                                <label for="controle">Controle</label>
+                            <div class="col text-center mb-3">
+                                <label for="controle"></label>
                                 <input type="checkbox" name="controle" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->controle ? 'checked' : ''}}>
+                                <label for="controle" class="form-check-label" data-tt="tooltip"
+                                data-placement="top" title="Controler">4</label>
                             </div>
-                            <div class="col-1">
-                                <label for="computador">PC</label>
+                            <div class="col text-center mb-3">
+                                <label for="computador"></label>
                                 <input type="checkbox" name="computador" data-toggle="toggle" data-on="Sim" data-off="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->computador ? 'checked' : ''}}>
+                                <label for="computador" class="form-check-label" data-tt="tooltip"
+                                data-placement="top" title="Computador">5</label>
                             </div>
-                            <div class="col">
-                                <label for="projetor">Projetor</label>
+                            <div class="col text-center mb-3">
+                                <label for="projetor"></label>
                                 <input type="checkbox" name="projetor" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->projetor ? 'checked' : ''}}>
+                                <label for="projetor" class="form-check-label" data-tt="tooltip"
+                                data-placement="top" title="Projetor">6</label>
                             </div>
-                            <div class="col">
-                                <label for="tela_projetor">Tela_proj</label>
+                            <div class="col text-center mb-3">
+                                <label for="tela_projetor"></label>
                                 <input type="checkbox" name="tela_projetor" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->tela_projetor ? 'checked' : ''}}>
+                                <label for="tela_projetor" class="form-check-label" data-tt="tooltip"
+                                data-placement="top" title="Tela do projetor">7</label>
                             </div>
-                            <div class="col">
-                                <label for="quadro">Quadro</label>
+                            <div class="col text-center mb-3">
+                                <label for="quadro"></label>
                                 <input type="checkbox" name="quadro" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->quadro ? 'checked' : ''}}>
+                                <label for="quadro" class="form-check-label" data-tt="tooltip"
+                                data-placement="top" title="Quadro">8</label>
                             </div>
-                            <div class="col">
-                                <label for="som">Som</label>
+                            <div class="col text-center mb-3">
+                                <label for="som"></label>
                                 <input type="checkbox" name="som" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->som ? 'checked' : ''}}>
+                                <label for="som" class="form-check-label" data-tt="tooltip"
+                                data-placement="top" title="Som">9</label>
                             </div>
-                            <div class="col">
-                                <label for="ventilador">Ventilador</label>
+                            <br>
+                            <div class="col text-center mb-3">
+                                <label for="ventilador"></label>
                                 <input type="checkbox" name="ventilador" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->ventilador ? 'checked' : ''}}>
+                                <label for="ventilador" class="form-check-label" data-tt="tooltip"
+                                data-placement="top" title="Ventilador">10</label>
                             </div>
-                            <div class="col">
-                                <label for="luz_azul">Luz azul</label>
+                            <div class="col text-center mb-3">
+                                <label for="luz_azul"></label>
                                 <input type="checkbox" name="luz_azul" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->luz_azul ? 'checked' : ''}}>
+                                <label for="luz_azul" class="form-check-label" data-tt="tooltip"
+                                data-placement="top" title="luz azul">11</label>
                             </div>
-                            <div class="col">
-                                <label for="luz_vermelha">Luz_vermelha</label>
-                                <input type="checkbox" name="luz_azul" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->luz_azul ? 'checked' : ''}}>
+                            <div class="col text-center mb-3">
+                                <label for="luz_vermelha"></label>
+                                <input type="checkbox" name="luz_vermelha" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->luz_azul ? 'checked' : ''}}>
+                                <label for="luz_vermelha" class="form-check-label" data-tt="tooltip"
+                                data-placement="top" title="luz vermelha">12</label>
                             </div>
                         </div>
                         <div class="row justify-content-center">

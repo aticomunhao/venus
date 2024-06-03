@@ -286,8 +286,8 @@ return view ('/reuniao-mediunica/editar-reuniao', compact('info','salas', 'grupo
 
             $grupo = intval($request->grupo);
             $numero = intval($request->id_sala);
-            $h_inicio = Carbon::createFromDate($request->h_inicio)->subMinutes(30)->date;
-            $h_fim = Carbon::createFromDate($request->h_fim)->addMinutes(30)->time();
+            $h_inicio = Carbon::createFromDate($request->h_inicio)->subMinutes(30);
+            $h_fim = Carbon::createFromDate($request->h_fim)->addMinutes(30);
             $dia = intval($request->dia);
             dd($h_inicio, $h_fim);
             $repeat = DB::table('cronograma AS rm')
