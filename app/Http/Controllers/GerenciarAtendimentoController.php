@@ -102,6 +102,7 @@ class GerenciarAtendimentoController extends Controller
     public function create()
     {
 
+        $hoje = Carbon::today();
         $lista = DB::select("select
         p.id as pid,
         p.ddd,
@@ -122,14 +123,12 @@ class GerenciarAtendimentoController extends Controller
         order by prid
         ");
 
-      
-
-
         $afi = DB::table('atendente_dia as at')
             ->leftJoin('associado as a', 'at.id_associado', '=', 'a.id')
             ->leftJoin('pessoas as p', 'a.id_pessoa', '=', 'p.id')
             ->leftJoin('membro as m', 'm.id', '=', 'a.id')
             ->whereNull('at.dh_fim')
+            ->where('at.dh_inicio','>', $hoje)
             ->select(
                 'm.id_associado',
                 'p.id as idp',
@@ -139,7 +138,7 @@ class GerenciarAtendimentoController extends Controller
                 'm.id_associado as ida',
             )
             ->get();
-     
+
 
 
         $sexo = DB::select("select

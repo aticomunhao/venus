@@ -16,8 +16,6 @@ class ReuniaoMediunicaController extends Controller
         public function index(Request $request){
 
             $now =  Carbon::now()->format('Y-m-d');
-
-
             $reuniao = DB::table('cronograma AS cro')
                         ->select('cro.id AS idr', 'gr.nome AS nomeg', 'cro.dia_semana AS idd', 'cro.id_sala', 'cro.id_tipo_tratamento', 'cro.id_tipo_tratamento', 'cro.h_inicio','td.nome AS nomed', 'cro.h_fim', 'cro.max_atend', 'gr.status_grupo AS idst', 'tst.descricao AS tstd', 'sa.numero', DB::raw("(CASE WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status"))
                         ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')

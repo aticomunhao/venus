@@ -84,8 +84,8 @@ class GerenciarEntrevistaController extends Controller
                 'pessoa_entrevistador.nome_completo as nome_entrevistador'
             );
 
-   
-          
+
+
 
         $i = 0;
         $pesquisaNome = null;
@@ -170,10 +170,15 @@ class GerenciarEntrevistaController extends Controller
         $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
         $entrevista = DB::table('entrevistas')->where('id', $id)->first();
         $salas = DB::table('salas')
-            ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
-            ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
-            ->where('id_finalidade', 2)
-            ->get();
+        ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
+        ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
+        ->where('status_sala', 1)
+        ->orderBy('numero');
+
+    if($encaminhamento->id_tipo_entrevista == 3){
+        $salas = $salas->where('id_finalidade', 2);
+    }
+    $salas = $salas->get();
 
 
 
@@ -184,7 +189,6 @@ class GerenciarEntrevistaController extends Controller
             $info = DB::table('encaminhamento')
                 ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
                 ->leftJoin('pessoas AS pessoa_atendente', 'atendimentos.id_usuario', '=', 'pessoa_atendente.id')
-
                 ->leftJoin('pessoas AS pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
                 ->leftJoin('tipo_tratamento', 'encaminhamento.id_tipo_tratamento', '=', 'tipo_tratamento.id')
                 ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
@@ -192,8 +196,6 @@ class GerenciarEntrevistaController extends Controller
                     'atendimentos.id_assistido AS id_pessoa',
                     'pessoa_pessoa.nome_completo AS nome_pessoa',
                     'encaminhamento.id_tipo_tratamento',
-
-
                     'tipo_tratamento.descricao AS tratamento_descricao',
                     'tipo_tratamento.sigla AS tratamento_sigla',
                     'tipo_entrevista.descricao AS entrevista_descricao',
@@ -315,21 +317,21 @@ class GerenciarEntrevistaController extends Controller
 
         $a = DB::table('encaminhamento')->where('id', $id)->first();
 
-     
+
         if($a->id_tipo_entrevista == 3){
             DB::table('entrevistas')->where('id_encaminhamento', $id)->update([
                 'id_entrevistador' => $request->input('id_entrevistador'),
                 'status' => 4,
             ]);
         }
-       
+
         else{
             DB::table('entrevistas')->where('id_encaminhamento', $id)->update([
                 'id_entrevistador' => $request->input('id_entrevistador'),
                 'status' => 3,
             ]);
         }
-       
+
 
 
 
@@ -395,7 +397,8 @@ class GerenciarEntrevistaController extends Controller
                 'entre.id_entrevistador',
                 'entre.data',
                 'entre.hora',
-            
+                'enc.id_tipo_entrevista'
+
             )
             ->where('entre.id_encaminhamento', $id)
             ->first();
@@ -406,11 +409,18 @@ class GerenciarEntrevistaController extends Controller
         $entrevistador = DB::table('pessoas')->get();
         $pessoas = DB::table('pessoas')->get();
         $encaminhamento = DB::table('encaminhamento')->find($id);
+
         $salas = DB::table('salas')
             ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
             ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
-            ->where('id_finalidade', 2)
-            ->get();
+            ->where('status_sala', 1)
+            ->orderBy('numero');
+
+        if($entrevistas->id_tipo_entrevista == 3){
+            $salas = $salas->where('id_finalidade', 2);
+        }
+        $salas = $salas->get();
+
         $membros = DB::table('membro')
             ->join('associado', 'membro.id_associado', '=', 'associado.id')
             ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
@@ -612,13 +622,13 @@ class GerenciarEntrevistaController extends Controller
             ->where('id', $id)
             ->update(['status_encaminhamento' => 4]);
 
-           
+
         }
-     
+
         elseif($tp == 2){
             DB::table('entrevistas')
             ->where('id_encaminhamento', '=', $id)
-            ->update(['status' =>6]);    
+            ->update(['status' =>6]);
 
         }
         else{
