@@ -31,6 +31,7 @@ use App\Http\Controllers\GerenciarEntrevistaController;
 use App\Http\Controllers\GerenciarPTIController;
 use App\Http\Controllers\GerenciarIntegralController;
 use App\Http\Controllers\GerenciarPerfil;
+use App\Http\Controllers\GerenciarSetor;
 use App\Http\Controllers\PresencaController;
 
 /*
@@ -64,9 +65,22 @@ Route::get('/usuario/excluir/{id}', [UsuarioController::class, 'destroy']);
 Route::get('/usuario-incluir', [UsuarioController::class, 'create']);
 
 // Perfil
-
 Route::get('/gerenciar-perfis', [GerenciarPerfil::class, 'index']);
 Route::get('/criar-perfis', [GerenciarPerfil::class, 'create']);
+Route::post('/armazenar-perfis', [GerenciarPerfil::class, 'store']);
+Route::get('/visualizar-perfis/{id}', [GerenciarPerfil::class, 'show']);
+Route::get('/editar-perfis/{id}', [GerenciarPerfil::class, 'edit']);
+Route::post('/atualizar-perfis/{id}', [GerenciarPerfil::class, 'update']);
+Route::any('/excluir-perfis/{id}', [GerenciarPerfil::class, 'destroy']);
+
+// Setor
+Route::get('/gerenciar-setor', [GerenciarSetor::class, 'index']);
+Route::get('/criar-setor', [GerenciarSetor::class, 'create']);
+Route::post('/armazenar-setor', [GerenciarSetor::class, 'store']);
+Route::get('/visualizar-setor/{id}', [GerenciarSetor::class, 'show']);
+Route::get('/editar-setor/{id}', [GerenciarSetor::class, 'edit']);
+Route::post('/atualizar-setor/{id}', [GerenciarSetor::class, 'update']);
+Route::any('/excluir-setor/{id}', [GerenciarSetor::class, 'destroy']);
 
 
 // Pessoas Banco

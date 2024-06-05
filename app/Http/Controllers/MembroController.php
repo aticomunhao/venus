@@ -25,9 +25,9 @@ class membroController extends Controller
             ->select(
                 'p.nome_completo',
                 'm.id_cronograma',
-              
+
             )->distinct()->get();}
-        
+
 
         foreach($cronogramas as $cro){
             $array_cro[] = $cro->id_cronograma;
@@ -40,9 +40,9 @@ class membroController extends Controller
         ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
         ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
         ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
-        ->leftJoin('tipo_status_grupo as tpg', 'cro.status_reuniao', 'tpg.id')
+        ->leftJoin('tipo_status_grupo as tpg', 'gr', 'tpg.id')
         ->whereIn('cro.id', $array_cro);
-        
+
 
 
 
@@ -54,7 +54,7 @@ class membroController extends Controller
             ->select(
                 'p.nome_completo',
                 'm.id_associado',
-              
+
             )->distinct()->get();
 
 
@@ -63,15 +63,15 @@ class membroController extends Controller
           }
 
                 $membro_cronograma = $membro_cronograma->orderBy('tpg.descricao')->orderBy('nome_grupo')->get();
-            
+
             $nome = $request->nome_grupo;
             $membroPesquisa = $request->nome_membro;
-            
-     
 
-         
-        
-      
+
+
+
+
+
         return view('membro.listar-grupos-membro', compact('membro_cronograma', 'nome', 'membro', 'membroPesquisa'));
     }
 
@@ -101,7 +101,7 @@ class membroController extends Controller
     return view('membro/criar-membro-grupo', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao', 'id'));
 
     }
-    
+
     public function storeGrupo(Request $request, String $id){
 
         $data = date("Y-m-d H:i:s");
@@ -118,7 +118,7 @@ class membroController extends Controller
         app('flasher')->addSuccess("Cadastrado com Sucesso");
         return redirect("gerenciar-membro/$id");
     }
-       
+
     public function index(Request $request, String $id)
     {
 
@@ -149,41 +149,41 @@ class membroController extends Controller
                 'm.id_cronograma',
                 'g.nome as nome_grupo'
             )
-            
+
             ->orderBy('p.nome_completo', 'ASC');
-    
+
         $nome = $request->nome_pesquisa;
         $cpf = $request->cpf_pesquisa;
         $grupoPesquisa = $request->grupo_pesquisa;
-    
+
         $grupos = DB::table('grupo')->pluck('nome', 'id');
-    
+
         if ($nome || $cpf || $grupoPesquisa) {
             $membroQuery->where(function ($query) use ($nome, $cpf, $grupoPesquisa) {
                 if ($nome) {
                     $query->where('p.nome_completo', 'ilike', "%$nome%")
                         ->orWhere('p.cpf', 'ilike', "%$nome%");
                 }
-    
+
                 if ($cpf) {
                     $query->orWhere('p.cpf', 'ilike', "%$cpf%");
                 }
-    
+
                 if ($grupoPesquisa) {
                     $query->orWhere('g.id', '=', $grupoPesquisa);
                 }
             });
         }
-    
+
         $membro = $membroQuery->orderBy('p.status', 'asc')
             ->orderBy('p.nome_completo', 'asc')
             ->paginate(50);
-    
+
         return view('membro.gerenciar-membro', compact('membro', 'id', 'grupo'));
     }
-    
 
-    
+
+
 
     public function create()
 {
@@ -229,7 +229,7 @@ class membroController extends Controller
 
 
         ]);
-        
+
 
 
 
@@ -238,7 +238,7 @@ class membroController extends Controller
     }
 
 
-  
+
     public function edit(String $idcro, String $id)
 {
     $grupo = DB::table('cronograma as cro')
@@ -249,11 +249,11 @@ class membroController extends Controller
     ->get();
 
     $membro = DB::table('membro AS m')
-        ->leftJoin('associado AS a', 'a.id', '=', 'm.id_associado') 
-        ->leftJoin('pessoas AS p', 'a.id_pessoa', '=', 'p.id') 
+        ->leftJoin('associado AS a', 'a.id', '=', 'm.id_associado')
+        ->leftJoin('pessoas AS p', 'a.id_pessoa', '=', 'p.id')
         ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
         ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
-        ->leftJoin('pessoas', 'p.id', '=', 'a.id_pessoa')  
+        ->leftJoin('pessoas', 'p.id', '=', 'a.id_pessoa')
         ->select(
             'p.nome_completo',
             'm.id AS idm',
@@ -285,14 +285,14 @@ class membroController extends Controller
     return view('membro.editar-membro', compact('associado','membro', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo', 'pessoas', 'tipo_funcao', 'idcro'));
 }
 
-    
+
 
 
 
 
     public function update(Request $request, string $idcro, String $id)
     {
-      
+
 
         DB::table('membro')->where('id', $id)->update([
             'id_funcao' => $request->input('id_funcao'),
@@ -340,7 +340,7 @@ class membroController extends Controller
         ->where('m.id', $id)
         ->first();
 
-      
+
     $tipo_status_pessoa = DB::table('tipo_status_pessoa')->select('id', 'tipo as tipos')->get();
     $tipo_motivo_status_pessoa = DB::table('tipo_motivo_status_pessoa')->select('id', 'motivo')->get();
     $pessoas = DB::table('pessoas')->get();
@@ -396,7 +396,7 @@ class membroController extends Controller
             'status_reuniao' => 4
          ]);
 
-    
+
 
         }
         else if($tp == 2){

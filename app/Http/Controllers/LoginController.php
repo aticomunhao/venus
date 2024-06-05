@@ -32,7 +32,7 @@ class LoginController extends Controller
                         p.sexo,
                         p.nome_completo,
                         u.hash_senha,
-                        string_agg(distinct u_p.id_tp_perfil::text, ',') perfis,
+                        string_agg(distinct u_p.id_perfil::text, ',') perfis,
                         string_agg(distinct u_d.id_deposito::text, ',') depositos,
                         string_agg(distinct u_s.id_setor::text, ',') setor
                         from usuario u
@@ -92,7 +92,7 @@ class LoginController extends Controller
         p.sexo,
         p.nome_completo,
         u.hash_senha,
-        string_agg(distinct u_p.id_tp_perfil::text, ',') perfis,
+        string_agg(distinct u_p.id_perfil::text, ',') perfis,
         string_agg(distinct u_d.id_deposito::text, ',') depositos,
         string_agg(distinct u_s.id_setor::text, ',') setor
         from usuario u
