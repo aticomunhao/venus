@@ -102,86 +102,85 @@
                                     <label for="ar_condicionado"></label>
                                     <input type="checkbox" name="ar_condicionado" data-toggle="toggle" data-onlabel="Sim"
                                         data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
-                                    <label for="ar_condicionado" class="form-check-label" data-tt="tooltip"
-                                        data-placement="top" title="Ar-condicionado">1</label>
+                                        <label for="ar_condicionado">Ar_cond</label>
+                                    
                                 </div>
                                 <div class="col text-center mb-3">
                                     <label for="armarios"></label>
                                     <input type="checkbox" name="armarios" data-toggle="toggle" data-onlabel="Sim"
                                         data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
-                                    <label for="armarios" class="form-check-label" data-tt="tooltip" data-placement="top"
-                                        title="Armarios">2</label>
+                                        <label for="armarios">Armários</label>
+                                   
                                 </div>
                                 <div class="col text-center mb-3">
                                     <label for="bebedouro"></label>
                                     <input type="checkbox" name="bebedouro" data-toggle="toggle" data-onlabel="Sim"
                                         data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
-                                    <label for="bebedouro" class="form-check-label" data-tt="tooltip"
-                                        data-placement="top" title="bebedouro">3</label>
+                                        <label for="bebedouro">Bebedouro</label>
+                                   
                                 </div>
                                 <div class="col text-center mb-3">
                                     <label for="controle"></label>
                                     <input type="checkbox" name="controle" data-toggle="toggle" data-onlabel="Sim"
                                         data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
-                                    <label for="controle" class="form-check-label" data-tt="tooltip"
-                                        data-placement="top" title="controle">4</label>
+                                        <label for="controle">Controle</label>
+                                  
                                 </div>
                                 <div class="col text-center mb-3">
                                     <label for="computador"></label>
                                     <input type="checkbox" name="computador" data-toggle="toggle" data-on="Sim"
                                         data-off="Não" data-onstyle="success" data-offstyle="danger">
-                                    <label for="computador" class="form-check-label" data-tt="tooltip"
-                                        data-placement="top" title="computador">5</label>
+                                        <label for="computador">Computador</label>
+                                  
                                 </div>
                                 <div class="col text-center mb-3">
                                     <label for="projetor"></label>
                                     <input type="checkbox" name="projetor" data-toggle="toggle" data-onlabel="Sim"
                                         data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
-                                    <label for="projetor" class="form-check-label" data-tt="tooltip"
-                                        data-placement="top" title="Projetor">6</label>
+                                        <label for="projetor">Projetor</label>
+                                   
                                 </div>
 
                                 <div class="col text-center mb-3">
                                     <label for="tela_projetor"></label>
                                     <input type="checkbox" name="tela_projetor" data-toggle="toggle" data-onlabel="Sim"
                                         data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
-                                    <label for="tela_projetor" class="form-check-label" data-tt="tooltip"
-                                        data-placement="top" title="Tela de projetor">7</label>
+                                        <label for="tela_projetor">Tela_projetor</label>
+                                  
                                 </div>
                                 <div class="col text-center mb-3">
                                     <label for="quadro"></label>
                                     <input type="checkbox" name="quadro" data-toggle="toggle" data-onlabel="Sim"
                                         data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
-                                    <label for="quadro" class="form-check-label" data-tt="tooltip"
-                                        data-placement="top" title="Quadro">8</label>
+                                        <label for="quadro">Quadro</label>
+                                    
                                 </div>
                                 <div class="col text-center mb-3">
                                     <label for="som"></label>
                                     <input type="checkbox" name="som" data-toggle="toggle" data-onlabel="Sim"
-                                        data-offlabel="Não" data-onstyle="success" data-offstyle="danger"> <label
-                                        for="som" class="form-check-label" data-tt="tooltip" data-placement="top"
-                                        title="Som">9</label>
+                                        data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
+                                        <label for="som">Som</label>
+                                        
                                 </div>
                                 <div class="col text-center mb-3">
                                     <label for="ventilador"></label>
                                     <input type="checkbox" name="ventilador" data-toggle="toggle" data-onlabel="Sim"
                                         data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
-                                    <label for="ventilador" class="form-check-label" data-tt="tooltip"
-                                        data-placement="top" title="Ventilador">10</label>
+                                        <label for="ventilador">Ventilador</label>
+                                    
                                 </div>
                                 <div class="col text-center mb-3">
-                                    <label for="luz_azul"></label>
+                                   
                                     <input type="checkbox" name="luz_azul" data-toggle="toggle" data-onlabel="Sim"
                                         data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
-                                    <label for="luz_azul" class="form-check-label" data-tt="tooltip"
-                                        data-placement="top" title="Luz azul">11</label>
+                                        <label for="luz_azul">Luz_azul</label>
                                 </div>
                                 <div class="col text-center mb-3">
-                                    <label for="luz_vermelha"></label>
+                                    
                                     <input type="checkbox" name="luz_azul" data-toggle="toggle" data-onlabel="Sim"
                                         data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
-                                    <label for="luz_vermelha" class="form-check-label" data-tt="tooltip"
-                                        data-placement="top" title="Luz vermelha">12</label>
+                                        <label for="luz_vermelha">Luz_vermelha</label>
+                                   
                                 </div>
 
                             </div>
