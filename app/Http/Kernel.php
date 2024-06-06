@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\RegrasRotasMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -65,5 +66,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'validaUsuario' => \App\Http\Middleware\ValidaUsuario::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'rotas' => \App\Http\Middleware\RegrasRotasMiddleware::class,
     ];
 }
