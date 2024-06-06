@@ -60,7 +60,7 @@ Route::get('/usuario/alterar/{id}', [UsuarioController::class, 'edit']);
 Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
 Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
 Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
-Route::put('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
+Route::any('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
 Route::get('/usuario/excluir/{id}', [UsuarioController::class, 'destroy']);
 Route::get('/usuario-incluir', [UsuarioController::class, 'create']);
 

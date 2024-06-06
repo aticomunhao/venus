@@ -12,46 +12,47 @@
 
     <br>
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12">
-                <div class="card m-1">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col">
-                                GERENCIAR USUÁRIO
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-body">
+        <form class="form-horizontal mt-4" method="POST" action="/cad-usuario/inserir">
+            @csrf
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <div class="card m-1">
+                        <div class="card-header">
                             <div class="row">
                                 <div class="col">
-                                    <p>NOME:<strong> {{ $result[0]->nome_completo }}</strong></p>
-                                    <p>IDENTIDADE:<strong> {{ $result[0]->idt }}</strong> </p>
+                                    GERENCIAR USUÁRIO
                                 </div>
-                                <div class="col">
-                                    <p>CPF: <strong> {{ $result[0]->cpf }}</strong> </p>
-                                    <p>DATA NASCIMENTO:<strong>
-                                            {{ date('d-m-Y', strtotime($result[0]->dt_nascimento)) }}</strong> </p>
-                                </div>
-                                <div class="col">
-                                    <p>EMAIL: <strong> {{ $result[0]->email }}</strong> </p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">
+                                        <p>NOME:<strong> {{ $result[0]->nome_completo }}</strong></p>
+                                        <p>IDENTIDADE:<strong> {{ $result[0]->idt }}</strong> </p>
+                                    </div>
+                                    <div class="col">
+                                        <p>CPF: <strong> {{ $result[0]->cpf }}</strong> </p>
+                                        <p>DATA NASCIMENTO:<strong>
+                                                {{ date('d-m-Y', strtotime($result[0]->dt_nascimento)) }}</strong> </p>
+                                    </div>
+                                    <div class="col">
+                                        <p>EMAIL: <strong> {{ $result[0]->email }}</strong> </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="card m-1">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col">
-                                SELECIONAR PERFIS
+                    <div class="card m-1">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    SELECIONAR PERFIS
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <form class="form-horizontal mt-4" method="POST" action="/cad-usuario/inserir">
-                            @csrf
+                        <div class="card-body">
+
                             <input type="hidden" name="idPessoa" value="{{ $result[0]->id }}">
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped mb-0">
@@ -80,11 +81,11 @@
                                     @foreach ($resultPerfil as $resultPerfils)
                                         <tr>
                                             <td>
-                                                {{ $resultPerfils->nome }}
+                                                {{ $resultPerfils->descricao }}
                                             </td>
                                             <td>
-                                                <input id="{{ $resultPerfils->nome }}" type="checkbox"
-                                                    name="{{ $resultPerfils->nome }}" value="{{ $resultPerfils->id }}"
+                                                <input id="{{ $resultPerfils->descricao }}" type="checkbox"
+                                                    name="{{ $resultPerfils->descricao }}" value="{{ $resultPerfils->id }}"
                                                     data-size="small" data-size="small" data-toggle="toggle"
                                                     data-onstyle="success" data-offstyle="danger" data-onlabel="Sim"
                                                     data-offlabel="Não">
@@ -93,9 +94,9 @@
                                     @endforeach
                                 </table>
                             </div>
+                        </div>
                     </div>
-                </div>
-                {{--  <div class="card m-1">
+                    {{--  <div class="card m-1">
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
@@ -130,64 +131,66 @@
                         </div>
                     </div>
                 </div>  --}}
-                <div class="card m-1">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col">
-                                SETOR
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-body">
+                    <div class="card m-1">
+                        <div class="card-header">
                             <div class="row">
                                 <div class="col">
-                                    <div class="form-floating">
-                                        <input class="form-control" type="text" id="nome_pesquisa"
-                                            name="nome_pesquisa">
-                                        <label for="floatingTextarea">Pesquisa de Setor</label>
-                                    </div>
-                                    <br />
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-striped mb-0" id="myTable"
-                                            name="myTable">
-                                            @foreach ($resultSetor as $resultSetors)
-                                                <tr>
-                                                    <td>
-                                                        {{ $resultSetors->nome }}
-                                                    </td>
-                                                    <td>
-                                                        <input id="{{ $resultSetors->nome }}" type="checkbox"
-                                                            name="{{ $resultSetors->nome }}"
-                                                            value="{{ $resultSetors->id }}" data-size="small"
-                                                            data-size="small" data-toggle="toggle" data-onstyle="success"
-                                                            data-offstyle="danger" data-onlabel="Sim"
-                                                            data-offlabel="Não">
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </table>
-                                    </div>
+                                    SETOR
                                 </div>
                             </div>
-                            <br>
-                            <center>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-body">
                                 <div class="row">
+                                    <div class="col">
+                                        <div class="form-floating">
+                                            <input class="form-control" type="text" id="nome_pesquisa"
+                                                name="nome_pesquisa">
+                                            <label for="floatingTextarea">Pesquisa de Setor</label>
+                                        </div>
+                                        <br />
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped mb-0" id="myTable"
+                                                name="myTable">
+                                                @foreach ($resultSetor as $resultSetors)
+                                                    <tr>
+                                                        <td>
+                                                            {{ $resultSetors->nome }}
+                                                        </td>
+                                                        <td>
+                                                            <input id="{{ $resultSetors->nome }}" type="checkbox"
+                                                                name="{{ $resultSetors->nome }}"
+                                                                value="{{ $resultSetors->id }}" data-size="small"
+                                                                data-size="small" data-toggle="toggle"
+                                                                data-onstyle="success" data-offstyle="danger"
+                                                                data-onlabel="Sim" data-offlabel="Não">
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <center>
+                                    <div class="row">
                                         <div class="col">
                                             <a href="/gerenciar-usuario ">
-                                                <input class="btn btn-danger btn-block col-3" type="button" value="Cancelar">
+                                                <input class="btn btn-danger btn-block col-3" type="button"
+                                                    value="Cancelar">
                                             </a>
                                         </div>
                                         <div class="col ">
-                                            <button type="submit" class="btn btn-primary btn-block col-3">Cadastrar</button>
+                                            <button type="submit"
+                                                class="btn btn-primary btn-block col-3">Cadastrar</button>
                                         </div>
-                                </div>
-                            </center>
+                                    </div>
+                                </center>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
         </form>
     </div>

@@ -82,11 +82,10 @@ class UsuarioController extends Controller
 
         $this->inserirperfilUsuario($keys_request, $request->input('idPessoa'));
 
-        $this->inserirUsuarioDeposito($keys_request, $request->input('idPessoa'));
+        //$this->inserirUsuarioDeposito($keys_request, $request->input('idPessoa'));
 
-        $this->inserirUsuarioDeposito($keys_request, $request->input('idPessoa'));
+        $this->inserirUsuarioSetor($keys_request, $request->input('idPessoa'));
 
-        $result = $this->getUsuarios();
 
         app('flasher')->addSuccess('O usuário foi criado com sucesso.');
 
@@ -102,11 +101,11 @@ class UsuarioController extends Controller
 
     public function edit($idUsuario)
     {
-        $resultPerfil = DB::select('select id, nome from tipo_perfil');
+        $resultPerfil = DB::table('perfil')->get();
 
-        $resultDeposito = $this->getDeposito();
+        //$resultDeposito = $this->getDeposito();
 
-        $resultSetor = $this->getSetor();
+        $resultSetor = DB::table('rotas_setor')->leftJoin('setor', 'rotas_setor.id_setor', 'setor.id')->distinct('id_setor')->get();
 
         $resultUsuario = DB::table('usuario')->where('id', $idUsuario)->get();
 
@@ -118,7 +117,7 @@ class UsuarioController extends Controller
 
         $resultPerfisUsuarioArray = [];
         foreach ($resultPerfisUsuario as $resultPerfisUsuarios) {
-            $resultPerfisUsuarioArray[] = $resultPerfisUsuarios->id_tp_perfil;
+            $resultPerfisUsuarioArray[] = $resultPerfisUsuarios->id_perfil;
         }
 
         $resultDepositoUsuario = DB::select('select * from usuario_deposito where id_usuario =' . $idUsuario);
@@ -135,7 +134,7 @@ class UsuarioController extends Controller
             $resultSetorUsuarioArray[] = $resultSetorUsuarios->id_setor;
         }
 
-        return view('/usuario/alterar-configurar-usuario', compact('result', 'resultPerfil', 'resultDeposito', 'resultSetor', 'resultUsuario', 'resultPerfisUsuarioArray', 'resultDepositoUsuarioArray', 'resultSetorUsuarioArray'));
+        return view('/usuario/alterar-configurar-usuario', compact('result', 'resultPerfil', 'resultSetor', 'resultUsuario', 'resultPerfisUsuarioArray', 'resultDepositoUsuarioArray', 'resultSetorUsuarioArray'));
     }
 
     public function update(Request $request, $id)
@@ -157,11 +156,10 @@ class UsuarioController extends Controller
 
         $this->inserirPerfilUsuario($keys_request, $request->input('idPessoa'));
 
-        $this->inserirUsuarioDeposito($keys_request, $request->input('idPessoa'));
+       // $this->inserirUsuarioDeposito($keys_request, $request->input('idPessoa'));
 
         $this->inserirUsuarioSetor($keys_request, $request->input('idPessoa'));
 
-        $result = $this->getUsuarios();
 
         app('flasher')->addSuccess('Usuário alterado com sucesso!');
         return redirect('gerenciar-usuario');
@@ -182,40 +180,18 @@ class UsuarioController extends Controller
         //return view('usuario/gerenciar-usuario', compact('result'));
     }
 
-    public function getDeposito()
-    {
-        $sql = "select
-                d.id,
-                d.nome||'-'||e.nome nome
-                from deposito d
-                join tipo_estoque e on d.id_tp_estoque = e.id";
 
-        return DB::select($sql);
-    }
-
-    public function getSetor()
-    {
-        $sql = "select
-                s.id,
-                s.nome
-                from setor s
-                order by nome
-                ";
-
-        return DB::select($sql);
-    }
 
     public function configurarUsuario($id)
     {
-        $resultPerfil = DB::select('select id, nome from tipo_perfil');
+        $resultPerfil = DB::table('perfil')->get();
 
-        $resultDeposito = $this->getDeposito();
 
-        $resultSetor = $this->getSetor();
+        $resultSetor = DB::table('rotas_setor')->leftJoin('setor', 'rotas_setor.id_setor', 'setor.id')->distinct('id_setor')->get();
 
         $result = DB::table('pessoas')->where('id', $id)->get();
 
-        return view('/usuario/configurar-usuario', compact('result', 'resultPerfil', 'resultDeposito', 'resultSetor'));
+        return view('/usuario/configurar-usuario', compact('result', 'resultPerfil', 'resultSetor'));
     }
 
     public function inserirUsuario($request, $senha_inicial)
@@ -245,16 +221,16 @@ class UsuarioController extends Controller
     public function inserirPerfilUsuario($perfil, $idPessoa)
     {
         $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
-        $resultPerfil = DB::select('select id, nome from tipo_perfil');
+        $resultPerfil = DB::table('perfil')->get();
 
         foreach ($perfil as $perfils) {
             foreach ($resultPerfil as $resultPerfils) {
-                if ($resultPerfils->nome == str_replace('_', ' ', $perfils)) {
+                if ($resultPerfils->descricao == str_replace('_', ' ', $perfils)) {
                     //echo $resultPerfils->id;
 
                     DB::table('usuario_perfil')->insert([
                         'id_usuario' => $idUsuario[0]->id,
-                        'id_tp_perfil' => $resultPerfils->id,
+                        'id_perfil' => $resultPerfils->id,
                     ]);
                 }
             }
@@ -281,28 +257,28 @@ class UsuarioController extends Controller
     //     }
     // }
 
-    public function inserirUsuarioDeposito($deposito, $idPessoa)
-    {
-        $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
-        $resultDeposito = $this->getDeposito();
-        //dd($resultDeposito);
-        foreach ($deposito as $depositos) {
-            foreach ($resultDeposito as $resultDepositos) {
-                if ($resultDepositos->nome == str_replace('_', ' ', $depositos)) {
-                    DB::table('usuario_deposito')->insert([
-                        'id_usuario' => $idUsuario[0]->id,
-                        'id_deposito' => $resultDepositos->id,
-                    ]);
-                }
-            }
-        }
-    }
+    // public function inserirUsuarioDeposito($deposito, $idPessoa)
+    // {
+    //     $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
+    //     $resultDeposito = $this->getDeposito();
+    //     //dd($resultDeposito);
+    //     foreach ($deposito as $depositos) {
+    //         foreach ($resultDeposito as $resultDepositos) {
+    //             if ($resultDepositos->nome == str_replace('_', ' ', $depositos)) {
+    //                 DB::table('usuario_deposito')->insert([
+    //                     'id_usuario' => $idUsuario[0]->id,
+    //                     'id_deposito' => $resultDepositos->id,
+    //                 ]);
+    //             }
+    //         }
+    //     }
+    // }
 
 
     public function inserirUsuarioSetor($setor, $idPessoa)
     {
         $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
-        $resultSetor = $this->getSetor();
+        $resultSetor =DB::table('rotas_setor')->leftJoin('setor', 'rotas_setor.id_setor', 'setor.id')->distinct('id_setor')->get();
         //dd($resultDeposito);
         foreach ($setor as $setors) {
             foreach ($resultSetor as $resultSetors) {

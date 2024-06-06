@@ -40,7 +40,7 @@ class membroController extends Controller
         ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
         ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
         ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
-        ->leftJoin('tipo_status_grupo as tpg', 'gr', 'tpg.id')
+        ->leftJoin('tipo_status_grupo as tpg', 'cro.modificador', 'tpg.id')
         ->whereIn('cro.id', $array_cro);
 
 
@@ -124,7 +124,7 @@ class membroController extends Controller
 
 
         $grupo = DB::table('cronograma as cro')
-    ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.status_reuniao')
+    ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.modificador')
     ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
     ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
     ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
@@ -393,7 +393,7 @@ class membroController extends Controller
         if($tp == 1){
 
             DB::table('cronograma')->where('id', $id)->update([
-            'status_reuniao' => 4
+            'modificador' => 4
          ]);
 
 
@@ -402,7 +402,7 @@ class membroController extends Controller
         else if($tp == 2){
 
             DB::table('cronograma')->where('id', $id)->update([
-            'status_reuniao' => 1
+            'modificador' => null
          ]);
 
 

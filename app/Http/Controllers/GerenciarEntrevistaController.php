@@ -318,19 +318,13 @@ class GerenciarEntrevistaController extends Controller
         $a = DB::table('encaminhamento')->where('id', $id)->first();
 
 
-        if($a->id_tipo_entrevista == 3){
-            DB::table('entrevistas')->where('id_encaminhamento', $id)->update([
-                'id_entrevistador' => $request->input('id_entrevistador'),
-                'status' => 4,
-            ]);
-        }
 
-        else{
+
             DB::table('entrevistas')->where('id_encaminhamento', $id)->update([
                 'id_entrevistador' => $request->input('id_entrevistador'),
                 'status' => 3,
             ]);
-        }
+
 
 
 
