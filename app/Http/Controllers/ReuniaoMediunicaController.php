@@ -80,8 +80,8 @@ class ReuniaoMediunicaController extends Controller
 
             $grupo = DB::table('grupo AS gr')
                         ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
-                        ->orderBy('gr.nome')
-                        ->get();
+                        ->orderBy('gr.nome');
+
 
             $tipo = DB::table('tipo_grupo AS tg')
                         ->select('tg.id AS idtg', 'tg.nm_tipo_grupo')
@@ -100,6 +100,16 @@ class ReuniaoMediunicaController extends Controller
                         ->where('id_finalidade', 6)
                         ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
                         ->get();
+
+                        if (in_array(25,session()->get('usuario.setor'))) {
+
+
+                        }else{
+                            $grupo=$grupo->whereIn('gr.id_setor',session()->get('usuario.setor'));
+                        }
+
+                        $grupo=$grupo->get();
+
 
             return view ('/reuniao-mediunica/criar-reuniao', compact( 'grupo', 'tipo',  'tratamento',  'dia','salas'));
 
@@ -241,8 +251,8 @@ return view ('/reuniao-mediunica/visualizar-reuniao', compact('info','salas', 'g
             $grupo = DB::table('grupo AS gr')
             ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
             ->where('id_tipo_grupo', 1)
-            ->orderBy('gr.nome')
-            ->get();
+            ->orderBy('gr.nome');
+
 
             $tipo = DB::table('tipo_grupo AS tg')
             ->select('tg.id AS idtg', 'tg.nm_tipo_grupo')
@@ -272,7 +282,14 @@ return view ('/reuniao-mediunica/visualizar-reuniao', compact('info','salas', 'g
             ->where('crn.id', "$id")
             ->first();
 
+            if (in_array(25,session()->get('usuario.setor'))) {
 
+
+            }else{
+                $grupo=$grupo->whereIn('gr.id_setor',session()->get('usuario.setor'));
+            }
+
+            $grupo=$grupo->get();
 
 return view ('/reuniao-mediunica/editar-reuniao', compact('info','salas', 'grupo', 'tipo',  'tratamento',  'dia'));
 
