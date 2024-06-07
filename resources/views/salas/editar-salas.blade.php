@@ -112,8 +112,7 @@
                             <div class="col text-center mb-3">
                                 <label for="computador"></label>
                                 <input type="checkbox" name="computador" data-toggle="toggle" data-on="Sim" data-off="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->computador ? 'checked' : ''}}>
-                                <label for="computador" class="form-check-label" data-tt="tooltip"
-                                data-placement="top" title="Computador">5</label>
+                                <label for="computador">Computador</label>
                             </div>
                             <div class="col text-center mb-3">
                                 <label for="projetor"></label>
@@ -133,8 +132,7 @@
                             <div class="col text-center mb-3">
                                 <label for="som"></label>
                                 <input type="checkbox" name="som" data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não" data-onstyle="success" data-offstyle="danger" {{$salaEditada->som ? 'checked' : ''}}>
-                                <label for="som" class="form-check-label" data-tt="tooltip"
-                                data-placement="top" title="Som">9</label>
+                                <label for="som">Som</label>
                             </div>
                             <br>
                             <div class="col text-center mb-3">
