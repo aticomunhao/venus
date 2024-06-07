@@ -18,7 +18,7 @@ class GerenciarPerfil extends Controller
             $perfis =$perfis->where('descricao', 'ilike', "%$request->nome_pesquisa%");
         }
 
-        $perfis = $perfis->get();
+        $perfis = $perfis->orderBy('descricao')->get();
         return view('perfis.gerenciar-perfil', compact('perfis'));
     }
 

@@ -23,7 +23,7 @@ class GerenciarSetor extends Controller
             });
         }
 
-        $setores = $setores->get();
+        $setores = $setores->orderBy('s.nome')->get();
         return view('setor.gerenciar-setor', compact('setores'));
     }
 
@@ -32,7 +32,7 @@ class GerenciarSetor extends Controller
      */
     public function create()
     {
-        $setores = DB::table('setor')->whereNull('dt_fim')->get();
+        $setores = DB::table('setor')->whereNull('dt_fim')->orderBy('nome')->get();
         $rotas = DB::table('tipo_rotas')->orderBy('tipo_rotas.nome', 'ASC')->get();
         return view('setor.criar-setor', compact('rotas', 'setores'));
     }
@@ -72,7 +72,7 @@ class GerenciarSetor extends Controller
     public function edit(string $id)
     {
         $setor = DB::table('setor')->where('id',$id)->first();
-        $setores = DB::table('setor')->get();
+        $setores = DB::table('setor')->whereNull('dt_fim')->orderBy('nome')->get();
         $rotas = DB::table('tipo_rotas')->get();
         $rotasSelecionadas = DB::table('rotas_setor')->leftJoin('tipo_rotas', 'rotas_setor.id_rotas', 'tipo_rotas.id')->where('id_setor',$id)->orderBy('tipo_rotas.nome', 'ASC')->pluck('id_rotas');
 

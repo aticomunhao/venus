@@ -16,27 +16,31 @@ class RegrasRotasMiddleware
      */
     public function handle(Request $request, Closure $next, string $rota): Response
     {
-        $perfis = session()->get('usuario.perfis');
-        $setores = session()->get('usuario.setor');
-        $perfis = explode(',', $perfis);
-        $setores = explode(',', $setores);
+        try{
 
-        $perfis = DB::table('rotas_perfil')->whereIn('id_perfil', $perfis)->pluck('id_rotas');
-        $setores = DB::table('rotas_setor')->whereIn('id_setor', $setores)->pluck('id_rotas');
+           
+            $rotasAutorizadas = session()->get('usuario.acesso');
 
-        $perfis = json_decode(json_encode($perfis), true);
-        $setores = json_decode(json_encode($setores), true);
+            if(in_array($rota, $rotasAutorizadas)){
+                return $next($request);
+            }
+            else{
+            app('flasher')->addError('Você não tem autorização para acessar esta funcionalidade!');
+            return redirect('/login/valida');
+            }
 
-        $rotasAutorizadas = array_intersect($perfis, $setores);
-
-
-        if(in_array($rota, $rotasAutorizadas)){
-            return $next($request);
         }
-        else{
-        app('flasher')->addError('Você não tem autorização para acessar esta funcionalidade!');
-          return redirect('/login/valida');
-        }
+
+        catch(\Exception $e){
+
+                    app('flasher')->addError('É necessário fazer login para acessar!');
+                    return redirect('/login/valida');
+
+                }
+
+
+
+
 
 
 
