@@ -31,6 +31,13 @@ class ReuniaoMediunicaController extends Controller
 
             $status = $request->status == null ? "undefined" : $request->status;
 
+            if (in_array(25,session()->get('usuario.setor'))) {
+
+
+            }else{
+                $reuniao=$reuniao->whereIn('gr.id_setor',session()->get('usuario.setor'));
+            }
+
 
             if ($request->semana != null){
                 $reuniao->where('cro.dia_semana', '=', $request->semana);

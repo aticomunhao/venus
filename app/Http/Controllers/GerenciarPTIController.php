@@ -17,6 +17,7 @@ class GerenciarPTIController extends Controller
 
         try{
 
+        $hoje = Carbon::today();
             $dirigentes = DB::table('membro as mem')
         ->select('ass.id_pessoa', 'gr.nome', 'cr.id', 'gr.status_grupo', 'd.nome as dia')
         ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
@@ -26,7 +27,10 @@ class GerenciarPTIController extends Controller
         ->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
         ->where('id_funcao', '<', 3)
         ->where('cr.id_tipo_tratamento', 2)
-        ->where('cr.status_reuniao', '<>', 2)
+        ->where(function($query) use ($hoje) {
+            $query->whereRaw("cr.data_fim < ?", [$hoje])
+                  ->orWhereNull('cr.data_fim');
+        })
         ->distinct('gr.id')
         ->get();
 

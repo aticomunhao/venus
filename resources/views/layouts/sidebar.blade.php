@@ -165,7 +165,7 @@ $setor = session()->get('usuario.setor');
                         </li>
                     </ul>
                 @endif
-                @if (in_array(25, $setor))
+
                     <ul class="navbar-nav" id="ADM">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="3" role="button"
@@ -190,7 +190,7 @@ $setor = session()->get('usuario.setor');
                             </ul>
                         </li>
                     </ul>
-                @endif
+
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="4" role="button"
@@ -214,3 +214,10 @@ $setor = session()->get('usuario.setor');
         </div>
     </nav>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    if($('#ADM .dropdown-item').lenght){
+        $('#ADM').hide();
+    }
+
+</script>
