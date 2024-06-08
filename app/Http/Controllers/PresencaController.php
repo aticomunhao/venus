@@ -18,6 +18,8 @@ use Illuminate\Support\Carbon;
       
         public function index(Request $request)
         {
+
+            try {
             $now = Carbon::now()->format('Y-m-d');
         
             $lista = DB::table('atendimentos as atd')
@@ -45,11 +47,16 @@ use Illuminate\Support\Carbon;
         
             return view('presenças.gerenciar-presenca', compact('lista', 'stat', 'now', 'dia'));
         }
-        
+        catch(\Exception $e){
+
+            $code = $e->getCode( );
+            return view('gerenciar-presenca erro.erro-inesperado', compact('code'));
+                }
+            }
     
         public function criar(Request $request, string $idtr) {
             
-        
+        try{
             $now = Carbon::now();
             $presenca = isset($request->presenca) ? true : false;
         
@@ -66,7 +73,12 @@ use Illuminate\Support\Carbon;
             return redirect('/gerenciar-presenca');
         }
         
+        catch(\Exception $e){
 
+            $code = $e->getCode( );
+            return view('administrativo-erro.erro-inesperado', compact('code'));
+                }
+            }
 
 
             public function destroy( $id)

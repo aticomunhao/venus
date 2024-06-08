@@ -16,6 +16,8 @@ class PessoaController extends Controller
     public function index(Request $request)
     {
 
+        try{
+
         $ddd = DB::select('select id, descricao from tp_ddd');
 
         $sexo = DB::select('select id, tipo from tp_sexo');
@@ -71,19 +73,32 @@ class PessoaController extends Controller
         return view('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('gerenciar-pessoas erro.erro-inesperado', compact('code'));
+            }
+        }
+
     public function store()
     {
+        try{
         $ddd = DB::select('select id, descricao from tp_ddd');
 
         $sexo = DB::select('select id, tipo from tp_sexo');
 
         return view('/pessoal/incluir-pessoa', compact('ddd', 'sexo'));
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function create(Request $request)
     {
-
+        
         $today = Carbon::today()->format('Y-m-d');
 
         $cpf = $request->cpf;
@@ -148,6 +163,7 @@ class PessoaController extends Controller
 
     public function edit($idp)
     {
+        try{
         $ddd = DB::select('select id, descricao from tp_ddd');
 
         $sexo = DB::select('select id, tipo from tp_sexo');
@@ -171,9 +187,16 @@ class PessoaController extends Controller
 
         return view('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p', 'motivo'));
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function show($idp)
     {
+        try{
         $ddd = DB::select('select id, descricao from tp_ddd');
 
         $sexo = DB::select('select id, tipo from tp_sexo');
@@ -197,10 +220,16 @@ class PessoaController extends Controller
         return view('/pessoal/visualizar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p','motivo'));
     }
     
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function update(Request $request, $idp)
     {
+        
         $usuario = session()->get('usuario.id_usuario');
 
         //dd($usuario);

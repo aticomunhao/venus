@@ -22,6 +22,7 @@ class AtendimentoFraternoEspecificoController extends Controller
     public function index(Request $request)
     {
 
+        try{
 
         $atendente = session()->get('usuario.id_associado');
 
@@ -37,7 +38,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
         $afe = DB::table('associado')->where('id_pessoa', session()->get('usuario.id_pessoa'))
         ->first();
-
+          
 
         $assistido = DB::table('atendimentos AS at')
             ->select('at.id AS idat', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido AS idas', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento')
@@ -65,8 +66,16 @@ class AtendimentoFraternoEspecificoController extends Controller
         return view('/atendente-fraterno-especifico/atendendo-afe', compact('assistido', 'atendente', 'now', 'nome', 'grupo','afe'));
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function atende_agora()
     {
+
+        try{
 
         $now =  Carbon::now()->format('Y-m-d');
         $atendente = session()->get('usuario.id_associado');
@@ -119,10 +128,17 @@ class AtendimentoFraternoEspecificoController extends Controller
             return redirect('/atendendo-afe');
         }
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function history($idat, $idas)
     {
+
+        try{
 
         $atendimentos = DB::table('atendimentos AS at')->where('id_assistido', $idas)->get('id');
         //dd($atendimentos);
@@ -243,7 +259,12 @@ class AtendimentoFraternoEspecificoController extends Controller
 
 
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
 
@@ -255,6 +276,7 @@ class AtendimentoFraternoEspecificoController extends Controller
     public function fimanalise($idat)
     {
 
+        try{
         $atendente = session()->get('usuario.id_associado');
 
         $sit = DB::table('atendimentos AS at')
@@ -287,8 +309,16 @@ class AtendimentoFraternoEspecificoController extends Controller
         return redirect()->back();
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
+
     public function inicio($idat)
     {
+        try{
 
         $now =  Carbon::now()->format('Y-m-d H:m:d');
 
@@ -315,10 +345,16 @@ class AtendimentoFraternoEspecificoController extends Controller
         }
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function tratar($idat, $idas)
     {
 
+        try{
         $sit = DB::table('atendimentos AS at')
             ->where('at.id', $idat)
             ->where('status_atendimento', '<', 4)
@@ -358,9 +394,16 @@ class AtendimentoFraternoEspecificoController extends Controller
         }
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function entrevistar($idat, $idas)
     {
 
+        try{
         $sit = DB::table('atendimentos AS at')
             ->where('at.id', $idat)
             ->where('status_atendimento', '<', 4)
@@ -402,10 +445,16 @@ class AtendimentoFraternoEspecificoController extends Controller
             return redirect()->back();
         }
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function final($idat)
     {
-
+        try{
         $sit = DB::table('atendimentos AS at')->where('at.id', $idat)->where('status_atendimento', '<', 4)->count();
 
 
@@ -426,9 +475,15 @@ class AtendimentoFraternoEspecificoController extends Controller
         }
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function pre_tema($idat)
     {
-
+        try{
         $verifi =  $result = DB::table('registro_tema AS rt')
             ->leftJoin('atendimentos AS at', 'rt.id_atendimento', 'at.id')
             ->where('at.id', $idat)->count();
@@ -450,9 +505,16 @@ class AtendimentoFraternoEspecificoController extends Controller
         return view('/atendente-fraterno-especifico/tematicas-afe', compact('assistido', 'result', 'verifi'));
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function enc_trat(Request $request, $idat, $idas)
     {
+        try{
         $now = Carbon::now()->format('Y-m-d H:m:s');
 
         $atendente = session()->get('usuario.id_associado');
@@ -556,9 +618,16 @@ class AtendimentoFraternoEspecificoController extends Controller
         return Redirect('/atendendo-afe');
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function enc_entre(Request $request, $idat)
     {
+        try{
         $now = Carbon::now()->format('Y-m-d H:m:s');
 
         $atendente = session()->get('usuario.id_pessoa');
@@ -637,9 +706,15 @@ class AtendimentoFraternoEspecificoController extends Controller
         return Redirect('/atendendo-afe');
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function finaliza($idat)
     {
-
+        try{
         $now = Carbon::now()->format('Y-m-d H:m:s');
 
         $atendente = session()->get('usuario.id_associado');
@@ -670,10 +745,16 @@ class AtendimentoFraternoEspecificoController extends Controller
 
         return redirect('/atendendo-afe');
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function meus_atendimentos()
     {
-
+        try{
         $atendente = session()->get('usuario.id_associado');
 
         $nome = session()->get('usuario.nome');
@@ -754,11 +835,16 @@ class AtendimentoFraternoEspecificoController extends Controller
 
         return view('/atendente-fraterno-especifico/meus-atendimentos-afe', compact('assistido', 'atendente', 'nome', 'grupo'));
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function tematica(Request $request, $idat)
     {
-
+        try{
         $r_tema = DB::table('registro_tema')->where('id_atendimento', $idat)->count();
 
         $now = Carbon::now()->format('Y-m-d H:m:s');
@@ -836,7 +922,14 @@ class AtendimentoFraternoEspecificoController extends Controller
         }
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function reset(string $idat) {
+        try{
 
         DB::table('encaminhamento')->where('id_atendimento',$idat)->delete();
 
@@ -850,5 +943,11 @@ class AtendimentoFraternoEspecificoController extends Controller
         return redirect()->back();
     }
 
-}
+
+catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+    }}
 

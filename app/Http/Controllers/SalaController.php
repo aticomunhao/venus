@@ -19,6 +19,8 @@ class SalaController extends Controller
     public function index(Request $request)
 {
 
+    try {
+
     $sala = DB::table('salas AS s')
         ->select(
             's.id AS ids',
@@ -47,11 +49,18 @@ class SalaController extends Controller
 
         return view('salas.gerenciar-salas', compact('sala'));
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('gerenciar-salas erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
 
     public function criar()
     {
+        try{
         $salas = db::select('select * from salas');
         $tipo_finalidade_sala = db::select('select * from tipo_finalidade_sala');
         $tipo_motivo = db::select('select * from tipo_motivo');
@@ -69,9 +78,16 @@ class SalaController extends Controller
         //
         return view('salas/criar-salas', compact('salas', 'tipo_finalidade_sala', 'tipo_localizacao','numerosExistem','tipo_motivo'));
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function show($id)
     {
+        try{
 
         $salaEditada = DB::table('salas')->where('id', $id)->select('*')->first();
         $salas = DB::table('salas AS s')
@@ -117,11 +133,17 @@ class SalaController extends Controller
     return view('salas/visualizar-salas', compact('salas', 'tipo_finalidade_sala', 'tipo_localizacao','salaEditada','numerosExistem','tipo_motivo'));
 
         }
+        catch(\Exception $e){
+
+            $code = $e->getCode( );
+            return view('administrativo-erro.erro-inesperado', compact('code'));
+                }
+            }
 
 
     public function store(Request $request)
     {
-
+        try{
 
         $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
 
@@ -179,11 +201,16 @@ class SalaController extends Controller
 
         return redirect('gerenciar-salas');
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function edit($id)
     {
-
+        try{
 
         $salaEditada = DB::table('salas')->where('id', $id)->select('*')->first();
         $salas = DB::table('salas AS s')
@@ -233,10 +260,15 @@ class SalaController extends Controller
 
 }
 
+catch(\Exception $e){
 
+    $code = $e->getCode( );
+    return view('administrativo-erro.erro-inesperado', compact('code'));
+        }
+    }
 public function update(Request $request, $id)
 {
-
+    try{
 
     $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
     $projetor = isset($request->projetor) ? 1 : 0;
@@ -286,10 +318,16 @@ public function update(Request $request, $id)
         app('flasher')->addSuccess("Alterado com Sucesso");
         return redirect('gerenciar-salas');
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function destroy($id)
     {
+        try{
         $ids = DB::table('salas')->select('nome')->where('id', $id)->get();
         $teste = session()->get('usuario');
 
@@ -319,4 +357,10 @@ public function update(Request $request, $id)
         app('flasher')->addError('Excluido com sucesso.');
         return redirect('/gerenciar-salas');
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 }

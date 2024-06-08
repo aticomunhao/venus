@@ -9,8 +9,14 @@ use Illuminate\Database\DBAL\TimestampType;
 
     class FatosController extends Controller
     {
+        
         public function index(Request $request)
         {
+
+            try{
+
+            
+
             $lista = DB::table('tipo_fato')
                 ->select('id', 'descricao')
                 ->orderBy('id', 'ASC');
@@ -22,19 +28,40 @@ use Illuminate\Database\DBAL\TimestampType;
 
                 return view('/administrativo/gerenciar-fatos', compact('lista'));
 
+              
+            
+            }
+            catch(\Exception $e){
 
-        }
+                $code = $e->getCode( );
+                return view('administrativo-erro.erro-inesperado', compact('code'));
+                    }
+                }
+                    
+
+                    
+                    
 
         public function edit($id) {
+
+            try{
 
             $lista = DB::select("select * from tipo_fato where id = $id");
 
 
             return view ('\administrativo\editar-fatos' , compact('lista'));
 
+            
         }
 
+   
+    
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
         public function update(Request $request, string $id)
         {
 
@@ -47,28 +74,43 @@ use Illuminate\Database\DBAL\TimestampType;
 
         public function criar()
         {
+            try{
+
 
             return view ('/administrativo/criar-fatos');
 
 
         }
+          
+    
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
             public function incluir(Request $request)
 
         {
-
+            try{
 
             DB::table('tipo_fato')->insert([
                 'descricao' => $request->input('fato')
             ]);
 
-
-
-
-
-            return redirect('/gerenciar-fatos');
         }
-
+        
+        
+        catch(\Exception $e){
+    
+            $code = $e->getCode( );
+            return view('administrativo-erro.erro-inesperado', compact('code'));
+                }
+            
+        return redirect('/gerenciar-fatos');
+        }
+        
 
 
 

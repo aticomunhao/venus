@@ -14,7 +14,7 @@ class ReuniaoMediunicaController extends Controller
 {
 
         public function index(Request $request){
-
+            try {
             $now =  Carbon::now()->format('Y-m-d');
             $reuniao = DB::table('cronograma AS cro')
                         ->select('cro.id AS idr', 'gr.nome AS nomeg', 'cro.dia_semana AS idd', 'cro.id_sala', 'cro.id_tipo_tratamento', 'cro.id_tipo_tratamento', 'cro.h_inicio','td.nome AS nomed', 'cro.h_fim', 'cro.max_atend', 'gr.status_grupo AS idst', 'tst.descricao AS tstd', 'sa.numero', DB::raw("(CASE WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status"))
@@ -69,14 +69,16 @@ class ReuniaoMediunicaController extends Controller
 
 
         }
+        catch(\Exception $e){
+
+            $code = $e->getCode( );
+            return view('gerenciar-reunioes erro.erro-inesperado', compact('code'));
+                }
+            }
 
         public function create(){
 
-            // $sala = DB::table('salas AS sl')
-            //             ->select('sl.id AS ids', 'sl.nome', 'sl.numero', 'sl.nr_lugares','sl.id_localizacao')
-            //             ->where('id_finalidade', 6)
-            //             ->orderBy('numero', 'asc')
-            //             ->get();
+          try{
 
             $grupo = DB::table('grupo AS gr')
                         ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
@@ -115,9 +117,15 @@ class ReuniaoMediunicaController extends Controller
 
 
         }
+        catch(\Exception $e){
+
+            $code = $e->getCode( );
+            return view('administrativo-erro.erro-inesperado', compact('code'));
+                }
+            }
 
         public function store(Request $request){
-
+            try{
 
             $usuario = session()->get('usuario.id_pessoa');
             $now =  Carbon::now()->format('Y-m-d');
@@ -188,14 +196,16 @@ class ReuniaoMediunicaController extends Controller
             return redirect ('/gerenciar-reunioes');
 
         }
+        catch(\Exception $e){
+
+            $code = $e->getCode( );
+            return view('administrativo-erro.erro-inesperado', compact('code'));
+                }
+            }
 
         public function show(string $id)
         {
-            // $sala = DB::table('salas AS sl')
-            // ->select('sl.id AS ids', 'sl.nome', 'sl.numero', 'sl.nr_lugares')
-            // ->where('id_finalidade', 6)
-            // ->orderBy('numero', 'asc')
-            // ->get();
+            try{
 
             $grupo = DB::table('grupo AS gr')
             ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
@@ -235,6 +245,12 @@ class ReuniaoMediunicaController extends Controller
 
 return view ('/reuniao-mediunica/visualizar-reuniao', compact('info','salas', 'grupo', 'tipo',  'tratamento',  'dia'));
         }
+        catch(\Exception $e){
+
+            $code = $e->getCode( );
+            return view('administrativo-erro.erro-inesperado', compact('code'));
+                }
+            }
 
         /**
          * Show the form for editing the specified resource.
@@ -242,11 +258,7 @@ return view ('/reuniao-mediunica/visualizar-reuniao', compact('info','salas', 'g
         public function edit(string $id)
         {
 
-            // $sala = DB::table('salas AS sl')
-            // ->select('sl.id AS ids', 'sl.nome', 'sl.numero', 'sl.nr_lugares','sl.id_localizacao')
-            // ->where('id_finalidade', 6)
-            // ->orderBy('numero', 'asc')
-            // ->get();
+       try{
 
             $grupo = DB::table('grupo AS gr')
             ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
@@ -294,13 +306,19 @@ return view ('/reuniao-mediunica/visualizar-reuniao', compact('info','salas', 'g
 return view ('/reuniao-mediunica/editar-reuniao', compact('info','salas', 'grupo', 'tipo',  'tratamento',  'dia'));
 
         }
+        catch(\Exception $e){
+
+            $code = $e->getCode( );
+            return view('administrativo-erro.erro-inesperado', compact('code'));
+                }
+            }
 
         /**
          * Update the specified resource in storage.
          */
         public function update(Request $request, string $id)
         {
-
+            try{
 
             $usuario = session()->get('usuario.id_pessoa');
             $now =  Carbon::now()->format('Y-m-d');
@@ -369,6 +387,12 @@ return view ('/reuniao-mediunica/editar-reuniao', compact('info','salas', 'grupo
             return redirect ('/gerenciar-reunioes');
 
         }
+        catch(\Exception $e){
+
+            $code = $e->getCode( );
+            return view('administrativo-erro.erro-inesperado', compact('code'));
+                }
+            }
 
         /**
          * Remove the specified resource from storage.

@@ -12,6 +12,7 @@ class membroController extends Controller
 {
 
     public function grupos(Request $request){
+        try{
         $cronogramas = DB::table('membro')->select('id_cronograma')->get();
         $array_cro = [];
 
@@ -75,8 +76,17 @@ class membroController extends Controller
         return view('membro.listar-grupos-membro', compact('membro_cronograma', 'nome', 'membro', 'membroPesquisa'));
     }
 
-    public function createGrupo(Request $request, String $id){
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('listar-grupos erro.erro-inesperado', compact('code'));
+            }
+        }
+
+    public function createGrupo(Request $request, String $id){
+        
+        try{
         $grupo = DB::table('cronograma as cro')
     ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia')
     ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
@@ -101,9 +111,15 @@ class membroController extends Controller
     return view('membro/criar-membro-grupo', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao', 'id'));
 
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function storeGrupo(Request $request, String $id){
-
+        try{
         $data = date("Y-m-d H:i:s");
         DB::table('membro')->insert([
             'id_associado' => $request->input('id_associado'),
@@ -118,10 +134,16 @@ class membroController extends Controller
         app('flasher')->addSuccess("Cadastrado com Sucesso");
         return redirect("gerenciar-membro/$id");
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function index(Request $request, String $id)
     {
 
+        try{
 
         $grupo = DB::table('cronograma as cro')
     ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.modificador')
@@ -182,11 +204,17 @@ class membroController extends Controller
         return view('membro.gerenciar-membro', compact('membro', 'id', 'grupo'));
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('gerenciar-membro erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
     public function create()
 {
+    try{
     $grupo = DB::table('cronograma as cro')
     ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia')
     ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
@@ -211,13 +239,18 @@ class membroController extends Controller
     return view('membro/criar-membro', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao'));
 }
 
+catch(\Exception $e){
 
+    $code = $e->getCode( );
+    return view('administrativo-erro.erro-inesperado', compact('code'));
+        }
+    }
 
 
 
     public function store(Request $request)
     {
-
+        try{
 
 
         $data = date("Y-m-d H:i:s");
@@ -237,10 +270,16 @@ class membroController extends Controller
         return redirect('gerenciar-grupos-membro');
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function edit(String $idcro, String $id)
 {
+        try{
     $grupo = DB::table('cronograma as cro')
     ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia')
     ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
@@ -286,13 +325,18 @@ class membroController extends Controller
 }
 
 
+catch(\Exception $e){
 
+    $code = $e->getCode( );
+    return view('administrativo-erro.erro-inesperado', compact('code'));
+        }
+    }
 
 
 
     public function update(Request $request, string $idcro, String $id)
     {
-
+        try{
 
         DB::table('membro')->where('id', $id)->update([
             'id_funcao' => $request->input('id_funcao'),
@@ -307,12 +351,17 @@ class membroController extends Controller
     }
 
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
     public function show(string $idcro, string $id)
 {
-
+    try{
     $grupo = DB::table('cronograma as cro')
     ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia')
     ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
@@ -357,10 +406,15 @@ class membroController extends Controller
     return view('membro.visualizar-membro', compact('associado', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo',  'membro', 'pessoas', 'tipo_funcao', 'idcro'));
 }
 
+catch(\Exception $e){
 
+    $code = $e->getCode( );
+    return view('administrativo-erro.erro-inesperado', compact('code'));
+        }
+    }
     public function destroy(string $idcro, string $id)
     {
-
+        try{
         $data = date("Y-m-d H:i:s");
 
         DB::table('historico_venus')->insert([
@@ -388,8 +442,14 @@ class membroController extends Controller
         return redirect("/gerenciar-membro/$idcro");
     }
 
-    public function ferias(string $id, string $tp){
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }    
+    public function ferias(string $id, string $tp){
+        try{
         if($tp == 1){
 
             DB::table('cronograma')->where('id', $id)->update([
@@ -412,4 +472,10 @@ class membroController extends Controller
 
 
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 }

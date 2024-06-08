@@ -108,9 +108,9 @@ class AtendentePlantonistaController extends Controller
                 $i += 1;
             }
 
-            return redirect()->route('indexAtendentePlantonista');
-
+            
             DB::commit();
+            return redirect()->route('indexAtendentePlantonista');
         } catch (\Exception $e) {
             app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
             DB::rollBack();
@@ -137,6 +137,7 @@ class AtendentePlantonistaController extends Controller
                 ->get();
 
             $dias = DB::table('tipo_dia')->get();
+
         } catch (\Exception $e) {
             app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
             return redirect()->back();
@@ -205,9 +206,10 @@ class AtendentePlantonistaController extends Controller
                 ]);
             }
 
-            return redirect()->route('indexAtendentePlantonista');
-
+            
             DB::commit();
+            return redirect()->route('indexAtendentePlantonista');
+            
         } catch (\Exception $e) {
             app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
             DB::rollBack();

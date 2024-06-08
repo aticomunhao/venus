@@ -12,6 +12,8 @@ class GerenciarPerfil extends Controller
      */
     public function index(Request $request)
     {
+        try{
+        
         $perfis = DB::table('perfil');
 
         if($request->nome_pesquisa){
@@ -22,21 +24,33 @@ class GerenciarPerfil extends Controller
         return view('perfis.gerenciar-perfil', compact('perfis'));
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('gerenciar-perfi erro.erro-inesperado', compact('code'));
+            }
+        }
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
+        try{
         $rotas = DB::table('tipo_rotas')->orderBy('tipo_rotas.nome', 'ASC')->get();
         return view('perfis.criar-perfil', compact('rotas'));
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-
+        try{
 
         $perfil = DB::table('perfil')->insertGetId([
             'descricao' => $request->nome
@@ -53,23 +67,37 @@ class GerenciarPerfil extends Controller
         return redirect('/gerenciar-perfis');
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
+        try{
 
         $perfil = DB::table('perfil')->where('id',$id)->first();
         $rotas = DB::table('rotas_perfil')->leftJoin('tipo_rotas', 'rotas_perfil.id_rotas', 'tipo_rotas.id')->where('id_perfil',$id)->orderBy('tipo_rotas.nome', 'ASC')->get();
 
         return view('perfis.visualizar-perfil', compact('perfil', 'rotas'));
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
+        try{
         $perfil = DB::table('perfil')->where('id',$id)->first();
 
         $rotas = DB::table('tipo_rotas')->get();
@@ -77,13 +105,18 @@ class GerenciarPerfil extends Controller
 
         return view('perfis.editar-perfil', compact('perfil', 'rotas', 'rotasSelecionadas'));
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-
+        try{
         DB::table('perfil')->where('id', $id)->update([
             'descricao' => $request->nome
         ]);
@@ -102,16 +135,29 @@ class GerenciarPerfil extends Controller
         return redirect('/gerenciar-perfis');
 
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
+        try{
 
         DB::table('rotas_perfil')->where('id_perfil', $id)->delete();
         DB::table('perfil')->where('id', $id)->delete();
         return redirect('/gerenciar-perfis');
 
+    }
+catch(\Exception $e){
+
+    $code = $e->getCode( );
+    return view('administrativo-erro.erro-inesperado', compact('code'));
+        }
     }
 }

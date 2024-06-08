@@ -42,6 +42,7 @@ class GerenciarEntrevistaController extends Controller
 
     public function index(Request $request)
     {
+        try{
         $informacoes = DB::table('encaminhamento')
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
             ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
@@ -159,10 +160,16 @@ class GerenciarEntrevistaController extends Controller
     }
 
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('gerenciar-entrevistas-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function create($id)
     {
+        try{
 
         $pessoas = DB::select('SELECT id, nome_completo FROM pessoas');
         $tipo_tratamento = DB::select('SELECT id, descricao AS tratamento_descricao FROM tipo_tratamento');
@@ -214,13 +221,18 @@ class GerenciarEntrevistaController extends Controller
         return view('Entrevistas/criar-entrevista', compact('salas', 'entrevista', 'encaminhamento', 'informacoes', 'pessoas', 'tipo_tratamento', 'tipo_entrevista'));
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
 
     public function store(Request $request, $id)
     {
-
+        try{
 
 
 
@@ -244,11 +256,16 @@ class GerenciarEntrevistaController extends Controller
 
         return redirect()->route('gerenciamento')->with('success', 'Entrevista criada com sucesso!');
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function criar($id)
     {
 
-
+    try
 
 
         $associado = DB::table('membro')->select('membro.id',)
@@ -309,11 +326,16 @@ class GerenciarEntrevistaController extends Controller
         return view('Entrevistas.agendar-entrevistador', compact('membros', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function incluir(Request $request, string $id)
     {
-
+    try
 
         $a = DB::table('encaminhamento')->where('id', $id)->first();
 
@@ -336,11 +358,17 @@ class GerenciarEntrevistaController extends Controller
     }
 
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
     public function show($id)
     {
+     try{
         $entrevistas = DB::table('entrevistas AS entre')
             ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
             ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
@@ -367,12 +395,18 @@ class GerenciarEntrevistaController extends Controller
         return view('Entrevistas.visualizar-entrevista', compact('membros', 'entrevistas', 'encaminhamento',  'salas'));
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
 
     public function edit($id)
     {
+        try{
 
         $entrevistas = DB::table('entrevistas AS entre')
             ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
@@ -440,10 +474,16 @@ class GerenciarEntrevistaController extends Controller
     }
 
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function update(Request $request, $id)
     {
+        try{
         $entrevista = DB::table('entrevistas AS entre')
             ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
             ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
@@ -478,10 +518,15 @@ class GerenciarEntrevistaController extends Controller
     }
 
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function finalizar($id)
     {
-
+        try{
         $novo_encaminhamento = Carbon::today();
         $id_usuario = session()->get('usuario.id_usuario');
         $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
@@ -575,11 +620,16 @@ class GerenciarEntrevistaController extends Controller
         // Criar um novo registro na tabela de encaminhamento
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function fim($id)
 
     {
-
+    try{
 
         DB::table('entrevistas')
             ->where('id_encaminhamento', $id)
@@ -591,10 +641,15 @@ class GerenciarEntrevistaController extends Controller
         return redirect()->route('gerenciamento')->with('sucess', 'Entrevista cancelada!');
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function inativar($id, $tp)
     {
-
+        try{
 
         $data = date("Y-m-d H:i:s");
 
@@ -631,4 +686,10 @@ class GerenciarEntrevistaController extends Controller
 
         return redirect()->route('gerenciamento')->with('success', 'Entrevista Cancelada com Sucesso!');
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 }

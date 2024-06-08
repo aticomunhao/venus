@@ -484,6 +484,8 @@ catch(\Exception $e){
         public function entrevistar($idat, $idas)
         {
 
+            try{
+
             $sit = DB::table('atendimentos AS at')
                     ->where('at.id', $idat)
                     ->where('status_atendimento', '<', 4)
@@ -529,10 +531,17 @@ catch(\Exception $e){
 
             }
 
-        }
+        }catch(\Exception $e){
+
+            $code = $e->getCode( );
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+            }
 
         public function final($idat)
         {
+
+            try{
 
             $sit = DB::table('atendimentos AS at')->where('at.id', $idat)->where('status_atendimento', '<', 4)->count();
 
@@ -557,8 +566,17 @@ catch(\Exception $e){
 
         }
 
+        catch(\Exception $e){
+
+            $code = $e->getCode( );
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+            }
+
         public function pre_tema($idat)
         {
+
+            try{
 
             $verifi =  $result = DB::table('registro_tema AS rt')
             ->leftJoin('atendimentos AS at', 'rt.id_atendimento', 'at.id')
@@ -581,10 +599,18 @@ catch(\Exception $e){
             return view('/atendimento-assistido/tematicas', compact('assistido', 'result', 'verifi'));
 
         }
+        catch(\Exception $e){
 
+            $code = $e->getCode( );
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+            }
 
         public function enc_trat(Request $request, $idat, $idas)
         {
+
+            try{
+
             $now = Carbon::now()->format('Y-m-d H:m:s');
 
             $atendente = session()->get('usuario.id_associado');
@@ -710,10 +736,18 @@ catch(\Exception $e){
             return Redirect('/atendendo');
 
         }
+        catch(\Exception $e){
 
+            $code = $e->getCode( );
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+            }
 
         public function enc_entre(Request $request, $idat)
         {
+            
+            try{
+
             $now = Carbon::now()->format('Y-m-d H:m:s');
 
             $atendente = session()->get('usuario.id_pessoa');
@@ -829,8 +863,18 @@ catch(\Exception $e){
 
         }
 
+        catch(\Exception $e){
+
+            $code = $e->getCode( );
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+            }
+
         public function finaliza($idat)
         {
+
+            
+            try{
 
             $now = Carbon::now()->format('Y-m-d H:m:s');
 
@@ -864,9 +908,16 @@ catch(\Exception $e){
             return redirect('/atendendo');
 
         }
+        catch(\Exception $e){
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
 
         public function meus_atendimentos()
         {
+
+            try{
 
             $atendente = session()->get('usuario.id_associado');
 
@@ -952,8 +1003,13 @@ catch(\Exception $e){
 
         }
 
-
+        catch(\Exception $e){
+            $code = $e->getCode( );
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+            }
         public function tematica(Request $request, $idat){
+            try{
 
             $r_tema = DB::table('registro_tema')->where('id_atendimento', $idat)->count();
 
@@ -1033,9 +1089,14 @@ catch(\Exception $e){
             }
 
         }
-
+        catch(\Exception $e){
+            $code = $e->getCode( );
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+            }
 
         public function reset(string $idat) {
+            try{
 
             DB::table('encaminhamento')->where('id_atendimento',$idat)->delete();
 
@@ -1049,4 +1110,9 @@ catch(\Exception $e){
             return redirect()->back();
         }
 
+        catch(\Exception $e){
+            $code = $e->getCode( );
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+            }
 }

@@ -18,6 +18,8 @@ class GerenciarEncaminhamentoPTIController extends Controller
 {
     public function index(Request $request){
 
+        try{
+
         $now =  Carbon::now()->format('Y-m-d');
 
 
@@ -82,10 +84,17 @@ class GerenciarEncaminhamentoPTIController extends Controller
         return view ('/recepcao-integrada/gerenciar-encaminhamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'motivo'));
 
 
-    }
+        }
+
+        catch(\Exception $e){
+
+            $code = $e->getCode( );
+            return view('recpcao-integrada-erro.erro-inesperado', compact('code'));
+                }
+            }
 
     public function agenda($ide, $idtt){
-
+        try{
         $hoje = Carbon::now()->format('Y-m-d');
         $result = DB::table('encaminhamento AS enc')
                         ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat' )
@@ -270,10 +279,15 @@ class GerenciarEncaminhamentoPTIController extends Controller
         return view('/recepcao-integrada/agendar-dia', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
 
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function tratamento(Request $request, $ide){
-
+        try{
 
         $hoje = Carbon::today();
 
@@ -344,9 +358,15 @@ class GerenciarEncaminhamentoPTIController extends Controller
 
 
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function tratar(Request $request, $ide){
-
+        try{
         $reu = intval($request->reuniao);
         $dia_semana = DB::table('cronograma AS reu')->where('id', $reu)->value('dia_semana');
         $data_atual = Carbon::now();
@@ -441,10 +461,15 @@ class GerenciarEncaminhamentoPTIController extends Controller
         return redirect('/gerenciar-encaminhamentos');
 
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function visualizar($ide){
-
+        try{
         $result = DB::table('encaminhamento AS enc')
                         ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido','p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo','p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'tse.descricao AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo')
                         ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
@@ -489,10 +514,15 @@ class GerenciarEncaminhamentoPTIController extends Controller
         return view('/recepcao-integrada/historico-encaminhamento', compact('result', 'list', 'faul'));
 
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function inative(Request $request, $ide){
-
+        try{
         $today = Carbon::today()->format('Y-m-d');
 
 
@@ -521,5 +551,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
 
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 }

@@ -16,6 +16,7 @@ class GerenciarAtendimentoController extends Controller
 
     public function index(Request $request)
     {
+        try{
 
         $now =  Carbon::now()->format('Y-m-d');
 
@@ -97,10 +98,18 @@ class GerenciarAtendimentoController extends Controller
         return view('/recepcao-AFI/gerenciar-atendimentos', compact('lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'situacao', 'now'));
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('recpcao-AFI-erro.erro-inesperado', compact('code'));
+            }
+        }
+
     ///CRIAR UM NOVO ATENDIMENTO
 
     public function create()
     {
+        try{
 
         $hoje = Carbon::today();
         $lista = DB::select("select
@@ -157,11 +166,17 @@ class GerenciarAtendimentoController extends Controller
         return view('/recepcao-AFI/incluir-atendimento', compact('afi', 'priori', 'sexo', 'parentes', 'lista'));
     }
 
+ catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function store(Request $request)
     {
 
+        try{
         $usuario = session()->get('usuario.id_pessoa');
 
         $now = Carbon::now()->format('Y-m-d H:m:s');
@@ -209,13 +224,18 @@ class GerenciarAtendimentoController extends Controller
 
         return redirect('/gerenciar-atendimentos');
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     ////INCLUI UMA NOVA PESSOA
     public function SetPessoa(Request $request)
     {
 
-
+        try{
         DB::table('pessoas AS p')->insert([
 
             'nome_completo' => $request->input('nomepes'),
@@ -228,10 +248,15 @@ class GerenciarAtendimentoController extends Controller
         return redirect('/gerenciar-atendimentos');
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function cancelar($ida)
     {
-
+        try{
         $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
         if ($status > 1) {
@@ -248,11 +273,16 @@ class GerenciarAtendimentoController extends Controller
             return redirect('/gerenciar-atendimentos');
         }
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     ////PREPARA PARA EDITAR
     public function edit($ida)
     {
-
+        try {
         $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
         if ($status > 1) {
@@ -317,11 +347,16 @@ class GerenciarAtendimentoController extends Controller
             return view('/recepcao-AFI/editar-atendimento', compact('result', 'priori', 'sexo', 'pare', 'afi', 'lista'));
         }
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     ///////ALTERA UM ATENDIMENTO
     public function altera(Request $request, $ida)
     {
-
+        try{
         $afi = DB::table('associado')->where('id_pessoa', $request->input('afi_p'))->first();
 
 
@@ -341,11 +376,17 @@ class GerenciarAtendimentoController extends Controller
 
         return redirect('/gerenciar-atendimentos');
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function visual($idas)
     {
 
-
+    try{
         $result = DB::table('atendimentos AS at')
             ->where('p1.id', $idas)
             ->select('at.id AS ida', 'at.pref_tipo_atendente', 'p1.dt_nascimento', 'at.dh_chegada',  'at.dh_fim', 'at.dh_inicio', 'at.id_assistido', 'at.id_representante', 'at.id_atendente_pref', 'at.id_atendente', 'at.parentesco', 'tdd.descricao AS ddd', 'p1.celular', 'p1.id AS idas', 'p1.nome_completo AS nm_1',  'p2.nome_completo as nm_2',  'p3.id AS idp', 'p3.nome_completo as nm_3',  'p4.nome_completo as nm_4',  'ts.descricao', 'tp.nome',   'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo')
@@ -367,7 +408,12 @@ class GerenciarAtendimentoController extends Controller
         return view('/recepcao-AFI/visualizar-atendimentos', compact('result'));
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
     //===============================================================//
@@ -376,6 +422,7 @@ class GerenciarAtendimentoController extends Controller
 
     public function atendente_dia(Request $request)
     {
+        try{
 
         $now = Carbon::now()->format('Y-m-d');
 
@@ -437,14 +484,19 @@ class GerenciarAtendimentoController extends Controller
 
         return view('/recepcao-AFI/gerenciar-atendente-dia', compact('atende', 'atendente', 'status', 'situacao', 'grupo', 'data', 'now'));
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     ////PREPARA INFORMAÇÕES DO FORMULÁRIO DE EDIÇÃO DA SALA
 
 
 
     public function editar_afi($idatd)
     {
-
+        try{
         $now = Carbon::today();
         $no = Carbon::today()->addDay(1);
 
@@ -507,12 +559,17 @@ class GerenciarAtendimentoController extends Controller
 
         return view('/recepcao-AFI/editar-atendente-dia', compact('atende', 'st_atend', 'grupo', 'sala'));
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     //// SALVAR EM BANCO A EDIÇÃO DA SALA DO AFI
 
     public function update_afi(Request $request, $idatd)
     {
-
+        try{
         $now = Carbon::now()->format('Y-m-d');
 
 
@@ -542,16 +599,21 @@ class GerenciarAtendimentoController extends Controller
         app('flasher')->addError('Saiu aqui deu erro.');
 
         return redirect('/gerenciar-atendente-dia');
+    
     }
+    catch(\Exception $e){
 
-
-
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+    }
+    
     //////GERENCIAR/DEFINIR OS AFI E SALAS DE ATENDIMENTO DO DIA
 
     public function definir_sala(Request $request)
     {
 
-
+        try{
         $now = Carbon::today();
         $no = Carbon::today()->addDay(1);
 
@@ -661,12 +723,17 @@ class GerenciarAtendimentoController extends Controller
 
         return view('/recepcao-AFI/incluir-atendente-dia', compact('atende', 'st_atend',  'situacao', 'grupo', 'sala'));
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     ////SALVA O AFI DO DIA E SALA
 
     public function salva_afi(Request $request, $ida)
     {
-
+        try{
         $sala = $request->sala;
 
         $now = Carbon::now();
@@ -699,13 +766,18 @@ class GerenciarAtendimentoController extends Controller
     }
 
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     ////EDITAR A SALA DE TRABALHO DO ATENDENTE
 
     public function gravar_sala(Request $request, $ida)
     {
-
+        try{
         $now = Carbon::now()->format('d/m/Y');
 
         $sit_afi = DB::table('atendente_dia AS atd')->select('id_associado')->where('atd.dh_inicio', $now)->count();
@@ -727,12 +799,17 @@ class GerenciarAtendimentoController extends Controller
             ]);
         }
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     ///APAGAR O ATENDENTE DA LISTA DIÁRIA
 
     public function delete($idatd, $idad)
     {
-
+        try{
         $usuario = session()->get('usuario.id_pessoa');
 
         $now = Carbon::now()->format('Y/m/d');
@@ -750,14 +827,25 @@ class GerenciarAtendimentoController extends Controller
 
         return redirect('/gerenciar-atendente-dia');
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function finaliza_afi(string $id)
     {
-
+        try{
         $now = Carbon::now();
         DB::table('atendente_dia')->where('id', $id)->update(['dh_fim' => $now]);
 
         app('flasher')->addSuccess('Turno Finalizado com Sucesso.');
         return redirect()->back();
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 }

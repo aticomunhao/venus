@@ -18,6 +18,7 @@ class Grupocontroller extends Controller
     public function index(Request $request)
     {
 
+        try{
 
         $grupo = DB::table('grupo AS g')
             ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
@@ -56,6 +57,12 @@ class Grupocontroller extends Controller
     }
 
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('gerenciar-grupos erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
 
@@ -66,6 +73,7 @@ class Grupocontroller extends Controller
      */
     public function create()
     {
+        try{
         $grupos = DB::select('select * from grupo');
         $tipo_grupo = DB::select('select id as idg,nm_tipo_grupo from tipo_grupo order by nm_tipo_grupo asc');
         $tipo_status_grupo = DB::select('select id as ids, descricao as descricao from tipo_status_grupo');
@@ -79,13 +87,18 @@ class Grupocontroller extends Controller
     }
 
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-
+        try{
         $data = date("Y-m-d H:i:s");
         DB::table('grupo')->insert([
             'status_grupo' => $request->input('status_grupo'),
@@ -107,7 +120,12 @@ class Grupocontroller extends Controller
         return redirect('gerenciar-grupos');
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
 
@@ -116,6 +134,7 @@ class Grupocontroller extends Controller
      */
     public function show(string $id)
     {
+        try{
         $grupo = DB::table('grupo AS g')
             ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
             ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
@@ -130,13 +149,19 @@ class Grupocontroller extends Controller
 
         return view('grupos/visualizar-grupos', compact('setor', 'grupo', 'tipo_grupo', 'tipo_status_grupo', 'tipo_motivo'));
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
-
+        try{
 
 
         $grupo = DB::table('grupo AS g')
@@ -154,14 +179,19 @@ class Grupocontroller extends Controller
 
         return view('grupos/editar-grupos', compact('setor', 'grupo', 'tipo_grupo', 'tipo_status_grupo', 'tipo_motivo'));
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
      {
     
-
+    try{
 // Obter a data atual
 $now = Carbon::now()->format('Y-m-d');
 
@@ -192,38 +222,14 @@ app('flasher')->addSuccess("Alterado com Sucesso");
 return redirect('gerenciar-grupos');
 
      }
+     catch(\Exception $e){
 
-    // public function update(Request $request, $id)
-    // {
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
-    //     $now =  Carbon::now()->format('Y-m-d');
-    //     DB::table('grupo')->where('id', $id)->update([
-    //         'nome' => $request->input('nome'),
-    //         'data_inicio' => $request->input('data_inicio'),
-    //         'data_fim' => $request->input('data_fim'),
-    //         'id_tipo_grupo' => $request->input('id_tipo_grupo'),
-    //         'status_grupo' => $request->input('status_grupo'),
-    //         'id_motivo_inativacao' => $request->input('id_motivo_inativacao'),
-    //         'id_setor' => $request->input('id_setor')
-
-
-    //     ]);
-
-    //     if ($request->input('status_grupo') == 2) {
-
-
-    //         DB::table('cronograma as cro')
-    //             ->where('cro.id_grupo', $id)
-    //             ->update([
-    //                 'status_reuniao' => 2,
-    //                 'data_fim' => $now
-    //             ]);
-    //     }
-
-    //     app('flasher')->addSuccess("Alterado com Sucesso");
-
-    //     return redirect('gerenciar-grupos');
-    // }
+  
 
 
     /**
@@ -232,6 +238,7 @@ return redirect('gerenciar-grupos');
     public function destroy(string $id)
 
     {
+        try{
 
         $ids = DB::table('grupo')->select('nome')->where('id', $id)->get();
         $teste = session()->get('usuario');
@@ -271,4 +278,10 @@ return redirect('gerenciar-grupos');
         app('flasher')->addError('Excluido com sucesso.');
         return redirect('/gerenciar-grupos');
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 }

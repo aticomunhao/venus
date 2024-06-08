@@ -20,6 +20,7 @@ use PhpParser\Node\Expr\BinaryOp\Coalesce as BinaryOpCoalesce;
 class GerenciarTratamentosController extends Controller
 {
     public function index(Request $request){
+        try{
 
         $now =  Carbon::now()->format('Y-m-d');
 
@@ -99,9 +100,16 @@ class GerenciarTratamentosController extends Controller
 
     }
 
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('gerenciar-tratamentos erro.erro-inesperado', compact('code'));
+            }
+        }
+
     public function destroy(Request $request, string $id){
 
-
+try{
         $hoje = Carbon::today();
         $tratamento = DB::table('tratamento')->where('id', $id)->first();
 
@@ -114,10 +122,16 @@ class GerenciarTratamentosController extends Controller
 
 
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
     public function presenca(Request $request, $idtr){
-
+        try{
 
         $infoTrat = DB::table('tratamento')->where('id', $idtr)->first();
 
@@ -195,11 +209,16 @@ class GerenciarTratamentosController extends Controller
 
         return Redirect('/gerenciar-tratamentos');
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
     public function visualizar($idtr){
-
+        try{
         $result = DB::table('tratamento AS tr')
                         ->select('enc.id AS ide', 'tr.id AS idtr', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido','p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo', 'sat.descricao AS statat','sl.numero as sala')
                         ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id' )
@@ -245,8 +264,14 @@ class GerenciarTratamentosController extends Controller
         return view('/recepcao-integrada/historico-tratamento', compact('result', 'list', 'faul'));
 
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function job() {
+        try{
         DiasCronogramaOntem::dispatch();
         DiasCronograma::dispatch();
         LimiteFalta::dispatch();
@@ -254,12 +279,17 @@ class GerenciarTratamentosController extends Controller
         Faltas::dispatch();
         return redirect()->back();
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function escolherGrupo($id){
 
 
-
+        try{
 
         $ide = DB::table('tratamento')->where('id', $id)->first();
         $idtt = DB::table('tratamento as tr')->where('tr.id', $id)
@@ -425,12 +455,18 @@ class GerenciarTratamentosController extends Controller
         return view('recepcao-integrada/agendar-grupo-tratamento', compact('dia_hoje','result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
 
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
     public function escolherHorario(Request $request, $ide){
 
 
-
+        try{
 
         $dia = intval($request->dia);
 
@@ -491,10 +527,15 @@ class GerenciarTratamentosController extends Controller
 
 
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function trocarGrupo(Request $request, $ide){
 
-
+        try{
 
         $reu = intval($request->reuniao);
 
@@ -570,9 +611,15 @@ class GerenciarTratamentosController extends Controller
         return redirect('/gerenciar-tratamentos');
 
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function createAvulso(){
-
+        try{
         //dd($request->all());
         $dia = Carbon::today()->weekday();
 
@@ -592,9 +639,14 @@ class GerenciarTratamentosController extends Controller
 
         return view('recepcao-integrada.incluir-avulso', compact('assistidos', 'reuniao'));
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function storeAvulso(Request $request){
-
+        try{
         $hoje = Carbon::today();
         $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $hoje)->first();
         $nrAcomp = $acompanhantes->nr_acompanhantes + $request->acompanhantes;
@@ -615,5 +667,11 @@ class GerenciarTratamentosController extends Controller
         ]);
         return redirect('/gerenciar-tratamentos');
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 }

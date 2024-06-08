@@ -15,6 +15,8 @@ class MediunidadePessoaController extends Controller
 
     public function index(Request $request)
     {
+
+        try{
         $tipos = DB::table('mediunidade_pessoa')
             ->select('id_pessoa')->groupBy('id_pessoa')->get();
 
@@ -45,10 +47,16 @@ class MediunidadePessoaController extends Controller
     }
 
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('gerenciar-mediunidades erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function create()
     {
+        try{
         $id_mediunidade = 1;
         $grupo = DB::select('select id, nome from grupo');
         $mediunidade = DB::select('select * from mediunidade_pessoa');
@@ -61,11 +69,17 @@ class MediunidadePessoaController extends Controller
 
         return view('mediunidade.criar-mediunidade', compact('tipo_status_pessoa', 'grupo', 'id_mediunidade', 'mediunidade', 'tipo_mediunidade', 'pessoas', 'tipo_funcao', 'mediunidade_pessoa'));
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
     public function store(Request $request)
     {
+        try{
         // Obter os dados do formulário
         $id_pessoa = $request->input('id_pessoa');
         $tipo_ids = $request->input('id_tp_mediunidade');
@@ -88,12 +102,17 @@ class MediunidadePessoaController extends Controller
         return redirect('gerenciar-mediunidades');
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
     public function edit($id)
     {
-
+        try{
         $id_mediunidade = 1;
         $mediunidade = DB::table('mediunidade_pessoa AS m')
             ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
@@ -117,10 +136,16 @@ class MediunidadePessoaController extends Controller
 
         return view('mediunidade.editar-mediunidade', compact('mediunidadesIds', 'arrayChecked', 'id_mediunidade', 'mediunidade', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_mediunidade', 'pessoas'));
     }
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function update(Request $request, string $id)
     {
+        try{
         // Excluir registros anteriores na tabela 'mediunidade_pessoa' para o mesmo id_pessoa
         DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->delete();
     
@@ -159,11 +184,17 @@ class MediunidadePessoaController extends Controller
         return redirect('gerenciar-mediunidades');
     }
     
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
 
     public function show($id)
     {
+        try{
         $id_mediunidade = 1;
         $mediunidade = DB::table('mediunidade_pessoa AS m')
             ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
@@ -188,11 +219,16 @@ class MediunidadePessoaController extends Controller
         return view('mediunidade.visualizar-mediunidade', compact('mediunidadesIds', 'arrayChecked', 'id_mediunidade', 'mediunidade', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_mediunidade', 'pessoas'));
     }
 
+    catch(\Exception $e){
 
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function destroy(string $id)
     {
-
+        try{
         $data = date("Y-m-d H:i:s");
 
         DB::table('historico_venus')->insert([
@@ -219,4 +255,10 @@ class MediunidadePessoaController extends Controller
         app('flasher')->addError('Excluído com sucesso.');
         return redirect('/gerenciar-mediunidades');
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 }
