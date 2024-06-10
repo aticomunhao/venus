@@ -16,89 +16,85 @@ class PessoaController extends Controller
     public function index(Request $request)
     {
 
-        try{
+        try {
 
-        $ddd = DB::select('select id, descricao from tp_ddd');
+            $ddd = DB::select('select id, descricao from tp_ddd');
 
-        $sexo = DB::select('select id, tipo from tp_sexo');
+            $sexo = DB::select('select id, tipo from tp_sexo');
 
-        $pessoa = DB::table('pessoas AS p')
-            ->select('p.id AS idp', 'p.nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'email', 'ddd', 'celular', 'tsp.id AS idtps', 'p.status', 'tsp.tipo AS tpsta', 'd.id as did', 'd.descricao as ddesc')
-            ->leftjoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
-            ->leftJoin('tp_sexo AS tps', 'p.sexo', 'tps.id')
-            ->leftJoin('tp_ddd AS d', 'p.ddd', 'd.id');
-
-
+            $pessoa = DB::table('pessoas AS p')
+                ->select('p.id AS idp', 'p.nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'email', 'ddd', 'celular', 'tsp.id AS idtps', 'p.status', 'tsp.tipo AS tpsta', 'd.id as did', 'd.descricao as ddesc')
+                ->leftjoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
+                ->leftJoin('tp_sexo AS tps', 'p.sexo', 'tps.id')
+                ->leftJoin('tp_ddd AS d', 'p.ddd', 'd.id');
 
 
 
-        $nome = $request->nome;
-
-        if ($request->nome) {
-            $pessoa->where('p.nome_completo', 'ilike', "%$request->nome%");
-        }
-
-        $cpf = $request->cpf;
-
-        if ($request->cpf) {
-            $pessoa->where('p.cpf', $request->cpf);
-        }
-
-        $status = $request->status;
-        //
 
 
-        if ($request->has('status') && $request->status !== "") {
-            if($request->status == "*"){
-                $pessoa = $pessoa;
-            }else{
-                $pessoa = $pessoa->where('p.status', '=', $request->status);
+            $nome = $request->nome;
+
+            if ($request->nome) {
+                $pessoa->where('p.nome_completo', 'ilike', "%$request->nome%");
             }
-            
-        }
 
-        $pessoa = $pessoa->orderBy('p.status', 'desc')->orderBy('p.nome_completo', 'asc')->Paginate(30);
+            $cpf = $request->cpf;
+
+            if ($request->cpf) {
+                $pessoa->where('p.cpf', $request->cpf);
+            }
+
+            $status = $request->status;
+            //
 
 
-        $stap = DB::select("select
+            if ($request->has('status') && $request->status !== "") {
+                if ($request->status == "*") {
+                    $pessoa = $pessoa;
+                } else {
+                    $pessoa = $pessoa->where('p.status', '=', $request->status);
+                }
+            }
+
+            $pessoa = $pessoa->orderBy('p.status', 'desc')->orderBy('p.nome_completo', 'asc')->Paginate(30);
+
+
+            $stap = DB::select("select
                         id as ids,
                         tipo
                         from tipo_status_pessoa t
                         ");
 
-        $soma = $pessoa->count();
+            $soma = $pessoa->count();
 
 
 
-        return view('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
-    }
+            return view('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
+        } catch (\Exception $e) {
 
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('gerenciar-pessoas erro.erro-inesperado', compact('code'));
-            }
+            $code = $e->getCode();
+            return view('gerenciar-pessoas erro.erro-inesperado', compact('code'));
         }
+    }
 
     public function store()
     {
-        try{
-        $ddd = DB::select('select id, descricao from tp_ddd');
+        try {
+            $ddd = DB::select('select id, descricao from tp_ddd');
 
-        $sexo = DB::select('select id, tipo from tp_sexo');
+            $sexo = DB::select('select id, tipo from tp_sexo');
 
-        return view('/pessoal/incluir-pessoa', compact('ddd', 'sexo'));
-    }
-    catch(\Exception $e){
+            return view('/pessoal/incluir-pessoa', compact('ddd', 'sexo'));
+        } catch (\Exception $e) {
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
         }
+    }
 
     public function create(Request $request)
     {
-        
+
         $today = Carbon::today()->format('Y-m-d');
 
         $cpf = $request->cpf;
@@ -163,18 +159,18 @@ class PessoaController extends Controller
 
     public function edit($idp)
     {
-        try{
-        $ddd = DB::select('select id, descricao from tp_ddd');
+        try {
+            $ddd = DB::select('select id, descricao from tp_ddd');
 
-        $sexo = DB::select('select id, tipo from tp_sexo');
+            $sexo = DB::select('select id, tipo from tp_sexo');
 
-        $status_p = DB::select('select id, tipo from tipo_status_pessoa');
+            $status_p = DB::select('select id, tipo from tipo_status_pessoa');
 
-        $motivo = DB::select('select id, motivo from tipo_motivo_status_pessoa order by id');
+            $motivo = DB::select('select id, motivo from tipo_motivo_status_pessoa order by id');
 
 
 
-        $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.motivo_status,p.sexo, p.status ,tipo_motivo_status_pessoa.id as tipo_motivo_status_pessoa,tipo_motivo_status_pessoa.motivo as motivo_status_pessoa_tipo_motivo, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
+            $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.motivo_status,p.sexo, p.status ,tipo_motivo_status_pessoa.id as tipo_motivo_status_pessoa,tipo_motivo_status_pessoa.motivo as motivo_status_pessoa_tipo_motivo, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
         left join tp_sexo tps on (p.sexo = tps.id)
         left join tp_ddd d on (p.ddd = d.id)
         left join tipo_status_pessoa on (tipo_status_pessoa.id = p.status )
@@ -185,30 +181,29 @@ class PessoaController extends Controller
 
 
 
-        return view('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p', 'motivo'));
-    }
-    catch(\Exception $e){
+            return view('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p', 'motivo'));
+        } catch (\Exception $e) {
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
         }
+    }
 
     public function show($idp)
     {
-        try{
-        $ddd = DB::select('select id, descricao from tp_ddd');
+        try {
+            $ddd = DB::select('select id, descricao from tp_ddd');
 
-        $sexo = DB::select('select id, tipo from tp_sexo');
+            $sexo = DB::select('select id, tipo from tp_sexo');
 
-        $status_p = DB::select('select id, tipo from tipo_status_pessoa');
+            $status_p = DB::select('select id, tipo from tipo_status_pessoa');
 
-        $motivo = DB::select('select id, motivo from tipo_motivo_status_pessoa order by id');
+            $motivo = DB::select('select id, motivo from tipo_motivo_status_pessoa order by id');
 
-       
-        
 
-        $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.motivo_status,p.sexo, p.status ,tipo_motivo_status_pessoa.id as tipo_motivo_status_pessoa,tipo_motivo_status_pessoa.motivo as motivo_status_pessoa_tipo_motivo, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
+
+
+            $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.motivo_status,p.sexo, p.status ,tipo_motivo_status_pessoa.id as tipo_motivo_status_pessoa,tipo_motivo_status_pessoa.motivo as motivo_status_pessoa_tipo_motivo, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
         left join tp_sexo tps on (p.sexo = tps.id)
         left join tp_ddd d on (p.ddd = d.id)
         left join tipo_status_pessoa on (tipo_status_pessoa.id = p.status )
@@ -217,19 +212,17 @@ class PessoaController extends Controller
 
 
 
-        return view('/pessoal/visualizar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p','motivo'));
-    }
-    
-    catch(\Exception $e){
+            return view('/pessoal/visualizar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p', 'motivo'));
+        } catch (\Exception $e) {
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
         }
+    }
 
     public function update(Request $request, $idp)
     {
-        
+
         $usuario = session()->get('usuario.id_usuario');
 
         //dd($usuario);
