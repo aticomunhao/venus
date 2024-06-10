@@ -177,10 +177,10 @@ $setor = session()->get('usuario.setor');
                                 @if (in_array(12, $acesso))
                                     <li><a class="dropdown-item" href="/gerenciar-salas">Gerenciar Salas</a></li>
                                 @endif
-                                @if (in_array(26, $acesso))
+                                @if (in_array(1, $acesso))
                                     <li><a class="dropdown-item" href="/gerenciar-perfis">Gerenciar Perfis</a></li>
                                 @endif
-                                @if (in_array(27, $acesso))
+                                @if (in_array(1, $acesso))
                                     <li><a class="dropdown-item" href="/gerenciar-setor">Gerenciar Setor</a></li>
                                 @endif
                                 @if (in_array(1, $acesso))
