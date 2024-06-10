@@ -265,7 +265,7 @@ class GerenciarEntrevistaController extends Controller
     public function criar($id)
     {
 
-    try
+    try{
 
 
         $associado = DB::table('membro')->select('membro.id',)
@@ -335,7 +335,7 @@ class GerenciarEntrevistaController extends Controller
 
     public function incluir(Request $request, string $id)
     {
-    try
+    try{
 
         $a = DB::table('encaminhamento')->where('id', $id)->first();
 
