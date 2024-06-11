@@ -56,7 +56,7 @@ class LoginController extends Controller
         $perfis = explode(',', $result[0]->perfis);
         $setores = explode(',', $result[0]->setor);
         $array_setores = $setores;
-        
+
         $perfis = DB::table('rotas_perfil')->whereIn('id_perfil', $perfis)->orderBy('id_rotas')->pluck('id_rotas');
         $setores = DB::table('rotas_setor')->whereIn('id_setor', $setores)->orderBy('id_rotas')->pluck('id_rotas');
 
@@ -90,7 +90,7 @@ class LoginController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     public function validaUserLogado()
@@ -148,7 +148,7 @@ class LoginController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     public function create()

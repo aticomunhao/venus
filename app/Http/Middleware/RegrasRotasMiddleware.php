@@ -16,33 +16,21 @@ class RegrasRotasMiddleware
      */
     public function handle(Request $request, Closure $next, string $rota): Response
     {
-        try{
-
-           
+        try {
             $rotasAutorizadas = session()->get('usuario.acesso');
 
-            if(in_array($rota, $rotasAutorizadas)){
+            if (!$rotasAutorizadas) {
+                app('flasher')->addError('É necessário fazer login para acessar!');
+                return redirect('/');
+            } elseif (in_array($rota, $rotasAutorizadas)) {
                 return $next($request);
+            } else {
+                app('flasher')->addError('Você não tem autorização para acessar esta funcionalidade!');
+                return redirect('/login/valida');
             }
-            else{
-            app('flasher')->addError('Você não tem autorização para acessar esta funcionalidade!');
+        } catch (\Exception $e) {
+            app('flasher')->addError('Houve um Erro Inesperado!!');
             return redirect('/login/valida');
-            }
-
         }
-
-        catch(\Exception $e){
-
-                    app('flasher')->addError('É necessário fazer login para acessar!');
-                    return redirect('/login/valida');
-
-                }
-
-
-
-
-
-
-
     }
 }
