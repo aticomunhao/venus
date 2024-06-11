@@ -25,7 +25,7 @@
                                 Funcionalidades Autorizadas
                                 <select class="form-select select2" name="rotas[]" multiple>
                                     @foreach ($rotas as $rota)
-                                        <option value="{{ $rota->id }}" id="{{ $rota->id }}">{{ $rota->nome }}</option>
+                                        <option value="{{ $rota->id }}" id="id{{ $rota->id }}">{{ $rota->nome }}</option>
                                     @endforeach
                                 </select>
 
@@ -59,8 +59,8 @@
             let rotasSelecionadas = {{ $rotasSelecionadas }};
 
             $.each(rotasSelecionadas, function(index, value){
-                $('#' + value).attr('selected','selected');
-                $("#" + value).change();
+                $('#id' + value).attr('selected','selected');
+                $("#id" + value).change();
             })
 
             })

@@ -13,7 +13,7 @@ class GerenciarPerfil extends Controller
     public function index(Request $request)
     {
         try{
-        
+
         $perfis = DB::table('perfil');
 
         if($request->nome_pesquisa){
@@ -36,7 +36,7 @@ class GerenciarPerfil extends Controller
     public function create()
     {
         try{
-        $rotas = DB::table('tipo_rotas')->orderBy('tipo_rotas.nome', 'ASC')->get();
+        $rotas = DB::table('tipo_rotas')->orderBy('tipo_rotas.nome', 'ASC')->where('id_sistema', 1)->get();
         return view('perfis.criar-perfil', compact('rotas'));
     }
     catch(\Exception $e){
@@ -100,8 +100,8 @@ class GerenciarPerfil extends Controller
         try{
         $perfil = DB::table('perfil')->where('id',$id)->first();
 
-        $rotas = DB::table('tipo_rotas')->get();
-        $rotasSelecionadas = DB::table('rotas_perfil')->leftJoin('tipo_rotas', 'rotas_perfil.id_rotas', 'tipo_rotas.id')->where('id_perfil',$id)->orderBy('tipo_rotas.nome', 'ASC')->pluck('id_rotas');
+        $rotas = DB::table('tipo_rotas')->where('id_sistema', 1)->orderBy('nome', 'ASC')->get();
+        $rotasSelecionadas = DB::table('rotas_perfil')->leftJoin('tipo_rotas', 'rotas_perfil.id_rotas', 'tipo_rotas.id')->where('id_perfil',$id)->orderBy('id_rotas', 'ASC')->pluck('id_rotas');
 
         return view('perfis.editar-perfil', compact('perfil', 'rotas', 'rotasSelecionadas'));
     }

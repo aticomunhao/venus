@@ -59,7 +59,8 @@ class GerenciarEntrevistaController extends Controller
             ->where('encaminhamento.id_tipo_encaminhamento', 1)
             ->where('encaminhamento.status_encaminhamento', '<>', 4)
             ->whereNotIn('tipo_entrevista.id', [8]) // Exclui o tipo de entrevista 8
-            ->whereBetween('tipo_entrevista.id', [1, 7]) // Inclui os tipos de entrevista de 1 a 7
+            ->whereBetween('tipo_entrevista.id', [1, 7])
+            ->whereIn('tipo_entrevista.id_setor', session()->get('usuario.setor')) // Inclui os tipos de entrevista de 1 a 7
             ->select(
                 'entrevistas.id_entrevistador',
                 DB::raw("CASE
