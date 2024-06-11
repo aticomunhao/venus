@@ -101,8 +101,9 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('recpcao-AFI-erro.erro-inesperado', compact('code'));
-            }
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+
         }
 
     ///CRIAR UM NOVO ATENDIMENTO
@@ -168,10 +169,10 @@ class GerenciarAtendimentoController extends Controller
 
  catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+    $code = $e->getCode( );
+    return view('tratamento-erro.erro-inesperado', compact('code'));
         }
+    }
 
     public function store(Request $request)
     {
@@ -227,8 +228,9 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+
         }
 
     ////INCLUI UMA NOVA PESSOA
@@ -251,8 +253,9 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
+
         }
     public function cancelar($ida)
     {
@@ -274,10 +277,10 @@ class GerenciarAtendimentoController extends Controller
         }
     }
     catch(\Exception $e){
-
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
+
         }
     ////PREPARA PARA EDITAR
     public function edit($ida)
@@ -350,8 +353,9 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
+
         }
     ///////ALTERA UM ATENDIMENTO
     public function altera(Request $request, $ida)
@@ -379,8 +383,9 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
+
         }
 
     public function visual($idas)
@@ -411,8 +416,9 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
+
         }
 
 
@@ -487,8 +493,9 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
+
         }
     ////PREPARA INFORMAÇÕES DO FORMULÁRIO DE EDIÇÃO DA SALA
 
@@ -561,10 +568,10 @@ class GerenciarAtendimentoController extends Controller
     }
     catch(\Exception $e){
 
+
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }}
     //// SALVAR EM BANCO A EDIÇÃO DA SALA DO AFI
 
     public function update_afi(Request $request, $idatd)
@@ -603,10 +610,11 @@ class GerenciarAtendimentoController extends Controller
     }
     catch(\Exception $e){
 
+
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
             }
-    }
     
     //////GERENCIAR/DEFINIR OS AFI E SALAS DE ATENDIMENTO DO DIA
 
@@ -726,8 +734,8 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
         }
     ////SALVA O AFI DO DIA E SALA
 
@@ -767,10 +775,9 @@ class GerenciarAtendimentoController extends Controller
 
 
     catch(\Exception $e){
-
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
         }
 
     ////EDITAR A SALA DE TRABALHO DO ATENDENTE
@@ -802,8 +809,8 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
         }
     ///APAGAR O ATENDENTE DA LISTA DIÁRIA
 
@@ -830,8 +837,8 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
         }
     public function finaliza_afi(string $id)
     {
@@ -845,7 +852,6 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
-        }
-}
+        }}

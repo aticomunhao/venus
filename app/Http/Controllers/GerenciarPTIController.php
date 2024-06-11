@@ -151,7 +151,7 @@ class GerenciarPTIController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     /**
@@ -202,7 +202,7 @@ class GerenciarPTIController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 

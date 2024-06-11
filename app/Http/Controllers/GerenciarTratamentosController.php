@@ -103,7 +103,7 @@ class GerenciarTratamentosController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('gerenciar-tratamentos erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -125,7 +125,7 @@ try{
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -212,7 +212,7 @@ try{
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -267,7 +267,7 @@ try{
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     public function job() {
@@ -282,7 +282,7 @@ try{
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -458,7 +458,7 @@ try{
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -530,7 +530,7 @@ try{
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     public function trocarGrupo(Request $request, $ide){
@@ -614,7 +614,7 @@ try{
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -642,7 +642,7 @@ try{
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     public function storeAvulso(Request $request){
@@ -670,7 +670,7 @@ try{
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 

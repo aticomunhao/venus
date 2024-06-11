@@ -31,7 +31,7 @@ class GerenciarSetor extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('gerenciar-setor erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -48,7 +48,7 @@ class GerenciarSetor extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     /**
@@ -71,7 +71,7 @@ class GerenciarSetor extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -89,7 +89,7 @@ class GerenciarSetor extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     /**
@@ -108,7 +108,7 @@ class GerenciarSetor extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -136,7 +136,7 @@ class GerenciarSetor extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 

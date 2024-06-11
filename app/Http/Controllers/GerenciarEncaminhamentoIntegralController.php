@@ -89,7 +89,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('recpcao-integrada-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     public function agenda($ide, $idtt){
@@ -282,7 +282,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     public function tratamento(Request $request, $ide){
@@ -360,7 +360,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -463,7 +463,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -516,7 +516,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -553,7 +553,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
         }
 }

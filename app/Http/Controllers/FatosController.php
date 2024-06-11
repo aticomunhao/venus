@@ -28,15 +28,17 @@ use Illuminate\Database\DBAL\TimestampType;
 
                 return view('/administrativo/gerenciar-fatos', compact('lista'));
 
-              
-            
             }
-            catch(\Exception $e){
+            
+                catch(\Exception $e){
 
-                $code = $e->getCode( );
-                return view('administrativo-erro.erro-inesperado', compact('code'));
-                    }
-                }
+                    $code = $e->getCode( );
+                    return view('tratamento-erro.erro-inesperado', compact('code'));
+                        }
+
+
+        }
+            
                     
 
                     
@@ -59,8 +61,8 @@ use Illuminate\Database\DBAL\TimestampType;
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
         }
         public function update(Request $request, string $id)
         {
@@ -83,12 +85,14 @@ use Illuminate\Database\DBAL\TimestampType;
         }
           
     
-    catch(\Exception $e){
+        catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+            $code = $e->getCode( );
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+
+
+}
 
             public function incluir(Request $request)
 
@@ -101,12 +105,15 @@ use Illuminate\Database\DBAL\TimestampType;
 
         }
         
+
+
         
         catch(\Exception $e){
     
             $code = $e->getCode( );
-            return view('administrativo-erro.erro-inesperado', compact('code'));
+            return view('tratamento-erro.erro-inesperado', compact('code'));
                 }
+
             
         return redirect('/gerenciar-fatos');
         }

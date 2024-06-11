@@ -91,8 +91,8 @@ class GerenciarEncaminhamentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('recpcao-integrada-erro.erro-inesperado', compact('code'));
-            }
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
         }
 
     public function agenda($ide, $idtt){
@@ -284,7 +284,7 @@ class GerenciarEncaminhamentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -361,9 +361,8 @@ class GerenciarEncaminhamentoController extends Controller
 
     }
     catch(\Exception $e){
-
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -466,8 +465,8 @@ class GerenciarEncaminhamentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
         }
 
     public function visualizar($ide){
@@ -518,9 +517,8 @@ class GerenciarEncaminhamentoController extends Controller
     }
 
     catch(\Exception $e){
-
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     public function inative(Request $request, $ide){
@@ -555,7 +553,7 @@ class GerenciarEncaminhamentoController extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 

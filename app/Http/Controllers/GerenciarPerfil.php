@@ -27,7 +27,7 @@ class GerenciarPerfil extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('gerenciar-perfi erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     /**
@@ -42,7 +42,7 @@ class GerenciarPerfil extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     /**
@@ -70,7 +70,7 @@ class GerenciarPerfil extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     /**
@@ -88,7 +88,7 @@ class GerenciarPerfil extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -108,7 +108,7 @@ class GerenciarPerfil extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
     /**
@@ -138,7 +138,7 @@ class GerenciarPerfil extends Controller
     catch(\Exception $e){
 
         $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
 
@@ -157,7 +157,7 @@ class GerenciarPerfil extends Controller
 catch(\Exception $e){
 
     $code = $e->getCode( );
-    return view('administrativo-erro.erro-inesperado', compact('code'));
+    return view('tratamento-erro.erro-inesperado', compact('code'));
         }
     }
 }

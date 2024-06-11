@@ -41,7 +41,7 @@ class AtendimentoApoioController extends Controller
             return view('/atendentes-apoio/gerenciar-atendente-apoio', compact('atendente', 'conta', 'pesquisaNome', 'pesquisaCpf'));
         } catch (\Exception $e) {
             $code = $e->getCode();
-            return view('atendentes-apoio-erro.erro-inesperado', compact('code'));
+            return view('tratamento-erro.erro-inesperado', compact('code'));
         }
     }
 
