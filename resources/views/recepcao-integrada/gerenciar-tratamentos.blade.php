@@ -64,9 +64,12 @@
                                         style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                         value="Limpar"></a>
 
-                                <a href="/job"><input class="btn btn-light btn-sm me-md-2"
-                                        style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
-                                        value="Job"></a>
+                                        @if(in_array(17,session()->get('usuario.acesso')))
+
+                                        <a href="/job"><input class="btn btn-light btn-sm me-md-2"
+                                                style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
+                                                value="Job"></a>
+                                        @endif
 
                                 <a href="/incluir-avulso"><input class="btn btn-success btn-sm me-md-2" type="button"
                                         value="Incluir Avulso"></a>
@@ -305,7 +308,7 @@
 
         });
     </script>
-  
+
     <script>
         $(document).ready(function() {
             if ({{ $situacao == null }}) { //Deixa o select status como padrao vazio
