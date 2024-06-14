@@ -75,8 +75,8 @@
                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            Tem certeza que deseja declarar alta para <br /><span
-                                                style="color:rgb(196, 27, 27);">{{ $listas->nome_completo }}</span>&#63;
+                                            Tem certeza que deseja declarar a presença para <br /><span
+                                                style="color:rgba(255, 165, 0, 1);">{{ $listas->nome_completo }}</span>&#63;
 
                                         </div>
                                         <div class="modal-footer mt-2">

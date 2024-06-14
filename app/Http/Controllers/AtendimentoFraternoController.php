@@ -531,12 +531,16 @@ catch(\Exception $e){
 
             }
 
-        }catch(\Exception $e){
-
-            $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
-            }
+            DB::commit();
+        }
+        
+        catch(\Exception $e){
+        
+                    app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+                    DB::rollBack();
+                return redirect()->back();
+        
+                } }
 
         public function final($idat)
         {

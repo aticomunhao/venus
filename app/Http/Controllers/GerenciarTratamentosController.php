@@ -621,6 +621,7 @@ try{
     public function createAvulso(){
         try{
         //dd($request->all());
+        $hoje = Carbon::today();
         $dia = Carbon::today()->weekday();
 
        $assistidos = DB::table('pessoas')->select('id', 'nome_completo')->orderBy('nome_completo')->get();
@@ -629,7 +630,10 @@ try{
        ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
        ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
        ->where('cro.dia_semana', $dia)
-       ->where('cro.status_reuniao', '<>', 2)
+       ->where(function($query) use ($hoje) {
+        $query->whereRaw("cro.data_fim < ?", [$hoje])
+              ->orWhereNull('cro.data_fim');
+    })
        ->select('cro.id', 'cro.h_inicio', 'cro.h_fim', 'gr.nome', 'sl.numero as sala')
        ->get();
 

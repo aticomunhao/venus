@@ -55,7 +55,7 @@
                             <div class="col-2">
                                 <div class="mb-4" style="text-align:left;">
                                     <label for="validationCustom05" class="form-label">DDD</label>
-                                    <select class="form-select" id="" name="ddd" required="required">
+                                    <select class="form-select" id="" name="ddd">
                                         <option value=""></option>
                                         @foreach($ddd as $ddds)
                                             <option @if(old ('ddd') == $ddds->id) {{'selected="selected"'}} @endif value="{{ $ddds->id }}">{{$ddds->descricao}}</option>
@@ -66,7 +66,7 @@
                             <div class="col">
                                 <div class="mb-5" style="text-align:left;">
                                     <label for="validationCustom06" class="form-label">Nr Celular</label>
-                                    <input class="form-control" maxlength="9" type="numeric" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" placeholder="Ex.: 99999-9999" value="{{old('celular')}}" id="" name="celular" required="required" >
+                                    <input class="form-control" maxlength="9" type="numeric" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" >
                                 </div>
                             </div>
                         </div>

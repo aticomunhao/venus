@@ -38,7 +38,14 @@ class DiasCronogramaOntem implements ShouldQueue
             $arrayIncluidos[] = $incluido->id_cronograma;
         }
 
-        $reunioes_hoje = DB::table('cronograma')->where('dia_semana', $dia_semana_hoje)->whereNotIn('id', $arrayIncluidos)->where('status_reuniao', '<>', 2)->get();
+        $reunioes_hoje = DB::table('cronograma')
+        ->where('dia_semana', $dia_semana_hoje)
+        ->whereNotIn('id', $arrayIncluidos)
+        ->where(function($query) use ($dia_hoje) {
+            $query->whereRaw("data_fim < ?", [$dia_hoje])
+                  ->orWhereNull('data_fim');
+        })
+        ->get();
 
         foreach($reunioes_hoje as $reuniao){
             DB::table('dias_cronograma')

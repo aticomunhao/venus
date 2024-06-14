@@ -38,7 +38,7 @@
                             </div>
                             <div class=" mb-3 col-12">
                                 Reunião Mediúnica
-                                <select class="form-select" aria-label="Default select example" name="reuniao" required>
+                                <select class="form-select select2" aria-label="Default select example" name="reuniao" required>
                                     @foreach($reuniao as $reunioes)
                                     <option value="{{ $reunioes->id }}">{{ $reunioes->nome }} - {{ date('H:i', strtotime($reunioes->h_inicio)) }}/{{ date('H:i', strtotime($reunioes->h_fim)) }} - Sala {{ $reunioes->sala }}</option>
                                     @endforeach
