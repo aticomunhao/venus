@@ -50,7 +50,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-1">Menor Auto
+                        <div class="col-1">Menor de 18 anos
                             <label for="menor" class="form-check-label"></label>
                             <input id="menor" type="checkbox" name="menor" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                         </div>

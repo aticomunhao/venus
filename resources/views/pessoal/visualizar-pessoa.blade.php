@@ -78,11 +78,9 @@
                             <br>
                                 <div class="row mt-2 justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">
-                                        <a class="btn btn-danger" href="/gerenciar-pessoas" role="button">Cancelar</a>
+                                        <a class="btn btn-danger" href="/gerenciar-pessoas" role="button">Retornar</a>
                                     </div>
-                                    <div class="d-grid gap-2 col-4 mx-auto">
-                                        <button type="submit" class="btn btn-primary">Confirmar</button>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </form>
