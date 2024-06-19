@@ -281,9 +281,10 @@ class GerenciarEncaminhamentoIntegralController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+	    return redirect()->back();
+            
+        } 
         }
     public function tratamento(Request $request, $ide){
 
@@ -359,8 +360,9 @@ class GerenciarEncaminhamentoIntegralController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
             }
         }
 
@@ -462,10 +464,10 @@ class GerenciarEncaminhamentoIntegralController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+        }}
 
     public function visualizar($ide){
         try{
@@ -515,8 +517,9 @@ class GerenciarEncaminhamentoIntegralController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
             }
         }
 
@@ -552,8 +555,9 @@ class GerenciarEncaminhamentoIntegralController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
                 }
         }
 }

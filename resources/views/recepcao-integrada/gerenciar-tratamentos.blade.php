@@ -72,7 +72,7 @@
                                         @endif
 
                                 <a href="/incluir-avulso"><input class="btn btn-success btn-sm me-md-2" type="button"
-                                        value="Incluir Avulso"></a>
+                                        value="Atendimento de emergência"></a>
 
                     </form>
 

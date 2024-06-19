@@ -41,8 +41,8 @@ class GerenciarPerfil extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+	    return redirect()->back();
             }
         }
     /**
@@ -69,8 +69,9 @@ class GerenciarPerfil extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
             }
         }
     /**
@@ -87,8 +88,8 @@ class GerenciarPerfil extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+	    return redirect()->back();
             }
         }
 
@@ -107,8 +108,8 @@ class GerenciarPerfil extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+	    return redirect()->back();
             }
         }
     /**
@@ -137,8 +138,9 @@ class GerenciarPerfil extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
             }
         }
 
@@ -156,8 +158,9 @@ class GerenciarPerfil extends Controller
     }
 catch(\Exception $e){
 
-    $code = $e->getCode( );
-    return view('tratamento-erro.erro-inesperado', compact('code'));
+    app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+    DB::rollBack();
+return redirect()->back();
         }
     }
 }

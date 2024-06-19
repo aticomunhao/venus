@@ -66,6 +66,7 @@ use Illuminate\Database\DBAL\TimestampType;
         }
         public function update(Request $request, string $id)
         {
+            
 
             Tipo_fato::findOrFail($request->id)->update([ 'descricao' => $request->descricao ]) ;
 
@@ -87,9 +88,11 @@ use Illuminate\Database\DBAL\TimestampType;
     
         catch(\Exception $e){
 
-            $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
 
 
 }
@@ -110,9 +113,11 @@ use Illuminate\Database\DBAL\TimestampType;
         
         catch(\Exception $e){
     
-            $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
 
             
         return redirect('/gerenciar-fatos');

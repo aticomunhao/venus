@@ -227,11 +227,11 @@ class GerenciarAtendimentoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
 
-        }
+        }}
 
     ////INCLUI UMA NOVA PESSOA
     public function SetPessoa(Request $request)
@@ -252,8 +252,9 @@ class GerenciarAtendimentoController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
             }
 
         }
@@ -277,8 +278,9 @@ class GerenciarAtendimentoController extends Controller
         }
     }
     catch(\Exception $e){
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
             }
 
         }
@@ -382,8 +384,9 @@ class GerenciarAtendimentoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
             }
 
         }
@@ -492,8 +495,9 @@ class GerenciarAtendimentoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
             }
 
         }
@@ -569,8 +573,9 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
             }}
     //// SALVAR EM BANCO A EDIÇÃO DA SALA DO AFI
 
@@ -611,8 +616,9 @@ class GerenciarAtendimentoController extends Controller
     catch(\Exception $e){
 
 
-        $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
                 }
             }
     
@@ -733,8 +739,9 @@ class GerenciarAtendimentoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
                 }
         }
     ////SALVA O AFI DO DIA E SALA
@@ -775,8 +782,9 @@ class GerenciarAtendimentoController extends Controller
 
 
     catch(\Exception $e){
-        $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
                 }
         }
 
@@ -808,8 +816,9 @@ class GerenciarAtendimentoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
                 }
         }
     ///APAGAR O ATENDENTE DA LISTA DIÁRIA
@@ -851,7 +860,8 @@ class GerenciarAtendimentoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
             }
         }}

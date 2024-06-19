@@ -224,8 +224,8 @@ class GerenciarEntrevistaController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+	    return redirect()->back();
             }
         }
 
@@ -259,8 +259,9 @@ class GerenciarEntrevistaController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
             }
         }
     public function criar($id)
@@ -329,8 +330,8 @@ class GerenciarEntrevistaController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+	    return redirect()->back();
             }
         }
 
@@ -361,8 +362,9 @@ class GerenciarEntrevistaController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
             }
         }
 
@@ -398,8 +400,8 @@ class GerenciarEntrevistaController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+	    return redirect()->back();
             }
         }
 
@@ -477,8 +479,8 @@ class GerenciarEntrevistaController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+	    return redirect()->back();
             }
         }
 
@@ -521,8 +523,10 @@ class GerenciarEntrevistaController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+
             }
         }
     public function finalizar($id)
@@ -623,8 +627,10 @@ class GerenciarEntrevistaController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+
             }
         }
     public function fim($id)
@@ -644,8 +650,10 @@ class GerenciarEntrevistaController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+
             }
         }
     public function inativar($id, $tp)
@@ -689,8 +697,10 @@ class GerenciarEntrevistaController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+
             }
         }
 }

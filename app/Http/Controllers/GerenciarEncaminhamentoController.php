@@ -283,11 +283,11 @@ class GerenciarEncaminhamentoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
-
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+	    return redirect()->back();
+            
+        } 
+    }
     public function tratamento(Request $request, $ide){
         try{
 
@@ -361,10 +361,10 @@ class GerenciarEncaminhamentoController extends Controller
 
     }
     catch(\Exception $e){
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+        }}
 
     public function tratar(Request $request, $ide){
         try{
@@ -464,9 +464,10 @@ class GerenciarEncaminhamentoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+	    return redirect()->back();
+            
+        } 
         }
 
     public function visualizar($ide){
@@ -552,9 +553,10 @@ class GerenciarEncaminhamentoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+	    return redirect()->back();
+            
+        } 
         }
 
 }

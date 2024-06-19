@@ -15,7 +15,7 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                INCLUIR AVULSO
+                                INCLUIR ATENDIMENTO DE EMERGÊNCIA
                             </div>
                         </div>
                     </div>
