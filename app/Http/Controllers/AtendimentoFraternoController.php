@@ -47,6 +47,7 @@ class AtendimentoFraternoController extends Controller
             $grupo = DB::table('atendente_dia AS ad')
             ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id' )
             ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
+    
 
             //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente, que não sejam AFE
             $assistido = DB::table('atendimentos AS at')
@@ -572,9 +573,12 @@ catch(\Exception $e){
 
         catch(\Exception $e){
 
-            $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
+         
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
             }
 
         public function pre_tema($idat)
@@ -605,9 +609,12 @@ catch(\Exception $e){
         }
         catch(\Exception $e){
 
-            $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
+        
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
             }
 
         public function enc_trat(Request $request, $idat, $idas)
@@ -742,9 +749,12 @@ catch(\Exception $e){
         }
         catch(\Exception $e){
 
-            $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
+          
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
             }
 
         public function enc_entre(Request $request, $idat)
@@ -869,9 +879,12 @@ catch(\Exception $e){
 
         catch(\Exception $e){
 
-            $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
+           
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
             }
 
         public function finaliza($idat)
@@ -913,9 +926,12 @@ catch(\Exception $e){
 
         }
         catch(\Exception $e){
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
+      
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
         }
 
         public function meus_atendimentos()
@@ -1008,9 +1024,12 @@ catch(\Exception $e){
         }
 
         catch(\Exception $e){
-            $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
+           
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
             }
         public function tematica(Request $request, $idat){
             try{
@@ -1094,9 +1113,12 @@ catch(\Exception $e){
 
         }
         catch(\Exception $e){
-            $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
+           
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
             }
 
         public function reset(string $idat) {
@@ -1115,8 +1137,11 @@ catch(\Exception $e){
         }
 
         catch(\Exception $e){
-            $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
+          
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } 
             }
 }
