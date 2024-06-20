@@ -130,10 +130,10 @@ class AtendimentoFraternoEspecificoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+    }}
 
     public function history($idat, $idas)
     {
@@ -261,11 +261,10 @@ class AtendimentoFraternoEspecificoController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
-
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+}}
 
 
 
@@ -311,10 +310,10 @@ class AtendimentoFraternoEspecificoController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+}}
 
     public function inicio($idat)
     {
@@ -347,10 +346,10 @@ class AtendimentoFraternoEspecificoController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+}}
     public function tratar($idat, $idas)
     {
 
@@ -396,10 +395,10 @@ class AtendimentoFraternoEspecificoController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+}}
     public function entrevistar($idat, $idas)
     {
 
@@ -447,10 +446,10 @@ class AtendimentoFraternoEspecificoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+}}
 
     public function final($idat)
     {
@@ -477,10 +476,10 @@ class AtendimentoFraternoEspecificoController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+}}
     public function pre_tema($idat)
     {
         try{
@@ -507,10 +506,10 @@ class AtendimentoFraternoEspecificoController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+}}
 
     public function enc_trat(Request $request, $idat, $idas)
     {
@@ -620,10 +619,10 @@ class AtendimentoFraternoEspecificoController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+}}
 
     public function enc_entre(Request $request, $idat)
     {
@@ -708,10 +707,11 @@ class AtendimentoFraternoEspecificoController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+
+    } }
     public function finaliza($idat)
     {
         try{
@@ -747,10 +747,11 @@ class AtendimentoFraternoEspecificoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
+
+        } }
 
     public function meus_atendimentos()
     {
@@ -837,11 +838,11 @@ class AtendimentoFraternoEspecificoController extends Controller
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+            DB::rollBack();
+	    return redirect()->back();
 
+        } }
     public function tematica(Request $request, $idat)
     {
         try{
@@ -924,10 +925,11 @@ class AtendimentoFraternoEspecificoController extends Controller
 
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
+
+    } }
     public function reset(string $idat) {
         try{
 
@@ -946,8 +948,10 @@ class AtendimentoFraternoEspecificoController extends Controller
 
 catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-    }}
+    app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+    DB::rollBack();
+return redirect()->back();
+
+
+    }}}
 

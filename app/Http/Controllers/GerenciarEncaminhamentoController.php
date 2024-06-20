@@ -249,17 +249,20 @@ class GerenciarEncaminhamentoController extends Controller
 
             //dd($contcap);
 
-            return view('/recepcao-integrada/agendar-dia', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter', 'conttratqua', 'conttratqui', 'conttratsex', 'conttratsab', 'conttratdom', 'contcap'));
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
-    }
+        return view('/recepcao-integrada/agendar-dia', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
 
-    public function tratamento(Request $request, $ide)
-    {
-        try {
-            $hoje = Carbon::today();
+    }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
+
+    public function tratamento(Request $request, $ide){
+        try{
+
+        $hoje = Carbon::today();
 
             $dia = intval($request->dia);
 
@@ -309,12 +312,15 @@ class GerenciarEncaminhamentoController extends Controller
                 return redirect()->back();
             }
 
-            return view('/recepcao-integrada/agendar-tratamento', compact('result', 'trata', 'dia'));
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
+        return view('/recepcao-integrada/agendar-tratamento', compact('result', 'trata', 'dia'));
+
+
     }
+    catch(\Exception $e){
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function tratar(Request $request, $ide)
     {
@@ -388,12 +394,15 @@ class GerenciarEncaminhamentoController extends Controller
 
             app('flasher')->addError('Aconteceu um erro ao criar o tratamento contate a ATI.');
 
-            return redirect('/gerenciar-encaminhamentos');
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
+        return redirect('/gerenciar-encaminhamentos');
+
     }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+        }
 
     public function visualizar($ide)
     {
@@ -730,85 +739,9 @@ class GerenciarEncaminhamentoController extends Controller
 
         catch(\Exception $e){
 
-                    app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
-                return redirect()->back();
-
-                }
-
-    }
-
-    public function trocarGrupo(Request $request, $ide)
-    {
-        DB::beginTransaction();
-        try {
-            $reu = intval($request->reuniao);
-
-            //dd($dia_atual);
-            $countVagas = DB::table('tratamento')
-                ->where('id_reuniao', '=', "$reu")
-                ->where('status', '<', '3')
-                ->count();
-            $maxAtend = DB::table('cronograma')
-                ->where('id', '=', "$reu")
-                ->first();
-            $tratID = DB::table('encaminhamento')->where('id', '=', $ide)->get();
-            $idt = DB::table('tratamento')->where('id_encaminhamento', $ide)->first();
-            $data_ontem = Carbon::yesterday();
-            $data_hoje = Carbon::today();
-            $dia_fim = Carbon::createFromFormat('Y-m-d G:i:s', "$idt->dt_fim 00:00:00");
-            $dia_fim->weekday($maxAtend->dia_semana);
-
-            if ($tratID[0]->id_tipo_tratamento == 2 and $countVagas >= $maxAtend->max_atend) {
-                app('flasher')->addError('Número de vagas insuficientes');
-                return redirect()->back();
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
             }
-
-            if ($data_hoje->weekOfYear == $dia_fim->weekOfYear and $data_hoje->diffInDays($dia_fim, false) < 0) {
-                app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
-                return redirect()->back();
-            } elseif ($data_hoje->weekOfYear == $dia_fim->weekOfYear + 1 and $data_hoje->diffInDays($dia_fim, false) < 0 and $maxAtend->dia_semana == 0) {
-                app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
-                return redirect()->back();
-            }
-
-            $data = date('Y-m-d H:i:s');
-
-            DB::table('historico_venus')->insert([
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'data' => $data,
-                'fato' => 39,
-                'obs' => $ide,
-            ]);
-
-            $data = date('Y-m-d H:i:s');
-
-            DB::table('tratamento_grupos')
-                ->where('dt_fim', null)
-                ->where('id_tratamento', $idt->id)
-                ->update([
-                    'dt_fim' => $data_ontem,
-                ]);
-
-            DB::table('tratamento_grupos')->insert([
-                'id_cronograma' => $reu,
-                'id_tratamento' => $idt->id,
-                'dt_inicio' => $data,
-            ]);
-
-            DB::table('tratamento')
-                ->where('id_encaminhamento', $ide)
-                ->update([
-                    'id_reuniao' => $reu,
-                    'dt_fim' => $dia_fim,
-                ]);
-
-            return redirect('/gerenciar-encaminhamentos');
-
-            DB::commit();
-        } catch (\Exception $e) {
-            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
-            DB::rollBack();
-            return redirect()->back();
         }
-    }
+
 }

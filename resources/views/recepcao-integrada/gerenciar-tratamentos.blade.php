@@ -71,8 +71,8 @@
                                                 value="Job"></a>
                                         @endif
 
-                                <a href="/incluir-avulso"><input class="btn btn-success btn-sm me-md-2" type="button"
-                                        value="Incluir Avulso"></a>
+                                <a href="/incluir-avulso"><input class="btn btn-danger btn-sm me-md-2" type="button"
+                                        value="Atendimento de emergência"></a>
 
                     </form>
 
