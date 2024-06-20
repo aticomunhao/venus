@@ -78,12 +78,7 @@
 
                 </div>
             </div>
-
-
-
-
             <br />
-
 
 
         </div style="text-align:right;">
@@ -220,23 +215,14 @@
                                     title="Histórico"><i class="bi bi-search"
                                         style="font-size: 1rem; color:#000;"></i></a>
 
-                                @if ($listas->status == 1 or $listas->status == 2) {{-- botao de alterar grupo --}}
-                                    <a href="/alterar-grupo-tratamento/{{ $listas->idtr }}"type="button"
-                                        class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
-                                        title="Alterar Grupo"><i class="bi bi-arrow-left-right"
-                                            style="font-size: 1rem; color:#000;"></i></a>
-                                @else
-                                    <button type="button"
-                                        class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
-                                        title="Alterar Grupo" disabled><i class="bi bi-arrow-left-right"
-                                            style="font-size: 1rem; color:#000;"></i></button>
-                                @endif
+
 
                                 @if ($listas->status == 1 or $listas->status == 2){{-- botao de inativar --}}
                                     <a type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip"
                                         data-placement="top" data-bs-target="#inativa{{ $listas->idtr }}"
                                         data-bs-toggle="modal" title="Inativar"><i class="bi bi-x-circle"
                                             style="font-size: 1rem; color:#000;"></i></a>
+
                                 @else
                                     <button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip"
                                         data-placement="top" data-bs-target="#inativa{{ $listas->idtr }}"

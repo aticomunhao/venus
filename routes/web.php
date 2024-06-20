@@ -240,6 +240,9 @@ Route::middleware('rotas:16')->group(function () {
     Route::post('incluir-tratamento/{idtr}', [GerenciarEncaminhamentoController::class, 'tratar'])->name('gtctrt');
     Route::get('/visualizar-enc/{ide}', [GerenciarEncaminhamentoController::class, 'visualizar'])->name('gecvis');
     Route::post('/inativar/{ide}', [GerenciarEncaminhamentoController::class, 'inative'])->name('gecina');
+    Route::get('/alterar-grupo-tratamento/{id}', [GerenciarEncaminhamentoController::class, 'escolherGrupo']);
+    Route::get('/escolher-horario/{id}', [GerenciarEncaminhamentoController::class, 'escolherHorario']);
+    Route::any('/trocar-grupo-tratamento/{id}', [GerenciarEncaminhamentoController::class, 'trocarGrupo']);
 });
 
 // Jobs de Tratamento
@@ -253,9 +256,6 @@ Route::middleware('rotas:18')->group(function () {
     Route::get('/visualizar-tratamento/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
     Route::any('/presenca-tratatamento/{idtr}', [GerenciarTratamentosController::class, 'presenca']);
     Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
-    Route::get('/alterar-grupo-tratamento/{id}', [GerenciarTratamentosController::class, 'escolherGrupo']);
-    Route::get('/escolher-horario/{id}', [GerenciarTratamentosController::class, 'escolherHorario']);
-    Route::any('/trocar-grupo-tratamento/{id}', [GerenciarTratamentosController::class, 'trocarGrupo']);
     Route::any('/incluir-avulso', [GerenciarTratamentosController::class, 'createAvulso']);
     Route::any('/armazenar-avulso', [GerenciarTratamentosController::class, 'storeAvulso']);
     Route::any('/inativar-tratamento/{id}', [GerenciarTratamentosController::class, 'destroy']);
@@ -327,7 +327,7 @@ Route::middleware('rotas:25')->group(function () {
 });
 
 // Gerenciar Perfis
-Route::middleware('rotas:1')->group(function () {
+Route::middleware('rotas:26')->group(function () {
     Route::get('/gerenciar-perfis', [GerenciarPerfil::class, 'index']);
     Route::get('/criar-perfis', [GerenciarPerfil::class, 'create']);
     Route::post('/armazenar-perfis', [GerenciarPerfil::class, 'store']);
@@ -338,7 +338,7 @@ Route::middleware('rotas:1')->group(function () {
 });
 
 // Gerenciar Rotas Setor
-Route::middleware('rotas:1')->group(function () {
+Route::middleware('rotas:27')->group(function () {
     Route::get('/gerenciar-setor', [GerenciarSetor::class, 'index']);
     Route::get('/criar-setor', [GerenciarSetor::class, 'create']);
     Route::post('/armazenar-setor', [GerenciarSetor::class, 'store']);
