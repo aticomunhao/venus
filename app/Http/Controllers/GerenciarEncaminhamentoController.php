@@ -103,7 +103,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                 ->where(function ($query) use ($hoje) {
-                    $query->whereRaw('reu.data_fim < ?', [$hoje])->orWhereNull('reu.data_fim');
+                    $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                 })
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 1)
@@ -113,7 +113,7 @@ class GerenciarEncaminhamentoController extends Controller
 
             $conttratseg = DB::table('tratamento AS tr')
                 ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($seg - COUNT(CASE WHEN tr.status < 3 AND $seg <> NULL THEN tr.id END)) as trat"))
+                ->select(DB::raw("($seg - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 1)
                 ->get();
@@ -123,7 +123,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                 ->where(function ($query) use ($hoje) {
-                    $query->whereRaw('reu.data_fim < ?', [$hoje])->orWhereNull('reu.data_fim');
+                    $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                 })
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 2)
@@ -133,7 +133,7 @@ class GerenciarEncaminhamentoController extends Controller
 
             $conttratter = DB::table('tratamento AS tr')
                 ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($ter - COUNT(CASE WHEN tr.status < 3  AND $ter <> NULL THEN tr.id END)) as trat"))
+                ->select(DB::raw("($ter - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 2)
                 ->get();
@@ -144,7 +144,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                 ->where(function ($query) use ($hoje) {
-                    $query->whereRaw('reu.data_fim < ?', [$hoje])->orWhereNull('reu.data_fim');
+                    $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                 })
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 3)
@@ -154,7 +154,7 @@ class GerenciarEncaminhamentoController extends Controller
 
             $conttratqua = DB::table('tratamento AS tr')
                 ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($qua - COUNT(CASE WHEN tr.status < 3  AND $qua <> NULL THEN tr.id END)) as trat"))
+                ->select(DB::raw("($qua - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 3)
                 ->get();
@@ -165,7 +165,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                 ->where(function ($query) use ($hoje) {
-                    $query->whereRaw('reu.data_fim < ?', [$hoje])->orWhereNull('reu.data_fim');
+                    $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                 })
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 4)
@@ -175,7 +175,7 @@ class GerenciarEncaminhamentoController extends Controller
 
             $conttratqui = DB::table('tratamento AS tr')
                 ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($qui - COUNT(CASE WHEN tr.status < 3  AND $qui <> NULL THEN tr.id END)) as trat"))
+                ->select(DB::raw("($qui - COUNT(CASE WHEN tr.status < 3  THEN tr.id END)) as trat"))
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 4)
                 ->get();
@@ -184,7 +184,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', '=', 'gr.id')
                 ->where(function ($query) use ($hoje) {
-                    $query->whereRaw('reu.data_fim < ?', [$hoje])->orWhereNull('reu.data_fim');
+                    $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                 })
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 5)
@@ -194,7 +194,7 @@ class GerenciarEncaminhamentoController extends Controller
 
             $conttratsex = DB::table('tratamento AS tr')
                 ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($sex - COUNT(CASE WHEN tr.status < 3   AND $sex <> NULL THEN tr.id END)) as trat"))
+                ->select(DB::raw("($sex - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 5)
                 ->get();
@@ -205,7 +205,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                 ->where(function ($query) use ($hoje) {
-                    $query->whereRaw('reu.data_fim < ?', [$hoje])->orWhereNull('reu.data_fim');
+                    $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                 })
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 6)
@@ -224,17 +224,18 @@ class GerenciarEncaminhamentoController extends Controller
                 ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                 ->where(function ($query) use ($hoje) {
-                    $query->whereRaw('reu.data_fim < ?', [$hoje])->orWhereNull('reu.data_fim');
+                    $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                 })
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 0)
                 ->get();
 
-            $dom = intval($contgrdom[0]->maxat);
 
-            $conttratdom = DB::table('tratamento AS tr')
+                $dom = intval($contgrdom[0]->maxat);
+
+                $conttratdom = DB::table('tratamento AS tr')
                 ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($dom - COUNT(CASE WHEN tr.status < 3  AND $dom <> NULL THEN tr.id END)) as trat"))
+                ->select(DB::raw("$dom - (COUNT(CASE WHEN tr.status < 3  THEN tr.id END)) as trat"))
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 0)
                 ->get();
@@ -242,7 +243,7 @@ class GerenciarEncaminhamentoController extends Controller
             $contcap = DB::table('cronograma AS reu')
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                 ->where(function ($query) use ($hoje) {
-                    $query->whereRaw('reu.data_fim < ?', [$hoje])->orWhereNull('reu.data_fim');
+                    $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                 })
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->sum('reu.max_atend');
@@ -297,7 +298,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
                 ->leftJoin('tipo_dia AS td', 'reu.dia_semana', 'td.id')
                 ->where(function ($query) use ($hoje) {
-                    $query->whereRaw('reu.data_fim < ?', [$hoje])->orWhereNull('reu.data_fim');
+                    $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                 })
                 ->where('reu.dia_semana', $dia)
                 ->where('reu.id_tipo_tratamento', $tp_trat)
@@ -465,279 +466,345 @@ class GerenciarEncaminhamentoController extends Controller
         }
     }
 
-    public function escolherGrupo($id)
-    {
-        try {
-            $idtt = DB::table('encaminhamento')->where('id', $id)->select('id_tipo_tratamento')->first();
+    public function escolherGrupo($id){
 
-            $idtt = $idtt->id_tipo_tratamento;
 
-            $result = DB::table('encaminhamento AS enc')
-                ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat')
-                ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-                ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-                ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-                ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-                ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
-                ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-                ->where('enc.id', $id)
-                ->get();
-
-            $contgrseg = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 1)->get();
-
-            $seg = $contgrseg[0]->maxat;
-
-            $conttratseg = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($seg - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 1)
-                ->get();
-            //dd($conttratseg, $seg);
-
-            $contgrter = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 2)->get();
-
-            $ter = $contgrter[0]->maxat;
-
-            $conttratter = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($ter - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 2)
-                ->get();
-
-            //dd($conttratter);
-
-            $contgrqua = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 3)->get();
-
-            $qua = intval($contgrqua[0]->maxat);
-
-            $conttratqua = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($qua - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 3)
-                ->get();
-
-            //dd($conttratqua);
-
-            $contgrqui = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 4)->get();
-
-            $qui = $contgrqui[0]->maxat;
-
-            $conttratqui = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($qui - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 4)
-                ->get();
-
-            $contgrsex = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 5)->get();
-
-            $sex = $contgrsex[0]->maxat;
-
-            $conttratsex = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($sex - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 5)
-                ->get();
-
-            //dd($conttratsex);
-
-            $contgrsab = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 6)->get();
-
-            $sab = $contgrsab[0]->maxat;
-
-            $conttratsab = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($sab - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 6)
-                ->get();
-
-            $contgrdom = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 0)->get();
-
-            $dom = $contgrdom[0]->maxat;
-
-            $conttratdom = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($dom - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 0)
-                ->get();
-
-            $contcap = DB::table('cronograma AS reu')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->sum('reu.max_atend');
-
-            $dia_hoje = Carbon::today()->weekday();
-
-            return view('recepcao-integrada/agendar-grupo-tratamento', compact('dia_hoje', 'result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter', 'conttratqua', 'conttratqui', 'conttratsex', 'conttratsab', 'conttratdom', 'contcap'));
-        } catch (\Exception $e) {
-            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
-            return redirect()->back();
-        }
-    }
-
-    public function escolherHorario(Request $request, $ide)
-    {
         try{
 
-            $idtt = DB::table('encaminhamento')->where('id', $id)->select('id_tipo_tratamento')->first();
 
-            $idtt = $idtt->id_tipo_tratamento;
+        $idtt = DB::table('encaminhamento')->where('id', $id)
+        ->select('id_tipo_tratamento')->first();
 
-            $result = DB::table('encaminhamento AS enc')
-                ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat')
-                ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-                ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-                ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-                ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-                ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
-                ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-                ->where('enc.id', $id)
-                ->get();
+        $idtt = $idtt->id_tipo_tratamento;
 
-            $contgrseg = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 1)->get();
 
-            $seg = $contgrseg[0]->maxat;
+        $hoje = Carbon::now()->format('Y-m-d');
+        $result = DB::table('encaminhamento AS enc')
+            ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat')
+            ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+            ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+            ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+            ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+            ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
+            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+            ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+            ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
+            ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+            ->where('enc.id', $id)
+            ->get();
 
-            $conttratseg = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($seg - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 1)
-                ->get();
-            //dd($conttratseg, $seg);
+        $contgrseg = DB::table('cronograma AS reu')
+            ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
+            ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+            ->where(function ($query) use ($hoje) {
+                $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+            })
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 1)
+            ->get();
 
-            $contgrter = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 2)->get();
+        $seg = intval($contgrseg[0]->maxat);
 
-            $ter = $contgrter[0]->maxat;
+        $conttratseg = DB::table('tratamento AS tr')
+            ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
+            ->select(DB::raw("($seg - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 1)
+            ->get();
+        //dd($conttratseg, $seg);
 
-            $conttratter = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($ter - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 2)
-                ->get();
+        $contgrter = DB::table('cronograma AS reu')
+            ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
+            ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+            ->where(function ($query) use ($hoje) {
+                $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+            })
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 2)
+            ->get();
 
-            //dd($conttratter);
+        $ter = intval($contgrter[0]->maxat);
 
-            $contgrqua = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 3)->get();
+        $conttratter = DB::table('tratamento AS tr')
+            ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
+            ->select(DB::raw("($ter - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 2)
+            ->get();
 
-            $qua = intval($contgrqua[0]->maxat);
+        //dd($conttratter);
 
-            $conttratqua = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($qua - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 3)
-                ->get();
+        $contgrqua = DB::table('cronograma AS reu')
+            ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
+            ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+            ->where(function ($query) use ($hoje) {
+                $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+            })
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 3)
+            ->get();
 
-            //dd($conttratqua);
+        $qua = intval($contgrqua[0]->maxat);
 
-            $contgrqui = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 4)->get();
+        $conttratqua = DB::table('tratamento AS tr')
+            ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
+            ->select(DB::raw("($qua - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 3)
+            ->get();
 
-            $qui = $contgrqui[0]->maxat;
+        //dd($conttratqua);
 
-            $conttratqui = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($qui - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 4)
-                ->get();
+        $contgrqui = DB::table('cronograma AS reu')
+            ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
+            ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+            ->where(function ($query) use ($hoje) {
+                $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+            })
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 4)
+            ->get();
 
-            $contgrsex = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 5)->get();
+        $qui = intval($contgrqui[0]->maxat);
 
-            $sex = $contgrsex[0]->maxat;
+        $conttratqui = DB::table('tratamento AS tr')
+            ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
+            ->select(DB::raw("($qui - COUNT(CASE WHEN tr.status < 3  THEN tr.id END)) as trat"))
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 4)
+            ->get();
 
-            $conttratsex = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($sex - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 5)
-                ->get();
+        $contgrsex = DB::table('cronograma AS reu')
+            ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
+            ->leftJoin('grupo AS gr', 'reu.id_grupo', '=', 'gr.id')
+            ->where(function ($query) use ($hoje) {
+                $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+            })
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 5)
+            ->get();
 
-            //dd($conttratsex);
+        $sex = intval($contgrsex[0]->maxat);
 
-            $contgrsab = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 6)->get();
+        $conttratsex = DB::table('tratamento AS tr')
+            ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
+            ->select(DB::raw("($sex - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 5)
+            ->get();
 
-            $sab = $contgrsab[0]->maxat;
+        //dd($conttratsex);
 
-            $conttratsab = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($sab - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 6)
-                ->get();
+        $contgrsab = DB::table('cronograma AS reu')
+            ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
+            ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+            ->where(function ($query) use ($hoje) {
+                $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+            })
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 6)
+            ->get();
 
-            $contgrdom = DB::table('cronograma AS reu')->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->where('reu.dia_semana', 0)->get();
+        $sab = intval($contgrsab[0]->maxat);
 
-            $dom = $contgrdom[0]->maxat;
+        $conttratsab = DB::table('tratamento AS tr')
+            ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
+            ->select(DB::raw("($sab - COUNT(CASE WHEN tr.status < 3  THEN tr.id END)) as trat"))
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 6)
+            ->get();
+
+        $contgrdom = DB::table('cronograma AS reu')
+            ->selectRaw('count(*) as ttreu, sum(max_atend) as maxat')
+            ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+            ->where(function ($query) use ($hoje) {
+                $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+            })
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 0)
+            ->get();
+
+
+            $dom = intval($contgrdom[0]->maxat);
 
             $conttratdom = DB::table('tratamento AS tr')
-                ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
-                ->select(DB::raw("($dom - COUNT(CASE WHEN tr.status < 3 THEN tr.id END)) as trat"))
-                ->where('reu.id_tipo_tratamento', $idtt)
-                ->where('reu.dia_semana', 0)
-                ->get();
+            ->leftJoin('cronograma AS reu', 'tr.id_reuniao', 'reu.id')
+            ->select(DB::raw("$dom - (COUNT(CASE WHEN tr.status < 3  THEN tr.id END)) as trat"))
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->where('reu.dia_semana', 0)
+            ->get();
 
-            $contcap = DB::table('cronograma AS reu')->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')->where('reu.data_fim', null)->where('reu.id_tipo_tratamento', $idtt)->sum('reu.max_atend');
+        $contcap = DB::table('cronograma AS reu')
+            ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+            ->where(function ($query) use ($hoje) {
+                $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+            })
+            ->where('reu.id_tipo_tratamento', $idtt)
+            ->sum('reu.max_atend');
 
-            $dia_hoje = Carbon::today()->weekday();
+                        $dia_hoje = Carbon::today()->weekday();
 
-            return view('recepcao-integrada/agendar-grupo-tratamento', compact('dia_hoje', 'result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter', 'conttratqua', 'conttratqui', 'conttratsex', 'conttratsab', 'conttratdom', 'contcap'));
-            $dia = intval($request->dia);
 
-            $ide = intval($ide);
+        return view('recepcao-integrada/agendar-grupo-tratamento', compact('dia_hoje','result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
 
-            $verifica = DB::table('cronograma AS rm')->select('rm.dia_semana', 'rm.id AS idrm', 'enc.id_tipo_tratamento AS trenc', 'rm.id_tipo_tratamento AS trtr')->leftJoin('tratamento AS tr', 'tr.id_reuniao', 'rm.id')->leftJoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')->where('rm.dia_semana', $dia)->distinct('rm.id')->whereRaw('enc.id_tipo_tratamento = rm.id_tipo_tratamento')->get();
+    }
+    catch(\Exception $e){
 
-            $tp_trat = DB::table('encaminhamento AS enc')->select('enc.id_tipo_tratamento')->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')->where('enc.id', $ide)->value('enc.id_tipo_tratamento');
-
-            $result = DB::table('encaminhamento AS enc')
-                ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat')
-                ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-                ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-                ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-                ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-                ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
-                ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-                ->where('enc.id', $ide)
-                ->get();
-
-            $trata = DB::table('cronograma AS reu')
-
-                ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'), 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
-                ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
-                ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
-                ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
-                ->leftJoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
-                ->leftJoin('cronograma as cro', 'gr.id', 'cro.id_grupo')
-                ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
-                ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
-                ->leftJoin('tipo_dia AS td', 'reu.dia_semana', 'td.id')
-                ->where('reu.dia_semana', $dia)
-                ->where('reu.id_tipo_tratamento', $tp_trat)
-                ->orWhere('tr.status', null)
-                ->where('tr.status', '<', 3)
-                ->groupBy('reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
-                ->orderBy('h_inicio')
-                ->get();
-
-            return view('/recepcao-integrada/agendar-horario-tratamento', compact('result', 'trata', 'dia'));
-
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
         }
 
-        catch(\Exception $e){
+
+    public function escolherHorario(Request $request, $ide){
+
+
+        try{
+
+        $dia = intval($request->dia);
+
+        $ide = intval($ide);
+
+        $verifica = DB::table('cronograma AS rm')
+                    ->select('rm.dia_semana', 'rm.id AS idrm', 'enc.id_tipo_tratamento AS trenc', 'rm.id_tipo_tratamento AS trtr')
+                    ->leftJoin('tratamento AS tr', 'tr.id_reuniao', 'rm.id')
+                    ->leftJoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
+                    ->where('rm.dia_semana', $dia)
+                    ->distinct('rm.id')
+                    ->whereRaw('enc.id_tipo_tratamento = rm.id_tipo_tratamento')
+                    ->get();
+
+
+        $tp_trat = DB::table('encaminhamento AS enc')
+                        ->select('enc.id_tipo_tratamento')
+                        ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+                        ->where('enc.id', $ide)
+                        ->value('enc.id_tipo_tratamento');
+
+
+        $result = DB::table('encaminhamento AS enc')
+                        ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat' )
+                        ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+                        ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+                        ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+                        ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+                        ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
+                        ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+                        ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+                        ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
+                        ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+                        ->where('enc.id', $ide)
+                        ->get();
+
+
+        $trata = DB::table('cronograma AS reu')
+
+                        ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'),'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
+                        ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
+                        ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
+                        ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+                        ->leftJoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
+                        ->leftJoin('cronograma as cro', 'gr.id', 'cro.id_grupo')
+                        ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
+                        ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
+                        ->leftJoin('tipo_dia AS td', 'reu.dia_semana', 'td.id')
+                        ->where('reu.dia_semana', $dia)
+                        ->where('reu.id_tipo_tratamento', $tp_trat)
+                        ->orWhere('tr.status', null)
+                        ->where('tr.status', '<', 3)
+                        ->groupBy('reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
+                        ->orderBy('h_inicio')
+                        ->get();
+
+        return view('/recepcao-integrada/agendar-horario-tratamento', compact('result', 'trata', 'dia'));
+
+
+    }
+    catch(\Exception $e){
+
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
+    public function trocarGrupo(Request $request, $ide){
+
+        try{
+
+        $reu = intval($request->reuniao);
+
+        //dd($dia_atual);
+        $countVagas = DB::table('tratamento')->where('id_reuniao', '=', "$reu")->where('status', '<', '3' )->count();
+        $maxAtend = DB::table('cronograma')->where('id', '=', "$reu")->first();
+        $tratID = DB::table('encaminhamento')->where('id', '=', $ide)->get();
+        $idt = DB::table('tratamento')->where('id_encaminhamento', $ide)->first();
+        $data_ontem = Carbon::yesterday();
+        $data_hoje = Carbon::today();
+        $dia_fim = Carbon::createFromFormat('Y-m-d G:i:s', "$idt->dt_fim 00:00:00");
+        $dia_fim->weekday($maxAtend->dia_semana);
+
+
+        if ($tratID[0]->id_tipo_tratamento == 2 and $countVagas >= $maxAtend->max_atend){
+
+            app('flasher')->addError('Número de vagas insuficientes');
+            return redirect()->back();
+        }
+
+        if($data_hoje->weekOfYear == $dia_fim->weekOfYear and $data_hoje->diffInDays($dia_fim, false) < 0){
+
+            app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
+            return redirect()->back();
+
+        }
+        elseif($data_hoje->weekOfYear == ($dia_fim->weekOfYear + 1) and $data_hoje->diffInDays($dia_fim, false) < 0 and $maxAtend->dia_semana == 0){
+            app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
+            return redirect()->back();
+        }
+
+        $data = date("Y-m-d H:i:s");
+
+        DB::table('historico_venus')->insert([
+
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'fato' => 39,
+            'obs' => $ide
+
+        ]);
+
+        $data = date("Y-m-d H:i:s");
+
+
+        DB::table('tratamento_grupos')
+        ->where('dt_fim', null)
+        ->where('id_tratamento', $idt->id)
+        ->update([
+            'dt_fim' => $data_ontem,
+        ]);
+
+
+        DB::table('tratamento_grupos')
+        ->insert([
+            'id_cronograma' => $reu,
+            'id_tratamento' => $idt->id,
+            'dt_inicio' => $data,
+        ]);
+
+
+
+
+     DB::table('tratamento')
+     ->where('id_encaminhamento', $ide)
+     ->update([
+        'id_reuniao'=> $reu,
+        'dt_fim' => $dia_fim
+    ]);
+
+
+
+        return redirect('/gerenciar-encaminhamentos');
+
+    }
+    catch(\Exception $e){
 
         $code = $e->getCode( );
         return view('tratamento-erro.erro-inesperado', compact('code'));
