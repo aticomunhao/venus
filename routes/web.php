@@ -49,6 +49,8 @@ Route::fallback(function () {
 Route::get('/', [LoginController::class, 'index']);
 Route::any('/login/home', [LoginController::class, 'valida']);
 Route::any('/login/valida', [LoginController::class, 'validaUserLogado'])->name('home.post');
+Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
+Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
 
 //Gerenciar usuários
 Route::middleware('rotas:1')->group(function () {
@@ -56,8 +58,7 @@ Route::middleware('rotas:1')->group(function () {
     Route::get('/cadastrar-usuarios/configurar/{id}', [UsuarioController::class, 'configurarUsuario']);
     Route::get('/gerenciar-usuario', [UsuarioController::class, 'index']);
     Route::get('/usuario/alterar/{id}', [UsuarioController::class, 'edit']);
-    Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
-    Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
+ 
     Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
     Route::any('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
     Route::get('/usuario/excluir/{id}', [UsuarioController::class, 'destroy']);
