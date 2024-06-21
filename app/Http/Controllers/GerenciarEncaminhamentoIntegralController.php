@@ -81,7 +81,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
         ");
 
 
-        return view ('/recepcao-integrada/gerenciar-encaminhamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'motivo'));
+        return view ('/encaminhamento-integral/gerenciar-encaminhamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'motivo'));
 
 
     }
@@ -275,7 +275,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
 
 //dd($contcap);
 
-        return view('/recepcao-integrada/agendar-dia', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
+        return view('/encaminhamento-integral/agendar-dia', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
 
     }
 
@@ -283,8 +283,8 @@ class GerenciarEncaminhamentoIntegralController extends Controller
 
         app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
 	    return redirect()->back();
-            
-        } 
+
+        }
         }
     public function tratamento(Request $request, $ide){
 
@@ -348,13 +348,13 @@ class GerenciarEncaminhamentoIntegralController extends Controller
                         ->groupBy('reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
                         ->orderBy('h_inicio')
                         ->get();
-                      
+
         if(sizeof($trata) == 0){
             app('flasher')->addWarning('Não existem grupos para este dia');
             return redirect()->back();
         }
 
-        return view('/recepcao-integrada/agendar-tratamento', compact('result', 'trata', 'dia'));
+        return view('/encaminhamento-integrala/agendar-tratamento', compact('result', 'trata', 'dia'));
 
 
     }
@@ -422,7 +422,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
 
             app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
 
-            return redirect('/gerenciar-encaminhamentos');
+            return redirect('/gerenciar-encaminhamentos-integral');
 
 
         }elseif($dia_atual > $dia_semana){
@@ -453,13 +453,13 @@ class GerenciarEncaminhamentoIntegralController extends Controller
 
         app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
 
-        return redirect('/gerenciar-encaminhamentos');
+        return redirect('/gerenciar-encaminhamentos-integral');
 
         }
 
         app('flasher')->addError('Aconteceu um erro ao criar o tratamento contate a ATI.');
 
-        return redirect('/gerenciar-encaminhamentos');
+        return redirect('/gerenciar-encaminhamentos-integral');
 
     }
     catch(\Exception $e){
@@ -512,7 +512,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
         ->count();
 
 
-        return view('/recepcao-integrada/historico-encaminhamento', compact('result', 'list', 'faul'));
+        return view('/encaminhamento-integral/historico-encaminhamento', compact('result', 'list', 'faul'));
 
     }
     catch(\Exception $e){
@@ -549,7 +549,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
         app('flasher')->addSuccess('O encaminhamento foi inativado.');
 
 
-        return redirect('/gerenciar-encaminhamentos');
+        return redirect('/gerenciar-encaminhamentos-integral');
 
     }
 
@@ -560,4 +560,5 @@ class GerenciarEncaminhamentoIntegralController extends Controller
 	    return redirect()->back();
                 }
         }
+
 }
