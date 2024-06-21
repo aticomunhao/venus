@@ -49,6 +49,8 @@ Route::fallback(function () {
 Route::get('/', [LoginController::class, 'index']);
 Route::any('/login/home', [LoginController::class, 'valida']);
 Route::any('/login/valida', [LoginController::class, 'validaUserLogado'])->name('home.post');
+Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
+Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
 
 //Gerenciar usuários
 Route::middleware('rotas:1')->group(function () {
@@ -56,8 +58,6 @@ Route::middleware('rotas:1')->group(function () {
     Route::get('/cadastrar-usuarios/configurar/{id}', [UsuarioController::class, 'configurarUsuario']);
     Route::get('/gerenciar-usuario', [UsuarioController::class, 'index']);
     Route::get('/usuario/alterar/{id}', [UsuarioController::class, 'edit']);
-    Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
-    Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
     Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
     Route::any('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
     Route::get('/usuario/excluir/{id}', [UsuarioController::class, 'destroy']);
@@ -300,6 +300,9 @@ Route::middleware('rotas:22')->group(function () {
     Route::post('incluir-tratamento-pti/{idtr}', [GerenciarEncaminhamentoPTIController::class, 'tratar']);
     Route::get('/visualizar-enc-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'visualizar']);
     Route::any('/inativar-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'inative']);
+    Route::get('/alterar-grupo-tratamento-pti/{id}', [GerenciarEncaminhamentoPTIController::class, 'escolherGrupo']);
+    Route::get('/escolher-horario-pti/{id}', [GerenciarEncaminhamentoPTIController::class, 'escolherHorario']);
+    Route::any('/trocar-grupo-tratamento-pti/{id}', [GerenciarEncaminhamentoPTIController::class, 'trocarGrupo']);
 });
 
 // Gerenciar Encaminhamento Integral
@@ -310,6 +313,9 @@ Route::middleware('rotas:23')->group(function () {
     Route::post('incluir-tratamento-integral/{idtr}', [GerenciarEncaminhamentoIntegralController::class, 'tratar']);
     Route::get('/visualizar-enc-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'visualizar']);
     Route::any('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'inative']);
+    Route::get('/alterar-grupo-tratamento-integral/{id}', [GerenciarEncaminhamentoIntegralController::class, 'escolherGrupo']);
+    Route::get('/escolher-horario-integral/{id}', [GerenciarEncaminhamentoIntegralController::class, 'escolherHorario']);
+    Route::any('/trocar-grupo-tratamento-integral/{id}', [GerenciarEncaminhamentoIntegralController::class, 'trocarGrupo']);
 });
 
 // Gerenciar Assistido PTI

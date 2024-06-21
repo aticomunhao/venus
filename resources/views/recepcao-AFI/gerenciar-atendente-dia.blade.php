@@ -17,10 +17,10 @@
                 <form action="{{route('afidia')}}" class="form-horizontal mt-4" method="GET" >
                 <div class="row">
                     <div class ="col">Data
-                        <input class="form-control" type="date" id="" name="data" value="{{$data}}">
+                        <input class="form-control" type="date" id="data" name="data" value="{{$data}}">
                     </div>
                     <div class="col">Grupo
-                        <select class="form-select" id="" name="grupo" type="number">
+                        <select class="form-select pesquisa" id="" name="grupo" type="number">
                             <option value=""></option>
                             @foreach ($grupo as $grupos)
                             {{--<option value="{{ old('grupo', $grupos->id) }}" selected="{{ old('grupo') == $grupos->id ? 'selected' : '' }}">{{$grupos->nome}}</option>--}}
@@ -30,12 +30,12 @@
                         </select>
                     </div>
                     <div class="col">Atendente
-                        <input class="form-control" type="text" id="" name="atendente" value="{{$atendente}}">
+                        <input class="form-control pesquisa" type="text" id="" name="atendente" value="{{$atendente}}">
                     </div>
                     <div class="col">Status
-                        <select class="form-select" id="" name="status" type="number">
-                            <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Ativo</option>
-                            <option value="false" {{ old('status') == 'false' ? 'selected' : '' }}>Inativo</option>
+                        <select class="form-select pesquisa" id="" name="status" type="number">
+                            <option value="Ativo" {{ old('status') == 'Ativo' ? 'selected' : '' }}>Ativo</option>
+                            <option value="Inativo" {{ old('status') == 'Inativo' ? 'selected' : '' }}>Inativo</option>
                             <option value="" {{ old('status') == '' ? 'selected' : '' }}>Todos</option>
                         </select>
                     </div>
@@ -73,7 +73,7 @@
                             <td scope="">{{$atendes->nomeg}}</td>
                             <td scope="">{{$atendes->nm_4}}</td>
                             <td scope="">{{$atendes->nm_sala}}</td>
-                            <td scope="">{{$atendes->tipo}}</td>
+                            <td scope="">{{$atendes->status}}</td>
                             <td scope="">
                                 @if ($atendes->dh_inicio < $now or $atendes->dh_fim)
                                     <button disabled type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button>
@@ -106,6 +106,12 @@ var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tool
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
+
+ $('.pesquisa').change(function () {
+    $('#data').val("")
+ })
+
+
 
 </script>
 

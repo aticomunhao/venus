@@ -308,9 +308,10 @@ try{
 
    // dd($reuniao);
 
+        $motivo = DB::table('tipo_motivo_presenca')->get();
 
 
-        return view('recepcao-integrada.incluir-avulso', compact('assistidos', 'reuniao'));
+        return view('recepcao-integrada.incluir-avulso', compact('assistidos', 'reuniao', 'motivo'));
     }
     catch(\Exception $e){
 
@@ -320,6 +321,7 @@ try{
         }
     public function storeAvulso(Request $request){
         try{
+
         $hoje = Carbon::today();
         $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $hoje)->first();
         $nrAcomp = $acompanhantes->nr_acompanhantes + $request->acompanhantes;
@@ -336,7 +338,8 @@ try{
         ->insert([
             'presenca' => true,
             'id_pessoa' => $request->assistido,
-            'id_dias_cronograma' => $acompanhantes->id
+            'id_dias_cronograma' => $acompanhantes->id,
+            'id_motivo' => $request->motivo
         ]);
         return redirect('/gerenciar-tratamentos');
     }
