@@ -69,9 +69,19 @@
                             <td>
                                 @if ($listas->status_encaminhamento == 1)
                                 <a href="/agendar-pti/{{$listas->ide}}/{{$listas->idtt}}"><button type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Agendar"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button></a>
+                                @elseif($listas->status_encaminhamento == 2)
+                                {{-- botao de alterar grupo --}}
+                                <a href="/alterar-grupo-tratamento-pti/{{ $listas->ide }}"type="button"
+                                    class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top"
+                                    title="Alterar Grupo"><i class="bi bi-arrow-left-right"
+                                        style="font-size: 1rem; color:#000;"></i></a>
                                 @else
-                                <button type="button" class="btn btn-outline-success btn-sm disabled" data-tt="tooltip" data-placement="top" title="Agendar" aria-disabled="true"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button>
+                                <button type="button"
+                                    class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top"
+                                    title="Alterar Grupo" disabled><i class="bi bi-arrow-left-right"
+                                        style="font-size: 1rem; color:#000;" ></i></button>
                                 @endif
+  
                                 <a href="/visualizar-enc-pti/{{$listas->ide}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Histórico"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
                                 @if ($listas->status_encaminhamento < 2)
                                 <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#inativar{{$listas->ide}}" data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>

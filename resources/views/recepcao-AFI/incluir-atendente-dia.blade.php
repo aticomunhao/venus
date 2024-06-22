@@ -13,28 +13,28 @@
                 <form class="form-horizontal mt-4" method="GET" >
                 <div class="row">
                 {{--<div class="col-2">Grupo
-                       <select class="form-select" id="" name="grupo" type="number">                           
+                       <select class="form-select" id="" name="grupo" type="number">
                             <option value=""></option>
                             @foreach ($grupo as $grupos)
                             <option @if(old('grupo')==$grupos->id) {{'selected="selected"'}} @endif value="{{ $grupos->id }}">{{$grupos->nome}}</option>
-                            @endforeach               
-                        </select>                       
+                            @endforeach
+                        </select>
                     </div>--}}
                     <div class="col-2">Atendente
-                        <select class="form-select" id="" name="atendente" type="number">                           
+                        <select class="form-select select2" id="" name="atendente" type="number">
                             <option value=""></option>
                             @foreach ($atende as $atendes)
                             <option @if(old('atendente')==$atendes->ida) {{'selected="selected"'}} @endif value="{{ $atendes->ida}}">{{$atendes->nm_4}}</option>
-                            @endforeach               
-                        </select>                       
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-2">Status
-                        <select class="form-select" id="" name="status" type="number">                           
+                        <select class="form-select" id="" name="status" type="number">
                             <option value="">Todos</option>
                             @foreach ($situacao as $sit)
                             <option value="{{$sit->ids}}">{{$sit->tipo}}</option>
-                            @endforeach               
-                        </select>                       
+                            @endforeach
+                        </select>
                     </div>
                         <div class="col"><br>
                             <input type="submit" formaction="{{route('afisal')}}"  class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;" value="Pesquisar">
@@ -49,15 +49,15 @@
                 <a href="/gerenciar-atendente-dia"><input class="btn btn-danger btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px; font-size: 0.9rem;" type="button" value="Retornar principal"></a>
             </div>
             <div class="table">Total selecionados:
-       
-            
+
+
                     <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                         <thead style="text-align: center;">
-                            <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">                                
+                            <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                                 <th class="col">NR</th>
-                                <th class="col">GRUPO</th>                                               
+                                <th class="col">GRUPO</th>
                                 <th class="col">ATENDENTE</th>
-                                <th class="col-1">SALA</th>                           
+                                <th class="col-1">SALA</th>
                                 <th class="col">STATUS</th>
                                 <th class="col">AÇÕES</th>
                             </tr>
@@ -65,39 +65,45 @@
                         <tbody style="font-size: 14px; color:#000000; text-align: center;">
                         @foreach($atende as $atendes)
                         <form class="form-horizontal mt-4" method="POST">
-                            @csrf 
+                            @csrf
                             <tr>
                                 <td>{{$atendes->ida}}</td>
                                 <td>
                                 <select class="form-select" id="" name="grupo" type="number">
-                                
+
                                     @foreach ($atendes->grup as $results)
                                     <option value="{{ $results->id_grupo }}">{{$results->gnome}}</option>
-                                    @endforeach               
+                                    @endforeach
                                 </select>
-                            </td>                                                      
-                                <td>{{$atendes->nm_4}}</td>                            
+                            </td>
+                                <td>{{$atendes->nm_4}}</td>
                                 <td><select class="form-select" id="" name="sala" type="number">
                                 @foreach ($sala as $salas)
                                 <option value="{{ $salas->id }}">{{$salas->numero}}</option>
-                                @endforeach               
+                                @endforeach
                                 </select></td>
                                 <td>{{$atendes->tipo}}</td>
-                                <td>                                
-                                <button type="submit" formaction="/incluir-afi-sala/{{$atendes->ida}}" class="btn btn-success btn-sm" style="color:#fff;">Confirmar</button>                           
+                                <td>
+                                <button type="submit" formaction="/incluir-afi-sala/{{$atendes->ida}}" class="btn btn-success btn-sm" style="color:#fff;">Confirmar</button>
                                 <!--<a href="/incluir-afi-sala/{{$atendes->idat}}"><input class="btn btn-light btn-sm me-md-2" formaction="/incluir-afi-sala/{{$atendes->idat}}" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="cONFIRMAR"></a>                                                  -->
-                                </td>                                
+                                </td>
                             </tr>
                             </form>
                             @endforeach
                         </tbody>
                 </table>
-                
+
             </div class="d-flex justify-content-center">
             {{$atende->withQueryString()->links()}}
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({ theme: 'bootstrap-5'});
+    });
+</script>
 <!--
 <script>
   const masterCheckBox = document.querySelector('th input');
@@ -128,7 +134,7 @@ function changeBackground(input) {
 
 @endsection
 
-@section('footerScript')  
+@section('footerScript')
 
 
 @endsection
