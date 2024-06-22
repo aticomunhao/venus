@@ -26,7 +26,7 @@ class GerenciarIntegralController extends Controller
         ->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
         ->where('id_funcao', '<', 3)
         ->where('cr.id_tipo_tratamento', 6)
-        ->where('cr.status_reuniao', '<>', 2)
+        // ->where('cr.status_reuniao', '<>', 2)
         ->distinct('gr.id')
         ->get();
 

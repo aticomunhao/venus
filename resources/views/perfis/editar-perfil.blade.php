@@ -21,15 +21,18 @@
                                     required="required" value="{{ $perfil->descricao }}">
                                 <br />
                             </div>
-                            <div class="col-12">
-                                Funcionalidades Autorizadas
-                                <select class="form-select select2" name="rotas[]" multiple>
-                                    @foreach ($rotas as $rota)
-                                        <option value="{{ $rota->id }}" id="id{{ $rota->id }}">{{ $rota->nome }}</option>
-                                    @endforeach
-                                </select>
-
-                            </div>
+                           
+                                <div class="col-12">
+                                    Funcionalidades Autorizadas
+                                    <select class="form-select select2" name="rotas[]" multiple>
+                                        @foreach ($rotas as $rota)
+                                            <option value="{{ $rota->id }}" id="id{{ $rota->id }}">{{ $rota->nome }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                              
+                            </form>
+                            
 
 
                             <center>
@@ -47,6 +50,7 @@
             </div>
         </div>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
