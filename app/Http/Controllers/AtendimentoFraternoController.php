@@ -42,12 +42,12 @@ class AtendimentoFraternoController extends Controller
 
             $now =  Carbon::now()->format('Y-m-d');
 
-            
+
 
             $grupo = DB::table('atendente_dia AS ad')
             ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id' )
             ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
-    
+
 
             //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente, que não sejam AFE
             $assistido = DB::table('atendimentos AS at')
@@ -112,9 +112,9 @@ class AtendimentoFraternoController extends Controller
             $atende2 = DB::table('atendimentos')->where('status_atendimento', 1)->where('afe', null)->where('pref_tipo_atendente', $pref_m )->pluck('id');
             $atende2=json_decode(json_encode($atende2), true);
             $atendeFinal = array_merge($atende, $atende1, $atende2);
-            
+
             $assistido = count($atendeFinal);
-            
+
 
             //traz os dados de atendente_dia, no intervalo entre o começo do dia de hoje e o fim de ontem, onde não estejam finalizados, para o atendente
             $sala = DB::table('atendente_dia AS atd')
@@ -124,7 +124,7 @@ class AtendimentoFraternoController extends Controller
             ->where('id_associado', $atendente )
             ->value('id_sala');
 
-            
+
             if ($atendendo > 0){
 
                 app('flasher')->addError('Você não pode atender dois assistidos ao mesmo tempo.');
@@ -146,8 +146,8 @@ class AtendimentoFraternoController extends Controller
             }elseif ($atendendo < 1 && $sala > 0){
 
                     //Pega todos os atendimentos em ordem de status, prioridade e chegada, apenas um por vez, e troca o status para analisando e adiciona o atendente a ele
-                  
-               
+
+
 
                     DB::table('atendimentos')
                             ->whereIn('id',$atendeFinal)
@@ -183,7 +183,7 @@ catch(\Exception $e){
         //Botão Analisar na VIEW
         public function history($idat, $idas)
         {
-          
+
         try{
 
             $atendimentos = DB::table('atendimentos AS at')->where('id_assistido', $idas)->get('id');
@@ -309,9 +309,9 @@ catch(\Exception $e){
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
 	    return redirect()->back();
 
-        } 
+        }
 
-           
+
         }
 //dd($assistido);
 
@@ -341,7 +341,7 @@ catch(\Exception $e){
 
             }
             if ($sit = 1){
-                //Atualiza o status para Aguardando Assistido, atualizar o id_atendente não muda nada, 
+                //Atualiza o status para Aguardando Assistido, atualizar o id_atendente não muda nada,
                 // logo que o usuário só ve atendimentos dele, atualizando sempre pro mesmo valor original
                 DB::table('atendimentos AS at')
                         ->where('status_atendimento', '=', 2)
@@ -351,9 +351,9 @@ catch(\Exception $e){
                 'id_atendente' => $atendente
             ]);
         }
-        
+
         app('flasher')->addSuccess('O status do atendimento foi alterado para "Aguardando o assistido".');
-        
+
         DB::commit();
             return redirect()->back();
 
@@ -365,8 +365,8 @@ catch(\Exception $e){
             DB::rollBack();
 	    return redirect()->back();
 
-        } 
-            
+        }
+
 
         }
         // Botão Iniciar na VIEW
@@ -413,9 +413,9 @@ catch(\Exception $e){
             DB::rollBack();
 	    return redirect()->back();
 
-        } 
+        }
 
-            
+
 
         }
 
@@ -460,7 +460,7 @@ catch(\Exception $e){
 
                 return view('/atendimento-assistido/tratamentos', compact('assistido'));
 
-                //Se já tiver encaminhamentos de tratamento, trava para nao reinserir dados 
+                //Se já tiver encaminhamentos de tratamento, trava para nao reinserir dados
             }elseif($verifi > 0){
 
                 app('flasher')->addError('Os tratamentos já foram registrados para o atendido '. $atendido[0]->nm);
@@ -468,16 +468,16 @@ catch(\Exception $e){
                 return redirect()->back();
 
             }
-            
+
             }
-            
+
             catch(\Exception $e){
-            
+
                         app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
                     return redirect()->back();
-                        
-                    } 
-            
+
+                    }
+
 
 
         }
@@ -534,13 +534,13 @@ catch(\Exception $e){
 
             DB::commit();
         }
-        
+
         catch(\Exception $e){
-        
+
                     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
                     DB::rollBack();
                 return redirect()->back();
-        
+
                 } }
 
         public function final($idat)
@@ -573,12 +573,12 @@ catch(\Exception $e){
 
         catch(\Exception $e){
 
-         
+
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
             DB::rollBack();
 	    return redirect()->back();
 
-        } 
+        }
             }
 
         public function pre_tema($idat)
@@ -609,12 +609,12 @@ catch(\Exception $e){
         }
         catch(\Exception $e){
 
-        
+
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
             DB::rollBack();
 	    return redirect()->back();
 
-        } 
+        }
             }
 
         public function enc_trat(Request $request, $idat, $idas)
@@ -749,17 +749,17 @@ catch(\Exception $e){
         }
         catch(\Exception $e){
 
-          
+
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
             DB::rollBack();
 	    return redirect()->back();
 
-        } 
+        }
             }
 
         public function enc_entre(Request $request, $idat)
         {
-            
+
             try{
 
             $now = Carbon::now()->format('Y-m-d H:m:s');
@@ -879,22 +879,22 @@ catch(\Exception $e){
 
         catch(\Exception $e){
 
-           
+
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
             DB::rollBack();
 	    return redirect()->back();
 
-        } 
+        }
             }
 
-        public function finaliza($idat)
+        public function finaliza(Request $request, $idat)
         {
 
-            
+
             try{
 
             $now = Carbon::now()->format('Y-m-d H:m:s');
-
+            $emergencia = $request->emergencia == 'on' ? 1:0;
             $atendente = session()->get('usuario.id_associado');
 
             $sit = DB::table('atendimentos AS at')->where('at.id_atendente', $atendente)->where('at.status_atendimento','<',5)->count();
@@ -916,7 +916,8 @@ catch(\Exception $e){
                         ->update([
                             'status_atendimento' => 5,
                             'id_atendente' => $atendente,
-                            'dh_fim' => $now
+                            'dh_fim' => $now,
+                            'emergencia' => $emergencia
                         ]);
             }
 
@@ -926,12 +927,12 @@ catch(\Exception $e){
 
         }
         catch(\Exception $e){
-      
+
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
             DB::rollBack();
 	    return redirect()->back();
 
-        } 
+        }
         }
 
         public function meus_atendimentos()
@@ -1024,12 +1025,12 @@ catch(\Exception $e){
         }
 
         catch(\Exception $e){
-           
+
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
             DB::rollBack();
 	    return redirect()->back();
 
-        } 
+        }
             }
         public function tematica(Request $request, $idat){
             try{
@@ -1113,12 +1114,12 @@ catch(\Exception $e){
 
         }
         catch(\Exception $e){
-           
+
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
             DB::rollBack();
 	    return redirect()->back();
 
-        } 
+        }
             }
 
         public function reset(string $idat) {
@@ -1137,11 +1138,11 @@ catch(\Exception $e){
         }
 
         catch(\Exception $e){
-          
+
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
             DB::rollBack();
 	    return redirect()->back();
 
-        } 
+        }
             }
 }

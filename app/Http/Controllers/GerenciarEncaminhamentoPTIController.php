@@ -381,7 +381,7 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
 
                         return redirect('/gerenciar-encaminhamentos');
-                    } elseif ($dia_atual > $dia_semana) {
+                    } elseif ($dia_atual > $dia_semana or $dia_atual == $dia_semana) {
                         $prox = date('Y-m-d', strtotime("$data_atual + $dia_semana day + 7 day - $dia_atual day"));
 
                         $id_trata = DB::table('tratamento AS t')->select(DB::raw('MAX(id) as max_id'))->value('max_id');

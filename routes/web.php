@@ -58,7 +58,7 @@ Route::middleware('rotas:1')->group(function () {
     Route::get('/cadastrar-usuarios/configurar/{id}', [UsuarioController::class, 'configurarUsuario']);
     Route::get('/gerenciar-usuario', [UsuarioController::class, 'index']);
     Route::get('/usuario/alterar/{id}', [UsuarioController::class, 'edit']);
- 
+
     Route::any('/usuario/gerar-Senha/{id}', [UsuarioController::class, 'gerarSenha']);
     Route::any('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
     Route::get('/usuario/excluir/{id}', [UsuarioController::class, 'destroy']);
@@ -111,7 +111,7 @@ Route::middleware('rotas:6')->group(function () {
     Route::post('/entrevistas/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
     Route::get('/fim-analise/{idat}', [AtendimentoFraternoController::class, 'fimanalise'])->name('afifna');
     Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
-    Route::post('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
+    Route::any('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
     Route::get('/gerar-enc_entre/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiene');
     Route::get('/gerar-enc_trata/{idat}', [AtendimentoFraternoController::class, 'enc_trata'])->name('afient');
     Route::get('/historico/{idat}/{idas}', [AtendimentoFraternoController::class, 'history'])->name('afihis');
