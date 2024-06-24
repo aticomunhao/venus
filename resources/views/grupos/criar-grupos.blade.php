@@ -24,7 +24,7 @@
 
                                     <div class="col-6">
                                         Nome
-                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="30" required="required" oninput="validarCaracteresEspeciais(this)">
+                                        <input type="text" class="form-control" id="nome" name="nome" maxlength="50" required="required" oninput="validarCaracteresEspeciais(this)">
 
                                     </div>
 
