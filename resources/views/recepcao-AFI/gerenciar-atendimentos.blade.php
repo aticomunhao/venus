@@ -14,20 +14,23 @@
     ?>
 
 
-<div class="container">
+<div class="container-fluid">
     <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ATENDIMENTOS</h4>
     <div class="col-12">
         <form action="{{ route('atedex') }}" class="form-horizontal mt-4" method="GET">
         <div class="row mt-3 justify-content-center">
-            <div class="col-12 col-md-2 mb-2">
+            <div class="col">
                 <label for="dt_ini">Data início</label>
                 <input class="form-control" type="date" id="dt_ini" name="dt_ini" value="{{ $data_inicio ?? now()->toDateString() }}">
             </div>
-            <div class="col-12 col-md-3 mb-3">
+            <div class="col">
                 <label for="assist">Atendido</label>
                 <input class="form-control pesquisa" type="text" id="assist" name="assist" value="{{ $assistido }}">
             </div>
-            <div class="col-12 col-md-2 mb-2">
+            <div class="col">CPF
+                <input class="form-control" type="text" maxlength="11" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="2" name="cpf" value="{{$cpf}}">
+            </div>
+            <div class="col">
                 <label for="status">Status</label>
                 <select class="form-select pesquisa" id="status" name="status" type="number">
                 <option value=""></option>
@@ -36,7 +39,8 @@
                 @endforeach
                 </select>
             </div>
-            <div class="col-12 col-md-5 mb-3 d-flex align-items-end justify-content-between">
+        
+            <div class="col-12 col-md-4 mb-1 d-flex align-items-end justify-content-between">
                 <input class="btn btn-light btn-sm w-100" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
                 <a href="/gerenciar-atendimentos" class="btn btn-light btn-sm w-100" style="box-shadow: 1px 2px 5px #000000; margin:5px;">Limpar</a>       
         </form> 
@@ -45,6 +49,8 @@
                 <a href="/criar-atendimento" class="btn btn-success btn-sm w-100" style="box-shadow: 1px 2px 5px #000000; margin:5px;">Criar Novo</a>
             </div>
         </div>
+        
+        <hr>
         <div class="row">
             <div class="table">Total Atendidos: {{ $contar }}
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">

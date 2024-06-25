@@ -40,7 +40,6 @@
                     <thead style="text-align: center;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             <th class="col">NOME</th>
-                            <th class="col">CPF</th>
                             <th class="col">NASCIMENTO</th>
                             <th class="col">SEXO</th>
                             <th class="col">STATUS</th>
@@ -51,7 +50,7 @@
                     @foreach($pessoa as $pessoas)
                         <tr>
                             <td scope="" style="text-align: left;">{{$pessoas->nome_completo}}</td>
-                            <td scope="" >{{str_pad($pessoas->cpf, 11, "0", STR_PAD_LEFT)}}</td>
+                            {{-- <td scope="" >{{str_pad($pessoas->cpf, 11, "0", STR_PAD_LEFT)}}</td> --}}
                             <td scope="" >{{date( 'd/m/Y' , strtotime($pessoas->dt_nascimento))}}</td>
                             <td scope="" >{{$pessoas->tipo}}</td>
                             <td scope="" >{{$pessoas->tpsta}}</td>

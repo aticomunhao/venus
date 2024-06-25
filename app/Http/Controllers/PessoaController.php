@@ -67,6 +67,7 @@ class PessoaController extends Controller
 
             $soma = $pessoa->count();
 
+            
 
 
             return view('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
