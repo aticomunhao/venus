@@ -85,7 +85,7 @@
                                             <td scope="">{{ $assistidos->nm_3 }}</td>
                                             <td scope="">{{ $assistidos->tipo }}</td>
                                             <td scope="">
-                                                {{ date('d/m/Y H:m:s', strtotime($assistidos->dh_chegada)) }}</td>
+                                                {{ date('d/m/Y G:i:s', strtotime($assistidos->dh_chegada)) }}</td>
                                             <td scope="">{{ $assistidos->prdesc }}</td>
                                             <td scope="">{{ $assistidos->nm_1 }}</td>
                                             <td scope="">{{ $assistidos->nm_2 }}</td>
@@ -124,9 +124,9 @@
                                                     data-tt="tooltip" data-placement="top" title="Reset"><i
                                                         class="bi bi-arrow-repeat" style="font-size: 1rem; color:#000;"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#modal{{ $assistidos->idat }}"></i></button>
+                                                        data-bs-target="#modalRel{{ $assistidos->idat }}"></i></button>
                                                 <button type="button" class="btn btn-outline-danger btn-sm"
-                                                    data-tt="tooltip" data-placement="top" title="Reset"
+                                                    data-tt="tooltip" data-placement="top" title="Finalizado"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#modalF{{ $assistidos->idat }}"><i
                                                         class="bi bi-door-open"
@@ -134,7 +134,7 @@
 
 
                                                 {{-- Modal de Reset --}}
-                                                <div class="modal fade" id="modal{{ $assistidos->idat }}" tabindex="-1"
+                                                <div class="modal fade" id="modalRel{{ $assistidos->idat }}" tabindex="-1"
                                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">

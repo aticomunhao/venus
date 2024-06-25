@@ -23,7 +23,7 @@ class GerenciarEncaminhamentoController extends Controller
             $now = Carbon::now()->format('Y-m-d');
 
             $lista = DB::table('encaminhamento AS enc')
-                ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla', 'gr.nome AS nomeg')
+                ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.nome', 'pr.id AS prid', DB::raw("(CASE WHEN at.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as prdesc"), 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla', 'gr.nome AS nomeg')
                 ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
                 ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                 ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
@@ -56,8 +56,8 @@ class GerenciarEncaminhamentoController extends Controller
             if ($request->status) {
                 $lista->where('enc.status_encaminhamento', $request->status);
             }
-
-            $lista = $lista->orderby('status_encaminhamento', 'ASC')->orderby('at.id_prioridade', 'ASC')->orderby('nm_1', 'ASC')->paginate(50);
+          //  ->orderby('status_encaminhamento', 'ASC')->orderby('nm_1', 'ASC')
+            $lista = $lista->orderby('status_encaminhamento', 'ASC')->orderby('at.emergencia', 'DESC')->orderBy('at.dh_fim')->paginate(50);
             //dd($lista)->get();
 
             $contar = $lista->count('enc.id');

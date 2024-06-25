@@ -113,7 +113,7 @@ class GerenciarEntrevistaController extends Controller
         }
 
 
-        $informacoes = $informacoes->orderBy('entrevistas.status')->orderBy('pessoa_pessoa.nome_completo')->get();
+        $informacoes = $informacoes->orderBy('entrevistas.status')->orderby('atendimentos.emergencia', 'DESC')->orderBy('atendimentos.dh_fim')->get();
 
         // Mapear os status para a ordem desejada
         $statusOrder = [

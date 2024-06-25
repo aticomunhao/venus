@@ -132,7 +132,7 @@ class GerenciarAtendimentoController extends Controller
         try {
             $usuario = session()->get('usuario.id_pessoa');
 
-            $now = Carbon::now()->format('Y-m-d H:m:s');
+            $now = Carbon::now();
 
             $dt_hora = Carbon::now();
 

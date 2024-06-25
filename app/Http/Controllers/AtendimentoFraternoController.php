@@ -68,7 +68,7 @@ class AtendimentoFraternoController extends Controller
                                 ->orderby('status_atendimento', 'ASC')
                                 ->get();
 
-
+ //dd($assistido, $grupo, $now, $nome, $pref_m, $atendente);
 
                 return view ('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
 
@@ -376,7 +376,7 @@ catch(\Exception $e){
             DB::beginTransaction();
         try{
 
-            $now =  Carbon::now()->format('Y-m-d H:m:d');
+            $now =  Carbon::now();
 
             $atendente = session()->get('usuario.id_associado');
 
@@ -893,7 +893,7 @@ catch(\Exception $e){
 
             try{
 
-            $now = Carbon::now()->format('Y-m-d H:m:s');
+            $now = Carbon::now();
             $emergencia = $request->emergencia == 'on' ? 1:0;
             $atendente = session()->get('usuario.id_associado');
 
