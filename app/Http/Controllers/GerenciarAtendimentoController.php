@@ -60,6 +60,12 @@ class GerenciarAtendimentoController extends Controller
                 $lista->where('at.status_atendimento', $request->status);
             }
 
+            $cpf = $request->cpf;
+
+            if ($request->cpf) {
+                $pessoa->where('p.cpf', $request->cpf);
+            }
+
             $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
 
             $lista = $lista->paginate(50);
@@ -72,7 +78,7 @@ class GerenciarAtendimentoController extends Controller
         from tipo_status_atendimento s
         ");
 
-            return view('/recepcao-AFI/gerenciar-atendimentos', compact('lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'situacao', 'now'));
+            return view('/recepcao-AFI/gerenciar-atendimentos', compact('cpf','lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'situacao', 'now'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('tratamento-erro.erro-inesperado', compact('code'));
