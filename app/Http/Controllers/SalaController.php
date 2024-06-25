@@ -143,7 +143,8 @@ class SalaController extends Controller
 
     public function store(Request $request)
     {
-        try{
+       
+        // try{
 
         $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
 
@@ -200,12 +201,12 @@ class SalaController extends Controller
 
 
         return redirect('gerenciar-salas');
-    }
-    catch(\Exception $e){
+    // }
+    // catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+    //     $code = $e->getCode( );
+        // return view('administrativo-erro.erro-inesperado', compact('code'));
+        //     }
         }
 
     public function edit($id)
