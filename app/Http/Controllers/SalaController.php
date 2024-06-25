@@ -140,74 +140,74 @@ class SalaController extends Controller
                 }
             }
 
-
-    public function store(Request $request)
-    {
-       
-        // try{
-
-        $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
-
-
-        $projetor = isset($request->projetor) ? 1 : 0;
-        $quadro = isset($request->quadro) ? 1 : 0;
-        $tela_projetor = isset($request->tela_projetor) ? 1 : 0;
-        $ventilador = isset($request->ventilador) ? 1 : 0;
-        $computador = isset($request->computador) ? 1 : 0;
-        $controle = isset($request->controle) ? 1 : 0;
-        $som = isset($request->som) ? 1 : 0;
-        $luz_azul = isset($request->luz_azul) ? 1 : 0;
-        $luz_vermelha = isset($request->luz_vermelha) ? 1 : 0;
-        $bebedouro = isset($request->bebedouro) ? 1 : 0;
-        $armarios = isset($request->armarios) ? 1 : 0;
-
-
-
-
-        DB::table('salas')->insert([
-
-            'nome' => $request->input('nome'),
-            'numero' => $request->input('numero'),
-            'nr_lugares' => $request->input('nr_lugares'),
-            'id_localizacao' => $request->input('id_localizacao'),
-            'id_finalidade' => $request->input('tipo_sala'),
-            'status_sala' => $request->input('status_sala'),
-            'id_motivo' => $request->input('id_motivo'),
-            'projetor' => $projetor,
-            'quadro' => $quadro,
-            'tela_projetor' => $tela_projetor,
-            'ventilador' => $ventilador,
-            'ar_condicionado' => $ar_condicionado,
-            'computador' => $computador,
-            'controle' => $controle,
-            'som' => $som,
-            'luz_azul' => $luz_azul,
-            'luz_vermelha' => $luz_vermelha,
-            'bebedouro' => $bebedouro,
-            'armarios' => $armarios,
-            'tamanho_sala' => $request->input('tamanho_sala')
-
-        ]);
-
-
-
-
-
-
-        app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
-
-
-
-
-
-        return redirect('gerenciar-salas');
-    // }
-    // catch(\Exception $e){
-
-    //     $code = $e->getCode( );
-        // return view('administrativo-erro.erro-inesperado', compact('code'));
-        //     }
-        }
+            public function store(Request $request)
+            {
+               
+                // try{
+        
+                $ar_condicionado = isset($request->ar_condicionado) ? 1 : 0;
+        
+        
+                $projetor = isset($request->projetor) ? 1 : 0;
+                $quadro = isset($request->quadro) ? 1 : 0;
+                $tela_projetor = isset($request->tela_projetor) ? 1 : 0;
+                $ventilador = isset($request->ventilador) ? 1 : 0;
+                $computador = isset($request->computador) ? 1 : 0;
+                $controle = isset($request->controle) ? 1 : 0;
+                $som = isset($request->som) ? 1 : 0;
+                $luz_azul = isset($request->luz_azul) ? 1 : 0;
+                $luz_vermelha = isset($request->luz_vermelha) ? 1 : 0;
+                $bebedouro = isset($request->bebedouro) ? 1 : 0;
+                $armarios = isset($request->armarios) ? 1 : 0;
+        
+        
+        
+        
+                DB::table('salas')->insert([
+        
+                    'nome' => $request->input('nome'),
+                    'numero' => $request->input('numero'),
+                    'nr_lugares' => $request->input('nr_lugares'),
+                    'id_localizacao' => $request->input('id_localizacao'),
+                    'id_finalidade' => $request->input('tipo_sala'),
+                    'status_sala' => $request->input('status_sala'),
+                    'id_motivo' => $request->input('id_motivo'),
+                    'projetor' => $projetor,
+                    'quadro' => $quadro,
+                    'tela_projetor' => $tela_projetor,
+                    'ventilador' => $ventilador,
+                    'ar_condicionado' => $ar_condicionado,
+                    'computador' => $computador,
+                    'controle' => $controle,
+                    'som' => $som,
+                    'luz_azul' => $luz_azul,
+                    'luz_vermelha' => $luz_vermelha,
+                    'bebedouro' => $bebedouro,
+                    'armarios' => $armarios,
+                    'tamanho_sala' => $request->input('tamanho_sala')
+        
+                ]);
+        
+        
+        
+        
+        
+        
+                app('flasher')->addSuccess('O cadastro foi realizado com sucesso.');
+        
+        
+        
+        
+        
+                return redirect('gerenciar-salas');
+            // }
+            // catch(\Exception $e){
+        
+            //     $code = $e->getCode( );
+                // return view('administrativo-erro.erro-inesperado', compact('code'));
+                //     }
+                }
+   
 
     public function edit($id)
     {
