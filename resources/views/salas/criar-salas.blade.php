@@ -177,7 +177,7 @@
                                 </div>
                                 <div class="col text-center mb-3">
                                     
-                                    <input type="checkbox" name="luz_azul" data-toggle="toggle" data-onlabel="Sim"
+                                    <input type="checkbox" name="luz_vermelha" data-toggle="toggle" data-onlabel="Sim"
                                         data-offlabel="Não" data-onstyle="success" data-offstyle="danger">
                                         <label for="luz_vermelha">Luz_vermelha</label>
                                    
