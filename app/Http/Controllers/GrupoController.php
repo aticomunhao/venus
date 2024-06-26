@@ -13,7 +13,7 @@ use Spatie\FlareClient\Http\Exceptions\InvalidData;
 
 
 
-class Grupocontroller extends Controller
+class GrupoController extends Controller
 {
     public function index(Request $request)
     {

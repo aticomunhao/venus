@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
 use function Laravel\Prompts\select;
 
-class membroController extends Controller
+class MembroController extends Controller
 {
 
     public function grupos(Request $request){
