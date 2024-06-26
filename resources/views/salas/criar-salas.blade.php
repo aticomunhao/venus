@@ -15,7 +15,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form class="form-horizontal mt-2" method="post" action="/incluir-salas/">
+                        <form class="form-horizontal mt-2" method="post" action="/incluir-salas">
                             @csrf
 
                             <div class="row">
