@@ -23,12 +23,7 @@
                                 <input type="text" maxlength="50" class="form-control" id="nome" name="nome" value="{{ $salaEditada->nome }}" required="required" oninput="validarSomenteLetras(this)">
                             </div>
 
-                            <script>
-                                function validarSomenteLetras(input) {
-                                    // Permite letras e alguns caracteres especiais comuns, excluindo números
-                                    input.value = input.value.replace(/[^a-zA-Z\u00C0-\u00FF\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]/g, '');
-                                }
-                            </script>
+                           
 
                             <div class="col">
                                 <label for="status_sala">Status</label>
@@ -69,8 +64,8 @@
                                 </select>
                             </div>
                             <div class="col">Número
-                                <input type="number" class="form-control" id="numero" min="1" max="500" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->numero}} required="required" onchange="validarNumero(this)">
-                                <span id="numeroError" style="color: red;"></span>
+                                <input type="text" class="form-control" id="numero" maxlength="4" name="numero" value={{$salaEditada->numero}} required="required">
+                             
                             </div>
                             <div class="col">M² da sala
                                 <input type="number" class="form-control" id="tamanho_sala" name="tamanho_sala"  min="1" max="500" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->tamanho_sala}} required="required">
@@ -169,6 +164,12 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function validarSomenteLetras(input) {
+        // Permite letras e alguns caracteres especiais comuns, excluindo números
+        input.value = input.value.replace(/[^a-zA-Z\u00C0-\u00FF\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]/g, '');
+    }
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Função para verificar e habilitar/desabilitar o campo "Motivo"

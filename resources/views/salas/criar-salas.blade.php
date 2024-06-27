@@ -25,12 +25,7 @@
                                         required="required" oninput="validarSomenteLetras(this)">
                                 </div>
 
-                                <script>
-                                    function validarSomenteLetras(input) {
-                                        // Permite letras, espaços e caracteres especiais
-                                        input.value = input.value.replace(/[^a-zA-Z\u00C0-\u00FF\s]/g, '');
-                                    }
-                                </script>
+                            
 
                                 <div class="col">
                                     Status
@@ -65,10 +60,9 @@
                                     </select>
                                 </div>
                                 <div class="col">Número
-                                    <input type="number" class="form-control" id="numero" min="1" max="500"
-                                        name="numero"
-                                        oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3); validarNumero(this);"
-                                        required="required">
+                                    <input type="text" class="form-control" id="numero" maxlength="4"
+                                        name="numero">
+                                      
                                 </div>
 
 
@@ -206,22 +200,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
     <script>
-        function validarNumero(input) {
-            var valor = parseInt(input.value, 10);
-            if (isNaN(valor) || valor < 1) {
-                alert('O valor deve ser um número maior ou igual a 1.');
-                input.value = '';
-            }
+        function validarSomenteLetras(input) {
+            // Permite letras, espaços e caracteres especiais
+            input.value = input.value.replace(/[^a-zA-Z\u00C0-\u00FF\s]/g, '');
         }
-
-        document.getElementById('numero').addEventListener('change', function() {
-            var numeroSelecionado = parseInt(this.value, 10);
-            var numerosExistem = {!! json_encode($numerosExistem) !!};
-
-            if (numeroSelecionado < 1 || numeroSelecionado > 300 || numerosExistem.includes(numeroSelecionado)) {
-                alert('Existe uma sala com esse número.');
-                this.value = '';
-            }
-        });
     </script>
 @endsection

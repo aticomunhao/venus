@@ -65,7 +65,7 @@
                                     <div class="col">
                                         <br>
                                         <label for="numero" class="form-label">Número</label>
-                                        <input type="number" id="numero" value="{{ $salaEditada->numero }}" class="form-control" placeholder="Número" disabled>
+                                        <input type="text" id="numero" value="{{ $salaEditada->numero }}" class="form-control" placeholder="Número" disabled>
                                     </div>
 
                                     <div class="col">

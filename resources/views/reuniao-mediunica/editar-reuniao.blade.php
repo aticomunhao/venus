@@ -148,7 +148,7 @@
             let array = @json($grupo);
             array = array[grupo]
 
-            if (array.id_tipo_grupo == 3) {
+            if (array.id_tipo_grupo !== 3) {
                 $('#max_atend').prop("disabled", false)
                 $('#tratamento').prop("disabled", false)
                 $('.sumir').prop('hidden', false)
