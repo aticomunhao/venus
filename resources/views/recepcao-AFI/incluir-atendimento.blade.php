@@ -31,9 +31,9 @@
                 <div class="card-body">
                     <form class="form-horizontal mt-4" method="post" action="/novo-atendimento">
                         @csrf
-                    <legend style="color:#525252; font-size:12px; font-family:sans-serif">Dados do Atendido</legend>
-                    <fieldset class="border rounded border-primary p-2">
-                    <div class="form-group row">
+
+
+                    <div class="input-group row">
                         <div class="col-3">Tipo Prioridade
                             <select class="form-select" id="" name="priori" required="required">
                                 <option value=""></option>
@@ -43,12 +43,14 @@
                             </select>
                         </div>
                         <div class="col">Atendido
+
                             <select class="form-select lista" id="" name="assist" required="required">
                                 <option value=""></option>
                                 @foreach($lista as $listas)
                                 <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
                                 @endforeach
                             </select>
+
                         </div>
                         <div class="col-1">Menor de 18 anos
                             <label for="menor" class="form-check-label"></label>
@@ -97,16 +99,19 @@
                     </div>
                     <br>
                 </div>
-                <div class="row">
-                        <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-atendimentos" role="button">Cancelar</a>
-                        </div>
-                        <div class="d-grid gap-2 col-4 mx-auto" >
-                            <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>
-                        </div>
-                        </form>
+                <center>
+                <div class="row col-10">
+                            <div class="d-grid gap-1 col mx-auto">
+                                <a class="btn btn-danger" href="/gerenciar-atendimentos" role="button">Cancelar</a>
+                            </div>
 
-                    </div>
+                            <div class="d-grid gap-2 col mx-auto" >
+                                <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>
+                            </div>
+                            </form>
+
+                        </div>
+                    </center>
                     <br>
             </div>
         </div>

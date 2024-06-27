@@ -45,10 +45,11 @@
                     Filtrar <i class="bi bi-funnel"></i>
                 </button>
             </div>
+
             <div class="col d-flex justify-content-end">
                 <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal"
                     style="box-shadow: 1px 2px 5px #000000; margin:5px;">
-                    Configurações <i class="bi bi-gear"></i>
+                    Colunas <i class="bi bi-gear"></i>
                 </button>
             </div>
 
@@ -67,7 +68,7 @@
                         aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                                <form action="{{ route('atedex') }}" class="form-horizontal mt-4" method="GET">
+
 
                                 <center>
                                     <div class="col-10">
@@ -84,7 +85,7 @@
                                             <label for="assist">CPF</label>
                                             <input class="form-control" type="text" maxlength="11"
                                                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                                                id="2" name="cpf" value="{{ $cpf }}">
+                                                id="cpf" name="cpf" value="{{ $cpf }}">
 
                                         </div>
 
@@ -112,9 +113,8 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                                <a href="/gerenciar-atendimentos" type="button" class="btn btn-secondary">Limpar</a>
-                                <button type="submit" class="btn btn-primary">Confirmar</button>
-                            </form>
+                                <button id="limpar" type="button" class="btn btn-secondary pesq" data-bs-dismiss="modal">Limpar</button>
+                                <button class="btn btn-primary pesq" id="confirmar" data-bs-dismiss="modal">Confirmar</button>
                             </div>
                         </div>
                     </div>
@@ -252,13 +252,38 @@
     </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         $(document).ready(function() {
             let atendimentos = @json($lista);
+            var intervalPesq = 0
 
 
+            function ajax() {
 
+                let assist = $('#assist').val() == '' ? null : $('#assist').val()
+                let cpf = $('#cpf').val() == '' ? null : $('#cpf').val()
+                let status = $('#status').val() == '' ? null : $('#status').val()
+                let dt_ini = $('#dt_ini').val() == '' ? null : $('#dt_ini').val()
+
+
+               $.ajax({
+                   type: "GET",
+                    url: "/tabela-atendimentos/"+assist+"/"+cpf+"/"+status+"/"+dt_ini,
+                    dataType: "json",
+                    success: function(response) {
+
+                        atendimentos = response
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+
+            $('#teste').click(function(){
+                ajax();
+            })
 
             function colunas() {
 
@@ -297,8 +322,62 @@
                        let descricao = this.descricao  == null ? '' : this.descricao
 
 
-                   $('#tabelaPrincipal').append(
-                       '<tr>'+
+
+                    if(this.status_atendimento == 3){
+
+                        $('#tabelaPrincipal').append(
+
+                        '<tr class="table-danger">'+
+
+
+                                   '<td class="numeroAtendimento"> '+ ida  +'</td>' +
+                                   '<td class="atendentePreferido">'+nm_4  +'</td>' +
+                                   '<td class="tipoAtendente">'+tipo+'</td>' +
+                                   '<td class="horarioChegada">'+dh_chegada+'</td>' +
+                                  '<td class="prioridade">'+prdesc +'</td>' +
+                                   '<td class="atendimento">'+nm_1 +'</td>' +
+                                   '<td class="representante">'+nm_2 +'</td>' +
+                                   '<td class="atendente">'+nm_3 +'</td>'+
+                                   '<td class="sala">'+nr_sala +'</td>'+
+                               '<td class="tipoAtendimento">'+afe+'</td>'+
+                                  '<td class="statusAtendimento" >'+descricao+'</td>'+
+                                   '<td class="">'+
+
+                                       '<a href="/editar-atendimento/' + ida + '" class="tooltips">' +
+                                        '<span class="tooltiptext">Editar</span>'+
+                                           '<button type="button" class="btn btn-outline-warning btn-sm">' +
+                                               '<i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>' +
+                                           '</button>' +
+                                       '</a>'+
+
+                                       '<a href="/visualizar-atendimentos/' + this.idas + '"class="tooltips">' +
+                                        '<span class="tooltiptext">Visualizar</span>'+
+                                           '<button type="button" class="btn btn-outline-primary btn-sm">' +
+                                               '<i class="bi bi-search" style="font-size: 1rem; color:#000;">' +
+                                               '</i>' +
+                                           '</button>' +
+                                       '</a>' +
+
+                                       '<a href="/cancelar-atendimento/' + ida + '"class="tooltips">' +
+                                        '<span class="tooltiptext">Cancelar</span>'+
+                                           '<button type="button"class="btn btn-outline-danger btn-sm">' +
+                                               '<i class="bi bi-x-circle"style="font-size: 1rem; color:#000;">' +
+                                               '</i>' +
+                                           '</button>' +
+                                       '</a>' +
+
+
+                                   '</td>'+
+
+
+
+                       '</tr>'
+                   )
+
+                    }else{
+                        $('#tabelaPrincipal').append(
+
+                        '<tr>'+
 
 
                                    '<td class="numeroAtendimento"> '+ ida  +'</td>' +
@@ -314,21 +393,25 @@
                                   '<td class="statusAtendimento">'+descricao+'</td>'+
                                    '<td class="">'+
 
-                                       '<a href="/editar-atendimento/' + ida + '">' +
-                                           '<button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar">' +
+                                       '<a href="/editar-atendimento/' + ida + '" class="tooltips">' +
+                                        '<span class="tooltiptext">Editar</span>'+
+                                           '<button type="button" class="btn btn-outline-warning btn-sm" >' +
                                                '<i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>' +
                                            '</button>' +
                                        '</a>'+
 
-                                       '<a href="/visualizar-atendimentos/' + this.idas + '">' +
-                                           '<button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">' +
+                                       '<a href="/visualizar-atendimentos/' + this.idas + '" class="tooltips">' +
+                                        '<span class="tooltiptext">Visualizar</span>'+
+                                           '<button type="button" class="btn btn-outline-primary btn-sm">' +
                                                '<i class="bi bi-search" style="font-size: 1rem; color:#000;">' +
                                                '</i>' +
                                            '</button>' +
                                        '</a>' +
 
-                                       '<a href="/cancelar-atendimento/' + ida + '">' +
-                                           '<button type="button"class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top"title="Cancelar">' +
+                                       '<a href="/cancelar-atendimento/' + ida + '" class="tooltips">' +
+                                        '<span class="tooltiptext">Cancelar</span>'+
+                                           '<button type="button"class="btn btn-outline-danger btn-sm" data-tt="tooltip">' +
+
                                                '<i class="bi bi-x-circle"style="font-size: 1rem; color:#000;">' +
                                                '</i>' +
                                            '</button>' +
@@ -341,24 +424,44 @@
 
                        '</tr>'
                    )
-               })
 
+                    }
+
+
+            })}
+            function stopPesquisa(){
+                clearInterval(intervalPesq)
             }
 
             tabelas()
             colunas()
 
-            var intervalId = window.setInterval(function(){
-                [tabelas(), colunas()]
-              }, 10000);
 
 
             $('.coluna').click(function(){
                 colunas();
             })
+            $('#limpar').click(function(){
+                $('#assist').val("")
+                $('#cpf').val("")
+                $('#status').prop('selectedIndex', -1)
+                $('#dt_ini').val("{{ $data_inicio ?? now()->toDateString() }}")
+
+            })
+
+            $('.pesq').click(function(){
+                        ajax()
+                        intervalPesq = window.setInterval(function(){[tabelas(), colunas()]}, 500);
+
+
+            })
+
+           var intervalId = window.setInterval(function(){
+              [ajax(), tabelas(), colunas(), stopPesquisa()]
+            }, 10000);
+
 
         })
-
     </script>
 
     <script>
@@ -384,10 +487,5 @@
         })
     </script>
 
-    <script>
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    </script>
+
 @endsection

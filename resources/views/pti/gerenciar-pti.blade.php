@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+
+    
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR PTI
         </h4>
@@ -70,13 +72,13 @@
                               <td>
 
                                 <button type="button"
-                                    class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Declarar Alta" data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
+                                    class="btn btn-outline-warning btn-sm tooltips" data-bs-target="#modal{{ $encaminhamento->id }}">
+                                    <span class="tooltiptext">Declarar Alta</span>
                                     <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
                                 </button>
                                 <a href="/visualizar-pti/{{ $encaminhamento->id }}" type="button"
-                                    class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Visualizar">
+                                    class="btn btn-outline-primary btn-sm tooltips" >
+                                    <span class="tooltiptext">Visualizar</span>
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
                                         data-bs-target="#pessoa"></i>
                                 </a>
@@ -122,27 +124,5 @@
     </div>
 
 
-    <script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
-    <link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-
-        function confirmarExclusao(id, nome) {
-            document.getElementById('btn-confirmar-exclusao').setAttribute('data-id', id);
-            document.getElementById('modal-body-text').innerText = nome;
-            $('#confirmacaoDelecao').modal('show');
-        }
-
-        function confirmarDelecao() {
-            var id = document.getElementById('btn-confirmar-exclusao').getAttribute('data-id');
-            window.location.href = '/deletar-membro/' + id;
-        }
-    </script>
 @endsection
 

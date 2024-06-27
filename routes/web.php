@@ -40,7 +40,7 @@ use App\Http\Controllers\PresencaController;
 |--------------------------------------------------------------------------
 */
 
-Route::any('/ajax', [GerenciarAtendimentoController::class, 'ajaxTeste']);
+Route::any('/tabela-atendimentos/{assist}/{cpf}/{status}/{dt_ini}', [GerenciarAtendimentoController::class, 'ajaxTeste']);
 
 
 
