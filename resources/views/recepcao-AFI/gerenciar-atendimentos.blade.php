@@ -17,7 +17,7 @@
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR
             ATENDIMENTOS</h4>
 
-        <div class="row">
+        <div class="row mt-3">
 
 
 
@@ -45,10 +45,10 @@
                     Filtrar <i class="bi bi-funnel"></i>
                 </button>
             </div>
-            <div class="col-1">
+            <div class="col d-flex justify-content-end">
                 <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal"
                     style="box-shadow: 1px 2px 5px #000000; margin:5px;">
-                    Colunas
+                    Configurações <i class="bi bi-gear"></i>
                 </button>
             </div>
 
@@ -57,17 +57,17 @@
 
 
             {{-- Filtro Modal --}}
-            <form action="{{ route('atedex') }}" class="form-horizontal mt-4" method="GET">
-                <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header" style="background-color:grey;color:white">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Filtrar Opções</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
+            <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:grey;color:white">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Filtrar Opções</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                                <form action="{{ route('atedex') }}" class="form-horizontal mt-4" method="GET">
 
                                 <center>
                                     <div class="col-10">
@@ -114,14 +114,14 @@
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
                                 <a href="/gerenciar-atendimentos" type="button" class="btn btn-secondary">Limpar</a>
                                 <button type="submit" class="btn btn-primary">Confirmar</button>
+                            </form>
                             </div>
                         </div>
                     </div>
                 </div>
-            </form>
             {{-- Fim filtro Modal --}}
 
-
+            {{-- Modal Colunas --}}
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -211,7 +211,7 @@
                     </div>
                 </div>
             </div>
-
+{{-- Fim modal Colunas --}}
 
 
 
@@ -256,23 +256,6 @@
     <script>
         $(document).ready(function() {
             let atendimentos = @json($lista);
-
-
-            $.ajax({
-                type: "GET",
-                url: "/ajax" + idbanco,
-                dataType: "json",
-                success: function(response) {
-                    alert(response)
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-
-
-
-
 
 
 
