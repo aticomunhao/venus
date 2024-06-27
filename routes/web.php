@@ -40,6 +40,10 @@ use App\Http\Controllers\PresencaController;
 |--------------------------------------------------------------------------
 */
 
+Route::any('/ajax', [GerenciarAtendimentoController::class, 'ajaxTeste']);
+
+
+
 Auth::routes();
 
 Route::fallback(function () {

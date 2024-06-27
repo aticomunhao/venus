@@ -7,124 +7,398 @@
 @section('content')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
     <?php
     //echo "<meta HTTP-EQUIV='refresh' CONTENT='30;URL=gerenciar-atendimentos'>";
     ?>
 
 
-<div class="container-fluid">
-    <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ATENDIMENTOS</h4>
-    <div class="col-12">
-        <form action="{{ route('atedex') }}" class="form-horizontal mt-4" method="GET">
-        <div class="row mt-3 justify-content-center">
-            <div class="col">
-                <label for="dt_ini">Data início</label>
-                <input class="form-control" type="date" id="dt_ini" name="dt_ini" value="{{ $data_inicio ?? now()->toDateString() }}">
+    <div class="container-fluid">
+        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR
+            ATENDIMENTOS</h4>
+
+        <div class="row">
+
+
+
+
+
+            <div class="col-2">
+                <a href="/criar-atendimento" class="btn btn-success btn-sm w-100"
+                    style="box-shadow: 1px 2px 5px #000000; margin:5px;">Criar Novo</a>
             </div>
-            <div class="col">
-                <label for="assist">Atendido</label>
-                <input class="form-control pesquisa" type="text" id="assist" name="assist" value="{{ $assistido }}">
+
+            <div class="col-2">
+                <a href="/gerenciar-pessoas" class="btn btn-warning btn-sm w-100"
+                    style="box-shadow: 1px 2px 5px #000000; margin:5px;">Nova Pessoa</a>
             </div>
-            <div class="col">CPF
-                <input class="form-control" type="text" maxlength="11" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="2" name="cpf" value="{{$cpf}}">
+
+
+
+            <div class="col-1">
+                <a href="/gerenciar-atendente-dia" class="btn btn-warning btn-sm w-100"
+                    style="box-shadow: 1px 2px 5px #000000; margin:5px;">Escala AFI</a>
             </div>
-            <div class="col">
-                <label for="status">Status</label>
-                <select class="form-select pesquisa" id="status" name="status" type="number">
-                <option value=""></option>
-                @foreach ($st_atend as $statusz)
-                    <option @if (old('status') == $statusz->id) selected="selected" @endif value="{{ $statusz->id }}">{{ $statusz->descricao }}</option>
-                @endforeach
-                </select>
+            <div class="col-1">
+                <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#filtros"
+                    style="box-shadow: 1px 2px 5px #000000; margin:5px;">
+                    Filtrar <i class="bi bi-funnel"></i>
+                </button>
             </div>
-        
-            <div class="col-12 col-md-4 mb-1 d-flex align-items-end justify-content-between">
-                <input class="btn btn-light btn-sm w-100" style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
-                <a href="/gerenciar-atendimentos" class="btn btn-light btn-sm w-100" style="box-shadow: 1px 2px 5px #000000; margin:5px;">Limpar</a>       
-        </form> 
-                <a href="/gerenciar-pessoas" class="btn btn-warning btn-sm w-100" style="box-shadow: 1px 2px 5px #000000; margin:5px;">Nova Pessoa</a>
-                <a href="/gerenciar-atendente-dia" class="btn btn-warning btn-sm w-100" style="box-shadow: 1px 2px 5px #000000; margin:5px;">Escala AFI</a>
-                <a href="/criar-atendimento" class="btn btn-success btn-sm w-100" style="box-shadow: 1px 2px 5px #000000; margin:5px;">Criar Novo</a>
+            <div class="col-1">
+                <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                    style="box-shadow: 1px 2px 5px #000000; margin:5px;">
+                    Colunas
+                </button>
             </div>
+
+
+
+
+
+            {{-- Filtro Modal --}}
+            <form action="{{ route('atedex') }}" class="form-horizontal mt-4" method="GET">
+                <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color:grey;color:white">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Filtrar Opções</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+
+                                <center>
+                                    <div class="col-10">
+
+
+
+                                        <div class="col">
+                                            <label for="assist">Atendido</label>
+                                            <input class="form-control pesquisa" type="text" id="assist"
+                                                name="assist" value="{{ $assistido }}">
+                                        </div>
+
+                                        <div class="col mt-3">
+                                            <label for="assist">CPF</label>
+                                            <input class="form-control" type="text" maxlength="11"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                                id="2" name="cpf" value="{{ $cpf }}">
+
+                                        </div>
+
+                                        <div class="col mt-3 ">
+                                            <label for="status">Status</label>
+                                            <select class="form-select pesquisa" id="status" name="status"
+                                                type="number">
+                                                <option value=""></option>
+                                                @foreach ($st_atend as $statusz)
+                                                    <option {{ $situacao == $statusz->id ? 'selected' : '' }}
+                                                        value="{{ $statusz->id }}">{{ $statusz->descricao }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+
+                                        <div class="col  mt-3  mb-3">
+                                            <label for="dt_ini">Data início</label>
+                                            <input class="form-control" type="date" id="dt_ini" name="dt_ini"
+                                                value="{{ $data_inicio ?? now()->toDateString() }}">
+                                        </div>
+
+                                    </div>
+                                </center>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                <a href="/gerenciar-atendimentos" type="button" class="btn btn-secondary">Limpar</a>
+                                <button type="submit" class="btn btn-primary">Confirmar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            {{-- Fim filtro Modal --}}
+
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:grey;color:white">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Colunas Visualizadas</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+
+
+
+                            <div class="col-10 mx-auto d-block">
+
+                                <div class="col">
+                                    <input class="form-check-input coluna" type="checkbox" value=""
+                                        id="numeroAtendimento">
+                                    <label class="form-check-label" for="flexCheckDefault"> Número do Atendimento </label>
+                                </div>
+
+                                <div class="col">
+                                    <input class="form-check-input coluna" type="checkbox" value=""
+                                        id="atendentePreferido">
+                                    <label class="form-check-label" for="flexCheckDefault"> Atendente Preferido </label>
+                                </div>
+
+                                <div class="col">
+                                    <input class="form-check-input coluna" type="checkbox" value=""
+                                        id="tipoAtendente">
+                                    <label class="form-check-label" for="flexCheckDefault"> Tipo do Atendente </label>
+                                </div>
+
+                                <div class="col">
+                                    <input class="form-check-input coluna" type="checkbox" value=""
+                                        id="horarioChegada">
+                                    <label class="form-check-label" for="flexCheckDefault"> Horário de Chegada </label>
+                                </div>
+
+                                <div class="col">
+                                    <input class="form-check-input coluna" type="checkbox" value=""
+                                        id="prioridade">
+                                    <label class="form-check-label" for="flexCheckDefault"> Prioridade </label>
+                                </div>
+
+                                <div class="col">
+                                    <input class="form-check-input coluna" type="checkbox" value=""
+                                        id="atendimento" checked>
+                                    <label class="form-check-label" for="flexCheckDefault"> Atendido </label>
+                                </div>
+
+                                <div class="col">
+                                    <input class="form-check-input coluna" type="checkbox" value=""
+                                        id="representante" checked>
+                                    <label class="form-check-label" for="flexCheckDefault"> Representante </label>
+                                </div>
+
+                                <div class="col">
+                                    <input class="form-check-input coluna" type="checkbox" value=""
+                                        id="atendente" checked>
+                                    <label class="form-check-label" for="flexCheckDefault"> Atendente </label>
+                                </div>
+
+                                <div class="col">
+                                    <input class="form-check-input coluna" type="checkbox" value=""
+                                        id="sala" checked>
+                                    <label class="form-check-label" for="flexCheckDefault"> Sala </label>
+                                </div>
+
+                                <div class="col">
+                                    <input class="form-check-input coluna" type="checkbox" value=""
+                                        id="tipoAtendimento">
+                                    <label class="form-check-label" for="flexCheckDefault"> Tipo do Atendimento </label>
+                                </div>
+
+                                <div class="col mb-3">
+                                    <input class="form-check-input coluna" type="checkbox" value=""
+                                        id="statusAtendimento" checked>
+                                    <label class="form-check-label" for="flexCheckDefault"> Status </label>
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
         </div>
-        
+
         <hr>
         <div class="row">
             <div class="table">Total Atendidos: {{ $contar }}
-                <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
+                <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle" >
                     <thead style="text-align: center;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                            <th class="col">Nr</th>
-                            <th class="col">AFI PREF</th>
-                            <th class="col">TIPO AFI</th>
-                            <th class="col">HORÁRIO CHEGADA</th>
-                            <th class="col">PRIOR</th>
-                            <th class="col">ATENDIDO</th>
-                            <th class="col">REPRESENTANTE</th>
-                            <th class="col">ATENDENTE</th>
-                            <th class="col">SALA</th>
-                            <th class="col">STATUS</th>
+                            <th class="col numeroAtendimento">Nr</th>
+                            <th class="col atendentePreferido">AFI PREF</th>
+                            <th class="col tipoAtendente">TIPO AFI</th>
+                            <th class="col horarioChegada">HORÁRIO CHEGADA</th>
+                            <th class="col prioridade">PRIOR</th>
+                            <th class="col atendimento">ATENDIDO</th>
+                            <th class="col representante">REPRESENTANTE</th>
+                            <th class="col atendente">ATENDENTE</th>
+                            <th class="col sala">SALA</th>
+                            <th class="col tipoAtendimento">TIPO</th>
+                            <th class="col statusAtendimento">STATUS</th>
                             <th class="col">AÇÕES</th>
                         </tr>
                     </thead>
-                    <tbody style="font-size: 14px; color:#000000; text-align: center;">
-                        <tr>
-                            @foreach ($lista as $listas)
-                            <td scope="">{{ $listas->ida }}</td>
-                            <td scope="">{{ $listas->nm_4 }}</td>
-                            <td scope="">{{ $listas->tipo }}</td>
-                            <td scope="">{{ date('d/m/Y H:i:s', strtotime($listas->dh_chegada)) }}</td>
-                            <td scope="">{{ $listas->prdesc }}</td>
-                            <td scope="">{{ $listas->nm_1 }}</td>
-                            <td scope="">{{ $listas->nm_2 }}</td>
-                            <td scope="">{{ $listas->nm_3 }}</td>
-                            <td scope="">{{ $listas->nr_sala }}</td>
-                            <td scope="">{{ $listas->descricao }}</td>
-                            <td scope="">
-                                <!--<a href="/desce-status/{{ $listas->ida }}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-left-square" style="font-size: 1rem; color:#000;"></i></button></a>
-                                    <button class="btn btn-outline-warning btn-sm" style="font-size: 1rem; color:#000;" type="button" id="" data-bs-toggle="modal" data-bs-target="#atendimento{{ $listas->ida }}"><i class="bi bi-person" style="font-size: 1rem; color:#000;"></i></button>
-                                    @include('recepcao-AFI.popUp-sel-atendente')
-                                    <a href="/sobe-status/{{ $listas->ida }}"><button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-caret-right-square" style="font-size: 1rem; color:#000;"></i></button></a>-->
-                                <a href="/editar-atendimento/{{ $listas->ida }}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar"><i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/visualizar-atendimentos/{{ $listas->idas }}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
-                                <a href="/cancelar-atendimento/{{ $listas->ida }}"><button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top" title="Cancelar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button></a>
-                            </td>
-                        </tr>
-                        @endforeach
+                    <tbody style="font-size: 14px; color:#000000; text-align: center;" id="tabelaPrincipal">
+
+
+
                     </tbody>
                 </table>
             </div class="d-flex justify-content-center">
-            {{ $lista->withQueryString()->links('pagination::bootstrap-5') }}
+
         </div>
-    </div>    
-</div>
+    </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let atendimentos = @json($lista);
+
+
+            $.ajax({
+                type: "GET",
+                url: "/ajax" + idbanco,
+                dataType: "json",
+                success: function(response) {
+                    alert(response)
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+
+
+
+
+
+
+
+
+            function colunas() {
+
+                    $('#numeroAtendimento').prop('checked') ? $('.numeroAtendimento').show() : $('.numeroAtendimento').hide()
+                    $('#atendentePreferido').prop('checked') ? $('.atendentePreferido').show() : $('.atendentePreferido').hide()
+                    $('#tipoAtendente').prop('checked') ? $('.tipoAtendente').show() : $('.tipoAtendente').hide()
+                    $('#horarioChegada').prop('checked') ? $('.horarioChegada').show() : $('.horarioChegada').hide()
+                    $('#prioridade').prop('checked') ? $('.prioridade').show() : $('.prioridade').hide()
+                    $('#atendimento').prop('checked') ? $('.atendimento').show() : $('.atendimento').hide()
+                    $('#representante').prop('checked') ? $('.representante').show() : $('.representante').hide()
+                    $('#atendente').prop('checked') ? $('.atendente').show() : $('.atendente').hide()
+                    $('#sala').prop('checked') ? $('.sala').show() : $('.sala').hide()
+                    $('#tipoAtendimento').prop('checked') ? $('.tipoAtendimento').show() : $('.tipoAtendimento').hide()
+                    $('#statusAtendimento').prop('checked') ? $('.statusAtendimento').show() : $('.statusAtendimento').hide()
+
+            }
+
+            function tabelas() {
+                $('#tabelaPrincipal').html("")
+                $.each(atendimentos, function(){
+
+                   const date = Date.parse(this.dh_chegada);
+                   const formatter = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric',hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                   const formattedDate = formatter.format(date);
+
+                       let ida = this.ida  == null ? '' : this.ida
+                       let nm_4 = this.nm_4 == null ? ' ' : this.nm_4
+                       let tipo = this.tipo  == null ? ' ' : this.tipo
+                       let dh_chegada = formattedDate
+                       let prdesc = this.prdesc  == null ? '' : this.prdesc
+                       let nm_1 =  this.nm_1  == null ? '' : this.nm_1
+                       let nm_2 = this.nm_2  == null ? '' : this.nm_2
+                       let nm_3 = this.nm_3  == null ? '' : this.nm_3
+                       let nr_sala = this.nr_sala  == null ? '' : this.nr_sala
+                       let afe = this.afe  == null ? '' : this.afe
+                       let descricao = this.descricao  == null ? '' : this.descricao
+
+
+                   $('#tabelaPrincipal').append(
+                       '<tr>'+
+
+
+                                   '<td class="numeroAtendimento"> '+ ida  +'</td>' +
+                                   '<td class="atendentePreferido">'+nm_4  +'</td>' +
+                                   '<td class="tipoAtendente">'+tipo+'</td>' +
+                                   '<td class="horarioChegada">'+dh_chegada+'</td>' +
+                                  '<td class="prioridade">'+prdesc +'</td>' +
+                                   '<td class="atendimento">'+nm_1 +'</td>' +
+                                   '<td class="representante">'+nm_2 +'</td>' +
+                                   '<td class="atendente">'+nm_3 +'</td>'+
+                                   '<td class="sala">'+nr_sala +'</td>'+
+                               '<td class="tipoAtendimento">'+afe+'</td>'+
+                                  '<td class="statusAtendimento">'+descricao+'</td>'+
+                                   '<td class="">'+
+
+                                       '<a href="/editar-atendimento/' + ida + '">' +
+                                           '<button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar">' +
+                                               '<i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>' +
+                                           '</button>' +
+                                       '</a>'+
+
+                                       '<a href="/visualizar-atendimentos/' + this.idas + '">' +
+                                           '<button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">' +
+                                               '<i class="bi bi-search" style="font-size: 1rem; color:#000;">' +
+                                               '</i>' +
+                                           '</button>' +
+                                       '</a>' +
+
+                                       '<a href="/cancelar-atendimento/' + ida + '">' +
+                                           '<button type="button"class="btn btn-outline-danger btn-sm" data-tt="tooltip" data-placement="top"title="Cancelar">' +
+                                               '<i class="bi bi-x-circle"style="font-size: 1rem; color:#000;">' +
+                                               '</i>' +
+                                           '</button>' +
+                                       '</a>' +
+
+
+                                   '</td>'+
+
+
+
+                       '</tr>'
+                   )
+               })
+
+            }
+
+            tabelas()
+            colunas()
+
+            var intervalId = window.setInterval(function(){
+                [tabelas(), colunas()]
+              }, 10000);
+
+
+            $('.coluna').click(function(){
+                colunas();
+            })
+
+        })
+
+    </script>
 
     <script>
-            let hoje =  @json($now);
-            let assistido =  @json($assistido);
-            let situacao =  @json($situacao);
+        let hoje = @json($now);
+        let assistido = @json($assistido);
+        let situacao = @json($situacao);
 
-            if(assistido != null || situacao != null){
-                $('#dt_ini').val("")
-            }
-        $('.pesquisa').change(function(){
-            let assis =  $('#assist').val()
+        if (assistido != null || situacao != null) {
+            $('#dt_ini').val("")
+        }
+        $('.pesquisa').change(function() {
+            let assis = $('#assist').val()
             let status = $('#status').prop('selectedIndex')
 
-            if(assis == '' && status == 0){
-               $('#dt_ini').val(hoje)
+            if (assis == '' && status == 0) {
+                $('#dt_ini').val(hoje)
 
-            }else{
-               $('#dt_ini').val("")
+            } else {
+                $('#dt_ini').val("")
 
             }
 
         })
-
     </script>
 
     <script>
