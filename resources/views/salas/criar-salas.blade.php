@@ -65,7 +65,7 @@
                                     </select>
                                 </div>
                                 <div class="col">Número
-                                    <input type="number" class="form-control" id="numero" min="1" max="300"
+                                    <input type="number" class="form-control" id="numero" min="1" max="500"
                                         name="numero"
                                         oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3); validarNumero(this);"
                                         required="required">
@@ -74,13 +74,13 @@
 
                                 <div class="col">M² da sala
                                     <input type="number" class="form-control" id="tamanho_sala" name="tamanho_sala"
-                                        min="1" max="300"
+                                        min="1" max="500"
                                         oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3); validarNumero(this);"
                                         required="required">
                                 </div>
                                 <div class="col">Número de lugares
                                     <input type="number" class="form-control" id="nr_lugares" name="nr_lugares"
-                                        min="1" max="1000"
+                                        min="1" max="2000"
                                         oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3); validarNumero(this);"
                                         required="required">
                                 </div>

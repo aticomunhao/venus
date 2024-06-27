@@ -69,14 +69,14 @@
                                 </select>
                             </div>
                             <div class="col">Número
-                                <input type="number" class="form-control" id="numero" min="1" max="200" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->numero}} required="required" onchange="validarNumero(this)">
+                                <input type="number" class="form-control" id="numero" min="1" max="500" name="numero" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->numero}} required="required" onchange="validarNumero(this)">
                                 <span id="numeroError" style="color: red;"></span>
                             </div>
                             <div class="col">M² da sala
-                                <input type="number" class="form-control" id="tamanho_sala" name="tamanho_sala"  min="1" max="200" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->tamanho_sala}} required="required">
+                                <input type="number" class="form-control" id="tamanho_sala" name="tamanho_sala"  min="1" max="500" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->tamanho_sala}} required="required">
                             </div>
                             <div class="col">Número de lugares
-                                <input type="number" class="form-control" id="nr_lugares" name="nr_lugares"  min="1" max="1000"  oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->nr_lugares}} required="required">
+                                <input type="number" class="form-control" id="nr_lugares" name="nr_lugares"  min="1" max="2000"  oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->nr_lugares}} required="required">
                             </div>
                         </div>
                     </div>
@@ -191,7 +191,7 @@
         var numeroSelecionado = parseInt(input.value, 10);
         var numerosExistem = {!! json_encode($numerosExistem) !!};
 
-        if (numeroSelecionado < 1 || numeroSelecionado > 200 || numerosExistem.includes(numeroSelecionado)) {
+        if (numeroSelecionado < 1 || numeroSelecionado < 500 || numerosExistem.includes(numeroSelecionado)) {
             document.getElementById('numeroError').innerText = 'Existe uma sala registrada com esse número.';
             input.value = '';
         } else {
