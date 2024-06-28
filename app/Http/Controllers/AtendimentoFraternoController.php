@@ -830,7 +830,7 @@ catch(\Exception $e){
                     'id_tipo_encaminhamento'=> 2,
                     'id_atendimento' =>$idat,
                     'id_tipo_tratamento' => 1,
-                    'status_encaminhamento' =>  1
+                    'status_encaminhamento' =>  2
                 ]);
 
                 DB::table('encaminhamento AS enc')->insert([
@@ -846,6 +846,14 @@ catch(\Exception $e){
 
             }
             elseif($nutres == 1 and $existeEncaminhamento == 1){
+
+                DB::table('encaminhamento')
+                ->where('id_atendimento', $idat)
+                ->update([
+                    'status_encaminhamento' =>  2
+                ]);
+
+
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
@@ -854,6 +862,7 @@ catch(\Exception $e){
                     'id_tipo_entrevista' => 4,
                     'status_encaminhamento' =>  1
                 ]);
+
 
                 app('flasher')->addSuccess('O encaminhamento para o NUTRES foi criado com sucesso.');
             }

@@ -38,7 +38,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
         $afe = DB::table('associado')->where('id_pessoa', session()->get('usuario.id_pessoa'))
         ->first();
-          
+
 
         $assistido = DB::table('atendimentos AS at')
             ->select('at.id AS idat', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido AS idas', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento')
@@ -627,10 +627,14 @@ class AtendimentoFraternoEspecificoController extends Controller
     public function enc_entre(Request $request, $idat)
     {
         try{
+
         $now = Carbon::now()->format('Y-m-d H:m:s');
-
+        $existeEncaminhamento = DB::table('encaminhamento')->where('id_atendimento', $idat)->first();
+        $existeEncaminhamento = $existeEncaminhamento != null ? 1 : 0;
         $atendente = session()->get('usuario.id_pessoa');
-
+        $atendimento = DB::table('atendimentos')->where('id', $idat)->first();
+        $sala = DB::table('sala')->get();
+        dd($atendimento);
 
 
         $ame = isset($request->ame) ? 1 : 0;
@@ -664,31 +668,79 @@ class AtendimentoFraternoEspecificoController extends Controller
             ]);
 
             app('flasher')->addSuccess('O encaminhamento para o AFE foi criado com sucesso.');
+        }else{
+
+
+            DB::table('encaminhamento AS enc')->insertGetId([
+                'dh_enc' => $now,
+                'id_usuario' => $atendente,
+                'id_tipo_encaminhamento' => 1,
+                'id_atendimento' => $idat,
+                'id_tipo_entrevista' => 3,
+                'status_encaminhamento' =>  1
+            ]);
+
+
         }
         if ($diamo == 1) {
             DB::table('encaminhamento AS enc')->insert([
                 'dh_enc' => $now,
                 'id_usuario' => $atendente,
+                'id_sala' => $sala,
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
-                'id_tipo_entrevista' => 6,
+                'id_tipo_entrevista' => 3,
                 'status_encaminhamento' =>  1
             ]);
 
             app('flasher')->addSuccess('O encaminhamento para a DIAMO foi criado com sucesso.');
         }
-        if ($nutres == 1) {
+        if ($nutres == 1 and $existeEncaminhamento == 0)
+        {
             DB::table('encaminhamento AS enc')->insert([
                 'dh_enc' => $now,
                 'id_usuario' => $atendente,
-                'id_tipo_encaminhamento' => 1,
-                'id_atendimento' => $idat,
+                'id_tipo_encaminhamento'=> 2,
+                'id_atendimento' =>$idat,
+                'id_tipo_tratamento' => 1,
+                'status_encaminhamento' =>  2
+            ]);
+
+            DB::table('encaminhamento AS enc')->insert([
+                'dh_enc' => $now,
+                'id_usuario' => $atendente,
+                'id_tipo_encaminhamento'=> 1,
+                'id_atendimento' =>$idat,
                 'id_tipo_entrevista' => 4,
                 'status_encaminhamento' =>  1
             ]);
 
+            app('flasher')->addSuccess('O encaminhamento para o NUTRES e PTD foi criado com sucesso.');
+
+        }
+        elseif($nutres == 1 and $existeEncaminhamento == 1){
+
+            DB::table('encaminhamento')
+            ->where('id_atendimento', $idat)
+            ->update([
+                'status_encaminhamento' =>  2
+            ]);
+
+
+            DB::table('encaminhamento AS enc')->insert([
+                'dh_enc' => $now,
+                'id_usuario' => $atendente,
+                'id_tipo_encaminhamento'=> 1,
+                'id_atendimento' =>$idat,
+                'id_tipo_entrevista' => 4,
+                'status_encaminhamento' =>  1
+            ]);
+
+
             app('flasher')->addSuccess('O encaminhamento para o NUTRES foi criado com sucesso.');
         }
+
+
         if ($evangelho == 1) {
             DB::table('encaminhamento AS enc')->insert([
                 'dh_enc' => $now,

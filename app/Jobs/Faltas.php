@@ -52,16 +52,22 @@ class Faltas implements ShouldQueue
         ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
         ->where('tr.status', 2)
         ->where('rm.dia_semana', $dia_atual)
-        ->where('rm.modificador', '<>', 4)
+        ->where(function($query) {
+            $query->where('rm.modificador', NULL);
+            $query->orWhere('rm.modificador','<>', 4);
+        })
         ->whereNotIn('tr.id', $inseridos )
         ->get();
 
 
 
+      
+
+
 
         foreach ($lista as $item){
         $id_dia_cronograma =  DB::table('dias_cronograma')->where('data', $data_atual)->select('id')->where('id_cronograma', $item->id_reuniao)->first();
-      
+
         DB::table('presenca_cronograma AS dt')
         ->leftJoin('tratamento AS tr', 'dt.id', 'dt.id_tratamento')
         ->whereNotIn('id_tratamento', $inseridos)

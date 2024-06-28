@@ -30,34 +30,28 @@ class FimSemanas implements ShouldQueue
     {
         $ontem = Carbon::yesterday();
 
-        $array_pti = DB::table('encaminhamento as enc')
-        ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-        ->where('enc.id_tipo_tratamento', 2)
-        ->where('enc.status_encaminhamento', 1)
-        ->select('at.id_assistido as id')
-        ->get();
-
-        $aguardando_pti = [];
-        foreach($array_pti as $array){
-            $aguardando_pti[] = $array->id;
-        }
 
 
-         DB::table('tratamento')
-        ->select('id_encaminhamento')
-        ->where('dt_fim', '<>', null)
-        ->where('dt_fim', $ontem)
-        ->whereNotIn('id', $aguardando_pti)
+
+
+         DB::table('tratamento as tr')
+        ->select('tr.id_encaminhamento')
+        ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+        ->where('tr.dt_fim', '<>', null)
+        ->where('tr.dt_fim', $ontem)
+        ->whereNot('enc.status_encaminhamento', 4)
         ->update([
-            'status' => 4
+            'tr.status' => 4
         ]);
 
-        $semanas = DB::table('tratamento')
+        $semanas = DB::table('tratamento as tr')
         ->select('id_encaminhamento')
+        ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
         ->where('dt_fim', '<>', null)
         ->where('dt_fim', $ontem)
-        ->whereNotIn('id', $aguardando_pti)
+        ->whereNot('enc.status_encaminhamento', 4)
         ->get();
+
 
         $semanasId = [];
         foreach($semanas as $semana){
@@ -68,7 +62,7 @@ class FimSemanas implements ShouldQueue
         DB::table('encaminhamento')
         ->whereIn('id', $semanasId)
         ->update([
-            'status_encaminhamento' => 3
+            'status_encaminhamento' => 5
         ]);
 
 

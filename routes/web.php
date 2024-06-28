@@ -338,7 +338,7 @@ Route::middleware('rotas:25')->group(function () {
 });
 
 // Gerenciar Perfis
-Route::middleware('rotas:26')->group(function () {
+Route::middleware('rotas:1')->group(function () {
     Route::get('/gerenciar-perfis', [GerenciarPerfil::class, 'index']);
     Route::get('/criar-perfis', [GerenciarPerfil::class, 'create']);
     Route::post('/armazenar-perfis', [GerenciarPerfil::class, 'store']);
@@ -349,7 +349,7 @@ Route::middleware('rotas:26')->group(function () {
 });
 
 // Gerenciar Rotas Setor
-Route::middleware('rotas:27')->group(function () {
+Route::middleware('rotas:1')->group(function () {
     Route::get('/gerenciar-setor', [GerenciarSetor::class, 'index']);
     Route::get('/criar-setor', [GerenciarSetor::class, 'create']);
     Route::post('/armazenar-setor', [GerenciarSetor::class, 'store']);

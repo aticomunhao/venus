@@ -360,7 +360,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
                 DB::table('encaminhamento AS enc')
                     ->where('enc.id', $ide)
                     ->update([
-                        'status_encaminhamento' => 2,
+                        'status_encaminhamento' => 3,
                     ]);
 
                 app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
@@ -381,7 +381,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
                 DB::table('encaminhamento AS enc')
                     ->where('enc.id', $ide)
                     ->update([
-                        'status_encaminhamento' => 2,
+                        'status_encaminhamento' => 3,
                     ]);
 
                 app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
@@ -442,7 +442,7 @@ class GerenciarEncaminhamentoIntegralController extends Controller
             $inative = DB::table('encaminhamento AS enc')
                 ->where('enc.id', $ide)
                 ->update([
-                    'status_encaminhamento' => 4,
+                    'status_encaminhamento' => 6,
                     'motivo' => $request->input('motivo'),
                 ]);
 

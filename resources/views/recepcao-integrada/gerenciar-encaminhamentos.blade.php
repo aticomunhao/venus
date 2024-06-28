@@ -75,12 +75,12 @@
                             <td>{{ $listas->desctrat }}</td>
                             <td>{{ $listas->tsenc }}</td>
                             <td>
-                                @if ($listas->status_encaminhamento == 1)
+                                @if ($listas->status_encaminhamento < 3)
                                     <a href="/agendar/{{ $listas->ide }}/{{ $listas->idtt }}"><button type="button"
                                             class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top"
                                             title="Agendar"><i class="bi bi-clipboard-check"
                                                 style="font-size: 1rem; color:#000;"></i></button></a>
-                                @elseif($listas->status_encaminhamento == 2)
+                                @elseif($listas->status_encaminhamento < 5)
                                 {{-- botao de alterar grupo --}}
                                 <a href="/alterar-grupo-tratamento/{{ $listas->ide }}"type="button"
                                     class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top"
@@ -99,7 +99,7 @@
                                         style="font-size: 1rem; color:#000;"></i></button></a>
 
 
-                                @if ($listas->status_encaminhamento < 2)
+                                @if ($listas->status_encaminhamento < 3)
                                     <button class="btn btn-outline-danger btn-sm" type="button" id=""
                                         data-bs-toggle="modal" data-bs-target="#inativar{{ $listas->ide }}"
                                         data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle"

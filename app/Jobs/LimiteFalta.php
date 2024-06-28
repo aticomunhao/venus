@@ -30,17 +30,7 @@ class LimiteFalta implements ShouldQueue
     {
 
 
-        $array_pti = DB::table('encaminhamento as enc')
-        ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-        ->where('enc.id_tipo_tratamento', 2)
-        ->where('enc.status_encaminhamento', 1)
-        ->select('at.id_assistido as id')
-        ->get();
 
-        $aguardando_pti = [];
-        foreach($array_pti as $array){
-            $aguardando_pti[] = $array->id;
-        }
 
         $tratamentos_faltas = DB::table('presenca_cronograma as pc')
         ->select('pc.id_tratamento', DB::raw('count(*) as total'))
@@ -50,7 +40,8 @@ class LimiteFalta implements ShouldQueue
         ->groupBy('pc.id_tratamento')
         ->where('pc.id_tratamento', '<>', null)
         ->where('pc.presenca', false)
-        ->whereNotIn('at.id_assistido', $aguardando_pti)
+        ->where('enc.id_tipo_tratamento', 1)
+        ->whereNot('enc.status_encaminhamento', 4)
         ->get();
 
 
@@ -70,7 +61,7 @@ class LimiteFalta implements ShouldQueue
                 DB::table('encaminhamento')
                 ->where('id', $id_encaminhamento->id_encaminhamento)
                 ->update([
-                    'status_encaminhamento' => 4
+                    'status_encaminhamento' => 6
                 ]);
             }
         }

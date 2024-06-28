@@ -42,7 +42,7 @@ class GerenciarEntrevistaController extends Controller
 
     public function index(Request $request)
     {
-        try{
+      //  try{
         $informacoes = DB::table('encaminhamento')
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
             ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
@@ -57,7 +57,10 @@ class GerenciarEntrevistaController extends Controller
             ->leftJoin('pessoas as pessoa_entrevistador', 'associado.id_pessoa', '=', 'pessoa_entrevistador.id')
             ->leftJoin('tipo_status_entrevista as tse', 'entrevistas.status', '=', 'tse.id')
             ->where('encaminhamento.id_tipo_encaminhamento', 1)
-            ->where('encaminhamento.status_encaminhamento', '<>', 4)
+            ->where(function($query){
+                $query->where('encaminhamento.status_encaminhamento', '<', 5);
+                $query->orWhere('entrevistas.id', '<>', NULL);
+            })
             ->whereNotIn('tipo_entrevista.id', [8]) // Exclui o tipo de entrevista 8
             ->whereBetween('tipo_entrevista.id', [1, 7])
             ->whereIn('tipo_entrevista.id_setor', session()->get('usuario.setor')) // Inclui os tipos de entrevista de 1 a 7
@@ -85,7 +88,6 @@ class GerenciarEntrevistaController extends Controller
                 's.numero',
                 'pessoa_entrevistador.nome_completo as nome_entrevistador'
             );
-
 
 
 
@@ -161,12 +163,12 @@ class GerenciarEntrevistaController extends Controller
     }
 
 
-    catch(\Exception $e){
+    // catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+    //     $code = $e->getCode( );
+    //     return view('tratamento-erro.erro-inesperado', compact('code'));
+    //         }
+    //     }
 
     public function create($id)
     {

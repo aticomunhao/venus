@@ -83,7 +83,7 @@ class GerenciarEncaminhamentoController extends Controller
 
     public function agenda($ide, $idtt)
     {
-        try {
+    //    try {
             $hoje = Carbon::now()->format('Y-m-d');
             $result = DB::table('encaminhamento AS enc')
                 ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat')
@@ -104,6 +104,10 @@ class GerenciarEncaminhamentoController extends Controller
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                 ->where(function ($query) use ($hoje) {
                     $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+                })
+                ->where(function($query){
+                    $query->where('reu.modificador', NULL);
+                    $query->orWhere('reu.modificador', '<>', 4);
                 })
                 ->where('reu.id_tipo_tratamento', $idtt)
                 ->where('reu.dia_semana', 1)
@@ -253,12 +257,12 @@ class GerenciarEncaminhamentoController extends Controller
         return view('/recepcao-integrada/agendar-dia', compact('result', 'contgrseg', 'contgrter', 'contgrqua', 'contgrqui', 'contgrsex', 'contgrsab', 'contgrdom', 'conttratseg', 'conttratter','conttratqua','conttratqui','conttratsex','conttratsab','conttratdom', 'contcap'));
 
     }
-    catch(\Exception $e){
+    // catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+    //     $code = $e->getCode( );
+    //     return view('tratamento-erro.erro-inesperado', compact('code'));
+    //         }
+    //     }
 
     public function tratamento(Request $request, $ide){
         try{
@@ -300,6 +304,10 @@ class GerenciarEncaminhamentoController extends Controller
                 ->where(function ($query) use ($hoje) {
                     $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                 })
+                ->where(function($query){
+                    $query->where('reu.modificador', NULL);
+                    $query->orWhere('reu.modificador', '<>', 4);
+                })
                 ->where('reu.dia_semana', $dia)
                 ->where('reu.id_tipo_tratamento', $tp_trat)
                 ->orWhere('tr.status', null)
@@ -325,7 +333,7 @@ class GerenciarEncaminhamentoController extends Controller
 
     public function tratar(Request $request, $ide)
     {
-        try {
+     //   try {
             $reu = intval($request->reuniao);
             $dia_semana = DB::table('cronograma AS reu')->where('id', $reu)->value('dia_semana');
             $data_atual = Carbon::now();
@@ -354,6 +362,7 @@ class GerenciarEncaminhamentoController extends Controller
 
                 $id_trata = DB::table('tratamento AS t')->select(DB::raw('MAX(id) as max_id'))->value('max_id');
 
+
                 DB::table('tratamento AS tr')->insert([
                     'id_reuniao' => $reu,
                     'id_encaminhamento' => $ide,
@@ -361,11 +370,20 @@ class GerenciarEncaminhamentoController extends Controller
                     'dt_fim' => $data_fim_depois,
                 ]);
 
-                DB::table('encaminhamento AS enc')
+                if($tratID[0]->status_encaminhamento == 2){
+                    DB::table('encaminhamento AS enc')
                     ->where('enc.id', $ide)
                     ->update([
-                        'status_encaminhamento' => 2,
+                        'status_encaminhamento' => 4,
                     ]);
+                }else{
+                    DB::table('encaminhamento AS enc')
+                    ->where('enc.id', $ide)
+                    ->update([
+                        'status_encaminhamento' => 3,
+                    ]);
+                }
+
 
                 app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
 
@@ -382,11 +400,19 @@ class GerenciarEncaminhamentoController extends Controller
                     'dt_fim' => $data_fim_antes,
                 ]);
 
-                DB::table('encaminhamento AS enc')
+                if($tratID[0]->status_encaminhamento == 2){
+                    DB::table('encaminhamento AS enc')
                     ->where('enc.id', $ide)
                     ->update([
-                        'status_encaminhamento' => 2,
+                        'status_encaminhamento' => 4,
                     ]);
+                }else{
+                    DB::table('encaminhamento AS enc')
+                    ->where('enc.id', $ide)
+                    ->update([
+                        'status_encaminhamento' => 3,
+                    ]);
+                }
 
                 app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
 
@@ -398,12 +424,12 @@ class GerenciarEncaminhamentoController extends Controller
         return redirect('/gerenciar-encaminhamentos');
 
     }
-    catch(\Exception $e){
+    // catch(\Exception $e){
 
-        $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
-        }
+    //     $code = $e->getCode( );
+    //         return view('tratamento-erro.erro-inesperado', compact('code'));
+    //             }
+    //     }
 
     public function visualizar($ide)
     {
@@ -446,7 +472,7 @@ class GerenciarEncaminhamentoController extends Controller
             $inative = DB::table('encaminhamento AS enc')
                 ->where('enc.id', $ide)
                 ->update([
-                    'status_encaminhamento' => 4,
+                    'status_encaminhamento' => 6,
                     'motivo' => $request->input('motivo'),
                 ]);
 

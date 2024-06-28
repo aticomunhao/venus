@@ -2,11 +2,11 @@
 
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
-<br>               
+<br>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-12">
-            <div class="card">               
+            <div class="card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
@@ -14,7 +14,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body">                
+                <div class="card-body">
                     <div class="row">
                         <div class="col-2">Nr Atendimento
                             <input class="form-control" type="numeric" name="id" value="{{$assistido[0]->idat}}" disabled>
@@ -24,12 +24,12 @@
                         </div>
                     </div>
                     <form class="form-horizontal mt-4" method="POST" action="/entrevistas-afe/{{$assistido[0]->idat}}">
-                    @csrf                
+                    @csrf
                     <div class="row">
                         <div class="col">
-                            <div class="form-check form-check-inline">                        
+                            <div class="form-check form-check-inline">
                                 <input type="checkbox" id="afe" name="afe" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                                <label for="afe" class="form-check-label">Atendente Fraterno Específico - AFE</label>
+                                <label for="afe" class="form-check-label">Declarar Alta - AFE</label>
                             </div>
                             <br>
                             <br>
@@ -51,11 +51,11 @@
                             </div>
                             <br>
                             <br>
-                            <div class="form-check form-check-inline">                        
+                            <div class="form-check form-check-inline">
                                 <input type="checkbox" id="gel" name="gel" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                                 <label for="gel" class="form-check-label">Grupo de Evangelho no Lar - GEL</label>
                             </div>
-                        </div>                    
+                        </div>
                     </div>
                     <br>
                     <hr>
