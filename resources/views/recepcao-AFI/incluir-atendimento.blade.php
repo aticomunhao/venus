@@ -22,9 +22,13 @@
         <div class="col-12">
             <div class="card">
             <div class="card-header">
-                    <div class="row">
+                    <div class="row justify-content-between">
                         <div class="col">
                             INCLUIR ATENDIMENTO
+                        </div>
+                        <div class="col-2">
+                            <a href="/gerenciar-pessoas" class="btn btn-warning btn-sm w-100"
+                            style="box-shadow: 1px 2px 5px #000000; margin:5px;">Nova Pessoa</a>
                         </div>
                     </div>
                 </div>
@@ -32,7 +36,7 @@
                     <form class="form-horizontal mt-4" method="post" action="/novo-atendimento">
                         @csrf
 
-
+            
                     <div class="input-group row">
                         <div class="col-3">Tipo Prioridade
                             <select class="form-select" id="" name="priori" required="required">
@@ -52,10 +56,13 @@
                             </select>
 
                         </div>
+                       
+                        
                         <div class="col-1">Menor de 18 anos
                             <label for="menor" class="form-check-label"></label>
                             <input id="menor" type="checkbox" name="menor" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                         </div>
+                       
                     </div>
                     <br>
                     <div class="form-group row">

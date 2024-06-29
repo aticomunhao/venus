@@ -53,16 +53,18 @@
                                     <option value="all"
                                         {{ $situacao == 'all' ? 'selected' : '' }}> Todos os Status </option>
                                 </select>
+                                
                             </div>
-
+                            
                             <div class="col">
                                 <br />
                                 <input class="btn btn-light btn-sm me-md-2"
-                                    style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
-
+                                style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
+                                
                                 <a href="/gerenciar-tratamentos"><input class="btn btn-light btn-sm me-md-2"
-                                        style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
-                                        value="Limpar"></a>
+                                    style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
+                                    value="Limpar"></a>
+                          
 
                                         @if(in_array(17,session()->get('usuario.acesso')))
 
@@ -74,6 +76,8 @@
                                 <a href="/incluir-avulso"><input class="btn btn-danger btn-sm me-md-2" type="button"
                                         value="Atendimento de emergência"></a>
 
+                                        <a href="/gerenciar-encaminhamentos" class="btn btn-warning btn-sm"
+                                        style="box-shadow: 1px 2px 5px #000000; margin:5px;">Encaminhamentos</a>
                     </form>
 
                 </div>

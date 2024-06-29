@@ -20,17 +20,18 @@
         <div class="col-12">
             <div class="row justify-content-center">
                 <div>
+                    
                     <form action="{{ route('gecdex') }}" class="form-horizontal mt-4" method="GET">
                         <div class="row">
                             <div class ="col">Data início
                                 <input class="form-control" type="date" id="" name="dt_enc"
                                     value="{{ $data_enc }}">
                             </div>
-                            <div class="col-5">Assistido
+                            <div class="col">Assistido
                                 <input class="form-control" type="text" id="3" name="assist"
                                     value="{{ $assistido }}">
                             </div>
-                            <div class="col">Status
+                            <div class="col-2">Status
                                 <select class="form-select" id="4" name="status" type="number">
                                     <option value="{{ $situacao }}"></option>
                                     @foreach ($stat as $status)
@@ -44,8 +45,14 @@
                                 <a href="/gerenciar-encaminhamentos"><input class="btn btn-light btn-sm me-md-2"
                                         style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                         value="Limpar"></a>
-                    </form>
-                </div>
+                                    </form>
+                                    <a href="/gerenciar-tratamentos" class="btn btn-warning btn-sm"
+                                    style="box-shadow: 1px 2px 5px #000000; margin:5px;">Tratamentos</a>
+                                </div>
+                             
+                               
+                            </div>
+                        </div>
             </div>
             <br />
         </div style="text-align:right;">

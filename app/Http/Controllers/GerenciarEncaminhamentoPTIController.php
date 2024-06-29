@@ -117,6 +117,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                         })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
+                        })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 1)
                         ->get();
@@ -136,6 +140,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+                        })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
                         })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 2)
@@ -158,6 +166,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                         })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
+                        })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 3)
                         ->get();
@@ -179,6 +191,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                         })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
+                        })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 4)
                         ->get();
@@ -197,6 +213,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', '=', 'gr.id')
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+                        })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
                         })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 5)
@@ -219,6 +239,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                         })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
+                        })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 6)
                         ->get();
@@ -238,6 +262,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                         })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
+                        })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 0)
                         ->get();
@@ -255,6 +283,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+                        })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
                         })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->sum('reu.max_atend');
@@ -505,6 +537,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                         })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
+                        })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 1)
                         ->get();
@@ -524,6 +560,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+                        })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
                         })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 2)
@@ -546,6 +586,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                         })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
+                        })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 3)
                         ->get();
@@ -567,6 +611,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                         })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
+                        })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 4)
                         ->get();
@@ -585,6 +633,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', '=', 'gr.id')
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+                        })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
                         })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 5)
@@ -607,6 +659,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                         })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
+                        })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 6)
                         ->get();
@@ -625,6 +681,10 @@ class GerenciarEncaminhamentoPTIController extends Controller
                         ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                         ->where(function ($query) use ($hoje) {
                             $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+                        })
+                        ->where(function($query){
+                            $query->where('reu.modificador', NULL);
+                            $query->orWhere('reu.modificador', '<>', 4);
                         })
                         ->where('reu.id_tipo_tratamento', $idtt)
                         ->where('reu.dia_semana', 0)
