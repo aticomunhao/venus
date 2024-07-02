@@ -51,7 +51,7 @@
                         <tr>
                             <td scope="" style="text-align: left;">{{$pessoas->nome_completo}}</td>
                             {{-- <td scope="" >{{str_pad($pessoas->cpf, 11, "0", STR_PAD_LEFT)}}</td> --}}
-                            <td scope="" >{{date( 'd/m/Y' , strtotime($pessoas->dt_nascimento))}}</td>
+                            <td scope="" >{{$pessoas->dt_nascimento ? date( 'd/m/Y' , strtotime($pessoas->dt_nascimento)) : '--'}}</td>
                             <td scope="" >{{$pessoas->tipo}}</td>
                             <td scope="" >{{$pessoas->tpsta}}</td>
                             <td scope="">
@@ -66,12 +66,12 @@
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
                                         data-bs-target="#pessoa"></i>
                                 </a>
-                             
+
                                 <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ $pessoas->idp }}">
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;" data-tt="tooltip" data-placement="top" title="Deletar"></i>
                                 </button>
-                                
-                                
+
+
                                 <!-- Modal de Exclusao -->
                                 <div class="modal fade" id="modal{{ $pessoas->idp }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -90,7 +90,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             {{-- Fim Modal de Exclusao --}}
                         </tr>
                         @endforeach

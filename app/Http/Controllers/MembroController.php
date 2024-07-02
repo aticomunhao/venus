@@ -12,7 +12,7 @@ class MembroController extends Controller
 {
     public function grupos(Request $request)
     {
-        //  try{
+          try{
 
         $now = Carbon::now()->format('Y-m-d');
 
@@ -26,6 +26,7 @@ class MembroController extends Controller
 
         $cronogramasLogin = json_decode(json_encode($cronogramasLogin), true);
         $cronogramas = $cronogramasLogin;
+//dd($cronogramas, session()->get('usuario.id_associado'));
 
         if ($request->nome_membro) {
             $cronogramasPesquisa = DB::table('membro AS m')
@@ -80,12 +81,12 @@ class MembroController extends Controller
         return view('membro.listar-grupos-membro', compact('membro_cronograma', 'nome', 'membro', 'membroPesquisa'));
     }
 
-    //  catch(\Exception $e){
+     catch(\Exception $e){
 
-    //     $code = $e->getCode( );
-    //     return view('listar-grupos erro.erro-inesperado', compact('code'));
-    //        }
-    //    }
+        $code = $e->getCode( );
+        return view('listar-grupos erro.erro-inesperado', compact('code'));
+           }
+       }
 
     public function createGrupo(Request $request, string $id)
     {
@@ -96,7 +97,7 @@ class MembroController extends Controller
             $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas order by nome_completo asc');
             $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao order by nome asc');
             $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-            $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('pessoas.nome_completo', 'associado.nr_associado')->orderBy('pessoas.nome_completo', 'asc')->get();
+            $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('pessoas.nome_completo', 'associado.id')->orderBy('pessoas.nome_completo', 'asc')->get();
 
             return view('membro/criar-membro-grupo', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao', 'id'));
         } catch (\Exception $e) {
@@ -178,7 +179,7 @@ class MembroController extends Controller
             $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas order by nome_completo asc');
             $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao order by nome asc');
             $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-            $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('pessoas.nome_completo', 'associado.nr_associado')->orderBy('pessoas.nome_completo', 'asc')->get();
+            $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('pessoas.nome_completo', 'associado.id')->orderBy('pessoas.nome_completo', 'asc')->get();
 
             return view('membro/criar-membro', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao'));
         } catch (\Exception $e) {
@@ -327,7 +328,7 @@ class MembroController extends Controller
 
                 foreach ($tratamentosPTI as $tratamento) {
                     if ($tratamento->id_tipo_tratamento == 2) {
-                    
+
                         DB::table('encaminhamento AS enc')
                         ->where('enc.id_atendimento', $tratamento->id_atendimento)
                         ->update([

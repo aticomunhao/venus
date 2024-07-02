@@ -39,8 +39,8 @@ class GrupoController extends Controller
                 'g.id_setor',
                 'st.nome AS nm_setor'
             );
-         
-            
+
+
 
 
         $nome = $request->nome_pesquisa;
@@ -102,7 +102,7 @@ class GrupoController extends Controller
         $data = date("Y-m-d H:i:s");
         DB::table('grupo')->insert([
             'status_grupo' => $request->input('status_grupo'),
-            'nome' => ucwords(trans($request->input('nome'))),
+            'nome' => str($request->input('nome'))->upper(),
             'data_inicio' => $data,
             'id_tipo_grupo' => $request->input('id_tipo_grupo'),
             'id_motivo_inativacao' => $request->input('id_motivo_inativacao'),
@@ -190,14 +190,14 @@ class GrupoController extends Controller
      */
     public function update(Request $request, $id)
      {
-    
+
     try{
 // Obter a data atual
 $now = Carbon::now()->format('Y-m-d');
 
 // Atualizar o registro do grupo
 DB::table('grupo')->where('id', $id)->update([
-    'nome' => $request->input('nome'),
+    'nome' => str($request->input('nome'))->upper(),
     'data_inicio' => $request->input('data_inicio'),
     'data_fim' => $request->input('data_fim'),
     'id_tipo_grupo' => $request->input('id_tipo_grupo'),
@@ -229,7 +229,7 @@ return redirect('gerenciar-grupos');
             }
         }
 
-  
+
 
 
     /**

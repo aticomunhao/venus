@@ -4,7 +4,6 @@
 
 <title>Cadastrar Atendimento</title>
 
-
 @endsection
 
 @section('content')
@@ -12,8 +11,6 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <link href="/node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-
 
 
 <br>
@@ -36,7 +33,7 @@
                     <form class="form-horizontal mt-4" method="post" action="/novo-atendimento">
                         @csrf
 
-            
+
                     <div class="input-group row">
                         <div class="col-3">Tipo Prioridade
                             <select class="form-select" id="" name="priori" required="required">
@@ -56,13 +53,13 @@
                             </select>
 
                         </div>
-                       
-                        
+
+
                         <div class="col-1">Menor de 18 anos
                             <label for="menor" class="form-check-label"></label>
                             <input id="menor" type="checkbox" name="menor" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
                         </div>
-                       
+
                     </div>
                     <br>
                     <div class="form-group row">

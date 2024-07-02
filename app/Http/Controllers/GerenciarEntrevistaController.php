@@ -552,7 +552,7 @@ class GerenciarEntrevistaController extends Controller
             ->select('ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id_sala', 'ent.id_entrevistador')
             ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
             ->first();
-
+//dd($dateTime);
 
         $dt = Carbon::createFromFormat('Y-m-d H:i:s', $dateTime->data . ' ' . $dateTime->hora);
         $atendimentos = DB::table('encaminhamento as enc')
@@ -573,7 +573,7 @@ class GerenciarEntrevistaController extends Controller
                 'status_atendimento' => 7,
                 'afe' => true
             ]);
-            DB::table('entrevistas')->where('id_encaminhamento', $id)->update(['status' => 3]);
+            DB::table('entrevistas')->where('id_encaminhamento', $id)->update(['status' => 4]);
             DB::table('historico_venus')->insert([
 
                 'id_usuario' => session()->get('usuario.id_usuario'),

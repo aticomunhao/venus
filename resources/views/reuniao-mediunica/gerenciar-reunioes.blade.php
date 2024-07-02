@@ -118,7 +118,7 @@
                                 </div>
                                 <div class="modal-footer mt-2">
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                                    <a type="button" class="btn btn-primary" href="/excluir-pessoa/{{ $reuni->idr }}">Confirmar</a>
+                                    <a type="button" class="btn btn-primary" href="/excluir-reuniao/{{ $reuni->idr }}">Confirmar</a>
                                 </div>
                             </div>
                         </div>

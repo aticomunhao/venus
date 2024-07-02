@@ -67,7 +67,7 @@ class PessoaController extends Controller
 
             $soma = $pessoa->count();
 
-            
+
 
 
             return view('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
@@ -129,7 +129,7 @@ class PessoaController extends Controller
 
             DB::table('pessoas')->insert([
 
-                'nome_completo' => ucwords(trans($request->input('nome'))),
+                'nome_completo' => str($request->input('nome'))->upper(),
                 'cpf' => $request->input('cpf'),
                 'dt_nascimento' => $request->input('dt_na'),
                 'sexo' => $request->input('sex'),
@@ -259,7 +259,7 @@ class PessoaController extends Controller
         } else {
 
             DB::table('pessoas AS p')->where('p.id', $idp)->update([
-                'nome_completo' => ucwords(trans($request->input('nome'))),
+                'nome_completo' => str($request->input('nome'))->upper(),
                 'cpf' => $request->input('cpf'),
                 'dt_nascimento' => $request->input('dt_nasc'),
                 'sexo' => $request->input('sex'),
@@ -290,7 +290,6 @@ class PessoaController extends Controller
     {
 
         if (is_null(session()->get('usuario.id_usuario'))) {
-
 
             app('flasher')->addError('É necessário fazer Login!');
             return redirect()->route('homeLogin');

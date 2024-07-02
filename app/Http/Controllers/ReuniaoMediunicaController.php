@@ -55,11 +55,11 @@ class ReuniaoMediunicaController extends Controller
         if ($request->semana != null && $request->semana != 'todos') {
             $reuniao->where('cro.dia_semana', '=', $request->semana);
         }
-   
+
         if ($request->grupo) {
-        
+
             $reuniao->where('gr.nome', 'ilike', "%$request->grupo%");
-         
+
         }
 
 
@@ -322,7 +322,6 @@ class ReuniaoMediunicaController extends Controller
             $h_inicio = Carbon::createFromDate($request->h_inicio)->subMinutes(30);
             $h_fim = Carbon::createFromDate($request->h_fim)->addMinutes(30);
             $dia = intval($request->dia);
-            dd($h_inicio, $h_fim);
             $repeat = DB::table('cronograma AS rm')
                 ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
                 ->leftJoin('salas AS s', 'rm.id_sala', 's.id')
@@ -391,7 +390,6 @@ class ReuniaoMediunicaController extends Controller
         DB::table('cronograma as cro')
             ->where('cro.id', $id)
             ->update([
-                'status_reuniao' => 2,
                 'data_fim' => $now
             ]);
 
