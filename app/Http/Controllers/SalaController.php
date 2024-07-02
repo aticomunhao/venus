@@ -37,15 +37,20 @@ class SalaController extends Controller
         ->leftJoin('tipo_finalidade_sala AS ts', 's.id_finalidade', 'ts.id')
         ->leftJoin('tipo_localizacao AS tl', 's.id_localizacao', 'tl.id');
         $nome = $request->nome_pesquisa;
-
-        if ($request->nome_pesquisa) {
+        $numero = $request->numero; // Adicione esta linha
+        
+        if ($nome) {
             $sala->where('s.nome', 'ilike', "%$nome%");
         }
-
+        
+        if ($numero) {
+            $sala->where('s.numero', '=', $numero);
+        }
+        
         $sala = $sala->orderBy('s.status_sala', 'ASC')
-                     ->orderBy('s.numero', 'ASC')
-                     ->orderBy('s.nome', 'ASC')
-                     ->paginate(50);
+             ->orderBy('s.numero', 'ASC')
+             ->orderBy('s.nome', 'ASC')
+             ->paginate(50);
 
         return view('salas.gerenciar-salas', compact('sala'));
     }

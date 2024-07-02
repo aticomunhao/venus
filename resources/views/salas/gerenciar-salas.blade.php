@@ -15,6 +15,9 @@
                     <div class="col-3">Nome
                         <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa" placeholder="Pesquisar nome {{ request('nome_pesquisa') }}">
                     </div>
+                    <div class="col-3">Número
+                        <input class="form-control" type="text" id="numero" name="numero" placeholder="Pesquisar número {{ request('numero') }}">
+                    </div>
 
                     <div class="col"><br>
                         <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">

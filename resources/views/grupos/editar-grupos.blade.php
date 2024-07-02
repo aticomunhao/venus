@@ -2,6 +2,7 @@
 
 @section('content')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <br>
     <div class="container">
         <div class="row justify-content-center">
@@ -43,7 +44,6 @@
                                         }
                                     </script>
 
-
                                     <div class="col-3">
                                         Status
                                         <select class="form-select" aria-label=".form-select-lg example" name="status_grupo" id="status_grupo" required="required">
@@ -52,6 +52,7 @@
                                             <option value="3">Experimental</option>
                                         </select>
                                     </div>
+
                                     <div class="col-3">
                                         Motivo
                                         <select class="form-select" aria-label=".form-select-lg example" name="id_motivo_inativacao" id="id_motivo_inativacao" required="required" disabled>
@@ -62,39 +63,42 @@
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-3">
                                         <br>
                                         Tipo grupo
                                         <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_grupo" required="required">
-                                            <option value="{{ $grupo[0]->id_tipo_grupo }}" > {{ $grupo[0]->nmg }}</option>
+                                            <option value="{{ $grupo[0]->id_tipo_grupo }}"> {{ $grupo[0]->nmg }}</option>
                                             @foreach ($tipo_grupo as $item)
-                                                <option value="{{ $item->id }}" > {{ $item->nm_tipo_grupo }}</option>
+                                                <option value="{{ $item->id }}"> {{ $item->nm_tipo_grupo }}</option>
                                             @endforeach
                                         </select>
                                     </div>
+
                                     <div class="col">
                                         <br>
                                         Data início
-                                        <input type="date" class="form-control" id="h_inicio" name="data_inicio" value="{{ $grupo[0]->data_inicio }}"disabled>
+                                        <input type="date" class="form-control" id="h_inicio" name="data_inicio" value="{{ $grupo[0]->data_inicio }}" disabled>
                                     </div>
+
                                     <div class="col">
                                         <br>
                                         Data fim
                                         <input type="date" class="form-control" id="h_fim" name="data_fim" value="{{ $grupo[0]->data_fim }}" disabled>
                                     </div>
-                                        <div class="col">
-                                            <br>
-                                            Setor
-                                            <select class="form-select" aria-label=".form-select-lg example" name="id_setor" required="required">
-                                                @foreach ($setor as $setores)
-                                                <option value="{{ $grupo[0]->id_setor}}" > {{ $grupo[0]->nm_setor}}</option>
-                                                    <option value="{{ $setores->id}}">{{ $setores->nome}}</option>
-                                                @endforeach
-                                            </select>
-                                       
-                                    </div>
 
+                                    <div class="col">
+                                        <br>
+                                        Setor
+                                        <select class="form-select select2" aria-label=".form-select-lg example" name="id_setor" required="required">
+                                            <option value="{{ $grupo[0]->id_setor }}"> {{ $grupo[0]->nm_setor }}</option>
+                                            @foreach ($setor as $setores)
+                                                <option value="{{ $setores->id }}">{{ $setores->nome }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
 
                                 <div class="row justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">
@@ -116,10 +120,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
+            // Inicializa o Select2
+            $('.select2').select2({
+                theme: 'bootstrap-5'
+            });
+
             // Adiciona um ouvinte de evento para o campo "Status"
-            $('#status_grupo').change(function () {
+            $('#status_grupo').change(function() {
                 // Obtém o valor selecionado no campo "Status"
                 var selectedStatus = $(this).val();
 
@@ -136,4 +146,8 @@
             $('#status_grupo').val('{{ $grupo[0]->status_grupo }}').trigger('change');
         });
     </script>
+@endsection
+
+@section('footerScript')
+    <script src="{{ URL::asset('/js/pages/mascaras.init.js') }}"></script>
 @endsection

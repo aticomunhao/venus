@@ -4,7 +4,7 @@
 
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet">
 
 <div class="container-fluid">
     <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPOS</h4>
@@ -14,6 +14,14 @@
                 <div class="row">
                     <div class="col-3">Nome
                         <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa" placeholder="Pesquisar nome {{ request('nome_pesquisa') }}">
+                    </div>
+                    <div class="col-3">Setor
+                        <select class="form-select select2" name="nome_setor">
+                            <option value="">Selecione o Setor</option>
+                            @foreach ($setores as $setor)
+                                <option value="{{ $setor->nome }}" {{ request('nome_setor') == $setor->nome ? 'selected' : '' }}>{{ $setor->nome }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="col"><br>
@@ -25,7 +33,6 @@
                     </div>
                 </div>
         </div>
-
 
     <hr>
 
@@ -91,12 +98,9 @@
     </div>
 </div>
 
-
-
-<script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
-<link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
 
 <script>
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
@@ -104,10 +108,10 @@
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
 
-
-
-
-
-
+    $(document).ready(function() {
+        $('.select2').select2({
+            theme: 'bootstrap-5'
+        });
+    });
 </script>
 @endsection

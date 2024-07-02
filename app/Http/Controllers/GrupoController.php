@@ -15,54 +15,56 @@ use Spatie\FlareClient\Http\Exceptions\InvalidData;
 
 class GrupoController extends Controller
 {
+    
     public function index(Request $request)
     {
-
-        try{
-
-        $grupo = DB::table('grupo AS g')
-            ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
-            ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
-            ->leftJoin('tipo_motivo AS tm', 'g.id_motivo_inativacao', 'tm.id')
-            ->leftJoin('setor AS st', 'g.id_setor', 'st.id')
-            ->select(
-                'g.id',
-                'g.nome',
-                'g.data_inicio',
-                'g.data_fim',
-                'g.status_grupo',
-                'g.id_motivo_inativacao',
-                'tg.nm_tipo_grupo',
-                'tg.id AS idg',
-                'ts.descricao as descricao1',
-                'tm.tipo',
-                'g.id_setor',
-                'st.nome AS nm_setor'
-            );
-
-
-
-
-        $nome = $request->nome_pesquisa;
-
-        if ($request->nome_pesquisa) {
-            $grupo->where('g.nome', 'ilike', "%$nome%");
-        }
-
-        $grupo = $grupo->orderBy('g.status_grupo', 'ASC')
-            ->orderBy('g.nome', 'ASC')
-            ->paginate(50);
-
-        return view('grupos/gerenciar-grupos', compact('grupo'));
-    }
-
-
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('gerenciar-grupos erro.erro-inesperado', compact('code'));
+        try {
+            $grupo = DB::table('grupo AS g')
+                ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
+                ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
+                ->leftJoin('tipo_motivo AS tm', 'g.id_motivo_inativacao', 'tm.id')
+                ->leftJoin('setor AS st', 'g.id_setor', 'st.id')
+                ->select(
+                    'g.id',
+                    'g.nome',
+                    'g.data_inicio',
+                    'g.data_fim',
+                    'g.status_grupo',
+                    'g.id_motivo_inativacao',
+                    'tg.nm_tipo_grupo',
+                    'tg.id AS idg',
+                    'ts.descricao as descricao1',
+                    'tm.tipo',
+                    'g.id_setor',
+                    'st.nome AS nm_setor'
+                );
+    
+            $nome = $request->nome_pesquisa;
+            if ($nome) {
+                $grupo->where('g.nome', 'ilike', "%$nome%");
             }
+    
+            $setor = $request->nome_setor;
+            if ($setor) {
+                $grupo->where('st.nome', 'ilike', "%$setor%");
+            }
+    
+            $grupo = $grupo->orderBy('g.status_grupo', 'ASC')
+                ->orderBy('g.nome', 'ASC')
+                ->paginate(50);
+    
+            // Carregar a lista de setores para o Select2
+            $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
+    
+            return view('grupos.gerenciar-grupos', compact('grupo', 'setores'));
+        } catch (\Exception $e) {
+            $code = $e->getCode();
+            return view('gerenciar-grupos.erro-inesperado', compact('code'));
         }
+    }
+    
+
+  
 
 
 
@@ -175,6 +177,7 @@ class GrupoController extends Controller
         $tipo_status_grupo = DB::table('tipo_status_grupo')->select('descricao as descricao1', 'id')->get();
         $tipo_motivo = DB::table('tipo_motivo')->get();
         $setor = DB::table('setor')->get();
+
 
 
         return view('grupos/editar-grupos', compact('setor', 'grupo', 'tipo_grupo', 'tipo_status_grupo', 'tipo_motivo'));

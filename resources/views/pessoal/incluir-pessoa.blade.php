@@ -20,6 +20,8 @@
                             <div class="col">
                                 <div class="mb-4" style="text-align:left;">
                                     <label for="validationCustom01" class="form-label">Nome</label>
+                                    <span style="color:red" data-tt="tooltip" data-placement="top"
+                                        title="Obrigatório">*</span></label>
                                     <input class="form-control" type="text" maxlength="45" oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="" name="nome" value="{{old('nome')}}" required="required">                       
                                 </div>
                             </div>
@@ -29,12 +31,16 @@
                             <div class="col">
                                 <div class="mb-4" style="text-align:left;">
                                     <label for="validationCustom02" class="form-label">CPF</label>
+                                    <span style="color:red" data-tt="tooltip" data-placement="top"
+                                        title="Obrigatório">*</span></label>
                                     <input class="form-control" type="numeric" maxlength="11" placeholder="888.888.888-88"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" value="{{old('cpf')}}" id="" name="cpf" required="required" >
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="mb-4" style="text-align:left;">
                                     <label for="validationCustom04" class="form-label">Sexo</label>
+                                    <span style="color:red" data-tt="tooltip" data-placement="top"
+                                        title="Obrigatório">*</span></label>
                                     <select class="form-select" id="" name="sex" required="required">
                                         <option value=""></option>
                                         @foreach($sexo as $sexos)
@@ -49,6 +55,8 @@
                             <div class="col">
                                 <div class="mb-4" style="text-align:left;">
                                     <label for="validationCustom03" class="form-label">Data Nascimento</label>
+                                    <span style="color:red" data-tt="tooltip" data-placement="top"
+                                        title="Obrigatório">*</span></label>
                                     <input class="form-control" type="date" id="" name="dt_na" value="{{old('dt_na')}}" required="required" >
                                 </div>
                             </div>

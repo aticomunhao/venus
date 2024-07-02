@@ -53,7 +53,7 @@
                 <thead>
                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                         <th>ID</th>
-                        <th>NOME</th>
+                        <th>NOME DO MÉDIUM</th>
                         <th>FUNÇÃO</th>
                         <th>STATUS PESSOA</th>
                         <th>AÇÕES</th>

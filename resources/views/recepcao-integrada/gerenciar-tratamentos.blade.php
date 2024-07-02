@@ -23,7 +23,7 @@
                     <form action="{{ route('gtcdex') }}" class="form-horizontal mt-4" method="GET">
                         <div class="row">
 
-                            <div class ="col-2">Data início
+                            <div class ="col-1">Data início
                                 <input class="form-control pesquisa" type="date" id="dt_enc" name="dt_enc"
                                     value="{{ $data_enc }}">
                             </div>
@@ -38,12 +38,12 @@
                                 </select>
                             </div>
 
-                            <div class="col">Assistido
+                            <div class="col-3">Assistido
                                 <input class="form-control pesquisa" type="text" id="3" name="assist"
                                     value="{{ $assistido }}">
                             </div>
 
-                            <div class="col-1">Status
+                            <div class="col-2">Status
                                 <select class="form-select teste1" id="4" name="status" type="number">
 
                                     @foreach ($stat as $status)
@@ -69,12 +69,13 @@
                                         @if(in_array(17,session()->get('usuario.acesso')))
 
                                         <a href="/job"><input class="btn btn-light btn-sm me-md-2"
-                                                style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
+                                                style="box-shadow: 1px 1px 3px #000000; margin:5px;" type="button"
                                                 value="Job"></a>
                                         @endif
 
-                                <a href="/incluir-avulso"><input class="btn btn-danger btn-sm me-md-2" type="button"
-                                        value="Atendimento de emergência"></a>
+                                        <a href="/incluir-avulso" class="btn btn-danger btn-sm"
+                                        style="box-shadow: 1px 2px 5px #000000; margin:5px;">Atendimento de Emergência</a>
+
 
                                         <a href="/gerenciar-encaminhamentos" class="btn btn-warning btn-sm"
                                         style="box-shadow: 1px 2px 5px #000000; margin:5px;">Encaminhamentos</a>

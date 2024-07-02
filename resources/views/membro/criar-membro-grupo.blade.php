@@ -22,7 +22,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="id_associado" class="form-label">Nome</label>
+                                <label for="id_associado" class="form-label">Nome do médium</label>
                                 <select class="form-select select2" aria-label=".form-select-lg example" name="id_associado">
                                     @foreach ($associado as $associados)
                                         <option value="{{ $associados->id}}">{{ $associados->nome_completo}}</option>
