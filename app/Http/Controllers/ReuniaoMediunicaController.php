@@ -351,7 +351,7 @@ class ReuniaoMediunicaController extends Controller
 
             DB::table('cronograma AS rm')->where('id', $id)->update([
                 'id_grupo' => $request->input('grupo'),
-                'id_sala' => $request->input('numero_sala'),
+                'id_sala' => $request->input('id_sala'),
                 'h_inicio' => $request->input('h_inicio'),
                 'h_fim' => $request->input('h_fim'),
                 'max_atend' => $request->input('max_atend'),

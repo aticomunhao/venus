@@ -60,7 +60,7 @@
                                     </select>
                                 </div>
                                 <div class="col">Número
-                                    <input type="text" class="form-control" id="numero" maxlength="4"
+                                    <input type="text" class="form-control" id="numero" maxlength="10"
                                         name="numero">
                                       
                                 </div>
