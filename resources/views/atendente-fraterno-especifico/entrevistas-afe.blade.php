@@ -35,7 +35,7 @@
                             <br>
                             <div class="form-check form-check-inline">
                                 <input type="checkbox" id="ame" name="ame" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                                <label for="ame" class="form-check-label">Asessoria da Medicina Espiritual - AME</label>
+                                <label for="ame" class="form-check-label">Assessoria da Medicina Espiritual - AME</label>
                             </div>
                             <br>
                             <br>
