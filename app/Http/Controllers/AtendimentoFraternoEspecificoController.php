@@ -22,7 +22,7 @@ class AtendimentoFraternoEspecificoController extends Controller
     public function index(Request $request)
     {
 
-      //  try{
+       try{
 
         $atendente = session()->get('usuario.id_associado');
 
@@ -66,12 +66,12 @@ class AtendimentoFraternoEspecificoController extends Controller
         return view('/atendente-fraterno-especifico/atendendo-afe', compact('assistido', 'atendente', 'now', 'nome', 'grupo','afe'));
     }
 
-    // catch(\Exception $e){
+    catch(\Exception $e){
 
-    //     $code = $e->getCode( );
-    //     return view('tratamento-erro.erro-inesperado', compact('code'));
-    //         }
-    //     }
+        $code = $e->getCode( );
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+            }
+        }
     public function atende_agora()
     {
 
@@ -624,7 +624,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
     public function enc_entre(Request $request, $idat)
     {
-   //     try{
+       try{
 
         $now = Carbon::now();
         $existeEncaminhamento = DB::table('encaminhamento')->where('id_atendimento', $idat)->first();
@@ -758,13 +758,13 @@ class AtendimentoFraternoEspecificoController extends Controller
         return Redirect('/atendendo-afe');
     }
 
-    // catch(\Exception $e){
+    catch(\Exception $e){
 
-    //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
-    //     DB::rollBack();
-    // return redirect()->back();
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
+        DB::rollBack();
+    return redirect()->back();
 
-    // } }
+    } }
     public function finaliza($idat)
     {
         try{
