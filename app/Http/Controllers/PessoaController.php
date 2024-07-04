@@ -78,9 +78,13 @@ class PessoaController extends Controller
         }
     }
 
-    public function store()
+    public function store(Request $request)
     {
         try {
+
+            if($request->nova == 1){
+                app('flasher')->addWarning('É necessário incluir esta pessoa!');
+            }
             $ddd = DB::select('select id, descricao from tp_ddd');
 
             $sexo = DB::select('select id, tipo from tp_sexo');

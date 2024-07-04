@@ -1,179 +1,325 @@
 @extends('layouts.app')
 
-@section('head')
-
-<title>Cadastrar Atendimento</title>
-
+@section('title')
+    Incluir Atendimento
 @endsection
 
 @section('content')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<link href="/node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <div class="container">
 
-
-<br>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-12">
-            <div class="card">
+        {{-- Card de assistidos --}}
+        <br />
+        <div class="card">
             <div class="card-header">
-                    <div class="row justify-content-between">
-                        <div class="col">
-                            INCLUIR ATENDIMENTO
+                Incluir Atendimento
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span>
+                            Buscar CPF
+                            <span class="tooltips">
+                                <span class="tooltiptext">Obrigatório</span>
+                                <span style="color:red">*</span>
+                            </span>
+                        </span>
+                        <div class="input-group mt-1">
+                            <input type="text" class="form-control " placeholder="12345678900"
+                                aria-label="Recipient's username" aria-describedby="button-addon2" id="cpfAssistido"
+                                maxlength="11">
+                            <button class="btn btn-outline-primary" type="button" id="bCpfAssistido">
+                                Buscar <i class="bi bi-search"></i>
+                            </button>
                         </div>
-                        <div class="col-2">
-                            <a href="/gerenciar-pessoas" class="btn btn-warning btn-sm w-100"
-                            style="box-shadow: 1px 2px 5px #000000; margin:5px;">Nova Pessoa</a>
-                        </div>
+                        <label id="labelNumeroCpfAssistido" style="font-size: 14px; color:red" hidden>
+                            *Número insuficiente de caracteres.
+                        </label>
+                        <label id="labelCpfAssistido" style="font-size: 14px; color:red" hidden>
+                            *CPF inválido.
+                        </label>
                     </div>
                 </div>
-                <div class="card-body">
-                    <form class="form-horizontal mt-4" method="post" action="/novo-atendimento">
+                <div class="row">
+
+                    <form class="form-horizontal mt-3" method="post" action="/novo-atendimento">
                         @csrf
 
-
-                    <div class="input-group row">
-                        <div class="col-3">Tipo Prioridade
-                            <select class="form-select" id="" name="priori" required="required">
-                                <option value=""></option>
-                                @foreach($priori as $prioris)
-                                <option value="{{$prioris->prid}}">{{$prioris->prdesc}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col">Atendido
-
-                            <select class="form-select lista" id="" name="assist" required="required">
-                                <option value=""></option>
-                                @foreach($lista as $listas)
-                                <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
-                                @endforeach
-                            </select>
-
-                        </div>
-
-
-                        <div class="col-1">Menor de 18 anos
-                            <label for="menor" class="form-check-label"></label>
-                            <input id="menor" type="checkbox" name="menor" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                        </div>
-
-                    </div>
-                    <br>
-                    <div class="form-group row">
-                    <div class="col">Representante/Responsável
-                            <select class="form-select lista" id="" name="repres" >
-                                <option value=""></option>
-                                @foreach($lista as $listas)
-                                <option value="{{$listas->pid}}">{{$listas->nome_completo}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col">Parentesco
-                            <select class="form-select" id="" name="parent" >
-                                <option value=""></option>
-                                @foreach($parentes as $parentess)
-                                <option value="{{$parentess->id}}">{{$parentess->nome}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col">Tipo AFI
-                            <select class="form-select" id="tipo_afi" name="tipo_afi" >
-                                <option value=""></option>
-                                @foreach($sexo as $sexos)
-                                <option value="{{$sexos->id}}">{{$sexos->tipo}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-1">Ped especial
-                            <label for="especial" class="form-check-label"></label>
-                            <input id="especial" type="checkbox" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" >
-
-                        </div>
-                        <div class="col" id="hiddenField" style="display: none;">AFI preferido
-                            <select class="form-select" id="afi_p" name="afi_p" >
-                                <option value=""></option>
-                                @foreach($afi as $afis)
-                                <option value="{{$afis->ida}}">{{$afis->nm_1}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <br>
-                </div>
-                <center>
-                <div class="row col-10">
-                            <div class="d-grid gap-1 col mx-auto">
-                                <a class="btn btn-danger" href="/gerenciar-atendimentos" role="button">Cancelar</a>
+                        <div class="input-group row">
+                            <div class="col-3">Tipo Prioridade
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
+                                <select class="form-select" id="" name="priori" required="required">
+                                    @foreach ($priori as $prioris)
+                                        <option value="{{ $prioris->prid }}">{{ $prioris->prdesc }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-
-                            <div class="d-grid gap-2 col mx-auto" >
-                                <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>
+                            <div class="col">Atendido
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
+                                <select class="form-control" id="assist" name="assist" required="required">
+                                </select>
                             </div>
-                            </form>
-
                         </div>
-                    </center>
-                    <br>
+                        <center>
+                        <div class="row mt-3">
+
+
+                                    <div class="col">
+                                            <div class="col">Menor de 18 anos</div>
+                                            <div class="col-1"><input id="menor" type="checkbox" name="menor" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não"></div>
+                                    </div>
+                                    <div class="col">
+                                            <div class="col">Representante</div>
+                                            <div class="col-1"><input id="representante" class="checkboxes" type="checkbox" name="representante" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não"></div>
+                                    </div>
+                                    <div class="col">
+                                            <div class="col">Pedido Especial</div>
+                                            <div class="col-1"><input id="pEspecial" class="checkboxes" type="checkbox" name="pEspecial" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não"></div>
+                                    </div>
+
+
+                                </div>
+                            </center>
+                            </div>
             </div>
         </div>
+{{-- Fim do card de Assistido --}}
+
+{{-- Card Representante --}}
+<div class="card mt-4" id="represent" hidden>
+
+            <div class="card-header">
+                Incluir Representante/Responsável
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span>
+                            Buscar CPF
+                        </span>
+                        <div class="input-group mt-1">
+                            <input type="text" class="form-control " placeholder="12345678900"
+                                aria-label="Recipient's username" aria-describedby="button-addon2" id="cpfResponsavel"
+                                maxlength="11">
+                            <button class="btn btn-outline-primary" type="button" id="bCpfResponsavel">
+                                Buscar <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                        <label id="labelNumeroCpfResponsavel" style="font-size: 14px; color:red" hidden>
+                            *Número insuficiente de caracteres.
+                        </label>
+                        <label id="labelCpfResponsavel" style="font-size: 14px; color:red" hidden>
+                            *CPF inválido.
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                        <div class="input-group row mt-3">
+                            <div class="col-3">Parentesco
+                                <select class="form-select" id="parent" name="parent">
+                                    @foreach($parentes as $parentess)
+                                    <option value="{{$parentess->id}}">{{$parentess->nome}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col">Representante/Responsável
+                                <select class="form-select lista" id="repres" name="repres">
+                                </select>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+{{-- Fim card Representante --}}
+
+{{-- Card Pedido Especial --}}
+        <div class="card mt-4"  id="pedidoEspecial" hidden>
+            <div class="card-header">
+                Incluir Pedido Especial
+            </div>
+            <div class="card-body">
+                <div class="row">
+
+
+                    <div class="col">Tipo AFI
+                        <select class="form-select pedido" id="tipo_afi" name="tipo_afi" >
+                            <option></option>
+                            @foreach($sexo as $sexos)
+                            <option value="{{$sexos->id}}">{{$sexos->tipo}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col" id="hiddenField" >AFI preferido
+                        <select class="form-select pedido" id="afi_p" name="afi_p" >
+                            <option></option>
+                            @foreach($afi as $afis)
+                            <option value="{{$afis->ida}}">{{$afis->nm_1}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+
+                        </div>
+                </div>
+        </div>
+{{-- Fim Card Pedido Especial --}}
+
+
+
+        <center>
+            <br>
+            <div class="row col-10">
+                <div class="d-grid gap-1 col mx-auto">
+                    <a class="btn btn-danger" href="/gerenciar-atendimentos" role="button">Cancelar</a>
+                </div>
+
+                <div class="d-grid gap-2 col mx-auto">
+                    <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>
+                </div>
+                </form>
+
+            </div>
+        </center>
     </div>
-</div>
 
-<script>
-       jQuery(document).ready(function () {
-            jQuery('#especial').change(function () {
-                if ($(this).prop('checked')) {
-                    $('#hiddenField').show();
+
+
+
+
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
+    <script>
+        $(document).ready(function() {
+
+            $('#assist').prop('selectedIndex', -1)
+            $('#repres').prop('selectedIndex', -1)
+            $('#parent').prop('selectedIndex', -1)
+
+            function pageRedirect() {
+                window.location.replace("/dados-pessoa?nova=1");
+            }
+
+            function ajaxAssistido() {
+                cpf = $('#cpfAssistido').val()
+                $('#cpfAssistido').removeClass('is-invalid')
+                $('#labelNumeroCpfAssistido').prop('hidden', true)
+                $('#labelCpfAssistido').prop('hidden', true)
+                $('#assist').prop('selectedIndex', -1)
+                if (cpf.length < 11) {
+                    $('#cpfAssistido').addClass('is-invalid')
+                    $('#labelNumeroCpfAssistido').prop('hidden', false)
                 } else {
-                    $('#hiddenField').hide();
+                    $.ajax({
+                        type: "GET",
+                        url: "/ajaxCRUD?cpf=" + cpf,
+                        dataType: "json",
+                        success: function(response) {
+
+                            $('#assist').append([
+                                '<option value="' + response.id + '">' +
+                                response.nome_completo +
+                                '</option>'
+                            ])
+                        },
+                        error: function(xhr) {
+                            if (xhr.responseText.length == 0) {
+                                pageRedirect()
+                            } else {
+                                $('#cpfAssistido').addClass('is-invalid')
+                                $('#labelCpfAssistido').prop('hidden', false)
+                            }
+                        }
+                    });
                 }
-            });
-        });
-</script>
+            }
 
-<script>
-    jQuery(document).ready(function() {
-        jQuery('.lista').select2({
+            function ajaxResponsavel() {
+                cpf = $('#cpfResponsavel').val()
+                $('#cpfResponsavel').removeClass('is-invalid')
+                $('#labelNumeroCpfResponsavel').prop('hidden', true)
+                $('#labelCpfResponsavel').prop('hidden', true)
+                $('#repres').prop('selectedIndex', -1)
+                $('#parent').prop('selectedIndex', -1)
+                if (cpf.length < 11) {
+                    $('#cpfResponsavel').addClass('is-invalid')
+                    $('#labelNumeroCpfResponsavel').prop('hidden', false)
+                } else {
+                    $.ajax({
+                        type: "GET",
+                        url: "/ajaxCRUD?cpf=" + cpf,
+                        dataType: "json",
+                        success: function(response) {
 
-            theme: 'bootstrap-5'
-        });
-    });
-</script>
-
-
-<script>
-    const campo1 = document.getElementById('afi_p');
-    const campo2 = document.getElementById('tipo_afi');
-
-    // Adiciona um ouvinte de eventos para o campo1
-    afi_p.addEventListener('input', function() {
-      // Se campo1 estiver preenchido, desabilita o campo2
-      if (afi_p.value.trim() !== '') {
-        tipo_afi.disabled = true;
-      } else {
-        tipo_afi.disabled = false;
-      }
-    });
-
-    // Adiciona um ouvinte de eventos para o campo2
-    tipo_afi.addEventListener('input', function() {
-      // Se campo2 estiver preenchido, desabilita o campo1
-      if (tipo_afi.value.trim() !== '') {
-        afi_p.disabled = true;
-      } else {
-        afi_p.disabled = false;
-      }
-    });
-  </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
-
-@endsection
-
-@section('footerScript')
+                            $('#repres').append([
+                                '<option value="' + response.id + '">' +
+                                response.nome_completo +
+                                '</option>'
+                            ])
+                        },
+                        error: function(xhr) {
+                            if (xhr.responseText.length == 0) {
+                                pageRedirect()
+                            } else {
+                                $('#cpfResponsavel').addClass('is-invalid')
+                                $('#labelCpfResponsavel').prop('hidden', false)
+                            }
+                        }
+                    });
+                }
+            }
 
 
+
+
+            $('#bCpfAssistido').click(function() {
+                ajaxAssistido();
+            })
+            $('#bCpfResponsavel').click(function() {
+                ajaxResponsavel();
+            })
+
+            $('.checkboxes').change(function(){
+                if($('#representante').prop('checked')){
+                    $('#represent').prop('hidden', false)
+                }else{
+                    $('#represent').prop('hidden', true)
+                }
+                if($('#pEspecial').prop('checked')){
+                    $('#pedidoEspecial').prop('hidden', false)
+                }else{
+                    $('#pedidoEspecial').prop('hidden', true)
+                }
+            })
+
+
+
+
+
+            $('.pedido').change(function(){
+                if($('#tipo_afi').prop('selectedIndex') != 0){
+                    $('#afi_p').prop('disabled', true)
+                    $('#afi_p').prop('selectedIndex', 0)
+                }
+                else{
+                    $('#afi_p').prop('disabled', false)
+                }
+
+                if($('#afi_p').prop('selectedIndex') != 0){
+                    $('#tipo_afi').prop('disabled', true)
+                    $('#tipo_afi').prop('selectedIndex', 0)
+                }
+                else{
+                    $('#tipo_afi').prop('disabled', false)
+                }
+            })
+
+        })
+    </script>
 @endsection

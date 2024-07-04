@@ -14,7 +14,7 @@ class GerenciarAtendimentoController extends Controller
     ////GERENCIAR ATENDIMENTOS DO DIA
 
 
-    public function ajaxTeste(String $assist, String $cpf, String $status, String $dt_ini){
+    public function ajaxAtendimento(String $assist, String $cpf, String $status, String $dt_ini){
 
 
         $lista = DB::table('atendimentos AS at')->select('at.id as ida', 'p1.id as idas', 'p.nome_completo as nm_3', 'at.status_atendimento', 'at.id_prioridade', 'at.dh_chegada', 'tx.tipo', 'tp.descricao as prdesc', 'p1.nome_completo as nm_1', 'p2.nome_completo as nm_2', 'p3.nome_completo as nm_4', 'sl.numero as nr_sala', 'ts.descricao', DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe"))->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')->leftJoin('pessoas as p3', 'ass1.id_pessoa', 'p3.id')->leftJoin('tp_sexo as tx', 'at.pref_tipo_atendente', 'tx.id')->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')->leftJoin('salas as sl', 'at.id_sala', 'sl.id')->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
@@ -121,6 +121,8 @@ class GerenciarAtendimentoController extends Controller
         from tipo_status_atendimento s
         ");
 
+        session()->flash('message', 'Post successfully updated.');
+
             return view('/recepcao-AFI/gerenciar-atendimentos', compact('cpf', 'lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'situacao', 'now'));
         } catch (\Exception $e) {
             $code = $e->getCode();
@@ -130,8 +132,33 @@ class GerenciarAtendimentoController extends Controller
 
     ///CRIAR UM NOVO ATENDIMENTO
 
+    public function ajaxCRUD(Request $request) {
+
+
+
+     try {
+        $validated = $request->validate([
+            'cpf' => 'required|cpf',
+        ]);
+
+        $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->where('cpf', $validated)->first();
+        return $pessoas;
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+
+        return $e;
+
+    }
+
+
+
+    }
+
     public function create()
     {
+
+
+
         try {
             $hoje = Carbon::today();
             $lista = DB::select("select
@@ -151,7 +178,7 @@ class GerenciarAtendimentoController extends Controller
         pr.descricao as prdesc,
         pr.sigla as prsigla
         from tipo_prioridade pr
-        order by prid
+        order by prid DESC
         ");
 
             $afi = DB::table('atendente_dia as at')->leftJoin('associado as a', 'at.id_associado', '=', 'a.id')->leftJoin('pessoas as p', 'a.id_pessoa', '=', 'p.id')->leftJoin('membro as m', 'm.id', '=', 'a.id')->whereNull('at.dh_fim')->where('at.dh_inicio', '>', $hoje)->select('m.id_associado', 'p.id as idp', 'p.nome_completo as nm_1', 'p.ddd', 'p.celular', 'm.id_associado as ida')->get();
@@ -167,6 +194,7 @@ class GerenciarAtendimentoController extends Controller
         id,
         nome
         from tp_parentesco
+        order by nome
         ");
 
             return view('/recepcao-AFI/incluir-atendimento', compact('afi', 'priori', 'sexo', 'parentes', 'lista'));
@@ -179,6 +207,8 @@ class GerenciarAtendimentoController extends Controller
     public function store(Request $request)
     {
         try {
+
+            dd($request->all());
             $usuario = session()->get('usuario.id_pessoa');
 
             $now = Carbon::now();

@@ -50,16 +50,18 @@
         }
     </style>
 
+
 </head>
 
 <body>
 
-    @include('layouts/sidebar')
+        @include('layouts/sidebar')
 
-    @yield('content')
+        @yield('content')
 
-    <!-- footerScript -->
-    @yield('footerScript')
+        <!-- footerScript -->
+        @yield('footerScript')
+
 
     <!-- App js-->
 

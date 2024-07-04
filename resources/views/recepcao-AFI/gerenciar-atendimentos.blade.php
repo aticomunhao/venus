@@ -215,9 +215,6 @@
 
 
 
-
-
-
         </div>
 
         <hr>
@@ -255,6 +252,9 @@
 
     <script>
         $(document).ready(function() {
+
+
+
             let atendimentos = @json($lista);
             var intervalPesq = 0
 
@@ -303,6 +303,7 @@
 
             function tabelas() {
                 $('#tabelaPrincipal').html("")
+
                 $.each(atendimentos, function(){
 
                    const date = Date.parse(this.dh_chegada);
@@ -455,6 +456,8 @@
 
 
             })
+
+
 
            var intervalId = window.setInterval(function(){
               [ajax(), tabelas(), colunas(), stopPesquisa()]
