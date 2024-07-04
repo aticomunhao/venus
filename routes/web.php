@@ -146,7 +146,7 @@ Route::middleware('rotas:7')->group(function () {
     Route::get('/temas-afe/{idat}', [AtendimentoFraternoEspecificoController::class, 'pre_tema'])->name('');
     Route::post('/tematicas-afe/{idat}', [AtendimentoFraternoEspecificoController::class, 'tematica'])->name('');
     Route::get('/atender-afe', [AtendimentoFraternoEspecificoController::class, 'atende_agora'])->name('Atender-afe');
-    Route::get('/final-afe/{idat}', [AtendimentoFraternoEspecificoController::class, 'final'])->name('');
+    Route::any('/final-afe/{idat}', [AtendimentoFraternoEspecificoController::class, 'final'])->name('');
     Route::post('/finalizar-afe/{idat}', [AtendimentoFraternoEspecificoController::class, 'finaliza'])->name('');
     Route::any('/reset/{idat}', [AtendimentoFraternoEspecificoController::class, 'reset'])->name('');
 });

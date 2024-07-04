@@ -67,7 +67,7 @@ class SalaController extends Controller
     {
         // try{
         $salas = db::select('select * from salas');
-        $tipo_finalidade_sala = db::select('select * from tipo_finalidade_sala');
+        $tipo_finalidade_sala = db::select('select * from tipo_finalidade_sala ORDER BY descricao ASC');
         $tipo_motivo = db::select('select * from tipo_motivo');
 
         $tipo_localizacao = DB::table('tipo_localizacao as tl')

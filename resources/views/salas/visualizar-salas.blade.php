@@ -65,19 +65,19 @@
                                     <div class="col">
                                         <br>
                                         <label for="numero" class="form-label">Número</label>
-                                        <input type="text" id="numero" value="{{ $salaEditada->numero }}" class="form-control" placeholder="Número" disabled>
+                                        <input type="text" id="numero" value="{{ $salaEditada->numero }}" class="form-control"  disabled>
                                     </div>
 
                                     <div class="col">
                                         <br>
                                         <label for="tamanho_sala" class="form-label">M² da Sala</label>
-                                        <input type="number" id="tamanho_sala" value="{{ $salaEditada->tamanho_sala }}" class="form-control" placeholder="M² da Sala" disabled>
+                                        <input type="number" id="tamanho_sala" value="{{ $salaEditada->tamanho_sala }}" class="form-control"  disabled>
                                     </div>
 
                                     <div class="col">
                                         <br>
                                         <label for="nr_lugares" class="form-label">Número de Lugares</label>
-                                        <input type="number" id="nr_lugares" value="{{ $salaEditada->nr_lugares }}" class="form-control" placeholder="Número de Lugares" disabled>
+                                        <input type="number" id="nr_lugares" value="{{ $salaEditada->nr_lugares }}" class="form-control"  disabled>
                                     </div>
                                 </div>
                             </div>

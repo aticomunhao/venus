@@ -328,6 +328,10 @@ class GerenciarEncaminhamentoIntegralController extends Controller
                 ->where(function ($query) use ($hoje) {
                     $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                 })
+                ->where(function($query){
+                    $query->where('reu.modificador', NULL);
+                    $query->orWhere('reu.modificador', '<>', 4);
+                })
                 ->where('reu.dia_semana', $dia)
                 ->where('reu.id_tipo_tratamento', $tp_trat)
                 ->orWhere('tr.status', null)

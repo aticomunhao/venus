@@ -64,7 +64,7 @@
                                 </select>
                             </div>
                             <div class="col">Número
-                                <input type="text" class="form-control" id="numero" maxlength="4" name="numero" value={{$salaEditada->numero}} required="required">
+                                <input type="text" class="form-control" id="numero" maxlength="4" name="numero" value={{$salaEditada->numero}} >
                              
                             </div>
                             <div class="col">M² da sala
