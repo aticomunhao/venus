@@ -47,7 +47,7 @@
                         <td>{{ $perfil->descricao }}</td>
                         <td>
                             <a href="/editar-perfis/{{ $perfil->id }}" type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar">
-                                <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                                <i class="bi bi-pencil"style="font-size: 1rem; color:#000;"></i>
                             </a>
                             <a href="/visualizar-perfis/{{ $perfil->id }}" type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">
                                 <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>

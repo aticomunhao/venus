@@ -50,7 +50,7 @@
                             <td>{{ $mediunidades->status ? 'Ativo' : 'Inativo' }}</td>
                             <td>
                                 <a href="/editar-mediunidade/{{ $mediunidades->idp }}" class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" title="Editar">
-                                    <i class="bi bi-pen" style="font-size: 1rem; color: #000;"></i>
+                                    <i class="bi bi-pencil" style="font-size: 1rem; color: #000;"></i>
                                 </a>
                                 <a href="/visualizar-mediunidade/{{ $mediunidades->idp }}" class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Visualizar">
                                     <i class="bi bi-search" style="font-size: 1rem; color: #000;"></i>

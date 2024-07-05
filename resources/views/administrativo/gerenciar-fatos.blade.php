@@ -44,7 +44,7 @@
                     <td>{{ $listas->descricao }}</td>
                     <td>
                         <a href="/editar-fatos/{{ $listas->id }}" type="button" class="btn btn-outline-warning btn-sm"  data-tt="tooltip" data-placement="top" title="Editar">
-                            <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                            <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                         </a>
 
                         <a href="/deletar-fatos" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao" onclick="confirmarExclusao('{{ $listas->id }}')" data-tt="tooltip" data-placement="top" title="Cancelar">

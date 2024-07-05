@@ -46,13 +46,13 @@
                     <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                         <thead style="text-align: center;">
                             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                                <th class="col">Nr</th>
-                                <th class="col">NOME</th>
-                                <th class="col">TIPO ENTREVISTA</th>
-                                <th class="col">ENTREVISTADOR</th>
-                                <th class="col">SALA</th>
+                                {{-- <th class="col">Nr</th> --}}
+                                <th class="col">DATA E HORÁRIO</th>
                                 <th class="col">PRIORIDADE</th>
-                                <th class="col">HORÁRIO</th>
+                                <th class="col">NOME</th>
+                                <th class="col">ENTREVISTADOR</th>
+                                <th class="col">TIPO ENTREVISTA</th>
+                                <th class="col">SALA</th>
                                 <th class="col">STATUS</th>
                                 <th class="col">AÇÕES</th>
                             </tr>
@@ -60,13 +60,13 @@
                         <tbody style="font-size: 14px; color:#000000; text-align: center;">
                             @foreach ($informacoes as $informacao)
                                 <tr>
-                                    <td>{{ $informacao->ide }}</td>{{-- Traz o ID do encaminhamento --}}
-                                    <td>{{ $informacao->nome_pessoa }}</td>{{-- Traz o nome do encaminhado --}}
-                                    <td>{{ $informacao->entrevista_sigla }}</td>
-                                    <td>{{ $informacao->nome_entrevistador }}</td>{{-- Quando existente, traz o nome do entrevistador --}}
-                                    <td>{{ $informacao->numero }}</td>{{-- Sala que foi agendada a entrevista --}}
-                                    <td>{{ $informacao->emergencia }}</td>{{-- Prioridade do atendimento --}}
+                                    {{-- <td>{{ $informacao->ide }}</td>Traz o ID do encaminhamento --}}
                                     <td>{{ date('d/m/Y  G:i', strtotime($informacao->inicio)) }}</td>{{-- Prioridade do atendimento --}}
+                                    <td>{{ $informacao->emergencia }}</td>{{-- Prioridade do atendimento --}}
+                                    <td>{{ $informacao->nome_pessoa }}</td>{{-- Traz o nome do encaminhado --}}
+                                    <td>{{ $informacao->nome_entrevistador }}</td>{{-- Quando existente, traz o nome do entrevistador --}}
+                                    <td>{{ $informacao->entrevista_sigla }}</td>
+                                    <td>{{ $informacao->numero }}</td>{{-- Sala que foi agendada a entrevista --}}
                                     <td>
                                         @if ($informacao->status === 1)
                                             Aguardando agendamento
@@ -79,13 +79,13 @@
                                         @if ($informacao->status == 1 or $informacao->status == 6 or $informacao->status == 5)
                                             <a href="#" type="button" class="btn btn-outline-warning btn-sm disabled"
                                                 data-tt="tooltip" data-placement="top" title="Editar" disabled>
-                                                <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                                                <i class="bi bi-pencil"style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @else
                                             <a href="/editar-entrevista/{{ $informacao->ide }}" type="button"
                                                 class="btn btn-outline-warning btn-sm" data-tt="tooltip"
                                                 data-placement="top" title="Editar">
-                                                <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                                                <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @endif{{-- Fim botao editar --}}
 

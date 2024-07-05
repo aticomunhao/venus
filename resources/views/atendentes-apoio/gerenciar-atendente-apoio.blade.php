@@ -63,7 +63,7 @@
 
                             <a href="/editar-atendentes-apoio/{{ $atendentes->id }}" type="button"
                                 class="btn btn-outline-warning btn-sm"  data-tt="tooltip" data-placement="top" title="Editar">
-                                <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                                <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                             </a>
 
                             <a href="/visualizar-atendentes-apoio/{{ $atendentes->id }}" type="button"

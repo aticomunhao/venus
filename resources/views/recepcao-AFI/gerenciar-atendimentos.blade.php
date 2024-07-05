@@ -347,7 +347,7 @@
                                        '<a href="/editar-atendimento/' + ida + '" class="tooltips">' +
                                         '<span class="tooltiptext">Editar</span>'+
                                            '<button type="button" class="btn btn-outline-warning btn-sm">' +
-                                               '<i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>' +
+                                               '<i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>' +
                                            '</button>' +
                                        '</a>'+
 
@@ -397,7 +397,7 @@
                                        '<a href="/editar-atendimento/' + ida + '" class="tooltips">' +
                                         '<span class="tooltiptext">Editar</span>'+
                                            '<button type="button" class="btn btn-outline-warning btn-sm" >' +
-                                               '<i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>' +
+                                               '<i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>' +
                                            '</button>' +
                                        '</a>'+
 
