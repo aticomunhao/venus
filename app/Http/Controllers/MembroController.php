@@ -18,9 +18,9 @@ class MembroController extends Controller
 
         $cronogramasLogin = DB::table('membro AS m')->leftJoin('associado', 'associado.id', '=', 'm.id_associado')->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id');
 
-        if (!in_array(1, session()->get('usuario.perfis'))) {
-            $cronogramasLogin = $cronogramasLogin->where('id_associado', session()->get('usuario.id_associado'));
-        }
+        // if (!in_array(1, session()->get('usuario.perfis'))) {
+        //     $cronogramasLogin = $cronogramasLogin->where('id_associado', session()->get('usuario.id_associado'));
+        // }
         $cronogramasLogin = $cronogramasLogin->pluck('m.id_cronograma');
 
         $cronogramasLogin = json_decode(json_encode($cronogramasLogin), true);
