@@ -21,7 +21,7 @@
                                     <span class="tooltiptext">Obrigatório</span>
                                     <span style="color:red">*</span>
                                 </span>
-                                <input type="text" class="form-control" id="nome" name="nome" maxlength="30"
+                                <input type="text" class="form-control" id="nome" name="nome" maxlength="40"
                                     required="required" value="{{ $perfil->descricao }}">
                                 <br />
                             </div>
