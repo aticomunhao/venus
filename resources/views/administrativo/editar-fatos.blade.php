@@ -13,7 +13,12 @@
                         <form class="form-horizontal mt-4" method="post" action="/atualizar-fatos/@foreach($lista as $item){{$item->id}}@endforeach">
                             @csrf
                             <div class="mb-3">
-                                <label for="descricao" class="form-label">Descrição:</label>
+                                <label for="descricao" class="form-label">Descrição:
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
+                                </label>
                                 <input type="text" name="descricao" class="form-control" id="descricao" placeholder=""
                                 value="@foreach($lista as $item){{$item->descricao}}@endforeach">
                             </div>

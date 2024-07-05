@@ -22,6 +22,10 @@
                     <div class="row">
                         <div class="col">
                     Nome
+                    <span class="tooltips">
+                        <span class="tooltiptext">Obrigatório</span>
+                        <span style="color:red">*</span>
+                    </span>
                             <select class="form-select select2" aria-label=".form-select-lg example"
                             name="id_pessoa">
                             @foreach ($pessoas as $pessoa)
@@ -117,7 +121,7 @@
     <!-- Adicione antes do fechamento da tag </body> -->
 
 
- 
+
 
 
 
@@ -128,7 +132,7 @@
             $('.select2').select2({ theme: 'bootstrap-5'});
         });
     </script>
-    
+
     <script>
         $(document).ready(function() {
             $('.data_manifestou')

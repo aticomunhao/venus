@@ -5,7 +5,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-12">
-            <div class="card">               
+            <div class="card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
@@ -20,9 +20,11 @@
                             <div class="col">
                                 <div class="mb-4" style="text-align:left;">
                                     <label for="validationCustom01" class="form-label">Nome</label>
-                                    <span style="color:red" data-tt="tooltip" data-placement="top"
-                                        title="Obrigatório">*</span></label>
-                                    <input class="form-control" type="text" maxlength="45" oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="" name="nome" value="{{old('nome')}}" required="required">                       
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
+                                    <input class="form-control" type="text" maxlength="45" oninput="this.value = this.value.replace(/[0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" id="" name="nome" value="{{old('nome')}}" required="required">
                                 </div>
                             </div>
                         </div>
@@ -31,16 +33,20 @@
                             <div class="col">
                                 <div class="mb-4" style="text-align:left;">
                                     <label for="validationCustom02" class="form-label">CPF</label>
-                                    <span style="color:red" data-tt="tooltip" data-placement="top"
-                                        title="Obrigatório">*</span></label>
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
                                     <input class="form-control" type="numeric" maxlength="11" placeholder="888.888.888-88"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" value="{{old('cpf')}}" id="" name="cpf" required="required" >
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="mb-4" style="text-align:left;">
                                     <label for="validationCustom04" class="form-label">Sexo</label>
-                                    <span style="color:red" data-tt="tooltip" data-placement="top"
-                                        title="Obrigatório">*</span></label>
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
                                     <select class="form-select" id="" name="sex" required="required">
                                         <option value=""></option>
                                         @foreach($sexo as $sexos)
@@ -55,8 +61,10 @@
                             <div class="col">
                                 <div class="mb-4" style="text-align:left;">
                                     <label for="validationCustom03" class="form-label">Data Nascimento</label>
-                                    <span style="color:red" data-tt="tooltip" data-placement="top"
-                                        title="Obrigatório">*</span></label>
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
                                     <input class="form-control" type="date" id="" name="dt_na" value="{{old('dt_na')}}" required="required" >
                                 </div>
                             </div>
@@ -79,7 +87,7 @@
                             </div>
                         </div>
                         <br>
-                           
+
                         <div class="row mt-1 justify-content-center">
                             <div class="d-grid gap-1 col-4 mx-auto">
                                 <a class="btn btn-danger" href="/gerenciar-pessoas" role="button">Cancelar</a>
@@ -88,9 +96,9 @@
                                 <button type="submit" class="btn btn-primary">Confirmar</button>
                             </div>
                         </div>
-                    </form>                               
-                   
-                </div>                    
+                    </form>
+
+                </div>
             </div>
         </div>
     </div>

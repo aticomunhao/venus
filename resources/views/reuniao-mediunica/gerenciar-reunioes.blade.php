@@ -130,7 +130,7 @@
                 </tbody>
             </table>
         </div class="d-flex justify-content-center">
-        {{ $reuniao->withQueryString()->links() }}
+        {{ $reuniao->links('pagination::bootstrap-5') }}
     </div>
     </div>
     </div>

@@ -27,6 +27,10 @@
                     <div class="row mb-5">
                         <div class="col">
                             <label for="id_entrevistador" class="form-label">Entrevistador</label>
+                            <span class="tooltips">
+                                <span class="tooltiptext">Obrigatório</span>
+                                <span style="color:red">*</span>
+                            </span>
                             <select class="form-control teste" id="id_entrevistador" name="entrevistador" {{ $entrevistas->id_entrevistador == null ? 'disabled' : '' }}>
                                  @foreach ($membros as $membro )
                                  <option value="{{ $membro->id }}" {{$membro->id == $entrevistas->id_entrevistador ? 'selected' : '' }}>{{ $membro->nome_entrevistador }}</option>
@@ -38,11 +42,19 @@
                         <div class="row mb-3">
                             <div class="col">
                                 <label for="data" class="form-label">Data</label>
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <input type="date" class="form-select" id="data" name="data"
                                     value="{{ $entrevistas->data }}">
                             </div>
                             <div class="col">
                                 <label for="hora" class="form-label">Hora</label>
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <input type="time" class="form-select" id="hora" name="hora"
                                     value="{{ $entrevistas->hora }}">
                             </div>
@@ -61,6 +73,10 @@
                                         <div class="row">
                                             <div class="col">
                                                 <label for="numero_sala" class="form-label">Número</label>
+                                                <span class="tooltips">
+                                                    <span class="tooltiptext">Obrigatório</span>
+                                                    <span style="color:red">*</span>
+                                                </span>
                                                 <select class="form-select" id="numero_sala" name="numero_sala">
                                                     <option value="{{ $entrevistas->sala_id }}">{{ $entrevistas ? $entrevistas->numero : '' }}</option>
                                                     @foreach ($salas as $sala)
@@ -108,19 +124,19 @@
     <script>
         // Obtém a data atual no formato 'YYYY-MM-DD'
         var dataAtual = new Date().toISOString().split('T')[0];
-    
+
         // Define a data mínima no campo de entrada
         document.getElementById('data').setAttribute('min', dataAtual);
     </script>
-    
+
     <script>
         // Obtém a data atual no formato 'YYYY-MM-DD'
         var dataAtual = new Date().toISOString().split('T')[0];
-    
+
         // Define a data mínima no campo de entrada
         document.getElementById('data').setAttribute('min', dataAtual);
     </script>
-    
+
     <script>
         document.getElementById('numero_sala').addEventListener('change', function() {
             var selectedOption = this.options[this.selectedIndex];

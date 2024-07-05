@@ -93,7 +93,7 @@
                                             <label for="status">Status</label>
                                             <select class="form-select pesquisa" id="status" name="status"
                                                 type="number">
-                                                <option value=""></option>
+
                                                 @foreach ($st_atend as $statusz)
                                                     <option {{ $situacao == $statusz->id ? 'selected' : '' }}
                                                         value="{{ $statusz->id }}">{{ $statusz->descricao }}</option>

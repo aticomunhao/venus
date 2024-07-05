@@ -17,25 +17,29 @@
                 <div class="row">
                     <div class="col">
                         <span>
-                            Buscar CPF
+                            Buscar Pessoa
                             <span class="tooltips">
                                 <span class="tooltiptext">Obrigatório</span>
                                 <span style="color:red">*</span>
                             </span>
                         </span>
                         <div class="input-group mt-1">
-                            <input type="text" class="form-control " placeholder="12345678900"
+                            <input type="text" class="form-control " placeholder="Nome..."
                                 aria-label="Recipient's username" aria-describedby="button-addon2" id="cpfAssistido"
-                                maxlength="11">
+                                maxlength="100">
                             <button class="btn btn-outline-primary" type="button" id="bCpfAssistido">
                                 Buscar <i class="bi bi-search"></i>
                             </button>
+                            <a href="/dados-pessoa" type="button" class="btn btn-outline-success">
+                                Inserir Nova Pessoa
+                            </a>
                         </div>
+
                         <label id="labelNumeroCpfAssistido" style="font-size: 14px; color:red" hidden>
                             *Número insuficiente de caracteres.
                         </label>
                         <label id="labelCpfAssistido" style="font-size: 14px; color:red" hidden>
-                            *CPF inválido.
+                            *Nenhuma pessoa encontrada.
                         </label>
                     </div>
                 </div>
@@ -100,22 +104,26 @@
                 <div class="row">
                     <div class="col">
                         <span>
-                            Buscar CPF
+                            Buscar Pessoa
                         </span>
                         <div class="input-group mt-1">
-                            <input type="text" class="form-control " placeholder="12345678900"
+                            <input type="text" class="form-control " placeholder="Nome..."
                                 aria-label="Recipient's username" aria-describedby="button-addon2" id="cpfResponsavel"
-                                maxlength="11">
+                                maxlength="100">
                             <button class="btn btn-outline-primary" type="button" id="bCpfResponsavel">
                                 Buscar <i class="bi bi-search"></i>
                             </button>
+                            <a href="/dados-pessoa" type="button" class="btn btn-outline-success">
+                                Inserir Nova Pessoa
+                            </a>
                         </div>
                         <label id="labelNumeroCpfResponsavel" style="font-size: 14px; color:red" hidden>
                             *Número insuficiente de caracteres.
                         </label>
                         <label id="labelCpfResponsavel" style="font-size: 14px; color:red" hidden>
-                            *CPF inválido.
+                            *Nenhuma pessoa encontrada.
                         </label>
+
                     </div>
                 </div>
                 <div class="row">
@@ -202,74 +210,91 @@
             $('#repres').prop('selectedIndex', -1)
             $('#parent').prop('selectedIndex', -1)
 
-            function pageRedirect() {
-                window.location.replace("/dados-pessoa?nova=1");
-            }
+
 
             function ajaxAssistido() {
-                cpf = $('#cpfAssistido').val()
+                nome = $('#cpfAssistido').val()
                 $('#cpfAssistido').removeClass('is-invalid')
                 $('#labelNumeroCpfAssistido').prop('hidden', true)
                 $('#labelCpfAssistido').prop('hidden', true)
+                $('#assist').html('')
                 $('#assist').prop('selectedIndex', -1)
-                if (cpf.length < 11) {
+                if (nome.length < 1) {
                     $('#cpfAssistido').addClass('is-invalid')
                     $('#labelNumeroCpfAssistido').prop('hidden', false)
                 } else {
                     $.ajax({
                         type: "GET",
-                        url: "/ajaxCRUD?cpf=" + cpf,
+                        url: "/ajaxCRUD?nome=" + nome,
                         dataType: "json",
                         success: function(response) {
-
-                            $('#assist').append([
-                                '<option value="' + response.id + '">' +
-                                response.nome_completo +
-                                '</option>'
-                            ])
-                        },
-                        error: function(xhr) {
-                            if (xhr.responseText.length == 0) {
-                                pageRedirect()
-                            } else {
+                            console.log(response)
+                            if(response.length == 0){
                                 $('#cpfAssistido').addClass('is-invalid')
                                 $('#labelCpfAssistido').prop('hidden', false)
+                            }else{
+                                $.each(response, function(){
+
+                                    $('#assist').append([
+                                    '<option value="' + this.id + '">' +
+                                    this.nome_completo +
+                                    '</option>'
+                                ])
+                                })
                             }
+
+
+                        },
+                        error: function(xhr) {
+                            console.log(xhr.responseText)
+                                $('#cpfAssistido').addClass('is-invalid')
+                                $('#labelCpfAssistido').prop('hidden', false)
+
                         }
                     });
                 }
             }
 
             function ajaxResponsavel() {
-                cpf = $('#cpfResponsavel').val()
+                nome = $('#cpfResponsavel').val()
                 $('#cpfResponsavel').removeClass('is-invalid')
                 $('#labelNumeroCpfResponsavel').prop('hidden', true)
                 $('#labelCpfResponsavel').prop('hidden', true)
+                $('#repres').html('')
                 $('#repres').prop('selectedIndex', -1)
                 $('#parent').prop('selectedIndex', -1)
-                if (cpf.length < 11) {
+                if (nome.length < 1) {
                     $('#cpfResponsavel').addClass('is-invalid')
                     $('#labelNumeroCpfResponsavel').prop('hidden', false)
                 } else {
                     $.ajax({
                         type: "GET",
-                        url: "/ajaxCRUD?cpf=" + cpf,
+                        url: "/ajaxCRUD?nome=" + nome,
                         dataType: "json",
                         success: function(response) {
 
-                            $('#repres').append([
-                                '<option value="' + response.id + '">' +
-                                response.nome_completo +
-                                '</option>'
-                            ])
-                        },
-                        error: function(xhr) {
-                            if (xhr.responseText.length == 0) {
-                                pageRedirect()
-                            } else {
+                            if(response.length == 0){
                                 $('#cpfResponsavel').addClass('is-invalid')
                                 $('#labelCpfResponsavel').prop('hidden', false)
+                            }else{
+                                $.each(response, function(){
+
+                                    $('#repres').append([
+                                    '<option value="' + this.id + '">' +
+                                    this.nome_completo +
+                                    '</option>'
+                                ])
+                                })
                             }
+
+
+
+                        },
+                        error: function(xhr) {
+
+                                $('#cpfResponsavel').addClass('is-invalid')
+                                $('#labelCpfResponsavel').prop('hidden', false)
+
                         }
                     });
                 }

@@ -17,6 +17,10 @@
                         <div class="row col-10 offset-1" style="margin-top:none">
                             <div class="col-12">
                                 Setor
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <select class="form-select select2" name="setor">
                                     @foreach ($setores as $st)
                                         <option value="{{ $st->id }}" {{ $setor->id == $st->id ? 'selected' : ''}}>{{ $st->nome }}</option>
@@ -26,6 +30,10 @@
                             </div>
                             <div class="col-12">
                                 Funcionalidades Autorizadas
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <select class="form-select select2" name="rotas[]" multiple>
                                     @foreach ($rotas as $rota)
                                         <option value="{{ $rota->id }}" id="id{{ $rota->id }}">{{ $rota->nome }}</option>

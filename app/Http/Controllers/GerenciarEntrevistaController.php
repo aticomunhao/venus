@@ -86,7 +86,9 @@ class GerenciarEntrevistaController extends Controller
                 'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
                 's.nome as local',
                 's.numero',
-                'pessoa_entrevistador.nome_completo as nome_entrevistador'
+                'pessoa_entrevistador.nome_completo as nome_entrevistador',
+                DB::raw("(CASE WHEN atendimentos.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as emergencia"),
+                'atendimentos.dh_inicio as inicio'
             );
 
 
@@ -115,7 +117,7 @@ class GerenciarEntrevistaController extends Controller
         }
 
 
-        $informacoes = $informacoes->orderBy('entrevistas.status')->orderby('atendimentos.emergencia', 'DESC')->orderBy('atendimentos.dh_fim')->get();
+        $informacoes = $informacoes->orderBy('entrevistas.status')->orderby('emergencia', 'ASC')->orderBy('atendimentos.dh_inicio')->get();
 
         // Mapear os status para a ordem desejada
         $statusOrder = [
@@ -543,9 +545,20 @@ class GerenciarEntrevistaController extends Controller
             ->where('id_encaminhamento', $id)
             ->first();
 
+        $salas = DB::table('entrevistas')->where('id_encaminhamento', $id)->where(function($query){
+            $query->where('data', NULL);
+            $query->orWhere('id_entrevistador', NULL);
+            $query->orWhere('hora', NULL);
+            $query->orWhere('id_sala', NULL);
+        })->count();
+
         if (!$entrevista) {
             return redirect()->route('gerenciamento')->with('error', 'Entrevista não encontrada!');
         }
+        if ($salas > 1) {
+            return redirect()->route('gerenciamento')->with('error', 'Entrevista com dados Insuficientes!');
+        }
+
 
 
         $dateTime = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)

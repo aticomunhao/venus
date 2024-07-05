@@ -20,10 +20,14 @@
                         <div class="row">
                             <div class="col-6">
                                 Nome
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <input type="text" maxlength="50" class="form-control" id="nome" name="nome" value="{{ $salaEditada->nome }}" required="required" oninput="validarSomenteLetras(this)">
                             </div>
 
-                           
+
 
                             <div class="col">
                                 <label for="status_sala">Status</label>
@@ -44,6 +48,10 @@
                             <div class="row mt-5">
                             <div class="col">
                                 <label for="id_localizacao">Localização</label>
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <select class="form-select" name="id_localizacao" aria-label="form-select-lg example" value={{$salaEditada->id_localizacao}}>
                                     <option value="{{ $salas[0]->id_localizacao }}"> {{ $salas[0]->nome }}</option>
                                     @foreach ($tipo_localizacao as $localizacao )
@@ -56,6 +64,10 @@
 
                             <div class="col-4">
                                 Finalidade sala
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <select class="form-select" aria-label=".form-select-lg example" name="id_finalidade">
                                     <option value="{{ $salas[0]->id_finalidade }}"> {{ $salas[0]->descricao }}</option>
                                     @foreach ($tipo_finalidade_sala as $tipo)
@@ -65,12 +77,20 @@
                             </div>
                             <div class="col">Número
                                 <input type="text" class="form-control" id="numero" maxlength="4" name="numero" value={{$salaEditada->numero}} >
-                             
+
                             </div>
                             <div class="col">M² da sala
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <input type="number" class="form-control" id="tamanho_sala" name="tamanho_sala"  min="1" max="500" oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->tamanho_sala}} required="required">
                             </div>
                             <div class="col">Número de lugares
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <input type="number" class="form-control" id="nr_lugares" name="nr_lugares"  min="1" max="2000"  oninput="javascript: if (this.value.length > 3) this.value = this.value.slice(0, 3);" value={{$salaEditada->nr_lugares}} required="required">
                             </div>
                         </div>

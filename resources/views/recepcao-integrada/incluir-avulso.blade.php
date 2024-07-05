@@ -25,6 +25,10 @@
 
                             <div class=" mb-3 col-6">
                                 Nome Assistido
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <select class="form-select select2" aria-label="Default select example" name="assistido" required>
 
                                     @foreach($assistidos as $assistido)
@@ -38,6 +42,10 @@
                             </div>
                             <div class=" mb-3 col-6">
                                 Reunião Mediúnica
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <select class="form-select select2" aria-label="Default select example" name="reuniao" required>
                                     @foreach($reuniao as $reunioes)
                                     <option value="{{ $reunioes->id }}">{{ $reunioes->nome }} - {{ date('H:i', strtotime($reunioes->h_inicio)) }}/{{ date('H:i', strtotime($reunioes->h_fim)) }} - Sala {{ $reunioes->sala }}</option>
@@ -46,6 +54,10 @@
                             </div>
                             <div class=" mb-3 col-6">
                                 Motivo
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <select class="form-select" aria-label="Default select example" name="motivo" required>
                                     @foreach($motivo as $motivos)
                                     <option value="{{ $motivos->id }}">{{ $motivos->nome }}</option>

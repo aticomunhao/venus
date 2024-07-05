@@ -16,7 +16,12 @@
                         @csrf
                         <div class="row col-10 offset-1" style="margin-top:none">
                             <div class="col-md-6 col-12">
-                                <div>Nome</div>
+                                <div>Nome
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
+                                </div>
                                 <input class="form-control" type="text" value="{{ $nomes[0]->nome_completo }}" Disabled>
                             </div>
 
@@ -146,5 +151,5 @@
         });
 
     </script>
-   
+
 @endsection

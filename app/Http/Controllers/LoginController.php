@@ -76,6 +76,7 @@ class LoginController extends Controller
                         'sexo' => $result[0]->sexo,
                         'setor' => $array_setores,
                         'acesso' => $rotasAutorizadas,
+                        'administrador' => in_array(1, $perfis) ? true : false,
                     ]);
 
                     app('flasher')->addSuccess('Acesso autorizado');
@@ -139,6 +140,7 @@ class LoginController extends Controller
                     'sexo' => $result[0]->sexo,
                     'setor' => $array_setores,
                     'acesso' => $rotasAutorizadas,
+                    'perfis' => $perfis,
                 ]);
                 return view('/login/home');
             } else {

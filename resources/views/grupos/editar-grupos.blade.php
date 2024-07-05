@@ -34,6 +34,10 @@
 
                                     <div class="col-5">
                                         Nome
+                                        <span class="tooltips">
+                                            <span class="tooltiptext">Obrigatório</span>
+                                            <span style="color:red">*</span>
+                                        </span>
                                         <input type="text" class="form-control" id="nome" name="nome" maxlength="30" value="{{ $grupo[0]->nome }}" required="required" oninput="validarLetrasEspeciais(this)">
                                     </div>
 
@@ -68,6 +72,10 @@
                                     <div class="col-3">
                                         <br>
                                         Tipo grupo
+                                        <span class="tooltips">
+                                            <span class="tooltiptext">Obrigatório</span>
+                                            <span style="color:red">*</span>
+                                        </span>
                                         <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_grupo" required="required">
                                             <option value="{{ $grupo[0]->id_tipo_grupo }}"> {{ $grupo[0]->nmg }}</option>
                                             @foreach ($tipo_grupo as $item)
@@ -91,6 +99,10 @@
                                     <div class="col">
                                         <br>
                                         Setor
+                                        <span class="tooltips">
+                                            <span class="tooltiptext">Obrigatório</span>
+                                            <span style="color:red">*</span>
+                                        </span>
                                         <select class="form-select select2" aria-label=".form-select-lg example" name="id_setor" required="required">
                                             <option value="{{ $grupo[0]->id_setor }}"> {{ $grupo[0]->nm_setor }}</option>
                                             @foreach ($setor as $setores)

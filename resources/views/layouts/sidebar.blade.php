@@ -2,7 +2,7 @@
 $setor = session()->get('usuario.setor');
 ?>
 
-<div id="app">
+<div id="app" class="row">
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm"
         style="background-color:#87CEFA; font-family:tahoma; font-weight:bold;">
         <div class="container">
@@ -191,25 +191,28 @@ $setor = session()->get('usuario.setor');
                         </li>
                     </ul>
 
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="4" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">Logout</a>
-                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                            <li><a class="dropdown-item" href="/usuario/alterar-senha"><i
-                                        class="mdi mdi-lock-open-outline font-size-17 text-muted align-middle mr-1"></i>Alterar
-                                    Senha</a></li>
-                            <li><a class="dropdown-item" href="javascript:void();"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
-                                        class="mdi mdi-power font-size-17 text-muted align-middle mr-1 text-danger"></i>
-                                    {{ __('Sair') }}</a></li>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                style="display: none;">
-                                @csrf
-                            </form>
-                        </ul>
-                    </li>
-                </ul>
+                <div class="col">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="4" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">Logout</a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                                <li><a class="dropdown-item" href="/usuario/alterar-senha"><i
+                                            class="mdi mdi-lock-open-outline font-size-17 text-muted align-middle mr-1"></i>Alterar
+                                        Senha</a></li>
+                                <li><a class="dropdown-item" href="javascript:void();"
+                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
+                                            class="mdi mdi-power font-size-17 text-muted align-middle mr-1 text-danger"></i>
+                                        {{ __('Sair') }}</a></li>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    style="display: none;">
+                                    @csrf
+                                </form>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                    <div class=" fst-italic align-middle d-flex d-none d-lg-block justify-d-content-end" style="color:white">0.0.1</div>
             </div>
         </div>
     </nav>

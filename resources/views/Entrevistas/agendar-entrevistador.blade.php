@@ -17,6 +17,7 @@
                 <div class="row mb-5">
                     <div class="col">
                         <label for="id_encaminhamento" class="form-label">Nome</label>
+
                         <select class="form-control" id="id_encaminhamento" name="id_encaminhamento" disabled>
                             <option value="{{ $encaminhamento->id }}">{{ $entrevistas->nome_completo }}</option>
                         </select>
@@ -26,6 +27,10 @@
                 <div class="row mb-5">
                     <div class="col">
                         <label for="id_entrevistador" class="form-label">Entrevistador</label>
+                        <span class="tooltips">
+                            <span class="tooltiptext">Obrigatório</span>
+                            <span style="color:red">*</span>
+                        </span>
                         <select class="form-select" id="id_entrevistador" name="id_entrevistador">
                             @if (!empty($entrevistas->id_entrevistador))
                                 <option value="{{ $entrevistas->id_entrevistador }}">

@@ -8,7 +8,7 @@
     <div class="justify-content-center">
         <div class="col-12">
             <br>
-            <fieldset class="border rounded border-primary">
+
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
@@ -26,6 +26,10 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom01" class="form-label">Nome completo</label>
+                                        <span class="tooltips">
+                                            <span class="tooltiptext">Obrigatório</span>
+                                            <span style="color:red">*</span>
+                                        </span>
                                         <input class="form-control" type="text" maxlength="40" id="" name="nome" value="{{$lista[0]->nome_completo}}" required="required">
                                     </div>
                                 </div>
@@ -34,12 +38,20 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom02" class="form-label">CPF</label>
+                                        <span class="tooltips">
+                                            <span class="tooltiptext">Obrigatório</span>
+                                            <span style="color:red">*</span>
+                                        </span>
                                         <input class="form-control" type="numeric" maxlength="11" value="{{$lista[0]->cpf}}" id="" name="cpf" required="required" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom04" class="form-label">Sexo</label>
+                                        <span class="tooltips">
+                                            <span class="tooltiptext">Obrigatório</span>
+                                            <span style="color:red">*</span>
+                                        </span>
                                         <select class="form-select" id="" name="sex" required="required">
                                             <option value="{{$lista[0]->sexo}}">{{$lista[0]->tipo}}</option>
                                             @foreach($sexo as $sexos)
@@ -51,6 +63,10 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom03" class="form-label">Data Nascimento</label>
+                                        <span class="tooltips">
+                                            <span class="tooltiptext">Obrigatório</span>
+                                            <span style="color:red">*</span>
+                                        </span>
                                         <input class="form-control" type="date" value="{{$lista[0]->dt_nascimento}}" id="" name="dt_nasc" required="required">
                                     </div>
                                 </div>
@@ -77,7 +93,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                
+
                             <br>
                                 <div class="row mt-2 justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">

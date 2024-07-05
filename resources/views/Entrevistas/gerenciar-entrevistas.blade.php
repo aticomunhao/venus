@@ -51,6 +51,8 @@
                                 <th class="col">TIPO ENTREVISTA</th>
                                 <th class="col">ENTREVISTADOR</th>
                                 <th class="col">SALA</th>
+                                <th class="col">PRIORIDADE</th>
+                                <th class="col">HORÁRIO</th>
                                 <th class="col">STATUS</th>
                                 <th class="col">AÇÕES</th>
                             </tr>
@@ -63,6 +65,8 @@
                                     <td>{{ $informacao->entrevista_sigla }}</td>
                                     <td>{{ $informacao->nome_entrevistador }}</td>{{-- Quando existente, traz o nome do entrevistador --}}
                                     <td>{{ $informacao->numero }}</td>{{-- Sala que foi agendada a entrevista --}}
+                                    <td>{{ $informacao->emergencia }}</td>{{-- Prioridade do atendimento --}}
+                                    <td>{{ date('d/m/Y  G:i', strtotime($informacao->inicio)) }}</td>{{-- Prioridade do atendimento --}}
                                     <td>
                                         @if ($informacao->status === 1)
                                             Aguardando agendamento
@@ -238,7 +242,7 @@
                                                         <button type="button" class="btn btn-danger"
                                                             data-bs-dismiss="modal">Cancelar</button>
                                                         {{-- <a type="button" class="btn btn-danger" href="/nao-aceito-entrevista/{{ $informacao->ide }}">Cancelar tratamento</a>  --}}
-                                                        
+
                                                         @if($informacao->status == 1)
                                                         <a type="button" class="btn btn-primary"
                                                             href="/inativar-entrevista/{{ $informacao->ide }}/1">Confirmar

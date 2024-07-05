@@ -55,6 +55,10 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="id_funcao" class="form-label">Função</label>
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <select class="form-select" aria-label=".form-select-lg example" name="id_funcao">
                                     @foreach ($tipo_funcao as $funcao)
                                         <option value="{{ $funcao->id }}" @if($membro->id_funcao == $funcao->id) selected @endif>{{ $funcao->nome }}</option>
@@ -63,7 +67,7 @@
                             </div>
                         </div>
                         <br>
-                       
+
                     </div>
                     <br>
                     <div class="row mt-1 justify-content-center">

@@ -24,6 +24,10 @@
                                 <div class="row">
                                     <div class="col-6">
                                         Nome
+                                        <span class="tooltips">
+                                            <span class="tooltiptext">Obrigatório</span>
+                                            <span style="color:red">*</span>
+                                        </span>
                                         <input type="text" class="form-control" id="nome" name="nome" maxlength="50" required="required" oninput="validarCaracteresEspeciais(this)">
                                     </div>
 
@@ -36,6 +40,7 @@
 
                                     <div class="col">
                                         Status
+                                      
                                         <select class="form-select" aria-label=".form-select-lg example" name="status_grupo" id="status_grupo" required="required">
                                             <option value="1">Ativo</option>
                                             <option value="2">Inativo</option>
@@ -59,6 +64,10 @@
                                         <div class="col">
                                             <br>
                                             Tipo grupo
+                                            <span class="tooltips">
+                                                <span class="tooltiptext">Obrigatório</span>
+                                                <span style="color:red">*</span>
+                                            </span>
                                             <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_grupo" required="required">
                                                 @foreach ($tipo_grupo as $item)
                                                     <option value="{{ $item->idg }}">{{ $item->nm_tipo_grupo }}</option>
@@ -68,6 +77,10 @@
                                         <div class="col">
                                             <br>
                                             Setor
+                                            <span class="tooltips">
+                                                <span class="tooltiptext">Obrigatório</span>
+                                                <span style="color:red">*</span>
+                                            </span>
                                             <select class="form-select select2" aria-label=".form-select-lg example" name="id_setor" required="required">
                                                 @foreach ($setor as $setors)
                                                     <option value="{{ $setors->id }}">{{ $setors->nm_setor }}</option>

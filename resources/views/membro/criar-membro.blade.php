@@ -23,6 +23,10 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="id_associado" class="form-label">Nome do médium</label>
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <select class="form-select select2" aria-label=".form-select-lg example" name="id_associado">
                                     @foreach ($associado as $associados)
                                         <option value="{{ $associados->id}}">{{ $associados->nome_completo}}</option>
@@ -47,6 +51,10 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="id_funcao" class="form-label">Função</label>
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <select class="form-select" aria-label=".form-select-lg example" name="id_funcao">
                                     @foreach ($tipo_funcao as $funcao)
                                         <option value="{{ $funcao->idf }}">{{ $funcao->nome }}</option>
@@ -58,6 +66,10 @@
                         <div class="col-12 mt-3">
                             <div class="form-group">
                                 <label for="id_grupo" class="form-label">Nome Reunião Mediunica</label>
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <select class="form-select select2" aria-label=".form-select-lg example" name="id_reuniao">
                                     @foreach ($grupo as $grupos)
                                         <option value="{{ $grupos->id }}">{{ $grupos->nome }} - {{ $grupos->dia }}- {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim ))}} - Sala {{ $grupos->numero }}</option>

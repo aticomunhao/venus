@@ -12,21 +12,20 @@ class MembroController extends Controller
 {
     public function grupos(Request $request)
     {
-          try{
+        //   try{
 
         $now = Carbon::now()->format('Y-m-d');
 
-        $cronogramasLogin = DB::table('membro AS m')
-            ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
-            ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
-            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-            ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
-            ->where('id_associado', session()->get('usuario.id_associado'))
-            ->pluck('m.id_cronograma');
+        $cronogramasLogin = DB::table('membro AS m')->leftJoin('associado', 'associado.id', '=', 'm.id_associado')->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id');
+
+        if (!in_array(1, session()->get('usuario.perfis'))) {
+            $cronogramasLogin = $cronogramasLogin->where('id_associado', session()->get('usuario.id_associado'));
+        }
+        $cronogramasLogin = $cronogramasLogin->pluck('m.id_cronograma');
 
         $cronogramasLogin = json_decode(json_encode($cronogramasLogin), true);
         $cronogramas = $cronogramasLogin;
-//dd($cronogramas, session()->get('usuario.id_associado'));
+        //dd($cronogramas, session()->get('usuario.id_associado'));
 
         if ($request->nome_membro) {
             $cronogramasPesquisa = DB::table('membro AS m')
@@ -81,12 +80,12 @@ class MembroController extends Controller
         return view('membro.listar-grupos-membro', compact('membro_cronograma', 'nome', 'membro', 'membroPesquisa'));
     }
 
-     catch(\Exception $e){
+    //  catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('listar-grupos erro.erro-inesperado', compact('code'));
-           }
-       }
+    //     $code = $e->getCode( );
+    //     return view('listar-grupos erro.erro-inesperado', compact('code'));
+    //        }
+    //    }
 
     public function createGrupo(Request $request, string $id)
     {
@@ -108,7 +107,39 @@ class MembroController extends Controller
 
     public function storeGrupo(Request $request, string $id)
     {
-        try {
+      //  try {
+
+            $dia = intval($request->dia);
+            $now = Carbon::now()->format('Y-m-d');
+            $seletedCronograma = DB::table('cronograma as cro')->where('id', $id)->first();
+            $cronogramasPessoa = DB::table('membro')->where('id_associado', $request->input('id_associado'))->pluck('id_cronograma');
+
+            $repeat = DB::table('cronograma AS rm')
+                ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
+                ->where('rm.dia_semana', $dia)
+                ->whereIn('rm.id', $cronogramasPessoa)
+                ->whereNot('rm.id', $seletedCronograma->id)
+                ->where(function ($query) use ($now) {
+                    $query->where('rm.data_fim', '>', $now);
+                    $query->orWhere('rm.data_fim', null);
+                })
+                ->where(function ($query) use ($seletedCronograma) {
+                    $query->where(function ($hour) use ($seletedCronograma) {
+                        $hour->where('rm.h_inicio', '<=', $seletedCronograma->h_inicio);
+                        $hour->where('rm.h_fim', '>=', $seletedCronograma->h_inicio);
+                    });
+                    $query->orWhere(function ($hour) use ($seletedCronograma) {
+                        $hour->where('rm.h_inicio', '<=', $seletedCronograma->h_fim);
+                        $hour->where('rm.h_fim', '>=', $seletedCronograma->h_fim);
+                    });
+                })
+                ->first();
+
+            if ($repeat != null) {
+                app('flasher')->addError("Este membro faz parte de $repeat->nome neste horário");
+                return redirect()->back()->withInput();
+            }
+
             $data = date('Y-m-d H:i:s');
             DB::table('membro')->insert([
                 'id_associado' => $request->input('id_associado'),
@@ -119,25 +150,17 @@ class MembroController extends Controller
 
             app('flasher')->addSuccess('Cadastrado com Sucesso');
             return redirect("gerenciar-membro/$id");
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('administrativo-erro.erro-inesperado', compact('code'));
-        }
+        // } catch (\Exception $e) {
+        //     $code = $e->getCode();
+        //     return view('administrativo-erro.erro-inesperado', compact('code'));
+        // }
     }
     public function index(Request $request, string $id)
     {
         try {
             $grupo = DB::table('cronograma as cro')->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.modificador')->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')->where('cro.id', $id)->first();
 
-            $membroQuery = DB::table('membro AS m')
-                ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
-                ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
-                ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-                ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
-                ->where('m.id_cronograma', $id)
-                ->select('p.nome_completo', 'm.id AS idm', 'm.id_associado', 'm.id_funcao', 'p.cpf', 'p.status', 'p.motivo_status', 'tf.nome as nome_funcao', 'm.id_cronograma', 'g.nome as nome_grupo')
-
-                ->orderBy('p.nome_completo', 'ASC');
+            $membroQuery = DB::table('membro AS m')->leftJoin('associado', 'associado.id', '=', 'm.id_associado')->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')->where('m.id_cronograma', $id)->select('p.nome_completo', 'm.id AS idm', 'm.id_associado', 'm.id_funcao', 'p.cpf', 'p.motivo_status', 'tf.nome as nome_funcao', 'm.id_cronograma', 'g.nome as nome_grupo', DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativado' ELSE 'Ativado' END) as status"))->orderBy('status')->orderBy('p.nome_completo', 'ASC');
 
             $nome = $request->nome_pesquisa;
             $cpf = $request->cpf_pesquisa;
@@ -191,6 +214,38 @@ class MembroController extends Controller
     public function store(Request $request)
     {
         try {
+            $dia = intval($request->dia);
+            $now = Carbon::now()->format('Y-m-d');
+            $seletedCronograma = DB::table('cronograma as cro')->where('id', $request->input('id_reuniao'))->first();
+
+            $cronogramasPessoa = DB::table('membro')->where('id_associado', $request->input('id_associado'))->pluck('id_cronograma');
+
+            $repeat = DB::table('cronograma AS rm')
+                ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
+                ->whereIn('rm.id', $cronogramasPessoa)
+                ->where('rm.dia_semana', $dia)
+                ->whereNot('rm.id', $seletedCronograma->id)
+                ->where(function ($query) use ($now) {
+                    $query->where('rm.data_fim', '>', $now);
+                    $query->orWhere('rm.data_fim', null);
+                })
+                ->where(function ($query) use ($seletedCronograma) {
+                    $query->where(function ($hour) use ($seletedCronograma) {
+                        $hour->where('rm.h_inicio', '<=', $seletedCronograma->h_inicio);
+                        $hour->where('rm.h_fim', '>=', $seletedCronograma->h_inicio);
+                    });
+                    $query->orWhere(function ($hour) use ($seletedCronograma) {
+                        $hour->where('rm.h_inicio', '<=', $seletedCronograma->h_fim);
+                        $hour->where('rm.h_fim', '>=', $seletedCronograma->h_fim);
+                    });
+                })
+                ->first();
+
+            if ($repeat != null) {
+                app('flasher')->addError("Este membro faz parte de $repeat->nome neste horário");
+                return redirect()->back()->withInput();
+            }
+
             $data = date('Y-m-d H:i:s');
             DB::table('membro')->insert([
                 'id_associado' => $request->input('id_associado'),
@@ -280,13 +335,15 @@ class MembroController extends Controller
             $membro = DB::table('membro')->where('id', $id)->first();
 
             if (!$membro) {
-                app('flasher')->addError('A membro não foi encontrada.');
+                app('flasher')->addError('O membro não foi encontrada.');
                 return redirect("/gerenciar-membro/$idcro");
             }
 
-            DB::table('membro')->where('id', $id)->delete();
+            DB::table('membro')
+                ->where('id', $id)
+                ->update(['dt_fim' => Carbon::today()]);
 
-            app('flasher')->addError('Excluído com sucesso.');
+            app('flasher')->addError('Inativado com sucesso.');
             return redirect("/gerenciar-membro/$idcro");
         } catch (\Exception $e) {
             $code = $e->getCode();
@@ -297,7 +354,7 @@ class MembroController extends Controller
     {
         try {
             $now = Carbon::now()->format('Y-m-d');
-            $tratamentosPTI = DB::table('tratamento as tr')->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')->where('id_reuniao', $id)->where('tr.status','<', 3)->get();
+            $tratamentosPTI = DB::table('tratamento as tr')->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')->where('id_reuniao', $id)->where('tr.status', '<', 3)->get();
 
             if ($tp == 1) {
                 DB::table('cronograma')
@@ -307,7 +364,6 @@ class MembroController extends Controller
                     ]);
 
                 foreach ($tratamentosPTI as $tratamento) {
-
                     if ($tratamento->id_tipo_tratamento == 2) {
                         DB::table('encaminhamento AS enc')->insert([
                             'dh_enc' => $now,
@@ -328,12 +384,11 @@ class MembroController extends Controller
 
                 foreach ($tratamentosPTI as $tratamento) {
                     if ($tratamento->id_tipo_tratamento == 2) {
-
                         DB::table('encaminhamento AS enc')
-                        ->where('enc.id_atendimento', $tratamento->id_atendimento)
-                        ->update([
-                            'status_encaminhamento' => 5,
-                        ]);
+                            ->where('enc.id_atendimento', $tratamento->id_atendimento)
+                            ->update([
+                                'status_encaminhamento' => 5,
+                            ]);
                     }
                 }
             }

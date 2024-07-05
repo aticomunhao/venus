@@ -16,7 +16,13 @@
                         @csrf
                         <div class="row col-10 offset-1" style="margin-top:none">
                             <div class="col-md-6 col-12">
-                                <div>Nome</div>
+                                <div>Nome
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
+                                </div>
+
                                 <select class="form-select select2" aria-label="Default select example" required name="nome">
                                     @foreach ($nomes as $nome)
                                         <option value="{{ $nome->id }}">{{ $nome->nome_completo }}</option>

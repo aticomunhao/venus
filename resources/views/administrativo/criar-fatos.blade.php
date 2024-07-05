@@ -18,6 +18,10 @@
                         @csrf
                         <div class="mb-3">
                             <label for="fatos" class="form-label">Informe o fato:</label>
+                            <span class="tooltips">
+                                <span class="tooltiptext">Obrigatório</span>
+                                <span style="color:red">*</span>
+                            </span>
                             <input type="text" class="form-control" id="fatos" aria-describedby="" name="fato">
                         </div>
                         <div class="row justify-content-center">

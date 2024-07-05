@@ -66,25 +66,42 @@
                             <td>{{ $membros->idm }}</td>
                             <td>{{ $membros->nome_completo }}</td>
                             <td>{{ $membros->nome_funcao }}</td>
-                            <td>{{ $membros->status ? 'Ativo' : 'Inativo' }}</td>
+                            <td>{{ $membros->status }}</td>
                             <td>
 
+                                @if($membros->status == 'Inativado')
+                                <button href="/editar-membro/{{ $id }}/{{ $membros->idm }}" type="button"
+                                    class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
+                                    title="Editar" disabled>
+                                    <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
+                                </button>
+                                @else
                                 <a href="/editar-membro/{{ $id }}/{{ $membros->idm }}" type="button"
                                     class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Editar">
                                     <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
                                 </a>
-                                <a href="/visualizar-membro/{{ $id }}/{{ $membros->idm }}" type="button"
+                                @endif
+
+                                <button href="/visualizar-membro/{{ $id }}/{{ $membros->idm }}" type="button"
                                     class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Visualizar">
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
                                         data-bs-target="#pessoa"></i>
-                                </a>
+                                </button>
+                                @if($membros->status == 'Inativado')
                                 <button href="" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#confirmacaoDelecao{{ $membros->idm }}" data-tt="tooltip"
-                                    data-placement="top" title="Deletar">
+                                    data-placement="top" title="Inativar" disabled>
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </button>
+                                @else
+                                <button href="" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#confirmacaoDelecao{{ $membros->idm }}" data-tt="tooltip"
+                                    data-placement="top" title="Inativar">
+                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                                </button>
+                                @endif
                             </td>
                         </tr>
                         <div class="modal fade" id="confirmacaoDelecao{{ $membros->idm }}" tabindex="-1"
@@ -92,13 +109,13 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header" style="background-color:#DC4C64">
-                                        <h5 class="modal-title" id="exampleModalLabel" style="color:white">Exclusão de
+                                        <h5 class="modal-title" id="exampleModalLabel" style="color:white">Inativação de
                                             membro </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body" style="text-align: center; ">
-                                        Tem certeza que deseja excluir o membro<br /><span
+                                        Tem certeza que deseja inativar o membro<br /><span
                                             style="color:#DC4C64; font-weight: bold;">{{ $membros->nome_completo }}</span>&#63;
                                     </div>
                                     <div class="modal-footer mt-3">

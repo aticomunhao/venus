@@ -780,8 +780,32 @@ catch(\Exception $e){
           //  dd($ame, $afe, $diamo, $nutres  );
 
 
-            if ($ame == 1)
+            if ($ame == 1 and $existeEncaminhamento == 0)
             {
+
+
+                DB::table('encaminhamento AS enc')->insert([
+                    'dh_enc' => $now,
+                    'id_usuario' => $atendente,
+                    'id_tipo_encaminhamento'=> 2,
+                    'id_atendimento' =>$idat,
+                    'id_tipo_tratamento' => 1,
+                    'status_encaminhamento' =>  2
+                ]);
+
+                DB::table('encaminhamento AS enc')->insert([
+                    'dh_enc' => $now,
+                    'id_usuario' => $atendente,
+                    'id_tipo_encaminhamento'=> 1,
+                    'id_atendimento' =>$idat,
+                    'id_tipo_entrevista' => 5,
+                    'status_encaminhamento' =>  1
+                ]);
+
+                app('flasher')->addSuccess('Os encaminhamentos para a AME e PTD foram criados com sucesso.');
+
+            }
+            elseif($ame == 1 and $existeEncaminhamento == 0){
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
@@ -792,7 +816,6 @@ catch(\Exception $e){
                 ]);
 
                 app('flasher')->addSuccess('O encaminhamento para a AME foi criado com sucesso.');
-
             }
             if ($afe == 1)
             {

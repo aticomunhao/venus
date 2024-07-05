@@ -131,9 +131,9 @@ try{
 
 
     public function presenca(Request $request, $idtr){
-        try{
+       // try{
 
-        $infoTrat = DB::table('tratamento')->where('id', $idtr)->first();
+        $infoTrat = DB::table('tratamento')->leftJoin('encaminhamento', 'tratamento.id_encaminhamento', 'encaminhamento.id')->where('tratamento.id', $idtr)->first();
 
         $data_atual = Carbon::now();
         $dia_atual = $data_atual->weekday();
@@ -146,8 +146,11 @@ try{
 
         $lista = DB::table('tratamento AS tr')
         ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+        ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
         ->where('tr.id', $idtr)
         ->first();
+
+
 
         $dia_cronograma = DB::table('dias_cronograma')->where('id_cronograma', $lista->id_reuniao)->where('data', $data_atual)->first();
 
@@ -169,10 +172,20 @@ try{
 
         }else{
 
+
+            $encaminhamentosPTD = DB::table('encaminhamento')->where('id_atendimento', $lista->id_atendimento)->where('id_tipo_tratamento', 1)->where('status_encaminhamento', 4)->first();
+
             if($infoTrat->status == 1){
                 DB::table('tratamento')->where('id', $idtr)->update([
                     'status' => 2
                 ]);
+
+                if($infoTrat->id_tipo_tratamento == 2){
+                    DB::table('encaminhamento')->where('id', $encaminhamentosPTD->id)->update([
+                        'status_encaminhamento' => 5
+                    ]);
+                }
+
             }
 
 
@@ -209,12 +222,12 @@ try{
 
         return Redirect('/gerenciar-tratamentos');
     }
-    catch(\Exception $e){
+    // catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+    //     $code = $e->getCode( );
+    //     return view('tratamento-erro.erro-inesperado', compact('code'));
+    //         }
+    //     }
 
 
     public function visualizar($idtr){

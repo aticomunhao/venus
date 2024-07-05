@@ -27,11 +27,19 @@
                 <div class="row mb-3">
                     <div class="col">
                         <label for="data" class="form-label">Data</label>
+                        <span class="tooltips">
+                            <span class="tooltiptext">Obrigatório</span>
+                            <span style="color:red">*</span>
+                        </span>
                         <input type="date" class="form-control" id="data" name="data">
                     </div>
-                
+
                     <div class="col">
                         <label for="hora" class="form-label">Hora</label>
+                        <span class="tooltips">
+                            <span class="tooltiptext">Obrigatório</span>
+                            <span style="color:red">*</span>
+                        </span>
                         <input type="time" class="form-control" id="hora" name="hora">
                     </div>
                 </div>
@@ -42,11 +50,16 @@
                             <div id="accordion" class="card">
                                 <div class="card-header" id="headingOne">
                                     <h5 class="mb-0">Sala</h5>
+
                                 </div>
                                 <div class="card-body">
                                     <div class="row mb-5">
                                         <div class="col">
                                             <label for="id_sala" class="form-label">Numero</label>
+                                            <span class="tooltips">
+                                                <span class="tooltiptext">Obrigatório</span>
+                                                <span style="color:red">*</span>
+                                            </span>
                                             <select class="form-select" id="id_sala" name="id_sala">
                                                 <option value=""></option>
                                                 @foreach ($salas as $sala)
@@ -74,7 +87,7 @@
                     </div>
                 </fieldset>
                 <br>
-                
+
                 <br>
                 <div class="row mt-4 justify-content-center">
                     <div class="d-grid gap-1 col-4 mx-auto">

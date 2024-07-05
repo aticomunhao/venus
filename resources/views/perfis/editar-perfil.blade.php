@@ -17,22 +17,30 @@
                         <div class="row col-10 offset-1" style="margin-top:none">
                             <div class="col-12">
                                 Nome
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <input type="text" class="form-control" id="nome" name="nome" maxlength="30"
                                     required="required" value="{{ $perfil->descricao }}">
                                 <br />
                             </div>
-                           
+
                                 <div class="col-12">
                                     Funcionalidades Autorizadas
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
                                     <select class="form-select select2" name="rotas[]" multiple>
                                         @foreach ($rotas as $rota)
                                             <option value="{{ $rota->id }}" id="id{{ $rota->id }}">{{ $rota->nome }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                              
+
                             </form>
-                            
+
 
 
                             <center>
@@ -50,7 +58,7 @@
             </div>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>

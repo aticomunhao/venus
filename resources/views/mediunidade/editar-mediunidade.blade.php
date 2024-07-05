@@ -14,25 +14,29 @@
         <div class="card-body">
             <form class="form-horizontal mt-2" method="post" action="/atualizar-mediunidade/{{ $mediunidade->id_pessoa}}/">
                 @csrf
-            
+
 
                 <div class="row mt-3">
                     <div class="col-5">
                         <label for="id_pessoa" class="form-label">Nome</label>
+                        <span class="tooltips">
+                            <span class="tooltiptext">Obrigatório</span>
+                            <span style="color:red">*</span>
+                        </span>
                         <select name="id_pessoa" class="form-control" disabled>
                             <option value="{{ $mediunidade->idm }}"> {{ $mediunidade->nome_completo }} </option>
                             @foreach ($pessoas as $pessoa)
                             <option value="{{ $pessoa->id }}"> {{ $pessoa->nome_completo }} </option>
                             @endforeach
                         </select>
-                       
+
                     </div>
                     <div class="col">
                         <label for="tipo_status_pessoa" class="form-label ">Status</label>
                         <select class="form-select status" aria-label=".form-select-lg example" name="tipo_status_pessoa">
                             @foreach ($tipo_status_pessoa as $tipo)
                             <option value="{{ $tipo->id }}" {{ $mediunidade->tipo == $tipo->tipos ? 'selected' : '' }}>{{ $tipo->tipos }}</option>
-                    
+
                             @endforeach
                         </select>
                     </div>
@@ -46,7 +50,7 @@
                         </select>
                     </div>
                     </div>
-                    
+
 
                 <div class="row mt-3">
                     <div class="col">
@@ -56,7 +60,7 @@
                         <label for="data_inicio" class="form-label"></label>
                     </div>
                 </div>
- 
+
                 {{-- Table --}}
                 <div class="row mt-3">
                     <div class="col">
@@ -78,7 +82,7 @@
                                                     <?php
                                                     $isChecked = in_array($tipo->id, $arrayChecked) ? 'checked' : '';
                                                     ?>
-                                            
+
                                                     <input class="form-check-input" type="checkbox" name="id_tp_mediunidade[]"
                                                         value="{{ $tipo->id }}" {{ $isChecked }}>
                                                 </td>
@@ -91,7 +95,7 @@
 
                                                         <?php $i = 0; ?>
                                                     @foreach($mediunidadesIds as $dhi)
-                                                    
+
                                                         @if ($dhi->id_mediunidade == $tipo->id)
                                                         <?php $i = 1; ?>
                                                                 <input type="date" class="form-control form-control-sm"
@@ -105,7 +109,7 @@
                                                                 required="required">
                                                         @endif
 
-                                                       
+
                                                     </div>
                                                 </td>
                                             </tr>
@@ -159,15 +163,15 @@
     });
 
 
-   
+
 </script>
 
 <script>
   $(document).ready(function() {
     $('.status').change(function(){
-       
+
         let status = $('.status').val()
-    
+
 
         if(status == 1){
             $('.motivo').prop('disabled', true)
@@ -176,10 +180,10 @@
         else{
             $('.motivo').prop('disabled', false)
             $('.motivo').prop("selectedIndex", {{ $mediunidade->motivo_status }} - 1)
-            
+
         }
-       
-        
+
+
    })
 
    $('.status').change()
