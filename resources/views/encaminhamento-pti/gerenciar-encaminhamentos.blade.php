@@ -81,7 +81,7 @@
                                     title="Alterar Grupo" disabled><i class="bi bi-arrow-left-right"
                                         style="font-size: 1rem; color:#000;" ></i></button>
                                 @endif
-  
+
                                 <a href="/visualizar-enc-pti/{{$listas->ide}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Histórico"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
                                 @if ($listas->status_encaminhamento < 2)
                                 <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#inativar{{$listas->ide}}" data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>
@@ -140,7 +140,7 @@
                     </tbody>
                 </table>
             </div class="d-flex justify-content-center">
-            {{$lista->withQueryString()->links()}}
+            {{$lista->links('pagination::bootstrap-5')}}
         </div>
 
     </div>

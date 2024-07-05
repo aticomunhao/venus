@@ -53,18 +53,18 @@
                                     <option value="all"
                                         {{ $situacao == 'all' ? 'selected' : '' }}> Todos os Status </option>
                                 </select>
-                                
+
                             </div>
-                            
+
                             <div class="col">
                                 <br />
                                 <input class="btn btn-light btn-sm me-md-2"
                                 style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
-                                
+
                                 <a href="/gerenciar-tratamentos"><input class="btn btn-light btn-sm me-md-2"
                                     style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                     value="Limpar"></a>
-                          
+
 
                                         @if(in_array(17,session()->get('usuario.acesso')))
 
@@ -283,7 +283,7 @@
                 </tbody>
             </table>
         </div class="d-flex justify-content-center">
-        {{ $lista->withQueryString()->links() }}
+        {{ $lista->links('pagination::bootstrap-5') }}
     </div>
     </div>
     </div>

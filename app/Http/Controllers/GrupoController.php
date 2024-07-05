@@ -15,7 +15,7 @@ use Spatie\FlareClient\Http\Exceptions\InvalidData;
 
 class GrupoController extends Controller
 {
-    
+
     public function index(Request $request)
     {
         try {
@@ -38,33 +38,33 @@ class GrupoController extends Controller
                     'g.id_setor',
                     'st.nome AS nm_setor'
                 );
-    
+
             $nome = $request->nome_pesquisa;
             if ($nome) {
                 $grupo->where('g.nome', 'ilike', "%$nome%");
             }
-    
+
             $setor = $request->nome_setor;
             if ($setor) {
                 $grupo->where('st.nome', 'ilike', "%$setor%");
             }
-    
+
             $grupo = $grupo->orderBy('g.status_grupo', 'ASC')
                 ->orderBy('g.nome', 'ASC')
                 ->paginate(50);
-    
+
             // Carregar a lista de setores para o Select2
             $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
-    
+
             return view('grupos.gerenciar-grupos', compact('grupo', 'setores'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('gerenciar-grupos.erro-inesperado', compact('code'));
         }
     }
-    
 
-  
+
+
 
 
 

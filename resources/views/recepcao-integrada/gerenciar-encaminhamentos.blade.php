@@ -20,7 +20,7 @@
         <div class="col-12">
             <div class="row justify-content-center">
                 <div>
-                    
+
                     <form action="{{ route('gecdex') }}" class="form-horizontal mt-4" method="GET">
                         <div class="row">
                             <div class ="col">Data início
@@ -49,8 +49,8 @@
                                     <a href="/gerenciar-tratamentos" class="btn btn-warning btn-sm"
                                     style="box-shadow: 1px 2px 5px #000000; margin:5px;">Tratamentos</a>
                                 </div>
-                             
-                               
+
+
                             </div>
                         </div>
             </div>
@@ -124,7 +124,7 @@
                 </tbody>
             </table>
         </div class="d-flex justify-content-center">
-        {{ $lista->withQueryString()->links() }}
+        {{ $lista->links('pagination::bootstrap-5') }}
     </div>
 
     </div>

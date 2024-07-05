@@ -130,7 +130,8 @@
                     @endforeach
                 </tbody>
             </table>
-
+            {{ $membro->links('pagination::bootstrap-5') }}
+        </div>
 
 
     <script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>

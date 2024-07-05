@@ -78,6 +78,7 @@
             </div>
         </div>
     </div>
+    {{ $lista->links('pagination::bootstrap-5') }}
 </div>
  <script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
 <link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">
