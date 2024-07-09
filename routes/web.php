@@ -32,7 +32,9 @@ use App\Http\Controllers\GerenciarPTIController;
 use App\Http\Controllers\GerenciarIntegralController;
 use App\Http\Controllers\GerenciarPerfil;
 use App\Http\Controllers\GerenciarSetor;
+use App\Http\Controllers\GerenciarVersoesController;
 use App\Http\Controllers\PresencaController;
+use App\Http\Controllers\GerenciarVersoesControllerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -340,7 +342,7 @@ Route::middleware('rotas:25')->group(function () {
 });
 
 // Gerenciar Perfis
-Route::middleware('rotas:1')->group(function () {
+Route::middleware('rotas:26')->group(function () {
     Route::get('/gerenciar-perfis', [GerenciarPerfil::class, 'index']);
     Route::get('/criar-perfis', [GerenciarPerfil::class, 'create']);
     Route::post('/armazenar-perfis', [GerenciarPerfil::class, 'store']);
@@ -351,7 +353,7 @@ Route::middleware('rotas:1')->group(function () {
 });
 
 // Gerenciar Rotas Setor
-Route::middleware('rotas:1')->group(function () {
+Route::middleware('rotas:27')->group(function () {
     Route::get('/gerenciar-setor', [GerenciarSetor::class, 'index']);
     Route::get('/criar-setor', [GerenciarSetor::class, 'create']);
     Route::post('/armazenar-setor', [GerenciarSetor::class, 'store']);
@@ -359,4 +361,16 @@ Route::middleware('rotas:1')->group(function () {
     Route::get('/editar-setor/{id}', [GerenciarSetor::class, 'edit']);
     Route::post('/atualizar-setor/{id}', [GerenciarSetor::class, 'update']);
     Route::any('/excluir-setor/{id}', [GerenciarSetor::class, 'destroy']);
+});
+
+//Gerenciar Versões
+Route::middleware('rotas:28')->group(function () {
+    Route::get('/gerenciar-versoes', [GerenciarVersoesController::class, 'index']);
+    Route::get('/incluir-versoes', [GerenciarVersoesController::class, 'create']);
+    Route::post('/armazenar-versoes', [GerenciarVersoesController::class, 'store']);
+    Route::get('/editar-versoes/{id}', [GerenciarVersoesController::class, 'edit']);
+    Route::post('/atualizar-versoes/{id}', [GerenciarVersoesController::class, 'update']);
+    Route::get('/visualizar-versoes/{id}', [GerenciarVersoesController::class, 'show']);
+    Route::any('/excluir-versoes/{id}', [GerenciarVersoesController::class, 'destroy']);
+
 });

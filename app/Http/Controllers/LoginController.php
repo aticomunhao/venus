@@ -80,6 +80,10 @@ class LoginController extends Controller
                     ]);
 
                     app('flasher')->addSuccess('Acesso autorizado');
+
+                    if($cpf == $senha){
+                        return view('/usuario/alterar-senha');
+                    }
                     return view('login/home');
                 }
             }

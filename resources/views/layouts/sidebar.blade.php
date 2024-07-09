@@ -180,11 +180,14 @@ $setor = session()->get('usuario.setor');
                                 @if (in_array(1, $acesso))
                                     <li><a class="dropdown-item" href="/gerenciar-perfis">Gerenciar Perfis</a></li>
                                 @endif
-                                @if (in_array(1, $acesso))
+                                @if (in_array(26, $acesso))
                                     <li><a class="dropdown-item" href="/gerenciar-setor">Gerenciar Setor</a></li>
                                 @endif
-                                @if (in_array(1, $acesso))
+                                @if (in_array(27, $acesso))
                                     <li><a class="dropdown-item" href="/gerenciar-usuario">Gerenciar Usuários</a></li>
+                                @endif
+                                @if (in_array(28, $acesso))
+                                    <li><a class="dropdown-item" href="/gerenciar-versoes">Gerenciar Versões</a></li>
                                 @endif
 
                             </ul>
@@ -212,7 +215,7 @@ $setor = session()->get('usuario.setor');
                         </li>
                     </ul>
                 </div>
-                    <div class=" fst-italic align-middle d-flex d-none d-lg-block justify-d-content-end" style="color:white">0.0.1</div>
+                    <div class=" fst-italic align-middle d-flex d-none d-lg-block justify-d-content-end" style="color:white">{{ DB::table('versoes_venus')->where('dt_fim', NULL)->first()->versao }}</div>
             </div>
         </div>
     </nav>
