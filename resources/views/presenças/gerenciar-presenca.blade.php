@@ -39,7 +39,6 @@
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             <th class="col">Nr</th>
                             <th class="col">ASSISTIDO</th>
-                            <th class="col">CPF</th>
                             <th class="col">DIA</th>
                             <th class="col">HORÁRIO INICIO</th>
                             <th class="col">AÇÕES</th>
@@ -50,7 +49,6 @@
                         @foreach($lista as $listas)
                             <td>{{$listas->id}}</td>
                             <td>{{$listas->nome_completo}}</td>
-                            <td>{{$listas->cpf}}</td>
                             <td>{{date ('d/m/Y', strtotime($listas->dh_marcada))}}</td>
                             <td>{{date ('H:i', strtotime($listas->dh_marcada))}}</td>
                             <td>

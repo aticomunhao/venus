@@ -258,6 +258,7 @@
             let atendimentos = @json($lista);
             var intervalPesq = 0
 
+            $('#status').prop('selectedIndex', -1)
 
             function ajax() {
 
