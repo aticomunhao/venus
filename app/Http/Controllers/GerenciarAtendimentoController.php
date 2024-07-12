@@ -121,9 +121,10 @@ class GerenciarAtendimentoController extends Controller
         from tipo_status_atendimento s
         ");
 
-        session()->flash('message', 'Post successfully updated.');
+        $motivo = DB::table('tipo_motivo_atendimento')->get();
 
-            return view('/recepcao-AFI/gerenciar-atendimentos', compact('cpf', 'lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'situacao', 'now'));
+
+            return view('/recepcao-AFI/gerenciar-atendimentos', compact('cpf', 'lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'situacao', 'now', 'motivo'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('tratamento-erro.erro-inesperado', compact('code'));
@@ -262,9 +263,10 @@ class GerenciarAtendimentoController extends Controller
             return redirect()->back();
         }
     }
-    public function cancelar($ida)
+    public function cancelar(Request $request, $ida)
     {
         try {
+          
             $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
             if ($status > 1) {
@@ -275,6 +277,7 @@ class GerenciarAtendimentoController extends Controller
                     ->where('id', '=', $ida)
                     ->update([
                         'status_atendimento' => 6,
+                        'motivo' => $request->motivo
                     ]);
 
                 app('flasher')->addSuccess('O status do atendimento foi alterado para "Cancelado".');

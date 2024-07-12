@@ -16,9 +16,7 @@
             </div>
             <div class="card-body">
                 <div class="row">
-
                     <div class="col-12">
-
                         Versão
                         <input type="text" class="form-control" placeholder="0.0.0" name="versao" required>
                       </div>
@@ -26,10 +24,7 @@
                         Descrição
                         <textarea class="form-control" id="descricao" name="descricao" rows="6" required></textarea>
                       </div>
-
-
                     </div>
-
                     <div class="row">
                         <div class="d-grid gap-1 col-4 mx-auto">
                             <br>

@@ -39,7 +39,6 @@ class GerenciarVersoesController extends Controller
      */
     public function store(Request $request)
     {
-
         DB::table('versoes_venus')
         ->where('dt_fim', NULL)
         ->update([
