@@ -2,7 +2,7 @@
 
 @section('content')
 
-    
+
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR PTI
         </h4>
@@ -72,7 +72,7 @@
                               <td>
 
                                 <button type="button"
-                                    class="btn btn-outline-warning btn-sm tooltips" data-bs-target="#modal{{ $encaminhamento->id }}">
+                                    class="btn btn-outline-warning btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
                                     <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
                                 </button>

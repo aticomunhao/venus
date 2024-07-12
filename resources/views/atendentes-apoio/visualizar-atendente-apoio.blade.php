@@ -72,5 +72,12 @@
                                     </table>
                                 </div>
                             </div>
+                            <center>
+                                <div class="col-12 mt-3">
+                                    <a href="/gerenciar-atendentes-apoio" class="btn btn-danger col-3">
+                                        Retornar
+                                    </a>
+                                </div>
+                            </center>
                             </center>
                         @endsection

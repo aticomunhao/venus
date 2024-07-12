@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('head')
-    <title>Visualizar Plantonistas</title>
+@section('title')
+    Visualizar Plantonistas
 @endsection
 @section('content')
     <br />
@@ -71,5 +71,13 @@
                                     </table>
                                 </div>
                             </div>
+                            <center>
+                                <div class="col-12 mt-3">
+                                    <a href="/gerenciar-atendentes-plantonistas" class="btn btn-danger col-3">
+                                        Retornar
+                                    </a>
+
+                                </div>
+                            </center>
                             </center>
                         @endsection

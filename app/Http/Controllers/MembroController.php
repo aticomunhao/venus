@@ -66,7 +66,7 @@ class MembroController extends Controller
             ->whereIn('cro.id', $cronogramas)
             ->whereIn('gr.id_setor', session()->get('usuario.setor'));
 
-        $membro = DB::table('membro AS m')->leftJoin('associado', 'associado.id', '=', 'm.id_associado')->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')->leftJoin('cronograma as cro', 'm.id_cronograma', '=', 'cro.id')->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')->select('p.nome_completo', 'm.id_associado')->whereIn('m.id_cronograma', $cronogramasLogin)->whereIn('g.id_setor', session()->get('usuario.setor'))->get();
+        $membro = DB::table('membro AS m')->leftJoin('associado', 'associado.id', '=', 'm.id_associado')->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')->leftJoin('cronograma as cro', 'm.id_cronograma', '=', 'cro.id')->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')->select('p.nome_completo', 'm.id_associado')->whereIn('m.id_cronograma', $cronogramasLogin)->whereIn('g.id_setor', session()->get('usuario.setor'))->distinct()->get();
 
         if ($request->nome_grupo) {
             $membro_cronograma = $membro_cronograma->where('cro.id', $request->nome_grupo);
@@ -109,14 +109,14 @@ class MembroController extends Controller
     {
       //  try {
 
-            $dia = intval($request->dia);
+
             $now = Carbon::now()->format('Y-m-d');
             $seletedCronograma = DB::table('cronograma as cro')->where('id', $id)->first();
             $cronogramasPessoa = DB::table('membro')->where('id_associado', $request->input('id_associado'))->pluck('id_cronograma');
 
             $repeat = DB::table('cronograma AS rm')
                 ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
-                ->where('rm.dia_semana', $dia)
+                ->where('rm.dia_semana', $seletedCronograma->dia_semana)
                 ->whereIn('rm.id', $cronogramasPessoa)
                 ->whereNot('rm.id', $seletedCronograma->id)
                 ->where(function ($query) use ($now) {
@@ -214,7 +214,7 @@ class MembroController extends Controller
     public function store(Request $request)
     {
         try {
-            $dia = intval($request->dia);
+
             $now = Carbon::now()->format('Y-m-d');
             $seletedCronograma = DB::table('cronograma as cro')->where('id', $request->input('id_reuniao'))->first();
 
@@ -223,7 +223,7 @@ class MembroController extends Controller
             $repeat = DB::table('cronograma AS rm')
                 ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
                 ->whereIn('rm.id', $cronogramasPessoa)
-                ->where('rm.dia_semana', $dia)
+                ->where('rm.dia_semana', $seletedCronograma->dia_semana)
                 ->whereNot('rm.id', $seletedCronograma->id)
                 ->where(function ($query) use ($now) {
                     $query->where('rm.data_fim', '>', $now);

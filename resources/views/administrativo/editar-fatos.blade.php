@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+@section('title')
+Editar Fatos
+@endsection
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
@@ -7,7 +9,7 @@
                 <br>
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">Editar Sala</h5>
+                        <h5 class="card-title">Editar Fatos</h5>
                     </div>
                     <div class="card-body">
                         <form class="form-horizontal mt-4" method="post" action="/atualizar-fatos/@foreach($lista as $item){{$item->id}}@endforeach">

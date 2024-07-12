@@ -98,7 +98,28 @@
                                         <tbody>
                                             <tr style="text-align:center;font-size:11px">
                                                 <td>{{$assistidos->observacao}}</td>
-                                                <td>{{$assistidos->t1}} {{$assistidos->t2}} {{$assistidos->t3}} {{$assistidos->t4}} {{$assistidos->t5}} {{$assistidos->t6}} {{$assistidos->t7}} {{$assistidos->t8}} {{$assistidos->t9}} {{$assistidos->t10}} {{$assistidos->t11}} {{$assistidos->t12}} {{$assistidos->t13}}{{$assistidos->t14}} {{$assistidos->t15}} {{$assistidos->t16}} {{$assistidos->t17}} {{$assistidos->t18}} {{$assistidos->t19}}</td>
+                                                <td>
+                                                    - 
+                                                    {{$assistidos->t1 ? $assistidos->t1 . ' -' : ''}}
+                                                    {{$assistidos->t2 ? $assistidos->t2 . ' -' : ''}}
+                                                    {{$assistidos->t3 ? $assistidos->t3 . ' -' : ''}}
+                                                    {{$assistidos->t4 ? $assistidos->t4 . ' -' : ''}}
+                                                    {{$assistidos->t5 ? $assistidos->t5 . ' -' : ''}}
+                                                    {{$assistidos->t6 ? $assistidos->t6 . ' -' : ''}}
+                                                    {{$assistidos->t7 ? $assistidos->t7 . ' -' : ''}}
+                                                    {{$assistidos->t8 ? $assistidos->t8 . ' -' : ''}}
+                                                    {{$assistidos->t9 ? $assistidos->t9 . ' -' : ''}}
+                                                    {{$assistidos->t10 ? $assistidos->t10 . ' -' : '' }}
+                                                    {{$assistidos->t11 ? $assistidos->t11 . ' -' : '' }}
+                                                    {{$assistidos->t12 ? $assistidos->t12 . ' -' : '' }}
+                                                    {{$assistidos->t13 ? $assistidos->t13 . ' -' : '' }}
+                                                    {{$assistidos->t14 ? $assistidos->t14 . ' -' : '' }}
+                                                    {{$assistidos->t15 ? $assistidos->t15 . ' -' : '' }}
+                                                    {{$assistidos->t16 ? $assistidos->t16 . ' -' : '' }}
+                                                    {{$assistidos->t17 ? $assistidos->t17 . ' -' : '' }}
+                                                    {{$assistidos->t18 ? $assistidos->t18 . ' -' : '' }}
+                                                    {{$assistidos->t19 ? $assistidos->t19 . ' -' : '' }}
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>

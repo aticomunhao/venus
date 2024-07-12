@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Editar Entrevista')
 @section('content')
     <div class="container">
         <br>

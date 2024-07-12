@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Agendar dia')
 @section('head')
 
 <title>Agendar Tratamento</title>

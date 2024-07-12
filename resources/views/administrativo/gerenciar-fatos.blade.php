@@ -43,11 +43,13 @@
                     <td>{{ $listas->id }}</td>
                     <td>{{ $listas->descricao }}</td>
                     <td>
-                        <a href="/editar-fatos/{{ $listas->id }}" type="button" class="btn btn-outline-warning btn-sm"  data-tt="tooltip" data-placement="top" title="Editar">
+                        <a href="/editar-fatos/{{ $listas->id }}" type="button" class="btn btn-outline-warning btn-sm tooltips" >
+                            <span class="tooltiptext">Editar</span>
                             <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                         </a>
 
-                        <a href="/deletar-fatos" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao" onclick="confirmarExclusao('{{ $listas->id }}')" data-tt="tooltip" data-placement="top" title="Cancelar">
+                        <a href="/deletar-fatos" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao" onclick="confirmarExclusao('{{ $listas->id }}')" >
+                            <span class="tooltiptext">Deletar</span>
                             <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                         </a>
                     </td>
@@ -94,8 +96,6 @@
         window.location.href = '/deletar-fatos/' + id;
     }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
 
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))

@@ -78,21 +78,21 @@
                                     <td scope="">{{$assistidos->nm_2}}</td>
                                     <td scope="">{{$assistidos->descricao}}</td>
                                     <td scope="">
-                                        <a href="/historico-afe/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Analisar"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/fim-analise-afe/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Chamar assistido"><i class="bi bi-bell" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/iniciar-atendimento-afe/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Iniciar"><i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/tratar-afe/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Tratamento"><i class="bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/entrevistar-afe/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Entrevista"><i class="bi bi-mic" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <a href="/temas-afe/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Temática"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button></a>
-                                        <button type="button" class="btn btn-outline-danger btn-sm"
-                                        data-tt="tooltip" data-placement="top" title="Reset"><i
+                                        <a href="/historico-afe/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-primary btn-sm tooltips" ><span class="tooltiptext">Analisar</span><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                                        <a href="/fim-analise-afe/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext" style="width:150px; margin-left:-75px">Chamar Assistido</span><i class="bi bi-bell" style="font-size: 1rem; color:#000;"></i></button></a>
+                                        <a href="/iniciar-atendimento-afe/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-success btn-sm tooltips"><span class="tooltiptext">Iniciar</span><i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button></a>
+                                        <a href="/tratar-afe/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext">Tratamento</span><i class="bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button></a>
+                                        <a href="/entrevistar-afe/{{$assistidos->idat}}/{{$assistidos->idas}}"><button type="button" class="btn btn-outline-warning btn-sm tooltips" ><span class="tooltiptext">Entrevista</span><i class="bi bi-mic" style="font-size: 1rem; color:#000;"></i></button></a>
+                                        <a href="/temas-afe/{{$assistidos->idat}}"><button type="button" class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext">Temática</span><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button></a>
+                                        <button type="button" class="btn btn-outline-danger btn-sm tooltips"
+                                        ><span class="tooltiptext">Reset</span><i
                                             class="bi bi-arrow-repeat" style="font-size: 1rem; color:#000;"
                                             data-bs-toggle="modal"
                                             data-bs-target="#modalRel{{ $assistidos->idat }}"></i></button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm"
-                                        data-tt="tooltip" data-placement="top" title="Finalizado"
+                                    <button type="button" class="btn btn-outline-danger btn-sm tooltips"
+
                                         data-bs-toggle="modal"
-                                        data-bs-target="#modalF{{ $assistidos->idat }}"><i
+                                        data-bs-target="#modalF{{ $assistidos->idat }}"><span class="tooltiptext">Finalizar</span><i
                                             class="bi bi-door-open"
                                             style="font-size: 1rem; color:#000;"></i></button>
 
@@ -159,7 +159,7 @@
 
 
 
-                                                         
+
                                                         </div>
                                                     </div>
 
@@ -206,7 +206,7 @@
 opacity: 50%;
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 
 <script>
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))

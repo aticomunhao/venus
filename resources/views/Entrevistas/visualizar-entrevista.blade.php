@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Visualizar Entrevista')
 @section('content')
 <div class="container">
     <br>
@@ -13,7 +13,6 @@
         <div class="card-body">
             <form class="form-horizontal mt-2" method="post" action="/visualizar-entrevista/{{ $encaminhamento->id }}">
                 @csrf
-
                 <div class="row mb-5">
                     <div class="col">
                         <label for="id_encaminhamento" class="form-label">Nome assistido</label>
@@ -21,7 +20,7 @@
                             <option value="{{ $encaminhamento->id }}">{{ $entrevistas->nome_completo }}</option>
                         </select>
                     </div>
-                </div>    
+                </div>
                 <div class="row mb-5">
                     <div class="col">
                         <label for="id_entrevistador" class="form-label">Entrevistador</label>
@@ -74,7 +73,7 @@
                             </div>
                         </div>
                     </div>
-                </div>  
+                </div>
                 <br>
 
                 <div class="row mt-4 justify-content-center">

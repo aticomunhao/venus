@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 
 
-   
+
 
     <div class="container-xxl" ;>
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
@@ -90,50 +90,43 @@
                                             <td scope="">{{ $assistidos->descricao }}</td>
                                             <td scope="">
                                                 <a href="/historico/{{ $assistidos->idat }}/{{ $assistidos->idas }}"><button
-                                                        type="button" class="btn btn-outline-primary btn-sm"
-                                                        data-tt="tooltip" data-placement="top" title="Analisar"><i
+                                                        type="button" class="btn btn-outline-primary btn-sm tooltips"><span class="tooltiptext">Analisar</span><i
                                                             class="bi bi-search"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                                 <a href="/fim-analise/{{ $assistidos->idat }}"><button type="button"
-                                                        class="btn btn-outline-warning btn-sm" data-tt="tooltip"
-                                                        data-placement="top" title="Chamar assistido"><i class="bi bi-bell"
+                                                        class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext" style="width:150px; margin-left:-75px">Chamar assistido</span><i class="bi bi-bell"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                                 <a href="/iniciar-atendimento/{{ $assistidos->idat }}"><button
-                                                        type="button" class="btn btn-outline-success btn-sm"
-                                                        data-tt="tooltip" data-placement="top" title="Iniciar"><i
+                                                        type="button" class="btn btn-outline-success btn-sm tooltips"><span class="tooltiptext">Iniciar</span><i
                                                             class="bi bi-check-circle"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                                 <a href="/tratar/{{ $assistidos->idat }}/{{ $assistidos->idas }}"><button
-                                                        type="button" class="btn btn-outline-warning btn-sm"
-                                                        data-tt="tooltip" data-placement="top" title="Tratamento"><i
+                                                        type="button" class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext">Tratamento</span><i
                                                             class="bi bi-bandaid"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                                 <a href="/entrevistar/{{ $assistidos->idat }}/{{ $assistidos->idas }}"><button
-                                                        type="button" class="btn btn-outline-warning btn-sm"
-                                                        data-tt="tooltip" data-placement="top" title="Entrevista"><i
+                                                        type="button" class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext">Entrevista</span><i
                                                             class="bi bi-mic"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                                 <a href="/temas/{{ $assistidos->idat }}"><button type="button"
-                                                        class="btn btn-outline-warning btn-sm" data-tt="tooltip"
-                                                        data-placement="top" title="Temática"><i
+                                                        class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext">Temática</span><i
                                                             class="bi bi-journal-bookmark-fill"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
-                                                <button type="button" class="btn btn-outline-danger btn-sm"
-                                                    data-tt="tooltip" data-placement="top" title="Reset"><i
+                                                <button type="button" class="btn btn-outline-danger btn-sm tooltips"><span class="tooltiptext">Reset</span><i
                                                         class="bi bi-arrow-repeat" style="font-size: 1rem; color:#000;"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#modalRel{{ $assistidos->idat }}"></i></button>
-                                                <button type="button" class="btn btn-outline-danger btn-sm"
-                                                    data-tt="tooltip" data-placement="top" title="Finalizado"
+                                                <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                                     data-bs-toggle="modal"
-                                                    data-bs-target="#modalF{{ $assistidos->idat }}"><i
+                                                    data-bs-target="#modalF{{ $assistidos->idat }}"><span class="tooltiptext">Finalizado</span><i
                                                         class="bi bi-door-open"
                                                         style="font-size: 1rem; color:#000;"></i></button>
 
 
                                                 {{-- Modal de Reset --}}
-                                                <div class="modal fade" id="modalRel{{ $assistidos->idat }}" tabindex="-1"
-                                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal fade" id="modalRel{{ $assistidos->idat }}"
+                                                    tabindex="-1" aria-labelledby="exampleModalLabel"
+                                                    aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header"
@@ -195,9 +188,13 @@
 
                                                                         <div class="col-12 mt-5">
 
-                                                                            <input class="form-check-input" type="checkbox" name="emergencia" id="emergencia" style="width:15px; height:15px; border:1px solid rgb(0, 102, 255)">
-                                                                            <label class="emergencia" name="hello" id="hello">Este atendimento é uma <span
-                                                                                style="color:rgb(196, 27, 27);">Emergência</span></label>
+                                                                            <input class="form-check-input"
+                                                                                type="checkbox" name="emergencia"
+                                                                                id="emergencia"
+                                                                                style="width:15px; height:15px; border:1px solid rgb(0, 102, 255)">
+                                                                            <label class="emergencia" name="hello"
+                                                                                id="hello">Este atendimento é uma <span
+                                                                                    style="color:rgb(196, 27, 27);">Emergência</span></label>
 
                                                                         </div>
 
@@ -210,7 +207,8 @@
                                                                     <button type="button" class="btn btn-danger"
                                                                         data-bs-dismiss="modal">Cancelar</button>
 
-                                                                    <button type="submit" class="btn btn-primary">Confirmar
+                                                                    <button type="submit"
+                                                                        class="btn btn-primary">Confirmar
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -224,9 +222,9 @@
 
 
                                                 <!--<button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#tratamento{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Tratamentos"><i class="bi bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button>
-                                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#entrevista{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi bi-mic" style="font-size: 1rem; color:#000;"></i></button>
-                                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#anotacoes{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button>
-                                                    <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#finalizar{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i></button>-->
+                                                        <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#entrevista{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi bi-mic" style="font-size: 1rem; color:#000;"></i></button>
+                                                        <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#anotacoes{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button>
+                                                        <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#finalizar{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i></button>-->
                                             </td>
                                         </tr>
                                     @endforeach
@@ -244,17 +242,17 @@
         </div>
     </div>
 
-<style>
-    .emergencia {
-        opacity: 50%;
-    }
-</style>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    $('#emergencia').change(function() {
-        $('#hello').toggleClass('emergencia')
-    })
-</script>
+    <style>
+        .emergencia {
+            opacity: 50%;
+        }
+    </style>
+
+    <script>
+        $('#emergencia').change(function() {
+            $('#hello').toggleClass('emergencia')
+        })
+    </script>
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {

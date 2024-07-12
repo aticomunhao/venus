@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title') Gerenciar Atendimentos @endsection
+@section('title') Gerenciar Encaminhamentos PTI @endsection
 
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -68,12 +68,11 @@
                             <td>{{$listas->tsenc}}</td>
                             <td>
                                 @if ($listas->status_encaminhamento == 1)
-                                <a href="/agendar-pti/{{$listas->ide}}/{{$listas->idtt}}"><button type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top" title="Agendar"><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button></a>
-                                @elseif($listas->status_encaminhamento == 2)
+                                <a href="/agendar-pti/{{$listas->ide}}/{{$listas->idtt}}"><button type="button" class="btn btn-outline-success btn-sm tooltips"><span class="tooltiptext">Agendar</span><i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i></button></a>
+                                @elseif($listas->status_encaminhamento == 3)
                                 {{-- botao de alterar grupo --}}
                                 <a href="/alterar-grupo-tratamento-pti/{{ $listas->ide }}"type="button"
-                                    class="btn btn-outline-success btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Alterar Grupo"><i class="bi bi-arrow-left-right"
+                                    class="btn btn-outline-success btn-sm tooltips"><span class="tooltiptext">Alterar Grupo</span><i class="bi bi-arrow-left-right"
                                         style="font-size: 1rem; color:#000;"></i></a>
                                 @else
                                 <button type="button"
@@ -82,9 +81,9 @@
                                         style="font-size: 1rem; color:#000;" ></i></button>
                                 @endif
 
-                                <a href="/visualizar-enc-pti/{{$listas->ide}}"><button type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Histórico"><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/visualizar-enc-pti/{{$listas->ide}}"><button type="button" class="btn btn-outline-primary btn-sm tooltips"><span class="tooltiptext">Histórico</span><i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
                                 @if ($listas->status_encaminhamento < 2)
-                                <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#inativar{{$listas->ide}}" data-tt="tooltip" data-placement="top" title="Inativar"><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>
+                                <button class="btn btn-outline-danger btn-sm tooltips" type="button" id="" data-bs-toggle="modal" data-bs-target="#inativar{{$listas->ide}}"><span class="tooltiptext">Inativar</span><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>
                                 @else
                                 <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#inativar{{$listas->ide}}" data-tt="tooltip" data-placement="top" title="Inativar" disabled><i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>
                                 @endif
@@ -146,8 +145,6 @@
     </div>
 </div>
 
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 

@@ -51,9 +51,6 @@
             </div>
 
 
-
-
-
             {{-- Filtro Modal --}}
             <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
@@ -401,8 +398,6 @@
                         $('#tabelaPrincipal').append(
 
                         '<tr>'+
-
-
                                    '<td class="numeroAtendimento"> '+ ida  +'</td>' +
                                    '<td class="atendentePreferido">'+nm_4  +'</td>' +
                                    '<td class="tipoAtendente">'+tipo+'</td>' +

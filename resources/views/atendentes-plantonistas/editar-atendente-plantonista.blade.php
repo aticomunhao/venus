@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('head')
+@section('title')
     Editar Plantonistas
 @endsection
 @section('content')

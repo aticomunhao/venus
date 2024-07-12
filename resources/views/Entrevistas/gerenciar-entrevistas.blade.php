@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ENTREVISTA
         </h4>
@@ -83,8 +82,8 @@
                                             </a>
                                         @else
                                             <a href="/editar-entrevista/{{ $informacao->ide }}" type="button"
-                                                class="btn btn-outline-warning btn-sm" data-tt="tooltip"
-                                                data-placement="top" title="Editar">
+                                                class="btn btn-outline-warning btn-sm tooltips">
+                                                <span class="tooltiptext">Editar</span>
                                                 <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @endif{{-- Fim botao editar --}}
@@ -97,8 +96,8 @@
                                             </a>
                                         @else
                                             <a href="{{ route('criar-entrevista', ['id' => $informacao->ide]) }}"
-                                                type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip"
-                                                data-placement="top" title="Agendar ">
+                                                type="button" class="btn btn-outline-primary btn-sm tooltips">
+                                                <span class="tooltiptext">Agendar</span>
                                                 <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @endif{{-- Fim botao agendar --}}
@@ -111,8 +110,8 @@
                                             </a>
                                         @else
                                             <a href="{{ route('agendar-entrevistador', ['id' => $informacao->ide]) }}"
-                                                type="button" class="btn btn-outline-success btn-sm" data-tt="tooltip"
-                                                data-placement="top" title="Agendar entrevistador">
+                                                type="button" class="btn btn-outline-success btn-sm tooltips">
+                                                <span class="tooltiptext">Confirmar Entrevistador</span>
                                                 <i class="bi bi-person-add" style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @endif{{-- Fim aguardando entrevistador --}}
@@ -127,8 +126,8 @@
                                             </a>
                                         @else
                                             <a href="/visualizar-entrevista/{{ $informacao->ide }}" type="button"
-                                                class="btn btn-outline-primary btn-sm" data-tt="tooltip"
-                                                data-placement="top" title="Histórico">
+                                                class="btn btn-outline-primary btn-sm tooltips">
+                                                <span class="tooltiptext">Histórico</span>
                                                 <i class="bi bi bi-search" style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @endif{{-- Fim visualizar --}}
@@ -142,9 +141,9 @@
                                                 <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @else
-                                            <button type="button" class="btn btn-outline-success btn-sm"
-                                                data-tt="tooltip" data-placement="top" title="Confirmar"
+                                            <button type="button" class="btn btn-outline-success btn-sm tooltips"
                                                 data-bs-toggle="modal" data-bs-target="#modalF{{ $informacao->ide }}">
+                                                <span class="tooltiptext">Confirmar</span>
                                                 <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i>
                                             </button>
                                         @endif{{-- Fim Confirmar --}}
@@ -157,9 +156,9 @@
                                                 <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                             </a>
                                         @else
-                                            <button type="button" class="btn btn-outline-danger btn-sm"
-                                                data-tt="tooltip" data-placement="top" title="Cancelar"
+                                            <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                                 data-bs-toggle="modal" data-bs-target="#modal{{ $informacao->ide }}">
+                                                <span class="tooltiptext">Cancelar</span>
                                                 <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                             </button>{{-- Fim excluir --}}
                                         @endif
@@ -276,9 +275,13 @@
 
 
 
-        if ({{ $pesquisaValue == 'limpo' }}) { //Deixa o select status como padrao vazio
-            $(".teste").prop("selectedIndex", -1);
-        }
+    </script>
+    <script>
+        $(document).ready(function(){
+            if ({{ $pesquisaValue == 'limpo' }}) { //Deixa o select status como padrao vazio
+                $(".teste").prop("selectedIndex", -1);
+            }
+        })
     </script>
 @endsection
 
