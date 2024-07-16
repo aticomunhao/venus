@@ -128,7 +128,7 @@ class ReuniaoMediunicaController extends Controller
 
     public function store(Request $request)
     {
-        try {
+      //  try {
 
             $usuario = session()->get('usuario.id_pessoa');
             $now =  Carbon::now()->format('Y-m-d');
@@ -194,11 +194,11 @@ class ReuniaoMediunicaController extends Controller
             app('flasher')->addSuccess('A reunião foi cadastrada com sucesso.');
 
             return redirect('/gerenciar-reunioes');
-        } catch (\Exception $e) {
+        // } catch (\Exception $e) {
 
-            $code = $e->getCode();
-            return view('administrativo-erro.erro-inesperado', compact('code'));
-        }
+        //     $code = $e->getCode();
+        //     return view('administrativo-erro.erro-inesperado', compact('code'));
+        // }
     }
 
     public function show(string $id)

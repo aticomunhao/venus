@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Editar Mediunidades')
 @section('content')
 <div class="container mt-4">
     <div class="card">
@@ -151,9 +151,6 @@
 
 
 
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
 <script>

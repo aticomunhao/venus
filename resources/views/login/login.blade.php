@@ -4,6 +4,7 @@
 @section('title') Vênus @endsection
 
 @section('content')
+
  <div class="account-pages my-4 pt-sm-4">
         <div class="container">
             <div class="row justify-content-center">

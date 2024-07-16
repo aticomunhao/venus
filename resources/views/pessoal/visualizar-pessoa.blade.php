@@ -8,7 +8,7 @@
     <div class="justify-content-center">
         <div class="col-12">
             <br>
-            <fieldset class="border rounded border-primary">
+        
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
@@ -80,7 +80,7 @@
                                     <div class="d-grid gap-1 col-4 mx-auto">
                                         <a class="btn btn-danger" href="/gerenciar-pessoas" role="button">Retornar</a>
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         </form>

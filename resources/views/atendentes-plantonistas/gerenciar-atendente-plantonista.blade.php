@@ -48,7 +48,6 @@
             <thead style="text-align: center;">
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                     <th class="col">NOME</th>
-                    <th class="col">CPF</th>
                     <th class="col">STATUS</th>
                     <th class="col">AÇÕES</th>
                 </tr>
@@ -57,7 +56,6 @@
                 @foreach ($atendente as $atendentes)
                     <tr>
                         <td>{{ $atendentes->nome_completo }}</td>
-                        <td>{{ str_pad($atendentes->cpf, 11, '0', STR_PAD_LEFT) }}</td>
                         <td>{{ $atendentes->tipo }}</td>
                         <td scope="">
 

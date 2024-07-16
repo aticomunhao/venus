@@ -60,13 +60,16 @@
                         <td> {{$grupos->nm_setor}} </td>
                         <td> {{$grupos->descricao1}} </td>
                         <td>
-                            <a href="/editar-grupos/{{$grupos->id}}" type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar">
+                            <a href="/editar-grupos/{{$grupos->id}}" type="button" class="btn btn-outline-warning btn-sm tooltips">
+                                <span class="tooltiptext">Editar</span>
                                 <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                             </a>
-                            <a href="/visualizar-grupos/{{$grupos->id}}" type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">
+                            <a href="/visualizar-grupos/{{$grupos->id}}" type="button" class="btn btn-outline-primary btn-sm tooltips">
+                                <span class="tooltiptext">Visualizar</span>
                                 <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
                             </a>
-                            <a href="/deletar-grupos" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{$grupos->id}}"  data-tt="tooltip" data-placement="top" title="Deletar">
+                            <a href="/deletar-grupos" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modal{{$grupos->id}}">
+                                <span class="tooltiptext">Deletar</span>
                                 <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                             </a>
                             {{--  Modal de Exclusao --}}
@@ -98,8 +101,6 @@
     </div>
     {{ $grupo->links('pagination::bootstrap-5') }}
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
 

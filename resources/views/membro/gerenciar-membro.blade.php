@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Gerenciar Membros')
 @section('content')
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPO -
@@ -77,28 +77,21 @@
                                 </button>
                                 @else
                                 <a href="/editar-membro/{{ $id }}/{{ $membros->idm }}" type="button"
-                                    class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Editar">
+                                    class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Editar</span>
                                     <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                                 </a>
                                 @endif
-
-                                <button href="/visualizar-membro/{{ $id }}/{{ $membros->idm }}" type="button"
-                                    class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Visualizar">
-                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"
-                                        data-bs-target="#pessoa"></i>
-                                </button>
                                 @if($membros->status == 'Inativado')
-                                <button href="" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#confirmacaoDelecao{{ $membros->idm }}" data-tt="tooltip"
                                     data-placement="top" title="Inativar" disabled>
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </button>
                                 @else
-                                <button href="" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#confirmacaoDelecao{{ $membros->idm }}" data-tt="tooltip"
-                                    data-placement="top" title="Inativar">
+                                <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                    data-bs-target="#confirmacaoDelecao{{ $membros->idm }}">
+                                    <span class="tooltiptext">Inativar</span>
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </button>
                                 @endif
@@ -137,7 +130,6 @@
     <script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
     <link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))

@@ -54,11 +54,12 @@
                             <td>
 
 
-                                <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ $listas->id }}" data-tt="tooltip" data-placement="top" title="Presença">
+                                <button type="button" class="btn btn-outline-warning btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modal{{ $listas->id }}">
+                                    <span class="tooltiptext">Presença</span>
                                     <i class="bi bi-exclamation-triangle" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-
-                               <button type="button" class="btn btn-outline-danger btn-sm"  data-tt="tooltip" data-placement="top" data-bs-toggle="modal" data-bs-target="#modalp{{ $listas->id }}" title="Inativar">
+                               <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modalp{{ $listas->id }}">
+                                <span class="tooltiptext">Inativar</span>
                                 <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>
                                {{--  Modal de Presença --}}
                                <div class="modal fade" id="modal{{ $listas->id }}" tabindex="-1"
@@ -128,8 +129,6 @@
     </div>
 </div>
 
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 
