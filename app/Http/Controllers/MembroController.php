@@ -12,15 +12,15 @@ class MembroController extends Controller
 {
     public function grupos(Request $request)
     {
-        //   try{
+           try{
 
         $now = Carbon::now()->format('Y-m-d');
 
         $cronogramasLogin = DB::table('membro AS m')->leftJoin('associado', 'associado.id', '=', 'm.id_associado')->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id');
 
-        // if (!in_array(1, session()->get('usuario.perfis'))) {
-        //     $cronogramasLogin = $cronogramasLogin->where('id_associado', session()->get('usuario.id_associado'));
-        // }
+         if (!in_array(1, session()->get('usuario.perfis'))) {
+            $cronogramasLogin = $cronogramasLogin->where('id_associado', session()->get('usuario.id_associado'));
+        }
         $cronogramasLogin = $cronogramasLogin->pluck('m.id_cronograma');
 
         $cronogramasLogin = json_decode(json_encode($cronogramasLogin), true);
@@ -80,12 +80,12 @@ class MembroController extends Controller
         return view('membro.listar-grupos-membro', compact('membro_cronograma', 'nome', 'membro', 'membroPesquisa'));
     }
 
-    //  catch(\Exception $e){
+     catch(\Exception $e){
 
-    //     $code = $e->getCode( );
-    //     return view('listar-grupos erro.erro-inesperado', compact('code'));
-    //        }
-    //    }
+        $code = $e->getCode( );
+        return view('listar-grupos erro.erro-inesperado', compact('code'));
+           }
+       }
 
     public function createGrupo(Request $request, string $id)
     {

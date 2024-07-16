@@ -766,8 +766,6 @@ catch(\Exception $e){
 
             $atendente = session()->get('usuario.id_pessoa');
 
-
-
             $ame = isset($request->ame) ? 1 : 0;
             $afe = isset($request->afe) ? 1 : 0;
             $diamo = isset($request->diamo) ? 1 : 0;

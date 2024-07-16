@@ -14,18 +14,18 @@ class LoginController extends Controller
 {
     public function index()
     {
-        try {
+     //   try {
             return view('login/login');
-        } catch (\Exception $e) {
+    //    } catch (\Exception $e) {
 
-            $code = $e->getCode();
-            return view('login/login erro.erro-inesperado', compact('code'));
-        }
+     //       $code = $e->getCode();
+     //       return view('login/login erro.erro-inesperado', compact('code'));
+     //   }
     }
 
     public function valida(Request $request)
     {
-        try {
+     //   try {
             $cpf = $request->input('cpf');
             $senha = $request->input('senha');
 
@@ -54,6 +54,8 @@ class LoginController extends Controller
                         if (count($result) > 0) {
             $perfis = explode(',', $result[0]->perfis);
             $setores = explode(',', $result[0]->setor);
+            $perfis = $perfis[0] == '' ? [0] : $perfis;
+            $setores = $setores[0] == '' ? [0] : $setores;
             $array_setores = $setores;
 
             $perfis = DB::table('rotas_perfil')->whereIn('id_perfil', $perfis)->orderBy('id_rotas')->pluck('id_rotas');
@@ -76,7 +78,7 @@ class LoginController extends Controller
                         'sexo' => $result[0]->sexo,
                         'setor' => $array_setores,
                         'acesso' => $rotasAutorizadas,
-                        'administrador' => in_array(1, $perfis) ? true : false,
+                        'perfis' => $perfis,
                     ]);
 
                     app('flasher')->addSuccess('Acesso autorizado');
@@ -89,15 +91,15 @@ class LoginController extends Controller
             }
             app('flasher')->addError('Credenciais inválidas');
             return view('login/login');
-        } catch (\Exception $e) {
+        // } catch (\Exception $e) {
 
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
+        //     $code = $e->getCode();
+        //     return view('tratamento-erro.erro-inesperado', compact('code'));
+        // }
     }
     public function validaUserLogado()
     {
-       // try {
+        try {
             $cpf = session()->get('usuario.cpf');
 
             $result = DB::select("
@@ -151,11 +153,11 @@ class LoginController extends Controller
                 app('flasher')->addError('É necessário realizar o login para acessar!');
                 return view('login/login');
             }
-        // } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-        //     $code = $e->getCode();
-        //     return view('tratamento-erro.erro-inesperado', compact('code'));
-        // }
+            $code = $e->getCode();
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+        }
     }
     public function create()
     {

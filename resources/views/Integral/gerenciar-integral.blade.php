@@ -1,10 +1,10 @@
 @extends('layouts.app')
-
+@section('title', 'Gerenciar Assistidos Integral')
 @section('content')
     <div class="container-fluid">
-        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR INTEGRAL
+        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ASSISTIDOS INTEGRAL
         </h4>
-        
+
         <div class="col-12" >
             <form action="/gerenciar-integral" class="form-horizontal mt-4" method="GET">
                 <div class="row">
@@ -71,21 +71,21 @@
 
                                 @if($encaminhamento->dt_fim == null)
                                 <button type="button"
-                                    class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Declarar Alta" data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
+                                    class="btn btn-outline-warning btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
+                                    <span class="tooltiptext">Declarar Alta</span>
                                     <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
                                 </button>
                                 @else
                                 <button type="button"
-                                class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                title="Sem Limite" data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
+                                class="btn btn-outline-warning btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
+                                <span class="tooltiptext">Sem limite</span>
                                 <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>
                             </button>
                             @endif
 
                                 <a href="/visualizar-integral/{{ $encaminhamento->id }}" type="button"
-                                    class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Visualizar">
+                                    class="btn btn-outline-primary btn-sm tooltips">
+                                    <span class="tooltiptext">Visualizar</span>
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
                                         data-bs-target="#pessoa"></i>
                                 </a>
@@ -156,8 +156,6 @@
     </div>
 
 
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))

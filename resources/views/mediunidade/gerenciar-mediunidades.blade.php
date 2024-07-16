@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Gerenciar Mediunidades')
 @section('content')
 
     <div class="container-fluid">
@@ -36,7 +36,7 @@
                     <tr style="background-color: #d6e3ff; font-size: 14px; color: #000000;">
                         <th>ID</th>
                         <th>NOME</th>
-                        <th>CPF</th>
+                
                         <th>STATUS</th>
                         <th>AÇÕES</th>
                     </tr>
@@ -46,16 +46,19 @@
                         <tr>
                             <td>{{ $mediunidades->idp }}</td>
                             <td>{{ $mediunidades->nome_completo }}</td>
-                            <td>{{ $mediunidades->cpf }}</td>
+
                             <td>{{ $mediunidades->status ? 'Ativo' : 'Inativo' }}</td>
                             <td>
-                                <a href="/editar-mediunidade/{{ $mediunidades->idp }}" class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" title="Editar">
+                                <a href="/editar-mediunidade/{{ $mediunidades->idp }}" class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Editar</span>
                                     <i class="bi bi-pencil" style="font-size: 1rem; color: #000;"></i>
                                 </a>
-                                <a href="/visualizar-mediunidade/{{ $mediunidades->idp }}" class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Visualizar">
+                                <a href="/visualizar-mediunidade/{{ $mediunidades->idp }}" class="btn btn-outline-primary btn-sm tooltips">
+                                    <span class="tooltiptext">Visualizar</span>
                                     <i class="bi bi-search" style="font-size: 1rem; color: #000;"></i>
                                 </a>
-                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao{{ $mediunidades->idp }}" data-bs-toggle="tooltip" title="Deletar">
+                                <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao{{ $mediunidades->idp }}">
+                                    <span class="tooltiptext">Deletar</span>
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color: #000;"></i>
                                 </button>
                             </td>
@@ -85,7 +88,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Editar Membro')
 @section('content')
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <link href="/venus/node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />

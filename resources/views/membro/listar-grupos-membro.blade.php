@@ -1,8 +1,8 @@
 @extends('layouts.app')
-
+@section('title', 'Administrar Grupos')
 @section('content')
     <div class="container-fluid">
-        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR CONTROLE GRUPO
+        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">ADMINISTRAR GRUPOS
         </h4>
 
         <div class="col-12">
@@ -78,8 +78,8 @@
                             <td>
 
                                 <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
-                                class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                title="Gerenciar">
+                                class="btn btn-outline-warning btn-sm tooltips">
+                                <span class="tooltiptext">Gerenciar</span>
                                 <i class="bi bi-three-dots" style="font-size: 1rem; color:#000;"></i>
                              </a>
 
@@ -104,7 +104,7 @@
 
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))

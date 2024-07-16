@@ -1,7 +1,6 @@
 <?php $acesso = session()->get('usuario.acesso');
 $setor = session()->get('usuario.setor');
 ?>
-
 <div id="app" class="row">
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm"
         style="background-color:#87CEFA; font-family:tahoma; font-weight:bold;">
@@ -19,8 +18,6 @@ $setor = session()->get('usuario.setor');
                             <a class="nav-link dropdown-toggle" href="#" id="1" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">Gerenciamento AME</a>
                             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-
-
                                 @if (in_array(13, $acesso) or in_array(14, $acesso))
                                     <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
                                     </li>

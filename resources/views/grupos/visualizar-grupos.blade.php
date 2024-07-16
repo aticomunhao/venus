@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Visualizar Grupos')
 @section('content')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
     <br>
@@ -86,7 +86,7 @@
                                                 <option value="{{ $setores->id}}">{{ $setores->nome}}</option>
                                             @endforeach
                                         </select>
-                                   
+
                                 </div>
                                 <div class="row justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">
