@@ -299,7 +299,7 @@ class UsuarioController extends Controller
         }
 
     public function inserirPerfilUsuario($perfil, $idPessoa)
-    { 
+    {
         try{
         $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
         $resultPerfil = DB::table('perfil')->get();
@@ -314,10 +314,10 @@ class UsuarioController extends Controller
                         'id_perfil' => $resultPerfils->id,
                     ]);
                 }
-                
+
             }
         }
-        
+
     }
     catch(\Exception $e){
 
@@ -411,6 +411,10 @@ class UsuarioController extends Controller
         $resultSenhaAtualHash = DB::select("select hash_senha from usuario where id = $id_usuario");
 
         if (Hash::check($senhaAtual, $resultSenhaAtualHash[0]->hash_senha)) {
+            if($request->input('senhaNova') == $request->input('senhaAtual')){
+                app('flasher')->addError('Sua nova senha não pode ser igual a antiga!');
+                return redirect()->back();
+            }
             $senha_nova = Hash::make($request->input('senhaNova'));
 
             DB::table('usuario')
@@ -437,7 +441,7 @@ class UsuarioController extends Controller
 
     public function gerarSenha($id_pessoa)
     {
-        
+
         $senha = $this->gerarSenhaInicial($id_pessoa);
 
         DB::table('usuario')

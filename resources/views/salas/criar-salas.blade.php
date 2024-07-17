@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Cadastrar Sala')
 @section('content')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
     <br>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('head')
-    <title>Cadastrar Reunião Mediúnica</title>
+@section('title')
+   Cadastrar Reunião
 @endsection
 
 @section('content')
@@ -152,39 +152,40 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        $('#max_atend').prop("disabled", false)
-        $('#tratamento').prop("disabled", false)
-        $('#grupo').change(function() {
-            let grupo = $('#grupo').prop('selectedIndex');
+        $(document).ready(function(){
+            function disab(){
+                let grupo = $('#grupo').prop('selectedIndex');
 
+                let array = @json($grupo);
+                array = array[grupo]
 
-            let array = @json($grupo);
-            array = array[grupo]
-
-            if (array.id_tipo_grupo != 3) {
-                $('#max_atend').prop("disabled", false)
-                $('#tratamento').prop("disabled", false)
-                $('.sumir').prop('hidden', false)
+                if (array.id_tipo_grupo != 3) {
+                    $('#max_atend').prop("disabled", false)
+                    $('#tratamento').prop("disabled", false)
+                    $('.sumir').prop('hidden', false)
 
 
 
-            } else {
-                bufferM = $('#max_atend').val()
-                bufferT = $('#tratamento').prop("selectedIndex")
-                console.log(bufferM, bufferT)
-                $('#max_atend').prop("disabled", true)
-                $('#max_atend').val('')
-                $('#tratamento').prop("disabled", true)
-                $('#tratamento').prop("selectedIndex", -1)
-                $('.sumir').prop('hidden', true)
-            }
+                } else {
+                    bufferM = $('#max_atend').val()
+                    bufferT = $('#tratamento').prop("selectedIndex")
+                    $('#max_atend').prop("disabled", true)
+                    $('#max_atend').val('')
+                    $('#tratamento').prop("disabled", true)
+                    $('#tratamento').prop("selectedIndex", -1)
+                    $('.sumir').prop('hidden', true)
+                }
+            };
 
+            disab();
+            $('#grupo').change(function() {
+               disab()
+            })
         })
-    </script>
 
+    </script>
     <script>
         document.getElementById('id_sala').addEventListener('change', function() {
             var selectedOption = this.options[this.selectedIndex];

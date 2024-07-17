@@ -361,12 +361,11 @@ class GerenciarEncaminhamentoController extends Controller
 
     public function tratar(Request $request, $ide)
     {
-     //   try {
+       try {
             $reu = intval($request->reuniao);
             $dia_semana = DB::table('cronograma AS reu')->where('id', $reu)->value('dia_semana');
             $data_atual = Carbon::now();
             $dia_atual = $data_atual->weekday();
-
             $data_fim_antes = Carbon::today()->weekday($dia_semana)->addWeek(8);
             $data_fim_depois = Carbon::today()->weekday($dia_semana)->addWeek(7);
 
@@ -452,12 +451,12 @@ class GerenciarEncaminhamentoController extends Controller
         return redirect('/gerenciar-encaminhamentos');
 
     }
-    // catch(\Exception $e){
+    catch(\Exception $e){
 
-    //     $code = $e->getCode( );
-    //         return view('tratamento-erro.erro-inesperado', compact('code'));
-    //             }
-    //     }
+        $code = $e->getCode( );
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+                }
+        }
 
     public function visualizar($ide)
     {

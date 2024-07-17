@@ -98,40 +98,11 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     $(document).ready(function() {
         $('.select2').select2({ theme: 'bootstrap-5'});
     });
 </script>
-<!--
-<script>
-  const masterCheckBox = document.querySelector('th input');
- const checkBoxes = Array.from(document.querySelectorAll('td input'));
-
-// Marca ou desmarca todas as checkboxes de acordo com a checkbox master
-masterCheckBox.onchange = (event) => checkBoxes.forEach(e => {
-  e.checked = event.target.checked;
-  changeBackground(e);
-});
-
-// Marca masterCheckBox se todas as outras estiverem marcadas
-// Desmarca se pelo menos uma estiver desmarcada
-checkBoxes.forEach(e => e.onchange = (event) => {
-  masterCheckBox.checked = checkBoxes.every(f => f.checked);
-  changeBackground(e);
-});
-
-// Destaca background das linhas selecionadas
-function changeBackground(input) {
-  const tableRow = input.parentElement.parentElement;
-
-  if (input.checked) tableRow.style.background = '#aaa';
-  else tableRow.style.background = '';
-}
-
-</script>-->
-
 @endsection
 
 @section('footerScript')

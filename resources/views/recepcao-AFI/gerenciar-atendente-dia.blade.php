@@ -80,8 +80,8 @@
                                     <button  type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Finalizar" disabled><i class="bi bi-calendar2-check" style="font-size: 1rem; color:#000;"></i></button>
 
                                 @else
-                                    <a href="/editar-atendente-dia/{{$atendes->idatd}}"><button  type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar"><i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i></button></a>
-                                    <a href="/finalizar-atendente-dia/{{$atendes->idatd}}"><button  type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Finalizar"><i class="bi bi-calendar2-check" style="font-size: 1rem; color:#000;"></i></button></a>
+                                    <a href="/editar-atendente-dia/{{$atendes->idatd}}"><button  type="button" class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext">Editar</span><i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i></button></a>
+                                    <a href="/finalizar-atendente-dia/{{$atendes->idatd}}"><button  type="button" class="btn btn-outline-primary btn-sm tooltips"><span class="tooltiptext">Finalizar</span><i class="bi bi-calendar2-check" style="font-size: 1rem; color:#000;"></i></button></a>
 
                                 @endif
                             </td>
@@ -97,8 +97,6 @@
 
 
 
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 

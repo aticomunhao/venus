@@ -88,7 +88,7 @@
 
         </div style="text-align:right;">
         <hr />
-        <div class="table">Total assistidos: {{ $contar }}
+Total assistidos: {{ $contar }}
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                 <thead style="text-align: center;">
                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
@@ -122,9 +122,8 @@
 
 
                                 @if ($listas->status == 1 or $listas->status == 2){{-- Botão de presença --}}
-                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
-                                        data-tt="tooltip" data-placement="top" title="Presença"
-                                        data-bs-target="#presenca{{ $listas->idtr }}"><i
+                                    <button type="button" class="btn btn-outline-warning tooltips" data-bs-toggle="modal"
+                                        data-bs-target="#presenca{{ $listas->idtr }}"><span class="tooltiptext">Presença</span><i
                                             class="bi bi bi-exclamation-triangle"
                                             style="font-size: 1rem; color:#000;"></i></button>
                                 @else
@@ -191,8 +190,8 @@
                                             <div class="modal-header"
                                             style="background-color:rgb(39, 91, 189);color:white">
                                             <h1 class="modal-title fs-5" id="staticBackdropLabel">ATENÇÃO!</h1>
-                                            <a href="/gerenciar-tratamentos" type="button" class="btn-close"
-                                            aria-label="Close"></a>
+                                            <button data-bs-dismiss="modal" type="button" class="btn-close"
+                                            aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <label for="recipient-name" class="col-form-label"
@@ -202,9 +201,9 @@
 
                                         </div>
                                         <div class="modal-footer">
-                                            <a href="/gerenciar-tratamentos" type="button"
-                                            class="btn btn-danger">Cancelar Presença</a>
-                                            <button type="type" class="btn btn-primary">Confirmar</button>
+                                            <button data-bs-dismiss="modal" type="button"
+                                            class="btn btn-danger">Cancelar</button>
+                                            <button type="type" class="btn btn-primary">Confirmar Presença</button>
                                         </div>
                                     </div>
                                 </div>
@@ -216,16 +215,15 @@
 
 
                                 <a href="/visualizar-tratamento/{{ $listas->idtr }}" type="button"{{-- botão de histórico --}}
-                                    class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Histórico"><i class="bi bi-search"
-                                        style="font-size: 1rem; color:#000;"></i></a>
+                                    class="btn btn-outline-primary btn-sm tooltips">
+                                    <span class="tooltiptext">Histórico</span>
+                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></a>
 
 
 
                                 @if ($listas->status == 1 or $listas->status == 2){{-- botao de inativar --}}
-                                    <a type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip"
-                                        data-placement="top" data-bs-target="#inativa{{ $listas->idtr }}"
-                                        data-bs-toggle="modal" title="Inativar"><i class="bi bi-x-circle"
+                                    <a type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-target="#inativa{{ $listas->idtr }}"
+                                        data-bs-toggle="modal"><span class="tooltiptext">Inativar</span><i class="bi bi-x-circle"
                                             style="font-size: 1rem; color:#000;"></i></a>
 
                                 @else
@@ -282,14 +280,12 @@
                     @endforeach
                 </tbody>
             </table>
-        </div class="d-flex justify-content-center">
+
         {{ $lista->links('pagination::bootstrap-5') }}
     </div>
     </div>
     </div>
 
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         $(document).ready(function() {

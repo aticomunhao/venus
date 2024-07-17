@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title') Histórico  @endsection
+@section('title') Histórico Encaminhamento  @endsection
 
 @section('content')
 
@@ -91,7 +91,7 @@
                         </tbody>
                     </table>
                     @endforeach
-                    @if(sizeof($list) != 0)
+
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de presenças</legend>
                     Nr de faltas: {{$faul}}
                     <table class="table table-sm table-bordered table-striped">
@@ -101,7 +101,7 @@
                                 <td class="col">DATA</td>
                                 <td class="col">PRESENÇA</td>
                             </tr>
-                            
+
                         </thead>
                         <tbody>
                             @foreach($list as $lists)
@@ -111,7 +111,7 @@
 
                                 @if ($lists->presenca == true)
                                 <td style="background-color:#90EE90;">Sim</td>
-                                
+
                                 <td style="background-color:#FA8072;">Não</td>
                                 @endif
                             </tr>
@@ -119,7 +119,7 @@
                         </tbody>
                     </table>
                     <br/>
-                    @endif
+              
                     <div class="row">
                         <div class="col">
                             <a class="btn btn-danger" href="/gerenciar-encaminhamentos" style="text-align:right;" role="button">Fechar</a>

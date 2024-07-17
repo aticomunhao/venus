@@ -43,7 +43,7 @@
     </div>
     <hr>
     Quantidade filtrada:{{ $conta }}
-    <div class="table">
+
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
             <thead style="text-align: center;">
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">

@@ -6,7 +6,7 @@
 
 @section('content')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 
@@ -20,7 +20,7 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col">
-                                    GERENCIAR USUÁRIO
+                                    EDITAR USUÁRIO
                                 </div>
                             </div>
                         </div>
@@ -188,7 +188,7 @@
                                         </div>
                                         <div class="col ">
                                             <button type="submit"
-                                                class="btn btn-primary btn-block col-3">Cadastrar</button>
+                                                class="btn btn-primary btn-block col-3">Confirmar</button>
                                         </div>
                                     </div>
                                 </center>
@@ -201,7 +201,7 @@
         </form>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
 
     <script>

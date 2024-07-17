@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('head')
-    <title>Editar Reunião Mediúnica</title>
+@section('title')
+    Visualizar Reunião
 @endsection
 
 @section('content')
@@ -13,7 +13,7 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                Editar Reunião
+                                Visualizar Reunião
                             </div>
                         </div>
                     </div>
@@ -31,7 +31,7 @@
                                 </div>
                                 <div class="col">
                                     <label for="tratamento" class="form-label">Tipo de Tratamento</label>
-                                    <select class="form-select slct" id="tratamento" name="tratamento" required disabled>
+                                    <select class="form-control slct" id="tratamento" name="tratamento" required disabled>
                                         @foreach ($tratamento as $tratamentos)
                                             <option value="{{ $tratamentos->idt }}" {{$tratamentos->descricao == $info->descricao ? 'selected' : ''}}>{{ $tratamentos->descricao }}</option>
                                         @endforeach
@@ -44,7 +44,7 @@
                             <div class="row mt-3">
                                 <div class="col">
                                     <label for="dia" class="form-label">Dia da semana</label>
-                                    <select class="form-select slct" id="dia" name="dia" required disabled>
+                                    <select class="form-control slct" id="dia" name="dia" required disabled>
                                         @foreach ($dia as $dias)
                                             <option value="{{ $dias->idd }}" {{$dias->nome == $info->dia ? 'selected' : ''}} >{{ $dias->nome }}</option>
                                         @endforeach
@@ -88,7 +88,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <label for="id_sala" class="form-label">Número</label>
-                                <select class="form-select" id="id_sala" name="id_sala" disabled>
+                                <select class="form-control" id="id_sala" name="id_sala" disabled>
                                     <option value=""></option>
                                     @foreach ($salas as $sala)
                                         <option value="{{ $sala->id }}" data-nome="{{ $sala->nome }}"
@@ -122,7 +122,7 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 
 
 

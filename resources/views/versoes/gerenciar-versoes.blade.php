@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <div class="container-fluid";>
 
         <div class="container-fluid";>
@@ -64,9 +64,10 @@
                             </a>
 
 
-                            <a type="button" class="btn btn-outline-danger btn-sm"
-                                data-bs-target="#inativa{{ $versao->id }}" data-bs-toggle="modal"><i
-                                    class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></a>
+                            <a type="button" class="btn btn-outline-danger btn-sm tooltips"
+                                data-bs-target="#inativa{{ $versao->id }}" data-bs-toggle="modal">
+                                <span class="tooltiptext">Excluir</span>
+                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></a>
 
                             {{-- modal de inativação --}}
                             <div class="modal fade" id="inativa{{ $versao->id }}" data-bs-keyboard="false" tabindex="-1"

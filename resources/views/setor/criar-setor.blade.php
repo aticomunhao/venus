@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('head')
-    <title>Incluir Setor</title>
+@section('title')
+    Incluir Setor
 @endsection
 @section('content')
     <br />
@@ -58,7 +58,7 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <script>
         $(document).ready(function() {

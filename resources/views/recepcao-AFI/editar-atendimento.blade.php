@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Incluir Atendimento
+    Editar Atendimento
 @endsection
 
 @section('content')
@@ -11,7 +11,7 @@
         <br />
         <div class="card">
             <div class="card-header">
-                Incluir Atendimento
+                Editar Atendimento
             </div>
             <div class="card-body">
                 <div class="row">
@@ -238,7 +238,7 @@
                 if ($('#pEspecial').prop('checked')) {
                     $('#pedidoEspecial').prop('hidden', false)
                 } else {
-                    
+
                     $('#pedidoEspecial').prop('hidden', true)
                 }
             }

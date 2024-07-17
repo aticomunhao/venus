@@ -47,13 +47,16 @@
                         <td>{{ $setor->nome }}</td>
                         <td>{{ $setor->sigla }}</td>
                         <td>
-                            <a href="/editar-setor/{{ $setor->id }}" type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top" title="Editar">
+                            <a href="/editar-setor/{{ $setor->id }}" type="button" class="btn btn-outline-warning btn-sm tooltips">
+                                <span class="tooltiptext">Editar</span>
                                 <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                             </a>
-                            <a href="/visualizar-setor/{{ $setor->id }}" type="button" class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top" title="Visualizar">
+                            <a href="/visualizar-setor/{{ $setor->id }}" type="button" class="btn btn-outline-primary btn-sm tooltips">
+                                <span class="tooltiptext">Visualizar</span>
                                 <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
                             </a>
-                            <a href="#" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ $setor->id }}"  data-tt="tooltip" data-placement="top" title="Deletar">
+                            <a href="#" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modal{{ $setor->id }}">
+                                <span class="tooltiptext">Excluir</span>
                                 <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                             </a>
                             {{--  Modal de Exclusao --}}
@@ -90,7 +93,6 @@
 <script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
 <link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))

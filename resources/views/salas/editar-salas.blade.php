@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Editar Sala')
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 <br>
@@ -183,7 +183,7 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
     function validarSomenteLetras(input) {
         // Permite letras e alguns caracteres especiais comuns, excluindo números

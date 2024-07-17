@@ -326,7 +326,6 @@
 
 
 
-
             $('.pedido').change(function(){
                 if($('#tipo_afi').prop('selectedIndex') != 0){
                     $('#afi_p').prop('disabled', true)

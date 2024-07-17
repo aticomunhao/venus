@@ -55,7 +55,7 @@
             <br />
         </div style="text-align:right;">
         <hr />
-        <div class="table">Total reuniões: {{ $contar }}</div>
+        Total reuniões: {{ $contar }}</div>
 
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                 <thead style="text-align: center;">
@@ -86,18 +86,20 @@
                             <td>{{ $reuni->status }}</td>
                             <td>
                                 <a href="/editar-reuniao/{{ $reuni->idr }}"><button type="button"
-                                        class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                        title="Editar"><i class="bi bi-pencil"
+                                        class="btn btn-outline-warning btn-sm tooltips">
+                                        <span class="tooltiptext">Editar</span>
+                                        <i class="bi bi-pencil"
                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="/visualizar-reuniao/{{ $reuni->idr }}"><button type="button"
-                                        class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
-                                        title="Visualizar"><i class="bi bi-search"
+                                        class="btn btn-outline-primary btn-sm tooltips">
+                                        <span class="tooltiptext">Visualizar</span>
+                                        <i class="bi bi-search"
                                             style="font-size: 1rem; color:#000;"></i></button></a>
 
-                                <button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip"
-                                    data-placement="top" title="Inativar" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
                                     data-bs-target="#modal{{ $reuni->idr }}">
-                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;">
+                                    <span class="tooltiptext">Inativar</span>
+                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>
 
 
 
@@ -135,25 +137,23 @@
     </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
 
+    </script>
+    <script>
+        $(document).ready(function(){
+            if (typeof {{ $semana }} === 'undefined') { //Deixa o select status como padrao vazio
+                $(".semana").prop("selectedIndex", -1);
+            }
 
-
-        if (typeof {{ $semana }} === 'undefined') { //Deixa o select status como padrao vazio
-            $(".semana").prop("selectedIndex", -1);
-        }
-
-        if (typeof {{ $status }} === 'undefined') { //Deixa o select status como padrao vazio
-            $(".status").prop("selectedIndex", -1);
-        }
+            if (typeof {{ $status }} === 'undefined') { //Deixa o select status como padrao vazio
+                $(".status").prop("selectedIndex", -1);
+            }
+        })
     </script>
 @endsection
 
-@section('footerScript')
-@endsection

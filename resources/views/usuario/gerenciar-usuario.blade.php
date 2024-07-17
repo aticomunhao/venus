@@ -65,7 +65,7 @@
                                                 <td>{{$results->cpf}}</td>
                                                 <td>{{$results->ativo ? 'Sim' : 'Não' }}</td>
                                                 <td>{{$results->bloqueado ? 'Sim' : 'Não' }}</td>
-                                                <td>{{$results->data_ativacao}}</td>
+                                                <td>{{date('d/m/Y', strtotime($results->data_ativacao))}}</td>
                                                 <td>
                                                     <a href="/usuario/alterar/{{$results->id}}"
                                                          class="btn btn-warning btn-sm" type="button"> Alterar

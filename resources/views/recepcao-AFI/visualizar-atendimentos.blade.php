@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('head')
+@section('title')
 
-<title>Visualizar Atendimentos</title>
+Visualizar Atendimentos
 
 
 @endsection
@@ -17,7 +17,7 @@
             <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            HISTÓRICO DE ATENDIMENTOS                        
+                            HISTÓRICO DE ATENDIMENTOS
                         </div>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                     <legend style="color:#525252; font-size:12px; font-family:sans-serif">Lista de atendimentos</legend>
                     <?php $a=1; $b=1; $c=1; $d=1; $e=1; ?>
                     @foreach($result as $results)
-                    <div class="accordion accordion-flush" id="accordionFlushExample"> 
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="{{$a++}}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{$b++}}" aria-expanded="false" aria-controls="flush-collapse{{$c++}}">
@@ -61,7 +61,7 @@
 
                                         </thead>
                                         <tbody>
-                                            <tr style="text-align:center;font-size:13px">       
+                                            <tr style="text-align:center;font-size:13px">
                                                 <td>{{$results->nm_2}}</td>
                                                 <td>{{$results->nome}}</td>
                                                 <td>{{$results->nm_4}}</td>
@@ -78,7 +78,7 @@
                     @endforeach
                     <br>
                     <div class="row">
-                        <div class="col">    
+                        <div class="col">
                             <a class="btn btn-danger" href="/gerenciar-atendimentos" style="text-align:right;" role="button">Fechar</a>
                         </div>
                     </div>

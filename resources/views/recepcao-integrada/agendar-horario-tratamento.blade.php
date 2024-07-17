@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Agendar Dia')
 @section('content')
 <br>
 <div class="container">

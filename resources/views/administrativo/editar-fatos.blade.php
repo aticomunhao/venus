@@ -12,7 +12,7 @@ Editar Fatos
                         <h5 class="card-title">Editar Fatos</h5>
                     </div>
                     <div class="card-body">
-                        <form class="form-horizontal mt-4" method="post" action="/atualizar-fatos/@foreach($lista as $item){{$item->id}}@endforeach">
+                        <form class="form-horizontal mt-4" method="post" action="/atualizar-fatos/{{$lista->id}}">
                             @csrf
                             <div class="mb-3">
                                 <label for="descricao" class="form-label">Descrição:
@@ -22,7 +22,7 @@ Editar Fatos
                                     </span>
                                 </label>
                                 <input type="text" name="descricao" class="form-control" id="descricao" placeholder=""
-                                value="@foreach($lista as $item){{$item->descricao}}@endforeach">
+                                value="{{ $lista->descricao}}">
                             </div>
                             <div class="row justify-content-center">
                                 <div class="d-grid gap-1 col-4 mx-auto">

@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('head')
+@section('title')
 
-<title>Agendar Tratamento</title>
+Agendar Tratamento
 
 @endsection
 

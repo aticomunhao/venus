@@ -9,13 +9,13 @@ use Illuminate\Database\DBAL\TimestampType;
 
     class FatosController extends Controller
     {
-        
+
         public function index(Request $request)
         {
 
             try{
 
-            
+
 
             $lista = DB::table('tipo_fato')
                 ->select('id', 'descricao')
@@ -29,7 +29,7 @@ use Illuminate\Database\DBAL\TimestampType;
                 return view('/administrativo/gerenciar-fatos', compact('lista'));
 
             }
-            
+
                 catch(\Exception $e){
 
                     $code = $e->getCode( );
@@ -38,26 +38,22 @@ use Illuminate\Database\DBAL\TimestampType;
 
 
         }
-            
-                    
 
-                    
-                    
+
+
+
+
 
         public function edit($id) {
 
             try{
 
-            $lista = DB::select("select * from tipo_fato where id = $id");
-
+            $lista = DB::table('tipo_fato')->where('id', $id)->first();
 
             return view ('\administrativo\editar-fatos' , compact('lista'));
 
-            
-        }
 
-   
-    
+        }
     catch(\Exception $e){
 
         $code = $e->getCode( );
@@ -66,7 +62,7 @@ use Illuminate\Database\DBAL\TimestampType;
         }
         public function update(Request $request, string $id)
         {
-            
+
 
             Tipo_fato::findOrFail($request->id)->update([ 'descricao' => $request->descricao ]) ;
 
@@ -84,15 +80,15 @@ use Illuminate\Database\DBAL\TimestampType;
 
 
         }
-          
-    
+
+
         catch(\Exception $e){
 
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
             DB::rollBack();
 	    return redirect()->back();
 
-        } 
+        }
 
 
 }
@@ -107,22 +103,22 @@ use Illuminate\Database\DBAL\TimestampType;
             ]);
 
         }
-        
 
 
-        
+
+
         catch(\Exception $e){
-    
+
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
             DB::rollBack();
 	    return redirect()->back();
 
-        } 
+        }
 
-            
+
         return redirect('/gerenciar-fatos');
         }
-        
+
 
 
 

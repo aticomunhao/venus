@@ -1,6 +1,6 @@
 @extends('layouts.app')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
-
+@section('title', 'Visualizar Sala')
 @section('content')
     <br>
     <div class="container">
@@ -91,7 +91,7 @@
                                         <label for="ar_condicionado">Ar-cond</label>
                                     </div>
                                     <div class="col">
-                                       
+
                                         <input type="checkbox" name="armarios" @checked($salaEditada->armarios)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
@@ -99,7 +99,7 @@
                                             <label for="armarios">Armários</label>
                                     </div>
                                     <div class="col">
-                                        
+
                                         <input type="checkbox" name="bebedouro" @checked($salaEditada->bebedouro)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
@@ -107,7 +107,7 @@
                                             <label for="bebedouro">Bebedouro</label>
                                     </div>
                                     <div class="col">
-                                      
+
                                         <input type="checkbox" name="controle" @checked($salaEditada->controle)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
@@ -115,14 +115,14 @@
                                             <label for="controle">Controle</label>
                                     </div>
                                     <div class="col">
-                                       
+
                                         <input type="checkbox" name="computador" @checked($salaEditada->computador)
                                             data-toggle="toggle" data-on="Sim" data-off="Não" data-onstyle="success"
                                             data-offstyle="danger" placeholder="Disabled input" disabled>
                                             <label for="computador">PC</label>
                                     </div>
                                     <div class="col">
-                                        
+
                                         <input type="checkbox" name="projetor" @checked($salaEditada->projetor)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
@@ -130,7 +130,7 @@
                                             <label for="projetor">Projetor</label>
                                     </div>
                                     <div class="col">
-                                       
+
                                         <input type="checkbox" name="tela_projetor" @checked($salaEditada->tela_projetor)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
@@ -138,7 +138,7 @@
                                             <label for="tela_projetor">Tela_proj</label>
                                     </div>
                                     <div class="col">
-                                     
+
                                         <input type="checkbox" @checked($salaEditada->quadro) name="quadro"
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
@@ -146,7 +146,7 @@
                                             <label for="quadro">Quadro</label>
                                     </div>
                                     <div class="col">
-                                       
+
                                         <input type="checkbox" name="som" @checked($salaEditada->som)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
@@ -155,7 +155,7 @@
                                     </div>
                                     <br>
                                     <div class="col">
-                                        
+
                                         <input type="checkbox" name="ventilador" @checked($salaEditada->ventilador)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
@@ -163,7 +163,7 @@
                                             <label for="ventilador">Ventilador</label>
                                     </div>
                                     <div class="col">
-                                       
+
                                         <input type="checkbox" name="luz_azul" @checked($salaEditada->luz_azul)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"
@@ -171,7 +171,7 @@
                                             <label for="luz_azul">Luz azul</label>
                                     </div>
                                     <div class="col">
-                                       
+
                                         <input type="checkbox" name="luz_vermelha" @checked($salaEditada->luz_vermelha)
                                             data-toggle="toggle" data-onlabel="Sim" data-offlabel="Não"
                                             data-onstyle="success" data-offstyle="danger" placeholder="Disabled input"

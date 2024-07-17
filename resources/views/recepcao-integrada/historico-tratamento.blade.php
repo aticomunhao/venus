@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title') Histórico  @endsection
+@section('title') Histórico Tratamento @endsection
 
 @section('content')
 
@@ -92,7 +92,7 @@
                         </tbody>
                     </table>
                     @endforeach
-                    @if($list[0]->data)
+
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de presenças</legend>
                     Nr de faltas: {{$faul}}
                     <table class="table table-sm table-bordered table-striped">
@@ -103,7 +103,7 @@
                                 <td class="col">GRUPO</td>
                                 <td class="col">PRESENÇA</td>
                             </tr>
-                            
+
                         </thead>
                         <tbody>
                         @foreach($list as $lists)
@@ -120,7 +120,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    @endif
+
                     <br/>
                     <div class="row">
                         <div class="col">

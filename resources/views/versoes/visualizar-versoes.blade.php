@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Editar Versões
+    Visualizar Versões
 @endsection
 
 @section('content')
@@ -12,7 +12,7 @@
         @csrf
         <div class="card">
             <div class="card-header">
-              Editar Versão
+              Visualizar Versão
             </div>
             <div class="card-body">
                 <div class="row">
@@ -20,11 +20,11 @@
                         Versão
                         <input type="text" class="form-control" placeholder="0.0.0" name="versao" value="{{ $versao->versao }}" disabled>
                       </div>
-                    <div class="col-6">
+                    <div class="col-6 mt-3">
                         Data Inicio
                         <input type="text" class="form-control" name="versao" value="{{ date('d/m/Y', strtotime($versao->dt_inicio)) }}" disabled>
                       </div>
-                    <div class="col-6">
+                    <div class="col-6 mt-3">
                         Data Fim
                         <input type="text" class="form-control"name="versao" value="{{ $versao->dt_fim ? date('d/m/Y', strtotime($versao->dt_fim)) : ''}}" disabled>
                       </div>
