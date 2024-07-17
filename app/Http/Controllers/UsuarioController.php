@@ -105,7 +105,7 @@ class UsuarioController extends Controller
 
     public function store(Request $request)
     {
-        try{
+
         $keys_request = array_keys($request->input());
 
         $senha_inicial = $this->gerarSenhaInicial($request->input('idPessoa'));
@@ -127,12 +127,12 @@ class UsuarioController extends Controller
 
         //return view('usuario/gerenciar-usuario', compact('result'));
     }
-    catch(\Exception $e){
+    // catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+    //     $code = $e->getCode( );
+    //     return view('administrativo-erro.erro-inesperado', compact('code'));
+    //         }
+    //     }
     public function show($id)
     {
         //
@@ -368,7 +368,7 @@ class UsuarioController extends Controller
     {
         try{
         $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
-        $resultSetor =DB::table('rotas_setor')->leftJoin('setor', 'rotas_setor.id_setor', 'setor.id')->distinct('id_setor')->get();
+        $resultSetor = DB::table('rotas_setor')->leftJoin('setor', 'rotas_setor.id_setor', 'setor.id')->distinct('id_setor')->get();
         //dd($resultDeposito);
         foreach ($setor as $setors) {
             foreach ($resultSetor as $resultSetors) {
