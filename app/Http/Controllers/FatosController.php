@@ -46,7 +46,7 @@ use Illuminate\Database\DBAL\TimestampType;
 
         public function edit($id) {
 
-            try{
+        //    try{
 
             $lista = DB::table('tipo_fato')->where('id', $id)->first();
 
@@ -54,12 +54,12 @@ use Illuminate\Database\DBAL\TimestampType;
 
 
         }
-    catch(\Exception $e){
+    // catch(\Exception $e){
 
-        $code = $e->getCode( );
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-                }
-        }
+    //     $code = $e->getCode( );
+    //         return view('tratamento-erro.erro-inesperado', compact('code'));
+    //             }
+    //     }
         public function update(Request $request, string $id)
         {
 
