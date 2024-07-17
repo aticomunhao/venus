@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('head')
-    <title>Visualizar Atendentes Apoio</title>
+@section('title')
+    Visualizar Atendentes Apoio
 @endsection
 @section('content')
     <br />

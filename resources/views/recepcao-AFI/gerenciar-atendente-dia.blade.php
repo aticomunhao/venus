@@ -85,7 +85,6 @@
 
                                 @endif
                             </td>
-                            @include('recepcao-AFI/pop-up-delete')
                         </tr>
                         @endforeach
                     </tbody>

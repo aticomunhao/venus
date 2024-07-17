@@ -12,20 +12,28 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+
+    public function checaSession(){
+
+        $check = session()->get('usuario') == null ? 0 : 1;
+        return $check;
+    }
+
+
     public function index()
     {
-     //   try {
+        try {
             return view('login/login');
-    //    } catch (\Exception $e) {
+       } catch (\Exception $e) {
 
-     //       $code = $e->getCode();
-     //       return view('login/login erro.erro-inesperado', compact('code'));
-     //   }
+            $code = $e->getCode();
+            return view('login/login erro.erro-inesperado', compact('code'));
+        }
     }
 
     public function valida(Request $request)
     {
-     //   try {
+        try {
             $cpf = $request->input('cpf');
             $senha = $request->input('senha');
 
@@ -91,11 +99,11 @@ class LoginController extends Controller
             }
             app('flasher')->addError('Credenciais inválidas');
             return view('login/login');
-        // } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-        //     $code = $e->getCode();
-        //     return view('tratamento-erro.erro-inesperado', compact('code'));
-        // }
+            $code = $e->getCode();
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+        }
     }
     public function validaUserLogado()
     {

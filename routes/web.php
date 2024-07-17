@@ -55,6 +55,7 @@ Route::fallback(function () {
 Route::get('/', [LoginController::class, 'index']);
 Route::any('/login/home', [LoginController::class, 'valida']);
 Route::any('/login/valida', [LoginController::class, 'validaUserLogado'])->name('home.post');
+Route::get('/usuario/sessao', [LoginController::class, 'checaSession']);
 Route::get('/usuario/alterar-senha', [UsuarioController::class, 'alteraSenha']);
 Route::post('/usuario/gravaSenha', [UsuarioController::class, 'gravaSenha']);
 

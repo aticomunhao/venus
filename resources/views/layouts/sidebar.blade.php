@@ -200,8 +200,7 @@ $setor = session()->get('usuario.setor');
                                 <li><a class="dropdown-item" href="/usuario/alterar-senha"><i
                                             class="mdi mdi-lock-open-outline font-size-17 text-muted align-middle mr-1"></i>Alterar
                                         Senha</a></li>
-                                <li><a class="dropdown-item" href="javascript:void();"
-                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
+                                <li><a class="dropdown-item" id="sair"><i
                                             class="mdi mdi-power font-size-17 text-muted align-middle mr-1 text-danger"></i>
                                         {{ __('Sair') }}</a></li>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST"
@@ -220,8 +219,40 @@ $setor = session()->get('usuario.setor');
 <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
 <script>
 
+
+
+    function checkSession(){
+        $.ajax({
+            type: "GET",
+             url: "/usuario/sessao",
+             dataType: "json",
+             success: function(response) {
+
+                session=response
+
+             },
+             error: function(xhr) {
+                 console.log(xhr.responseText);
+             }
+         });
+    }
+
     if($('#ADM .dropdown-item').length == 0){
         $('#ADM').hide();
     }
+
+    $('#sair').click(function(){
+        checkSession();
+        setTimeout(function(){
+            if(session == 0){
+                window. location. replace("/login/valida")
+            }else{
+                console.log(session)
+                document.getElementById('logout-form').submit();
+            }
+        }, 1000);
+
+
+    })
 
 </script>

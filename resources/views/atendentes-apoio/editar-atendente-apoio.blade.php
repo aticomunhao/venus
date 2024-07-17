@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('head')
-    <title>Editar Atendentes Apoio</title>
+@section('title')
+    Editar Atendentes Apoio
 @endsection
 @section('content')
     <br />

@@ -52,7 +52,6 @@
 <body>
 
         @include('layouts/sidebar')
-
         @yield('content')
 
         <div class="modal fade" id="modalLogin" data-bs-keyboard="false"
@@ -84,23 +83,54 @@
 
 </body>
 <script>
+let session
     function toast(){
         $('.modal').modal('hide');
         $('#modalLogin').modal('show');
     }
+
+    function checkSession(){
+        $.ajax({
+            type: "GET",
+             url: "/usuario/sessao",
+             dataType: "json",
+             success: function(response) {
+
+                session=response
+
+             },
+             error: function(xhr) {
+                 console.log(xhr.responseText);
+             }
+         });
+    }
+
+
     function time(){
+        checkSession()
         total -= 1
         $('#tempoLogout').html(total + 's')
         if(total < 1){
-            document.getElementById('logout-form').submit();
+
+                if(session == 0){
+                    window. location. replace("/login/valida")
+                }else{
+                    document.getElementById('logout-form').submit();
+                }
+
         }
     }
+
     function setTime(){
         total = 30
         $('#tempoLogout').html(total + 's')
         var intervalIdTime = window.setInterval(function(){
             [time()]
         }, 1000);
+
+
+
+
 
        $('#confirm').click(function(){
         clearInterval(intervalIdTime)
@@ -111,6 +141,8 @@
     var intervalId = window.setInterval(function(){
         [toast(), setTime()]
       }, 600000);
+
+
 
 </script>
 <script>

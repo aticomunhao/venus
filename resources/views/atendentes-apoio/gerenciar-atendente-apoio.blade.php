@@ -6,7 +6,7 @@
 
 @section('content')
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <div class="container-fluid";>
 
     <div class="container-fluid";>
@@ -60,13 +60,14 @@
                         <td scope="">
 
                             <a href="/editar-atendentes-apoio/{{ $atendentes->id }}" type="button"
-                                class="btn btn-outline-warning btn-sm"  data-tt="tooltip" data-placement="top" title="Editar">
+                                class="btn btn-outline-warning btn-sm tooltips">
+                                <span class="tooltiptext">Editar</span>
                                 <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                             </a>
 
                             <a href="/visualizar-atendentes-apoio/{{ $atendentes->id }}" type="button"
-                                class="btn btn-outline-primary btn-sm" data-tt="tooltip" data-placement="top"
-                                title="Visualizar">
+                                class="btn btn-outline-primary btn-sm tooltips">
+                                <span class="tooltiptext">Visualizar</span>
                                 <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
                             </a>
                         </td>
