@@ -50,7 +50,7 @@ use Illuminate\Database\DBAL\TimestampType;
 
             $lista = DB::table('tipo_fato')->where('id', $id)->first();
 
-            return view ('\administrativo\editar-fatos' , compact('lista'));
+            return view ('/administrativo/editar-fatos' , compact('lista'));
 
 
         }
