@@ -262,7 +262,7 @@ class UsuarioController extends Controller
 
     public function inserirUsuario($request, $senha_inicial)
     {
-        try{
+      //  try{
         $ativo = isset($request->ativo) ? 1 : 0;
         $bloqueado = isset($request->bloqueado) ? 1 : 0;
 
@@ -275,12 +275,12 @@ class UsuarioController extends Controller
             'hash_senha' => $senha_inicial,
         ]);
     }
-    catch(\Exception $e){
+    // catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+    //     $code = $e->getCode( );
+    //     return view('administrativo-erro.erro-inesperado', compact('code'));
+    //         }
+    //     }
 
     public function excluirUsuarioPerfis($idPessoa)
     {
