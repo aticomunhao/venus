@@ -98,6 +98,7 @@
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
                 <a type="button" class="btn btn-primary"  id="btn-confirmar-exclusao" onclick="confirmarDelecao()">Confirmar </a>
             </div>
+          
         </div>
     </div>
 </div>

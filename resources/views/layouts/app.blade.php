@@ -15,8 +15,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-
-    <link rel="icon" href="{{ URL::asset('/images/logo.jpg')}}" type="image/icon type">
+    <link rel="icon" href="{{ URL::asset('/images/Venus2.png')}}" type="image/icon type">
     <title>@yield('title')</title>
 
     <!-- Fonts -->

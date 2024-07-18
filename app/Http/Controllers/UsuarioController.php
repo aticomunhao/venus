@@ -107,10 +107,17 @@ class UsuarioController extends Controller
     {
 
         $keys_request = array_keys($request->input());
-
         $senha_inicial = $this->gerarSenhaInicial($request->input('idPessoa'));
+        $contaUsuarios = DB::table('usuario')->where('id_pessoa', $request->input('idPessoa'))->count();
 
-        $this->inserirUsuario($request, $senha_inicial);
+
+
+        if($contaUsuarios < 1){
+            $this->inserirUsuario($request, $senha_inicial);
+            app('flasher')->addSuccess('O usuário foi criado com sucesso.');
+        }else{
+            app('flasher')->addWarning('Usuário já inserido. Dados Atualizados!');
+        }
 
         $this->excluirUsuarioPerfis($request->input('idPessoa'));
 
@@ -121,7 +128,7 @@ class UsuarioController extends Controller
         $this->inserirUsuarioSetor($keys_request, $request->input('idPessoa'));
 
 
-        app('flasher')->addSuccess('O usuário foi criado com sucesso.');
+
 
         return Redirect('/gerenciar-usuario');
 
@@ -186,10 +193,12 @@ class UsuarioController extends Controller
     public function update(Request $request, $id)
     {
         try{
+
         $ativo = isset($request->ativo) ? 1 : 0;
         $bloqueado = isset($request->bloqueado) ? 1 : 0;
         // echo $id;
         // exit();
+
         DB::table('usuario')
             ->where('id', $id)
             ->update([
@@ -262,7 +271,7 @@ class UsuarioController extends Controller
 
     public function inserirUsuario($request, $senha_inicial)
     {
-      //  try{
+        try{
         $ativo = isset($request->ativo) ? 1 : 0;
         $bloqueado = isset($request->bloqueado) ? 1 : 0;
 
@@ -275,12 +284,12 @@ class UsuarioController extends Controller
             'hash_senha' => $senha_inicial,
         ]);
     }
-    // catch(\Exception $e){
+    catch(\Exception $e){
 
-    //     $code = $e->getCode( );
-    //     return view('administrativo-erro.erro-inesperado', compact('code'));
-    //         }
-    //     }
+        $code = $e->getCode( );
+        return view('administrativo-erro.erro-inesperado', compact('code'));
+            }
+        }
 
     public function excluirUsuarioPerfis($idPessoa)
     {
