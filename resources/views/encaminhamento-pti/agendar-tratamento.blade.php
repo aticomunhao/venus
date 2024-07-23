@@ -52,7 +52,13 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="{{$a++}}">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{$b++}}" aria-expanded="false" aria-controls="flush-collapse{{$c++}}">
-                                {{date('H:i:s', strtotime($horario))}}
+                                    <label> {{date('H:i:s', strtotime($horario))}} -
+                                        @if(array_sum(array_column($tratasDoHorario->toArray(), 'max_atend')) > 0)
+                                            <label style="color:green">Vagas: {{ array_sum(array_column($tratasDoHorario->toArray(), 'max_atend')) }}</label>
+                                        @else
+                                            <label style="color:red">Vagas: {{ array_sum(array_column($tratasDoHorario->toArray(), 'max_atend')) }}</label>
+                                        @endif
+                                    </label>
                                 </button>
                                 </h2>
                                 <div id="flush-collapse{{$d++}}" class="accordion-collapse collapse" aria-labelledby="{{$e++}}" data-bs-parent="#accordionFlushExample">

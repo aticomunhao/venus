@@ -212,7 +212,7 @@ Route::middleware('rotas:12')->group(function () {
     Route::get('/visualizar-salas/{id}', [SalaController::class, 'show'])->name('');
 });
 
-// Administrar Grupos
+// Incluir Membro
 Route::middleware('rotas:13')->group(function () {
     Route::get('/criar-membro', [MembroController::class, 'create'])->name('');
     Route::post('/incluir-membro', [MembroController::class, 'store'])->name('membro.store');
@@ -226,9 +226,13 @@ Route::middleware('rotas:14')->group(function () {
     Route::any('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('');
     Route::get('/visualizar-membro/{idcro}/{id}', [MembroController::class, 'show'])->name('');
     Route::get('/gerenciar-grupos-membro', [MembroController::class, 'grupos'])->name('');
+    Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
+});
+
+// Incluir Membro Grupo
+Route::middleware('rotas:29')->group(function () {
     Route::get('/criar-membro-grupo/{id}', [MembroController::class, 'createGrupo'])->name('');
     Route::any('/incluir-membro-grupo/{id}', [MembroController::class, 'storeGrupo'])->name('');
-    Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
 });
 
 // Gerenciar Mediunidades

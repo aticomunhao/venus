@@ -36,11 +36,13 @@
                             <a href="/ferias-reuniao/{{ $id }}/1"><input class="btn btn-danger btn-sm me-md-2"
                                     style="font-size: 0.9rem;" type="button" value="Declarar Férias"></a>
                         @endif
-                        <a href="/criar-membro-grupo/{{ $id }}"><input class="btn btn-success btn-sm me-md-2"
-                                style="font-size: 0.9rem;" type="button" value="Novo membro +"></a>
-                    </div>
-                </div>
 
+                        @if( in_array(29, session()->get('usuario.acesso')) )
+                        <a href="/criar-membro-grupo/{{ $id }}"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
+                            type="button" value="Novo membro +"></a>
+                            @endif
+                    </div>
+                </div>x
             </form>
 
         </div>

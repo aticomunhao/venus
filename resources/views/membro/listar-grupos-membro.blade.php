@@ -38,9 +38,10 @@
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Limpar"></a>
 
+                               @if( in_array(13, session()->get('usuario.acesso')) )
                                 <a href="/criar-membro"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
                                     type="button" value="Novo membro +"></a>
-
+                                    @endif
                     </div>
                 </div>
 

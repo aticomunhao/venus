@@ -3,7 +3,7 @@ $setor = session()->get('usuario.setor');
 ?>
 <div id="app" class="row">
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm"
-        style="background-color:#87CEFA; font-family:tahoma; font-weight:bold;">
+        style="background-color:#60bbf0; font-family:tahoma; font-weight:bold;">
         <div class="container">
             <a class="navbar-brand" style="color: #fff;" href="{{ url('/login/valida') }}">Vênus</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown"

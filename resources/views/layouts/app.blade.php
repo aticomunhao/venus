@@ -83,6 +83,7 @@
 </body>
 <script>
 let session
+let redirect
     function toast(){
         $('.modal').modal('hide');
         $('#modalLogin').modal('show');
@@ -109,12 +110,12 @@ let session
         checkSession()
         total -= 1
         $('#tempoLogout').html(total + 's')
-        if(total < 1){
-
+        if(total < 1 && redirect == 0){
                 if(session == 0){
                     window. location. replace("/login/valida")
                 }else{
-                    document.getElementById('logout-form').submit();
+                        document.getElementById('logout-form').submit();
+                        redirect = 1
                 }
 
         }
@@ -122,6 +123,7 @@ let session
 
     function setTime(){
         total = 30
+        redirect = 0
         $('#tempoLogout').html(total + 's')
         var intervalIdTime = window.setInterval(function(){
             [time()]
