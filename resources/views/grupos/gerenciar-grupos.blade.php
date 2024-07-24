@@ -3,8 +3,7 @@
 @section('title') Gerenciar Grupos @endsection
 
 @section('content')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet">
+
 
 <div class="container-fluid">
     <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPOS</h4>
@@ -101,14 +100,10 @@
     </div>
     {{ $grupo->links('pagination::bootstrap-5') }}
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+
 
 <script>
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
+  
 
     $(document).ready(function() {
         $('.select2').select2({
