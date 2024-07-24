@@ -20,7 +20,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="id_associado" class="form-label">Nome do médium</label>
+                                <label for="id_associado" class="form-label">Nome</label>
                                 <span class="tooltips">
                                     <span class="tooltiptext">Obrigatório</span>
                                     <span style="color:red">*</span>
@@ -63,7 +63,7 @@
 
                         <div class="col-12 mt-3">
                             <div class="form-group">
-                                <label for="id_grupo" class="form-label">Nome Reunião Mediunica</label>
+                                <label for="id_grupo" class="form-label">Nome Reunião</label>
                                 <span class="tooltips">
                                     <span class="tooltiptext">Obrigatório</span>
                                     <span style="color:red">*</span>
