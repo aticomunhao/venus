@@ -74,10 +74,5 @@
                     </tr>
                 @endforeach
             </tbody>
-            <script>
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
-                var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl)
-                })
-            </script>
+       
         @endsection

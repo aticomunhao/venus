@@ -93,8 +93,6 @@
     </div>
 
 
-    <script src="caminho/para/bootstrap/js/bootstrap.bundle.min.js" async defer></script>
-    <link href="caminho/para/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <script>
         $(document).ready(function() {
             $('.select2').select2({ theme: 'bootstrap-5'});

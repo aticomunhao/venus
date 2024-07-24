@@ -3,14 +3,6 @@
 @section('title') Gerenciar Encaminhamentos PTI @endsection
 
 @section('content')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
-
-<?php
-//echo "<meta HTTP-EQUIV='refresh' CONTENT='30;URL=gerenciar-atendimentos'>";
-?>
 
 <div class="container-fluid";>
 <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ENCAMINHAMENTOS PTI</h4>
@@ -144,16 +136,6 @@
 
     </div>
 </div>
-
-
-<script>
-
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-  return new bootstrap.Tooltip(tooltipTriggerEl)
-})
-
-</script>
 
 
 

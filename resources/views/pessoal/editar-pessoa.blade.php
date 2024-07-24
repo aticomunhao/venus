@@ -3,7 +3,6 @@
 @section('title') Editar Pessoa @endsection
 
 @section('content')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 <div class="container">
     <div class="justify-content-center">
         <div class="col-12">
@@ -111,7 +110,6 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Função para verificar e habilitar/desabilitar o campo "Motivo"

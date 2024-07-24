@@ -69,7 +69,7 @@
                         </div>
                     </div>
                     <div class="mt-5 text-center">
-                        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+               
                         <script>
                             $("#buttonEye").click(function(){
 

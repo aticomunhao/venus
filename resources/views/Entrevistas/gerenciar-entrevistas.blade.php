@@ -267,16 +267,6 @@
     </div>
 
     <script>
-        //Tooltips
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        });
-
-
-
-    </script>
-    <script>
         $(document).ready(function(){
             if ({{ $pesquisaValue == 'limpo' }}) { //Deixa o select status como padrao vazio
                 $(".teste").prop("selectedIndex", -1);

@@ -3,12 +3,11 @@
 @section('title') Visualizar Pessoa @endsection
 
 @section('content')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 <div class="container">
     <div class="justify-content-center">
         <div class="col-12">
             <br>
-        
+
                 <div class="card">
                     <div class="card-header">
                         <div class="row">

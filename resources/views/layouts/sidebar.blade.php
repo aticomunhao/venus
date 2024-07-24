@@ -216,7 +216,7 @@ $setor = session()->get('usuario.setor');
         </div>
     </nav>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
+
 <script>
 
 

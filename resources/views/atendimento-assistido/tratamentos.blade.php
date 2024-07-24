@@ -1,7 +1,7 @@
 @extends('layouts/app')
 @section('title', 'Encaminhar Tratamento')
 @section('content')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
+
 <br>
 <div class="container">
     <div class="row justify-content-center">
@@ -83,6 +83,6 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
+
 
 @endsection

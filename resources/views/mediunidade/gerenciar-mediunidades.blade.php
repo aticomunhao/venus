@@ -36,7 +36,7 @@
                     <tr style="background-color: #d6e3ff; font-size: 14px; color: #000000;">
                         <th>ID</th>
                         <th>NOME</th>
-                
+
                         <th>STATUS</th>
                         <th>AÇÕES</th>
                     </tr>
@@ -89,10 +89,4 @@
     </div>
 
 
-    <script>
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    </script>
 @endsection

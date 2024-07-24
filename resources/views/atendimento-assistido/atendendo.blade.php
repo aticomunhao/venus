@@ -5,10 +5,7 @@
 @endsection
 
 @section('content')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 
 
 
@@ -112,10 +109,10 @@
                                                         class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext">Temática</span><i
                                                             class="bi bi-journal-bookmark-fill"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
-                                                <button type="button" class="btn btn-outline-danger btn-sm tooltips"><span class="tooltiptext">Reset</span><i
+                                                <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                                data-bs-target="#modalRel{{ $assistidos->idat }}"><span class="tooltiptext">Reset</span><i
                                                         class="bi bi-arrow-repeat" style="font-size: 1rem; color:#000;"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#modalRel{{ $assistidos->idat }}"></i></button>
+                                                        ></i></button>
                                                 <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#modalF{{ $assistidos->idat }}"><span class="tooltiptext">Finalizado</span><i
@@ -253,10 +250,5 @@
             $('#hello').toggleClass('emergencia')
         })
     </script>
-    <script>
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    </script>
+
 @endsection

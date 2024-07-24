@@ -1,10 +1,7 @@
 @extends('layouts/app')
 @section('title', 'Temáticas')
 @section('content')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 
 <br>
 <div class="container">
@@ -36,7 +33,7 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                            
+
                                     <div class="col" style="text-align:center">Espirituais
                                         <div class="form-check m-2">
                                             <input id="21" type="checkbox" name="maf" data-size="small"
@@ -189,7 +186,7 @@
             </div>
         </div>
     </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
+
 
 
 <script>

@@ -198,11 +198,6 @@
 
 
 
-
-
-
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
     <script>
         $(document).ready(function() {
 
