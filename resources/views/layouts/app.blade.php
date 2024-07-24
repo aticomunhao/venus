@@ -13,7 +13,9 @@
     <link rel="icon" href="{{ URL::asset('/images/Venus2.png')}}" type="image/icon type">
     <title>@yield('title')</title>
 
+    <!-- Fonts -->
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
     <!-- Link ke jQuery dari CDN -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
