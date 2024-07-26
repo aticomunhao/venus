@@ -1,3 +1,4 @@
+
 import 'bootstrap';
 
 /**
@@ -6,14 +7,22 @@ import 'bootstrap';
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
+import "./bootstrap";
+import $ from "jquery";
+import select2 from 'select2';
+select2();
+
+
+window.$ = $;
+
+
+
 import axios from 'axios';
 window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /*require('jquery');*/
-require('select2');
-$('select').select2();
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
