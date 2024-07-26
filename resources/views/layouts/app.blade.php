@@ -14,8 +14,8 @@
     <title>@yield('title')</title>
 
 
-
-
+    {{-- CDN Jquery --}}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
