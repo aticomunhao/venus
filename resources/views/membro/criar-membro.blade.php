@@ -25,9 +25,10 @@
                                     <span class="tooltiptext">Obrigatório</span>
                                     <span style="color:red">*</span>
                                 </span>
-                                <select class="form-select select2" aria-label=".form-select-lg example" name="id_associado">
+                                <select class="form-select select2" aria-label=".form-select-lg example"
+                                    name="id_associado">
                                     @foreach ($associado as $associados)
-                                        <option value="{{ $associados->id}}">{{ $associados->nome_completo}}</option>
+                                        <option value="{{ $associados->id }}">{{ $associados->nome_completo }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -70,7 +71,10 @@
                                 </span>
                                 <select class="form-select select2" aria-label=".form-select-lg example" name="id_reuniao">
                                     @foreach ($grupo as $grupos)
-                                        <option value="{{ $grupos->id }}">{{ $grupos->nome }} - {{ $grupos->dia }}- {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim ))}} - Sala {{ $grupos->numero }}</option>
+                                       
+                                        <option value="{{ $grupos->id }}">{{ $grupos->nome }} - {{ $grupos->dia }}-
+                                            {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim)) }}
+                                            - Sala {{ $grupos->numero }} - Setor {{ $grupos->nsigla }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -92,7 +96,9 @@
 
     <script>
         $(document).ready(function() {
-            $('.select2').select2({ theme: 'bootstrap-5'});
+            $('.select2').select2({
+                theme: 'bootstrap-5'
+            });
         });
     </script>
 @endsection
