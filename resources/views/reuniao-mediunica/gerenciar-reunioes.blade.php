@@ -60,6 +60,7 @@
                         <th class="col-2">GRUPO</th>
                         <th class="col">DIA</th>
                         <th class="col">SALA</th>
+                        <th class="col-2">SETOR</th>
                         <th class="col-2">TRATAMENTO</th>
                         <th class="col">HORÁRIO INÍCIO</th>
                         <th class="col">HORÁRIO FIM</th>
@@ -75,6 +76,7 @@
                             <td>{{ $reuni->nomeg }}</td>
                             <td>{{ $reuni->nomed }}</td>
                             <td>{{ $reuni->numero }}</td>
+                            <td>{{ $reuni->nsigla }}</td>
                             <td>{{ $reuni->tstd }}</td>
                             <td>{{ date('H:i:s', strtotime($reuni->h_inicio)) }}</td>
                             <td>{{ date('H:i:s', strtotime($reuni->h_fim)) }}</td>

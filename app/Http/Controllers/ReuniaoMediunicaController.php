@@ -31,11 +31,13 @@ class ReuniaoMediunicaController extends Controller
                 'cro.max_atend',
                 'gr.status_grupo AS idst',
                 'tst.descricao AS tstd',
+                's.sigla as nsigla',
                 'sa.numero',
                 DB::raw("(CASE WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status")
             )
             ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
             ->leftjoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('setor as s', 'gr.id_setor', 's.id')
             ->leftJoin('membro AS me', 'gr.id', 'me.id_cronograma')
             ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
             ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id');
@@ -85,10 +87,11 @@ class ReuniaoMediunicaController extends Controller
     public function create()
     {
 
-        try {
+        
 
             $grupo = DB::table('grupo AS gr')
-                ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
+                ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+                ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
                 ->orderBy('gr.nome');
 
 
@@ -119,11 +122,7 @@ class ReuniaoMediunicaController extends Controller
 
 
             return view('/reuniao-mediunica/criar-reuniao', compact('grupo', 'tipo',  'tratamento',  'dia', 'salas'));
-        } catch (\Exception $e) {
-
-            $code = $e->getCode();
-            return view('administrativo-erro.erro-inesperado', compact('code'));
-        }
+       
     }
 
     public function store(Request $request)
@@ -206,7 +205,8 @@ class ReuniaoMediunicaController extends Controller
         try {
 
             $grupo = DB::table('grupo AS gr')
-                ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
+            ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+                ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo','s.sigla as nsigla')
                 ->where('id_tipo_grupo', 1)
                 ->orderBy('gr.nome')
                 ->get();
@@ -258,7 +258,8 @@ class ReuniaoMediunicaController extends Controller
         try {
 
             $grupo = DB::table('grupo AS gr')
-                ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo')
+                 ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+                ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo','s.sigla as nsigla')
                 ->where('id_tipo_grupo', 1)
                 ->orderBy('gr.nome');
 

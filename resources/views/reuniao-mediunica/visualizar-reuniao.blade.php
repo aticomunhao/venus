@@ -23,9 +23,9 @@
                             <div class="row mt-3">
                                 <div class="col">
                                     <label for="grupo" class="form-label">Grupo</label>
-                                    <select class="form-select slct" id="grupo" name="grupo" required disabled>
+                                    <select class="form-control slct" id="grupo" name="grupo" required disabled>
                                         @foreach ($grupo as $grupos)
-                                            <option value="{{ $grupos->idg }}" {{$grupos->nome == $info->nome ? 'selected' : ''}}>{{ $grupos->nome }}</option>
+                                            <option value="{{ $grupos->idg }}" {{$grupos->nome == $info->nome ? 'selected' : ''}}>{{ $grupos->nome }}-{{ $grupos->nsigla }}</option>
                                         @endforeach
                                     </select>
                                 </div>

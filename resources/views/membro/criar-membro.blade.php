@@ -74,7 +74,7 @@
                                        
                                         <option value="{{ $grupos->id }}">{{ $grupos->nome }} - {{ $grupos->dia }}-
                                             {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim)) }}
-                                            - Sala {{ $grupos->numero }} - Setor {{ $grupos->nsigla }}</option>
+                                            - Sala {{ $grupos->numero }}  -  {{ $grupos->nsigla }}</option>
                                     @endforeach
                                 </select>
                             </div>

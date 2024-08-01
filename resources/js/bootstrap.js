@@ -7,7 +7,6 @@ import 'bootstrap';
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-import "./bootstrap";
 import $ from "jquery";
 import select2 from 'select2';
 select2();

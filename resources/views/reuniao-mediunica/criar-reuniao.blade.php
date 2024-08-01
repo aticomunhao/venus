@@ -27,9 +27,9 @@
                                         <span class="tooltiptext">Obrigatório</span>
                                         <span style="color:red">*</span>
                                     </span>
-                                    <select class="form-select slct" id="grupo" name="grupo" required>
+                                    <select class="form-select select2" id="grupo" name="grupo" required>
                                         @foreach ($grupo as $grupos)
-                                            <option value="{{ $grupos->idg }}">{{ $grupos->nome }}</option>
+                                            <option value="{{ $grupos->idg }}">{{ $grupos->nome }} - {{ $grupos->nsigla }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -152,6 +152,8 @@
             </div>
         </div>
     </div>
+
+  
 
     <script>
         $(document).ready(function(){
