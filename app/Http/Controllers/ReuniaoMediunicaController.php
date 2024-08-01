@@ -109,7 +109,7 @@ class ReuniaoMediunicaController extends Controller
 
             $salas = DB::table('salas')
                 ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
-                ->where('id_finalidade', 6)
+                // ->where('id_finalidade', 6)
                 ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
                 ->get();
 
