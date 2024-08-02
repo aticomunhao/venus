@@ -18,12 +18,12 @@ class ReuniaoMediunicaController extends Controller
 
         $now =  Carbon::now()->format('Y-m-d');
         $reuniao = DB::table('cronograma AS cro')
+            //->distinct()
             ->select(
                 'cro.id AS idr',
                 'gr.nome AS nomeg',
                 'cro.dia_semana AS idd',
                 'cro.id_sala',
-                'cro.id_tipo_tratamento',
                 'cro.id_tipo_tratamento',
                 'cro.h_inicio',
                 'td.nome AS nomed',
@@ -64,14 +64,14 @@ class ReuniaoMediunicaController extends Controller
 
         }
 
+        $contar = $reuniao->distinct()->count('cro.id');
 
-
-        $reuniao = $reuniao->orderby('status', 'ASC')->orderby('cro.id_tipo_tratamento', 'ASC')->orderby('nomeg', 'ASC')->paginate(50);
+        $reuniao = $reuniao->orderby('status', 'ASC')->orderby('cro.id_tipo_tratamento', 'ASC')->orderby('nomeg', 'ASC')->groupBy('idr', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero')->paginate(50);
 
         //dd($request->semana);
         //dd($status);
 
-        $contar = $reuniao->count('cro.id');
+        
 
         $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
 
