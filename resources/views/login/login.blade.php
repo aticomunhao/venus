@@ -71,20 +71,21 @@
                     <div class="mt-5 text-center">
                
                         <script>
-                            $("#buttonEye").click(function(){
-
-                                $("#buttonEye").toggleClass("bi-eye");
-                                $("#buttonEye").toggleClass("bi-eye-slash");
-
-                                if($('#senha').attr('type') == "password"){
-                                    $("#senha").attr("type", "text");
-                                }else{
-                                    $("#senha").attr("type", "password");
+                            document.getElementById('buttonEye').addEventListener('click', function () {
+                                const passwordInput = document.getElementById('senha');
+                                const eyeIcon = this.querySelector('i');
+                            
+                                if (passwordInput.type === 'password') {
+                                    passwordInput.type = 'text';
+                                    eyeIcon.classList.remove('bi-eye');
+                                    eyeIcon.classList.add('bi-eye-slash');
+                                } else {
+                                    passwordInput.type = 'password';
+                                    eyeIcon.classList.remove('bi-eye-slash');
+                                    eyeIcon.classList.add('bi-eye');
                                 }
-
-                            })
-
-                        </script>
+                            });
+                            </script>
                         {{-- <p>Don't have an account ? <a href="/register" class="text-primary"> Signup Now </a></p> --> --}}
                          {{-- <p>© {{  date('Y', strtotime('-2 year')) }} - {{  date('Y') }} Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p> --> --}}
                         <p>© Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p>
