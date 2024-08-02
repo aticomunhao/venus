@@ -101,6 +101,7 @@ class ReuniaoMediunicaController extends Controller
 
             $tratamento = DB::table('tipo_tratamento AS tt')
                 ->select('tt.id AS idt', 'tt.descricao', 'tt.sigla')
+                ->orderBy('tt.descricao')
                 ->get();
 
             $dia = DB::table('tipo_dia AS td')
@@ -270,6 +271,7 @@ class ReuniaoMediunicaController extends Controller
 
             $tratamento = DB::table('tipo_tratamento AS tt')
                 ->select('tt.id AS idt', 'tt.descricao', 'tt.sigla')
+                ->orderBy('tt.descricao')
                 ->get();
 
             $dia = DB::table('tipo_dia AS td')
