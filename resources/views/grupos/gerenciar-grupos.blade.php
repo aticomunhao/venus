@@ -50,7 +50,7 @@
 
 
         <hr>
-
+        Quantidade de grupos: {{ $contar }}</div>
         <div class="row" style="text-align:center;">
             <div class="col">
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
@@ -122,10 +122,10 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div class="d-flex justify-content-center">
         {{ $grupo->links('pagination::bootstrap-5') }}
     </div>
-
+       
 
     <script>
         $(document).ready(function() {

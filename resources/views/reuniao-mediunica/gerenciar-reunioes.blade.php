@@ -49,9 +49,12 @@
                 </div>
             </div>
             <br />
-        </div style="text-align:right;">
-        <hr />
-        Total reuniões: {{ $contar }}</div>
+            <div style="text-align:left;">
+                <hr />
+                <!-- Conteúdo adicional aqui -->
+            </div>
+            
+        Quantidade de  reuniões: {{ $contar }}</div>
             <div class="row">
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                     <thead style="text-align: center;">

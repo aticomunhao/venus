@@ -49,6 +49,8 @@ class GrupoController extends Controller
                 $grupo->where('st.nome', 'ilike', "%$setor%");
             }
 
+            $contar = $grupo->distinct()->count('g.id');
+
             $grupo = $grupo->orderBy('g.status_grupo', 'ASC')
                 ->orderBy('g.nome', 'ASC')
                 ->paginate(50);
@@ -56,7 +58,7 @@ class GrupoController extends Controller
             // Carregar a lista de setores para o Select2
             $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
 
-            return view('grupos.gerenciar-grupos', compact('grupo', 'setores'));
+            return view('grupos.gerenciar-grupos', compact('grupo', 'setores','contar'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('gerenciar-grupos.erro-inesperado', compact('code'));
