@@ -42,6 +42,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    Quantidade filtrada: {{ $contar }}</div>
                     @foreach ($mediunidade as $mediunidades)
                         <tr>
                             <td>{{ $mediunidades->idp }}</td>
@@ -85,6 +86,9 @@
                     @endforeach
                 </tbody>
             </table>
+        </div class="d-flex justify-content-center">
+        {{ $mediunidade->links('pagination::bootstrap-5') }}
+    </div>
         </div>
     </div>
 

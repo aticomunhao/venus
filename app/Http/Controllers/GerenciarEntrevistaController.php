@@ -42,7 +42,7 @@ class GerenciarEntrevistaController extends Controller
 
     public function index(Request $request)
     {
-      //  try{
+        //  try{
         $informacoes = DB::table('encaminhamento')
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
             ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
@@ -57,7 +57,7 @@ class GerenciarEntrevistaController extends Controller
             ->leftJoin('pessoas as pessoa_entrevistador', 'associado.id_pessoa', '=', 'pessoa_entrevistador.id')
             ->leftJoin('tipo_status_entrevista as tse', 'entrevistas.status', '=', 'tse.id')
             ->where('encaminhamento.id_tipo_encaminhamento', 1)
-            ->where(function($query){
+            ->where(function ($query) {
                 $query->where('encaminhamento.status_encaminhamento', '<', 5);
                 $query->orWhere('entrevistas.id', '<>', NULL);
             })
@@ -117,7 +117,17 @@ class GerenciarEntrevistaController extends Controller
         }
 
 
-        $informacoes = $informacoes->orderBy('entrevistas.status')->orderby('emergencia', 'ASC')->orderBy('atendimentos.dh_inicio')->get();
+        // Ordenação
+        $informacoes = $informacoes->orderBy('entrevistas.status')
+            ->orderBy('emergencia', 'ASC')
+            ->orderBy('atendimentos.dh_inicio');
+
+        // Paginação
+        $informacoes = $informacoes->paginate(50);
+
+        // Contar total de assistidos
+        $totalAssistidos = $informacoes->total();
+
 
         // Mapear os status para a ordem desejada
         $statusOrder = [
@@ -161,7 +171,7 @@ class GerenciarEntrevistaController extends Controller
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get();
 
 
-        return view('Entrevistas.gerenciar-entrevistas', compact('informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status'));
+        return view('Entrevistas.gerenciar-entrevistas', compact('totalAssistidos','informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status'));
     }
 
 
@@ -174,176 +184,171 @@ class GerenciarEntrevistaController extends Controller
 
     public function create($id)
     {
-        try{
+        try {
 
-        $pessoas = DB::select('SELECT id, nome_completo FROM pessoas');
-        $tipo_tratamento = DB::select('SELECT id, descricao AS tratamento_descricao FROM tipo_tratamento');
-        $tipo_entrevista = DB::select('SELECT id, descricao AS descricao_entrevista FROM tipo_entrevista');
-        $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
-        $entrevista = DB::table('entrevistas')->where('id', $id)->first();
-        $salas = DB::table('salas')
-        ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
-        ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
-        ->where('status_sala', 1)
-        ->orderBy('numero');
+            $pessoas = DB::select('SELECT id, nome_completo FROM pessoas');
+            $tipo_tratamento = DB::select('SELECT id, descricao AS tratamento_descricao FROM tipo_tratamento');
+            $tipo_entrevista = DB::select('SELECT id, descricao AS descricao_entrevista FROM tipo_entrevista');
+            $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
+            $entrevista = DB::table('entrevistas')->where('id', $id)->first();
+            $salas = DB::table('salas')
+                ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
+                ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
+                ->where('status_sala', 1)
+                ->orderBy('numero');
 
-    if($encaminhamento->id_tipo_entrevista == 3){
-        $salas = $salas->where('id_finalidade', 2);
-    }
-    $salas = $salas->get();
-
-
-
-
-
-        $informacoes = [];
-        if ($encaminhamento) {
-            $info = DB::table('encaminhamento')
-                ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
-                ->leftJoin('pessoas AS pessoa_atendente', 'atendimentos.id_usuario', '=', 'pessoa_atendente.id')
-                ->leftJoin('pessoas AS pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
-                ->leftJoin('tipo_tratamento', 'encaminhamento.id_tipo_tratamento', '=', 'tipo_tratamento.id')
-                ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
-                ->select(
-                    'atendimentos.id_assistido AS id_pessoa',
-                    'pessoa_pessoa.nome_completo AS nome_pessoa',
-                    'encaminhamento.id_tipo_tratamento',
-                    'tipo_tratamento.descricao AS tratamento_descricao',
-                    'tipo_tratamento.sigla AS tratamento_sigla',
-                    'tipo_entrevista.descricao AS entrevista_descricao',
-                    'tipo_entrevista.sigla AS entrevista_sigla'
-                )
-                ->where('encaminhamento.id', $encaminhamento->id)
-                ->distinct()
-                ->first();
-
-            if ($info) {
-                $informacoes[] = $info;
+            if ($encaminhamento->id_tipo_entrevista == 3) {
+                $salas = $salas->where('id_finalidade', 2);
             }
-        }
+            $salas = $salas->get();
 
 
-        return view('Entrevistas/criar-entrevista', compact('salas', 'entrevista', 'encaminhamento', 'informacoes', 'pessoas', 'tipo_tratamento', 'tipo_entrevista'));
-    }
 
-    catch(\Exception $e){
 
-        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
-	    return redirect()->back();
+
+            $informacoes = [];
+            if ($encaminhamento) {
+                $info = DB::table('encaminhamento')
+                    ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
+                    ->leftJoin('pessoas AS pessoa_atendente', 'atendimentos.id_usuario', '=', 'pessoa_atendente.id')
+                    ->leftJoin('pessoas AS pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
+                    ->leftJoin('tipo_tratamento', 'encaminhamento.id_tipo_tratamento', '=', 'tipo_tratamento.id')
+                    ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
+                    ->select(
+                        'atendimentos.id_assistido AS id_pessoa',
+                        'pessoa_pessoa.nome_completo AS nome_pessoa',
+                        'encaminhamento.id_tipo_tratamento',
+                        'tipo_tratamento.descricao AS tratamento_descricao',
+                        'tipo_tratamento.sigla AS tratamento_sigla',
+                        'tipo_entrevista.descricao AS entrevista_descricao',
+                        'tipo_entrevista.sigla AS entrevista_sigla'
+                    )
+                    ->where('encaminhamento.id', $encaminhamento->id)
+                    ->distinct()
+                    ->first();
+
+                if ($info) {
+                    $informacoes[] = $info;
+                }
             }
+
+
+            return view('Entrevistas/criar-entrevista', compact('salas', 'entrevista', 'encaminhamento', 'informacoes', 'pessoas', 'tipo_tratamento', 'tipo_entrevista'));
+        } catch (\Exception $e) {
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+            return redirect()->back();
         }
+    }
 
 
 
     public function store(Request $request, $id)
     {
-        try{
+        try {
 
 
 
-        $request->validate([
-            'id_sala' => 'required',
-            'data' => 'required|date',
-            'hora' => 'required',
-        ]);
+            $request->validate([
+                'id_sala' => 'required',
+                'data' => 'required|date',
+                'hora' => 'required',
+            ]);
 
 
-        DB::table('entrevistas')->insert([
-            'id_encaminhamento' => $id,
-            'id_sala' => $request->id_sala,
-            'data' => $request->data,
-            'hora' => $request->hora,
-            'status' => 2,
-        ]);
+            DB::table('entrevistas')->insert([
+                'id_encaminhamento' => $id,
+                'id_sala' => $request->id_sala,
+                'data' => $request->data,
+                'hora' => $request->hora,
+                'status' => 2,
+            ]);
 
 
 
 
-        return redirect()->route('gerenciamento')->with('success', 'Entrevista criada com sucesso!');
-    }
-    catch(\Exception $e){
+            return redirect()->route('gerenciamento')->with('success', 'Entrevista criada com sucesso!');
+        } catch (\Exception $e) {
 
-        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
-        DB::rollBack();
-    return redirect()->back();
-            }
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+            DB::rollBack();
+            return redirect()->back();
         }
+    }
     public function criar($id)
     {
 
-    try{
+        try {
 
 
-        $associado = DB::table('membro')->select('membro.id',)
-            ->leftJoin('associado', 'membro.id_associado', 'associado.id')->get();
+            $associado = DB::table('membro')->select('membro.id',)
+                ->leftJoin('associado', 'membro.id_associado', 'associado.id')->get();
 
-        $entrevistas = DB::table('entrevistas AS entre')
+            $entrevistas = DB::table('entrevistas AS entre')
 
-            ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
-            ->leftJoin('pessoas as pessoa_entrevistador', 'entre.id_entrevistador', '=', 'pessoa_entrevistador.id')
-            ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-            ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
-            ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
-            ->leftJoin('pessoas AS pessoa_assitido', 'atd.id_assistido', 'pessoa_assitido.id')
-            ->select(
-                'pessoa_assitido.nome_completo',
-                's.nome',
-                's.numero',
-                'tpl.nome as local',
-                'enc.id',
-                'entre.id',
-                'entre.id_entrevistador',
-                'entre.data',
-                'entre.hora',
-                'pessoa_entrevistador.nome_completo as nome_completo_pessoa_entrevistador'
-            )
-            ->where('entre.id_encaminhamento', $id)
-            ->first();
-
-
-
-        if (!$entrevistas) {
-        }
-
-        $salas = DB::table('salas')->get();
-        $encaminhamento = DB::table('encaminhamento')->find($id);
-        $pessoas = DB::table('pessoas')->get();
-        $membros = DB::table('membro')
-            ->join('associado', 'membro.id_associado', '=', 'associado.id')
-            ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
-            ->select('membro.*', 'pessoas.nome_completo')
-            ->distinct('membro.id_associado')
-            ->get();
+                ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
+                ->leftJoin('pessoas as pessoa_entrevistador', 'entre.id_entrevistador', '=', 'pessoa_entrevistador.id')
+                ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
+                ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
+                ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+                ->leftJoin('pessoas AS pessoa_assitido', 'atd.id_assistido', 'pessoa_assitido.id')
+                ->select(
+                    'pessoa_assitido.nome_completo',
+                    's.nome',
+                    's.numero',
+                    'tpl.nome as local',
+                    'enc.id',
+                    'entre.id',
+                    'entre.id_entrevistador',
+                    'entre.data',
+                    'entre.hora',
+                    'pessoa_entrevistador.nome_completo as nome_completo_pessoa_entrevistador'
+                )
+                ->where('entre.id_encaminhamento', $id)
+                ->first();
 
 
-        $encaminhamento = DB::table('encaminhamento')->find($id);
 
-        // Verificando se o tipo de entrevista é 3 (tipo_entrevista 3, afe)
-        if ($encaminhamento && $encaminhamento->id_tipo_entrevista === 3) {
-            // Obtendo informações dos atendentes (caso o tipo de entrevista seja afe)
+            if (!$entrevistas) {
+            }
+
+            $salas = DB::table('salas')->get();
+            $encaminhamento = DB::table('encaminhamento')->find($id);
+            $pessoas = DB::table('pessoas')->get();
             $membros = DB::table('membro')
                 ->join('associado', 'membro.id_associado', '=', 'associado.id')
                 ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
                 ->select('membro.*', 'pessoas.nome_completo')
                 ->distinct('membro.id_associado')
-                ->where('membro.id_funcao', 5)
                 ->get();
-        }
-        return view('Entrevistas.agendar-entrevistador', compact('membros', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
-    }
 
-    catch(\Exception $e){
 
-        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
-	    return redirect()->back();
+            $encaminhamento = DB::table('encaminhamento')->find($id);
+
+            // Verificando se o tipo de entrevista é 3 (tipo_entrevista 3, afe)
+            if ($encaminhamento && $encaminhamento->id_tipo_entrevista === 3) {
+                // Obtendo informações dos atendentes (caso o tipo de entrevista seja afe)
+                $membros = DB::table('membro')
+                    ->join('associado', 'membro.id_associado', '=', 'associado.id')
+                    ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
+                    ->select('membro.*', 'pessoas.nome_completo')
+                    ->distinct('membro.id_associado')
+                    ->where('membro.id_funcao', 5)
+                    ->get();
             }
+            return view('Entrevistas.agendar-entrevistador', compact('membros', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
+        } catch (\Exception $e) {
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+            return redirect()->back();
         }
+    }
 
     public function incluir(Request $request, string $id)
     {
-    try{
+        try {
 
-        $a = DB::table('encaminhamento')->where('id', $id)->first();
+            $a = DB::table('encaminhamento')->where('id', $id)->first();
 
 
 
@@ -360,362 +365,336 @@ class GerenciarEntrevistaController extends Controller
 
 
 
-        return redirect()->route('gerenciamento')->with('success', 'O cadastro foi realizado com sucesso!');
-    }
+            return redirect()->route('gerenciamento')->with('success', 'O cadastro foi realizado com sucesso!');
+        } catch (\Exception $e) {
 
-
-    catch(\Exception $e){
-
-        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
-        DB::rollBack();
-    return redirect()->back();
-            }
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+            DB::rollBack();
+            return redirect()->back();
         }
+    }
 
 
     public function show($id)
     {
-     try{
-        $entrevistas = DB::table('entrevistas AS entre')
-            ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
-            ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-            ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
-            ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
-            ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-            ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
-            ->where('entre.id_encaminhamento', $id)
-            ->first();
+        try {
+            $entrevistas = DB::table('entrevistas AS entre')
+                ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
+                ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
+                ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
+                ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+                ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
+                ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
+                ->where('entre.id_encaminhamento', $id)
+                ->first();
 
-        if (!$entrevistas) {
-        }
-
-        $salas = DB::table('salas')->get();
-        $encaminhamento = DB::table('encaminhamento')->find($id);
-        $membros = DB::table('membro')
-            ->join('associado', 'membro.id_associado', '=', 'associado.id')
-            ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
-            ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
-            ->where('membro.id', $entrevistas->id_entrevistador)
-            ->first();
-
-
-        return view('Entrevistas.visualizar-entrevista', compact('membros', 'entrevistas', 'encaminhamento',  'salas'));
-    }
-
-    catch(\Exception $e){
-
-        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
-	    return redirect()->back();
+            if (!$entrevistas) {
             }
+
+            $salas = DB::table('salas')->get();
+            $encaminhamento = DB::table('encaminhamento')->find($id);
+            $membros = DB::table('membro')
+                ->join('associado', 'membro.id_associado', '=', 'associado.id')
+                ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
+                ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
+                ->where('membro.id', $entrevistas->id_entrevistador)
+                ->first();
+
+
+            return view('Entrevistas.visualizar-entrevista', compact('membros', 'entrevistas', 'encaminhamento',  'salas'));
+        } catch (\Exception $e) {
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+            return redirect()->back();
         }
+    }
 
 
 
     public function edit($id)
     {
-        try{
+        try {
 
-        $entrevistas = DB::table('entrevistas AS entre')
-            ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
-            ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-            ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
-            ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
-            ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-            ->select(
-                'p.nome_completo',
-                's.nome',
-                's.numero',
-                's.id as sala_id',
-                'tpl.nome as local',
-                'enc.id',
-                'entre.id',
-                'entre.id_entrevistador',
-                'entre.data',
-                'entre.hora',
-                'enc.id_tipo_entrevista'
+            $entrevistas = DB::table('entrevistas AS entre')
+                ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
+                ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
+                ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
+                ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+                ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
+                ->select(
+                    'p.nome_completo',
+                    's.nome',
+                    's.numero',
+                    's.id as sala_id',
+                    'tpl.nome as local',
+                    'enc.id',
+                    'entre.id',
+                    'entre.id_entrevistador',
+                    'entre.data',
+                    'entre.hora',
+                    'enc.id_tipo_entrevista'
 
-            )
-            ->where('entre.id_encaminhamento', $id)
-            ->first();
-
-
-        if (!$entrevistas) {
-        }
-        $entrevistador = DB::table('pessoas')->get();
-        $pessoas = DB::table('pessoas')->get();
-        $encaminhamento = DB::table('encaminhamento')->find($id);
-
-        $salas = DB::table('salas')
-            ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
-            ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
-            ->where('status_sala', 1)
-            ->orderBy('numero');
-
-        if($entrevistas->id_tipo_entrevista == 3){
-            $salas = $salas->where('id_finalidade', 2);
-        }
-        $salas = $salas->get();
-
-        $membros = DB::table('membro')
-            ->join('associado', 'membro.id_associado', '=', 'associado.id')
-            ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
-            ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
-            // ->where('membro.id' , $entrevistas->id_entrevistador)
-            ->get();
+                )
+                ->where('entre.id_encaminhamento', $id)
+                ->first();
 
 
-        $encaminhamento = DB::table('encaminhamento')->find($id);
+            if (!$entrevistas) {
+            }
+            $entrevistador = DB::table('pessoas')->get();
+            $pessoas = DB::table('pessoas')->get();
+            $encaminhamento = DB::table('encaminhamento')->find($id);
 
-        // Verificando se o tipo de entrevista é 3 (tipo_entrevista 3, afe)
-        if ($encaminhamento && $encaminhamento->id_tipo_entrevista === 3) {
-            // Obtendo informações dos atendentes (caso o tipo de entrevista seja afe)
+            $salas = DB::table('salas')
+                ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
+                ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
+                ->where('status_sala', 1)
+                ->orderBy('numero');
+
+            if ($entrevistas->id_tipo_entrevista == 3) {
+                $salas = $salas->where('id_finalidade', 2);
+            }
+            $salas = $salas->get();
+
             $membros = DB::table('membro')
                 ->join('associado', 'membro.id_associado', '=', 'associado.id')
                 ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
                 ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
-                ->distinct('membro.id_associado')
-                ->where('membro.id_funcao', 5)
+                // ->where('membro.id' , $entrevistas->id_entrevistador)
                 ->get();
-        }
-           return view('Entrevistas.editar-entrevista', compact('membros', 'entrevistador', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
-    }
 
 
-    catch(\Exception $e){
+            $encaminhamento = DB::table('encaminhamento')->find($id);
 
-        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
-	    return redirect()->back();
+            // Verificando se o tipo de entrevista é 3 (tipo_entrevista 3, afe)
+            if ($encaminhamento && $encaminhamento->id_tipo_entrevista === 3) {
+                // Obtendo informações dos atendentes (caso o tipo de entrevista seja afe)
+                $membros = DB::table('membro')
+                    ->join('associado', 'membro.id_associado', '=', 'associado.id')
+                    ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
+                    ->select('membro.*', 'pessoas.nome_completo AS nome_entrevistador')
+                    ->distinct('membro.id_associado')
+                    ->where('membro.id_funcao', 5)
+                    ->get();
             }
+            return view('Entrevistas.editar-entrevista', compact('membros', 'entrevistador', 'entrevistas', 'encaminhamento', 'pessoas', 'salas'));
+        } catch (\Exception $e) {
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+            return redirect()->back();
         }
+    }
 
     public function update(Request $request, $id)
     {
-        try{
-        $entrevista = DB::table('entrevistas AS entre')
-            ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
-            ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-            ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
-            ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
-            ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-            ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora')
-            ->where('entre.id_encaminhamento', $id)
-            ->first();
+        try {
+            $entrevista = DB::table('entrevistas AS entre')
+                ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
+                ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
+                ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
+                ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+                ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
+                ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora')
+                ->where('entre.id_encaminhamento', $id)
+                ->first();
 
 
-        if (!$entrevista) {
-            app('flasher')->addError("Entrevista não encontrada");
-            return redirect('gerenciar-entrevistas');
-        }
-
-
-
-
-
-        DB::table('entrevistas')
-            ->where('id_encaminhamento', $id)
-            ->update([
-                'id_entrevistador' => $request->input('entrevistador'),
-                'data' => $request->input('data'),
-                'hora' => $request->input('hora'),
-                'id_sala' => $request->input('numero_sala'),
-            ]);
-
-        app('flasher')->addSuccess("Entrevista atualizada com sucesso");
-        return redirect('gerenciar-entrevistas');
-    }
-
-
-    catch(\Exception $e){
-
-        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
-        DB::rollBack();
-    return redirect()->back();
-
+            if (!$entrevista) {
+                app('flasher')->addError("Entrevista não encontrada");
+                return redirect('gerenciar-entrevistas');
             }
+
+
+
+
+
+            DB::table('entrevistas')
+                ->where('id_encaminhamento', $id)
+                ->update([
+                    'id_entrevistador' => $request->input('entrevistador'),
+                    'data' => $request->input('data'),
+                    'hora' => $request->input('hora'),
+                    'id_sala' => $request->input('numero_sala'),
+                ]);
+
+            app('flasher')->addSuccess("Entrevista atualizada com sucesso");
+            return redirect('gerenciar-entrevistas');
+        } catch (\Exception $e) {
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+            DB::rollBack();
+            return redirect()->back();
         }
+    }
     public function finalizar($id)
     {
-        try{
-        $novo_encaminhamento = Carbon::today();
-        $id_usuario = session()->get('usuario.id_usuario');
-        $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
+        try {
+            $novo_encaminhamento = Carbon::today();
+            $id_usuario = session()->get('usuario.id_usuario');
+            $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
 
-        // Obter informações sobre a entrevista
-        $entrevista = DB::table('entrevistas')
-            ->where('id_encaminhamento', $id)
-            ->first();
+            // Obter informações sobre a entrevista
+            $entrevista = DB::table('entrevistas')
+                ->where('id_encaminhamento', $id)
+                ->first();
 
-        $salas = DB::table('entrevistas')->where('id_encaminhamento', $id)->where(function($query){
-            $query->where('data', NULL);
-            $query->orWhere('id_entrevistador', NULL);
-            $query->orWhere('hora', NULL);
-            $query->orWhere('id_sala', NULL);
-        })->count();
+            $salas = DB::table('entrevistas')->where('id_encaminhamento', $id)->where(function ($query) {
+                $query->where('data', NULL);
+                $query->orWhere('id_entrevistador', NULL);
+                $query->orWhere('hora', NULL);
+                $query->orWhere('id_sala', NULL);
+            })->count();
 
-        if (!$entrevista) {
-            return redirect()->route('gerenciamento')->with('error', 'Entrevista não encontrada!');
+            if (!$entrevista) {
+                return redirect()->route('gerenciamento')->with('error', 'Entrevista não encontrada!');
+            }
+            if ($salas > 1) {
+                return redirect()->route('gerenciamento')->with('error', 'Entrevista com dados Insuficientes!');
+            }
+
+
+
+            $dateTime = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)
+                ->select('ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id_sala', 'ent.id_entrevistador')
+                ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
+                ->first();
+            //dd($dateTime);
+
+            $dt = Carbon::createFromFormat('Y-m-d H:i:s', $dateTime->data . ' ' . $dateTime->hora);
+            $atendimentos = DB::table('encaminhamento as enc')
+                ->select('id_assistido')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->where('enc.id', $id)
+                ->first();
+            $id_entrevistador = DB::table('membro')->where('id', $dateTime->id_entrevistador)->select('id_associado')->first();
+
+            if ($dateTime->id_tipo_entrevista == 3) {
+                $data = date("Y-m-d H:i:s");
+                DB::table('atendimentos')->insert([
+                    'dh_marcada' => $dt,
+                    'id_assistido' => $atendimentos->id_assistido,
+                    'id_atendente' => $id_entrevistador->id_associado,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_sala' => $dateTime->id_sala,
+                    'status_atendimento' => 7,
+                    'afe' => true
+                ]);
+                DB::table('entrevistas')->where('id_encaminhamento', $id)->update(['status' => 4]);
+                DB::table('historico_venus')->insert([
+
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'data' => $data,
+                    'fato' => 40,
+                    'obs' => $id
+
+                ]);
+
+
+                return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
+            } else {
+                $nova = DB::table('encaminhamento')->insertGetId([
+                    // Defina os valores adequados para o novo registro na tabela de encaminhamento
+                    'dh_enc' => $novo_encaminhamento,
+                    'id_usuario' => $id_usuario,
+                    'id_tipo_encaminhamento' => 2,
+                    'id_atendimento' => $encaminhamento->id_atendimento,
+                    'status_encaminhamento' => 1,
+                ]);
+
+                if ($encaminhamento->id_tipo_entrevista == 4) {
+                    DB::table('encaminhamento')->where('id', $nova)->update(['id_tipo_tratamento' => 2,]);
+                } else if ($encaminhamento->id_tipo_entrevista == 5) {
+
+                    DB::table('encaminhamento')->where('id', $nova)->update(['id_tipo_tratamento' => 6,]);
+                } else if ($encaminhamento->id_tipo_entrevista == 3) {
+                }
+
+                // Atualizar o status da entrevista para 'Entrevistado' e remover o ID de encaminhamento
+                DB::table('entrevistas')
+                    ->where('id_encaminhamento', $id)
+                    ->update(['status' => 5,]);
+
+
+                DB::table('encaminhamento')->where('id', $id)->update(['status_encaminhamento' => 3]);;
+
+                $data = date("Y-m-d H:i:s");
+
+                DB::table('historico_venus')->insert([
+
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'data' => $data,
+                    'fato' => 40,
+                    'obs' => $id
+
+                ]);
+
+                return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
+            }
+            // Criar um novo registro na tabela de encaminhamento
+        } catch (\Exception $e) {
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+            DB::rollBack();
+            return redirect()->back();
         }
-        if ($salas > 1) {
-            return redirect()->route('gerenciamento')->with('error', 'Entrevista com dados Insuficientes!');
+    }
+    public function fim($id)
+
+    {
+        try {
+
+            DB::table('entrevistas')
+                ->where('id_encaminhamento', $id)
+                ->update(['status' => 6,]);
+
+
+            DB::table('encaminhamento')->where('id', $id)->update(['status_encaminhamento' => 3]);;
+
+            return redirect()->route('gerenciamento')->with('sucess', 'Entrevista cancelada!');
+        } catch (\Exception $e) {
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+            DB::rollBack();
+            return redirect()->back();
         }
+    }
+    public function inativar($id, $tp)
+    {
+        try {
 
-
-
-        $dateTime = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)
-            ->select('ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id_sala', 'ent.id_entrevistador')
-            ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
-            ->first();
-//dd($dateTime);
-
-        $dt = Carbon::createFromFormat('Y-m-d H:i:s', $dateTime->data . ' ' . $dateTime->hora);
-        $atendimentos = DB::table('encaminhamento as enc')
-            ->select('id_assistido')
-            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-            ->where('enc.id', $id)
-            ->first();
-        $id_entrevistador = DB::table('membro')->where('id', $dateTime->id_entrevistador)->select('id_associado')->first();
-
-        if ($dateTime->id_tipo_entrevista == 3) {
             $data = date("Y-m-d H:i:s");
-            DB::table('atendimentos')->insert([
-                'dh_marcada' => $dt,
-                'id_assistido' => $atendimentos->id_assistido,
-                'id_atendente' => $id_entrevistador->id_associado,
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_sala' => $dateTime->id_sala,
-                'status_atendimento' => 7,
-                'afe' => true
-            ]);
-            DB::table('entrevistas')->where('id_encaminhamento', $id)->update(['status' => 4]);
+
             DB::table('historico_venus')->insert([
 
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'data' => $data,
-                'fato' => 40,
+                'fato' => 37,
                 'obs' => $id
 
             ]);
 
-
-            return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
-        }
-
-        else {  $nova = DB::table('encaminhamento')->insertGetId([
-            // Defina os valores adequados para o novo registro na tabela de encaminhamento
-            'dh_enc' => $novo_encaminhamento,
-            'id_usuario' => $id_usuario,
-            'id_tipo_encaminhamento' => 2,
-            'id_atendimento' => $encaminhamento->id_atendimento,
-            'status_encaminhamento' => 1,
-        ]);
-
-        if ($encaminhamento->id_tipo_entrevista == 4) {
-            DB::table('encaminhamento')->where('id', $nova)->update(['id_tipo_tratamento' => 2,]);
-        } else if ($encaminhamento->id_tipo_entrevista == 5) {
-
-            DB::table('encaminhamento')->where('id', $nova)->update(['id_tipo_tratamento' => 6,]);
-        } else if ($encaminhamento->id_tipo_entrevista == 3) {
-        }
-
-        // Atualizar o status da entrevista para 'Entrevistado' e remover o ID de encaminhamento
-        DB::table('entrevistas')
-            ->where('id_encaminhamento', $id)
-            ->update(['status' => 5,]);
+            $entrevistas = DB::table('entrevistas')->where('id_encaminhamento', '=', $id)->first();
 
 
-        DB::table('encaminhamento')->where('id', $id)->update(['status_encaminhamento' => 3]);;
+            if ($tp == 1) {
 
-        $data = date("Y-m-d H:i:s");
-
-        DB::table('historico_venus')->insert([
-
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $data,
-            'fato' => 40,
-            'obs' => $id
-
-        ]);
-
-        return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');}
-        // Criar um novo registro na tabela de encaminhamento
-    }
-
-    catch(\Exception $e){
-
-        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
-        DB::rollBack();
-    return redirect()->back();
-
+                DB::table('encaminhamento')
+                    ->where('id', $id)
+                    ->update(['status_encaminhamento' => 4]);
+            } elseif ($tp == 2) {
+                DB::table('entrevistas')
+                    ->where('id_encaminhamento', '=', $id)
+                    ->update(['status' => 6]);
+            } else {
+                return redirect()->route('gerenciamento')->with('danger', 'Erro Inesperado!');
             }
+
+            return redirect()->route('gerenciamento')->with('success', 'Entrevista Cancelada com Sucesso!');
+        } catch (\Exception $e) {
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+            DB::rollBack();
+            return redirect()->back();
         }
-    public function fim($id)
-
-    {
-    try{
-
-        DB::table('entrevistas')
-            ->where('id_encaminhamento', $id)
-            ->update(['status' => 6,]);
-
-
-        DB::table('encaminhamento')->where('id', $id)->update(['status_encaminhamento' => 3]);;
-
-        return redirect()->route('gerenciamento')->with('sucess', 'Entrevista cancelada!');
     }
-
-    catch(\Exception $e){
-
-        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
-        DB::rollBack();
-    return redirect()->back();
-
-            }
-        }
-    public function inativar($id, $tp)
-    {
-        try{
-
-        $data = date("Y-m-d H:i:s");
-
-        DB::table('historico_venus')->insert([
-
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $data,
-            'fato' => 37,
-            'obs' => $id
-
-        ]);
-
-        $entrevistas = DB::table('entrevistas')->where('id_encaminhamento', '=', $id)->first();
-
-
-        if ($tp == 1) {
-
-            DB::table('encaminhamento')
-            ->where('id', $id)
-            ->update(['status_encaminhamento' => 4]);
-
-
-        }
-
-        elseif($tp == 2){
-            DB::table('entrevistas')
-            ->where('id_encaminhamento', '=', $id)
-            ->update(['status' =>6]);
-
-        }
-        else{
-            return redirect()->route('gerenciamento')->with('danger', 'Erro Inesperado!');
-        }
-
-        return redirect()->route('gerenciamento')->with('success', 'Entrevista Cancelada com Sucesso!');
-    }
-    catch(\Exception $e){
-
-        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( )) ;
-        DB::rollBack();
-    return redirect()->back();
-
-            }
-        }
 }

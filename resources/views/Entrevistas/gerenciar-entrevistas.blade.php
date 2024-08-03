@@ -41,7 +41,7 @@
                     <br />
                 </div>
                 <hr />
-                <div class="table">Total assistidos:
+                <div class="table">Quantidade de assistidos: {{ $totalAssistidos }}
                     <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                         <thead style="text-align: center;">
                             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
@@ -149,7 +149,7 @@
                                         @endif{{-- Fim Confirmar --}}
 
                                         {{-- Inicio excluir --}}
-                                        @if ( $informacao->status == 5 or $informacao->status == 6)
+                                        @if ($informacao->status == 5 or $informacao->status == 6)
                                             <a href="#" type="button"
                                                 class="btn btn-outline-danger btn-sm disabled" data-tt="tooltip"
                                                 data-placement="top" title="Cancelar" disabled>
@@ -168,9 +168,10 @@
                                             aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
-                                                    <div class="modal-header" style="background-color: green; color: white">
-                                                        <h5 class="modal-title" id="exampleModalLabel"
-                                                            >Confirmação de Finalização</h5>
+                                                    <div class="modal-header"
+                                                        style="background-color: green; color: white">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Confirmação de
+                                                            Finalização</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -228,7 +229,7 @@
                                                     <div class="modal-header" style="background-color:#DC4C64">
                                                         <h5 class="modal-title" id="exampleModalLabel"
                                                             style="color:rgb(255, 255, 255);">Cancelar Tratamento
-                                                            </h5>
+                                                        </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -242,14 +243,14 @@
                                                             data-bs-dismiss="modal">Cancelar</button>
                                                         {{-- <a type="button" class="btn btn-danger" href="/nao-aceito-entrevista/{{ $informacao->ide }}">Cancelar tratamento</a>  --}}
 
-                                                        @if($informacao->status == 1)
-                                                        <a type="button" class="btn btn-primary"
-                                                            href="/inativar-entrevista/{{ $informacao->ide }}/1">Confirmar
-                                                        </a>
+                                                        @if ($informacao->status == 1)
+                                                            <a type="button" class="btn btn-primary"
+                                                                href="/inativar-entrevista/{{ $informacao->ide }}/1">Confirmar
+                                                            </a>
                                                         @else
-                                                        <a type="button" class="btn btn-primary"
-                                                            href="/inativar-entrevista/{{ $informacao->ide }}/2">Confirmar
-                                                        </a>
+                                                            <a type="button" class="btn btn-primary"
+                                                                href="/inativar-entrevista/{{ $informacao->ide }}/2">Confirmar
+                                                            </a>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -267,7 +268,7 @@
     </div>
 
     <script>
-        $(document).ready(function(){
+        $(document).ready(function() {
             if ({{ $pesquisaValue == 'limpo' }}) { //Deixa o select status como padrao vazio
                 $(".teste").prop("selectedIndex", -1);
             }

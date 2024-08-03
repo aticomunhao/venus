@@ -77,32 +77,27 @@
                     <div class="mt-5 text-center">
                         
                         <script>
-                            $("#buttonEye").click(function(){
-
-                                $("#buttonEye").toggleClass("bi-eye");
-                                $("#buttonEye").toggleClass("bi-eye-slash");
-
-                                if($('#senhaAtual').attr('type') == "password"){
-                                    $("#senhaAtual").attr("type", "text");
-                                }else{
-                                    $("#senhaAtual").attr("type", "password");
+                            document.addEventListener('DOMContentLoaded', function () {
+                                function togglePasswordVisibility(buttonId, inputId) {
+                                    const button = document.getElementById(buttonId);
+                                    const input = document.getElementById(inputId);
+                    
+                                    button.addEventListener('click', function () {
+                                        if (input.type === 'password') {
+                                            input.type = 'text';
+                                            button.classList.remove('bi-eye');
+                                            button.classList.add('bi-eye-slash');
+                                        } else {
+                                            input.type = 'password';
+                                            button.classList.remove('bi-eye-slash');
+                                            button.classList.add('bi-eye');
+                                        }
+                                    });
                                 }
-
-                            })
-
-                            $("#buttonEye2").click(function(){
-
-                                $("#buttonEye2").toggleClass("bi-eye");
-                                $("#buttonEye2").toggleClass("bi-eye-slash");
-
-                                if($('#senhaNova').attr('type') == "password"){
-                                    $("#senhaNova").attr("type", "text");
-                                }else{
-                                    $("#senhaNova").attr("type", "password");
-                                }
-
-                            })
-
+                    
+                                togglePasswordVisibility('buttonEye', 'senhaAtual');
+                                togglePasswordVisibility('buttonEye2', 'senhaNova');
+                            });
                         </script>
 
                          {{-- <p>© {{  date('Y', strtotime('-2 year')) }} - {{  date('Y') }} Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p> --> --}}

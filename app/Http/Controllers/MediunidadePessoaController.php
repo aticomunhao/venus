@@ -16,7 +16,7 @@ class MediunidadePessoaController extends Controller
     public function index(Request $request)
     {
 
-        try{
+        
         $tipos = DB::table('mediunidade_pessoa')
             ->select('id_pessoa')->groupBy('id_pessoa')->get();
 
@@ -28,6 +28,7 @@ class MediunidadePessoaController extends Controller
             ->whereIn('id', $array)
             ->orderBy('p.nome_completo', 'ASC');
 
+        $contar = $mediunidade->distinct()->count('p.id');
         $nome = $request->nome_pesquisa;
         $cpf = $request->cpf_pesquisa;
    
@@ -39,20 +40,20 @@ class MediunidadePessoaController extends Controller
             $mediunidade = $mediunidade->where('cpf', 'ilike', "%$cpf%");
         }
 
-        $mediunidade = $mediunidade->get();
+        $contarQuery = clone $mediunidade;
+        $contar = $contarQuery->distinct('p.id')->count('p.id');
+
+      
+        $mediunidade = $mediunidade->paginate(50);
 
 
 
-        return view('mediunidade.gerenciar-mediunidades', compact('nome', 'cpf',  'mediunidade'));
+        return view('mediunidade.gerenciar-mediunidades', compact('nome', 'cpf',  'mediunidade','contar'));
     }
 
 
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('gerenciar-mediunidades erro.erro-inesperado', compact('code'));
-            }
-        }
+  
+        
 
     public function create()
     {
