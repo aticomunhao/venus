@@ -196,149 +196,128 @@
         </center>
     </div>
 
-
+    
 
     <script>
-        $(document).ready(function() {
+   $(document).ready(function() {
+    $('#assist').prop('selectedIndex', -1);
+    $('#repres').prop('selectedIndex', -1);
+    $('#parent').prop('selectedIndex', -1);
 
-            $('#assist').prop('selectedIndex', -1)
-            $('#repres').prop('selectedIndex', -1)
-            $('#parent').prop('selectedIndex', -1)
-
-
-
-            function ajaxAssistido() {
-                nome = $('#cpfAssistido').val()
-                $('#cpfAssistido').removeClass('is-invalid')
-                $('#labelNumeroCpfAssistido').prop('hidden', true)
-                $('#labelCpfAssistido').prop('hidden', true)
-                $('#assist').html('')
-                $('#assist').prop('selectedIndex', -1)
-                if (nome.length < 1) {
-                    $('#cpfAssistido').addClass('is-invalid')
-                    $('#labelNumeroCpfAssistido').prop('hidden', false)
-                } else {
-                    $.ajax({
-                        type: "GET",
-                        url: "/ajaxCRUD?nome=" + nome,
-                        dataType: "json",
-                        success: function(response) {
-                            console.log(response)
-                            if(response.length == 0){
-                                $('#cpfAssistido').addClass('is-invalid')
-                                $('#labelCpfAssistido').prop('hidden', false)
-                            }else{
-                                $.each(response, function(){
-
-                                    $('#assist').append([
-                                    '<option value="' + this.id + '">' +
-                                    this.nome_completo +
-                                    '</option>'
-                                ])
-                                })
-                            }
-
-
-                        },
-                        error: function(xhr) {
-                            console.log(xhr.responseText)
-                                $('#cpfAssistido').addClass('is-invalid')
-                                $('#labelCpfAssistido').prop('hidden', false)
-
-                        }
-                    });
+    function ajaxAssistido() {
+        var nome = $('#cpfAssistido').val();
+        $('#cpfAssistido').removeClass('is-invalid');
+        $('#labelNumeroCpfAssistido').prop('hidden', true);
+        $('#labelCpfAssistido').prop('hidden', true);
+        $('#assist').html('');
+        $('#assist').prop('selectedIndex', -1);
+        
+        if (nome.length < 1) {
+            $('#cpfAssistido').addClass('is-invalid');
+            $('#labelNumeroCpfAssistido').prop('hidden', false);
+        } else {
+            $.ajax({
+                type: "GET",
+                url: "/ajaxCRUD?nome=" + nome,
+                dataType: "json",
+                success: function(response) {
+                    console.log(response);
+                    if(response.length === 0) {
+                        $('#cpfAssistido').addClass('is-invalid');
+                        $('#labelCpfAssistido').prop('hidden', false);
+                    } else {
+                        $.each(response, function() {
+                            $('#assist').append('<option value="' + this.id + '">' + this.nome_completo + '</option>');
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                    $('#cpfAssistido').addClass('is-invalid');
+                    $('#labelCpfAssistido').prop('hidden', false);
                 }
-            }
+            });
+        }
+    }
 
-            function ajaxResponsavel() {
-                nome = $('#cpfResponsavel').val()
-                $('#cpfResponsavel').removeClass('is-invalid')
-                $('#labelNumeroCpfResponsavel').prop('hidden', true)
-                $('#labelCpfResponsavel').prop('hidden', true)
-                $('#repres').html('')
-                $('#repres').prop('selectedIndex', -1)
-                $('#parent').prop('selectedIndex', -1)
-                if (nome.length < 1) {
-                    $('#cpfResponsavel').addClass('is-invalid')
-                    $('#labelNumeroCpfResponsavel').prop('hidden', false)
-                } else {
-                    $.ajax({
-                        type: "GET",
-                        url: "/ajaxCRUD?nome=" + nome,
-                        dataType: "json",
-                        success: function(response) {
-
-                            if(response.length == 0){
-                                $('#cpfResponsavel').addClass('is-invalid')
-                                $('#labelCpfResponsavel').prop('hidden', false)
-                            }else{
-                                $.each(response, function(){
-
-                                    $('#repres').append([
-                                    '<option value="' + this.id + '">' +
-                                    this.nome_completo +
-                                    '</option>'
-                                ])
-                                })
-                            }
-
-
-
-                        },
-                        error: function(xhr) {
-
-                                $('#cpfResponsavel').addClass('is-invalid')
-                                $('#labelCpfResponsavel').prop('hidden', false)
-
-                        }
-                    });
+    function ajaxResponsavel() {
+        var nome = $('#cpfResponsavel').val();
+        $('#cpfResponsavel').removeClass('is-invalid');
+        $('#labelNumeroCpfResponsavel').prop('hidden', true);
+        $('#labelCpfResponsavel').prop('hidden', true);
+        $('#repres').html('');
+        $('#repres').prop('selectedIndex', -1);
+        $('#parent').prop('selectedIndex', -1);
+        
+        if (nome.length < 1) {
+            $('#cpfResponsavel').addClass('is-invalid');
+            $('#labelNumeroCpfResponsavel').prop('hidden', false);
+        } else {
+            $.ajax({
+                type: "GET",
+                url: "/ajaxCRUD?nome=" + nome,
+                dataType: "json",
+                success: function(response) {
+                    if(response.length === 0) {
+                        $('#cpfResponsavel').addClass('is-invalid');
+                        $('#labelCpfResponsavel').prop('hidden', false);
+                    } else {
+                        $.each(response, function() {
+                            $('#repres').append('<option value="' + this.id + '">' + this.nome_completo + '</option>');
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    $('#cpfResponsavel').addClass('is-invalid');
+                    $('#labelCpfResponsavel').prop('hidden', false);
                 }
-            }
+            });
+        }
+    }
 
+    $('#bCpfAssistido').click(function() {
+        ajaxAssistido();
+    });
 
+    $('#bCpfResponsavel').click(function() {
+        ajaxResponsavel();
+    });
 
+    $('.checkboxes').change(function() {
+        if($('#representante').prop('checked')) {
+            $('#represent').prop('hidden', false);
+        } else {
+            $('#represent').prop('hidden', true);
+        }
+        if($('#pEspecial').prop('checked')) {
+            $('#pedidoEspecial').prop('hidden', false);
+        } else {
+            $('#pedidoEspecial').prop('hidden', true);
+        }
+    });
 
-            $('#bCpfAssistido').click(function() {
-                ajaxAssistido();
-            })
-            $('#bCpfResponsavel').click(function() {
-                ajaxResponsavel();
-            })
+    $('.pedido').change(function() {
+        if($('#tipo_afi').prop('selectedIndex') !== 0) {
+            $('#afi_p').prop('disabled', true);
+            $('#afi_p').prop('selectedIndex', 0);
+        } else {
+            $('#afi_p').prop('disabled', false);
+        }
 
-            $('.checkboxes').change(function(){
-                if($('#representante').prop('checked')){
-                    $('#represent').prop('hidden', false)
-                }else{
-                    $('#represent').prop('hidden', true)
-                }
-                if($('#pEspecial').prop('checked')){
-                    $('#pedidoEspecial').prop('hidden', false)
-                }else{
-                    $('#pedidoEspecial').prop('hidden', true)
-                }
-            })
+        if($('#afi_p').prop('selectedIndex') !== 0) {
+            $('#tipo_afi').prop('disabled', true);
+            $('#tipo_afi').prop('selectedIndex', 0);
+        } else {
+            $('#tipo_afi').prop('disabled', false);
+        }
+    });
+});
 
-
-
-
-            $('.pedido').change(function(){
-                if($('#tipo_afi').prop('selectedIndex') != 0){
-                    $('#afi_p').prop('disabled', true)
-                    $('#afi_p').prop('selectedIndex', 0)
-                }
-                else{
-                    $('#afi_p').prop('disabled', false)
-                }
-
-                if($('#afi_p').prop('selectedIndex') != 0){
-                    $('#tipo_afi').prop('disabled', true)
-                    $('#tipo_afi').prop('selectedIndex', 0)
-                }
-                else{
-                    $('#tipo_afi').prop('disabled', false)
-                }
-            })
-
-        })
     </script>
+    
+
+
+
+   
+
 @endsection
