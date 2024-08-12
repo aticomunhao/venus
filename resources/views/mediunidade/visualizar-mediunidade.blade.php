@@ -41,9 +41,13 @@
                     <div class="col">
                         <label for="motivo_status" class="form-label">Motivo status</label>
                         <select class="form-control motivo" aria-label=".form-select-lg example" name="motivo_status" id="motivo_status" disabled>
-                            @foreach ($tipo_motivo_status_pessoa as $motivo)
-                                <option value="{{ $motivo->id }}" {{ $motivo->id == $mediunidade->motivo_status ? 'selected' : '' }}>{{ $motivo->motivo }}</option>
-                            @endforeach
+                            @if ($mediunidade->motivo_status)
+                                @foreach ($tipo_motivo_status_pessoa as $motivo)
+                                    <option value="{{ $motivo->id }}" {{ $motivo->id == $mediunidade->motivo_status ? 'selected' : '' }}>{{ $motivo->motivo }}</option>
+                                @endforeach
+                            @else
+                                <option value=""></option>
+                            @endif
                         </select>
                     </div>
                 </div>
@@ -72,23 +76,26 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($tipo_mediunidade as $tipo)
-                                            <tr class="mediunidade-row" data-id="{{ $tipo->id }}">
-                                                <td>
-                                                    <input class="form-check-input" type="checkbox" name="id_tp_mediunidade[]" value="{{ $tipo->id }}" {{ in_array($tipo->id, $arrayChecked) ? 'checked' : '' }} disabled>
-                                                </td>
-                                                <td class="text-center">
-                                                    {{ $tipo->tipo }}
-                                                </td>
-                                                <td>
-                                                    <div class="form-group data_manifestou" name="id_mediunidade" id="data_inicio_{{ $tipo->id }}">
-                                                        @php
-                                                            $data_inicio = $mediunidadesIds->firstWhere('id_mediunidade', $tipo->id)->data_inicio ?? '';
-                                                        @endphp
-                                                        <input type="date" class="form-control form-control-sm" name="data_inicio[{{ $tipo->id }}][]" value="{{ $data_inicio }}" disabled>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                      @foreach ($tipo_mediunidade as $tipo)
+                                            @php
+                                                $checked = in_array($tipo->id, $arrayChecked);
+                                                $data_inicio = $mediunidadesIds->firstWhere('id_mediunidade', $tipo->id)->data_inicio ?? '';
+                                            @endphp
+                                            @if ($checked)
+                                                <tr class="mediunidade-row" data-id="{{ $tipo->id }}">
+                                                    <td>
+                                                        <input class="form-check-input" type="checkbox" name="id_tp_mediunidade[]" value="{{ $tipo->id }}" {{ $checked ? 'checked' : '' }} disabled>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ $tipo->tipo }}
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group data_manifestou" name="id_mediunidade" id="data_inicio_{{ $tipo->id }}">
+                                                            <input type="date" class="form-control form-control-sm" name="data_inicio[{{ $tipo->id }}][]" value="{{ $data_inicio }}" disabled>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -118,33 +125,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    $(document).ready(function() {
-        $('.select2').select2({ theme: 'bootstrap-5' });
-
-        // Inicializa o estado do motivo baseado no status atual
-        $('.status').change(function() {
-            let status = $('.status').val();
-            if (status == 1) {
-                $('.motivo').prop('disabled', true);
-                $('.motivo').prop("selectedIndex", -1);
-            } else {
-                $('.motivo').prop('disabled', false);
-                $('.motivo').prop("selectedIndex", {{ $mediunidade->motivo_status }} - 1);
-            }
-        });
-
-        $('.status').change();
-        
-        // Exibe apenas as linhas com checkbox marcado
-        $('.mediunidade-row').each(function() {
-            const checkbox = $(this).find('input[type=checkbox]');
-            if (!checkbox.prop('checked')) {
-                $(this).hide();
-            }
-        });
-    });
-</script>
 
 @endsection

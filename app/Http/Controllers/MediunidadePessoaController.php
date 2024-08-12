@@ -144,53 +144,67 @@ class MediunidadePessoaController extends Controller
             }
         }
 
-    public function update(Request $request, string $id)
-    {
-        try{
-        // Excluir registros anteriores na tabela 'mediunidade_pessoa' para o mesmo id_pessoa
-        DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->delete();
-    
-        // Obter os dados do formulário
-        $id_pessoa = $request->input('id_pessoa');
-        $tipo_ids = $request->input('id_tp_mediunidade');
-    
-        // Inserir dados na tabela 'mediunidade_medium'
-        foreach ($tipo_ids as $tipo_id) {
-            $datas_inicio = $request->input("data_inicio.{$tipo_id}");
-    
-            foreach ($datas_inicio as $data_inicio) {
-                DB::table('mediunidade_pessoa')->insert([
-                    'id_pessoa' => $id,
-                    'id_mediunidade' => $tipo_id,
-                    'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
+        public function update(Request $request, string $id)
+        {
+            try {
+                // Inicia a transação
+                DB::beginTransaction();
+        
+                // Excluir registros anteriores na tabela 'mediunidade_pessoa' para o mesmo id_pessoa
+                DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->delete();
+        
+                // Obter os dados do formulário
+                $id_pessoa = $request->input('id_pessoa');
+                $tipo_ids = $request->input('id_tp_mediunidade');
+        
+                // Certifique-se de que tipo_ids é um array
+                if (is_array($tipo_ids)) {
+                    // Inserir dados na tabela 'mediunidade_pessoa'
+                    foreach ($tipo_ids as $tipo_id) {
+                        $datas_inicio = $request->input("data_inicio.{$tipo_id}");
+        
+                        // Certifique-se de que datas_inicio é um array
+                        if (is_array($datas_inicio)) {
+                            foreach ($datas_inicio as $data_inicio) {
+                                DB::table('mediunidade_pessoa')->insert([
+                                    'id_pessoa' => $id,
+                                    'id_mediunidade' => $tipo_id,
+                                    'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
+                                ]);
+                            }
+                        }
+                    }
+                }
+        
+                // Atualizar o status e motivo na tabela 'pessoas'
+                $status = $request->input('tipo_status_pessoa');
+                $motivo = $request->input('motivo_status');
+                DB::table('pessoas')->where('id', $id)->update(['status' => $status, 'motivo_status' => $motivo]);
+        
+                // Gravar no histórico
+                $ida = session()->get('usuario.id_pessoa');
+                $data = Carbon::today();
+                DB::table('historico_venus')->insert([
+                    'id_usuario' => $ida,
+                    'data' => $data,
+                    'fato' => 38,
+                    'pessoa' => $id,
                 ]);
+        
+                // Commit da transação
+                DB::commit();
+        
+                return redirect('gerenciar-mediunidades');
+            } catch (\Exception $e) {
+                // Rollback em caso de erro
+                DB::rollBack();
+        
+                $code = $e->getCode();
+                $message = $e->getMessage();
+                return view('administrativo-erro.erro-inesperado', compact('code', 'message'));
             }
         }
-    
-        // Atualizar o status e motivo na tabela 'pessoas'
-        $status = $request->input('tipo_status_pessoa');
-        $motivo = $request->input('motivo_status');
-        DB::table('pessoas')->where('id', $id)->update(['status' => $status, 'motivo_status' => $motivo]);
-    
-        $ida = session()->get('usuario.id_pessoa');
-        // Gravar no histórico
-        $data=Carbon::today();
-        DB::table('historico_venus')->insert([
-            'id_usuario' => $ida,
-            'data' => $data,
-            'fato' => 38,
-            'pessoa' => $id
-        ]);
-    
-        return redirect('gerenciar-mediunidades');
-    }
-    
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+        
 
 
     public function show($id)
@@ -227,9 +241,10 @@ class MediunidadePessoaController extends Controller
             }
         }
 
+        
     public function destroy(string $id)
     {
-        try{
+      
         $data = date("Y-m-d H:i:s");
 
         DB::table('historico_venus')->insert([
@@ -256,10 +271,6 @@ class MediunidadePessoaController extends Controller
         app('flasher')->addError('Excluído com sucesso.');
         return redirect('/gerenciar-mediunidades');
     }
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+    
+        
 }

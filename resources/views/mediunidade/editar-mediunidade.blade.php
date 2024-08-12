@@ -185,31 +185,26 @@
 
    $('.status').change()
   })
-</script>
 
-
-<script>
     $(document).ready(function() {
-        $('.data_manifestou')
-            .hide()
-            .find('input[type=date]')
-            .prop('required', false);
-
-        $('[name^=id_tp_mediunidade]').change(function() {
-            $('.data_manifestou')
-                .hide()
-                .find('input[type=date]')
-                .prop('required', false);
-
-            $('[name^=id_tp_mediunidade]:checked').each(function() {
-                var tipoId = $(this).val();
-                $('#data_inicio_' + tipoId)
-                    .show()
-                    .find('input[type=date]')
-                    .prop('required', true);
-            });
-        });
-        $('[name^=id_tp_mediunidade]').change();
+      function updateMotivoStatus() {
+        let status = $('.status').val();
+  
+        if(status == 1) {
+          // Desabilitar e limpar seleção do campo motivo
+          $('.motivo').prop('disabled', true).val('');
+        } else {
+          // Habilitar campo motivo e manter a seleção existente ou selecionar o valor do motivo_status
+          $('.motivo').prop('disabled', false).val('{{ $mediunidade->motivo_status }}');
+        }
+      }
+  
+      // Chame a função de atualização quando o status mudar
+      $('.status').change(updateMotivoStatus);
+  
+      // Chame a função de atualização ao carregar a página para garantir que o estado inicial esteja correto
+      updateMotivoStatus();
     });
-</script>
+  </script>
+  
 @endsection
