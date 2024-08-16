@@ -1,16 +1,20 @@
-
 import './bootstrap';
-
-import $ from 'jquery';
 
 import '../sass/app.scss';
 
-import 'select2';
-
 import './custom';
 
-window.$ = window.jQuery = $;
+import 'select2/dist/css/select2.min.css';
 
+import 'jquery/dist/jquery.js';
+
+import 'bootstrap5-toggle/js/bootstrap5-toggle.ecmas.min.js';
+
+import $ from 'jquery';
+
+window.$ = $;
+
+ window.jQuery = $;
 
 
 import 'bootstrap5-toggle/js/bootstrap5-toggle.ecmas.min.js';
@@ -177,10 +181,3 @@ $(document).ready(function() {
     });
     $('[name^=id_tp_mediunidade]').change();
 });
-
-
-
- 
-
-
- 

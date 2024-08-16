@@ -135,7 +135,13 @@ class GerenciarAtendimentoController extends Controller
 
     public function ajaxCRUD(Request $request) {
 
-        $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->where('nome_completo', 'ilike', "%$request->nome%")->orderBy('nome_completo')->get();
+
+        $pessoas = DB::table('pessoas')
+        ->select('id', 'nome_completo')
+        ->where(DB::raw('unaccent(lower(nome_completo))'), 'ilike', DB::raw("unaccent(lower('%{$request->nome}%'))"))
+        ->orderBy('nome_completo')
+        ->get();
+
         return $pessoas;
 
     }
