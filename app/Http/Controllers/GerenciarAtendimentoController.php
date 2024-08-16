@@ -461,7 +461,7 @@ class GerenciarAtendimentoController extends Controller
             }
 
             if ($request->atendente) {
-                $atende->where('p.nome_completo', 'ilike', "%$request->atendente%");
+                $atende->where('p.nome_completo', 'like', "%$request->atendente%");
             }
 
             if ($request->status) {
@@ -571,60 +571,57 @@ class GerenciarAtendimentoController extends Controller
         try {
             $now = Carbon::today();
             $no = Carbon::today()->addDay(1);
-
-            $aten = DB::table('atendente_dia AS atd')->leftjoin('associado AS a', 'atd.id_associado', 'a.id')->where('dh_inicio', '>=', $now)->where('dh_inicio', '<', $no)->where('dh_fim', '=', null)->pluck('id_associado');
-
-            //dd($aten);
-
-            $atende = DB::table('membro AS m')
-            ->distinct('m.id_associado')
-            ->select('m.id AS idat', 'm.id_associado AS ida', 'p.nome_completo AS nm_4', 'p.id AS pid', 'tsp.tipo')
-            ->leftjoin('associado AS a', 'm.id_associado', 'a.id')
-            ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')
-            ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
-            ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
-            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
-            ->where('gr.id_tipo_grupo', 3)
-            ->where('p.status', 1)
-            ->whereNotIn('m.id_associado', $aten);
-
-            //$grupo = $request->grupo;
-
-            $atendente = $request->atendente;
-
-            $status = $request->status;
-
-            //if ($request->grupo){
-            //$atende->where('g.id', '=', $request->grupo);
-            //}
-
+    
+            // Obtenha todos os atendentes únicos para o select2
+            $atendentesParaSelect = DB::table('membro AS m')
+                ->select('m.id_associado AS ida', 'p.nome_completo AS nm_4')
+                ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
+                ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
+                ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+                ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+                ->where('gr.id_tipo_grupo', 3)
+                ->where('p.status', 1)
+                ->distinct('p.nome_completo') // Garante que o nome completo seja único
+                ->orderBy('p.nome_completo') // Ordene pela coluna de nome
+                ->get();
+    
+            // Crie a consulta para a listagem paginada
+            $atendeQuery = DB::table('membro AS m')
+                ->distinct('m.id_associado')
+                ->select('m.id AS idat', 'm.id_associado AS ida', 'p.nome_completo AS nm_4', 'p.id AS pid', 'tsp.tipo')
+                ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
+                ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
+                ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
+                ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+                ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+                ->where('gr.id_tipo_grupo', 3)
+                ->where('p.status', 1);
+    
+            // Aplicar filtros
             if ($request->atendente) {
-                $atende->where('m.id_associado', $request->atendente);
+                $atendeQuery->where('m.id_associado', $request->atendente);
             }
-
+    
             if ($request->status) {
-                $atende->where('p.status', $request->status);
+                $atendeQuery->where('p.status', $request->status);
             }
-
-            $atende = $atende->orderby('m.id_associado', 'ASC', 'nm_4', 'ASC')->paginate(50);
-
-            //dd($atende, $aten);
-
-            $st_atend = DB::select("select
-        tsp.id,
-        tsp.tipo
-        from tipo_status_pessoa tsp
-        ");
-
+    
+            // Contar o total de atendentes antes da paginação
+            $contar = $atendeQuery->count('m.id_associado');
+    
+            // Ordena e pagina
+            $atende = $atendeQuery->orderBy('m.id_associado', 'ASC')->orderBy('nm_4', 'ASC')->paginate(12);
+    
+            // Outras consultas
+            $st_atend = DB::table('tipo_status_pessoa')->select('id', 'tipo')->get();
             $situacao = DB::table('tipo_status_pessoa')->select('id AS ids', 'tipo')->get();
-
-            $grupo = DB::table('grupo AS g')->select('id', 'nome')->where('id_tipo_grupo', 3)->where('data_fim', null)->orderBy('nome')->get();
-
+            $grupo = DB::table('grupo AS g')->select('id', 'nome')->where('id_tipo_grupo', 3)->whereNull('data_fim')->orderBy('nome')->get();
+    
             foreach ($atende as $key => $lista) {
                 $result = DB::table('membro AS m')
                     ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
                     ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')
-                    ->where('m.id_associado', '=', $lista->ida) // Filtro para o ID de associado atual
+                    ->where('m.id_associado', '=', $lista->ida)
                     ->where('g.id_tipo_grupo', 3)
                     ->whereNull('g.data_fim')
                     ->select('m.id_associado', 'cro.id_grupo', 'g.nome AS gnome')
@@ -632,26 +629,40 @@ class GerenciarAtendimentoController extends Controller
                     ->get();
                 $lista->grup = $result;
             }
-
-            $salaAtendendo = DB::table('atendente_dia AS atd')->leftjoin('associado AS a', 'atd.id_associado', 'a.id')->where('dh_inicio', '>=', $now)->where('dh_inicio', '<', $no)->where('dh_fim', '=', null)->pluck('id_sala');
-
+    
+            $salaAtendendo = DB::table('atendente_dia AS atd')
+                ->leftJoin('associado AS a', 'atd.id_associado', 'a.id')
+                ->where('dh_inicio', '>=', $now)
+                ->where('dh_inicio', '<', $no)
+                ->whereNull('dh_fim')
+                ->pluck('id_sala');
+    
             $salaAFE = DB::table('atendimentos')
                 ->where('dh_marcada', '>=', $now)
                 ->where('dh_marcada', '<', $no)
                 ->whereIn('status_atendimento', [1, 7])
                 ->pluck('id_sala');
-
-            $sala = DB::table('salas AS s')->select('s.id', 's.numero')->where('s.id_finalidade', 2)->where('s.status_sala', 1)->whereNotIn('id', $salaAtendendo)->whereNotIn('id', $salaAFE)->orderBy('numero')->get();
-
-            // dd($atende);
-
-            return view('/recepcao-AFI/incluir-atendente-dia', compact('atende', 'st_atend', 'situacao', 'grupo', 'sala'));
+    
+            $sala = DB::table('salas AS s')
+                ->select('s.id', 's.numero')
+                ->where('s.id_finalidade', 2)
+                ->where('s.status_sala', 1)
+                ->whereNotIn('id', $salaAtendendo)
+                ->whereNotIn('id', $salaAFE)
+                ->orderBy('numero')
+                ->get();
+    
+            return view('/recepcao-AFI/incluir-atendente-dia', compact('contar', 'atende', 'st_atend', 'situacao', 'grupo', 'sala', 'atendentesParaSelect'));
         } catch (\Exception $e) {
             app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
             DB::rollBack();
             return redirect()->back();
         }
     }
+    
+    
+    
+    
     ////SALVA O AFI DO DIA E SALA
 
     public function salva_afi(Request $request, $ida)

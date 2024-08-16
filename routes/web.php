@@ -34,6 +34,7 @@ use App\Http\Controllers\GerenciarPerfil;
 use App\Http\Controllers\GerenciarSetor;
 use App\Http\Controllers\GerenciarVersoesController;
 use App\Http\Controllers\PresencaController;
+use App\Http\Controllers\PresencaDirigenteController;
 use App\Http\Controllers\GerenciarVersoesControllerController;
 
 /*
@@ -378,4 +379,12 @@ Route::middleware('rotas:28')->group(function () {
     Route::get('/visualizar-versoes/{id}', [GerenciarVersoesController::class, 'show']);
     Route::any('/excluir-versoes/{id}', [GerenciarVersoesController::class, 'destroy']);
 
+});
+
+// Gerenciar Presença Dirigente
+Route::middleware('rotas:30')->group(function () {
+    Route::get('/gerenciar-presenca', [PresencaDirigenteController::class, 'index'])->name('');
+    Route::get('/dar-presenca', [PresencaDirigenteController::class, 'index'])->name('dar.presenca');
+    Route::post('/dar-presenca', [PresencaDirigenteController::class, 'store'])->name('dar.presenca.store');
+    
 });

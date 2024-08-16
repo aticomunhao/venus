@@ -105,6 +105,10 @@ $setor = session()->get('usuario.setor');
                                     <li><a class="dropdown-item" href="/gerenciar-presenca">Gerenciar Presença
                                             Entrevista</a></li>
                                 @endif
+                                {{-- @if (in_array(8, $acesso)) --}}
+                                <li><a class="dropdown-item" href="/gerenciarpresencadirigente">Gerenciar Presença
+                                        Dirigente</a></li>
+                            {{-- @endif --}}
                                 @if (in_array(19, $acesso))
                                     <li><a class="dropdown-item" href="/gerenciar-reunioes">Gerenciar Reuniões</a></li>
                                 @endif
