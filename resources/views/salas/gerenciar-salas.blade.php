@@ -1,10 +1,8 @@
 @extends('layouts.app')
 
 @section('title') Gerenciar Salas @endsection
+
 @section('content')
-
-
-
 <div class="container-fluid">
     <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR SALAS</h4>
     <div class="col-12">
@@ -30,6 +28,7 @@
 
     <hr>
 
+    <div>Quantidade de salas: {{ $contar }}</div>
     <div class="row" style="text-align:center;">
         <div class="table-responsive">
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
@@ -52,9 +51,6 @@
                         <td> {{$salas->descricao}} </td>
                         <td> {{$salas->numero}} </td>
                         <td> {{$salas->nome2}} </td>
-
-
-
                         <td> {{$salas->tamanho_sala}} </td>
                         <td> {{$salas->nr_lugares}} </td>
                         <td class="text-center">{{$salas->status_sala ? 'Ativo' : 'Inativo' }}</td>
@@ -78,8 +74,10 @@
             </table>
         </div>
     </div>
-    {{ $sala->links('pagination::bootstrap-5') }}
-</div>
+
+    <!-- Paginação -->
+</div class="d-flex justify-content-center">
+{{ $sala->links('pagination::bootstrap-5') }}
 </div>
 
 <!-- Modal de Confirmação de Exclusão -->
@@ -97,15 +95,11 @@
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
                 <a type="button" class="btn btn-primary"  id="btn-confirmar-exclusao" onclick="confirmarDelecao()">Confirmar </a>
             </div>
-
         </div>
     </div>
 </div>
 
-
 <script>
- 
-
     function confirmarExclusao(id, nome) {
         document.getElementById('btn-confirmar-exclusao').setAttribute('data-id', id);
         document.getElementById('modal-body-text').innerText = nome;
@@ -116,7 +110,6 @@
         var id = document.getElementById('btn-confirmar-exclusao').getAttribute('data-id');
         window.location.href = '/deletar-salas/' + id;
     }
-
 </script>
 
 @endsection

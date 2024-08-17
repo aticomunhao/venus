@@ -46,13 +46,14 @@ class SalaController extends Controller
         if ($numero) {
             $sala->where('s.numero', '=', $numero);
         }
+        $contar = $sala->count('s.id');
         
         $sala = $sala->orderBy('s.status_sala', 'ASC')
-             ->orderBy('s.numero', 'ASC')
-             ->orderBy('s.nome', 'ASC')
-             ->paginate(50);
-
-        return view('salas.gerenciar-salas', compact('sala'));
+        ->orderBy('s.numero', 'ASC')
+        ->orderBy('s.nome', 'ASC')
+        ->paginate(40);
+        
+        return view('salas.gerenciar-salas', compact('sala','contar'));
     }
     catch(\Exception $e){
 
