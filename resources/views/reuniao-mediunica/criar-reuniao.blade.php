@@ -34,7 +34,7 @@
                                     </select>
                                 </div>
                                 <div class="col">
-                                    <label for="tratamento" class="form-label">Tipo de Tratamento</label>
+                                    <label for="tratamento" class="form-label">Tipo de Trabalho</label>
                                     <span class="tooltips">
                                         <span class="tooltiptext">Obrigatório</span>
                                         <span style="color:red">*</span>

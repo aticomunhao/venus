@@ -30,7 +30,7 @@
                                     </select>
                                 </div>
                                 <div class="col">
-                                    <label for="tratamento" class="form-label">Tipo de Tratamento</label>
+                                    <label for="tratamento" class="form-label">Tipo de Trabalho</label>
                                     <select class="form-control slct" id="tratamento" name="tratamento" required disabled>
                                         @foreach ($tratamento as $tratamentos)
                                             <option value="{{ $tratamentos->idt }}" {{$tratamentos->descricao == $info->descricao ? 'selected' : ''}}>{{ $tratamentos->descricao }}</option>

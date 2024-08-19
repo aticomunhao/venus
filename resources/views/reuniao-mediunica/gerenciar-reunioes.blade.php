@@ -64,7 +64,7 @@
                             <th class="col">DIA</th>
                             <th class="col">SALA</th>
                             <th class="col-2">SETOR</th>
-                            <th class="col-2">TRATAMENTO</th>
+                            <th class="col-2">TIPO DE TRABALHO</th>
                             <th class="col">HORÁRIO INÍCIO</th>
                             <th class="col">HORÁRIO FIM</th>
                             <th class="col">MAX ATENDIDOS</th>
