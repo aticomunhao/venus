@@ -42,7 +42,7 @@
                             type="button" value="Novo membro +"></a>
                             @endif
                     </div>
-                </div>x
+                </div>
             </form>
 
         </div>
@@ -104,13 +104,13 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header" style="background-color:#DC4C64">
-                                        <h5 class="modal-title" id="exampleModalLabel" style="color:white">Inativação de
+                                        <h5 class="modal-title" id="exampleModalLabel" style="color:white">Deletar
                                             membro </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body" style="text-align: center; ">
-                                        Tem certeza que deseja inativar o membro<br /><span
+                                        Tem certeza que deseja deletar o membro<br /><span
                                             style="color:#DC4C64; font-weight: bold;">{{ $membros->nome_completo }}</span>&#63;
                                     </div>
                                     <div class="modal-footer mt-3">

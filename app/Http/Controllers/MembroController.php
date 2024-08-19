@@ -323,36 +323,40 @@ class MembroController extends Controller
             return view('administrativo-erro.erro-inesperado', compact('code'));
         }
     }
+
     public function destroy(string $idcro, string $id)
-    {
-        try {
-            $data = date('Y-m-d H:i:s');
+{
+    try {
+        $data = date('Y-m-d H:i:s');
 
-            DB::table('historico_venus')->insert([
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'data' => $data,
-                'fato' => 0,
-                'obs' => $id,
-            ]);
+        // Insere o histórico antes de deletar o membro
+        DB::table('historico_venus')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'fato' => 0,
+            'obs' => $id,
+        ]);
 
-            $membro = DB::table('membro')->where('id', $id)->first();
+        // Verifica se o membro existe
+        $membro = DB::table('membro')->where('id', $id)->first();
 
-            if (!$membro) {
-                app('flasher')->addError('O membro não foi encontrada.');
-                return redirect("/gerenciar-membro/$idcro");
-            }
-
-            DB::table('membro')
-                ->where('id', $id)
-                ->update(['dt_fim' => Carbon::today()]);
-
-            app('flasher')->addError('Inativado com sucesso.');
+        if (!$membro) {
+            app('flasher')->addError('O membro não foi encontrado.');
             return redirect("/gerenciar-membro/$idcro");
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('administrativo-erro.erro-inesperado', compact('code'));
         }
+
+        // Deleta o membro
+        DB::table('membro')->where('id', $id)->delete();
+
+        app('flasher')->addSuccess('Membro deletado com sucesso.');
+        return redirect("/gerenciar-membro/$idcro");
+    } catch (\Exception $e) {
+        $code = $e->getCode();
+        return view('administrativo-erro.erro-inesperado', compact('code'));
     }
+}
+
+  
     public function ferias(string $id, string $tp)
     {
         try {

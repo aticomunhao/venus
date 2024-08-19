@@ -6,21 +6,23 @@
         </h4>
 
         <div class="col-12 mt-3 row">
-
-
-            <div class="col">
-                <a href="/gerenciar-membro/{{ $selected_grupo }}"><input class="btn btn-primary btn-sm me-md-2"
-                        style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
-                        value="Gerenciar Grupo"></a>
-            </div>
-
-            <div class="col d-flex justify-content-end mb-3">
-                <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#filtros"
-                    style="box-shadow: 1px 2px 5px #000000; margin:5px;">
-                    Filtrar <i class="bi bi-funnel"></i>
+            <div class="col d-flex justify-content-start mb-3">
+                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#filtros"
+                    style="box-shadow: 3px 5px 6px #000000; margin:5px;">
+                    Selecionar Grupo <i class="bi bi-funnel"></i>
                 </button>
+        
+                <a href="/gerenciar-membro/{{ $selected_grupo }}">
+                    <input class="btn btn-light btn-sm me-md-2"
+                        style="font-size: 0.9rem; box-shadow: 3px 5px 6px #000000; margin:5px;" 
+                        type="button"
+                        value="Gerenciar Grupo">
+                </a>
             </div>
+        </div>
+        
 
+        
             {{-- Modal Filtros --}}
             <form action="/gerenciar-pti" class="form-horizontal" method="GET">
                 <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel"
