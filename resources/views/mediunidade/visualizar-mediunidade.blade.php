@@ -117,7 +117,7 @@
 
                 <div class="row mt-1 justify-content-center">
                     <div class="d-grid gap-1 col-4 mx-auto">
-                        <a class="btn btn-danger" href="/gerenciar-mediunidades" role="button">Retornar</a>
+                        <a class="btn btn-danger" href="/gerenciar-mediunidades" role="button">Fechar</a>
                     </div>
                 
                 </div>

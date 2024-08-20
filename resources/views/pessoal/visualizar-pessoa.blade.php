@@ -77,7 +77,7 @@
                             <br>
                                 <div class="row mt-2 justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">
-                                        <a class="btn btn-danger" href="/gerenciar-pessoas" role="button">Retornar</a>
+                                        <a class="btn btn-danger" href="/gerenciar-pessoas" role="button">Fechar</a>
                                     </div>
 
                                 </div>

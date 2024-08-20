@@ -44,7 +44,7 @@
                     <div class="row">
                         <div class="d-grid gap-1 col-4 mx-auto">
                             <br>
-                            <a class="btn btn-danger" href="/gerenciar-versoes" role="button">Retornar</a>
+                            <a class="btn btn-danger" href="/gerenciar-versoes" role="button">Fechar</a>
                         </div>
                       </div>
 

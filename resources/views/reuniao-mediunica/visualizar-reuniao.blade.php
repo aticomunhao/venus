@@ -111,7 +111,7 @@
                             </div>
                             <div class="row mt-5">
                                 <div class="d-grid gap-1 col-4 mx-auto">
-                                    <a class="btn btn-danger" href="/gerenciar-reunioes" role="button">Retornar</a>
+                                    <a class="btn btn-danger" href="/gerenciar-reunioes" role="button">Fechar</a>
                                 </div>
 
                             </div>

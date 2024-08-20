@@ -74,7 +74,7 @@
                             <center>
                                 <div class="col-12 mt-3">
                                     <a href="/gerenciar-atendentes-plantonistas" class="btn btn-danger col-3">
-                                        Retornar
+                                        Fechar
                                     </a>
 
                                 </div>
