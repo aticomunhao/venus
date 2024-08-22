@@ -595,7 +595,17 @@ class GerenciarAtendimentoController extends Controller
                 ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
                 ->where('gr.id_tipo_grupo', 3)
-                ->where('p.status', 1);
+                ->where('p.status', 1) 
+                ->leftJoin('atendente_dia AS atd', function ($join) use ($now, $no) {
+                    $join->on('m.id_associado', '=', 'atd.id_associado')
+                         ->whereNull('atd.dh_fim')
+                         ->where('atd.dh_inicio', '>=', $now)
+                         ->where('atd.dh_inicio', '<', $no);
+                })
+
+                ->where('gr.id_tipo_grupo', 3)
+                ->where('p.status', 1)
+                ->whereNull('atd.id'); // Excluir aqueles que já estão em uma sala e sem fim de turno
     
             // Aplicar filtros
             if ($request->atendente) {

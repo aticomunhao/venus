@@ -400,39 +400,48 @@ class MembroController extends Controller
             return view('administrativo-erro.erro-inesperado', compact('code'));
         }
     }
-    public function inactivate(string $idcro, string $id)
-    {
-        
-            $data = date('Y-m-d H:i:s');
+   
     
-            // Insere o histórico
-            DB::table('historico_venus')->insert([
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'data' => $data,
-                'fato' => 41, // Indica que é uma inativação
-                'obs' => $id,
+    public function inactivate(string $idcro, string $id, Request $request)
+    {
+        $data = date('Y-m-d H:i:s');
+    
+        // Insere o histórico
+        DB::table('historico_venus')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'fato' => 41, // Indica que é uma inativação
+            'obs' => $id,
+        ]);
+    
+        // Verifica se o membro existe
+        $membro = DB::table('membro')->where('id', $id)->first();
+    
+        if (!$membro) {
+            app('flasher')->addError('O membro não foi encontrado.');
+            return redirect("/gerenciar-membro/$idcro");
+        }
+    
+        // Obtenha a data de inativação do request
+        $dataInativacao = $request->input('data_inativacao');
+    
+        // Se a data de inativação não for fornecida, use a data atual como fallback
+        if (empty($dataInativacao)) {
+            $dataInativacao = Carbon::today()->toDateString(); // Formato Y-m-d
+        }
+    
+        // Atualiza a data de término e o status para "Inativo"
+        DB::table('membro')
+            ->where('id', $id)
+            ->update([
+                'dt_fim' => $dataInativacao,
             ]);
     
-            // Verifica se o membro existe
-            $membro = DB::table('membro')->where('id', $id)->first();
+        app('flasher')->addSuccess('Membro inativado com sucesso.');
+        return redirect("/gerenciar-membro/$idcro");
+    }
     
-            if (!$membro) {
-                app('flasher')->addError('O membro não foi encontrado.');
-                return redirect("/gerenciar-membro/$idcro");
-            }
-    
-            // Atualiza a data de término e o status para "Inativo"
-            DB::table('membro')
-                ->where('id', $id)
-                ->update([
-                    'dt_fim' => Carbon::today(),
-                    
-                ]);
-    
-            app('flasher')->addSuccess('Membro inativado com sucesso.');
-            return redirect("/gerenciar-membro/$idcro");
-       
-            }
+            
 
   
     public function ferias(string $id, string $tp)

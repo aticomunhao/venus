@@ -134,18 +134,21 @@
                                 <div class="modal-body" style="text-align: center;">
                                     Tem certeza que deseja inativar o membro<br /><span style="color:#DC4C64; font-weight: bold;">
                                         {{ $membros->nome_completo }}</span>?
-                                </div>
-                                <div class="modal-footer mt-3">
-                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                                    <form action="{{ route('membro.inactivate', ['idcro' => $id, 'id' => $membros->idm]) }}" method="POST" style="display:inline;">
+                                    <form action="{{ route('membro.inactivate', ['idcro' => $id, 'id' => $membros->idm]) }}" method="POST">
                                         @csrf
-                                        <input type="hidden" name="action" value="inactivate">
-                                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                                        <label for="data_inativacao" class="form-label mt-3">Escolha a data de inativação:</label>
+                                        <input type="date" name="data_inativacao" id="data_inativacao{{ $membros->idm }}" class="form-control mb-3" required>
+                                        
+                                        <div class="modal-footer mt-3">
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
 
                     <!-- Modal de confirmação para deletar -->
                     <div class="modal fade" id="confirmDelete{{ $membros->idm }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
