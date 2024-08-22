@@ -224,7 +224,8 @@ Route::middleware('rotas:14')->group(function () {
     Route::get('/gerenciar-membro/{id}', [MembroController::class, 'index'])->name('lista');
     Route::get('/editar-membro/{idcro}/{id}', [MembroController::class, 'edit'])->name('');
     Route::any('/atualizar-membro/{idcro}/{id}', [MembroController::class, 'update'])->name('');
-    Route::any('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('');
+    Route::post('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('membro.destroy');
+    Route::post('/inativar-membro/{idcro}/{id}', [MembroController::class, 'inactivate'])->name('membro.inactivate');
     Route::get('/visualizar-membro/{idcro}/{id}', [MembroController::class, 'show'])->name('');
     Route::get('/gerenciar-grupos-membro', [MembroController::class, 'grupos'])->name('');
     Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);

@@ -153,44 +153,89 @@ class MembroController extends Controller
         //     return view('administrativo-erro.erro-inesperado', compact('code'));
         // }
     }
+   
     public function index(Request $request, string $id)
     {
-        try {
-            $grupo = DB::table('cronograma as cro')->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.modificador')->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')->where('cro.id', $id)->first();
-
-            $membroQuery = DB::table('membro AS m')->leftJoin('associado', 'associado.id', '=', 'm.id_associado')->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')->where('m.id_cronograma', $id)->select('p.nome_completo', 'm.id AS idm', 'm.id_associado', 'm.id_funcao', 'p.cpf', 'p.motivo_status', 'tf.nome as nome_funcao', 'm.id_cronograma', 'g.nome as nome_grupo', DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativado' ELSE 'Ativado' END) as status"))->orderBy('status')->orderBy('p.nome_completo', 'ASC');
-
+      
+            // Busca os detalhes do grupo
+            $grupo = DB::table('cronograma as cro')
+                ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.modificador')
+                ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
+                ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+                ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+                ->where('cro.id', $id)
+                ->first();
+    
+            // Montagem da query para membros
+            $membroQuery = DB::table('membro AS m')
+                ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
+                ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
+                ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+                ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
+                ->where('m.id_cronograma', $id)
+                ->select(
+                    'p.nome_completo', 
+                    'm.id AS idm', 
+                    'm.id_associado', 
+                    'm.id_funcao', 
+                    'p.cpf', 
+                    'p.motivo_status', 
+                    'tf.nome as nome_funcao', 
+                    'm.id_cronograma', 
+                    'g.nome as nome_grupo', 
+                    DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END) as status")
+                )
+                ->orderBy('status')
+                ->orderBy('p.nome_completo', 'ASC');
+    
+            // Filtros
             $nome = $request->nome_pesquisa;
+            $status = $request->status ?? 'Ativo'; // Define "Ativo" como valor padrão se não for informado
             $cpf = $request->cpf_pesquisa;
             $grupoPesquisa = $request->grupo_pesquisa;
+    
+            // Array de status
+            $statu = [
+                (object) ['nome' => 'Ativo'],
+                (object) ['nome' => 'Inativo'],
+                (object) ['nome' => 'Todos']
+            ];
 
+           
+            // Carregar lista de grupos
             $grupos = DB::table('grupo')->pluck('nome', 'id');
-
+    
+            // Aplicação dos filtros
             if ($nome || $cpf || $grupoPesquisa) {
                 $membroQuery->where(function ($query) use ($nome, $cpf, $grupoPesquisa) {
                     if ($nome) {
-                        $query->where('p.nome_completo', 'ilike', "%$nome%")->orWhere('p.cpf', 'ilike', "%$nome%");
+                        $query->where(DB::raw('unaccent(lower(p.nome_completo))'), 'ilike', DB::raw("unaccent(lower('%{$nome}%'))"))
+                              ->orWhere('p.cpf', 'ilike', "%$nome%");
                     }
-
+    
                     if ($cpf) {
                         $query->orWhere('p.cpf', 'ilike', "%$cpf%");
                     }
-
+    
                     if ($grupoPesquisa) {
                         $query->orWhere('g.id', '=', $grupoPesquisa);
                     }
                 });
             }
-
-            $membro = $membroQuery->orderBy('p.status', 'asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
-
-            return view('membro.gerenciar-membro', compact('membro', 'id', 'grupo'));
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('gerenciar-membro erro.erro-inesperado', compact('code'));
-        }
+    
+            // Filtro de status
+            if ($status && $status != 'Todos') {
+                $membroQuery->where(DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END)"), '=', $status);
+            } 
+    
+            // Paginação dos resultados
+            $membro = $membroQuery->orderBy('status', 'asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
+    
+            // Retorno da view com os dados
+            return view('membro.gerenciar-membro', compact('membro', 'id', 'grupo', 'status', 'statu', 'grupos'));
+    
     }
-
+    
     public function create()
     {
      
@@ -325,36 +370,69 @@ class MembroController extends Controller
     }
 
     public function destroy(string $idcro, string $id)
-{
-    try {
-        $data = date('Y-m-d H:i:s');
-
-        // Insere o histórico antes de deletar o membro
-        DB::table('historico_venus')->insert([
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $data,
-            'fato' => 0,
-            'obs' => $id,
-        ]);
-
-        // Verifica se o membro existe
-        $membro = DB::table('membro')->where('id', $id)->first();
-
-        if (!$membro) {
-            app('flasher')->addError('O membro não foi encontrado.');
+    {
+        try {
+            $data = date('Y-m-d H:i:s');
+    
+            // Insere o histórico antes de deletar o membro
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $data,
+                'fato' => 1,
+                'obs' => $id,
+            ]);
+    
+            // Verifica se o membro existe
+            $membro = DB::table('membro')->where('id', $id)->first();
+    
+            if (!$membro) {
+                app('flasher')->addError('O membro não foi encontrado.');
+                return redirect("/gerenciar-membro/$idcro");
+            }
+    
+            // Deleta o membro
+            DB::table('membro')->where('id', $id)->delete();
+    
+            app('flasher')->addSuccess('Membro deletado com sucesso.');
             return redirect("/gerenciar-membro/$idcro");
+        } catch (\Exception $e) {
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
         }
-
-        // Deleta o membro
-        DB::table('membro')->where('id', $id)->delete();
-
-        app('flasher')->addSuccess('Membro deletado com sucesso.');
-        return redirect("/gerenciar-membro/$idcro");
-    } catch (\Exception $e) {
-        $code = $e->getCode();
-        return view('administrativo-erro.erro-inesperado', compact('code'));
     }
-}
+    public function inactivate(string $idcro, string $id)
+    {
+        
+            $data = date('Y-m-d H:i:s');
+    
+            // Insere o histórico
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $data,
+                'fato' => 41, // Indica que é uma inativação
+                'obs' => $id,
+            ]);
+    
+            // Verifica se o membro existe
+            $membro = DB::table('membro')->where('id', $id)->first();
+    
+            if (!$membro) {
+                app('flasher')->addError('O membro não foi encontrado.');
+                return redirect("/gerenciar-membro/$idcro");
+            }
+    
+            // Atualiza a data de término e o status para "Inativo"
+            DB::table('membro')
+                ->where('id', $id)
+                ->update([
+                    'dt_fim' => Carbon::today(),
+                    
+                ]);
+    
+            app('flasher')->addSuccess('Membro inativado com sucesso.');
+            return redirect("/gerenciar-membro/$idcro");
+       
+            }
 
   
     public function ferias(string $id, string $tp)

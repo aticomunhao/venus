@@ -21,17 +21,17 @@
                             @endforeach
                         </select>
                     </div> --}}
-                    <div class="col-2">Atendente
-                        <select class="form-select select2" name="atendente" type="number">
-                            <option value=""></option>
-                            @foreach ($atendentesParaSelect as $atendes)
-                                <option @if (old('atendente') == $atendes->ida) {{ 'selected="selected"' }} @endif
-                                    value="{{ $atendes->ida }}">{{ $atendes->nm_4 }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    
-                    
+                            <div class="col-2">Atendente
+                                <select class="form-select select2" name="atendente" type="number">
+                                    <option value=""></option>
+                                    @foreach ($atendentesParaSelect as $atendes)
+                                        <option @if (old('atendente') == $atendes->ida) {{ 'selected="selected"' }} @endif
+                                            value="{{ $atendes->ida }}">{{ $atendes->nm_4 }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+
                             <div class="col-2">Status
                                 <select class="form-select" id="" name="status" type="number">
                                     <option value="">Todos</option>
@@ -105,10 +105,8 @@
             </table>
 
         </div class="d-flex justify-content-center">
-                {{ $atende->links('pagination::bootstrap-5') }}
-            </div>
-        </div>
+        {{ $atende->links('pagination::bootstrap-5') }}
+    </div>
+    </div>
     </div>
 @endsection
-
-

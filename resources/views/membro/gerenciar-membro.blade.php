@@ -11,10 +11,31 @@
                 <div class="row">
                     <div class="col-4">
                         Nome
-                        <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa"
-                            value="{{ request('nome_pesquisa') }}">
+                        <select class="form-select select2" name="nome_pesquisa">
+                            <option value=""></option>
+                            @foreach ($membro as $membros)
+                                <option value="{{ $membros->nome_completo }}" 
+                                    {{ request('nome_pesquisa') == $membros->nome_completo ? 'selected' : '' }}>
+                                    {{ $membros->nome_completo }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-
+                    
+                    <div class="col-2">
+                        Status
+                        <select class="form-select" name="status">
+                            <option value=""></option>
+                            @foreach ($statu as $status)
+                                <option value="{{ $status->nome }}"
+                                    {{ request('status') == $status->nome ? 'selected' : '' }}>
+                                    {{ $status->nome }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div> 
+                    
+                     
 
                     <div class="col">
                         <br>
@@ -24,8 +45,6 @@
                         <a href="/gerenciar-membro/{{ $id }}" class="btn btn-light btn-sm me-md-2 offset-4"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;"
                             type="button">Limpar</a>
-
-
 
                         <a href="/gerenciar-grupos-membro" class="btn btn-primary btn-sm me-md-2  offset-1"
                             type="button">Retornar para tela inicial</a>
@@ -49,85 +68,111 @@
 
         <hr>
 
-            <table
-                class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
-
-                <thead>
-                    <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                        <th>ID</th>
-                        <th>NOME DO MÉDIUM</th>
-                        <th>FUNÇÃO</th>
-                        <th>STATUS PESSOA</th>
-                        <th>AÇÕES</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach ($membro as $membros)
-                        <tr>
-                            <td>{{ $membros->idm }}</td>
-                            <td>{{ $membros->nome_completo }}</td>
-                            <td>{{ $membros->nome_funcao }}</td>
-                            <td>{{ $membros->status }}</td>
-                            <td>
-
-                                @if($membros->status == 'Inativado')
-                                <button href="/editar-membro/{{ $id }}/{{ $membros->idm }}" type="button"
-                                    class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
+        <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
+            <thead>
+                <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
+                    <th>ID</th>
+                    <th>NOME DO MÉDIUM</th>
+                    <th>FUNÇÃO</th>
+                    <th>STATUS PESSOA</th>
+                    <th>AÇÕES</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($membro as $membros)
+                    <tr>
+                        <td>{{ $membros->idm }}</td>
+                        <td>{{ $membros->nome_completo }}</td>
+                        <td>{{ $membros->nome_funcao }}</td>
+                        <td>{{ $membros->status }}</td>
+                        <td>
+                            <!-- Botão para editar -->
+                            @if($membros->status == 'Inativo')
+                                <button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
                                     title="Editar" disabled>
                                     <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                                @else
-                                <a href="/editar-membro/{{ $id }}/{{ $membros->idm }}" type="button"
-                                    class="btn btn-outline-warning btn-sm tooltips">
+                            @else
+                                <a href="/editar-membro/{{ $id }}/{{ $membros->idm }}" type="button" class="btn btn-outline-warning btn-sm tooltips">
                                     <span class="tooltiptext">Editar</span>
                                     <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                                 </a>
-                                @endif
-                                @if($membros->status == 'Inativado')
+                            @endif
+
+                            <!-- Botão para inativar -->
+                            @if($membros->status == 'Inativo')
                                 <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#confirmacaoDelecao{{ $membros->idm }}" data-tt="tooltip"
+                                    data-bs-target="#confirmInactivate{{ $membros->idm }}" data-tt="tooltip"
                                     data-placement="top" title="Inativar" disabled>
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                                @else
+                            @else
                                 <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
-                                    data-bs-target="#confirmacaoDelecao{{ $membros->idm }}">
+                                    data-bs-target="#confirmInactivate{{ $membros->idm }}">
                                     <span class="tooltiptext">Inativar</span>
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                                @endif
-                            </td>
-                        </tr>
-                        <div class="modal fade" id="confirmacaoDelecao{{ $membros->idm }}" tabindex="-1"
-                            aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header" style="background-color:#DC4C64">
-                                        <h5 class="modal-title" id="exampleModalLabel" style="color:white">Deletar
-                                            membro </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body" style="text-align: center; ">
-                                        Tem certeza que deseja deletar o membro<br /><span
-                                            style="color:#DC4C64; font-weight: bold;">{{ $membros->nome_completo }}</span>&#63;
-                                    </div>
-                                    <div class="modal-footer mt-3">
-                                        <button type="button" class="btn btn-danger"
-                                            data-bs-dismiss="modal">Cancelar</button>
-                                        <a type="button" class="btn btn-primary"
-                                            href="/deletar-membro/{{ $id }}/{{ $membros->idm }}">Confirmar</a>
-                                    </div>
+                            @endif
+
+                            <!-- Botão para deletar -->
+                            <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                data-bs-target="#confirmDelete{{ $membros->idm }}">
+                                <span class="tooltiptext">Deletar</span>
+                                <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Modal de confirmação para inativar -->
+                    <div class="modal fade" id="confirmInactivate{{ $membros->idm }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header" style="background-color:#DC4C64">
+                                    <h5 class="modal-title" id="exampleModalLabel" style="color:white">Inativar membro</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" style="text-align: center;">
+                                    Tem certeza que deseja inativar o membro<br /><span style="color:#DC4C64; font-weight: bold;">
+                                        {{ $membros->nome_completo }}</span>?
+                                </div>
+                                <div class="modal-footer mt-3">
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                    <form action="{{ route('membro.inactivate', ['idcro' => $id, 'id' => $membros->idm]) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <input type="hidden" name="action" value="inactivate">
+                                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
-                </tbody>
-            </table>
-            {{ $membro->links('pagination::bootstrap-5') }}
-        </div>
+                    </div>
 
-
-
+                    <!-- Modal de confirmação para deletar -->
+                    <div class="modal fade" id="confirmDelete{{ $membros->idm }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header" style="background-color:#DC4C64">
+                                    <h5 class="modal-title" id="exampleModalLabel" style="color:white">Deletar membro</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" style="text-align: center;">
+                                    Tem certeza que deseja deletar o membro<br /><span style="color:#DC4C64; font-weight: bold;">
+                                        {{ $membros->nome_completo }}</span>?
+                                </div>
+                                <div class="modal-footer mt-3">
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                    <form action="{{ route('membro.destroy', ['idcro' => $id, 'id' => $membros->idm]) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <input type="hidden" name="action" value="delete">
+                                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </tbody>
+        </table>
+        {{ $membro->links('pagination::bootstrap-5') }}
+    </div>
 @endsection

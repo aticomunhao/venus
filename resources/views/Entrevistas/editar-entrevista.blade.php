@@ -31,7 +31,7 @@
                                 <span class="tooltiptext">Obrigatório</span>
                                 <span style="color:red">*</span>
                             </span>
-                            <select class="form-control teste" id="id_entrevistador" name="entrevistador" {{ $entrevistas->id_entrevistador == null ? 'disabled' : '' }}>
+                            <select class="form-select select2 teste" id="id_entrevistador" name="entrevistador" {{ $entrevistas->id_entrevistador == null ? 'disabled' : '' }}>
                                  @foreach ($membros as $membro )
                                  <option value="{{ $membro->id }}" {{$membro->id == $entrevistas->id_entrevistador ? 'selected' : '' }}>{{ $membro->nome_entrevistador }}</option>
                                  @endforeach

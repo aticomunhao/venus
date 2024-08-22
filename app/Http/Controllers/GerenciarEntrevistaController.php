@@ -42,7 +42,7 @@ class GerenciarEntrevistaController extends Controller
 
     public function index(Request $request)
     {
-        //  try{
+        
         $informacoes = DB::table('encaminhamento')
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
             ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
@@ -175,12 +175,7 @@ class GerenciarEntrevistaController extends Controller
     }
 
 
-    // catch(\Exception $e){
-
-    //     $code = $e->getCode( );
-    //     return view('tratamento-erro.erro-inesperado', compact('code'));
-    //         }
-    //     }
+  
 
     public function create($id)
     {

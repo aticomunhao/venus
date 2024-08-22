@@ -75,7 +75,7 @@
                                             <span class="tooltiptext">Obrigatório</span>
                                             <span style="color:red">*</span>
                                         </span>
-                                        <select class="form-select" aria-label=".form-select-lg example" name="id_tipo_grupo" required="required">
+                                        <select class="form-select select2" aria-label=".form-select-lg example" name="id_tipo_grupo" required="required">
                                             <option value="{{ $grupo[0]->id_tipo_grupo }}"> {{ $grupo[0]->nmg }}</option>
                                             @foreach ($tipo_grupo as $item)
                                                 <option value="{{ $item->id }}"> {{ $item->nm_tipo_grupo }}</option>
