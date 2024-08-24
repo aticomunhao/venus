@@ -105,7 +105,7 @@ class MembroController extends Controller
 
     public function storeGrupo(Request $request, string $id)
     {
-        //  try {
+       
 
 
         $now = Carbon::now()->format('Y-m-d');
@@ -137,6 +137,19 @@ class MembroController extends Controller
             app('flasher')->addError("Este membro faz parte de $repeat->nome neste horário");
             return redirect()->back()->withInput();
         }
+        $repetfuncao = DB::table('membro AS m')
+        ->join('cronograma AS c', 'm.id_cronograma', '=', 'c.id')
+        ->where('m.id_associado', $request->input('id_associado'))
+        ->where('m.id_funcao', $request->input('id_funcao'))
+        ->where('c.id_grupo', $seletedCronograma->id_grupo)
+        ->exists();
+
+    // Se o membro já estiver registrado na mesma função e grupo, bloquear o cadastro
+    if ($repetfuncao) {
+        app('flasher')->addError('Este membro já está cadastrado nesta função para o mesmo grupo.');
+        return redirect()->back()->withInput();
+    }
+
 
         $data = date('Y-m-d H:i:s');
         DB::table('membro')->insert([
@@ -148,10 +161,7 @@ class MembroController extends Controller
 
         app('flasher')->addSuccess('Cadastrado com Sucesso');
         return redirect("gerenciar-membro/$id");
-        // } catch (\Exception $e) {
-        //     $code = $e->getCode();
-        //     return view('administrativo-erro.erro-inesperado', compact('code'));
-        // }
+      
     }
    
     public function index(Request $request, string $id)
@@ -293,6 +303,19 @@ class MembroController extends Controller
                 app('flasher')->addError("Este membro faz parte de $repeat->nome neste horário");
                 return redirect()->back()->withInput();
             }
+
+            $repetfuncao = DB::table('membro AS m')
+            ->join('cronograma AS c', 'm.id_cronograma', '=', 'c.id')
+            ->where('m.id_associado', $request->input('id_associado'))
+            ->where('m.id_funcao', $request->input('id_funcao'))
+            ->where('c.id_grupo', $seletedCronograma->id_grupo)
+            ->exists();
+    
+        // Se o membro já estiver registrado na mesma função e grupo, bloquear o cadastro
+        if ($repetfuncao) {
+            app('flasher')->addError('Este membro já está cadastrado nesta função para o mesmo grupo.');
+            return redirect()->back()->withInput();
+        }
 
             $data = date('Y-m-d H:i:s');
             DB::table('membro')->insert([
