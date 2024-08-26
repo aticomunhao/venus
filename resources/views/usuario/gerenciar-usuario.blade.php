@@ -48,6 +48,8 @@
 
                                     <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                         <thead>
+                                          
+                                    Total de pessoas: {{ $contar }}
                                             <tr style="text-align: center;">
                                                 <th>NOME</th>
                                                 <th>CPF</th>
@@ -107,6 +109,9 @@
             <!-- end col -->
         </div>
         <!-- end row -->
+    </div class="d-flex justify-content-center">
+            {{ $result->links('pagination::bootstrap-5') }}
+        </div>
 @endsection
 
 @section('footerScript')

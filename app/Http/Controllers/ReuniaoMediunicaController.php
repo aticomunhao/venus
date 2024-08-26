@@ -15,10 +15,11 @@ class ReuniaoMediunicaController extends Controller
 
     public function index(Request $request)
     {
+        // Obtém a data atual formatada
+        $now = Carbon::now()->format('Y-m-d');
 
-        $now =  Carbon::now()->format('Y-m-d');
+        // Inicializa a consulta
         $reuniao = DB::table('cronograma AS cro')
-            //->distinct()
             ->select(
                 'cro.id AS idr',
                 'gr.nome AS nomeg',
@@ -36,164 +37,185 @@ class ReuniaoMediunicaController extends Controller
                 DB::raw("(CASE WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status")
             )
             ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
-            ->leftjoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('setor as s', 'gr.id_setor', 's.id')
             ->leftJoin('membro AS me', 'gr.id', 'me.id_cronograma')
             ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
             ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id');
 
 
-        $semana = $request->semana == null ? "undefined" : $request->semana;
+        // Obtém os valores de pesquisa da requisição
+        $semana = $request->input('semana', null);
+        $grupo = $request->input('grupo', null);
+        $status = $request->input('status', null);
 
-        $grupo = $request->grupo;
-
-        $status = $request->status == null ? "undefined" : $request->status;
-
-        if (in_array(25, session()->get('usuario.setor'))) {
-        } else {
-            $reuniao = $reuniao->whereIn('gr.id_setor', session()->get('usuario.setor'));
+        // Aplica filtro por setor se não estiver no setor 25
+        if (!in_array(25, session()->get('usuario.setor'))) {
+            $reuniao->whereIn('gr.id_setor', session()->get('usuario.setor'));
         }
 
-        if ($request->semana != null && $request->semana != 'todos') {
-            $reuniao->where('cro.dia_semana', '=', $request->semana);
+        // Aplica filtro por semana
+        if ($semana && $semana !== 'todos') {
+            $reuniao->where('cro.dia_semana', '=', $semana);
         }
 
-        if ($request->grupo) {
+        // Aplica filtro por nome de grupo com insensibilidade a maiúsculas/minúsculas e acentos
+        if ($grupo) {
+            $reuniao->where(DB::raw('unaccent(gr.nome)'), 'ilike', "%$grupo%");
+        }
+        // Aplica filtro por status com base na expressão CASE WHEN
+        $statusCaseWhen = DB::raw("(CASE WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END)");
 
-            $reuniao->where('gr.nome', 'ilike', "%$request->grupo%");
-
+        if ($status) {
+            switch ($status) {
+                case 1:
+                    $reuniao->where($statusCaseWhen, 'Ativo');
+                    break;
+                case 2:
+                    $reuniao->where($statusCaseWhen, 'Inativo');
+                    break;
+                case 3:
+                    $reuniao->where($statusCaseWhen, 'Experimental');
+                    break;
+                case 4:
+                    $reuniao->where($statusCaseWhen, 'Em ferias');
+                    break;
+            }
         }
 
+        // Conta o número de registros
         $contar = $reuniao->distinct()->count('cro.id');
 
-        $reuniao = $reuniao->orderby('status', 'ASC')->orderby('cro.id_tipo_tratamento', 'ASC')->orderby('nomeg', 'ASC')->groupBy('idr', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero')->paginate(50);
+        // Aplica a paginação e mantém os parâmetros de busca na URL
+        $reuniao = $reuniao
+            ->orderBy('status', 'ASC')
+            ->orderBy('cro.id_tipo_tratamento', 'ASC')
+            ->orderBy('nomeg', 'ASC')
+            ->groupBy('idr', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero')
+            ->paginate(50)
+            ->appends([
+                'status' => $status,
+                'semana' => $semana,
+                'grupo' => $grupo
+            ]);
 
-        //dd($request->semana);
-        //dd($status);
-
-        
-
+        // Obtém os dados para os filtros
         $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
-
         $tpdia = DB::table('tipo_dia')->select('id AS idtd', 'nome AS nomed')->get();
 
-
-
-
-        return view('/reuniao-mediunica/gerenciar-reunioes', compact('reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupo', 'status'));
+        // Retorna a view com os dados
+        return view('/reuniao-mediunica/gerenciar-reunioes', compact('reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupo'));
     }
 
 
     public function create()
     {
 
-        
 
-            $grupo = DB::table('grupo AS gr')
-                ->leftJoin('setor as s', 'gr.id_setor', 's.id')
-                ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
-                ->orderBy('gr.nome');
-
-
-            $tipo = DB::table('tipo_grupo AS tg')
-                ->select('tg.id AS idtg', 'tg.nm_tipo_grupo')
-                ->get();
-
-            $tratamento = DB::table('tipo_tratamento AS tt')
-                ->select('tt.id AS idt', 'tt.descricao', 'tt.sigla')
-                ->orderBy('tt.descricao')
-                ->get();
-
-            $dia = DB::table('tipo_dia AS td')
-                ->select('td.id AS idd', 'td.nome', 'td.sigla')
-                ->get();
-
-            $salas = DB::table('salas')
-                ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
-                // ->where('id_finalidade', 6)
-                ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
-                ->get();
-
-            if (in_array(25, session()->get('usuario.setor'))) {
-            } else {
-                $grupo = $grupo->whereIn('gr.id_setor', session()->get('usuario.setor'));
-            }
-
-            $grupo = $grupo->get();
+        $grupo = DB::table('grupo AS gr')
+            ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+            ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
+            ->orderBy('gr.nome');
 
 
-            return view('/reuniao-mediunica/criar-reuniao', compact('grupo', 'tipo',  'tratamento',  'dia', 'salas'));
-       
+        $tipo = DB::table('tipo_grupo AS tg')
+            ->select('tg.id AS idtg', 'tg.nm_tipo_grupo')
+            ->get();
+
+        $tratamento = DB::table('tipo_tratamento AS tt')
+            ->select('tt.id AS idt', 'tt.descricao', 'tt.sigla')
+            ->orderBy('tt.descricao')
+            ->get();
+
+        $dia = DB::table('tipo_dia AS td')
+            ->select('td.id AS idd', 'td.nome', 'td.sigla')
+            ->get();
+
+        $salas = DB::table('salas')
+            ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
+            // ->where('id_finalidade', 6)
+            ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
+            ->get();
+
+        if (in_array(25, session()->get('usuario.setor'))) {
+        } else {
+            $grupo = $grupo->whereIn('gr.id_setor', session()->get('usuario.setor'));
+        }
+
+        $grupo = $grupo->get();
+
+
+        return view('/reuniao-mediunica/criar-reuniao', compact('grupo', 'tipo',  'tratamento',  'dia', 'salas'));
     }
 
     public function store(Request $request)
     {
-      //  try {
+        //  try {
 
-            $usuario = session()->get('usuario.id_pessoa');
-            $now =  Carbon::now()->format('Y-m-d');
-            $data_inicio = $request->dt_inicio ? $request->dt_inicio : $now;
+        $usuario = session()->get('usuario.id_pessoa');
+        $now =  Carbon::now()->format('Y-m-d');
+        $data_inicio = $request->dt_inicio ? $request->dt_inicio : $now;
 
-            $grupo = intval($request->grupo);
-            $numero = intval($request->id_sala);
-            $h_inicio = Carbon::createFromFormat('G:i', $request->h_inicio)->subMinutes(30);
-            $h_fim = Carbon::createFromFormat('G:i', $request->h_fim)->addMinutes(30);
-            $dia = intval($request->dia);
+        $grupo = intval($request->grupo);
+        $numero = intval($request->id_sala);
+        $h_inicio = Carbon::createFromFormat('G:i', $request->h_inicio)->subMinutes(30);
+        $h_fim = Carbon::createFromFormat('G:i', $request->h_fim)->addMinutes(30);
+        $dia = intval($request->dia);
 
-            $repeat = DB::table('cronograma AS rm')
-                ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
-                ->leftJoin('salas AS s', 'rm.id_sala', 's.id')
-                ->where('rm.dia_semana', $dia)
-                ->whereNot('rm.data_fim', '<', $now)
-                ->where('rm.id_sala', $numero)
-                ->where(function ($query) use ($h_inicio, $h_fim) {
-                    $query->where(function ($hour) use ($h_inicio) {
-                        $hour->where('rm.h_inicio', '<=', $h_inicio);
-                        $hour->where('rm.h_fim', '>=', $h_inicio);
-                    });
-                    $query->orWhere(function ($hour) use ($h_fim) {
-                        $hour->where('rm.h_inicio', '<=', $h_fim);
-                        $hour->where('rm.h_fim', '>=', $h_fim);
-                    });
-                })
-                ->count();
-
-
-
-            if ($repeat > 0) {
-
-                app('flasher')->addError('Existe uma outra reunião nesse horário.');
-
-                return redirect('/gerenciar-reunioes');
-            } else {
-            }
+        $repeat = DB::table('cronograma AS rm')
+            ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
+            ->leftJoin('salas AS s', 'rm.id_sala', 's.id')
+            ->where('rm.dia_semana', $dia)
+            ->whereNot('rm.data_fim', '<', $now)
+            ->where('rm.id_sala', $numero)
+            ->where(function ($query) use ($h_inicio, $h_fim) {
+                $query->where(function ($hour) use ($h_inicio) {
+                    $hour->where('rm.h_inicio', '<=', $h_inicio);
+                    $hour->where('rm.h_fim', '>=', $h_inicio);
+                });
+                $query->orWhere(function ($hour) use ($h_fim) {
+                    $hour->where('rm.h_inicio', '<=', $h_fim);
+                    $hour->where('rm.h_fim', '>=', $h_fim);
+                });
+            })
+            ->count();
 
 
-            DB::table('cronograma AS rm')->insert([
-                'id_grupo' => $request->input('grupo'),
-                'id_sala' => $request->input('id_sala'),
-                'h_inicio' => $request->input('h_inicio'),
-                'h_fim' => $request->input('h_fim'),
-                'max_atend' => $request->input('max_atend'),
-                'dia_semana' => $request->input('dia'),
-                'id_tipo_tratamento' => $request->input('tratamento'),
-                'data_inicio' => $data_inicio,
-                'data_fim' => $request->dt_fim
-            ]);
 
-            $result = DB::table('cronograma')->max('id');
+        if ($repeat > 0) {
 
-            DB::table('historico_venus')->insert([
-                'id_usuario' => $usuario,
-                'data' => $now,
-                'fato' => 34,
-                'id_ref' => $result
-            ]);
-
-
-            app('flasher')->addSuccess('A reunião foi cadastrada com sucesso.');
+            app('flasher')->addError('Existe uma outra reunião nesse horário.');
 
             return redirect('/gerenciar-reunioes');
+        } else {
+        }
+
+
+        DB::table('cronograma AS rm')->insert([
+            'id_grupo' => $request->input('grupo'),
+            'id_sala' => $request->input('id_sala'),
+            'h_inicio' => $request->input('h_inicio'),
+            'h_fim' => $request->input('h_fim'),
+            'max_atend' => $request->input('max_atend'),
+            'dia_semana' => $request->input('dia'),
+            'id_tipo_tratamento' => $request->input('tratamento'),
+            'data_inicio' => $data_inicio,
+            'data_fim' => $request->dt_fim
+        ]);
+
+        $result = DB::table('cronograma')->max('id');
+
+        DB::table('historico_venus')->insert([
+            'id_usuario' => $usuario,
+            'data' => $now,
+            'fato' => 34,
+            'id_ref' => $result
+        ]);
+
+
+        app('flasher')->addSuccess('A reunião foi cadastrada com sucesso.');
+
+        return redirect('/gerenciar-reunioes');
         // } catch (\Exception $e) {
 
         //     $code = $e->getCode();
@@ -206,8 +228,8 @@ class ReuniaoMediunicaController extends Controller
         try {
 
             $grupo = DB::table('grupo AS gr')
-            ->leftJoin('setor as s', 'gr.id_setor', 's.id')
-                ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo','s.sigla as nsigla')
+                ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+                ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
                 ->where('id_tipo_grupo', 1)
                 ->orderBy('gr.nome')
                 ->get();
@@ -259,8 +281,8 @@ class ReuniaoMediunicaController extends Controller
         try {
 
             $grupo = DB::table('grupo AS gr')
-                 ->leftJoin('setor as s', 'gr.id_setor', 's.id')
-                ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo','s.sigla as nsigla')
+                ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+                ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
                 ->where('id_tipo_grupo', 1)
                 ->orderBy('gr.nome');
 
@@ -389,16 +411,34 @@ class ReuniaoMediunicaController extends Controller
      */
     public function destroy(string $id)
     {
-        $now =  Carbon::now()->format('Y-m-d');
+        // Obtém a data atual formatada
+        $now = Carbon::now()->format('Y-m-d');
+
+        // Atualiza a tabela 'cronograma' com a data de término
         DB::table('cronograma as cro')
             ->where('cro.id', $id)
             ->update([
                 'data_fim' => $now
             ]);
 
+        // Verifica se há algum registro com o fato específico na tabela 'historico_venus'
+        $verifica = DB::table('historico_venus')
+            ->where('fato', $id)
+            ->count('fato');
 
+        // Se não houver nenhum registro, insere um novo registro
+        if ($verifica == 0) {
+            // Obtém a data atual para inserção na tabela 'historico_venus'
+            $data = Carbon::now()->format('Y-m-d');
 
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $data,
+                'fato' => 11, // Ajuste o valor conforme necessário
+            ]);
+        }
 
+        // Redireciona para a página de gerenciamento de reuniões
         return redirect('/gerenciar-reunioes');
     }
 }

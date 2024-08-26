@@ -100,7 +100,7 @@ use Illuminate\Support\Carbon;
 
             'id_usuario' => session()->get('usuario.id_usuario'),
             'data' => $data,
-            'fato' => 36,
+            'fato' => 10,
             'obs' => $id
 
         ]);

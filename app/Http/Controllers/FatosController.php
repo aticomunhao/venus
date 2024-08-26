@@ -13,7 +13,7 @@ use Illuminate\Database\DBAL\TimestampType;
         public function index(Request $request)
         {
 
-            try{
+           
 
 
 
@@ -30,14 +30,9 @@ use Illuminate\Database\DBAL\TimestampType;
 
             }
 
-                catch(\Exception $e){
+               
 
-                    $code = $e->getCode( );
-                    return view('tratamento-erro.erro-inesperado', compact('code'));
-                        }
-
-
-        }
+        
 
 
 
@@ -98,12 +93,14 @@ use Illuminate\Database\DBAL\TimestampType;
         {
             try{
 
-            DB::table('tipo_fato')->insert([
-                'descricao' => $request->input('fato')
-            ]);
+                DB::table('tipo_fato')->insert([
+                    'descricao' => $request->descricao,
+                ]);
+        
 
         }
 
+      
 
 
 

@@ -54,29 +54,32 @@ class UsuarioController extends Controller
             }
         }
 
-    public function index(Request $request)
-    {
-        try{
-        //$result= $this->objUsuario->all();
-        $result = $this->getUsuarios();
-
-        if ($request->nome) {
-            $result->where('p.nome_completo', 'ilike', "%$request->nome%");
+        public function index(Request $request)
+        {
+           
+                // Supondo que getUsuarios retorne um query builder
+                $query = $this->getUsuarios();
+        
+                // Aplicar filtros com base na requisição
+                if ($request->nome) {
+                    $query->whereRaw('unaccent(lower(p.nome_completo)) ILIKE ?', ['%' . strtolower($request->nome) . '%']);
+                }
+                if ($request->cpf) {
+                    $query->whereRaw('unaccent(lower(p.cpf)) ILIKE ?', ['%' . strtolower($request->cpf) . '%']);
+                }
+        
+                // Contar o número total de registros que atendem aos critérios de pesquisa
+                $contar = $query->distinct()->count('p.id');
+        
+                // Aplicar ordenação e paginação na consulta
+                $result = $query->orderBy('p.nome_completo', 'ASC')
+                                ->paginate(50);
+        
+                // Retornar a view com as variáveis necessárias
+                return view('usuario/gerenciar-usuario', compact('result', 'contar'));
+           
         }
-        if ($request->cpf) {
-            $result->where('p.cpf', 'ilike', "%$request->cpf%");
-        }
-
-        $result = $result->get();
-
-        return view('usuario/gerenciar-usuario', compact('result'));
-    }
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+        
 
     public function create(Request $request)
     {

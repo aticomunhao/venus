@@ -251,7 +251,7 @@ class MediunidadePessoaController extends Controller
 
             'id_usuario' => session()->get('usuario.id_pessoa'),
             'data' => $data,
-            'fato' => 43,
+            'fato' => 9,
             'obs' => $id
 
         ]);

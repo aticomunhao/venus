@@ -401,7 +401,7 @@ class MembroController extends Controller
             DB::table('historico_venus')->insert([
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'data' => $data,
-                'fato' => 1,
+                'fato' => 7,
                 'obs' => $id,
             ]);
     
@@ -433,7 +433,7 @@ class MembroController extends Controller
         DB::table('historico_venus')->insert([
             'id_usuario' => session()->get('usuario.id_usuario'),
             'data' => $data,
-            'fato' => 41, // Indica que é uma inativação
+            'fato' => 6, // Indica que é uma inativação
             'obs' => $id,
         ]);
     

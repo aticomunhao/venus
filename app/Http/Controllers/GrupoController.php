@@ -262,7 +262,7 @@ return redirect('gerenciar-grupos');
 
             'id_usuario' => session()->get('usuario.id_usuario'),
             'data' => $data,
-            'fato' => 0,
+            'fato' => 8,
             'obs' => $id
 
         ]);
