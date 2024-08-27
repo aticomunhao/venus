@@ -66,7 +66,7 @@
                                 @elseif($listas->status_encaminhamento == 3)
                                 {{-- botao de alterar grupo --}}
                                 <a href="/alterar-grupo-tratamento-integral/{{ $listas->ide }}"type="button"
-                                    class="btn btn-outline-success btn-sm tooltips"<i class="bi bi-arrow-left-right"
+                                    class="btn btn-outline-success btn-sm tooltips"><i class="bi bi-arrow-left-right"
                                         style="font-size: 1rem; color:#000;"><span class="tooltiptext">Alterar Grupo</span></i></a>
                                 @else
                                 <button type="button"
