@@ -81,30 +81,33 @@ class UsuarioController extends Controller
         }
         
 
-    public function create(Request $request)
-    {
-        try{
+        public function create(Request $request)
+{
+    try {
         $pessoa = new ModelPessoa();
         $result = $pessoa;
 
+        // Conta os registros distintos de 'id'
+        $contar = $result->distinct()->count('id'); 
+
         if ($request->nome) {
-            $result = $result->where('nome_completo', 'ilike', "%$request->nome%");
+            $result = $result->whereRaw("UNACCENT(LOWER(nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome}%"]);
         }
         if ($request->cpf) {
-            $result = $result->where('cpf', 'ilike', "%$request->cpf%");
+            $result = $result->whereRaw("UNACCENT(LOWER(cpf)) ILIKE UNACCENT(LOWER(?))", ["%{$request->cpf}%"]);
         }
 
-        $result = $result->get();  // Use get() to execute the query
+        $result = $result->orderBy('nome_completo', 'ASC')
+            ->paginate(50); 
 
-
-        return view('usuario/incluir-usuario', compact('result'));
+        return view('usuario/incluir-usuario', compact('result', 'contar'));
+    } catch (\Exception $e) {
+        $code = $e->getCode();
+        return view('administrativo-erro.erro-inesperado', compact('code', 'contar'));
     }
-    catch(\Exception $e){
+}
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+        
 
     public function store(Request $request)
     {
