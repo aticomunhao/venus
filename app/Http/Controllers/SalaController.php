@@ -352,7 +352,7 @@ public function update(Request $request, $id)
 
             'id_usuario' => session()->get('usuario.id_usuario'),
             'data' => $data,
-            'fato' => 23,
+            'fato' => 12,
             'obs' => $ids
 
         ]);

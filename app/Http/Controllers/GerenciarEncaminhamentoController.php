@@ -506,7 +506,7 @@ class GerenciarEncaminhamentoController extends Controller
             DB::table('historico_venus')->insert([
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'data' => $today,
-                'fato' => 36,
+                'fato' => 13,
                 'id_ref' => $ide,
             ]);
 
