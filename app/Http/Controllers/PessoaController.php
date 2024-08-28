@@ -56,8 +56,8 @@ class PessoaController extends Controller
                 }
             }
 
-            $pessoa = $pessoa->orderBy('p.status', 'desc')->orderBy('p.nome_completo', 'asc')->Paginate(30);
-
+            //Diz método Undefined mas ele funciona
+            $pessoa = $pessoa->orderBy('p.status', 'desc')->orderBy('p.nome_completo', 'asc')->paginate(30);
 
             $stap = DB::select("select
                         id as ids,
@@ -82,7 +82,7 @@ class PessoaController extends Controller
     {
         try {
 
-      
+
             $ddd = DB::select('select id, descricao from tp_ddd');
 
             $sexo = DB::select('select id, tipo from tp_sexo');
