@@ -58,7 +58,7 @@ use Illuminate\Database\DBAL\TimestampType;
         public function update(Request $request, string $id)
         {
 
-
+           
             Tipo_fato::findOrFail($request->id)->update([ 'descricao' => $request->descricao ]) ;
 
             return redirect('/gerenciar-fatos');
@@ -94,10 +94,10 @@ use Illuminate\Database\DBAL\TimestampType;
             try{
 
                 DB::table('tipo_fato')->insert([
-                    'descricao' => $request->descricao,
+                    'descricao' => $request->fato,
                 ]);
         
-
+         
         }
 
       

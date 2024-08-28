@@ -131,20 +131,24 @@
                                     <h5 class="modal-title" id="exampleModalLabel" style="color:white">Inativar membro</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body" style="text-align: center;">
+                                <div class="modal-body " style="text-align: center;">
                                     Tem certeza que deseja inativar o membro<br /><span style="color:#DC4C64; font-weight: bold;">
                                         {{ $membros->nome_completo }}</span>?
-                                    <form action="{{ route('membro.inactivate', ['idcro' => $id, 'id' => $membros->idm]) }}" method="POST">
-                                        @csrf
-                                        <label for="data_inativacao" class="form-label mt-3">Escolha a data de inativação:</label>
-                                        <input type="date" name="data_inativacao" id="data_inativacao{{ $membros->idm }}" class="form-control mb-3" required>
+                                        <form action="{{ route('membro.inactivate', ['idcro' => $id, 'id' => $membros->idm]) }}" method="POST">
+                                            @csrf
+                                            <center>
+                                            <div class="col-10">
+                                                <label for="data_inativacao" class="form-label mt-3">Escolha a data de inativação:</label>
+                                                <input type="date" name="data_inativacao" id="data_inativacao{{ $membros->idm }}" class="form-control mb-3" required>
+                                            </div>
+                                        </center>
                                         
-                                        <div class="modal-footer mt-3">
-                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                                            <button type="submit" class="btn btn-primary">Confirmar</button>
-                                        </div>
-                                    </form>
-                                </div>
+                                            <div class="modal-footer mt-3 ">
+                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-primary">Confirmar</button>
+                                            </div>
+                                        </form>
+                                    </div>
                             </div>
                         </div>
                     </div>

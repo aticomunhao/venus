@@ -285,6 +285,7 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('pessoas as pessoa_entrevistador', 'entre.id_entrevistador', '=', 'pessoa_entrevistador.id')
                 ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
                 ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
+                ->leftJoin('tipo_entrevista as te', 'enc.id_tipo_entrevista', 'te.id')
                 ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
                 ->leftJoin('pessoas AS pessoa_assitido', 'atd.id_assistido', 'pessoa_assitido.id')
                 ->select(
@@ -297,7 +298,8 @@ class GerenciarEntrevistaController extends Controller
                     'entre.id_entrevistador',
                     'entre.data',
                     'entre.hora',
-                    'pessoa_entrevistador.nome_completo as nome_completo_pessoa_entrevistador'
+                    'pessoa_entrevistador.nome_completo as nome_completo_pessoa_entrevistador',
+                    'te.id_setor'
                 )
                 ->where('entre.id_encaminhamento', $id)
                 ->first();
@@ -306,18 +308,25 @@ class GerenciarEntrevistaController extends Controller
 
             if (!$entrevistas) {
             }
+            $usuarios = DB::table('usuario as u')
+            ->rightJoin('usuario_setor as us', 'u.id', 'us.id_usuario')
+            ->where('us.id_setor', $entrevistas->id_setor)
+            ->pluck('id_pessoa');
 
             $salas = DB::table('salas')->get();
             $encaminhamento = DB::table('encaminhamento')->find($id);
             $pessoas = DB::table('pessoas')->get();
             $membros = DB::table('membro')
-                ->join('associado', 'membro.id_associado', '=', 'associado.id')
+                ->rightJoin('associado', 'membro.id_associado', '=', 'associado.id')
                 ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
-                ->select('membro.*', 'pessoas.nome_completo')
+                ->leftJoin('cronograma as cro', 'membro.id_cronograma','cro.id')
+                ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+                ->select('membro.*', 'pessoas.nome_completo', 'gr.id_setor')
                 ->distinct('membro.id_associado')
+                ->whereIn('associado.id_pessoa', $usuarios)
                 ->get();
 
-
+    
             $encaminhamento = DB::table('encaminhamento')->find($id);
 
             // Verificando se o tipo de entrevista é 3 (tipo_entrevista 3, afe)
