@@ -82,7 +82,7 @@
                                     <select class="form-select" id="" name="grupo" type="number">
 
                                         @foreach ($atendes->grup as $results)
-                                            <option value="{{ $results->id_grupo }}">{{ $results->gnome }}</option>
+                                            <option value="{{ $results->id }}">{{ $results->gnome }}</option>
                                         @endforeach
                                     </select>
                                 </td>

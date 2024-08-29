@@ -306,6 +306,7 @@ Route::middleware('rotas:21')->group(function () {
     Route::any('/visualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'show']);
     Route::any('/editar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'edit']);
     Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'update']);
+    Route::any('/testeChart', [AtendentePlantonistaController::class, 'teste']);
 });
 
 // Gerenciar Encaminhamento PTI
@@ -387,5 +388,5 @@ Route::middleware('rotas:30')->group(function () {
     Route::get('/gerenciar-presenca', [PresencaDirigenteController::class, 'index'])->name('');
     Route::get('/dar-presenca', [PresencaDirigenteController::class, 'index'])->name('dar.presenca');
     Route::post('/dar-presenca', [PresencaDirigenteController::class, 'store'])->name('dar.presenca.store');
-    
+
 });

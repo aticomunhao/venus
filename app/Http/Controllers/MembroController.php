@@ -43,13 +43,14 @@ class MembroController extends Controller
             // dd($request->all());
 
             $membro_cronograma = DB::table('cronograma as cro')
+
                 ->select(
                     'cro.id',
                     'gr.nome as nome_grupo',
                     'td.nome as dia',
                     'cro.h_inicio',
                     'cro.h_fim',
-                    'gr.id_setor as sala',
+                    'sl.numero as sala',
                     'tpg.descricao',
                     DB::raw("
             (CASE
@@ -105,7 +106,7 @@ class MembroController extends Controller
 
     public function storeGrupo(Request $request, string $id)
     {
-       
+
 
 
         $now = Carbon::now()->format('Y-m-d');
@@ -161,12 +162,12 @@ class MembroController extends Controller
 
         app('flasher')->addSuccess('Cadastrado com Sucesso');
         return redirect("gerenciar-membro/$id");
-      
+
     }
-   
+
     public function index(Request $request, string $id)
     {
-      
+
             // Busca os detalhes do grupo
             $grupo = DB::table('cronograma as cro')
                 ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.modificador')
@@ -175,7 +176,7 @@ class MembroController extends Controller
                 ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
                 ->where('cro.id', $id)
                 ->first();
-    
+
             // Montagem da query para membros
             $membroQuery = DB::table('membro AS m')
                 ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
@@ -184,26 +185,26 @@ class MembroController extends Controller
                 ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
                 ->where('m.id_cronograma', $id)
                 ->select(
-                    'p.nome_completo', 
-                    'm.id AS idm', 
-                    'm.id_associado', 
-                    'm.id_funcao', 
-                    'p.cpf', 
-                    'p.motivo_status', 
-                    'tf.nome as nome_funcao', 
-                    'm.id_cronograma', 
-                    'g.nome as nome_grupo', 
+                    'p.nome_completo',
+                    'm.id AS idm',
+                    'm.id_associado',
+                    'm.id_funcao',
+                    'p.cpf',
+                    'p.motivo_status',
+                    'tf.nome as nome_funcao',
+                    'm.id_cronograma',
+                    'g.nome as nome_grupo',
                     DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END) as status")
                 )
                 ->orderBy('status')
                 ->orderBy('p.nome_completo', 'ASC');
-    
+
             // Filtros
             $nome = $request->nome_pesquisa;
             $status = $request->status ?? 'Ativo'; // Define "Ativo" como valor padrão se não for informado
             $cpf = $request->cpf_pesquisa;
             $grupoPesquisa = $request->grupo_pesquisa;
-    
+
             // Array de status
             $statu = [
                 (object) ['nome' => 'Ativo'],
@@ -211,10 +212,10 @@ class MembroController extends Controller
                 (object) ['nome' => 'Todos']
             ];
 
-           
+
             // Carregar lista de grupos
             $grupos = DB::table('grupo')->pluck('nome', 'id');
-    
+
             // Aplicação dos filtros
             if ($nome || $cpf || $grupoPesquisa) {
                 $membroQuery->where(function ($query) use ($nome, $cpf, $grupoPesquisa) {
@@ -222,33 +223,33 @@ class MembroController extends Controller
                         $query->where(DB::raw('unaccent(lower(p.nome_completo))'), 'ilike', DB::raw("unaccent(lower('%{$nome}%'))"))
                               ->orWhere('p.cpf', 'ilike', "%$nome%");
                     }
-    
+
                     if ($cpf) {
                         $query->orWhere('p.cpf', 'ilike', "%$cpf%");
                     }
-    
+
                     if ($grupoPesquisa) {
                         $query->orWhere('g.id', '=', $grupoPesquisa);
                     }
                 });
             }
-    
+
             // Filtro de status
             if ($status && $status != 'Todos') {
                 $membroQuery->where(DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END)"), '=', $status);
-            } 
-    
+            }
+
             // Paginação dos resultados
             $membro = $membroQuery->orderBy('status', 'asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
-    
+
             // Retorno da view com os dados
             return view('membro.gerenciar-membro', compact('membro', 'id', 'grupo', 'status', 'statu', 'grupos'));
-    
+
     }
-    
+
     public function create()
     {
-     
+
 
 
             $grupo = DB::table('cronograma as cro')->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia','s.sigla as nsigla')
@@ -266,7 +267,7 @@ class MembroController extends Controller
 
 
             return view('membro/criar-membro', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao'));
-      
+
     }
 
     public function store(Request $request)
@@ -310,7 +311,7 @@ class MembroController extends Controller
             ->where('m.id_funcao', $request->input('id_funcao'))
             ->where('c.id_grupo', $seletedCronograma->id_grupo)
             ->exists();
-    
+
         // Se o membro já estiver registrado na mesma função e grupo, bloquear o cadastro
         if ($repetfuncao) {
             app('flasher')->addError('Este membro já está cadastrado nesta função para o mesmo grupo.');
@@ -396,7 +397,7 @@ class MembroController extends Controller
     {
         try {
             $data = date('Y-m-d H:i:s');
-    
+
             // Insere o histórico antes de deletar o membro
             DB::table('historico_venus')->insert([
                 'id_usuario' => session()->get('usuario.id_usuario'),
@@ -404,18 +405,18 @@ class MembroController extends Controller
                 'fato' => 7,
                 'obs' => $id,
             ]);
-    
+
             // Verifica se o membro existe
             $membro = DB::table('membro')->where('id', $id)->first();
-    
+
             if (!$membro) {
                 app('flasher')->addError('O membro não foi encontrado.');
                 return redirect("/gerenciar-membro/$idcro");
             }
-    
+
             // Deleta o membro
             DB::table('membro')->where('id', $id)->delete();
-    
+
             app('flasher')->addSuccess('Membro deletado com sucesso.');
             return redirect("/gerenciar-membro/$idcro");
         } catch (\Exception $e) {
@@ -423,12 +424,12 @@ class MembroController extends Controller
             return view('administrativo-erro.erro-inesperado', compact('code'));
         }
     }
-   
-    
+
+
     public function inactivate(string $idcro, string $id, Request $request)
     {
         $data = date('Y-m-d H:i:s');
-    
+
         // Insere o histórico
         DB::table('historico_venus')->insert([
             'id_usuario' => session()->get('usuario.id_usuario'),
@@ -436,37 +437,37 @@ class MembroController extends Controller
             'fato' => 6, // Indica que é uma inativação
             'obs' => $id,
         ]);
-    
+
         // Verifica se o membro existe
         $membro = DB::table('membro')->where('id', $id)->first();
-    
+
         if (!$membro) {
             app('flasher')->addError('O membro não foi encontrado.');
             return redirect("/gerenciar-membro/$idcro");
         }
-    
+
         // Obtenha a data de inativação do request
         $dataInativacao = $request->input('data_inativacao');
-    
+
         // Se a data de inativação não for fornecida, use a data atual como fallback
         if (empty($dataInativacao)) {
             $dataInativacao = Carbon::today()->toDateString(); // Formato Y-m-d
         }
-    
+
         // Atualiza a data de término e o status para "Inativo"
         DB::table('membro')
             ->where('id', $id)
             ->update([
                 'dt_fim' => $dataInativacao,
             ]);
-    
+
         app('flasher')->addSuccess('Membro inativado com sucesso.');
         return redirect("/gerenciar-membro/$idcro");
     }
-    
-            
 
-  
+
+
+
     public function ferias(string $id, string $tp)
     {
         try {
