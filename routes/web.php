@@ -36,6 +36,7 @@ use App\Http\Controllers\GerenciarVersoesController;
 use App\Http\Controllers\PresencaController;
 use App\Http\Controllers\PresencaDirigenteController;
 use App\Http\Controllers\GerenciarVersoesControllerController;
+use App\Http\Controllers\RelatoriosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -306,7 +307,6 @@ Route::middleware('rotas:21')->group(function () {
     Route::any('/visualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'show']);
     Route::any('/editar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'edit']);
     Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'update']);
-    Route::any('/testeChart', [AtendentePlantonistaController::class, 'teste']);
 });
 
 // Gerenciar Encaminhamento PTI
@@ -390,3 +390,16 @@ Route::middleware('rotas:30')->group(function () {
     Route::post('/dar-presenca', [PresencaDirigenteController::class, 'store'])->name('dar.presenca.store');
 
 });
+
+Route::middleware('rotas:30')->group(function () {
+    Route::get('/gerenciar-presenca', [PresencaDirigenteController::class, 'index'])->name('');
+    Route::get('/dar-presenca', [PresencaDirigenteController::class, 'index'])->name('dar.presenca');
+    Route::post('/dar-presenca', [PresencaDirigenteController::class, 'store'])->name('dar.presenca.store');
+
+});
+
+//Relatório de Presença AFI
+Route::middleware('rotas:30')->group(function () {
+    Route::any('/presenca-afi', [RelatoriosController::class, 'presencaAFI']);
+});
+

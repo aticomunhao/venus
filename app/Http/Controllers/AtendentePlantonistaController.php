@@ -220,42 +220,5 @@ class AtendentePlantonistaController extends Controller
     {
         //
     }
-    public function teste()
-    {
-        $diasAtendente = DB::table('atendente_dia')->where('id_associado', 9129)->get();
-        $dados = [];
-        foreach ($diasAtendente as $mKey => $diaAtendente) {
-            foreach ($diasAtendente as $diaAtendenteCompare) {
-                if (Carbon::parse($diaAtendente->dh_inicio)->format('Y-m-d') == Carbon::parse($diaAtendenteCompare->dh_inicio)->format('Y-m-d') and $diaAtendente->id != $diaAtendenteCompare->id) {
-                    unset($diasAtendente[$mKey]);
-                }
-            }
-        }
 
-        $cronogramasParticipa = DB::table('membro')
-            ->where('id_associado', 9129)
-            ->where(function ($query) {
-                $query->where('id_funcao', 5);
-                $query->orWhere('id_funcao', 6);
-            })
-            ->pluck('id_cronograma');
-
-        $cronogramaAFI = DB::table('dias_cronograma as dc')->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')->where('id_tipo_grupo', 3)->whereIn('cro.id', $cronogramasParticipa)->select('cro.id', 'dc.data', 'gr.nome', 'cro.h_inicio', 'td.nome as dia')->orderBy('dc.data')->get();
-
-        foreach ($cronogramaAFI as $datas) {
-            $i = 0;
-            foreach ($diasAtendente as $diaAtendente) {
-                if ($datas->data == Carbon::parse($diaAtendente->dh_inicio)->format('Y-m-d') and $diaAtendente->id_grupo == $datas->id) {
-                    array_push($dados, ['id' => $datas->id, 'data' => $datas->data, 'nome' => $datas->nome, 'h_inicio' => $datas->h_inicio, 'dia' => $datas->dia, 'presenca' => 1]);
-                    break;
-                } elseif (++$i === count($diasAtendente)) {
-                    array_push($dados, ['id' => $datas->id, 'data' => $datas->data, 'nome' => $datas->nome, 'h_inicio' => $datas->h_inicio, 'dia' => $datas->dia, 'presenca' => 0]);
-                }
-            }
-        }
-
-        $contaFaltas = array_count_values(array_column($dados, 'presenca'));
-       // dd($diasAtendente, $cronogramaAFI, $dados, $cronogramasParticipa, $contaFaltas);
-        return view('atendentes-plantonistas.relatorio', compact('contaFaltas', 'dados'));
-    }
 }
