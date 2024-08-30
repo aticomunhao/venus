@@ -18,13 +18,16 @@
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/js/app.js'])
 
- 
+
 
 
     {{-- Import CSS Tooltips --}}
     <link href="{{ asset('css/tooltips.css') }}" rel="stylesheet">
     <script src="{{ asset('js/jquery.js') }}"></script>
+    <script src="{{ asset('js/chart.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('css/font/bootstrap-icons.css') }}">
+
+
 
 
 
