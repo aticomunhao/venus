@@ -39,14 +39,15 @@ class GerenciarIntegralController extends Controller
 
 
         $encaminhamentos = DB::table('tratamento as tr')
-        ->select('tr.id','p.nome_completo', 'cro.h_inicio', 'cro.h_fim', 'gr.nome', 'tr.dt_fim')
+        ->select('tr.id','p.nome_completo', 'cro.h_inicio', 'cro.h_fim', 'gr.nome', 'tr.dt_fim', 'tse.nome as status', 'tr.status as id_status')
         ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
         ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
         ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
         ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
         ->leftJoin('pessoas as p','atd.id_assistido', 'p.id')
+        ->leftJoin('tipo_status_tratamento as tse', 'tr.status', 'tse.id')
         ->where('enc.id_tipo_tratamento', 6)
-        ->where('tr.status', 2)
+        ->whereIn('tr.status',[1, 2])
         ->whereIn('tr.id_reuniao', $grupos_autorizados);
 
 

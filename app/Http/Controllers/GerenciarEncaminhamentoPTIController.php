@@ -405,7 +405,6 @@ class GerenciarEncaminhamentoPTIController extends Controller
                             'id_reuniao' => $reu,
                             'id_encaminhamento' => $ide,
                             'status' => 1,
-                            'dt_fim' => $data_fim_depois,
                         ]);
 
                         DB::table('encaminhamento AS enc')
@@ -426,7 +425,6 @@ class GerenciarEncaminhamentoPTIController extends Controller
                             'id_reuniao' => $reu,
                             'id_encaminhamento' => $ide,
                             'status' => 1,
-                            'dt_fim' => $data_fim_antes,
                         ]);
 
                         DB::table('encaminhamento AS enc')

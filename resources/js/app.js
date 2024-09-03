@@ -11,6 +11,8 @@ import 'jquery/dist/jquery.js';
 import 'bootstrap5-toggle/js/bootstrap5-toggle.ecmas.min.js';
 
 import $ from 'jquery';
+import { Calendar } from '@fullcalendar/core'
+import timeGridPlugin from '@fullcalendar/timegrid'
 
 window.$ = $;
 

@@ -20,7 +20,7 @@ class PresencaDirigenteController extends Controller
     public function index(Request $request)
     {
         // Obtém todos os grupos
-        $grupos = DB::table('grupos')->get();
+        $grupos = DB::table('grupo')->get();
         $pessoas = [];
 
         // Verifica se um grupo foi selecionado e busca as pessoas desse grupo

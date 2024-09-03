@@ -55,8 +55,8 @@
                                 <td>{{$results->nm_2}}</td>
                                 <td>{{$results->nome}}</td>
                                 <td>{{$results->nm_4}}</td>
-                                <td>{{$results->dh_inicio}}</td>
-                                <td>{{$results->dh_fim}}</td>
+                                <td>{{ date('d/m/Y G:i', strtotime($results->dh_inicio))}}</td>
+                                <td>{{ date('d/m/Y G:i', strtotime($results->dh_fim))}}</td>
                                 <td>{{$results->tst}}</td>
                             </tr>
                         </tbody>

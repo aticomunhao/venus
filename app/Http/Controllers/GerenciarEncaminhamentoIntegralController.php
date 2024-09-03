@@ -363,8 +363,8 @@ class GerenciarEncaminhamentoIntegralController extends Controller
             $data_atual = Carbon::now();
             $dia_atual = $data_atual->weekday();
 
-            $data_fim_antes = Carbon::today()->weekday($dia_semana)->addWeek(8);
-            $data_fim_depois = Carbon::today()->weekday($dia_semana)->addWeek(7);
+            $data_fim_antes = Carbon::today()->weekday($dia_semana)->addWeek(6);
+            $data_fim_depois = Carbon::today()->weekday($dia_semana)->addWeek(5);
 
             //dd($dia_atual);
             $countVagas = DB::table('tratamento')

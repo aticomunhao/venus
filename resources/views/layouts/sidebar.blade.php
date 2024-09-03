@@ -117,7 +117,7 @@ $setor = session()->get('usuario.setor');
                                     </li>
                                 @endif
                                 @if (in_array(31, $acesso))
-                                    <li><a class="dropdown-item" href="/presenca-afi">Relatório de Presença AFI</a>
+                                    <li><a class="dropdown-item" href="/gerenciar-relatorio-afi">Relatório de Presença AFI</a>
                                     </li>
                                 @endif
 

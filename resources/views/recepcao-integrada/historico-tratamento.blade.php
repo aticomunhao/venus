@@ -55,8 +55,8 @@
                                 <td>{{$results->nm_2}}</td>
                                 <td>{{$results->nome}}</td>
                                 <td>{{$results->nm_4}}</td>
-                                <td>{{$results->dh_inicio}}</td>
-                                <td>{{$results->dh_fim}}</td>
+                                <td>{{ date('d/m/Y G:i', strtotime($results->dh_inicio))}}</td>
+                                <td>{{ date('d/m/Y G:i', strtotime($results->dh_fim))}}</td>
                                 <td>{{$results->statat}}</td>
                             </tr>
                         </tbody>
@@ -81,7 +81,7 @@
                         <tbody>
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$results->ide}}</td>
-                                <td>{{date ('d-m-Y', strtotime($results->dh_enc))}}</td>
+                                <td>{{date ('d/m/Y', strtotime($results->dh_enc))}}</td>
                                 <td>{{$results->desctrat}}</td>
                                 <td>{{$results->nomeg}}</td>
                                 <td>{{$results->rm_inicio}}</td>
