@@ -106,7 +106,7 @@ $setor = session()->get('usuario.setor');
                                             Entrevista</a></li>
                                 @endif
                                 {{-- @if (in_array(8, $acesso)) --}}
-                                <li><a class="dropdown-item" href="/gerenciarpresencadirigente">Gerenciar Presença
+                                <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Gerenciar Presença
                                         Dirigente</a></li>
                             {{-- @endif --}}
                                 @if (in_array(19, $acesso))

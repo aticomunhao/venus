@@ -385,9 +385,7 @@ Route::middleware('rotas:28')->group(function () {
 
 // Gerenciar Presença Dirigente
 Route::middleware('rotas:30')->group(function () {
-    Route::get('/gerenciar-presenca-dirigente', [PresencaDirigenteController::class, 'index'])->name('');
-    Route::get('/dar-presenca', [PresencaDirigenteController::class, 'index'])->name('dar.presenca');
-    Route::post('/dar-presenca', [PresencaDirigenteController::class, 'store'])->name('dar.presenca.store');
+    Route::get('/gerenciar-presenca-dirigente', [PresencaDirigenteController::class, 'index']);
 
 });
 
@@ -399,6 +397,7 @@ Route::middleware('rotas:31')->group(function () {
     Route::any('/relatorio-tematicas', [RelatoriosController::class, 'tematicas']);
     Route::any('/teste', [RelatoriosController::class, 'teste']);
 });
+
 //Relatório de Temáticas
 Route::middleware('rotas:32')->group(function () {
 
