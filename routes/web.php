@@ -399,4 +399,10 @@ Route::middleware('rotas:31')->group(function () {
     Route::any('/relatorio-tematicas', [RelatoriosController::class, 'tematicas']);
     Route::any('/teste', [RelatoriosController::class, 'teste']);
 });
+//Relatório de Temáticas
+Route::middleware('rotas:32')->group(function () {
+
+    Route::any('/relatorio-tematicas', [RelatoriosController::class, 'tematicas']);
+
+});
 

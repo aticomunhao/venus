@@ -120,6 +120,10 @@ $setor = session()->get('usuario.setor');
                                     <li><a class="dropdown-item" href="/gerenciar-relatorio-afi">Relatório de Presença AFI</a>
                                     </li>
                                 @endif
+                                @if (in_array(32, $acesso))
+                                    <li><a class="dropdown-item" href="/relatorio-tematicas">Relatório de Temáticas</a>
+                                    </li>
+                                @endif
 
                             </ul>
                         </li>

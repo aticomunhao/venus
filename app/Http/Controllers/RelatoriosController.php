@@ -187,8 +187,35 @@ $diasAtendente = DB::table('atendente_dia')
      */
     public function tematicas(Request $request)
     {
-    
-        return view('relatorios.tematicas');
+        $dt_inicio = $request->dt_inicio == null ? (Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d')) : $request->dt_inicio;
+        $dt_fim =  $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
+        $tematicas = DB::table('registro_tema as rg')->leftJoin('atendimentos as at', 'rg.id_atendimento', 'at.id')->where('at.dh_chegada', '>=', $dt_inicio)->where('at.dh_chegada', '<', $dt_fim);
+
+        $countTematicas['Mediunidade Aflorada'] = $tematicas->count('maf');
+        $countTematicas['Influenciação espiritual'] = $tematicas->count('ies');
+        $countTematicas['Obsessão'] = $tematicas->count('obs');
+        $countTematicas['Conjugal'] = $tematicas->count('coj');
+        $countTematicas['Familiar'] = $tematicas->count('fam');
+        $countTematicas['Social'] = $tematicas->count('soc');
+        $countTematicas['Profissional'] = $tematicas->count('prf');
+        $countTematicas['Saúde'] = $tematicas->count('sau');
+        $countTematicas['Psiquiátrica diagnosticada'] = $tematicas->count('pdg');
+        $countTematicas['Sexualidade'] = $tematicas->count('sex');
+        $countTematicas['Desânimo / Tristeza / Solidão'] = $tematicas->count('dts');
+        $countTematicas['Ansiedade / Depressão'] = $tematicas->count('adp');
+        $countTematicas['Dependência química'] = $tematicas->count('dqu');
+        $countTematicas['Estresse'] = $tematicas->count('est');
+        $countTematicas['Aborto'] = $tematicas->count('abo');
+        $countTematicas['Suicídio'] = $tematicas->count('sui');
+        $countTematicas['Interesse pela Doutrina'] = $tematicas->count('dou');
+        $countTematicas['Sonhos'] = $tematicas->count('son');
+        $countTematicas['Medo de espíritos'] = $tematicas->count('esp');
+        $countTematicas['Dificuldades profissionais'] = $tematicas->count('dpr');
+        $countTematicas['Desencarne de ente querido'] = $tematicas->count('deq');
+   
+
+      
+        return view('relatorios.tematicas', compact('countTematicas', 'dt_inicio', 'dt_fim'));
     }
 
     /**
