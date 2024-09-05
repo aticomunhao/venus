@@ -56,19 +56,24 @@ class PresencaDirigenteController extends Controller
     // Marca a presença de uma pessoa
     public function store(Request $request)
     {
-        $request->validate([
-            'pessoa_id' => 'required|exists:pessoas,id',
-        ]);
+        // $request->validate([
+        //     'pessoa_id' => 'required|exists:pessoas,id',
+        // ]);
 
         // Insere a presença na tabela 'presencas'
-        DB::table('presencas')->insert([
-            'pessoa_id' => $request->input('pessoa_id'),
-            'data_presenca' => now(),
-        ]);
+            DB::table('presencas')->insert([
+                'pessoa_id' => $request->input('pessoa_id'),
+                'id_grupo' => $request->input('grupo_id'),
+                'id_reuniao' => $request->input('reuniao_id'),
+                'dh_presenca' => now(),
+            ]);
+        
+            return redirect()->back()->with('success', 'Presença registrada com sucesso.');
+        }
+        
+        
 
 
 
 
-        return redirect()->back()->with('success', 'Presença marcada com sucesso!');
     }
-}
