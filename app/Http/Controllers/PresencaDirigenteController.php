@@ -53,24 +53,43 @@ class PresencaDirigenteController extends Controller
         return view('presenca-dirigente.gerenciar-presenca-dirigente', compact('reunioes', 'reunioesDirigentes', 'membros'));
     }
 
-    // Marca a presença de uma pessoa
-    public function store(Request $request)
-    {
-        // $request->validate([
-        //     'pessoa_id' => 'required|exists:pessoas,id',
-        // ]);
+  
 
-        // Insere a presença na tabela 'presencas'
-            DB::table('presencas')->insert([
-                'pessoa_id' => $request->input('pessoa_id'),
-                'id_grupo' => $request->input('grupo_id'),
-                'id_reuniao' => $request->input('reuniao_id'),
+   
+        // Método para marcar a presença
+        public function marcarPresenca(Request $request)
+        {
+            $membroId = $request->input('membro_id');
+            $grupoId = $request->input('grupo_id'); 
+            $reuniaoId = $request->input('reuniao_id');
+        
+            // Criar registro de presença
+            DB::table('presenca')->insert([
+                'id_membro' => $membroId,
+                'id_grupo' => $grupoId,
+                'id_reuniao' => $reuniaoId,
                 'dh_presenca' => now(),
             ]);
         
-            return redirect()->back()->with('success', 'Presença registrada com sucesso.');
+            return response()->json(['success' => true]);
         }
-        
-        
-
+    
+        // Método para cancelar a presença
+        public function cancelarPresenca(Request $request)
+        {
+            $membroId = $request->input('membro_id');
+    
+            // Deletar o registro de presença
+            $presenca = DB::table('presenca')->where('membro_id', $membroId)->first();
+    
+            if ($presenca) {
+                DB::table('presenca')->where('membro_id', $membroId)->delete();
+    
+                return redirect()->back()->with('success', 'Presença cancelada com sucesso.');
+            }
+    
+            return redirect()->back()->with('error', 'Este membro não tem presença marcada.');
+        }
     }
+    
+

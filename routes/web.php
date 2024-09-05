@@ -386,6 +386,12 @@ Route::middleware('rotas:28')->group(function () {
 // Gerenciar Presença Dirigente
 Route::middleware('rotas:30')->group(function () {
     Route::get('/gerenciar-presenca-dirigente', [PresencaDirigenteController::class, 'index']);
+Route::post('/marcar-presenca', [PresencaDirigenteController::class, 'marcarPresenca'])->name('marcar.presenca');
+Route::post('/cancelar-presenca', [PresencaDirigenteController::class, 'cancelarPresenca'])->name('cancelar.presenca');
+
+    
+    
+
 
 });
 

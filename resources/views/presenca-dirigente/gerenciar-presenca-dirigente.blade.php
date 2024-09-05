@@ -14,9 +14,9 @@ Gerenciar Presença Dirigente
                 Grupo
                 <select class="form-select select2" name="grupo">
                     @foreach ($reunioes as $reuniao)
-                    <option value="{{ $reuniao->id }}" {{ $reuniao->id == $reunioesDirigentes[0] ? 'selected' : '' }}>
-                        {{ $reuniao->nome . ' - ' . $reuniao->dia }}
-                    </option>
+                        <option value="{{ $reuniao->id }}" {{ $reuniao->id == $reunioesDirigentes[0] ? 'selected' : '' }}>
+                            {{ $reuniao->nome . ' - ' . $reuniao->dia }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -53,47 +53,79 @@ Gerenciar Presença Dirigente
                     <td>{{ $membro->nome_completo }}</td>
                     <td>{{ $membro->nome }}</td>
                     <td>
-                        <!-- Botão de Marcar Presença -->
-                        <button type="button" class="btn btn-success marcar" id="marcar-{{ $membro->id }}" data-membro="{{ $membro->id }}">
-                            Presença
-                        </button>
+                        <!-- Formulário de Marcar Presença -->
+                        <form action="{{ route('marcar.presenca') }}" method="POST" style="display: inline;">
+                            @csrf
+                            <input type="hidden" name="membro_id" value="{{ $membro->id }}">
+                            <button type="submit" class="btn btn-success marcar" id="marcar-{{ $membro->id }}">
+                                Presença
+                            </button>
+                        </form>
 
-
-                        <!-- Botão de Cancelar Presença, inicialmente escondido -->
-                        <button type="button" class="btn btn-danger cancelar" id="cancelar-{{ $membro->id }}" style="display:none;">
-                            Cancelar
-                        </button>
+                        <!-- Formulário de Cancelar Presença -->
+                        <form action="{{ route('cancelar.presenca') }}" method="POST" style="display: inline;">
+                            @csrf
+                            <input type="hidden" name="membro_id" value="{{ $membro->id }}">
+                            <button type="submit" class="btn btn-danger cancelar" id="cancelar-{{ $membro->id }}" style="display:none;">
+                                Cancelar
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-    
 
     <script>
-        document.querySelectorAll('.marcar').forEach(function(button) {
-            button.addEventListener('click', function() {
+        document.querySelectorAll('.marcar').forEach(function (button) {
+            button.addEventListener('click', function () {
                 let id = this.id.split('-')[1]; // Pegando o ID do membro
                 let cancelarButton = document.getElementById('cancelar-' + id);
                 let marcarButton = document.getElementById('marcar-' + id);
 
-                // Esconder o botão "Marcar Presença" e mostrar o botão "Cancelar Presença"
-                marcarButton.style.display = 'none';
-                cancelarButton.style.display = 'inline';
+                // Enviar requisição para marcar presença
+                fetch('{{ route("marcar.presenca") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: new URLSearchParams({
+                        'membro_id': id
+                    })
+                }).then(response => response.json()).then(data => {
+                    if (data.success) {
+                        marcarButton.style.display = 'none';
+                        cancelarButton.style.display = 'inline';
+                    }
+                });
             });
         });
 
-        document.querySelectorAll('.cancelar').forEach(function(button) {
-            button.addEventListener('click', function() {
+        document.querySelectorAll('.cancelar').forEach(function (button) {
+            button.addEventListener('click', function () {
                 let id = this.id.split('-')[1]; // Pegando o ID do membro
                 let cancelarButton = document.getElementById('cancelar-' + id);
                 let marcarButton = document.getElementById('marcar-' + id);
 
-                // Esconder o botão "Cancelar Presença" e mostrar o botão "Marcar Presença"
-                cancelarButton.style.display = 'none';
-                marcarButton.style.display = 'inline';
+                // Enviar requisição para cancelar presença
+                fetch('{{ route("cancelar.presenca") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: new URLSearchParams({
+                        'membro_id': id
+                    })
+                }).then(response => response.json()).then(data => {
+                    if (data.success) {
+                        cancelarButton.style.display = 'none';
+                        marcarButton.style.display = 'inline';
+                    }
+                });
             });
         });
     </script>
-    @endsection
+@endsection
