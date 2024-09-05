@@ -14,9 +14,9 @@ Gerenciar Presença Dirigente
                 Grupo
                 <select class="form-select select2" name="grupo">
                     @foreach ($reunioes as $reuniao)
-                        <option value="{{ $reuniao->id }}" {{ $reuniao->id == $reunioesDirigentes[0] ? 'selected' : '' }}>
-                            {{ $reuniao->nome . ' - ' . $reuniao->dia }}
-                        </option>
+                    <option value="{{ $reuniao->id }}" {{ $reuniao->id == $reunioesDirigentes[0] ? 'selected' : '' }}>
+                        {{ $reuniao->nome . ' - ' . $reuniao->dia }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -54,13 +54,14 @@ Gerenciar Presença Dirigente
                     <td>{{ $membro->nome }}</td>
                     <td>
                         <!-- Botão de Marcar Presença -->
-                        <button type="button" class="btn btn-success marcar" id="marcar-{{ $membro->id }}">
+                        <button type="button" class="btn btn-success marcar" id="marcar-{{ $membro->id }}" data-membro="{{ $membro->id }}">
                             Presença
                         </button>
 
+
                         <!-- Botão de Cancelar Presença, inicialmente escondido -->
                         <button type="button" class="btn btn-danger cancelar" id="cancelar-{{ $membro->id }}" style="display:none;">
-                            Cancelar 
+                            Cancelar
                         </button>
                     </td>
                 </tr>
@@ -68,10 +69,11 @@ Gerenciar Presença Dirigente
             </tbody>
         </table>
     </div>
+    
 
     <script>
-        document.querySelectorAll('.marcar').forEach(function (button) {
-            button.addEventListener('click', function () {
+        document.querySelectorAll('.marcar').forEach(function(button) {
+            button.addEventListener('click', function() {
                 let id = this.id.split('-')[1]; // Pegando o ID do membro
                 let cancelarButton = document.getElementById('cancelar-' + id);
                 let marcarButton = document.getElementById('marcar-' + id);
@@ -82,8 +84,8 @@ Gerenciar Presença Dirigente
             });
         });
 
-        document.querySelectorAll('.cancelar').forEach(function (button) {
-            button.addEventListener('click', function () {
+        document.querySelectorAll('.cancelar').forEach(function(button) {
+            button.addEventListener('click', function() {
                 let id = this.id.split('-')[1]; // Pegando o ID do membro
                 let cancelarButton = document.getElementById('cancelar-' + id);
                 let marcarButton = document.getElementById('marcar-' + id);
@@ -94,4 +96,4 @@ Gerenciar Presença Dirigente
             });
         });
     </script>
-@endsection
+    @endsection
