@@ -12,6 +12,8 @@ import 'bootstrap5-toggle/js/bootstrap5-toggle.ecmas.min.js';
 
 import $ from 'jquery';
 
+
+
 window.$ = $;
 
  window.jQuery = $;

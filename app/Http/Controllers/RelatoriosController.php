@@ -221,9 +221,40 @@ $diasAtendente = DB::table('atendente_dia')
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function cronograma()
     {
-        //
+
+        $cronogramas = DB::table('cronograma as cro')
+        ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+        ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+        ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
+        ->select('cro.id', 'gr.nome', 'st.nome as setor', 'st.sigla', 'cro.h_inicio','cro.h_fim' , 'cro.data_inicio', 'cro.data_fim', 'cro.dia_semana')
+        ->get();
+
+        $eventosCronogramas = [];
+        $i = 0;
+        foreach($cronogramas as $cronograma){
+
+            $eventosCronogramas[$i]['id'] = $i;
+            $eventosCronogramas[$i]['title'] = $cronograma->sigla;
+            $eventosCronogramas[$i]['daysOfWeek'] = [$cronograma->dia_semana];
+            $eventosCronogramas[$i]['startTime'] = $cronograma->h_inicio;
+            $eventosCronogramas[$i]['endTime'] = $cronograma->h_fim;
+            $cronograma->data_inicio == null ? '2024-09-02' : $eventosCronogramas[$i]['startRecur'] = $cronograma->data_inicio;
+            $cronograma->data_fim == null ? null: $eventosCronogramas[$i]['endRecur'] = $cronograma->data_fim;
+
+            $i++;
+        }
+
+
+      
+      
+
+
+     json_encode($eventosCronogramas);
+
+    //   dd($cronogramas, $eventosCronogramas);
+        return view('relatorios.relatorio-salas-cronograma', compact('eventosCronogramas'));
     }
 
     /**
@@ -231,7 +262,7 @@ $diasAtendente = DB::table('atendente_dia')
      */
     public function edit(string $id)
     {
-        //
+        
     }
 
     /**
