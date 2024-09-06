@@ -53,23 +53,17 @@ Gerenciar Presença Dirigente
                     <td>{{ $membro->nome_completo }}</td>
                     <td>{{ $membro->nome }}</td>
                     <td>
-                        <!-- Formulário de Marcar Presença -->
-                        <form action="{{ route('marcar.presenca') }}" method="POST" style="display: inline;">
-                            @csrf
-                            <input type="hidden" name="membro_id" value="{{ $membro->id }}">
-                            <button type="submit" class="btn btn-success marcar" id="marcar-{{ $membro->id }}">
-                                Presença
-                            </button>
-                        </form>
-
-                        <!-- Formulário de Cancelar Presença -->
-                        <form action="{{ route('cancelar.presenca') }}" method="POST" style="display: inline;">
-                            @csrf
-                            <input type="hidden" name="membro_id" value="{{ $membro->id }}">
-                            <button type="submit" class="btn btn-danger cancelar" id="cancelar-{{ $membro->id }}" style="display:none;">
+                       
+                            @if(in_array($membro->id, $presencas))
+                            <a href="/cancelar-presenca/{{ $membro->id }}/{{$reunioesDirigentes[0]}}" class="btn btn-danger marcar" id="marcar-{{ $membro->id }}">
                                 Cancelar
-                            </button>
-                        </form>
+                            </a>
+                            @else
+                            <a href="/marcar-presenca/{{ $membro->id }}/{{$reunioesDirigentes[0]}}" class="btn btn-success marcar" id="marcar-{{ $membro->id }}">
+                                Presença
+                            </a>
+                            @endif
+                           
                     </td>
                 </tr>
                 @endforeach
@@ -77,55 +71,5 @@ Gerenciar Presença Dirigente
         </table>
     </div>
 
-    <script>
-        document.querySelectorAll('.marcar').forEach(function (button) {
-            button.addEventListener('click', function () {
-                let id = this.id.split('-')[1]; // Pegando o ID do membro
-                let cancelarButton = document.getElementById('cancelar-' + id);
-                let marcarButton = document.getElementById('marcar-' + id);
-
-                // Enviar requisição para marcar presença
-                fetch('{{ route("marcar.presenca") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: new URLSearchParams({
-                        'membro_id': id
-                    })
-                }).then(response => response.json()).then(data => {
-                    if (data.success) {
-                        marcarButton.style.display = 'none';
-                        cancelarButton.style.display = 'inline';
-                    }
-                });
-            });
-        });
-
-        document.querySelectorAll('.cancelar').forEach(function (button) {
-            button.addEventListener('click', function () {
-                let id = this.id.split('-')[1]; // Pegando o ID do membro
-                let cancelarButton = document.getElementById('cancelar-' + id);
-                let marcarButton = document.getElementById('marcar-' + id);
-
-                // Enviar requisição para cancelar presença
-                fetch('{{ route("cancelar.presenca") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: new URLSearchParams({
-                        'membro_id': id
-                    })
-                }).then(response => response.json()).then(data => {
-                    if (data.success) {
-                        cancelarButton.style.display = 'none';
-                        marcarButton.style.display = 'inline';
-                    }
-                });
-            });
-        });
-    </script>
+ 
 @endsection

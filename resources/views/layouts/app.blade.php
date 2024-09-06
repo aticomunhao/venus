@@ -18,27 +18,33 @@
     @vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/js/app.js'])
 
 
-    
+
+    {{--
+ * Este regiao abaixo é dedicada aos imports do sistema
+ * Ela foi criada para substituir os Links CDN e só existe devido à um bug em Node_Modules
+ * Para encontrar esses arquivos vá em Public/js
+ --}}
+
+
+    {{-- Import Jquery --}}
+    <script src="{{ asset('js/jquery.js') }}"></script>
+
+    {{--Import Bootstrap, colocado dessa maneira devido a um Bug de comando $.modal()--}}
+    <script src="{{ asset('js/bootstrap/bootstrap.bundle.js') }}"></script>
 
     {{-- Import CSS Tooltips --}}
     <link href="{{ asset('css/tooltips.css') }}" rel="stylesheet">
-    {{-- Import Jquery --}}
-    <script src="{{ asset('js/jquery.js') }}"></script>
 
     {{-- Import Dos Gráficos --}}
     <script src="{{ asset('js/chart.js') }}"></script>
 
     {{-- Import do Calendário --}}
     <script src="{{ asset('js/fullcalendar.js') }}"></script>
-
-
+    
      {{-- Import do Bootstrap necessário para o Calendário --}}
      <script src="{{ asset('js/bootstrap5/index.global.min.js') }}"></script>
 
- 
-
-     
-     
+    
     <link rel="stylesheet" href="{{ asset('css/font/bootstrap-icons.css') }}">
 
 

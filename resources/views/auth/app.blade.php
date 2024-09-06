@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link rel="icon" href="{{ URL::asset('/images/logo.jpg')}}" type="image/icon type">
+    <link rel="icon" href="{{ URL::asset('/images/Venus2.png') }}" type="image/icon type">
     <title>Vênus</title>
 
     <!-- Fonts 
@@ -21,7 +21,7 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-dark shadow-sm" style="background-color:#87CEFA; font-family:tahoma; font-weight:bold;">
+        <nav class="navbar navbar-expand-md navbar-dark shadow-sm" style="background-color:#60bbf0; font-family:tahoma; font-weight:bold;">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     Vênus

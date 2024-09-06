@@ -46,7 +46,6 @@ class DiasCronogramaOntem implements ShouldQueue
                   ->orWhereNull('data_fim');
         })
         ->get();
-
         foreach($reunioes_hoje as $reuniao){
             DB::table('dias_cronograma')
 

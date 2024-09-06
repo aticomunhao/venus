@@ -1,5 +1,5 @@
+//import 'bootstrap' -- Comentado, importado com asset na APP.BLADE por Bug de comando modal
 
-import 'bootstrap';
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests

@@ -60,7 +60,7 @@ Agendar Tratamento
                                         <tr>
                                             <td>{{$contgrseg[0]->ttreu}}</td>
                                             <td>{{$contgrseg[0]->maxat}}</td>
-                                            @if (($contgrseg[0]->maxat / 100 * 90) < $conttratseg[0]->trat)
+                                            @if (($contgrseg[0]->maxat / 100 * 10) < $conttratseg[0]->trat)
                                             <td style="background-color:#90EE90;">{{$conttratseg[0]->trat}}</td>
                                             @else
                                             <td style="background-color:#FA8072;">{{$conttratseg[0]->trat}}</td>

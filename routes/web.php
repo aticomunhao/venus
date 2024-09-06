@@ -380,19 +380,13 @@ Route::middleware('rotas:28')->group(function () {
     Route::post('/atualizar-versoes/{id}', [GerenciarVersoesController::class, 'update']);
     Route::get('/visualizar-versoes/{id}', [GerenciarVersoesController::class, 'show']);
     Route::any('/excluir-versoes/{id}', [GerenciarVersoesController::class, 'destroy']);
-
 });
 
 // Gerenciar Presença Dirigente
 Route::middleware('rotas:30')->group(function () {
     Route::get('/gerenciar-presenca-dirigente', [PresencaDirigenteController::class, 'index']);
-Route::post('/marcar-presenca', [PresencaDirigenteController::class, 'marcarPresenca'])->name('marcar.presenca');
-Route::post('/cancelar-presenca', [PresencaDirigenteController::class, 'cancelarPresenca'])->name('cancelar.presenca');
-
-    
-    
-
-
+    Route::any('/marcar-presenca/{id}/{idg}', [PresencaDirigenteController::class, 'marcarPresenca'])->name('marcar.presenca');
+    Route::any('/cancelar-presenca/{id}/{idg}', [PresencaDirigenteController::class, 'cancelarPresenca'])->name('cancelar.presenca');
 });
 
 
@@ -401,13 +395,11 @@ Route::middleware('rotas:31')->group(function () {
     Route::any('/visualizar-presenca-afi', [RelatoriosController::class, 'visualizarAFI']);
     Route::any('/gerenciar-relatorio-afi', [RelatoriosController::class, 'indexAFI']);
     Route::any('/relatorio-tematicas', [RelatoriosController::class, 'tematicas']);
-    Route::any('/teste', [RelatoriosController::class, 'cronograma']);
+    Route::any('/relatorio-salas-cronograma', [RelatoriosController::class, 'cronograma']);
 });
 
 //Relatório de Temáticas
 Route::middleware('rotas:32')->group(function () {
 
     Route::any('/relatorio-tematicas', [RelatoriosController::class, 'tematicas']);
-
 });
-

@@ -54,9 +54,9 @@
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{$b++}}" aria-expanded="false" aria-controls="flush-collapse{{$c++}}">
                                     <label> {{date('H:i:s', strtotime($horario))}} -
                                         @if(array_sum(array_column($tratasDoHorario->toArray(), 'max_atend')) > 0)
-                                            <label style="color:green">Vagas: {{ array_sum(array_column($tratasDoHorario->toArray(), 'max_atend')) }}</label>
+                                            <label style="color:green">Vagas: {{ array_sum(array_column($tratasDoHorario->toArray(), 'trat')) }}</label>
                                         @else
-                                            <label style="color:red">Vagas: {{ array_sum(array_column($tratasDoHorario->toArray(), 'max_atend')) }}</label>
+                                            <label style="color:red">Vagas: {{ array_sum(array_column($tratasDoHorario->toArray(), 'trat')) }}</label>
                                         @endif
                                     </label>
                                 </button>
