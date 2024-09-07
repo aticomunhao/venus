@@ -14,18 +14,22 @@ Gerenciar Presença Dirigente
                 Grupo
                 <select class="form-select select2" name="grupo">
                     @foreach ($reunioes as $reuniao)
-                        <option value="{{ $reuniao->id }}" {{ $reuniao->id == $reunioesDirigentes[0] ? 'selected' : '' }}>
-                            {{ $reuniao->nome . ' - ' . $reuniao->dia }}
-                        </option>
+                    <option value="{{ $reuniao->id }}" {{ $reuniao->id == $reunioesDirigentes[0] ? 'selected' : '' }}>
+                        {{ $reuniao->nome . ' - ' . $reuniao->dia }}
+                    </option>
                     @endforeach
                 </select>
             </div>
             <div class="col-12">
                 Nome
-                <select class="form-select select2" name="nome_setor">
-                    <!-- Opções serão adicionadas dinamicamente -->
+                <select class="form-select select2" name="nome_setor" id="nome_setor">
+                    <option value=""></option>
+                    @foreach ($membros as $membro)
+                    <option value="{{ $membro->id }}">{{ $membro->nome_completo }} - {{ $membro->nome }}</option>
+                    @endforeach
                 </select>
             </div>
+
             <div class="col"><br />
                 <input class="btn btn-light btn-sm me-md-2 col-6 col-12" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
             </div>
@@ -53,17 +57,17 @@ Gerenciar Presença Dirigente
                     <td>{{ $membro->nome_completo }}</td>
                     <td>{{ $membro->nome }}</td>
                     <td>
-                       
-                            @if(in_array($membro->id, $presencas))
-                            <a href="/cancelar-presenca/{{ $membro->id }}/{{$reunioesDirigentes[0]}}" class="btn btn-danger marcar" id="marcar-{{ $membro->id }}">
-                                Cancelar
-                            </a>
-                            @else
-                            <a href="/marcar-presenca/{{ $membro->id }}/{{$reunioesDirigentes[0]}}" class="btn btn-success marcar" id="marcar-{{ $membro->id }}">
-                                Presença
-                            </a>
-                            @endif
-                           
+
+                        @if(in_array($membro->id, $presencas))
+                        <a href="/cancelar-presenca/{{ $membro->id }}/{{$reunioesDirigentes[0]}}" class="btn btn-danger marcar" id="marcar-{{ $membro->id }}">
+                            Cancelar
+                        </a>
+                        @else
+                        <a href="/marcar-presenca/{{ $membro->id }}/{{$reunioesDirigentes[0]}}" class="btn btn-success marcar" id="marcar-{{ $membro->id }}">
+                            Presença
+                        </a>
+                        @endif
+
                     </td>
                 </tr>
                 @endforeach
@@ -71,5 +75,5 @@ Gerenciar Presença Dirigente
         </table>
     </div>
 
- 
-@endsection
+
+    @endsection

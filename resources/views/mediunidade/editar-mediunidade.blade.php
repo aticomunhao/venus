@@ -149,20 +149,6 @@
 <!-- Adicione antes do fechamento da tag </body> -->
 
 
-
-
-
-
-<script>
-    $(document).ready(function() {
-        $('.select2').select2({ theme: 'bootstrap-5'});
-
-    });
-
-
-
-</script>
-
 <script>
   $(document).ready(function() {
     $('.status').change(function(){
