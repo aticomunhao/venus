@@ -51,6 +51,10 @@ $setor = session()->get('usuario.setor');
                                     <li><a class="dropdown-item" href="/gerenciar-integral">Gerenciar Tratamento
                                             Integral</a></li>
                                 @endif
+                                {{-- @if (in_array(8, $acesso)) --}}
+                                <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Gerenciar Presença
+                                    Dirigente</a></li>
+                        {{-- @endif --}}
 
 
                             </ul>
@@ -139,11 +143,12 @@ $setor = session()->get('usuario.setor');
                                     <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
                                     </li>
                                 @endif
-                                @if (in_array(22, $acesso))
-                                    <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-pti">Encaminhamentos
-                                            PTI</a>
-                                    </li>
-                                @endif
+                                 @if (in_array(22, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-pti">Encaminhamentos
+                                        PTI</a>
+                                </li>
+                             @endif 
+                               
                                 @if (in_array(24, $acesso))
                                     <li><a class="dropdown-item" href="/gerenciar-pti">Gerenciar Assistidos PTI</a></li>
                                 @endif
@@ -158,6 +163,10 @@ $setor = session()->get('usuario.setor');
                                     <li><a class="dropdown-item" href="/gerenciar-mediunidades">Gerenciar
                                             Mediunidades</a></li>
                                 @endif
+                                {{-- @if (in_array(8, $acesso)) --}}
+                                <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Gerenciar Presença
+                                    Dirigente</a></li>
+                                 {{-- @endif --}}
                                 @if (in_array(2, $acesso) or in_array(3, $acesso))
                                     <li><a class="dropdown-item" href="/gerenciar-pessoas">Gerenciar Pessoas</a></li>
                                 @endif
@@ -169,6 +178,11 @@ $setor = session()->get('usuario.setor');
                                     <li><a class="dropdown-item" href="/gerenciar-reunioes">Gerenciar Reuniões </a>
                                     </li>
                                 @endif
+                                 {{-- @if (in_array(22, $acesso)) --}}
+                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
+                                    Membros</a>
+                            </li>
+                        {{-- @endif --}}
 
                             </ul>
                         </li>

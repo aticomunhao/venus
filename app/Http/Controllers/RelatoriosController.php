@@ -69,7 +69,7 @@ class RelatoriosController extends Controller
                 ->select('cro.id', 'dc.data', 'gr.nome', 'cro.h_inicio', 'td.nome as dia')
                 ->orderBy('dc.data')->get();
 
-            //Confere se a data de uma reunião está presente na lista de distinct criaada acima, gerando um array completo, com o dado de presenca   
+            //Confere se a data de uma reunião está presente na lista de distinct criada acima, gerando um array completo, com o dado de presenca   
             foreach ($cronogramaAFI as $datas) {
                 $i = 0;
                 foreach ($diasAtendente as $diaAtendente) {
@@ -251,7 +251,7 @@ class RelatoriosController extends Controller
         if ($request->grupo) {
             $cronogramas = $cronogramas->where('cro.id_grupo', $requestGrupo);
         }
-       // dd($cronogramas->get());
+        // dd($cronogramas->get());
         $cronogramas = $cronogramas->get();
 
         $eventosCronogramas = [];
@@ -287,6 +287,56 @@ class RelatoriosController extends Controller
         //   dd($cronogramas, $eventosCronogramas);
         return view('relatorios.relatorio-salas-cronograma', compact('eventosCronogramas', 'salas', 'cronogramasPesquisa', 'requestSala', 'requestGrupo'));
     }
+
+    public function indexmembro(Request $request)
+{
+    // Obter os parâmetros de busca
+    $setorId = $request->input('setor');
+    $grupoId = $request->input('grupo');
+    $diaId = $request->input('dia');
+    $nomeId = $request->input('nome');
+
+    // Obter os membros com informações detalhadas
+    $membros = DB::table('membro as m')
+        ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+        ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+        ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
+        ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+        ->leftJoin('setor as st', 'gr.id_setor', 'st.id') // Join com setor
+        ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id') // Join com tipo_dia
+        ->select('m.id', 'p.nome_completo', 'gr.nome as grupo_nome', 'st.nome as setor_nome', 'st.sigla as setor_sigla', 'td.nome as dia_nome')
+        ->when($setorId, function($query, $setorId) {
+            return $query->where('st.id', $setorId);
+        })
+        ->when($grupoId, function($query, $grupoId) {
+            return $query->where('gr.id', $grupoId);
+        })
+        ->when($diaId, function($query, $diaId) {
+            return $query->where('cro.dia_semana', $diaId);
+        })
+        ->when($nomeId, function($query, $nomeId) {
+            return $query->where('m.id_associado', $nomeId);
+        })
+        ->get();
+        
+    // Obter os grupos
+    $grupo = DB::table('grupo')
+        ->select('id', 'nome as nome_grupo')
+        ->get();
+
+    // Obter os setores
+    $setor = DB::table('setor')
+        ->select('id', 'nome', 'sigla')
+        ->get();
+        
+    // Obter os dias
+    $dias = DB::table('tipo_dia')
+        ->select('id', 'nome')
+        ->get();
+
+    return view('relatorios.gerenciar-relatorio-pessoas-grupo', compact('membros', 'grupo', 'setor', 'dias'));
+}
+
 
     /**
      * Show the form for editing the specified resource.
