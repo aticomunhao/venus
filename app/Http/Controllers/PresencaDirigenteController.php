@@ -47,13 +47,14 @@ class PresencaDirigenteController extends Controller
 
         //Traz todos os membros do grupo selecionado
         $query = DB::table('membro as m')
-            ->select('m.id', 'm.id_cronograma', 'p.nome_completo', 'tf.nome')
-            ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
-            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
-            ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
-            ->where('m.dt_fim', null)
-            ->where('m.id_cronograma', $reunioesDirigentes[0]);
-
+        ->select('m.id', 'm.id_cronograma', 'p.nome_completo', 'tf.nome')
+        ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
+        ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+        ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
+        ->where('m.dt_fim', null)
+        ->where('m.id_cronograma', $reunioesDirigentes[0])
+        ->whereNotIn('m.id_funcao', [5, 6]); // Exclui id_funcao 5 e 6
+        
         // Filtra pelo nome do setor se estiver presente na requisição
         if ($request->nome_setor) {
             $query->where('m.id', $request->nome_setor);
