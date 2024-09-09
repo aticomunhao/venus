@@ -99,7 +99,7 @@
             </tbody>
         </table>
 
-        <div class="d-flex justify-content-center">
+    </div class="d-flex justify-content-center">
             {{ $membros->appends(request()->query())->links('pagination::bootstrap-5') }}
         </div>
     </div>
