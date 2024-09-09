@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('title')
-    Relatório de Presença Membros
+    Relatório de Trabalhadores
 @endsection
 
 @section('content')
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family: calibri">
-            RELATÓRIO DE PRESENÇA MEMBROS
+            RELATÓRIO DE TRABALHADORES
         </h4>
         <div class="col-12">
             <div class="row justify-content-center">
