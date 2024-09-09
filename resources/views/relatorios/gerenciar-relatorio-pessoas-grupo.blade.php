@@ -13,7 +13,7 @@
             <div class="row justify-content-center">
                 <div>
                     <br />
-                    <form action="/gerenciar-relatorio-pessoas-grupo" method="get">
+                    <form action="{{ url('/gerenciar-relatorio-pessoas-grupo') }}" method="get">
                         <div class="row">
                             <div class="col">
                                 Setor
@@ -49,19 +49,19 @@
                                 </select>
                             </div>
                             <div class="col">
-                                Nome
+                                Nome do Membro
                                 <select class="form-select select2" id="nome" name="nome">
                                     <option value="">Todos</option>
-                                    @foreach ($membros as $membro)
-                                        <option value="{{ $membro->id }}" {{ request('nome') == $membro->id ? 'selected' : '' }}>
-                                            {{ $membro->nome_completo }}
+                                    @foreach ($atendentesParaSelect as $atendente)
+                                        <option value="{{ $atendente->ida }}" {{ request('nome') == $atendente->ida ? 'selected' : '' }}>
+                                            {{ $atendente->nm_4 }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col mt-3">
                                 <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
-                                <a href="/gerenciar-relatorio-pessoas-grupo" class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;">Limpar</a>
+                                <a href="{{ url('/gerenciar-relatorio-pessoas-grupo') }}" class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;">Limpar</a>
                             </div>
                         </div>
                     </form>
@@ -73,9 +73,13 @@
         <table class="table table-striped table-bordered border-secondary table-hover align-middle">
             <thead style="text-align: center;">
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                    <th>ID ASSOCIADO</th>
-                    <th>NOME</th>
+                    <th>NÚMERO</th>
+                    <th>NOME DO MEMBRO</th>
                     <th>GRUPO</th>
+                    <th>FUNÇÃO</th>
+                    <th>DIA</th>
+                    <th>HORA INÍCIO</th>
+                    <th>HORA FIM</th>
                     <th>SETOR</th>
                 </tr>
             </thead>
@@ -85,10 +89,18 @@
                         <td>{{ $membro->id }}</td>
                         <td>{{ $membro->nome_completo }}</td>
                         <td>{{ $membro->grupo_nome }}</td>
+                        <td>{{ $membro->nome_funcao }}</td>
+                        <td>{{ $membro->dia_nome }}</td>
+                        <td>{{ $membro->h_inicio }}</td>
+                        <td>{{ $membro->h_fim }}</td>
                         <td>{{ $membro->setor_nome }} - {{ $membro->setor_sigla }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+
+        <div class="d-flex justify-content-center">
+            {{ $membros->appends(request()->query())->links('pagination::bootstrap-5') }}
+        </div>
     </div>
 @endsection

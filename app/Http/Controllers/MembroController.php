@@ -224,7 +224,7 @@ class MembroController extends Controller
                               ->orWhere('p.cpf', 'ilike', "%$nome%");
                     }
 
-                    if ($cpf) {
+                 if ($cpf) {
                         $query->orWhere('p.cpf', 'ilike', "%$cpf%");
                     }
 

@@ -620,7 +620,7 @@ class GerenciarAtendimentoController extends Controller
             $contar = $atendeQuery->count('m.id_associado');
 
             // Ordena e pagina
-            $atende = $atendeQuery->orderBy('m.id_associado', 'ASC')->orderBy('nm_4', 'ASC')->paginate(50);
+            $atende = $atendeQuery->orderBy('m.id_associado', 'ASC')->orderBy('nm_4', 'ASC')->paginate(10);
 
             // Outras consultas
             $st_atend = DB::table('tipo_status_pessoa')->select('id', 'tipo')->get();
