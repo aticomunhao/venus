@@ -53,7 +53,7 @@ class PresencaDirigenteController extends Controller
         ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
         ->where('m.dt_fim', null)
         ->where('m.id_cronograma', $reunioesDirigentes[0])
-        ->whereNotIn('m.id_funcao', [5, 6]); // Exclui id_funcao 5 e 6
+        ->whereNot('m.id_funcao',  6); // Exclui id_funcao 5 e 6
         
         // Filtra pelo nome do setor se estiver presente na requisição
         if ($request->nome_setor) {

@@ -129,7 +129,7 @@
             }
         
             function setTime(){
-                total = 30
+                total = 60
                 redirect = 0
                 $('#tempoLogout').html(total + 's')
                 var intervalIdTime = window.setInterval(function(){

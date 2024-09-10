@@ -22,21 +22,21 @@
                     <div class="form-group row">
                         <div class="col">
                             <label for="disabledTextInput" class="form-label">Assistido:</label>
-                            <input type="text" id="" value="{{$result[0]->nm_1}}" class="form-control" placeholder="Disabled input" disabled>
+                            <input type="text" id="" value="{{$result->nm_1}}" class="form-control" placeholder="Disabled input" disabled>
                         </div>
                         <div class="col-2">
                             <label for="disabledTextInput" class="form-label">Sexo:</label>
-                            <input type="text" id="" value="{{$result[0]->tipo}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
+                            <input type="text" id="" value="{{$result->tipo}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
                         </div>
                         <div class="col-3">
                             <label for="disabledTextInput" class="form-label">Dt nascimento:</label>
-                            <input type="date" class="form-control" id=""  name="date"  value="{{$result[0]->dt_nascimento}}"   class="form-control" placeholder="Disabled input" disabled>
+                            <input type="date" class="form-control" id=""  name="date"  value="{{$result->dt_nascimento}}"   class="form-control" placeholder="Disabled input" disabled>
                         </div>
                     </div>
                     </fieldset>
                     <br>
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Atendimento Fraterno</legend>
-                    @foreach($result as $results)
+                
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
@@ -51,19 +51,19 @@
                         </thead>
                         <tbody>
                             <tr style="text-align:center;font-size:13px">
-                                <td>{{$results->ida}}</td>
-                                <td>{{$results->nm_2}}</td>
-                                <td>{{$results->nome}}</td>
-                                <td>{{$results->nm_4}}</td>
-                                <td>{{$results->dh_inicio}}</td>
-                                <td>{{$results->dh_fim}}</td>
-                                <td>{{$results->statat}}</td>
+                                <td>{{$result->ida}}</td>
+                                <td>{{$result->nm_2}}</td>
+                                <td>{{$result->nome}}</td>
+                                <td>{{$result->nm_4}}</td>
+                                <td>{{$result->dh_inicio}}</td>
+                                <td>{{$result->dh_fim}}</td>
+                                <td>{{$result->statat}}</td>
                             </tr>
                         </tbody>
                     </table>
-                    @endforeach
+      
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Tratamento</legend>
-                    @foreach($result as $results)
+     
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
@@ -80,19 +80,19 @@
                         </thead>
                         <tbody>
                             <tr style="text-align:center;font-size:13px">
-                                <td>{{$results->ide}}</td>
-                                <td>{{date ('d-m-Y', strtotime($results->dh_enc))}}</td>
-                                <td>{{$results->desctrat}}</td>
-                                <td>{{$results->nomeg}}</td>
-                                <td>{{$results->rm_inicio}}</td>
-                                <td>{{$results->sala}}</td>
-                                <td>{{$results->tsenc}}</td>
-                                <td>{{$results->tpmotivo}}</td>
+                                <td>{{$result->ide}}</td>
+                                <td>{{date ('d-m-Y', strtotime($result->dh_enc))}}</td>
+                                <td>{{$result->desctrat}}</td>
+                                <td>{{$result->nomeg}}</td>
+                                <td>{{$result->rm_inicio}}</td>
+                                <td>{{$result->sala}}</td>
+                                <td>{{$result->tsenc}}</td>
+                                <td>{{$result->tpmotivo}}</td>
                             </tr>
                         </tbody>
                     </table>
-                    @endforeach
-                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de presenças</legend>
+      
+                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de Presenças Integral</legend>
                     Nr de faltas: {{$faul}}
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
@@ -113,6 +113,34 @@
                                 @if ($lists->presenca == 1)
                                 <td style="background-color:#90EE90;">Sim</td>
                                 @elseif ($lists->presenca == 0)
+                                <td style="background-color:#FA8072;">Não</td>
+                                @endif
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de Presenças PTD</legend>
+                    Nr de faltas: {{$faul2}}
+                    <table class="table table-sm table-bordered table-striped">
+                        <thead style="text-align:center; background: #daffe0;">
+                            <tr style="text-align:center; font-weight: bold; font-size:12px">
+                                <td class="col">NR</td>
+                                <td class="col">DATA</td>
+                                <td class="col">GRUPO</td>
+                                <td class="col">PRESENÇA</td>
+                            </tr>
+                            
+                        </thead>
+                        <tbody>
+                            @foreach($list2 as $lists1)
+                            <tr style="text-align:center;font-size:13px">
+                                <td>{{$lists1->idp}}</td>
+                                 <td>{{$lists1->data}}</td>
+                                 <td>{{$lists1->nome}}</td>
+                                @if ($lists1->presenca == 1)
+                                <td style="background-color:#90EE90;">Sim</td>
+                                @elseif ($lists1->presenca == 0)
                                 <td style="background-color:#FA8072;">Não</td>
                                 @endif
                             </tr>

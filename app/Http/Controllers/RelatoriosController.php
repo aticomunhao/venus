@@ -302,8 +302,9 @@ class RelatoriosController extends Controller
         
         // Definir o número de itens por página
         $itemsPerPage = 50;
-    
-        
+        $setoresAutorizado = session()->get('usuario.setor');
+      
+
         // Obter os atendentes para o select2
         $atendentesParaSelect = DB::table('membro AS m')
             ->select('m.id_associado AS ida', 'p.nome_completo AS nm_4')
@@ -312,6 +313,7 @@ class RelatoriosController extends Controller
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
             ->where('gr.id_tipo_grupo', 3)
+            ->whereIn('gr.id_setor', $setoresAutorizado)
             ->where('p.status', 1)
             ->distinct()
             ->orderBy('p.nome_completo')
@@ -325,8 +327,9 @@ class RelatoriosController extends Controller
             ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
-            ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id') 
+            ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
             ->orderBy('p.nome_completo')
+            ->whereIn('gr.id_setor', $setoresAutorizado)
             ->select('m.id', 'p.nome_completo', 'gr.nome as grupo_nome', 'st.nome as setor_nome', 'st.sigla as setor_sigla', 'td.nome as dia_nome', 'cro.h_inicio', 'cro.h_fim', 'tf.nome as nome_funcao', 'st.nome as sala') // Selecionando o nome da função
             ->when($setorId, function($query, $setorId) {
                 return $query->where('st.id', $setorId);
@@ -352,11 +355,13 @@ class RelatoriosController extends Controller
         // Obter os grupos
         $grupo = DB::table('grupo')
             ->select('id', 'nome as nome_grupo')
+            ->whereIn('id_setor', $setoresAutorizado)
             ->get();
     
         // Obter os setores
         $setor = DB::table('setor')
             ->select('id', 'nome', 'sigla')
+            ->whereIn('id', $setoresAutorizado)
             ->get();
         
         // Obter os dias
@@ -368,6 +373,8 @@ class RelatoriosController extends Controller
             foreach ($membros as $element) {
                 $result[$element->nome_completo][$element->id] = $element;
             }
+
+      //      dd($membros, $result);
            
             $result = $this->paginate($result, 50);
             $result->withPath('');

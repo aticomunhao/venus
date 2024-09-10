@@ -6,7 +6,7 @@
 
 @section('content')
 
-    <div class="container-fluid";>
+    <div class="container-fluid">
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
             GERENCIAR ENCAMINHAMENTOS</h4>
         <div class="col-12">
@@ -47,7 +47,7 @@
         </div>
     </div>
     <br />
-    </div style="text-align:right;">
+    </div>
     <hr />
     Total assistidos: {{ $contar }}
     <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
@@ -64,8 +64,8 @@
             </tr>
         </thead>
         <tbody style="font-size: 14px; color:#000000; text-align: center;">
+            @foreach ($lista as $listas)
             <tr>
-                @foreach ($lista as $listas)
                     <td>{{ $listas->ide }}</td>
                     <td>{{ date('d/m/Y ', strtotime($listas->dh_enc)) }}</td>
                     <td>{{ $listas->prdesc }}</td>
