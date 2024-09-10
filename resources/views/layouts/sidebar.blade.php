@@ -1,7 +1,7 @@
 <?php $acesso = session()->get('usuario.acesso');
 $setor = session()->get('usuario.setor');
 ?>
-<div id="app" class="row">
+
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm"
         style="background-color:#60bbf0; font-family:tahoma; font-weight:bold;">
         <div class="container">

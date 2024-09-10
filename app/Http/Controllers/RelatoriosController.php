@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
@@ -246,6 +249,7 @@ class RelatoriosController extends Controller
         $requestSala = $request->sala;
         if ($requestSala) {
             $cronogramas = $cronogramas->where('cro.id_sala', $requestSala);
+            
         }
         $requestGrupo = $request->grupo;
         if ($request->grupo) {
@@ -298,6 +302,7 @@ class RelatoriosController extends Controller
         
         // Definir o número de itens por página
         $itemsPerPage = 50;
+    
         
         // Obter os atendentes para o select2
         $atendentesParaSelect = DB::table('membro AS m')
@@ -312,6 +317,7 @@ class RelatoriosController extends Controller
             ->orderBy('p.nome_completo')
             ->get();
         
+
             $membrosQuery = DB::table('membro as m')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
@@ -319,25 +325,29 @@ class RelatoriosController extends Controller
             ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
-            ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')  
-            ->select('m.id', 'p.nome_completo', 'gr.nome as grupo_nome', 'st.nome as setor_nome', 'st.sigla as setor_sigla', 'td.nome as dia_nome', 'cro.h_inicio', 'cro.h_fim', 'tf.nome as nome_funcao') // Selecionando o nome da função
+            ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id') 
+            ->orderBy('p.nome_completo')
+            ->select('m.id', 'p.nome_completo', 'gr.nome as grupo_nome', 'st.nome as setor_nome', 'st.sigla as setor_sigla', 'td.nome as dia_nome', 'cro.h_inicio', 'cro.h_fim', 'tf.nome as nome_funcao', 'st.nome as sala') // Selecionando o nome da função
             ->when($setorId, function($query, $setorId) {
                 return $query->where('st.id', $setorId);
             })
             ->when($grupoId, function($query, $grupoId) {
+          
                 return $query->where('gr.id', $grupoId);
             })
             ->when($diaId, function($query, $diaId) {
                 return $query->where('cro.dia_semana', $diaId);
             })
+            ->when($diaId == 0 && $diaId != null, function($query) {
+                return $query->where('cro.dia_semana', 0);
+            })
             ->when($nomeId, function($query, $nomeId) {
                 return $query->where('m.id_associado', $nomeId);
             });
         
-        
-        
+
         // Paginar os resultados
-        $membros = $membrosQuery->paginate($itemsPerPage);
+        $membros = $membrosQuery->get();
         
         // Obter os grupos
         $grupo = DB::table('grupo')
@@ -353,11 +363,26 @@ class RelatoriosController extends Controller
         $dias = DB::table('tipo_dia')
             ->select('id', 'nome')
             ->get();
-        
-        return view('relatorios.gerenciar-relatorio-pessoas-grupo', compact('membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect'));
+
+            $result = array();
+            foreach ($membros as $element) {
+                $result[$element->nome_completo][$element->id] = $element;
+            }
+           
+            $result = $this->paginate($result, 50);
+            $result->withPath('');
+        return view('relatorios.gerenciar-relatorio-pessoas-grupo', compact('membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect', 'result'));
     }
     
-    
+    public function paginate($items, $perPage = 5, $page = null)
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $total = count($items);
+        $currentpage = $page;
+        $offset = ($currentpage * $perPage) - $perPage ;
+        $itemstoshow = array_slice($items , $offset , $perPage);
+        return new LengthAwarePaginator($itemstoshow ,$total   ,$perPage);
+    }
     
     public function edit(string $id) {}
 

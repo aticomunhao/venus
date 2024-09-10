@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <div class="container-fluid">
+    <div class="container-fluid" >
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family: calibri">
             RELATÓRIO DE TRABALHADORES
         </h4>
@@ -70,37 +70,73 @@
             </div>
         </div>
 
-        <table class="table table-striped table-bordered border-secondary table-hover align-middle">
-            <thead style="text-align: center;">
-                <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                    <th>NÚMERO</th>
-                    <th>NOME DO MEMBRO</th>
-                    <th>GRUPO</th>
-                    <th>FUNÇÃO</th>
-                    <th>DIA</th>
-                    <th>HORA INÍCIO</th>
-                    <th>HORA FIM</th>
-                    <th>SETOR</th>
-                </tr>
-            </thead>
-            <tbody style="font-size: 14px; color:#000000; text-align: center;">
-                @foreach ($membros as $membro)
-                    <tr>
-                        <td>{{ $membro->id }}</td>
-                        <td>{{ $membro->nome_completo }}</td>
-                        <td>{{ $membro->grupo_nome }}</td>
-                        <td>{{ $membro->nome_funcao }}</td>
-                        <td>{{ $membro->dia_nome }}</td>
-                        <td>{{ $membro->h_inicio }}</td>
-                        <td>{{ $membro->h_fim }}</td>
-                        <td>{{ $membro->setor_nome }} - {{ $membro->setor_sigla }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
 
+        <div class="card">
+            <div class="card-body">
+                <div div class="accordion" id="accordionExample">
+               
+                
+                @foreach ($result as $key => $membro)
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{reset($membro)->id}}" aria-expanded="false" aria-controls="collapseOne">
+                        {{$key}}
+                      </button>
+                    </h2>
+                    <div id="collapse{{reset($membro)->id}}" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                      <div class="accordion-body">
+                        <table class="table table-striped table-bordered border-secondary table-hover align-middle">
+                            <thead style="text-align: center;">
+                                <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
+                                    <th>GRUPO</th>
+                                    <th>FUNÇÃO</th>
+                                    <th>DIA</th>
+                                    <th>HORA INÍCIO</th>
+                                    <th>HORA FIM</th>
+                                    <th>SETOR</th>
+                                </tr>
+                            </thead>
+                            <tbody style="font-size: 14px; color:#000000; text-align: center;">
+                                @foreach ($membro as $dado)
+                                    <tr>
+                                        
+                                        <td>{{ $dado->grupo_nome }}</td>
+                                        <td>{{ $dado->nome_funcao }}</td>
+                                        <td>{{ $dado->dia_nome }}</td>
+                                        <td>{{ $dado->h_inicio }}</td>
+                                        <td>{{ $dado->h_fim }}</td>
+                                        <td>{{ $dado->setor_nome }} - {{ $dado->setor_sigla }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+        
+               
+                        
+                  
+               
+            @endforeach
+            </div>
+            </div>
+          </div>
+       
+            <br />
+          {{ $result->appends(request()->query())->links('pagination::bootstrap-5') }}
     </div class="d-flex justify-content-center">
-            {{ $membros->appends(request()->query())->links('pagination::bootstrap-5') }}
+           
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            if({{request('dia') === null }}){
+                $('#dia').prop('selectedIndex', 0);
+            }
+            
+        });
+        
+    </script>
 @endsection

@@ -34,6 +34,7 @@ class LoginController extends Controller
 
     public function valida(Request $request)
     {
+
         $cpf = $request->input('cpf');
         $senha = $request->input('senha');
 
@@ -58,8 +59,8 @@ class LoginController extends Controller
                         where u.ativo is true and p.cpf = '$cpf'
                         group by u.id, p.id, a.id
                         ");
-
         if (count($result) > 0) {
+         
             $perfis = explode(',', $result[0]->perfis);
             $setores = explode(',', $result[0]->setor);
             $perfis = $perfis[0] == '' ? [0] : $perfis;
@@ -100,6 +101,8 @@ class LoginController extends Controller
             app('flasher')->addError('Credenciais inválidas');
             return view('login/login');
         }
+        app('flasher')->addError('Credenciais inválidas');
+        return view('login/login');
     }
     public function validaUserLogado()
     {
