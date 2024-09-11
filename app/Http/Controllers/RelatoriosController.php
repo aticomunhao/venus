@@ -299,6 +299,7 @@ class RelatoriosController extends Controller
         $grupoId = $request->input('grupo');
         $diaId = $request->input('dia');
         $nomeId = $request->input('nome');
+        $funcaoId = $request->input('funcao');
         
         // Definir o número de itens por página
         $itemsPerPage = 50;
@@ -341,6 +342,9 @@ class RelatoriosController extends Controller
             ->when($diaId, function($query, $diaId) {
                 return $query->where('cro.dia_semana', $diaId);
             })
+            ->when($funcaoId, function($query, $funcaoId) {
+                return $query->where('m.id_funcao', $funcaoId);
+            })
             ->when($diaId == 0 && $diaId != null, function($query) {
                 return $query->where('cro.dia_semana', 0);
             })
@@ -369,6 +373,8 @@ class RelatoriosController extends Controller
             ->select('id', 'nome')
             ->get();
 
+         $funcao = DB::table('tipo_funcao')->get();   
+
             $result = array();
             foreach ($membros as $element) {
                 $result[$element->nome_completo][$element->id] = $element;
@@ -378,7 +384,7 @@ class RelatoriosController extends Controller
            
             $result = $this->paginate($result, 50);
             $result->withPath('');
-        return view('relatorios.gerenciar-relatorio-pessoas-grupo', compact('membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect', 'result'));
+        return view('relatorios.gerenciar-relatorio-pessoas-grupo', compact('membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect', 'result', 'funcao'));
     }
     
     public function paginate($items, $perPage = 5, $page = null)

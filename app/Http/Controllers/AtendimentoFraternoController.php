@@ -788,7 +788,7 @@ catch(\Exception $e){
                     'id_tipo_encaminhamento'=> 2,
                     'id_atendimento' =>$idat,
                     'id_tipo_tratamento' => 1,
-                    'status_encaminhamento' =>  2
+                    'status_encaminhamento' =>  1
                 ]);
 
                 DB::table('encaminhamento AS enc')->insert([

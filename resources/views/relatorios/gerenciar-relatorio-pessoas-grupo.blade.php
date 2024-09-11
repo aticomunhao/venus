@@ -48,6 +48,17 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="col-2">
+                                Função
+                                <select class="form-select select2" id="funcao" name="funcao">
+                                    <option value="">Todos</option>
+                                    @foreach ($funcao as $item)
+                                        <option value="{{ $item->id }}" {{ request('funcao') == $item->id ? 'selected' : '' }}>
+                                            {{ $item->nome }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="col">
                                 Nome do Membro
                                 <select class="form-select select2" id="nome" name="nome">
