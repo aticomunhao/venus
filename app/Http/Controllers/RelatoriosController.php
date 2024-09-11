@@ -313,8 +313,6 @@ class RelatoriosController extends Controller
             ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
-            ->where('gr.id_tipo_grupo', 3)
-            ->whereIn('gr.id_setor', $setoresAutorizado)
             ->where('p.status', 1)
             ->distinct()
             ->orderBy('p.nome_completo')
