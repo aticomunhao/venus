@@ -249,7 +249,6 @@ class RelatoriosController extends Controller
         $requestSala = $request->sala;
         if ($requestSala) {
             $cronogramas = $cronogramas->where('cro.id_sala', $requestSala);
-            
         }
         $requestGrupo = $request->grupo;
         if ($request->grupo) {
@@ -300,11 +299,11 @@ class RelatoriosController extends Controller
         $diaId = $request->input('dia');
         $nomeId = $request->input('nome');
         $funcaoId = $request->input('funcao');
-        
+
         // Definir o número de itens por página
         $itemsPerPage = 50;
         $setoresAutorizado = session()->get('usuario.setor');
-      
+
 
         // Obter os atendentes para o select2
         $atendentesParaSelect = DB::table('membro AS m')
@@ -317,9 +316,9 @@ class RelatoriosController extends Controller
             ->distinct()
             ->orderBy('p.nome_completo')
             ->get();
-        
 
-            $membrosQuery = DB::table('membro as m')
+
+        $membrosQuery = DB::table('membro as m')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
@@ -330,72 +329,161 @@ class RelatoriosController extends Controller
             ->orderBy('p.nome_completo')
             ->whereIn('gr.id_setor', $setoresAutorizado)
             ->select('m.id', 'p.nome_completo', 'gr.nome as grupo_nome', 'st.nome as setor_nome', 'st.sigla as setor_sigla', 'td.nome as dia_nome', 'cro.h_inicio', 'cro.h_fim', 'tf.nome as nome_funcao', 'st.nome as sala') // Selecionando o nome da função
-            ->when($setorId, function($query, $setorId) {
+            ->when($setorId, function ($query, $setorId) {
                 return $query->where('st.id', $setorId);
             })
-            ->when($grupoId, function($query, $grupoId) {
-          
+            ->when($grupoId, function ($query, $grupoId) {
+
                 return $query->where('gr.id', $grupoId);
             })
-            ->when($diaId, function($query, $diaId) {
+            ->when($diaId, function ($query, $diaId) {
                 return $query->where('cro.dia_semana', $diaId);
             })
-            ->when($funcaoId, function($query, $funcaoId) {
+            ->when($funcaoId, function ($query, $funcaoId) {
                 return $query->where('m.id_funcao', $funcaoId);
             })
-            ->when($diaId == 0 && $diaId != null, function($query) {
+            ->when($diaId == 0 && $diaId != null, function ($query) {
                 return $query->where('cro.dia_semana', 0);
             })
-            ->when($nomeId, function($query, $nomeId) {
+            ->when($nomeId, function ($query, $nomeId) {
                 return $query->where('m.id_associado', $nomeId);
             });
-        
+
 
         // Paginar os resultados
         $membros = $membrosQuery->get();
-        
+
         // Obter os grupos
         $grupo = DB::table('grupo')
             ->select('id', 'nome as nome_grupo')
             ->whereIn('id_setor', $setoresAutorizado)
             ->get();
-    
+
         // Obter os setores
         $setor = DB::table('setor')
             ->select('id', 'nome', 'sigla')
             ->whereIn('id', $setoresAutorizado)
             ->get();
-        
+
         // Obter os dias
         $dias = DB::table('tipo_dia')
             ->select('id', 'nome')
             ->get();
 
-         $funcao = DB::table('tipo_funcao')->get();   
+        $funcao = DB::table('tipo_funcao')->get();
 
-            $result = array();
-            foreach ($membros as $element) {
-                $result[$element->nome_completo][$element->id] = $element;
-            }
+        $result = array();
+        foreach ($membros as $element) {
+            $result[$element->nome_completo][$element->id] = $element;
+        }
 
-      //      dd($membros, $result);
-           
-            $result = $this->paginate($result, 50);
-            $result->withPath('');
+        //      dd($membros, $result);
+
+        $result = $this->paginate($result, 50);
+        $result->withPath('');
         return view('relatorios.gerenciar-relatorio-pessoas-grupo', compact('membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect', 'result', 'funcao'));
     }
-    
+
     public function paginate($items, $perPage = 5, $page = null)
     {
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
         $total = count($items);
         $currentpage = $page;
-        $offset = ($currentpage * $perPage) - $perPage ;
-        $itemstoshow = array_slice($items , $offset , $perPage);
-        return new LengthAwarePaginator($itemstoshow ,$total   ,$perPage);
+        $offset = ($currentpage * $perPage) - $perPage;
+        $itemstoshow = array_slice($items, $offset, $perPage);
+        return new LengthAwarePaginator($itemstoshow, $total, $perPage);
     }
-    
-    public function edit(string $id) {}
+
+    public function assistidosReuniao(Request $request)
+    {
+
+        $afiSelecionado = $request->afi;
+        $dt_inicio = $request->dt_inicio == null ? (Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d')) : $request->dt_inicio;
+        $dt_fim =  $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
+
+        //Traz todas as reuniões onde a pessoa logada é Dirigente ou Sub-dirigente
+        $cronogramasAutorizados = DB::table('membro as m')
+            ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
+            ->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
+            ->where('id_funcao', '<', 3)
+            ->distinct('m.id_cronograma')
+            ->pluck('m.id_cronograma');
+
+        $reunioesDirigentes = DB::table('membro as mem')
+            ->select('cr.id', 'gr.nome', 'cr.id', 'gr.status_grupo', 'd.nome as dia', 'cr.h_inicio', 'cr.h_fim')
+            ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
+            ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
+            ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
+            ->orderBy('gr.nome')
+            ->distinct('gr.nome');
+
+        $presencasAssistidos = DB::table('presenca_cronograma as pc')
+            ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->groupBy('presenca')
+            ->select('presenca', DB::raw("count(*) as total"));
+
+        $acompanhantes = DB::table('dias_cronograma');
+
+        $presencasMembros = DB::table('presenca_membros as pc')
+            ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->groupBy('presenca')
+            ->select('presenca', DB::raw("count(*) as total"));
+
+        if (!in_array(1, session()->get('usuario.perfis'))) {
+            $reunioesDirigentes = $reunioesDirigentes->whereIn('mem.id_cronograma', $cronogramasAutorizados);
+            $presencasAssistidos = $presencasAssistidos->whereIn('dc.id_cronograma', $cronogramasAutorizados);
+            $acompanhantes = $acompanhantes->whereIn('id_cronograma', $cronogramasAutorizados);
+            $presencasMembros = $presencasMembros->whereIn('dc.id_cronograma', $cronogramasAutorizados);
+        }
+
+
+        $reunioesDirigentes = $reunioesDirigentes->get();
+        $reunioesIds = json_decode(json_encode($reunioesDirigentes));
+
+        $presencasAssistidos = $presencasAssistidos->get();
+        $presencasAssistidos = json_decode(json_encode($presencasAssistidos));
+
+        $acompanhantes = $acompanhantes->sum('nr_acompanhantes');
+       
+
+        $presencasMembros = $presencasMembros->get();
+        $presencasMembros = json_decode(json_encode($presencasMembros));
+
+
+
+        if ($presencasAssistidos == []) {
+            $presencasAssistidos[0] = 0;
+            $presencasAssistidos[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasAssistidos, 'presenca')))) {
+            $presencasAssistidos[1] = $presencasAssistidos[0]->total;
+            $presencasAssistidos[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasAssistidos, 'presenca')))) {
+            $presencasAssistidos[0] = $presencasAssistidos[0]->total;
+            $presencasAssistidos[1] = 0;
+        } else {
+            $presencasAssistidos[0] = $presencasAssistidos[0]->total;
+            $presencasAssistidos[1] = $presencasAssistidos[1]->total;
+        }
+        $presencasAssistidos[2] =  $acompanhantes;
+
+        if ($presencasMembros == []) {
+            $presencasMembros[0] = 0;
+            $presencasMembros[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasMembros, 'presenca')))) {
+            $presencasMembros[1] = $presencasMembros[0]->total;
+            $presencasMembros[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasMembros, 'presenca')))) {
+            $presencasMembros[0] = $presencasMembros[0]->total;
+            $presencasMembros[1] = 0;
+        } else {
+            $presencasMembros[0] = $presencasMembros[0]->total;
+            $presencasMembros[1] = $presencasMembros[1]->total;
+        }
+        $presencasMembros[2] = 0;
+
+        return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasAssistidos', 'presencasMembros'));
+    }
 
     /**
      * Update the specified resource in storage.

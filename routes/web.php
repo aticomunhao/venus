@@ -394,6 +394,9 @@ Route::middleware('rotas:30')->group(function () {
 Route::middleware('rotas:31')->group(function () {
     Route::any('/visualizar-presenca-afi', [RelatoriosController::class, 'visualizarAFI']);
     Route::any('/gerenciar-relatorio-afi', [RelatoriosController::class, 'indexAFI']);
+
+    Route::any('/gerenciar-relatorio-assistidos', [RelatoriosController::class, 'assistidosReuniao']);
+    Route::any('/gerenciar-relatorio-afi', [RelatoriosController::class, 'indexAFI']);
 });
 
 //Relatório de Temáticas
