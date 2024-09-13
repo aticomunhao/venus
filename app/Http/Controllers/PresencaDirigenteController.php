@@ -29,11 +29,20 @@ class PresencaDirigenteController extends Controller
             ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
-            ->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
-            ->where('id_funcao', '<', 3)
             ->orderBy('gr.nome')
             ->distinct('gr.nome');
 
+
+            if(in_array(36,session()->get('usuario.acesso'))){
+
+            }elseif(in_array(37,session()->get('usuario.acesso'))){
+                $reunioesDirigentes = $reunioesDirigentes->whereIn('gr.id_setor', session()->get('usuario.setor'));
+            }else{
+                $reunioesDirigentes = $reunioesDirigentes->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
+                ->where('id_funcao', '<', 3);
+            }
+        
+            
         //Salva esse select completo em uma variável separada
         $reunioes = $reunioesDirigentes->get();
 

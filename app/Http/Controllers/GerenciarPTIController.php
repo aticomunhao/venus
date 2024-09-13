@@ -24,21 +24,26 @@ class GerenciarPTIController extends Controller
         ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
         ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
         ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
-        ->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
-        ->where('id_funcao', '<', 3)
         ->where('cr.id_tipo_tratamento', 2)
         ->where(function($query) use ($hoje) {
             $query->whereRaw("cr.data_fim < ?", [$hoje])
                   ->orWhereNull('cr.data_fim');
         })
-        ->distinct('gr.id')
-        ->get();
+        ->distinct('gr.id');
+       
+
+        if(!in_array(36,session()->get('usuario.acesso'))){
+            $dirigentes =  $dirigentes->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
+            ->where('id_funcao', '<', 3);
+        }
+        
+        $dirigentes = $dirigentes ->get();
 
         $grupos_autorizados = [];
         foreach($dirigentes as $dir){
             $grupos_autorizados[] = $dir->id;        }
 
-
+      //  dd($grupos_autorizados);
 
 
         $encaminhamentos = DB::table('tratamento as tr')

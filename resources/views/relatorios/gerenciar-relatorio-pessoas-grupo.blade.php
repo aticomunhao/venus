@@ -32,7 +32,7 @@
                                     <option value="">Todos</option>
                                     @foreach ($grupo as $grupos)
                                         <option value="{{ $grupos->id }}" {{ request('grupo') == $grupos->id ? 'selected' : '' }}>
-                                            {{ $grupos->nome_grupo }}
+                                            {{ $grupos->nome_grupo }} - {{ $grupos->sigla }}
                                         </option>
                                     @endforeach
                                 </select>

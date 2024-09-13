@@ -355,7 +355,8 @@ class RelatoriosController extends Controller
 
         // Obter os grupos
         $grupo = DB::table('grupo')
-            ->select('id', 'nome as nome_grupo')
+            ->leftJoin('setor', 'grupo.id_setor', 'setor.id')
+            ->select('grupo.id', 'grupo.nome as nome_grupo', 'setor.sigla')
             ->whereIn('id_setor', $setoresAutorizado)
             ->get();
 
@@ -394,12 +395,11 @@ class RelatoriosController extends Controller
         return new LengthAwarePaginator($itemstoshow, $total, $perPage);
     }
 
-    public function assistidosReuniao(Request $request)
+    public function relatorioReuniao(Request $request)
     {
-
-        $afiSelecionado = $request->afi;
         $dt_inicio = $request->dt_inicio == null ? (Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d')) : $request->dt_inicio;
         $dt_fim =  $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
+        $idCronogramaPesquisa = $request->nome_grupo;
 
         //Traz todas as reuniões onde a pessoa logada é Dirigente ou Sub-dirigente
         $cronogramasAutorizados = DB::table('membro as m')
@@ -415,82 +415,218 @@ class RelatoriosController extends Controller
             ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
+            ->when($idCronogramaPesquisa, function ($query, $idCronogramaPesquisa) {
+                return $query->where('cr.id', $idCronogramaPesquisa);
+            })
             ->orderBy('gr.nome')
             ->distinct('gr.nome');
 
-        $presencasAssistidos = DB::table('presenca_cronograma as pc')
+        $reunioesPesquisa = DB::table('membro as mem')
+            ->select('cr.id', 'gr.nome', 'd.nome as dia', 'cr.h_inicio', 'cr.h_fim')
+            ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
+            ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
+            ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
+            ->orderBy('gr.nome')
+            ->distinct('gr.nome');
+
+        $presencasCountAssistidos = DB::table('presenca_cronograma as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<', $dt_fim)
             ->groupBy('presenca')
             ->select('presenca', DB::raw("count(*) as total"));
 
         $acompanhantes = DB::table('dias_cronograma');
 
-        $presencasMembros = DB::table('presenca_membros as pc')
+        $presencasCountMembros = DB::table('presenca_membros as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<', $dt_fim)
             ->groupBy('presenca')
             ->select('presenca', DB::raw("count(*) as total"));
 
-        if (!in_array(1, session()->get('usuario.perfis'))) {
+        if (!in_array(36, session()->get('usuario.acesso'))) {
             $reunioesDirigentes = $reunioesDirigentes->whereIn('mem.id_cronograma', $cronogramasAutorizados);
-            $presencasAssistidos = $presencasAssistidos->whereIn('dc.id_cronograma', $cronogramasAutorizados);
+            $reunioesPesquisa = $reunioesPesquisa->whereIn('mem.id_cronograma', $cronogramasAutorizados);
+            $presencasCountAssistidos = $presencasCountAssistidos->whereIn('dc.id_cronograma', $cronogramasAutorizados);
             $acompanhantes = $acompanhantes->whereIn('id_cronograma', $cronogramasAutorizados);
-            $presencasMembros = $presencasMembros->whereIn('dc.id_cronograma', $cronogramasAutorizados);
+            $presencasCountMembros = $presencasCountMembros->whereIn('dc.id_cronograma', $cronogramasAutorizados);
         }
 
 
         $reunioesDirigentes = $reunioesDirigentes->get();
         $reunioesIds = json_decode(json_encode($reunioesDirigentes));
 
-        $presencasAssistidos = $presencasAssistidos->get();
-        $presencasAssistidos = json_decode(json_encode($presencasAssistidos));
+        $reunioesPesquisa = $reunioesPesquisa->get();
+
+        $presencasCountAssistidos = $presencasCountAssistidos->get();
+        $presencasCountAssistidos = json_decode(json_encode($presencasCountAssistidos));
 
         $acompanhantes = $acompanhantes->sum('nr_acompanhantes');
-       
-
-        $presencasMembros = $presencasMembros->get();
-        $presencasMembros = json_decode(json_encode($presencasMembros));
 
 
+        $presencasCountMembros = $presencasCountMembros->get();
+        $presencasCountMembros = json_decode(json_encode($presencasCountMembros));
 
-        if ($presencasAssistidos == []) {
-            $presencasAssistidos[0] = 0;
-            $presencasAssistidos[1] = 0;
-        } elseif (!in_array(false, array_values(array_column($presencasAssistidos, 'presenca')))) {
-            $presencasAssistidos[1] = $presencasAssistidos[0]->total;
-            $presencasAssistidos[0] = 0;
-        } elseif (!in_array(true, array_values(array_column($presencasAssistidos, 'presenca')))) {
-            $presencasAssistidos[0] = $presencasAssistidos[0]->total;
-            $presencasAssistidos[1] = 0;
+
+
+        if ($presencasCountAssistidos == []) {
+            $presencasCountAssistidos[0] = 0;
+            $presencasCountAssistidos[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
+            $presencasCountAssistidos[1] = $presencasCountAssistidos[0]->total;
+            $presencasCountAssistidos[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
+            $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
+            $presencasCountAssistidos[1] = 0;
         } else {
-            $presencasAssistidos[0] = $presencasAssistidos[0]->total;
-            $presencasAssistidos[1] = $presencasAssistidos[1]->total;
+            $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
+            $presencasCountAssistidos[1] = $presencasCountAssistidos[1]->total;
         }
-        $presencasAssistidos[2] =  $acompanhantes;
+        $presencasCountAssistidos[2] =  $acompanhantes;
 
-        if ($presencasMembros == []) {
-            $presencasMembros[0] = 0;
-            $presencasMembros[1] = 0;
-        } elseif (!in_array(false, array_values(array_column($presencasMembros, 'presenca')))) {
-            $presencasMembros[1] = $presencasMembros[0]->total;
-            $presencasMembros[0] = 0;
-        } elseif (!in_array(true, array_values(array_column($presencasMembros, 'presenca')))) {
-            $presencasMembros[0] = $presencasMembros[0]->total;
-            $presencasMembros[1] = 0;
+        if ($presencasCountMembros == []) {
+            $presencasCountMembros[0] = 0;
+            $presencasCountMembros[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasCountMembros, 'presenca')))) {
+            $presencasCountMembros[1] = $presencasCountMembros[0]->total;
+            $presencasCountMembros[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasCountMembros, 'presenca')))) {
+            $presencasCountMembros[0] = $presencasCountMembros[0]->total;
+            $presencasCountMembros[1] = 0;
         } else {
-            $presencasMembros[0] = $presencasMembros[0]->total;
-            $presencasMembros[1] = $presencasMembros[1]->total;
+            $presencasCountMembros[0] = $presencasCountMembros[0]->total;
+            $presencasCountMembros[1] = $presencasCountMembros[1]->total;
         }
-        $presencasMembros[2] = 0;
+        $presencasCountMembros[2] = 0;
 
-        return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasAssistidos', 'presencasMembros'));
+        return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasCountAssistidos', 'presencasCountMembros', 'reunioesPesquisa', 'dt_inicio', 'dt_fim', 'idCronogramaPesquisa'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function visualizarReuniao(Request $request, string $id)
     {
-        //
+
+        $dt_inicio = $request->dt_inicio == null ? (Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d')) : $request->dt_inicio;
+        $dt_fim =  $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
+
+        //Traz todas as reuniões onde a pessoa logada é Dirigente ou Sub-dirigente
+
+        $grupo = DB::table('cronograma as cr')
+            ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as td', 'cr.dia_semana', 'td.id')
+            ->select('gr.nome', 'td.nome as dia')
+            ->where('cr.id', $id)
+            ->first();
+
+        $presencasCountAssistidos = DB::table('presenca_cronograma as pc')
+            ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<', $dt_fim)
+            ->where('id_cronograma', $id)
+            ->groupBy('presenca')
+            ->select('presenca', DB::raw("count(*) as total"));
+
+        $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $id);
+
+        $presencasCountMembros = DB::table('presenca_membros as pc')
+            ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<', $dt_fim)
+            ->where('id_cronograma', $id)
+            ->groupBy('presenca')
+            ->select('presenca', DB::raw("count(*) as total"));
+
+
+
+
+
+
+
+        $presencasAssistidos = DB::table('tratamento as tr')
+            ->leftJoin('tipo_status_tratamento as tst', 'tr.status', 'tst.id')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->leftJoin('presenca_cronograma as pc', 'tr.id', 'pc.id_tratamento')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+            ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->where('enc.dh_enc', '>=', $dt_inicio)
+            ->where('enc.dh_enc', '<', $dt_fim)
+            ->where('id_reuniao', $id)
+            ->select('tr.id', 'p.nome_completo', 'tst.nome as status', 'dc.data', 'gr.nome as grupo', 'pc.presenca',)
+            ->orderBy('p.nome_completo')
+            ->get();
+
+        $presencasMembros = DB::table('membro as m')
+            ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
+            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->leftJoin('presenca_membros as pm', 'm.id', 'pm.id_membro')
+            ->leftJoin('dias_cronograma as dc', 'pm.id_dias_cronograma', 'dc.id')
+            ->where('m.dt_inicio', '>=', $dt_inicio)
+            ->where(function ($query) use ($dt_fim) {
+                $query->where('m.dt_fim', '<', $dt_fim);
+                $query->orWhere('m.dt_fim', NULL);
+            })
+            ->where('m.id_cronograma', $id)
+            ->select('m.id', 'p.nome_completo', 'dc.data', 'pm.presenca')
+            ->get();
+
+        $presencasMembrosArray = array();
+        foreach ($presencasMembros as $element) {
+            $presencasMembrosArray["$element->nome_completo"][] = $element;
+        }
+
+        $presencasCountAssistidos = $presencasCountAssistidos->get();
+        $presencasCountAssistidos = json_decode(json_encode($presencasCountAssistidos));
+
+        $acompanhantes = $acompanhantes->sum('nr_acompanhantes');
+
+
+        $presencasCountMembros = $presencasCountMembros->get();
+        $presencasCountMembros = json_decode(json_encode($presencasCountMembros));
+
+        $presencasAssistidosArray = array();
+        foreach ($presencasAssistidos as $element) {
+            $presencasAssistidosArray["$element->nome_completo - $element->status"][] = $element;
+        }
+
+
+        if ($presencasCountAssistidos == []) {
+            $presencasCountAssistidos[0] = 0;
+            $presencasCountAssistidos[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
+            $presencasCountAssistidos[1] = $presencasCountAssistidos[0]->total;
+            $presencasCountAssistidos[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
+            $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
+            $presencasCountAssistidos[1] = 0;
+        } else {
+            $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
+            $presencasCountAssistidos[1] = $presencasCountAssistidos[1]->total;
+        }
+        $presencasCountAssistidos[2] =  $acompanhantes;
+
+        if ($presencasCountMembros == []) {
+            $presencasCountMembros[0] = 0;
+            $presencasCountMembros[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasCountMembros, 'presenca')))) {
+            $presencasCountMembros[1] = $presencasCountMembros[0]->total;
+            $presencasCountMembros[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasCountMembros, 'presenca')))) {
+            $presencasCountMembros[0] = $presencasCountMembros[0]->total;
+            $presencasCountMembros[1] = 0;
+        } else {
+            $presencasCountMembros[0] = $presencasCountMembros[0]->total;
+            $presencasCountMembros[1] = $presencasCountMembros[1]->total;
+        }
+        $presencasCountMembros[2] = 0;
+
+        return view('relatorios.visualizar-assistido-reuniao', compact('id', 'presencasAssistidosArray','presencasMembrosArray', 'presencasCountAssistidos', 'presencasCountMembros', 'dt_inicio', 'dt_fim', 'grupo'));
     }
 
     /**

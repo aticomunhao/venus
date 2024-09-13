@@ -394,9 +394,6 @@ Route::middleware('rotas:30')->group(function () {
 Route::middleware('rotas:31')->group(function () {
     Route::any('/visualizar-presenca-afi', [RelatoriosController::class, 'visualizarAFI']);
     Route::any('/gerenciar-relatorio-afi', [RelatoriosController::class, 'indexAFI']);
-
-    Route::any('/gerenciar-relatorio-assistidos', [RelatoriosController::class, 'assistidosReuniao']);
-    Route::any('/gerenciar-relatorio-afi', [RelatoriosController::class, 'indexAFI']);
 });
 
 //Relatório de Temáticas
@@ -412,4 +409,9 @@ Route::middleware('rotas:33')->group(function () {
 //Relatório de Membro Grupo
 Route::middleware('rotas:34')->group(function () {
     Route::any('/gerenciar-relatorio-pessoas-grupo', [RelatoriosController::class, 'indexmembro']);
+});
+//Relatório de Reuniões
+Route::middleware('rotas:35')->group(function () {
+    Route::any('/gerenciar-relatorio-reuniao', [RelatoriosController::class, 'relatorioReuniao']);
+    Route::any('/visualizar-relatorio-reuniao/{id}', [RelatoriosController::class, 'visualizarReuniao']);
 });

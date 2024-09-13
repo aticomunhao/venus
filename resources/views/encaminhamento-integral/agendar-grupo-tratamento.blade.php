@@ -88,7 +88,7 @@
                                         <tr>
                                             <td>{{$contgrter[0]->ttreu}}</td>
                                             <td>{{$contgrter[0]->maxat}}</td>
-                                            @if (($contgrter[0]->maxat / 100 * 90) < $conttratter[0]->trat)
+                                            @if (($contgrter[0]->maxat / 100 * 10) < $conttratter[0]->trat)
                                             <td style="background-color:#90EE90;">{{$conttratter[0]->trat}}</td>
                                             @else
                                             <td style="background-color:#FA8072;">{{$conttratter[0]->trat}}</td>
@@ -114,7 +114,7 @@
                                         <tr>
                                             <td>{{$contgrqua[0]->ttreu}}</td>
                                             <td>{{$contgrqua[0]->maxat}}</td>
-                                            @if (($contgrqua[0]->maxat / 100 * 90) < $conttratqua[0]->trat)
+                                            @if (($contgrqua[0]->maxat / 100 * 10) < $conttratqua[0]->trat)
                                             <td style="background-color:#90EE90;">{{$conttratqua[0]->trat}}</td>
                                             @else
                                             <td style="background-color:#FA8072;">{{$conttratqua[0]->trat}}</td>
@@ -140,7 +140,7 @@
                                         <tr>
                                             <td>{{$contgrqui[0]->ttreu}}</td>
                                             <td>{{$contgrqui[0]->maxat}}</td>
-                                            @if (($contgrqui[0]->maxat / 100 * 90) < $conttratqui[0]->trat)
+                                            @if (($contgrqui[0]->maxat / 100 *10) < $conttratqui[0]->trat)
                                             <td style="background-color:#90EE90;">{{$conttratqui[0]->trat}}</td>
                                             @else
                                             <td style="background-color:#FA8072;">{{$conttratqui[0]->trat}}</td>
@@ -169,7 +169,7 @@
                                         <tr>
                                             <td>{{$contgrsex[0]->ttreu}}</td>
                                             <td>{{$contgrsex[0]->maxat}}</td>
-                                            @if (($contgrsex[0]->maxat / 100 * 90) < $conttratsex[0]->trat)
+                                            @if (($contgrsex[0]->maxat / 100 * 10) < $conttratsex[0]->trat)
                                             <td style="background-color:#90EE90;">{{$conttratsex[0]->trat}}</td>
                                             @else
                                             <td style="background-color:#FA8072;">{{$conttratsex[0]->trat}}</td>
@@ -195,7 +195,7 @@
                                         <tr>
                                             <td>{{$contgrsab[0]->ttreu}}</td>
                                             <td>{{$contgrsab[0]->maxat}}</td>
-                                            @if (($contgrsab[0]->maxat / 100 * 90) < $conttratsab[0]->trat)
+                                            @if (($contgrsab[0]->maxat / 100 * 10) < $conttratsab[0]->trat)
                                             <td style="background-color:#90EE90;">{{$conttratsab[0]->trat}}</td>
                                             @else
                                             <td style="background-color:#FA8072;">{{$conttratsab[0]->trat}}</td>
@@ -221,7 +221,7 @@
                                         <tr>
                                             <td>{{$contgrdom[0]->ttreu}}</td>
                                             <td>{{$contgrdom[0]->maxat}}</td>
-                                            @if (($contgrdom[0]->maxat / 100 * 90) < $conttratdom[0]->trat)
+                                            @if (($contgrdom[0]->maxat / 100 *10) < $conttratdom[0]->trat)
                                             <td style="background-color:#90EE90;">{{$conttratdom[0]->trat}}</td>
                                             @else
                                             <td style="background-color:#FA8072;">{{$conttratdom[0]->trat}}</td>

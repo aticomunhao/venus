@@ -61,6 +61,11 @@ $setor = session()->get('usuario.setor');
                                         Membros</a>
                                 </li>
                                 @endif
+                                @if (in_array(35, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
+                                        Reuniões</a>
+                                </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>
@@ -138,6 +143,11 @@ $setor = session()->get('usuario.setor');
                                         Membros</a>
                                 </li>
                                 @endif
+                                @if (in_array(35, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
+                                        Reuniões</a>
+                                </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>
@@ -192,7 +202,11 @@ $setor = session()->get('usuario.setor');
                                         Membros</a>
                                 </li>
                                 @endif
-
+                                @if (in_array(35, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
+                                        Reuniões</a>
+                                </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>
