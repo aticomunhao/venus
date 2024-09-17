@@ -38,158 +38,158 @@
 
                                         <div class="col" style="text-align:center">Espirituais
                                             <div class="form-check m-2">
-                                                <input id="21" type="checkbox" name="maf" data-size="small"
+                                                <input id="21" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-size="small" data-toggle="toggle" data-onstyle="success"
-                                                    data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                                                    data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" value="1">
                                                 <label for="maf" class="form-check-label tooltips">1.1<span
                                                         class="tooltiptext">Mediunidade aflorada</span></label>
                                             </div>
                                             <div class="form-check m-2">
-                                                <input id="1" type="checkbox" name="ies" data-size="small"
+                                                <input id="1" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-size="small" data-toggle="toggle" data-onstyle="success"
-                                                    data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
+                                                    data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não" value="2">
                                                 <label for="ies" class="form-check-label tooltips">1.2<span
                                                         class="tooltiptext">Influenciação espiritual</span></label>
                                             </div>
                                             <div class="form-check m-2">
-                                                <input id="2" type="checkbox" name="obs" data-size="small"
+                                                <input id="2" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="3">
                                                 <label for="obs" class="form-check-label tooltips">1.3<span
                                                         class="tooltiptext">Obsessão</span></label>
                                             </div>
                                         </div>
                                         <div class="col" style="text-align:center;">Relacionamento
                                             <div class="form-check  m-2">
-                                                <input id="5" type="checkbox" name="coj" data-size="small"
+                                                <input id="5" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="4">
                                                 <label for="coj" class="form-check-label tooltips">2.1<span
                                                         class="tooltiptext">Conjugal</span></label>
                                             </div>
                                             <div class="form-check   m-2">
-                                                <input id="6" type="checkbox" name="fam" data-size="small"
+                                                <input id="6" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="5">
                                                 <label for="fam" class="form-check-label tooltips">2.2<span
                                                         class="tooltiptext">Familiar</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="7" type="checkbox" name="soc" data-size="small"
+                                                <input id="7" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="6">
                                                 <label for="soc" class="form-check-label tooltips">2.3<span
                                                         class="tooltiptext">Social</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="8" type="checkbox" name="prf" data-size="small"
+                                                <input id="8" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="7">
                                                 <label for="prf" class="form-check-label tooltips">2.4<span
                                                         class="tooltiptext">Profissional</span></label>
                                             </div>
                                         </div>
                                         <div class="col" style="text-align:center;">Físicas/mentais
                                             <div class="form-check  m-2">
-                                                <input id="14" type="checkbox" name="sau" data-size="small"
+                                                <input id="14" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="8">
                                                 <label for="sau" class="form-check-label tooltips">3.1<span
                                                         class="tooltiptext">Saúde</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="15" type="checkbox" name="pdg" data-size="small"
+                                                <input id="15" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="9">
                                                 <label for="pdg" class="form-check-label tooltips">3.2<span
                                                         class="tooltiptext">Psiquiátrica diagnosticada</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="16" type="checkbox" name="sex" data-size="small"
+                                                <input id="16" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="10">
                                                 <label for="sex" class="form-check-label tooltips">3.3<span
                                                         class="tooltiptext">Sexualidade</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="17" type="checkbox" name="dts" data-size="small"
+                                                <input id="17" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="11">
                                                 <label for="dts" class="form-check-label tooltips">4.1<span
                                                         class="tooltiptext">Desânimo / Tristeza /<br />
                                                         Solidão</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="18" type="checkbox" name="adp" data-size="small"
+                                                <input id="18" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="12">
                                                 <label for="adp" class="form-check-label tooltips">4.2<span
                                                         class="tooltiptext">Ansiedade / Depressão</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="19" type="checkbox" name="dqu" data-size="small"
+                                                <input id="19" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="13">
                                                 <label for="dqu" class="form-check-label tooltips">4.3<span
                                                         class="tooltiptext">Dependência química</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="20" type="checkbox" name="est" data-size="small"
+                                                <input id="20" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="14">
                                                 <label for="est" class="form-check-label tooltips">4.4<span
                                                         class="tooltiptext">Estresse</span></label>
                                             </div>
                                         </div>
                                         <div class="col" style="text-align:center;">Comportamentais
                                             <div class="form-check  m-2">
-                                                <input id="3" type="checkbox" name="abo" data-size="small"
+                                                <input id="3" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="15">
                                                 <label for="abo" class="form-check-label tooltips">5.1<span
                                                         class="tooltiptext">Aborto</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="4" type="checkbox" name="sui" data-size="small"
+                                                <input id="4" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="16">
                                                 <label for="sui" class="form-check-label tooltips">5.2<span
                                                         class="tooltiptext">Suicídio</span></label>
                                             </div>
                                         </div>
                                         <div class="col" style="text-align:center;">Cotidiano
                                             <div class="form-check  m-2">
-                                                <input id="9" type="checkbox" name="dou" data-size="small"
+                                                <input id="9" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não"  value="17">
                                                 <label for="dou" class="form-check-label tooltips">6.1<span
                                                         class="tooltiptext">Interesse pela Doutrina</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="10" type="checkbox" name="son" data-size="small"
+                                                <input id="10" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="18">
                                                 <label for="son" class="form-check-label tooltips">6.2<span
                                                         class="tooltiptext">Sonhos</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="11" type="checkbox" name="esp" data-size="small"
+                                                <input id="11" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="19">
                                                 <label for="esp" class="form-check-label tooltips">6.3<span
                                                         class="tooltiptext">Medo de espíritos</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="12" type="checkbox" name="dpr" data-size="small"
+                                                <input id="12" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="20">
                                                 <label for="dpr" class="form-check-label tooltips">6.4<span
                                                         class="tooltiptext">Dificuldades profissionais</span></label>
                                             </div>
                                             <div class="form-check  m-2">
-                                                <input id="13" type="checkbox" name="deq" data-size="small"
+                                                <input id="13" type="checkbox" name="tematicas[]" data-size="small"
                                                     data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não">
+                                                    data-onlabel="Sim" data-offlabel="Não" value="21">
                                                 <label for="dpr" class="form-check-label tooltips">6.5<span
                                                         class="tooltiptext">Desencarne de ente querido</span></label>
                                             </div>

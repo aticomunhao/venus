@@ -187,7 +187,7 @@ class MediunidadePessoaController extends Controller
                 DB::table('historico_venus')->insert([
                     'id_usuario' => $ida,
                     'data' => $data,
-                    'fato' => 38,
+                    'fato' => 18,
                     'pessoa' => $id,
                 ]);
         

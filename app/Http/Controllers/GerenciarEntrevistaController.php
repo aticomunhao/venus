@@ -627,7 +627,7 @@ class GerenciarEntrevistaController extends Controller
 
                     'id_usuario' => session()->get('usuario.id_usuario'),
                     'data' => $data,
-                    'fato' => 40,
+                    'fato' => 15,
                     'obs' => $id
 
                 ]);

@@ -326,6 +326,14 @@ class MembroController extends Controller
                 'dt_inicio' => $data,
             ]);
 
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $data,
+                'pessoa' => 'Associado:' . $request->input('id_associado'),
+                'obs' => 'Reuniao:' . $request->input('id_reuniao'),
+                'fato' => 21, // Ajuste o valor conforme necessário
+            ]);
+
             app('flasher')->addSuccess('Cadastrado com Sucesso');
             return redirect('gerenciar-grupos-membro');
         } catch (\Exception $e) {

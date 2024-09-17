@@ -51,7 +51,7 @@
                         </tr>
                     </thead>
                     <tbody style="font-size: 14px; color:#000000; text-align: center;">
-                        @foreach ($countTematicas as $key => $tematica)
+                        @foreach ($tematicasArray as $key => $tematica)
                             <tr>
                                 <td> {{ $key }} </td>
                                 <td> {{ $tematica }} </td>
@@ -81,12 +81,15 @@
         new Chart(ctx, {
             type: 'bar',
             data: {
-
+                label: [
+                    'desanimo',
+                    'dificuldade'
+                ],
                 datasets: [
 
                     {
                         label: 'Total',
-                        data: @JSON($countTematicas),
+                        data: @JSON($tematicasArray),
                         backgroundColor: [
                             'rgba(0, 145, 255, 0.4)',
                             'rgba(0, 145, 255, 0.4)',

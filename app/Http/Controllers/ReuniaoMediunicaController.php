@@ -208,7 +208,7 @@ class ReuniaoMediunicaController extends Controller
         DB::table('historico_venus')->insert([
             'id_usuario' => $usuario,
             'data' => $now,
-            'fato' => 34,
+            'fato' => 16,
             'id_ref' => $result
         ]);
 
@@ -391,7 +391,7 @@ class ReuniaoMediunicaController extends Controller
             DB::table('historico_venus')->insert([
                 'id_usuario' => $usuario,
                 'data' => $now,
-                'fato' => 34,
+                'fato' => 16,
                 'id_ref' => $result
             ]);
 

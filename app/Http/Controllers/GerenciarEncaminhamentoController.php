@@ -851,7 +851,7 @@ class GerenciarEncaminhamentoController extends Controller
 
             'id_usuario' => session()->get('usuario.id_usuario'),
             'data' => $data,
-            'fato' => 39,
+            'fato' => 19,
             'obs' => $ide
 
         ]);

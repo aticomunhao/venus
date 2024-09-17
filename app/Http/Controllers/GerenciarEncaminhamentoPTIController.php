@@ -498,7 +498,7 @@ class GerenciarEncaminhamentoPTIController extends Controller
                     DB::table('historico_venus')->insert([
                         'id_usuario' => session()->get('usuario.id_usuario'),
                         'data' => $today,
-                        'fato' => 36,
+                        'fato' => 39,
                         'id_ref' => $ide,
                     ]);
 
@@ -816,7 +816,7 @@ class GerenciarEncaminhamentoPTIController extends Controller
                     DB::table('historico_venus')->insert([
                         'id_usuario' => session()->get('usuario.id_usuario'),
                         'data' => $data,
-                        'fato' => 39,
+                        'fato' => 19,
                         'obs' => $ide,
                     ]);
 

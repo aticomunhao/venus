@@ -121,26 +121,13 @@
                                                     <tr style="text-align:center;font-size:11px">
 
                                                         <td>
-                                                            -
-                                                            {{ $analisas->t1 ? $analisas->t1 . ' -' : '' }}
-                                                            {{ $analisas->t2 ? $analisas->t2 . ' -' : '' }}
-                                                            {{ $analisas->t3 ? $analisas->t3 . ' -' : '' }}
-                                                            {{ $analisas->t4 ? $analisas->t4 . ' -' : '' }}
-                                                            {{ $analisas->t5 ? $analisas->t5 . ' -' : '' }}
-                                                            {{ $analisas->t6 ? $analisas->t6 . ' -' : '' }}
-                                                            {{ $analisas->t7 ? $analisas->t7 . ' -' : '' }}
-                                                            {{ $analisas->t8 ? $analisas->t8 . ' -' : '' }}
-                                                            {{ $analisas->t9 ? $analisas->t9 . ' -' : '' }}
-                                                            {{ $analisas->t10 ? $analisas->t10 . ' -' : '' }}
-                                                            {{ $analisas->t11 ? $analisas->t11 . ' -' : '' }}
-                                                            {{ $analisas->t12 ? $analisas->t12 . ' -' : '' }}
-                                                            {{ $analisas->t13 ? $analisas->t13 . ' -' : '' }}
-                                                            {{ $analisas->t14 ? $analisas->t14 . ' -' : '' }}
-                                                            {{ $analisas->t15 ? $analisas->t15 . ' -' : '' }}
-                                                            {{ $analisas->t16 ? $analisas->t16 . ' -' : '' }}
-                                                            {{ $analisas->t17 ? $analisas->t17 . ' -' : '' }}
-                                                            {{ $analisas->t18 ? $analisas->t18 . ' -' : '' }}
-                                                            {{ $analisas->t19 ? $analisas->t19 . ' -' : '' }}
+                                                            @foreach ($analisas->tematicas as $item)
+                                                                @if ($loop->first)
+                                                                    {{ $item->tematica }}
+                                                                @else
+                                                                    {{ ' - ' . $item->tematica }}
+                                                                @endif
+                                                            @endforeach
                                                         </td>
 
                                                     </tr>
