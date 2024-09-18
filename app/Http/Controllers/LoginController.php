@@ -60,20 +60,34 @@ class LoginController extends Controller
                         group by u.id, p.id, a.id
                         ");
         if (count($result) > 0) {
-         
+
             $perfis = explode(',', $result[0]->perfis);
             $setores = explode(',', $result[0]->setor);
+
             $perfis = $perfis[0] == '' ? [0] : $perfis;
             $setores = $setores[0] == '' ? [0] : $setores;
+
+            $setores = DB::table('setor as st')
+                ->leftJoin('setor as stf', 'st.id', 'stf.setor_pai')
+                ->leftJoin('setor as stn', 'stf.id', 'stn.setor_pai')
+                ->select('st.id as ids', 'stf.id as idf', 'stn.id as idn')
+                ->whereIn('st.id', $setores)
+                ->get();
+
+            $setores = json_decode(json_encode($setores), true);
+            $setores = (array_unique(array_merge(array_column($setores, 'ids'), array_column($setores, 'idf'), array_column($setores, 'idn'))));
             $array_setores = $setores;
 
             $perfis = DB::table('rotas_perfil')->whereIn('id_perfil', $perfis)->orderBy('id_rotas')->pluck('id_rotas');
             $setores = DB::table('rotas_setor')->whereIn('id_setor', $setores)->orderBy('id_rotas')->pluck('id_rotas');
 
+
             $perfis = json_decode(json_encode($perfis), true);
             $setores = json_decode(json_encode($setores), true);
 
             $rotasAutorizadas = array_intersect($perfis, $setores);
+
+
 
             $hash_senha = $result[0]->hash_senha;
 
@@ -134,7 +148,19 @@ class LoginController extends Controller
             if ($cpf = session()->get('usuario.cpf')) {
                 $perfis = explode(',', $result[0]->perfis);
                 $setores = explode(',', $result[0]->setor);
+
+                $setores = DB::table('setor as st')
+                    ->leftJoin('setor as stf', 'st.id', 'stf.setor_pai')
+                    ->leftJoin('setor as stn', 'stf.id', 'stn.setor_pai')
+                    ->select('st.id as ids', 'stf.id as idf', 'stn.id as idn')
+                    ->whereIn('st.id', $setores)
+                    ->get();
+
+                $setores = json_decode(json_encode($setores), true);
+                $setores = (array_unique(array_merge(array_column($setores, 'ids'), array_column($setores, 'idf'), array_column($setores, 'idn'))));
                 $array_setores = $setores;
+
+
 
                 $perfis = DB::table('rotas_perfil')->whereIn('id_perfil', $perfis)->orderBy('id_rotas')->pluck('id_rotas');
                 $setores = DB::table('rotas_setor')->whereIn('id_setor', $setores)->orderBy('id_rotas')->pluck('id_rotas');

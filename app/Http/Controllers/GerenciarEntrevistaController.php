@@ -62,8 +62,7 @@ class GerenciarEntrevistaController extends Controller
                 $query->orWhere('entrevistas.id', '<>', NULL);
             })
             ->whereNotIn('tipo_entrevista.id', [8]) // Exclui o tipo de entrevista 8
-            ->whereBetween('tipo_entrevista.id', [1, 7])
-            ->whereIn('tipo_entrevista.id_setor', session()->get('usuario.setor')) // Inclui os tipos de entrevista de 1 a 7
+            ->whereBetween('tipo_entrevista.id', [1, 7]) // Inclui os tipos de entrevista de 1 a 7
             ->select(
                 'entrevistas.id_entrevistador',
                 DB::raw("CASE
@@ -91,8 +90,10 @@ class GerenciarEntrevistaController extends Controller
                 'atendimentos.dh_inicio as inicio'
             );
 
-
-
+            if(!in_array(36, session()->get('usuario.acesso'))){
+                $informacoes =  $informacoes->whereIn('tipo_entrevista.id_setor', session()->get('usuario.setor'));
+            }
+            
         $i = 0;
         $pesquisaNome = null;
         $pesquisaStatus = 0;

@@ -191,7 +191,7 @@ class RelatoriosController extends Controller
     public function tematicas(Request $request)
     {
         $dt_inicio = $request->dt_inicio == null ? (Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d')) : $request->dt_inicio;
-        $dt_fim =  $request->dt_fim == null ? Carbon::tomorrow()->format('Y-m-d') : $request->dt_fim;
+        $dt_fim =  $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
         $tematicas = DB::table('registro_tema as rt')
         ->leftJoin('atendimentos as at', 'rt.id_atendimento', 'at.id')
         ->rightJoin('tipo_temas as tm', 'rt.id_tematica', 'tm.id')
@@ -621,11 +621,18 @@ class RelatoriosController extends Controller
         return view('relatorios.visualizar-assistido-reuniao', compact('id', 'presencasAssistidosArray','presencasMembrosArray', 'presencasCountAssistidos', 'presencasCountMembros', 'dt_inicio', 'dt_fim', 'grupo'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+public function teste(){
+    
+    $setor = DB::table('setor as st')
+    ->leftJoin('setor as stf', 'st.id', 'stf.setor_pai')
+    ->leftJoin('setor as stn', 'stf.id', 'stn.setor_pai')
+    ->select('st.id as ids', 'stf.id as idf', 'stn.id as idn')
+    ->whereIn('st.id', session()->get('usuario.setor'))
+    ->get();
+
+    Barryvdh
+    
+    $setor = json_decode(json_encode($setor), true);
+    $setor = (array_unique(array_merge(array_column($setor, 'ids'), array_column($setor, 'idf'), array_column($setor, 'idn'))));
+}
 }
