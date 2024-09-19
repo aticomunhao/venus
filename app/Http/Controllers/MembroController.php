@@ -312,7 +312,7 @@ class MembroController extends Controller
             ->join('cronograma AS c', 'm.id_cronograma', '=', 'c.id')
             ->where('m.id_associado', $request->input('id_associado'))
             ->where('m.id_funcao', $request->input('id_funcao'))
-            ->where('c.id_grupo', $seletedCronograma->id_grupo)
+            ->where('c.id', $seletedCronograma->id_grupo)
             ->get();
 
             dd($repetfuncao, $request->input('id_funcao'));
