@@ -622,17 +622,6 @@ class RelatoriosController extends Controller
     }
 
 public function teste(){
-    
-    $setor = DB::table('setor as st')
-    ->leftJoin('setor as stf', 'st.id', 'stf.setor_pai')
-    ->leftJoin('setor as stn', 'stf.id', 'stn.setor_pai')
-    ->select('st.id as ids', 'stf.id as idf', 'stn.id as idn')
-    ->whereIn('st.id', session()->get('usuario.setor'))
-    ->get();
-
-    Barryvdh
-    
-    $setor = json_decode(json_encode($setor), true);
-    $setor = (array_unique(array_merge(array_column($setor, 'ids'), array_column($setor, 'idf'), array_column($setor, 'idn'))));
+   
 }
 }

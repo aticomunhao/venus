@@ -4,7 +4,7 @@
 @endsection
 @section('content')
     <br />
-    <a href="#" onclick="window.open('MyPDF.pdf', '_blank', 'fullscreen=yes'); return false;">MyPDF</a>
+
    
 
     <button type="button" class="btn btn-danger btn-floating btn-lg" id="btn-back-to-top">
