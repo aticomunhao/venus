@@ -76,7 +76,7 @@
                                 </select>
                             </div>
                             <div class="col">Número
-                                <input type="text" class="form-control" id="numero" maxlength="4" name="numero" value={{$salaEditada->numero}} >
+                                <input type="text" class="form-control" id="numero" maxlength="10" name="numero" value={{$salaEditada->numero}} >
 
                             </div>
                             <div class="col">M² da sala
