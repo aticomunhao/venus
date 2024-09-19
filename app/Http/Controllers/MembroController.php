@@ -315,7 +315,7 @@ class MembroController extends Controller
             ->where('c.id_grupo', $seletedCronograma->id_grupo)
             ->get();
 
-            //dd($repetfuncao, $request->input('id_funcao'));
+            dd($repetfuncao, $request->input('id_funcao'));
         // Se o membro já estiver registrado na mesma função e grupo, bloquear o cadastro
         if ($repetfuncao) {
             app('flasher')->addError('Este membro já está cadastrado nesta função para o mesmo grupo.');
