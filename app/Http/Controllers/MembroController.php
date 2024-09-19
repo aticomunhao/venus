@@ -143,8 +143,8 @@ class MembroController extends Controller
         ->where('m.id_associado', $request->input('id_associado'))
         ->where('m.id_funcao', $request->input('id_funcao'))
         ->where('c.id_grupo', $seletedCronograma->id_grupo)
-        ->exists();
-
+        ->get();
+        dd($repetfuncao);
     // Se o membro já estiver registrado na mesma função e grupo, bloquear o cadastro
     if ($repetfuncao) {
         app('flasher')->addError('Este membro já está cadastrado nesta função para o mesmo grupo.');
@@ -182,13 +182,15 @@ class MembroController extends Controller
                 ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
                 ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
                 ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-                ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
+                ->leftJoin('cronograma AS cro', 'm.id_cronograma', '=', 'cro.id')
+                ->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')
                 ->where('m.id_cronograma', $id)
                 ->select(
                     'p.nome_completo',
                     'm.id AS idm',
                     'm.id_associado',
                     'm.id_funcao',
+                    'm.id_cronograma',
                     'p.cpf',
                     'p.motivo_status',
                     'tf.nome as nome_funcao',
@@ -198,10 +200,11 @@ class MembroController extends Controller
                 )
                 ->orderBy('status')
                 ->orderBy('p.nome_completo', 'ASC');
+      
 
             // Filtros
             $nome = $request->nome_pesquisa;
-            $status = $request->status ?? 'Ativo'; // Define "Ativo" como valor padrão se não for informado
+            $status = $request->status ?? null; // Define "Ativo" como valor padrão se não for informado
             $cpf = $request->cpf_pesquisa;
             $grupoPesquisa = $request->grupo_pesquisa;
 
@@ -310,8 +313,9 @@ class MembroController extends Controller
             ->where('m.id_associado', $request->input('id_associado'))
             ->where('m.id_funcao', $request->input('id_funcao'))
             ->where('c.id_grupo', $seletedCronograma->id_grupo)
-            ->exists();
+            ->get();
 
+            dd($repetfuncao, $request->input('id_funcao'));
         // Se o membro já estiver registrado na mesma função e grupo, bloquear o cadastro
         if ($repetfuncao) {
             app('flasher')->addError('Este membro já está cadastrado nesta função para o mesmo grupo.');
