@@ -8,6 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
 
 class RelatoriosController extends Controller
 {
@@ -193,20 +194,20 @@ class RelatoriosController extends Controller
         $dt_inicio = $request->dt_inicio == null ? (Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d')) : $request->dt_inicio;
         $dt_fim =  $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
         $tematicas = DB::table('registro_tema as rt')
-        ->leftJoin('atendimentos as at', 'rt.id_atendimento', 'at.id')
-        ->rightJoin('tipo_temas as tm', 'rt.id_tematica', 'tm.id')
-        ->where('at.dh_chegada', '>=', $dt_inicio)
-        ->where('at.dh_chegada', '<', $dt_fim)
-        ->groupBy('nm_tca')
-        ->select('nm_tca', DB::raw("count(*) as total"))
-        ->get();
+            ->leftJoin('atendimentos as at', 'rt.id_atendimento', 'at.id')
+            ->rightJoin('tipo_temas as tm', 'rt.id_tematica', 'tm.id')
+            ->where('at.dh_chegada', '>=', $dt_inicio)
+            ->where('at.dh_chegada', '<', $dt_fim)
+            ->groupBy('nm_tca')
+            ->select('nm_tca', DB::raw("count(*) as total"))
+            ->get();
 
         $tematicas = json_decode(json_encode($tematicas), true);
         $nomes_temas = DB::table('tipo_temas')->pluck('nm_tca');
-    
+
         $tematicasArray = array();
-        foreach($nomes_temas as $tema){
-            $tematicasArray[$tema] = in_array($tema,array_column($tematicas, 'nm_tca')) ? $tematicas[array_search($tema,array_column($tematicas, 'nm_tca'))]['total'] : 0;
+        foreach ($nomes_temas as $tema) {
+            $tematicasArray[$tema] = in_array($tema, array_column($tematicas, 'nm_tca')) ? $tematicas[array_search($tema, array_column($tematicas, 'nm_tca'))]['total'] : 0;
         }
 
 
@@ -618,10 +619,17 @@ class RelatoriosController extends Controller
         }
         $presencasCountMembros[2] = 0;
 
-        return view('relatorios.visualizar-assistido-reuniao', compact('id', 'presencasAssistidosArray','presencasMembrosArray', 'presencasCountAssistidos', 'presencasCountMembros', 'dt_inicio', 'dt_fim', 'grupo'));
+        return view('relatorios.visualizar-assistido-reuniao', compact('id', 'presencasAssistidosArray', 'presencasMembrosArray', 'presencasCountAssistidos', 'presencasCountMembros', 'dt_inicio', 'dt_fim', 'grupo'));
     }
 
-public function teste(){
-   
-}
+    public function teste()
+    {
+
+
+        $pdf = \PDF::loadView('relatorios.teste');
+        return $pdf->download('invoice.pdf');
+
+
+
+    }
 }
