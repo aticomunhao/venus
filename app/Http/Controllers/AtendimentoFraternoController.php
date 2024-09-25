@@ -32,7 +32,7 @@ class AtendimentoFraternoController extends Controller
     public function index(Request $request)
     {
 
-        try {
+     
 
             $atendente = session()->get('usuario.id_associado');
 
@@ -51,12 +51,37 @@ class AtendimentoFraternoController extends Controller
 
             //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente, que não sejam AFE
             $assistido = DB::table('atendimentos AS at')
-                ->select('at.id AS idat', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido AS idas', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'p3.nome_completo AS nm_3', 'at.id_atendente', 'p4.nome_completo AS nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tx.tipo', 'pa.nome', 'at.id_prioridade', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.status_atendimento')
+                ->select(
+                    'at.id AS idat',
+                    'p1.ddd',
+                    'p1.celular',
+                    'at.dh_chegada',
+                    'at.dh_inicio',
+                    'at.dh_fim',
+                    'at.id_assistido AS idas',
+                    'p1.nome_completo AS nm_1',
+                    'at.id_representante',
+                    'p2.nome_completo AS nm_2',
+                    'at.id_atendente_pref',
+                    'p3.nome_completo AS nm_3',
+                    'at.id_atendente',
+                    'p4.nome_completo AS nm_4',
+                    'at.pref_tipo_atendente AS pta',
+                    'ts.descricao',
+                    'tx.tipo',
+                    'pa.nome',
+                    'at.id_prioridade',
+                    'pr.descricao AS prdesc',
+                    'pr.sigla AS prsigla',
+                    'at.status_atendimento',
+             
+                )
                 ->leftJoin('associado AS a', 'at.id_atendente', 'a.id')
                 ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                 ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                 ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                ->leftJoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+                ->leftJoin('associado AS ass_at_preferido', 'at.id_atendente_pref', 'ass_at_preferido.id')
+                ->leftJoin('pessoas AS p3', 'ass_at_preferido.id_pessoa', 'p3.id')
                 ->leftJoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
                 ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
                 ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
@@ -67,15 +92,13 @@ class AtendimentoFraternoController extends Controller
                 ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
                 ->orderby('status_atendimento', 'ASC')
                 ->get();
+                
+
 
             //dd($assistido, $grupo, $now, $nome, $pref_m, $atendente);
 
             return view('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
-        } catch (\Exception $e) {
-
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
+      
     }
 
     public function atende_agora()
@@ -98,6 +121,7 @@ class AtendimentoFraternoController extends Controller
                 ->where('afe', null)
                 ->where('at.status_atendimento', '<', 5)
                 ->count();
+
 
             //Conta quantos atendimentos estão Aguardando Atendimento
             $atende = DB::table('atendimentos')->where('status_atendimento', 1)->where('afe', null)->where('status_atendimento', 1)->whereNull('id_atendente_pref')->whereNull('pref_tipo_atendente')->pluck('id');
@@ -215,7 +239,7 @@ class AtendimentoFraternoController extends Controller
                     ->get();
                 $teste->entrevistas = $entre;
 
-                $tematica= DB::table('registro_tema AS rt')
+                $tematica = DB::table('registro_tema AS rt')
                     ->select('tt.nm_tca as tematica')
                     ->leftJoin('tipo_temas as  tt', 'rt.id_tematica', 'tt.id')
                     ->where('rt.id_atendimento', $teste->ida)
@@ -506,7 +530,7 @@ class AtendimentoFraternoController extends Controller
     {
 
         $r_tema = DB::table('registro_tema')->where('id_atendimento', $idat)->count();
-        $nota= DB::table('atendimentos')->where('id', $idat)->first();
+        $nota = DB::table('atendimentos')->where('id', $idat)->first();
 
 
         // dd($ies, $obs, $coj);
@@ -891,7 +915,7 @@ class AtendimentoFraternoController extends Controller
                     ->get();
                 $teste->entrevistas = $entre;
 
-                $tematica= DB::table('registro_tema AS rt')
+                $tematica = DB::table('registro_tema AS rt')
                     ->select('tt.nm_tca as tematica')
                     ->leftJoin('tipo_temas as  tt', 'rt.id_tematica', 'tt.id')
                     ->where('rt.id_atendimento', $teste->ida)
@@ -899,7 +923,7 @@ class AtendimentoFraternoController extends Controller
                 $teste->tematicas = $tematica;
             }
 
-   
+
 
             $now = Carbon::now()->format('Y-m-d');
 
@@ -921,23 +945,23 @@ class AtendimentoFraternoController extends Controller
     public function tematica(Request $request, $idat)
     {
 
-       // dd($request->all());
+        // dd($request->all());
 
 
         DB::table('atendimentos AS at')->where('id', $idat)->update([
             'observacao' => $request->input('nota')
         ]);
 
-        if($request->tematicas){
-            foreach($request->tematicas as $tematica){
+        if ($request->tematicas) {
+            foreach ($request->tematicas as $tematica) {
                 DB::table('registro_tema AS rt')->insert([
-                        'id_atendimento' => $idat,
-                        'id_tematica' => $tematica,
-                     ]);
+                    'id_atendimento' => $idat,
+                    'id_tematica' => $tematica,
+                ]);
             }
         }
-      
-      
+
+
 
         app('flasher')->addSuccess('Os temas foram salvos com sucesso.');
 

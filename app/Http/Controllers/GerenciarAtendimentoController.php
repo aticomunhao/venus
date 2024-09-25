@@ -22,7 +22,7 @@ class GerenciarAtendimentoController extends Controller
 
 
 
-       // Filtra pela data de início, se fornecida, caso contrário, usa a data atual
+        // Filtra pela data de início, se fornecida, caso contrário, usa a data atual
 
 
         if ($dt_ini != 'null') {
@@ -175,8 +175,14 @@ class GerenciarAtendimentoController extends Controller
         order by prid DESC
         ");
 
-            $afi = DB::table('atendente_dia as at')->leftJoin('associado as a', 'at.id_associado', '=', 'a.id')->leftJoin('pessoas as p', 'a.id_pessoa', '=', 'p.id')->leftJoin('membro as m', 'm.id', '=', 'a.id')->whereNull('at.dh_fim')->where('at.dh_inicio', '>', $hoje)->select('m.id_associado', 'p.id as idp', 'p.nome_completo as nm_1', 'p.ddd', 'p.celular', 'm.id_associado as ida')->get();
-
+            $afi = DB::table('atendente_dia as at')
+                ->leftJoin('associado as a', 'at.id_associado', '=', 'a.id')
+                ->leftJoin('pessoas as p', 'a.id_pessoa', '=', 'p.id')
+                ->leftJoin('membro as m', 'm.id', '=', 'a.id')
+                ->whereNull('at.dh_fim')->where('at.dh_inicio', '>', $hoje)
+                ->select('p.id as idp', 'p.nome_completo as nm_1', 'p.ddd', 'p.celular',  'a.id as ida', 'm.id')
+                ->get();
+            // dd($afi);
             $sexo = DB::select("select
         id,
         tipo,
@@ -236,6 +242,9 @@ class GerenciarAtendimentoController extends Controller
                 'menor_auto' => $menor,
                 'status_atendimento' => 1,
             ]);
+
+
+
 
             DB::table('historico_venus')->insert([
                 'id_usuario' => $usuario,

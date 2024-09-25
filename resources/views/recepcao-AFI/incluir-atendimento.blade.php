@@ -70,32 +70,39 @@
                             </div>
                         </div>
                         <center>
-                        <div class="row mt-3">
+                            <div class="row mt-3">
 
 
-                                    <div class="col">
-                                            <div class="col">Menor de 18 anos</div>
-                                            <div class="col-1"><input id="menor" type="checkbox" name="menor" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não"></div>
-                                    </div>
-                                    <div class="col">
-                                            <div class="col">Representante</div>
-                                            <div class="col-1"><input id="representante" class="checkboxes" type="checkbox" name="representante" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não"></div>
-                                    </div>
-                                    <div class="col">
-                                            <div class="col">Pedido Especial</div>
-                                            <div class="col-1"><input id="pEspecial" class="checkboxes" type="checkbox" name="pEspecial" data-size="small" data-toggle="toggle"  data-onstyle="success"  data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não"></div>
-                                    </div>
-
-
+                                <div class="col">
+                                    <div class="col">Menor de 18 anos</div>
+                                    <div class="col-1"><input id="menor" type="checkbox" name="menor"
+                                            data-size="small" data-toggle="toggle" data-onstyle="success"
+                                            data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não"></div>
                                 </div>
-                            </center>
+                                <div class="col">
+                                    <div class="col">Representante</div>
+                                    <div class="col-1"><input id="representante" class="checkboxes" type="checkbox"
+                                            name="representante" data-size="small" data-toggle="toggle"
+                                            data-onstyle="success" data-offstyle="danger" data-onlabel="Sim"
+                                            data-offlabel="Não"></div>
+                                </div>
+                                <div class="col">
+                                    <div class="col">Pedido Especial</div>
+                                    <div class="col-1"><input id="pEspecial" class="checkboxes" type="checkbox"
+                                            name="pEspecial" data-size="small" data-toggle="toggle" data-onstyle="success"
+                                            data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não"></div>
+                                </div>
+
+
                             </div>
+                        </center>
+                </div>
             </div>
         </div>
-{{-- Fim do card de Assistido --}}
+        {{-- Fim do card de Assistido --}}
 
-{{-- Card Representante --}}
-<div class="card mt-4" id="represent" hidden>
+        {{-- Card Representante --}}
+        <div class="card mt-4" id="represent" hidden>
 
             <div class="card-header">
                 Incluir Representante/Responsável
@@ -127,26 +134,26 @@
                     </div>
                 </div>
                 <div class="row">
-                        <div class="input-group row mt-3">
-                            <div class="col-3">Parentesco
-                                <select class="form-select" id="parent" name="parent">
-                                    @foreach($parentes as $parentess)
-                                    <option value="{{$parentess->id}}">{{$parentess->nome}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col">Representante/Responsável
-                                <select class="form-select lista" id="repres" name="repres">
-                                </select>
-                            </div>
+                    <div class="input-group row mt-3">
+                        <div class="col-3">Parentesco
+                            <select class="form-select" id="parent" name="parent">
+                                @foreach ($parentes as $parentess)
+                                    <option value="{{ $parentess->id }}">{{ $parentess->nome }}</option>
+                                @endforeach
+                            </select>
                         </div>
+                        <div class="col">Representante/Responsável
+                            <select class="form-select lista" id="repres" name="repres">
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-{{-- Fim card Representante --}}
+        {{-- Fim card Representante --}}
 
-{{-- Card Pedido Especial --}}
-        <div class="card mt-4"  id="pedidoEspecial" hidden>
+        {{-- Card Pedido Especial --}}
+        <div class="card mt-4" id="pedidoEspecial" hidden>
             <div class="card-header">
                 Incluir Pedido Especial
             </div>
@@ -155,28 +162,28 @@
 
 
                     <div class="col">Tipo AFI
-                        <select class="form-select pedido" id="tipo_afi" name="tipo_afi" >
+                        <select class="form-select pedido" id="tipo_afi" name="tipo_afi">
                             <option></option>
-                            @foreach($sexo as $sexos)
-                            <option value="{{$sexos->id}}">{{$sexos->tipo}}</option>
+                            @foreach ($sexo as $sexos)
+                                <option value="{{ $sexos->id }}">{{ $sexos->tipo }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="col" id="hiddenField" >AFI preferido
-                        <select class="form-select pedido" id="afi_p" name="afi_p" >
+                    <div class="col" id="hiddenField">AFI preferido
+                        <select class="form-select pedido" id="afi_p" name="afi_p">
                             <option></option>
-                            @foreach($afi as $afis)
-                            <option value="{{$afis->ida}}">{{$afis->nm_1}}</option>
+                            @foreach ($afi as $afis)
+                                <option value="{{ $afis->ida }}">{{ $afis->nm_1 }}</option>
                             @endforeach
                         </select>
                     </div>
 
 
-                        </div>
                 </div>
+            </div>
         </div>
-{{-- Fim Card Pedido Especial --}}
+        {{-- Fim Card Pedido Especial --}}
 
 
 
@@ -196,128 +203,123 @@
         </center>
     </div>
 
-    
+
 
     <script>
-   $(document).ready(function() {
-    $('#assist').prop('selectedIndex', -1);
-    $('#repres').prop('selectedIndex', -1);
-    $('#parent').prop('selectedIndex', -1);
+        $(document).ready(function() {
+            $('#assist').prop('selectedIndex', -1);
+            $('#repres').prop('selectedIndex', -1);
+            $('#parent').prop('selectedIndex', -1);
 
-    function ajaxAssistido() {
-        var nome = $('#cpfAssistido').val();
-        $('#cpfAssistido').removeClass('is-invalid');
-        $('#labelNumeroCpfAssistido').prop('hidden', true);
-        $('#labelCpfAssistido').prop('hidden', true);
-        $('#assist').html('');
-        $('#assist').prop('selectedIndex', -1);
-        
-        if (nome.length < 1) {
-            $('#cpfAssistido').addClass('is-invalid');
-            $('#labelNumeroCpfAssistido').prop('hidden', false);
-        } else {
-            $.ajax({
-                type: "GET",
-                url: "/ajaxCRUD?nome=" + nome,
-                dataType: "json",
-                success: function(response) {
-                    console.log(response);
-                    if(response.length === 0) {
-                        $('#cpfAssistido').addClass('is-invalid');
-                        $('#labelCpfAssistido').prop('hidden', false);
-                    } else {
-                        $.each(response, function() {
-                            $('#assist').append('<option value="' + this.id + '">' + this.nome_completo + '</option>');
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
+            function ajaxAssistido() {
+                var nome = $('#cpfAssistido').val();
+                $('#cpfAssistido').removeClass('is-invalid');
+                $('#labelNumeroCpfAssistido').prop('hidden', true);
+                $('#labelCpfAssistido').prop('hidden', true);
+                $('#assist').html('');
+                $('#assist').prop('selectedIndex', -1);
+
+                if (nome.length < 1) {
                     $('#cpfAssistido').addClass('is-invalid');
-                    $('#labelCpfAssistido').prop('hidden', false);
+                    $('#labelNumeroCpfAssistido').prop('hidden', false);
+                } else {
+                    $.ajax({
+                        type: "GET",
+                        url: "/ajaxCRUD?nome=" + nome,
+                        dataType: "json",
+                        success: function(response) {
+                            console.log(response);
+                            if (response.length === 0) {
+                                $('#cpfAssistido').addClass('is-invalid');
+                                $('#labelCpfAssistido').prop('hidden', false);
+                            } else {
+                                $.each(response, function() {
+                                    $('#assist').append('<option value="' + this.id + '">' +
+                                        this.nome_completo + '</option>');
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            console.log(xhr.responseText);
+                            $('#cpfAssistido').addClass('is-invalid');
+                            $('#labelCpfAssistido').prop('hidden', false);
+                        }
+                    });
                 }
-            });
-        }
-    }
+            }
 
-    function ajaxResponsavel() {
-        var nome = $('#cpfResponsavel').val();
-        $('#cpfResponsavel').removeClass('is-invalid');
-        $('#labelNumeroCpfResponsavel').prop('hidden', true);
-        $('#labelCpfResponsavel').prop('hidden', true);
-        $('#repres').html('');
-        $('#repres').prop('selectedIndex', -1);
-        $('#parent').prop('selectedIndex', -1);
-        
-        if (nome.length < 1) {
-            $('#cpfResponsavel').addClass('is-invalid');
-            $('#labelNumeroCpfResponsavel').prop('hidden', false);
-        } else {
-            $.ajax({
-                type: "GET",
-                url: "/ajaxCRUD?nome=" + nome,
-                dataType: "json",
-                success: function(response) {
-                    if(response.length === 0) {
-                        $('#cpfResponsavel').addClass('is-invalid');
-                        $('#labelCpfResponsavel').prop('hidden', false);
-                    } else {
-                        $.each(response, function() {
-                            $('#repres').append('<option value="' + this.id + '">' + this.nome_completo + '</option>');
-                        });
-                    }
-                },
-                error: function(xhr) {
+            function ajaxResponsavel() {
+                var nome = $('#cpfResponsavel').val();
+                $('#cpfResponsavel').removeClass('is-invalid');
+                $('#labelNumeroCpfResponsavel').prop('hidden', true);
+                $('#labelCpfResponsavel').prop('hidden', true);
+                $('#repres').html('');
+                $('#repres').prop('selectedIndex', -1);
+                $('#parent').prop('selectedIndex', -1);
+
+                if (nome.length < 1) {
                     $('#cpfResponsavel').addClass('is-invalid');
-                    $('#labelCpfResponsavel').prop('hidden', false);
+                    $('#labelNumeroCpfResponsavel').prop('hidden', false);
+                } else {
+                    $.ajax({
+                        type: "GET",
+                        url: "/ajaxCRUD?nome=" + nome,
+                        dataType: "json",
+                        success: function(response) {
+                            if (response.length === 0) {
+                                $('#cpfResponsavel').addClass('is-invalid');
+                                $('#labelCpfResponsavel').prop('hidden', false);
+                            } else {
+                                $.each(response, function() {
+                                    $('#repres').append('<option value="' + this.id + '">' +
+                                        this.nome_completo + '</option>');
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            $('#cpfResponsavel').addClass('is-invalid');
+                            $('#labelCpfResponsavel').prop('hidden', false);
+                        }
+                    });
+                }
+            }
+
+            $('#bCpfAssistido').click(function() {
+                ajaxAssistido();
+            });
+
+            $('#bCpfResponsavel').click(function() {
+                ajaxResponsavel();
+            });
+
+            $('.checkboxes').change(function() {
+                if ($('#representante').prop('checked')) {
+                    $('#represent').prop('hidden', false);
+                } else {
+                    $('#represent').prop('hidden', true);
+                }
+                if ($('#pEspecial').prop('checked')) {
+                    $('#pedidoEspecial').prop('hidden', false);
+                } else {
+                    $('#pedidoEspecial').prop('hidden', true);
                 }
             });
-        }
-    }
 
-    $('#bCpfAssistido').click(function() {
-        ajaxAssistido();
-    });
+            $('.pedido').change(function() {
+                if ($('#tipo_afi').prop('selectedIndex') !== 0) {
+                    $('#afi_p').prop('disabled', true);
+                    $('#afi_p').prop('selectedIndex', 0);
+                } else {
+                    $('#afi_p').prop('disabled', false);
+                }
 
-    $('#bCpfResponsavel').click(function() {
-        ajaxResponsavel();
-    });
-
-    $('.checkboxes').change(function() {
-        if($('#representante').prop('checked')) {
-            $('#represent').prop('hidden', false);
-        } else {
-            $('#represent').prop('hidden', true);
-        }
-        if($('#pEspecial').prop('checked')) {
-            $('#pedidoEspecial').prop('hidden', false);
-        } else {
-            $('#pedidoEspecial').prop('hidden', true);
-        }
-    });
-
-    $('.pedido').change(function() {
-        if($('#tipo_afi').prop('selectedIndex') !== 0) {
-            $('#afi_p').prop('disabled', true);
-            $('#afi_p').prop('selectedIndex', 0);
-        } else {
-            $('#afi_p').prop('disabled', false);
-        }
-
-        if($('#afi_p').prop('selectedIndex') !== 0) {
-            $('#tipo_afi').prop('disabled', true);
-            $('#tipo_afi').prop('selectedIndex', 0);
-        } else {
-            $('#tipo_afi').prop('disabled', false);
-        }
-    });
-});
-
+                if ($('#afi_p').prop('selectedIndex') !== 0) {
+                    $('#tipo_afi').prop('disabled', true);
+                    $('#tipo_afi').prop('selectedIndex', 0);
+                } else {
+                    $('#tipo_afi').prop('disabled', false);
+                }
+            });
+        });
     </script>
-    
-
-
-
-   
-
 @endsection

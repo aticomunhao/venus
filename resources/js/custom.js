@@ -1,4 +1,4 @@
-//Quando eecutar a pagina usa o select2
+//Quando executar a pagina usa o select2
 
 $(function () {
     $('.select2').select2({
