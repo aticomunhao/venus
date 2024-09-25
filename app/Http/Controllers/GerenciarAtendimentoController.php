@@ -22,31 +22,31 @@ class GerenciarAtendimentoController extends Controller
 
 
 
-        // Filtra pela data de início, se fornecida, caso contrário, usa a data atual
+       // Filtra pela data de início, se fornecida, caso contrário, usa a data atual
 
 
-        // if ($dt_ini != 'null') {
-        //     $lista->whereDate('dh_chegada', $dt_ini);
-        // } elseif ($assist != 'null' or $cpf != 'null' or $status != 'null') {
-        // } else {
-        //     $lista->whereDate('dh_chegada', '>', Carbon::today()->toDateString());
-        // }
+        if ($dt_ini != 'null') {
+            $lista->whereDate('dh_chegada', $dt_ini);
+        } elseif ($assist != 'null' or $cpf != 'null' or $status != 'null') {
+        } else {
+            $lista->whereDate('dh_chegada', '>', Carbon::today()->toDateString());
+        }
 
-        // if ($assist != 'null') {
-        //     $lista->where('p1.nome_completo', 'ilike', "%$assist%");
-        // }
+        if ($assist != 'null') {
+            $lista->where('p1.nome_completo', 'ilike', "%$assist%");
+        }
 
-        // if ($status != 'null') {
-        //     $lista->where('at.status_atendimento', $status);
-        // }
+        if ($status != 'null') {
+            $lista->where('at.status_atendimento', $status);
+        }
 
 
 
-        // if ($cpf != 'null') {
-        //     $lista->where('p1.cpf', 'ilike', "%$cpf%");
-        // }
+        if ($cpf != 'null') {
+            $lista->where('p1.cpf', 'ilike', "%$cpf%");
+        }
 
-        // $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
+        $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
 
         $lista = $lista->get();
 
