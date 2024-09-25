@@ -24,7 +24,9 @@
  * Ela foi criada para substituir os Links CDN e só existe devido à um bug em Node_Modules
  * Para encontrar esses arquivos vá em Public/js
  --}}
-
+ 
+    {{-- CDN Jquery --}}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
     {{-- Import Jquery --}}
     <script src="{{ asset('js/jquery.js') }}"></script>
