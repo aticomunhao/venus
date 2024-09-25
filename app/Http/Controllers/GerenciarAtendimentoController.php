@@ -14,37 +14,39 @@ class GerenciarAtendimentoController extends Controller
     ////GERENCIAR ATENDIMENTOS DO DIA
 
 
-    public function ajaxAtendimento(String $assist, String $cpf, String $status, String $dt_ini){
+    public function ajaxAtendimento(String $assist, String $cpf, String $status, String $dt_ini)
+    {
 
 
         $lista = DB::table('atendimentos AS at')->select('at.id as ida', 'p1.id as idas', 'p.nome_completo as nm_3', 'at.status_atendimento', 'at.id_prioridade', 'at.dh_chegada', 'tx.tipo', 'tp.descricao as prdesc', 'p1.nome_completo as nm_1', 'p2.nome_completo as nm_2', 'p3.nome_completo as nm_4', 'sl.numero as nr_sala', 'ts.descricao', DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe"))->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')->leftJoin('pessoas as p3', 'ass1.id_pessoa', 'p3.id')->leftJoin('tp_sexo as tx', 'at.pref_tipo_atendente', 'tx.id')->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')->leftJoin('salas as sl', 'at.id_sala', 'sl.id')->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
-        
+
+
 
         // Filtra pela data de início, se fornecida, caso contrário, usa a data atual
 
 
-        if ($dt_ini != 'null') {
-            $lista->whereDate('dh_chegada', $dt_ini);
-        } elseif ($assist != 'null' or $cpf != 'null' or $status != 'null') {
-        } else {
-            $lista->whereDate('dh_chegada','>' ,Carbon::today()->toDateString());
-        }
+        // if ($dt_ini != 'null') {
+        //     $lista->whereDate('dh_chegada', $dt_ini);
+        // } elseif ($assist != 'null' or $cpf != 'null' or $status != 'null') {
+        // } else {
+        //     $lista->whereDate('dh_chegada', '>', Carbon::today()->toDateString());
+        // }
 
-        if ($assist != 'null') {
-            $lista->where('p1.nome_completo', 'ilike', "%$assist%");
-        }
+        // if ($assist != 'null') {
+        //     $lista->where('p1.nome_completo', 'ilike', "%$assist%");
+        // }
 
-        if ($status != 'null') {
-            $lista->where('at.status_atendimento', $status);
-        }
+        // if ($status != 'null') {
+        //     $lista->where('at.status_atendimento', $status);
+        // }
 
 
 
-        if ($cpf != 'null') {
-            $lista->where('p1.cpf', 'ilike', "%$cpf%");
-        }
+        // if ($cpf != 'null') {
+        //     $lista->where('p1.cpf', 'ilike', "%$cpf%");
+        // }
 
-        $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
+        // $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
 
         $lista = $lista->get();
 
@@ -114,14 +116,14 @@ class GerenciarAtendimentoController extends Controller
             $lista = $lista->get();
 
             $contar = $lista->count('at.id');
-          //  $lista = json_decode(json_encode($lista), true);
+            //  $lista = json_decode(json_encode($lista), true);
             $st_atend = DB::select("select
         s.id,
         s.descricao
         from tipo_status_atendimento s
         ");
 
-        $motivo = DB::table('tipo_motivo_atendimento')->get();
+            $motivo = DB::table('tipo_motivo_atendimento')->get();
 
 
             return view('/recepcao-AFI/gerenciar-atendimentos', compact('cpf', 'lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'situacao', 'now', 'motivo'));
@@ -133,17 +135,17 @@ class GerenciarAtendimentoController extends Controller
 
     ///CRIAR UM NOVO ATENDIMENTO
 
-    public function ajaxCRUD(Request $request) {
+    public function ajaxCRUD(Request $request)
+    {
 
 
         $pessoas = DB::table('pessoas')
-        ->select('id', 'nome_completo')
-        ->where(DB::raw('unaccent(lower(nome_completo))'), 'ilike', DB::raw("unaccent(lower('%{$request->nome}%'))"))
-        ->orderBy('nome_completo')
-        ->get();
+            ->select('id', 'nome_completo')
+            ->where(DB::raw('unaccent(lower(nome_completo))'), 'ilike', DB::raw("unaccent(lower('%{$request->nome}%'))"))
+            ->orderBy('nome_completo')
+            ->get();
 
         return $pessoas;
-
     }
 
     public function create()
@@ -326,11 +328,11 @@ class GerenciarAtendimentoController extends Controller
                 //dd($lista);
 
                 $afi  = DB::table('atendente_dia as at')
-                ->leftJoin('associado as a', 'at.id_associado', '=', 'a.id')
-                ->leftJoin('pessoas as p', 'a.id_pessoa', '=', 'p.id')
-                ->leftJoin('membro as m', 'm.id', '=', 'a.id')
-                ->whereNull('at.dh_fim')->where('at.dh_inicio', '>', $hoje)
-                ->select('m.id_associado', 'p.id as iaf', 'p.nome_completo as nm_afi', 'p.ddd', 'p.celular', 'm.id_associado as ida')->get();
+                    ->leftJoin('associado as a', 'at.id_associado', '=', 'a.id')
+                    ->leftJoin('pessoas as p', 'a.id_pessoa', '=', 'p.id')
+                    ->leftJoin('membro as m', 'm.id', '=', 'a.id')
+                    ->whereNull('at.dh_fim')->where('at.dh_inicio', '>', $hoje)
+                    ->select('m.id_associado', 'p.id as iaf', 'p.nome_completo as nm_afi', 'p.ddd', 'p.celular', 'm.id_associado as ida')->get();
 
                 $afiSelecionado = DB::table('associado')->where('id', $result->iap)->pluck('id_pessoa');
 
@@ -355,7 +357,7 @@ class GerenciarAtendimentoController extends Controller
                     order by id DESC
                     ");
 
-            //       dd($afiSelecionado);
+                //       dd($afiSelecionado);
 
                 return view('/recepcao-AFI/editar-atendimento', compact('result', 'priori', 'sexo', 'pare', 'afi', 'lista', 'afiSelecionado'));
             }
@@ -598,9 +600,9 @@ class GerenciarAtendimentoController extends Controller
                 ->where('p.status', 1)
                 ->leftJoin('atendente_dia AS atd', function ($join) use ($now, $no) {
                     $join->on('m.id_associado', '=', 'atd.id_associado')
-                         ->whereNull('atd.dh_fim')
-                         ->where('atd.dh_inicio', '>=', $now)
-                         ->where('atd.dh_inicio', '<', $no);
+                        ->whereNull('atd.dh_fim')
+                        ->where('atd.dh_inicio', '>=', $now)
+                        ->where('atd.dh_inicio', '<', $no);
                 })
 
                 ->where('gr.id_tipo_grupo', 3)
