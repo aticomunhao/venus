@@ -333,34 +333,30 @@ try{
             }
         }
     public function storeAvulso(Request $request){
-        try{
+        
 
         $hoje = Carbon::today();
         $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $hoje)->first();
-        $nrAcomp = $acompanhantes->nr_acompanhantes + $request->acompanhantes;
+        // $nrAcomp = $acompanhantes->nr_acompanhantes + $request->acompanhantes;
 
 
         DB::table('dias_cronograma')
         ->where('id_cronograma', $request->reuniao)
-        ->where('data', $hoje)
-        ->update([
-            'nr_acompanhantes' => $nrAcomp
-        ]);
+        ->where('data', $hoje);
+        // ->update([
+        //     'nr_acompanhantes' => $nrAcomp
+        // ]);
 
         DB::table('presenca_cronograma')
         ->insert([
             'presenca' => true,
             'id_pessoa' => $request->assistido,
-            'id_dias_cronograma' => $acompanhantes->id,
+            // 'id_dias_cronograma' => $acompanhantes->id,
             'id_motivo' => $request->motivo
         ]);
         return redirect('/gerenciar-tratamentos');
     }
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+   
+        
 
 }
