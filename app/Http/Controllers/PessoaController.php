@@ -120,9 +120,9 @@ class PessoaController extends Controller
             return redirect()->back()->withInput();
             //dd($e->errors());
         }
+     
 
-        if ($vercpf > 1) {
-
+        if ($vercpf >= 1) {
 
             app('flasher')->addError('Existe outro cadastro usando este número de CPF');
 
