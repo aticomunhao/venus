@@ -121,6 +121,7 @@ class AtendimentoFraternoController extends Controller
                 ->where('afe', null)
                 ->where('at.status_atendimento', '<', 5)
                 ->count();
+           
 
 
             //Conta quantos atendimentos estão Aguardando Atendimento
@@ -131,6 +132,7 @@ class AtendimentoFraternoController extends Controller
                 ->whereNull('id_atendente_pref')
                 ->whereNull('pref_tipo_atendente')
                 ->pluck('id');
+         
          
             $atende = json_decode(json_encode($atende), true);
            
