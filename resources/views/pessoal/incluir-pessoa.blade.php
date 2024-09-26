@@ -82,7 +82,7 @@
                             <div class="col">
                                 <div class="mb-5" style="text-align:left;">
                                     <label for="validationCustom06" class="form-label">Nr Celular</label>
-                                    <input class="form-control" maxlength="9" type="numeric" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" >
+                                    <input class="form-control" maxlength="9" type="numeric" name="celular" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" >
                                 </div>
                             </div>
                         </div>
