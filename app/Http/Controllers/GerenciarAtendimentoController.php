@@ -439,12 +439,27 @@ class GerenciarAtendimentoController extends Controller
             //  dd($now);
 
             $atende = DB::table('atendente_dia as atd')
-                ->select('atd.id AS nr', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4', 'p.id', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', DB::raw("(CASE WHEN atd.dh_inicio < '$now' OR  NOT atd.dh_fim IS NULL THEN 'Inativo' ELSE 'Ativo' END) as status"))
+                ->select(
+                    'atd.id AS nr',
+                    'atd.id AS idatd',
+                    'atd.id_associado AS idad',
+                    'atd.id_sala',
+                    'atd.dh_inicio',
+                    'atd.dh_fim',
+                    'p.nome_completo AS nm_4',
+                    'p.id',
+                    'g.id AS idg',
+                    'g.nome AS nomeg',
+                    's.id AS ids',
+                    's.numero AS nm_sala',
+                    DB::raw("(CASE WHEN atd.dh_inicio < '$now' OR  NOT atd.dh_fim IS NULL THEN 'Inativo' ELSE 'Ativo' END) as status")
+                )
                 ->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')
                 ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')
                 ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
                 ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
-                ->leftJoin('grupo AS g', 'atd.id_grupo', 'g.id');
+                ->leftJoin('cronograma AS cro', 'atd.id_grupo', 'cro.id')
+                ->leftJoin('grupo as g', 'cro.id_grupo', 'g.id');
 
             $data = $request->data;
 
@@ -636,8 +651,14 @@ class GerenciarAtendimentoController extends Controller
             // Outras consultas
             $st_atend = DB::table('tipo_status_pessoa')->select('id', 'tipo')->get();
             $situacao = DB::table('tipo_status_pessoa')->select('id AS ids', 'tipo')->get();
-            $grupo = DB::table('grupo AS g')->select('id', 'nome')->where('id_tipo_grupo', 3)->whereNull('data_fim')->orderBy('nome')->get();
-
+            $grupo = DB::table('grupo AS g')
+                ->select('id', 'nome')
+                ->where('id_tipo_grupo', 3)
+                ->whereNull('data_fim')
+                ->orderBy('nome')
+                ->get();
+            
+        
             foreach ($atende as $key => $lista) {
                 $result = DB::table('membro AS m')
                     ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
@@ -650,7 +671,7 @@ class GerenciarAtendimentoController extends Controller
                     ->get();
                 $lista->grup = $result;
             }
-
+           
             $salaAtendendo = DB::table('atendente_dia AS atd')
                 ->leftJoin('associado AS a', 'atd.id_associado', 'a.id')
                 ->where('dh_inicio', '>=', $now)
