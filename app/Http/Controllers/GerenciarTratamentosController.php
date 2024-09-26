@@ -332,31 +332,47 @@ try{
         return view('tratamento-erro.erro-inesperado', compact('code'));
             }
         }
-    public function storeAvulso(Request $request){
+        public function storeAvulso(Request $request)
+        {
+            $hoje = Carbon::today();
+            $acompanhantes = DB::table('dias_cronograma')
+                ->where('id_cronograma', $request->reuniao)
+                ->where('data', $hoje)
+                ->first();
         
-
-        $hoje = Carbon::today();
-        $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $hoje)->first();
-        // $nrAcomp = $acompanhantes->nr_acompanhantes + $request->acompanhantes;
-
-
-        DB::table('dias_cronograma')
-        ->where('id_cronograma', $request->reuniao)
-        ->where('data', $hoje);
-        // ->update([
-        //     'nr_acompanhantes' => $nrAcomp
-        // ]);
-
-        DB::table('presenca_cronograma')
-        ->insert([
-            'presenca' => true,
-            'id_pessoa' => $request->assistido,
-            // 'id_dias_cronograma' => $acompanhantes->id,
-            'id_motivo' => $request->motivo
-        ]);
-        return redirect('/gerenciar-tratamentos');
-    }
-   
+            // Verifica se o registro existe
+            if (!$acompanhantes) {
+                // Se não existir, crie um novo registro
+                $acompanhantesId = DB::table('dias_cronograma')->insertGetId([
+                    'id_cronograma' => $request->reuniao,
+                    'data' => $hoje,
+                    'nr_acompanhantes' => $request->acompanhantes,
+                ]);
+            } else {
+                // Se existir, atualiza o número de acompanhantes
+                $nrAcomp = $acompanhantes->nr_acompanhantes + $request->acompanhantes;
+        
+                DB::table('dias_cronograma')
+                    ->where('id_cronograma', $request->reuniao)
+                    ->where('data', $hoje)
+                    ->update([
+                        'nr_acompanhantes' => $nrAcomp
+                    ]);
+        
+                $acompanhantesId = $acompanhantes->id; // Use o ID existente
+            }
+        
+            // Insere a presença do assistido
+            DB::table('presenca_cronograma')->insert([
+                'presenca' => true,
+                'id_pessoa' => $request->assistido,
+                'id_dias_cronograma' => $acompanhantesId,
+                'id_motivo' => $request->motivo
+            ]);
+        
+            return redirect('/gerenciar-tratamentos');
+        }
+        
         
 
 }
