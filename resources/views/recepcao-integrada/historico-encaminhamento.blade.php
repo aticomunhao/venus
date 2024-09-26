@@ -72,6 +72,7 @@
                                 <td class="col">DATA</td>
                                 <td class="col">TRATAMENTO</td>
                                 <td class="col">GRUPO</td>
+                                <td class="col">DIA</td>
                                 <td class="col">HORÁRIO</td>
                                 <td class="col">STATUS</td>
                                 <td class="col">MOTIVO</td>
@@ -84,6 +85,7 @@
                                 <td>{{date ('d-m-Y', strtotime($results->dh_enc))}}</td>
                                 <td>{{$results->desctrat}}</td>
                                 <td>{{$results->nomeg}}</td>
+                                <td>{{$results->nomedia}}</td>
                                 <td>{{$results->rm_inicio}}</td>
                                 <td>{{$results->tsenc}}</td>
                                 <td>{{$results->tpmotivo}}</td>

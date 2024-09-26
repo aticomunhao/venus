@@ -462,7 +462,7 @@ class GerenciarEncaminhamentoController extends Controller
     {
         try {
             $result = DB::table('encaminhamento AS enc')
-                ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'tse.descricao AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo')
+                ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'td.nome as nomedia', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'tse.descricao AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo')
                 ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
                 ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                 ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
@@ -478,6 +478,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                 ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
                 ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
+                ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
                 ->where('enc.id', $ide)
                 ->get();
 
