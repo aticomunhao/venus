@@ -19,7 +19,7 @@
 
             <div class="col-2">
                 <a href="/criar-atendimento" class="btn btn-success btn-sm w-100"
-                    style="box-shadow: 1px 2px 5px #000000; margin:5px;">Criar Novo</a>
+                    style="box-shadow: 1px 2px 5px #000000; margin:5px;">Novo Atendimento</a>
             </div>
 
             <div class="col-2">

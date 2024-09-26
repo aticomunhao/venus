@@ -15,12 +15,19 @@
                 @csrf
                 <div class="row mb-5">
                     <div class="col">
-                        <label for="id_encaminhamento" class="form-label">Nome assistido</label>
-                        <select class="form-control" id="id_encaminhamento" name="id_encaminhamento" disabled>
+                        <label for="id_encaminhamento_nome" class="form-label">Nome assistido</label>
+                        <select class="form-control" id="id_encaminhamento_nome" name="id_encaminhamento_nome" disabled>
                             <option value="{{ $encaminhamento->id }}">{{ $entrevistas->nome_completo }}</option>
                         </select>
                     </div>
+                    <div class="col">
+                        <label for="id_encaminhamento_telefone" class="form-label">Telefone</label>
+                        <select class="form-control" id="id_encaminhamento_telefone" name="id_encaminhamento_telefone" disabled>
+                            <option value="{{ $encaminhamento->id }}">{{ $entrevistas->ddd }} {{ $entrevistas->celular }}</option>
+                        </select>
+                    </div>
                 </div>
+                
                 <div class="row mb-5">
                     <div class="col">
                         <label for="id_entrevistador" class="form-label">Entrevistador</label>

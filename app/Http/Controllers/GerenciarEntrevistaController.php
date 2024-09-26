@@ -182,7 +182,7 @@ class GerenciarEntrevistaController extends Controller
     {
         try {
 
-            $pessoas = DB::select('SELECT id, nome_completo FROM pessoas');
+            $pessoas = DB::select('SELECT id, nome_completo,ddd,celular FROM pessoas');
             $tipo_tratamento = DB::select('SELECT id, descricao AS tratamento_descricao FROM tipo_tratamento');
             $tipo_entrevista = DB::select('SELECT id, descricao AS descricao_entrevista FROM tipo_entrevista');
             $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first();
@@ -213,6 +213,8 @@ class GerenciarEntrevistaController extends Controller
                     ->select(
                         'atendimentos.id_assistido AS id_pessoa',
                         'pessoa_pessoa.nome_completo AS nome_pessoa',
+                        'pessoa_pessoa.celular',
+                        'pessoa_pessoa.ddd',
                         'encaminhamento.id_tipo_tratamento',
                         'tipo_tratamento.descricao AS tratamento_descricao',
                         'tipo_tratamento.sigla AS tratamento_sigla',
@@ -389,7 +391,7 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
                 ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
                 ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-                ->select('p.nome_completo', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
+                ->select('p.nome_completo','p.ddd','p.celular', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
                 ->where('entre.id_encaminhamento', $id)
                 ->first();
 

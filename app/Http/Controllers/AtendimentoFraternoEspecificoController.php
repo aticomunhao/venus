@@ -92,8 +92,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->where('status_atendimento', '<', 5)
             ->where('status_atendimento', '>', 2)
             ->count();
-
-
+          
 
         $assistido = DB::table('atendimentos')->where('status_atendimento', '<', 5)->where('afe', true)->where('id_atendente', $atendente)->count();
 
@@ -101,8 +100,6 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->where('dh_inicio', $now)
             ->where('id_associado', $atendente)
             ->value('id_sala');
-
-
 
 
         if ($assistido < 1) {

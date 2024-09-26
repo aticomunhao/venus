@@ -16,10 +16,18 @@
 
                 <div class="row mb-5">
                     <div class="col">
-                        <label for="id_encaminhamento" class="form-label">Nome</label>
-                        <select class="form-control" id="id_encaminhamento" name="id_encaminhamento" disabled>
+                        <label for="id_encaminhamento_nome" class="form-label">Nome</label>
+                        <select class="form-control" id="id_encaminhamento_nome" name="id_encaminhamento_nome" disabled>
                             @foreach ($informacoes as $informacao)
                             <option value="{{ $informacao->id_pessoa }}">{{ $informacao->nome_pessoa }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="id_encaminhamento_telefone" class="form-label">Telefone</label>
+                        <select class="form-control" id="id_encaminhamento_telefone" name="id_encaminhamento_telefone" disabled>
+                            @foreach ($informacoes as $informacao)
+                            <option value="{{ $informacao->id_pessoa }}">{{ $informacao->ddd }} {{ $informacao->celular }}</option>
                             @endforeach
                         </select>
                     </div>

@@ -32,73 +32,72 @@ class AtendimentoFraternoController extends Controller
     public function index(Request $request)
     {
 
-     
-
-            $atendente = session()->get('usuario.id_associado');
-
-            $pref_m = session()->get('usuario.sexo');
-
-            $nome = session()->get('usuario.nome');
-
-            $now =  Carbon::now()->format('Y-m-d');
 
 
+        $atendente = session()->get('usuario.id_associado');
 
-            $grupo = DB::table('atendente_dia AS ad')
-                ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id')
-                ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
+        $pref_m = session()->get('usuario.sexo');
 
+        $nome = session()->get('usuario.nome');
 
-            //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente, que não sejam AFE
-            $assistido = DB::table('atendimentos AS at')
-                ->select(
-                    'at.id AS idat',
-                    'p1.ddd',
-                    'p1.celular',
-                    'at.dh_chegada',
-                    'at.dh_inicio',
-                    'at.dh_fim',
-                    'at.id_assistido AS idas',
-                    'p1.nome_completo AS nm_1',
-                    'at.id_representante',
-                    'p2.nome_completo AS nm_2',
-                    'at.id_atendente_pref',
-                    'p3.nome_completo AS nm_3',
-                    'at.id_atendente',
-                    'p4.nome_completo AS nm_4',
-                    'at.pref_tipo_atendente AS pta',
-                    'ts.descricao',
-                    'tx.tipo',
-                    'pa.nome',
-                    'at.id_prioridade',
-                    'pr.descricao AS prdesc',
-                    'pr.sigla AS prsigla',
-                    'at.status_atendimento',
-             
-                )
-                ->leftJoin('associado AS a', 'at.id_atendente', 'a.id')
-                ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
-                ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                ->leftJoin('associado AS ass_at_preferido', 'at.id_atendente_pref', 'ass_at_preferido.id')
-                ->leftJoin('pessoas AS p3', 'ass_at_preferido.id_pessoa', 'p3.id')
-                ->leftJoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-                ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
-                ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-                ->where('at.status_atendimento', '<', 5)
-                ->where('at.afe',  null)
-                ->where('at.id_atendente', $atendente)
-                ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
-                ->orderby('status_atendimento', 'ASC')
-                ->get();
-                
+        $now =  Carbon::now()->format('Y-m-d');
 
 
-            //dd($assistido, $grupo, $now, $nome, $pref_m, $atendente);
 
-            return view('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
-      
+        $grupo = DB::table('atendente_dia AS ad')
+            ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id')
+            ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
+
+
+        //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente, que não sejam AFE
+        $assistido = DB::table('atendimentos AS at')
+            ->select(
+                'at.id AS idat',
+                'p1.ddd',
+                'p1.celular',
+                'at.dh_chegada',
+                'at.dh_inicio',
+                'at.dh_fim',
+                'at.id_assistido AS idas',
+                'p1.nome_completo AS nm_1',
+                'at.id_representante',
+                'p2.nome_completo AS nm_2',
+                'at.id_atendente_pref',
+                'p3.nome_completo AS nm_3',
+                'at.id_atendente',
+                'p4.nome_completo AS nm_4',
+                'at.pref_tipo_atendente AS pta',
+                'ts.descricao',
+                'tx.tipo',
+                'pa.nome',
+                'at.id_prioridade',
+                'pr.descricao AS prdesc',
+                'pr.sigla AS prsigla',
+                'at.status_atendimento',
+
+            )
+            ->leftJoin('associado AS a', 'at.id_atendente', 'a.id')
+            ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
+            ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+            ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+            ->leftJoin('associado AS ass_at_preferido', 'at.id_atendente_pref', 'ass_at_preferido.id')
+            ->leftJoin('pessoas AS p3', 'ass_at_preferido.id_pessoa', 'p3.id')
+            ->leftJoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
+            ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
+            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+            ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+            ->where('at.status_atendimento', '<', 5)
+            ->where('at.afe',  null)
+            ->where('at.id_atendente', $atendente)
+            ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
+            ->orderby('status_atendimento', 'ASC')
+            ->get();
+
+
+
+        //dd($assistido, $grupo, $now, $nome, $pref_m, $atendente);
+
+        return view('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
     }
 
     public function atende_agora()
@@ -110,6 +109,7 @@ class AtendimentoFraternoController extends Controller
             $now =  Carbon::today();
             $no =  Carbon::today()->addDay(1);
             $atendente = session()->get('usuario.id_associado');
+
             $pref_m = session()->get('usuario.sexo');
 
             //Conta todos os atendimentos do específico atendente, que não sejam AFE e não estejam finalizados
@@ -124,11 +124,26 @@ class AtendimentoFraternoController extends Controller
 
 
             //Conta quantos atendimentos estão Aguardando Atendimento
-            $atende = DB::table('atendimentos')->where('status_atendimento', 1)->where('afe', null)->where('status_atendimento', 1)->whereNull('id_atendente_pref')->whereNull('pref_tipo_atendente')->pluck('id');
+            $atende = DB::table('atendimentos')
+                ->where('status_atendimento', 1)
+                ->where('afe', null)
+                ->where('status_atendimento', 1)
+                ->whereNull('id_atendente_pref')
+                ->whereNull('pref_tipo_atendente')
+                ->pluck('id');
+         
             $atende = json_decode(json_encode($atende), true);
-            $atende1 = DB::table('atendimentos')->where('status_atendimento', 1)->where('afe', null)->where('id_atendente_pref', $atendente)->pluck('id');
+           
+            $atende1 = DB::table('atendimentos')->where('status_atendimento', 1)
+                ->where('afe', null)
+                ->where('id_atendente_pref', $atendente)
+                ->pluck('id');
+            
             $atende1 = json_decode(json_encode($atende1), true);
-            $atende2 = DB::table('atendimentos')->where('status_atendimento', 1)->where('afe', null)->where('pref_tipo_atendente', $pref_m)->pluck('id');
+            $atende2 = DB::table('atendimentos')->where('status_atendimento', 1)
+                ->where('afe', null)
+                ->where('pref_tipo_atendente', $pref_m)
+                ->pluck('id');
             $atende2 = json_decode(json_encode($atende2), true);
             $atendeFinal = array_merge($atende, $atende1, $atende2);
 
