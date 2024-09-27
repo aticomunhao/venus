@@ -312,6 +312,7 @@ try{
        $reuniao = DB::table('cronograma as cro')
        ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
        ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+       ->where('cro.id_tipo_tratamento', 1) 
        ->where('cro.dia_semana', $dia)
        ->where(function($query) use ($hoje) {
         $query->whereRaw("cro.data_fim < ?", [$hoje])
