@@ -44,9 +44,15 @@ class AtendimentoFraternoController extends Controller
 
 
 
+        // $grupo = DB::table('atendente_dia AS ad')
+        //     ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id')
+        //     ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
         $grupo = DB::table('atendente_dia AS ad')
-            ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id')
-            ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
+            ->leftJoin('cronograma as cro', 'cro.id', 'ad.id_grupo')
+            ->leftJoin('grupo', 'grupo.id', 'cro.id_grupo')
+            ->where('ad.id_associado',  $atendente)
+            ->value('grupo.nome');
+
 
 
         //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente, que não sejam AFE
@@ -104,12 +110,12 @@ class AtendimentoFraternoController extends Controller
     {
 
         DB::beginTransaction();
+
         try {
 
             $now =  Carbon::today();
             $no =  Carbon::today()->addDay(1);
             $atendente = session()->get('usuario.id_associado');
-
             $pref_m = session()->get('usuario.sexo');
 
             //Conta todos os atendimentos do específico atendente, que não sejam AFE e não estejam finalizados
@@ -118,35 +124,38 @@ class AtendimentoFraternoController extends Controller
                 ->leftjoin('associado AS a', 'm.id_associado', 'a.id')
                 ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
                 ->where('at.id_atendente', $atendente)
-                ->where('afe', null)
+                ->whereNull('afe')
                 ->where('at.status_atendimento', '<', 5)
                 ->count();
-           
+            //dd($atendendo);
+
 
 
             //Conta quantos atendimentos estão Aguardando Atendimento
             $atende = DB::table('atendimentos')
                 ->where('status_atendimento', 1)
-                ->where('afe', null)
-                ->where('status_atendimento', 1)
+                ->whereNull('afe')
                 ->whereNull('id_atendente_pref')
                 ->whereNull('pref_tipo_atendente')
-                ->pluck('id');
-         
-         
-            $atende = json_decode(json_encode($atende), true);
-           
+                ->pluck('id')
+                ->toArray();
+
+
+            //$atende = json_decode(json_encode($atende), true);
+
             $atende1 = DB::table('atendimentos')->where('status_atendimento', 1)
-                ->where('afe', null)
+                ->whereNull('afe')
                 ->where('id_atendente_pref', $atendente)
-                ->pluck('id');
-            
-            $atende1 = json_decode(json_encode($atende1), true);
+                ->pluck('id')
+                ->toArray();
+
+           // $atende1 = json_decode(json_encode($atende1), true);
             $atende2 = DB::table('atendimentos')->where('status_atendimento', 1)
-                ->where('afe', null)
+                ->whereNull('afe')
                 ->where('pref_tipo_atendente', $pref_m)
-                ->pluck('id');
-            $atende2 = json_decode(json_encode($atende2), true);
+                ->pluck('id')
+                ->toArray();
+            //$atende2 = json_decode(json_encode($atende2), true);
             $atendeFinal = array_merge($atende, $atende1, $atende2);
 
             $assistido = count($atendeFinal);
@@ -156,7 +165,7 @@ class AtendimentoFraternoController extends Controller
             $sala = DB::table('atendente_dia AS atd')
                 ->where('dh_inicio', '>', $now)
                 ->where('dh_inicio', '<', $no)
-                ->where('dh_fim', '=', null)
+                ->whereNull('dh_fim')
                 ->where('id_associado', $atendente)
                 ->value('id_sala');
 
@@ -181,17 +190,36 @@ class AtendimentoFraternoController extends Controller
                 //Pega todos os atendimentos em ordem de status, prioridade e chegada, apenas um por vez, e troca o status para analisando e adiciona o atendente a ele
 
 
-
-                DB::table('atendimentos')
-                    ->whereIn('id', $atendeFinal)
-                    ->orderby('status_atendimento', 'ASC')->orderby('id_prioridade')->orderBy('dh_chegada')
+                //dd($atendente);
+                $lixo = DB::table('atendimentos')
+                    //->whereIn('id', $atendeFinal)
+                    //->orderby('status_atendimento', 'ASC')->orderby('id_prioridade')->orderBy('dh_chegada')
+                    //->limit(1)
+                    //->whereNull('afe')
+                    //->orWhereNot('afe')
+                     ->where('status_atendimento', 1)
+                     ->where(function($query){
+                        $query->whereNull('afe')
+                        ->orWhere('afe',false);
+                     })
+                     ->where(function($query) use ($atendente){
+                         $query->whereNull('id_atendente_pref')
+                         ->orWhere('id_atendente_pref', $atendente);           
+                     })
+                     ->where(function($query) use ($pref_m){
+                         $query->whereNull('pref_tipo_atendente')
+                         ->orWhere('pref_tipo_atendente', $pref_m );
+                    })
+                    ->orderby('id_prioridade')->orderBy('dh_chegada')
                     ->limit(1)
+                    //->get();
                     ->update([
                         'id_atendente' => $atendente,
                         'id_sala' => $sala,
                         'status_atendimento' => 2
                     ]);
 
+                    //dd($lixo);
 
                 app('flasher')->addSuccess('O assistido foi selecionado com sucesso.');
 
