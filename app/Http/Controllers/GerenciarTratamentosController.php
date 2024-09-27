@@ -312,13 +312,14 @@ try{
        $reuniao = DB::table('cronograma as cro')
        ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
        ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+       ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
        ->where('cro.id_tipo_tratamento', 1) 
        ->where('cro.dia_semana', $dia)
        ->where(function($query) use ($hoje) {
         $query->whereRaw("cro.data_fim < ?", [$hoje])
               ->orWhereNull('cro.data_fim');
     })
-       ->select('cro.id', 'cro.h_inicio', 'cro.h_fim', 'gr.nome', 'sl.numero as sala')
+       ->select('cro.id', 'cro.h_inicio', 'cro.h_fim', 'td.nome as nomedia', 'gr.nome', 'sl.numero as sala')
        ->get();
 
    // dd($reuniao);

@@ -48,7 +48,7 @@
                                 </span>
                                 <select class="form-select select2" aria-label="Default select example" name="reuniao" required>
                                     @foreach($reuniao as $reunioes)
-                                    <option value="{{ $reunioes->id }}">{{ $reunioes->nome }} - {{ date('H:i', strtotime($reunioes->h_inicio)) }}/{{ date('H:i', strtotime($reunioes->h_fim)) }} - Sala {{ $reunioes->sala }}</option>
+                                    <option value="{{ $reunioes->id }}">{{ $reunioes->nome }} - {{ $reunioes->nomedia }} - {{ date('H:i', strtotime($reunioes->h_inicio)) }}/{{ date('H:i', strtotime($reunioes->h_fim)) }} - Sala {{ $reunioes->sala }}</option>
                                     @endforeach
                                 </select>
                             </div>
