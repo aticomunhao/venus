@@ -111,6 +111,13 @@ class GerenciarEntrevistaController extends Controller
             $informacoes = $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome_pesquisa%");
             $pesquisaNome = $request->nome_pesquisa;
         }
+
+        if ($request->tipo_entrevista) {
+            $informacoes = $informacoes->where('tipo_entrevista.sigla', 'ilike', "%$request->tipo_entrevista%");
+            $pesquisaEntrevista = $request->tipo_entrevista;
+        }
+        
+
         if ($request->status != 1 and $pesquisaValue != 'limpo') {
 
 
@@ -167,12 +174,13 @@ class GerenciarEntrevistaController extends Controller
         }
 
 
+        $tipo_entrevista = $request->tipo_entrevista ?? null; 
 
 
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get();
 
 
-        return view('Entrevistas.gerenciar-entrevistas', compact('totalAssistidos','informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status'));
+        return view('Entrevistas.gerenciar-entrevistas', compact('tipo_entrevista','totalAssistidos','informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status'));
     }
 
 
