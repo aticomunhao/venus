@@ -78,7 +78,31 @@ class GerenciarAtendimentoController extends Controller
                     where m.id_funcao = 6
                     ");
 
-            $lista = DB::table('atendimentos AS at')->select('at.id as ida', 'p1.id as idas', 'p.nome_completo as nm_3', 'at.status_atendimento', 'at.id_prioridade', 'at.dh_chegada', 'tx.tipo', 'tp.descricao as prdesc', 'p1.nome_completo as nm_1', 'p2.nome_completo as nm_2', 'p3.nome_completo as nm_4', 'sl.numero as nr_sala', 'ts.descricao', DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe"))->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')->leftJoin('pessoas as p3', 'ass1.id_pessoa', 'p3.id')->leftJoin('tp_sexo as tx', 'at.pref_tipo_atendente', 'tx.id')->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')->leftJoin('salas as sl', 'at.id_sala', 'sl.id')->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
+            $lista = DB::table('atendimentos AS at')
+                ->select(
+                    'at.id as ida',
+                    'p1.id as idas',
+                    'p.nome_completo as nm_3',
+                    'at.status_atendimento',
+                    'at.id_prioridade',
+                    'at.dh_chegada',
+                    'tx.tipo',
+                    'tp.descricao as prdesc',
+                    'p1.nome_completo as nm_1',
+                    'p2.nome_completo as nm_2',
+                    'p3.nome_completo as nm_4',
+                    'sl.numero as nr_sala',
+                    'ts.descricao',
+                    DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe")
+                )->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')
+                ->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')
+                ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+                ->leftJoin('pessoas as p3', 'ass1.id_pessoa', 'p3.id')
+                ->leftJoin('tp_sexo as tx', 'at.pref_tipo_atendente', 'tx.id')
+                ->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')
+                ->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')
+                ->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')
+                ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
 
             $data_inicio = $request->input('dt_ini', Carbon::today()->toDateString());
 
@@ -657,8 +681,8 @@ class GerenciarAtendimentoController extends Controller
                 ->whereNull('data_fim')
                 ->orderBy('nome')
                 ->get();
-            
-        
+
+
             foreach ($atende as $key => $lista) {
                 $result = DB::table('membro AS m')
                     ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
@@ -671,7 +695,7 @@ class GerenciarAtendimentoController extends Controller
                     ->get();
                 $lista->grup = $result;
             }
-           
+
             $salaAtendendo = DB::table('atendente_dia AS atd')
                 ->leftJoin('associado AS a', 'atd.id_associado', 'a.id')
                 ->where('dh_inicio', '>=', $now)

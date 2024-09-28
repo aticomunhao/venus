@@ -5,11 +5,6 @@
 @endsection
 
 @section('content')
-
-
-
-
-
     <div class="container-xxl" ;>
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
             ATENDIMENTO FRATERNO INDIVIDUAL</h4>
@@ -34,9 +29,13 @@
                                 type="text" name="id_atendene" id="" value="{{ $atendente }}" disabled>
                         </div>
 
-                        <div class="col-5">Nome do Atendente
+                        <div class="col-3">Nome do Atendente
                             <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
                                 value="{{ $nome }}" name="nome_usuario" id="" type="text" disabled>
+                        </div>
+                        <div class="col-2">Assistidos Em Espera
+                            <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
+                                value="" name="nome_usuario" type="text" disabled id="id_pessoas_para_atender">
                         </div>
                     </div>
                 </div>
@@ -87,36 +86,43 @@
                                             <td scope="">{{ $assistidos->descricao }}</td>
                                             <td scope="">
                                                 <a href="/historico/{{ $assistidos->idat }}/{{ $assistidos->idas }}"><button
-                                                        type="button" class="btn btn-outline-primary btn-sm tooltips"><span class="tooltiptext">Analisar</span><i
-                                                            class="bi bi-search"
+                                                        type="button" class="btn btn-outline-primary btn-sm tooltips"><span
+                                                            class="tooltiptext">Analisar</span><i class="bi bi-search"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                                 <a href="/fim-analise/{{ $assistidos->idat }}"><button type="button"
-                                                        class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext" style="width:150px; margin-left:-75px">Chamar assistido</span><i class="bi bi-bell"
+                                                        class="btn btn-outline-warning btn-sm tooltips"><span
+                                                            class="tooltiptext"
+                                                            style="width:150px; margin-left:-75px">Chamar assistido</span><i
+                                                            class="bi bi-bell"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                                 <a href="/iniciar-atendimento/{{ $assistidos->idat }}"><button
-                                                        type="button" class="btn btn-outline-success btn-sm tooltips"><span class="tooltiptext">Iniciar</span><i
-                                                            class="bi bi-check-circle"
+                                                        type="button" class="btn btn-outline-success btn-sm tooltips"><span
+                                                            class="tooltiptext">Iniciar</span><i class="bi bi-check-circle"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                                 <a href="/tratar/{{ $assistidos->idat }}/{{ $assistidos->idas }}"><button
-                                                        type="button" class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext">Tratamento</span><i
-                                                            class="bi bi-bandaid"
+                                                        type="button"
+                                                        class="btn btn-outline-warning btn-sm tooltips"><span
+                                                            class="tooltiptext">Tratamento</span><i class="bi bi-bandaid"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                                 <a href="/entrevistar/{{ $assistidos->idat }}/{{ $assistidos->idas }}"><button
-                                                        type="button" class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext">Entrevista</span><i
-                                                            class="bi bi-mic"
+                                                        type="button"
+                                                        class="btn btn-outline-warning btn-sm tooltips"><span
+                                                            class="tooltiptext">Entrevista</span><i class="bi bi-mic"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                                 <a href="/temas/{{ $assistidos->idat }}"><button type="button"
-                                                        class="btn btn-outline-warning btn-sm tooltips"><span class="tooltiptext">Temática</span><i
+                                                        class="btn btn-outline-warning btn-sm tooltips"><span
+                                                            class="tooltiptext">Temática</span><i
                                                             class="bi bi-journal-bookmark-fill"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
-                                                <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
-                                                data-bs-target="#modalRel{{ $assistidos->idat }}"><span class="tooltiptext">Reset</span><i
-                                                        class="bi bi-arrow-repeat" style="font-size: 1rem; color:#000;"
-                                                        ></i></button>
                                                 <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                                     data-bs-toggle="modal"
-                                                    data-bs-target="#modalF{{ $assistidos->idat }}"><span class="tooltiptext">Finalizado</span><i
-                                                        class="bi bi-door-open"
+                                                    data-bs-target="#modalRel{{ $assistidos->idat }}"><span
+                                                        class="tooltiptext">Reset</span><i class="bi bi-arrow-repeat"
+                                                        style="font-size: 1rem; color:#000;"></i></button>
+                                                <button type="button" class="btn btn-outline-danger btn-sm tooltips"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modalF{{ $assistidos->idat }}"><span
+                                                        class="tooltiptext">Finalizado</span><i class="bi bi-door-open"
                                                         style="font-size: 1rem; color:#000;"></i></button>
 
 
@@ -219,9 +225,9 @@
 
 
                                                 <!--<button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#tratamento{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Tratamentos"><i class="bi bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button>
-                                                        <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#entrevista{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi bi-mic" style="font-size: 1rem; color:#000;"></i></button>
-                                                        <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#anotacoes{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button>
-                                                        <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#finalizar{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i></button>-->
+                                                                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#entrevista{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi bi-mic" style="font-size: 1rem; color:#000;"></i></button>
+                                                                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#anotacoes{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button>
+                                                                                    <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#finalizar{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i></button>-->
                                             </td>
                                         </tr>
                                     @endforeach
@@ -250,5 +256,26 @@
             $('#hello').toggleClass('emergencia')
         })
     </script>
+    <script>
+        $(document).ready(function() {
+            function fetchData() {
+                $.ajax({
+                    type: "GET",
+                    url: "/pessoas-para-atender",
+                    dataType: "JSON",
+                    success: function(response) {
+                
+                        $('#id_pessoas_para_atender').val(response);
+                    },
+                    error: function(error) {
+                        console.error('Erro ao buscar dados:', error);
+                    }
+                });
+            }
 
+            // Chama a função imediatamente e a cada 5 segundos
+            fetchData(); // Chamada inicial
+            setInterval(fetchData, 5000); // Chamada a cada 5 segundos
+        });
+    </script>
 @endsection

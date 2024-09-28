@@ -127,7 +127,7 @@
 
                                 <div class="col">
                                     <input class="form-check-input coluna" type="checkbox" value=""
-                                        id="atendentePreferido">
+                                        id="atendentePreferido" checked>
                                     <label class="form-check-label" for="flexCheckDefault"> Atendente Preferido </label>
                                 </div>
 
@@ -139,13 +139,13 @@
 
                                 <div class="col">
                                     <input class="form-check-input coluna" type="checkbox" value=""
-                                        id="horarioChegada">
+                                        id="horarioChegada" checked>
                                     <label class="form-check-label" for="flexCheckDefault"> Horário de Chegada </label>
                                 </div>
 
                                 <div class="col">
                                     <input class="form-check-input coluna" type="checkbox" value=""
-                                        id="prioridade">
+                                        id="prioridade" checked>
                                     <label class="form-check-label" for="flexCheckDefault"> Prioridade </label>
                                 </div>
 
@@ -157,7 +157,7 @@
 
                                 <div class="col">
                                     <input class="form-check-input coluna" type="checkbox" value=""
-                                        id="representante" checked>
+                                        id="representante">
                                     <label class="form-check-label" for="flexCheckDefault"> Representante </label>
                                 </div>
 

@@ -42,6 +42,36 @@ class AtendimentoFraternoController extends Controller
 
         $now =  Carbon::now()->format('Y-m-d');
 
+        $lista = DB::table('atendimentos AS at')
+            ->select(
+                'at.id as ida',
+                'p1.id as idas',
+                'p.nome_completo as nm_3',
+                'at.status_atendimento',
+                'at.id_prioridade',
+                'at.dh_chegada',
+                'tx.tipo',
+                'tp.descricao as prdesc',
+                'p1.nome_completo as nm_1',
+                'p2.nome_completo as nm_2',
+                'p3.nome_completo as nm_4',
+                'sl.numero as nr_sala',
+                'ts.descricao',
+                DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe")
+            )->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')
+            ->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')
+            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->leftJoin('pessoas as p3', 'ass1.id_pessoa', 'p3.id')
+            ->leftJoin('tp_sexo as tx', 'at.pref_tipo_atendente', 'tx.id')
+            ->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')
+            ->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')
+            ->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')
+            ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
+
+        $data_inicio = $request->input('dt_ini', Carbon::today()->toDateString());
+
+
+
 
 
         // $grupo = DB::table('atendente_dia AS ad')
@@ -107,6 +137,50 @@ class AtendimentoFraternoController extends Controller
         return view('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
     }
 
+    public function pessoas_para_atender()
+    {
+
+        $id_associado = session()->get('usuario.id_associado');
+        $numero_de_assistidos_para_atender = DB::table('atendimentos AS at')
+            ->select(
+                'at.id as ida',
+                'p1.id as idas',
+                'p.nome_completo as nm_3',
+                'at.status_atendimento',
+                'at.id_prioridade',
+                'at.dh_chegada',
+                'tx.tipo',
+                'tp.descricao as prdesc',
+                'p1.nome_completo as nm_1',
+                'p2.nome_completo as nm_2',
+                'p3.nome_completo as nm_4',
+                'sl.numero as nr_sala',
+                'ts.descricao',
+                DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe")
+            )->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')
+            ->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')
+            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->leftJoin('pessoas as p3', 'ass1.id_pessoa', 'p3.id')
+            ->leftJoin('tp_sexo as tx', 'at.pref_tipo_atendente', 'tx.id')
+            ->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')
+            ->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')
+            ->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')
+            ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')
+            ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
+            ->whereDate('dh_chegada', Carbon::today()->toDateString())
+            ->where('at.status_atendimento', '=', 1)
+            ->where(function ($query) use ($id_associado) {
+                $query->where('at.id_atendente_pref', '=',   $id_associado)
+                    ->orWhereNull('at.id_atendente_pref'); // Inclui registros onde não há atendente preferencial
+            });;
+
+
+        $numero_de_assistidos_para_atender = $numero_de_assistidos_para_atender->count();
+
+
+        return response()->json($numero_de_assistidos_para_atender);
+    }
+
     public function atende_agora()
     {
 
@@ -150,7 +224,7 @@ class AtendimentoFraternoController extends Controller
                 ->pluck('id')
                 ->toArray();
 
-           // $atende1 = json_decode(json_encode($atende1), true);
+            // $atende1 = json_decode(json_encode($atende1), true);
             $atende2 = DB::table('atendimentos')->where('status_atendimento', 1)
                 ->whereNull('afe')
                 ->where('pref_tipo_atendente', $pref_m)
@@ -198,18 +272,18 @@ class AtendimentoFraternoController extends Controller
                     //->limit(1)
                     //->whereNull('afe')
                     //->orWhereNot('afe')
-                     ->where('status_atendimento', 1)
-                     ->where(function($query){
+                    ->where('status_atendimento', 1)
+                    ->where(function ($query) {
                         $query->whereNull('afe')
-                        ->orWhere('afe',false);
-                     })
-                     ->where(function($query) use ($atendente){
-                         $query->whereNull('id_atendente_pref')
-                         ->orWhere('id_atendente_pref', $atendente);           
-                     })
-                     ->where(function($query) use ($pref_m){
-                         $query->whereNull('pref_tipo_atendente')
-                         ->orWhere('pref_tipo_atendente', $pref_m );
+                            ->orWhere('afe', false);
+                    })
+                    ->where(function ($query) use ($atendente) {
+                        $query->whereNull('id_atendente_pref')
+                            ->orWhere('id_atendente_pref', $atendente);
+                    })
+                    ->where(function ($query) use ($pref_m) {
+                        $query->whereNull('pref_tipo_atendente')
+                            ->orWhere('pref_tipo_atendente', $pref_m);
                     })
                     ->orderby('id_prioridade')->orderBy('dh_chegada')
                     ->limit(1)
@@ -220,7 +294,7 @@ class AtendimentoFraternoController extends Controller
                         'status_atendimento' => 2
                     ]);
 
-                    //dd($lixo);
+                //dd($lixo);
 
                 app('flasher')->addSuccess('O assistido foi selecionado com sucesso.');
 
@@ -973,9 +1047,21 @@ class AtendimentoFraternoController extends Controller
 
             $now = Carbon::now()->format('Y-m-d');
 
-            $grupo = DB::table('atendente_dia AS ad')
-                ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id')
-                ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
+            // $grupo = DB::table('atendente_dia AS ad')
+            // ->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')
+            // ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')
+            // ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
+            // ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
+            // ->leftJoin('cronograma AS cro', 'atd.id_grupo', 'cro.id')
+            // ->leftJoin('grupo as g', 'cro.id_grupo', 'g.id')
+            //     ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
+            $grupo = DB::table('atendente_dia AS atd')
+                ->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')
+                ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')
+                ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
+                ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
+                ->leftJoin('cronograma AS cro', 'atd.id_grupo', 'cro.id')
+                ->leftJoin('grupo as g', 'cro.id_grupo', 'g.id')->where('atd.id_associado', '=', $atendente)->where('dh_inicio', '>=', $now)->value('g.nome');
 
             // dd($grupo);
 
