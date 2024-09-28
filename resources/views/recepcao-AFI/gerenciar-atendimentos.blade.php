@@ -139,7 +139,7 @@
 
                                 <div class="col">
                                     <input class="form-check-input coluna" type="checkbox" value=""
-                                        id="horarioChegada">
+                                        id="horarioChegada" checked>
                                     <label class="form-check-label" for="flexCheckDefault"> Horário de Chegada </label>
                                 </div>
 
