@@ -51,6 +51,7 @@ class AtendimentoFraternoController extends Controller
             ->leftJoin('cronograma as cro', 'cro.id', 'ad.id_grupo')
             ->leftJoin('grupo', 'grupo.id', 'cro.id_grupo')
             ->where('ad.id_associado',  $atendente)
+            ->whereNull('dh_fim')
             ->value('grupo.nome');
 
 
