@@ -24,7 +24,7 @@
                                 value="{{ $grupo }}" name="nome" id="" type="text" disabled>
                         </div>
 
-                        <div class="col-2">Código Atendente
+                        <div class="col-2">Cod AFI
                             <input class="form-control" style="font-weight:bold; background:#f3f3f3; color:#000;"
                                 type="text" name="id_atendene" id="" value="{{ $atendente }}" disabled>
                         </div>
@@ -33,7 +33,7 @@
                             <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
                                 value="{{ $nome }}" name="nome_usuario" id="" type="text" disabled>
                         </div>
-                        <div class="col-2">Assistidos Em Espera
+                        <div class="col-2">Fila de espera
                             <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
                                 value="" name="nome_usuario" type="text" disabled id="id_pessoas_para_atender">
                         </div>
