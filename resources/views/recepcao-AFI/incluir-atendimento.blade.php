@@ -65,7 +65,7 @@
                                     <span class="tooltiptext">Obrigatório</span>
                                     <span style="color:red">*</span>
                                 </span>
-                                <select class="form-control" id="assist" name="assist" required="required">
+                                <select class="form-select" id="assist" name="assist" required="required">
                                 </select>
                             </div>
                         </div>
