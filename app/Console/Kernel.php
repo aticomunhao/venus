@@ -23,10 +23,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
 
-          $schedule->job( new Faltas())->dailyAt('01:00');
-          $schedule->job( new DiasCronograma())->dailyAt('01:00');
-          $schedule->job( new LimiteFalta())->dailyAt('01:01');
-          $schedule->job( new FimSemanas())->dailyAt('01:01');
+          $schedule->job( new Faltas());
+          $schedule->job( new DiasCronograma());
+          $schedule->job( new LimiteFalta());
+          $schedule->job( new FimSemanas());
     }
 
     /**
