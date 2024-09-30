@@ -16,13 +16,16 @@
                             <div class="col-4">
                                 Nome
                                 <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa"
-                                    value="{{ $pesquisaNome }}">
+                                    value="{{$nome_pesquisa}}">
                             </div>
                             
                             <div class="col-3">
                                 Status
                                 <select class="form-select" id="status" name="status">
                                     {{-- Select de pesquisa de status --}}
+                                    <option value="" {{  $pesquisaValue ? 'selected' : '' }}>
+                                        Todos
+                                    </option>
                                     @foreach ($status as $statu)
                                         <option value="{{ $statu->id }}" {{ $statu->id == $pesquisaValue ? 'selected' : '' }}>
                                             {{ $statu->descricao }}
@@ -285,6 +288,7 @@
             }
         })
     </script>
+    
 @endsection
 
 @section('footerScript')

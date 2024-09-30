@@ -98,6 +98,7 @@ class GerenciarEntrevistaController extends Controller
         $pesquisaNome = null;
         $pesquisaStatus = 0;
         $pesquisaValue = $request->status == null ? 'limpo' : $request->status;
+        $nome_pesquisa = $request->nome_pesquisa;
 
         if (session()->get('usuario.setor') == 38) {
             $informacoes = $informacoes->where('encaminhamento.id_tipo_entrevista', 5);
@@ -109,7 +110,7 @@ class GerenciarEntrevistaController extends Controller
         if ($request->nome_pesquisa) {
 
             $informacoes = $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome_pesquisa%");
-            $pesquisaNome = $request->nome_pesquisa;
+          
         }
 
         if ($request->tipo_entrevista) {
@@ -180,7 +181,7 @@ class GerenciarEntrevistaController extends Controller
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get();
 
 
-        return view('Entrevistas.gerenciar-entrevistas', compact('tipo_entrevista','totalAssistidos','informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status'));
+        return view('Entrevistas.gerenciar-entrevistas', compact('nome_pesquisa','tipo_entrevista','totalAssistidos','informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status'));
     }
 
 

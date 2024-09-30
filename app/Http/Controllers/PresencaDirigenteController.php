@@ -109,7 +109,7 @@ class PresencaDirigenteController extends Controller
 
         // Caso nenhum cronograma seja encontrado ao dar a presença, retorna um erro
         if (count($dias_cronograma_selecionada) == 0) {
-            app('flasher')->addError('Essa reunião não pertence ao dia de hoje!');
+            app('flasher')->addError('Esta reunião não está agendada para hoje nem para este horário!');
             return redirect()->back();
         }
 
