@@ -113,7 +113,7 @@ class GerenciarEntrevistaController extends Controller
         }
 
         if ($request->tipo_entrevista) {
-            $informacoes = $informacoes->where('tipo_entrevista.sigla', 'ilike', "%$request->tipo_entrevista%");
+            $informacoes = $informacoes->where('tipo_entrevista.id', $request->tipo_entrevista);
             $pesquisaEntrevista = $request->tipo_entrevista;
         }
 
@@ -136,7 +136,7 @@ class GerenciarEntrevistaController extends Controller
         $totalAssistidos = $informacoes->total();
 
 
-        $tipo_entrevista = $request->tipo_entrevista ?? null;
+        $tipo_entrevista = DB::table('tipo_entrevista')->whereIn('id',[3,4,5,6])->select('id as id_ent', 'sigla as ent_desc')->orderby('descricao', 'asc')->get(); 
 
 
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get();

@@ -35,10 +35,18 @@
                                 </select>
                             </div>
 
-                            <div class="col-auto">
+                            <div class="col-3">
                                 Tipo Entrevista
-                                <input class="form-control" type="text" id="tipo_entrevista" name="tipo_entrevista"
-                                    value="{{ $tipo_entrevista }}">
+                                <select class="form-select" id="tipo_entrevista" name="tipo_entrevista">
+                                    {{-- Select de pesquisa de tipo entrevista --}}
+                                    <option value="">Todos</option>
+                                    @foreach ($tipo_entrevista as $tp_ent)
+                                        <option value="{{ $tp_ent->id_ent }}" {{ $tp_ent->id_ent == $pesquisaValue ? 'selected' : '' }}>
+                                            {{ $tp_ent->ent_desc }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            
                             </div>
 
                             <div class="col-auto">
