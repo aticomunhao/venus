@@ -42,7 +42,7 @@ class GerenciarEntrevistaController extends Controller
 
     public function index(Request $request)
     {
-        
+
         $informacoes = DB::table('encaminhamento')
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
             ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
@@ -90,10 +90,10 @@ class GerenciarEntrevistaController extends Controller
                 'atendimentos.dh_inicio as inicio'
             );
 
-            if(!in_array(36, session()->get('usuario.acesso'))){
-                $informacoes =  $informacoes->whereIn('tipo_entrevista.id_setor', session()->get('usuario.setor'));
-            }
-            
+        if (!in_array(36, session()->get('usuario.acesso'))) {
+            $informacoes =  $informacoes->whereIn('tipo_entrevista.id_setor', session()->get('usuario.setor'));
+        }
+
         $i = 0;
         $pesquisaNome = null;
         $pesquisaStatus = 0;
@@ -110,14 +110,13 @@ class GerenciarEntrevistaController extends Controller
         if ($request->nome_pesquisa) {
 
             $informacoes = $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome_pesquisa%");
-          
         }
 
         if ($request->tipo_entrevista) {
             $informacoes = $informacoes->where('tipo_entrevista.sigla', 'ilike', "%$request->tipo_entrevista%");
             $pesquisaEntrevista = $request->tipo_entrevista;
         }
-        
+
 
         if ($request->status != 1 and $pesquisaValue != 'limpo') {
 
@@ -125,67 +124,29 @@ class GerenciarEntrevistaController extends Controller
             $informacoes->where('entrevistas.status', $pesquisaValue);
         }
 
+        $informacoes = $informacoes->orderByRaw("CASE 
+        WHEN entrevistas.status IS NULL THEN 1 
+        ELSE entrevistas.status 
+    END")
+            ->orderBy('atendimentos.emergencia', 'ASC')
+            ->orderBy('atendimentos.dh_inicio')
+            ->paginate(50);
 
-        // Ordenação
-        $informacoes = $informacoes->orderBy('entrevistas.status')
-            ->orderBy('emergencia', 'ASC')
-            ->orderBy('atendimentos.dh_inicio');
 
-        // Paginação
-        $informacoes = $informacoes->paginate(50);
-
-        // Contar total de assistidos
         $totalAssistidos = $informacoes->total();
 
 
-        // Mapear os status para a ordem desejada
-        $statusOrder = [
-            1 => 1,
-            2 => 2,
-            3 => 3,
-            4 => 4,
-            5 => 5,
-            6 => 6
-        ];
-
-        // Ordenar os resultados de acordo com o mapeamento de status
-        $informacoes = $informacoes->sortBy(function ($item) use ($statusOrder) {
-            return $statusOrder[$item->status] ?? PHP_INT_MAX;
-        });
-
-
-
-
-
-
-        if ($request->status == 1) {
-            $info = [];
-            foreach ($informacoes as $dia) {
-                $info[] = $dia;
-            }
-            foreach ($info as $check) {
-                if ($check->status != 1) {
-                    unset($info[$i]);
-                }
-                $i = $i + 1;
-            }
-            $informacoes = $info;
-            $pesquisaStatus = "Aguardando agendamento";
-            $pesquisaValue = 1;
-        }
-
-
-        $tipo_entrevista = $request->tipo_entrevista ?? null; 
+        $tipo_entrevista = $request->tipo_entrevista ?? null;
 
 
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get();
 
 
-        return view('Entrevistas.gerenciar-entrevistas', compact('nome_pesquisa','tipo_entrevista','totalAssistidos','informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status'));
+        return view('Entrevistas.gerenciar-entrevistas', compact('nome_pesquisa', 'tipo_entrevista', 'totalAssistidos', 'informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status'));
     }
 
 
-  
+
 
     public function create($id)
     {
@@ -321,9 +282,9 @@ class GerenciarEntrevistaController extends Controller
             if (!$entrevistas) {
             }
             $usuarios = DB::table('usuario as u')
-            ->rightJoin('usuario_setor as us', 'u.id', 'us.id_usuario')
-            ->where('us.id_setor', $entrevistas->id_setor)
-            ->pluck('id_pessoa');
+                ->rightJoin('usuario_setor as us', 'u.id', 'us.id_usuario')
+                ->where('us.id_setor', $entrevistas->id_setor)
+                ->pluck('id_pessoa');
 
             $salas = DB::table('salas')->get();
             $encaminhamento = DB::table('encaminhamento')->find($id);
@@ -331,14 +292,14 @@ class GerenciarEntrevistaController extends Controller
             $membros = DB::table('membro')
                 ->rightJoin('associado', 'membro.id_associado', '=', 'associado.id')
                 ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
-                ->leftJoin('cronograma as cro', 'membro.id_cronograma','cro.id')
+                ->leftJoin('cronograma as cro', 'membro.id_cronograma', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
                 ->select('membro.*', 'pessoas.nome_completo', 'gr.id_setor')
                 ->distinct('membro.id_associado')
                 ->whereIn('associado.id_pessoa', $usuarios)
                 ->get();
 
-    
+
             $encaminhamento = DB::table('encaminhamento')->find($id);
 
             // Verificando se o tipo de entrevista é 3 (tipo_entrevista 3, afe)
@@ -400,7 +361,7 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
                 ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
                 ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-                ->select('p.nome_completo','p.ddd','p.celular', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
+                ->select('p.nome_completo', 'p.ddd', 'p.celular', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
                 ->where('entre.id_encaminhamento', $id)
                 ->first();
 

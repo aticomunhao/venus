@@ -12,42 +12,43 @@
             <div class="row justify-content-center">
                 <div>
                     <form action="{{ route('gerenciamento') }}" class="form-horizontal mt-4" method="GET">
-                        <div class="row align-items-end"> 
+                        <div class="row align-items-end">
                             <div class="col-4">
                                 Nome
                                 <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa"
-                                    value="{{$nome_pesquisa}}">
+                                    value="{{ $nome_pesquisa }}">
                             </div>
-                            
+
                             <div class="col-3">
                                 Status
                                 <select class="form-select" id="status" name="status">
                                     {{-- Select de pesquisa de status --}}
-                                    <option value="" {{  $pesquisaValue ? 'selected' : '' }}>
+                                    <option value="" {{ $pesquisaValue ? 'selected' : '' }}>
                                         Todos
                                     </option>
                                     @foreach ($status as $statu)
-                                        <option value="{{ $statu->id }}" {{ $statu->id == $pesquisaValue ? 'selected' : '' }}>
+                                        <option value="{{ $statu->id }}"
+                                            {{ $statu->id == $pesquisaValue ? 'selected' : '' }}>
                                             {{ $statu->descricao }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
-                            
+
                             <div class="col-auto">
                                 Tipo Entrevista
                                 <input class="form-control" type="text" id="tipo_entrevista" name="tipo_entrevista"
                                     value="{{ $tipo_entrevista }}">
                             </div>
-                    
+
                             <div class="col-auto">
                                 <input class="btn btn-light btn-sm me-md-2"
-                                    style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
-                                    value="Pesquisar"> {{-- Botão de pesquisar --}}
+                                    style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
+                                {{-- Botão de pesquisar --}}
                                 <a href="/gerenciar-entrevistas">
                                     <input class="btn btn-light btn-sm me-md-2"
-                                        style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
-                                        value="Limpar"> {{-- Botão de limpar pesquisa --}}
+                                        style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar">
+                                    {{-- Botão de limpar pesquisa --}}
                                 </a>
                             </div>
                         </div>
@@ -276,9 +277,12 @@
                             @endforeach
                         </tbody>
                     </table>
-                </div>
+                </div class="d-flex justify-content-center">
+                {{ $informacoes->links('pagination::bootstrap-5') }}
             </div>
         </div>
+    </div>
+    </div>
     </div>
 
     <script>
@@ -288,7 +292,6 @@
             }
         })
     </script>
-    
 @endsection
 
 @section('footerScript')
