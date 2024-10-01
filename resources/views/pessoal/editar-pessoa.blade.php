@@ -42,8 +42,8 @@
                                             <span style="color:red">*</span>
                                         </span>
                                         <input class="form-control" type="numeric" maxlength="11" value="{{$lista[0]->cpf}}" id="" name="cpf" required="required" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
-                                    {{-- </div>
-                                </div> --}}
+                                    </div>
+                                </div>
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom04" class="form-label">Sexo</label>

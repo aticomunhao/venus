@@ -139,8 +139,10 @@ class PessoaController extends Controller
                 'celular' => $request->input('celular'),
                 'email' => $request->input('email'),
                 'status' => 1
-
+                
+                
             ]);
+         
 
             $pessoa = DB::table('pessoas')->max('id');
 
@@ -150,6 +152,8 @@ class PessoaController extends Controller
                 'fato' => 2,
                 'pessoa' => $request->input('nome')
             ]);
+           
+
         }
 
         app('flasher')->addSuccess('O cadastro foi realizado com sucesso');

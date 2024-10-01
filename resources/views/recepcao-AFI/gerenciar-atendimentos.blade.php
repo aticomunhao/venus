@@ -4,12 +4,9 @@
     Gerenciar Assistido
 @endsection
 @section('content')
-
-
-
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ASSISTIDO
-            </h4>
+        </h4>
 
         <div class="row mt-3">
 
@@ -49,59 +46,62 @@
 
 
             {{-- Filtro Modal --}}
-            <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header" style="background-color:grey;color:white">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Filtrar Opções</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                                <center>
-                                    <div class="col-10">
-                                        <div class="col">
-                                            <label for="assist">Atendido</label>
-                                            <input class="form-control pesquisa" type="text" id="assist"
-                                                name="assist" value="{{ $assistido }}">
-                                        </div>
-                                        <div class="col mt-3">
-                                            <label for="assist">CPF</label>
-                                            <input class="form-control pesquisa" type="text" maxlength="11"
-                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                                                id="cpf" name="cpf" value="{{ $cpf }}">
-
-                                        </div>
-                                        <div class="col mt-3 ">
-                                            <label for="status">Status</label>
-                                            <select class="form-select pesquisa" id="status" name="status"
-                                                type="number">
-
-                                                @foreach ($st_atend as $statusz)
-                                                    <option {{ $situacao == $statusz->id ? 'selected' : '' }}
-                                                        value="{{ $statusz->id }}">{{ $statusz->descricao }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-
-                                        <div class="col  mt-3  mb-3">
-                                            <label for="dt_ini">Data início</label>
-                                            <input class="form-control" type="date" id="dt_ini" name="dt_ini"
-                                                value="{{ $data_inicio ?? now()->toDateString() }}">
-                                        </div>
+            <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:grey;color:white">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Filtrar Opções</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <center>
+                                <div class="col-10">
+                                    <div class="col">
+                                        <label for="assist">Atendido</label>
+                                        <input class="form-control pesquisa" type="text" id="assist" name="assist"
+                                            value="{{ $assistido }}">
                                     </div>
-                                </center>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                                <button id="limpar" type="button" class="btn btn-secondary pesq" data-bs-dismiss="modal">Limpar</button>
-                                <button class="btn btn-primary pesq" id="confirmar" data-bs-dismiss="modal">Confirmar</button>
-                            </div>
+                                    {{-- <div class="col">
+                                        <label for="assist">Atendente</label>
+                                        <input class="form-control pesquisa" type="text" id="idatendente" name="atendente"
+                                            value="">
+                                    </div> --}}
+                                    <div class="col mt-3">
+                                        <label for="assist">CPF</label>
+                                        <input class="form-control pesquisa" type="text" maxlength="11"
+                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                            id="cpf" name="cpf" value="{{ $cpf }}">
+
+                                    </div>
+                                    <div class="col mt-3 ">
+                                        <label for="status">Status</label>
+                                        <select class="form-select pesquisa" id="status" name="status" type="number">
+
+                                            @foreach ($st_atend as $statusz)
+                                                <option {{ $situacao == $statusz->id ? 'selected' : '' }}
+                                                    value="{{ $statusz->id }}">{{ $statusz->descricao }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+
+                                    <div class="col  mt-3  mb-3">
+                                        <label for="dt_ini">Data início</label>
+                                        <input class="form-control" type="date" id="dt_ini" name="dt_ini"
+                                            value="{{ $data_inicio ?? now()->toDateString() }}">
+                                    </div>
+                                </div>
+                            </center>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                            <button id="limpar" type="button" class="btn btn-secondary pesq"
+                                data-bs-dismiss="modal">Limpar</button>
+                            <button class="btn btn-primary pesq" id="confirmar" data-bs-dismiss="modal">Confirmar</button>
                         </div>
                     </div>
                 </div>
+            </div>
             {{-- Fim filtro Modal --}}
 
             {{-- Modal Colunas --}}
@@ -162,14 +162,14 @@
                                 </div>
 
                                 <div class="col">
-                                    <input class="form-check-input coluna" type="checkbox" value=""
-                                        id="atendente" checked>
+                                    <input class="form-check-input coluna" type="checkbox" value="" id="atendente"
+                                        checked>
                                     <label class="form-check-label" for="flexCheckDefault"> Atendente </label>
                                 </div>
 
                                 <div class="col">
-                                    <input class="form-check-input coluna" type="checkbox" value=""
-                                        id="sala" checked>
+                                    <input class="form-check-input coluna" type="checkbox" value="" id="sala"
+                                        checked>
                                     <label class="form-check-label" for="flexCheckDefault"> Sala </label>
                                 </div>
 
@@ -194,7 +194,7 @@
                     </div>
                 </div>
             </div>
-{{-- Fim modal Colunas --}}
+            {{-- Fim modal Colunas --}}
 
 
 
@@ -203,7 +203,7 @@
         <hr>
         <div class="row">
             <div class="table">Total Atendidos: {{ $contar }}
-                <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle" >
+                <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                     <thead style="text-align: center;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             <th class="col numeroAtendimento">Nr</th>
@@ -250,11 +250,14 @@
                 let cpf = $('#cpf').val() == '' ? null : $('#cpf').val()
                 let status = $('#status').val() == '' ? null : $('#status').val()
                 let dt_ini = $('#dt_ini').val() == '' ? null : $('#dt_ini').val()
+                let atendente = $('#idatendente').val() == '' ? null : $('#idatendente').val();
+              
 
 
-               $.ajax({
-                   type: "GET",
-                    url: "/tabela-atendimentos/"+assist+"/"+cpf+"/"+status+"/"+dt_ini,
+                $.ajax({
+                    type: "GET",
+                    url: "/tabela-atendimentos/" + assist + "/" + cpf + "/" + status + "/" + dt_ini,
+                    // url: "/atendimentos-tabela/" + assist + "/" + cpf + "/" + status + "/" + dt_ini + "/" + atendente,
                     dataType: "json",
                     success: function(response) {
 
@@ -268,213 +271,235 @@
 
             function colunas() {
 
-                    $('#numeroAtendimento').prop('checked') ? $('.numeroAtendimento').show() : $('.numeroAtendimento').hide()
-                    $('#atendentePreferido').prop('checked') ? $('.atendentePreferido').show() : $('.atendentePreferido').hide()
-                    $('#tipoAtendente').prop('checked') ? $('.tipoAtendente').show() : $('.tipoAtendente').hide()
-                    $('#horarioChegada').prop('checked') ? $('.horarioChegada').show() : $('.horarioChegada').hide()
-                    $('#prioridade').prop('checked') ? $('.prioridade').show() : $('.prioridade').hide()
-                    $('#atendimento').prop('checked') ? $('.atendimento').show() : $('.atendimento').hide()
-                    $('#representante').prop('checked') ? $('.representante').show() : $('.representante').hide()
-                    $('#atendente').prop('checked') ? $('.atendente').show() : $('.atendente').hide()
-                    $('#sala').prop('checked') ? $('.sala').show() : $('.sala').hide()
-                    $('#tipoAtendimento').prop('checked') ? $('.tipoAtendimento').show() : $('.tipoAtendimento').hide()
-                    $('#statusAtendimento').prop('checked') ? $('.statusAtendimento').show() : $('.statusAtendimento').hide()
+                $('#numeroAtendimento').prop('checked') ? $('.numeroAtendimento').show() : $('.numeroAtendimento')
+                    .hide()
+                $('#atendentePreferido').prop('checked') ? $('.atendentePreferido').show() : $(
+                    '.atendentePreferido').hide()
+                $('#tipoAtendente').prop('checked') ? $('.tipoAtendente').show() : $('.tipoAtendente').hide()
+                $('#horarioChegada').prop('checked') ? $('.horarioChegada').show() : $('.horarioChegada').hide()
+                $('#prioridade').prop('checked') ? $('.prioridade').show() : $('.prioridade').hide()
+                $('#atendimento').prop('checked') ? $('.atendimento').show() : $('.atendimento').hide()
+                $('#representante').prop('checked') ? $('.representante').show() : $('.representante').hide()
+                $('#atendente').prop('checked') ? $('.atendente').show() : $('.atendente').hide()
+                $('#sala').prop('checked') ? $('.sala').show() : $('.sala').hide()
+                $('#tipoAtendimento').prop('checked') ? $('.tipoAtendimento').show() : $('.tipoAtendimento').hide()
+                $('#statusAtendimento').prop('checked') ? $('.statusAtendimento').show() : $('.statusAtendimento')
+                    .hide()
 
             }
 
             function tabelas() {
-                if($('.modal').hasClass('show')){
+                if ($('.modal').hasClass('show')) {
 
-                }else{
-                $('#tabelaPrincipal').html("")
-                $.each(atendimentos, function(){
+                } else {
+                    $('#tabelaPrincipal').html("")
+                    $.each(atendimentos, function() {
 
-                   const date = Date.parse(this.dh_chegada);
-                   const formatter = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric',hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                   const formattedDate = formatter.format(date);
+                        const date = Date.parse(this.dh_chegada);
+                        const formatter = new Intl.DateTimeFormat('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                        });
+                        const formattedDate = formatter.format(date);
 
-                       let ida = this.ida  == null ? '' : this.ida
-                       let nm_4 = this.nm_4 == null ? ' ' : this.nm_4
-                       let tipo = this.tipo  == null ? ' ' : this.tipo
-                       let dh_chegada = formattedDate
-                       let prdesc = this.prdesc  == null ? '' : this.prdesc
-                       let nm_1 =  this.nm_1  == null ? '' : this.nm_1
-                       let nm_2 = this.nm_2  == null ? '' : this.nm_2
-                       let nm_3 = this.nm_3  == null ? '' : this.nm_3
-                       let nr_sala = this.nr_sala  == null ? '' : this.nr_sala
-                       let afe = this.afe  == null ? '' : this.afe
-                       let descricao = this.descricao  == null ? '' : this.descricao
-
-
-                    if(this.status_atendimento == 3){
-
-                        $('#tabelaPrincipal').append(
-
-                        '<tr class="table-danger">'+
-
-                            //Colunas com informações
-                                   '<td class="numeroAtendimento">'+ ida  +'</td>' +
-                                   '<td class="atendentePreferido">'+nm_4  +'</td>' +
-                                   '<td class="tipoAtendente">'+tipo+'</td>' +
-                                   '<td class="horarioChegada">'+dh_chegada+'</td>' +
-                                  '<td class="prioridade">'+prdesc +'</td>' +
-                                   '<td class="atendimento">'+nm_1 +'</td>' +
-                                   '<td class="representante">'+nm_2 +'</td>' +
-                                   '<td class="atendente">'+nm_3 +'</td>'+
-                                   '<td class="sala">'+nr_sala +'</td>'+
-                               '<td class="tipoAtendimento">'+afe+'</td>'+
-                                  '<td class="statusAtendimento" >'+descricao+'</td>'+
-                                   '<td class="">'+
-
-                                    //Botões de ação
-                                       '<a href="/editar-atendimento/' + ida + '" class="tooltips">' +
-                                        '<span class="tooltiptext">Editar</span>'+
-                                           '<button type="button" class="btn btn-outline-warning btn-sm">' +
-                                               '<i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>' +
-                                           '</button>' +
-                                       '</a>'+
-
-                                       '<a href="/visualizar-atendimentos/' + this.idas + '"class="tooltips">' +
-                                        '<span class="tooltiptext">Visualizar</span>'+
-                                           '<button type="button" class="btn btn-outline-primary btn-sm">' +
-                                               '<i class="bi bi-search" style="font-size: 1rem; color:#000;">' +
-                                               '</i>' +
-                                           '</button>' +
-                                       '</a>' +
-
-                                       //botão modal cancelar
-                                       '<button type="button"class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modal'+ ida +'">' +
-                                               '<span class="tooltiptext">Cancelar</span>'+
-                                               '<i class="bi bi-x-circle"style="font-size: 1rem; color:#000;">' +
-                                               '</i>' +
-                                           '</button>' +
-
-                                           '<form action="/cancelar-atendimento/' + ida + '">'+
-                                           '<div class="modal fade" id="modal'+ ida +'" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">'+
-                                            '<div class="modal-dialog">'+
-                                              '<div class="modal-content">'+
-                                                '<div class="modal-header" style="background-color:#DC4C64;color:white">'+
-                                                  '<h1 class="modal-title fs-5" id="exampleModalLabel">Confirmar Cancelamento</h1>'+
-                                                  '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'+
-                                                '</div>'+
-                                                 '<div class="modal-body">'+
-
-                                                    '<label for="recipient-name" class="col-form-label" style="font-size:17px">'+
-                                                        'Tem certeza que deseja inativar:'+
-                                                        '<br />'+
-                                                    '<span style="color:#DC4C64; font-weight: bold;">'+nm_1+'</span>'+
-                                                    '&#63;'+
-                                                '</label>'+
-                                                '<br />'+
-
-                                                '<center>'+
-                                                    '<div class="mb-2 col-10">'+
-                                                        '<label class="col-form-label">Insira o motivo da '+
-                                                            '<span style="color:#DC4C64">inativação:</span></label>'+
-                                                        '<select class="form-select" name="motivo" required>'+
-                                                                '<option value="'+motivo[0].id+'">'+motivo[0].descricao+'</option>'+
-                                                                '<option value="'+motivo[1].id+'">'+motivo[1].descricao+'</option>'+
-                                                        '</select>'+
-                                                    '</div>'+
-                                                '</center>'+
-                                                '</div>'+
-                                                '<div class="modal-footer">'+
-                                                  '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>'+
-                                                  '<button type="submit" class="btn btn-primary">Confirmar</button>'+
-                                                '</div>'+
-                                              '</div>'+
-                                            '</div>'+
-                                          '</div>'+
-                                        '</form>'+
-                                   '</td>'+
-                       '</tr>'
-                   )
-
-                    }else{
-                        $('#tabelaPrincipal').append(
-
-                        '<tr>'+
-                                   '<td class="numeroAtendimento"> '+ ida  +'</td>' +
-                                   '<td class="atendentePreferido">'+nm_4  +'</td>' +
-                                   '<td class="tipoAtendente">'+tipo+'</td>' +
-                                   '<td class="horarioChegada">'+dh_chegada+'</td>' +
-                                  '<td class="prioridade">'+prdesc +'</td>' +
-                                   '<td class="atendimento">'+nm_1 +'</td>' +
-                                   '<td class="representante">'+nm_2 +'</td>' +
-                                   '<td class="atendente">'+nm_3 +'</td>'+
-                                   '<td class="sala">'+nr_sala +'</td>'+
-                               '<td class="tipoAtendimento">'+afe+'</td>'+
-                                  '<td class="statusAtendimento">'+descricao+'</td>'+
-                                   '<td class="">'+
-
-                                       '<a href="/editar-atendimento/' + ida + '" class="tooltips">' +
-                                        '<span class="tooltiptext">Editar</span>'+
-                                           '<button type="button" class="btn btn-outline-warning btn-sm" >' +
-                                               '<i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>' +
-                                           '</button>' +
-                                       '</a>'+
-
-                                       '<a href="/visualizar-atendimentos/' + this.idas + '" class="tooltips">' +
-                                        '<span class="tooltiptext">Visualizar</span>'+
-                                           '<button type="button" class="btn btn-outline-primary btn-sm">' +
-                                               '<i class="bi bi-search" style="font-size: 1rem; color:#000;">' +
-                                               '</i>' +
-                                           '</button>' +
-                                       '</a>' +
+                        let ida = this.ida == null ? '' : this.ida
+                        let nm_4 = this.nm_4 == null ? ' ' : this.nm_4
+                        let tipo = this.tipo == null ? ' ' : this.tipo
+                        let dh_chegada = formattedDate
+                        let prdesc = this.prdesc == null ? '' : this.prdesc
+                        let nm_1 = this.nm_1 == null ? '' : this.nm_1
+                        let nm_2 = this.nm_2 == null ? '' : this.nm_2
+                        let nm_3 = this.nm_3 == null ? '' : this.nm_3
+                        let nr_sala = this.nr_sala == null ? '' : this.nr_sala
+                        let afe = this.afe == null ? '' : this.afe
+                        let descricao = this.descricao == null ? '' : this.descricao
 
 
-                                        '<button type="button"class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modal'+ ida +'">' +
-                                               '<span class="tooltiptext">Cancelar</span>'+
-                                               '<i class="bi bi-x-circle"style="font-size: 1rem; color:#000;">' +
-                                               '</i>' +
-                                           '</button>' +
+                        if (this.status_atendimento == 3) {
 
-                                           '<form action="/cancelar-atendimento/' + ida + '">'+
-                                           '<div class="modal fade" id="modal'+ ida +'" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">'+
-                                            '<div class="modal-dialog">'+
-                                              '<div class="modal-content">'+
-                                                '<div class="modal-header" style="background-color:#DC4C64;color:white">'+
-                                                  '<h1 class="modal-title fs-5" id="exampleModalLabel">Confirmar Cancelamento</h1>'+
-                                                  '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'+
-                                                '</div>'+
-                                                 '<div class="modal-body">'+
+                            $('#tabelaPrincipal').append(
 
-                                                    '<label for="recipient-name" class="col-form-label" style="font-size:17px">'+
-                                                        'Tem certeza que deseja inativar:'+
-                                                        '<br />'+
-                                                    '<span style="color:#DC4C64; font-weight: bold;">'+nm_1+'</span>'+
-                                                    '&#63;'+
-                                                '</label>'+
-                                                '<br />'+
+                                '<tr class="table-danger">' +
 
-                                                '<center>'+
-                                                    '<div class="mb-2 col-10">'+
-                                                        '<label class="col-form-label">Insira o motivo da '+
-                                                            '<span style="color:#DC4C64">inativação:</span></label>'+
-                                                        '<select class="form-select" name="motivo" required>'+
-                                                                '<option value="'+motivo[0].id+'">'+motivo[0].descricao+'</option>'+
-                                                                '<option value="'+motivo[1].id+'">'+motivo[1].descricao+'</option>'+
-                                                        '</select>'+
-                                                    '</div>'+
-                                                '</center>'+
-                                                '</div>'+
-                                                '<div class="modal-footer">'+
-                                                  '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>'+
-                                                  '<button type="submit" class="btn btn-primary">Confirmar</button>'+
-                                                '</div>'+
-                                              '</div>'+
-                                            '</div>'+
-                                          '</div>'+
-                                        '</form>'+
-                                   '</td>'+
-                       '</tr>'
-                   )
-                    }
+                                //Colunas com informações
+                                '<td class="numeroAtendimento">' + ida + '</td>' +
+                                '<td class="atendentePreferido">' + nm_4 + '</td>' +
+                                '<td class="tipoAtendente">' + tipo + '</td>' +
+                                '<td class="horarioChegada">' + dh_chegada + '</td>' +
+                                '<td class="prioridade">' + prdesc + '</td>' +
+                                '<td class="atendimento">' + nm_1 + '</td>' +
+                                '<td class="representante">' + nm_2 + '</td>' +
+                                '<td class="atendente">' + nm_3 + '</td>' +
+                                '<td class="sala">' + nr_sala + '</td>' +
+                                '<td class="tipoAtendimento">' + afe + '</td>' +
+                                '<td class="statusAtendimento" >' + descricao + '</td>' +
+                                '<td class="">' +
+
+                                //Botões de ação
+                                '<a href="/editar-atendimento/' + ida + '" class="tooltips">' +
+                                '<span class="tooltiptext">Editar</span>' +
+                                '<button type="button" class="btn btn-outline-warning btn-sm">' +
+                                '<i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>' +
+                                '</button>' +
+                                '</a>' +
+
+                                '<a href="/visualizar-atendimentos/' + this.idas +
+                                '"class="tooltips">' +
+                                '<span class="tooltiptext">Visualizar</span>' +
+                                '<button type="button" class="btn btn-outline-primary btn-sm">' +
+                                '<i class="bi bi-search" style="font-size: 1rem; color:#000;">' +
+                                '</i>' +
+                                '</button>' +
+                                '</a>' +
+
+                                //botão modal cancelar
+                                '<button type="button"class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modal' +
+                                ida + '">' +
+                                '<span class="tooltiptext">Cancelar</span>' +
+                                '<i class="bi bi-x-circle"style="font-size: 1rem; color:#000;">' +
+                                '</i>' +
+                                '</button>' +
+
+                                '<form action="/cancelar-atendimento/' + ida + '">' +
+                                '<div class="modal fade" id="modal' + ida +
+                                '" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">' +
+                                '<div class="modal-dialog">' +
+                                '<div class="modal-content">' +
+                                '<div class="modal-header" style="background-color:#DC4C64;color:white">' +
+                                '<h1 class="modal-title fs-5" id="exampleModalLabel">Confirmar Cancelamento</h1>' +
+                                '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+                                '</div>' +
+                                '<div class="modal-body">' +
+
+                                '<label for="recipient-name" class="col-form-label" style="font-size:17px">' +
+                                'Tem certeza que deseja inativar:' +
+                                '<br />' +
+                                '<span style="color:#DC4C64; font-weight: bold;">' + nm_1 + '</span>' +
+                                '&#63;' +
+                                '</label>' +
+                                '<br />' +
+
+                                '<center>' +
+                                '<div class="mb-2 col-10">' +
+                                '<label class="col-form-label">Insira o motivo da ' +
+                                '<span style="color:#DC4C64">inativação:</span></label>' +
+                                '<select class="form-select" name="motivo" required>' +
+                                '<option value="' + motivo[0].id + '">' + motivo[0].descricao +
+                                '</option>' +
+                                '<option value="' + motivo[1].id + '">' + motivo[1].descricao +
+                                '</option>' +
+                                '</select>' +
+                                '</div>' +
+                                '</center>' +
+                                '</div>' +
+                                '<div class="modal-footer">' +
+                                '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>' +
+                                '<button type="submit" class="btn btn-primary">Confirmar</button>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</form>' +
+                                '</td>' +
+                                '</tr>'
+                            )
+
+                        } else {
+                            $('#tabelaPrincipal').append(
+
+                                '<tr>' +
+                                '<td class="numeroAtendimento"> ' + ida + '</td>' +
+                                '<td class="atendentePreferido">' + nm_4 + '</td>' +
+                                '<td class="tipoAtendente">' + tipo + '</td>' +
+                                '<td class="horarioChegada">' + dh_chegada + '</td>' +
+                                '<td class="prioridade">' + prdesc + '</td>' +
+                                '<td class="atendimento">' + nm_1 + '</td>' +
+                                '<td class="representante">' + nm_2 + '</td>' +
+                                '<td class="atendente">' + nm_3 + '</td>' +
+                                '<td class="sala">' + nr_sala + '</td>' +
+                                '<td class="tipoAtendimento">' + afe + '</td>' +
+                                '<td class="statusAtendimento">' + descricao + '</td>' +
+                                '<td class="">' +
+
+                                '<a href="/editar-atendimento/' + ida + '" class="tooltips">' +
+                                '<span class="tooltiptext">Editar</span>' +
+                                '<button type="button" class="btn btn-outline-warning btn-sm" >' +
+                                '<i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>' +
+                                '</button>' +
+                                '</a>' +
+
+                                '<a href="/visualizar-atendimentos/' + this.idas +
+                                '" class="tooltips">' +
+                                '<span class="tooltiptext">Visualizar</span>' +
+                                '<button type="button" class="btn btn-outline-primary btn-sm">' +
+                                '<i class="bi bi-search" style="font-size: 1rem; color:#000;">' +
+                                '</i>' +
+                                '</button>' +
+                                '</a>' +
 
 
-            })}}
+                                '<button type="button"class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modal' +
+                                ida + '">' +
+                                '<span class="tooltiptext">Cancelar</span>' +
+                                '<i class="bi bi-x-circle"style="font-size: 1rem; color:#000;">' +
+                                '</i>' +
+                                '</button>' +
 
-            function stopPesquisa(){
+                                '<form action="/cancelar-atendimento/' + ida + '">' +
+                                '<div class="modal fade" id="modal' + ida +
+                                '" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">' +
+                                '<div class="modal-dialog">' +
+                                '<div class="modal-content">' +
+                                '<div class="modal-header" style="background-color:#DC4C64;color:white">' +
+                                '<h1 class="modal-title fs-5" id="exampleModalLabel">Confirmar Cancelamento</h1>' +
+                                '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+                                '</div>' +
+                                '<div class="modal-body">' +
+
+                                '<label for="recipient-name" class="col-form-label" style="font-size:17px">' +
+                                'Tem certeza que deseja inativar:' +
+                                '<br />' +
+                                '<span style="color:#DC4C64; font-weight: bold;">' + nm_1 + '</span>' +
+                                '&#63;' +
+                                '</label>' +
+                                '<br />' +
+
+                                '<center>' +
+                                '<div class="mb-2 col-10">' +
+                                '<label class="col-form-label">Insira o motivo da ' +
+                                '<span style="color:#DC4C64">inativação:</span></label>' +
+                                '<select class="form-select" name="motivo" required>' +
+                                '<option value="' + motivo[0].id + '">' + motivo[0].descricao +
+                                '</option>' +
+                                '<option value="' + motivo[1].id + '">' + motivo[1].descricao +
+                                '</option>' +
+                                '</select>' +
+                                '</div>' +
+                                '</center>' +
+                                '</div>' +
+                                '<div class="modal-footer">' +
+                                '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>' +
+                                '<button type="submit" class="btn btn-primary">Confirmar</button>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</form>' +
+                                '</td>' +
+                                '</tr>'
+                            )
+                        }
+
+
+                    })
+                }
+            }
+
+            function stopPesquisa() {
                 clearInterval(intervalPesq)
             }
 
@@ -485,10 +510,10 @@
 
 
 
-            $('.coluna').click(function(){
+            $('.coluna').click(function() {
                 colunas();
             })
-            $('#limpar').click(function(){
+            $('#limpar').click(function() {
                 $('#assist').val("")
                 $('#cpf').val("")
                 $('#status').prop('selectedIndex', -1)
@@ -496,17 +521,17 @@
 
             })
 
-            $('.pesq').click(function(){
-                        ajax()
-                        intervalPesq = window.setInterval(function(){[tabelas(), colunas()]}, 500);
+            $('.pesq').click(function() {
+                ajax()
+                intervalPesq = window.setInterval(function() {
+                    [tabelas(), colunas()]
+                }, 500);
 
 
             })
 
-
-
-           var intervalId = window.setInterval(function(){
-              [ajax(), tabelas(), colunas(), stopPesquisa()]
+            var intervalId = window.setInterval(function() {
+                [ajax(), tabelas(), colunas(), stopPesquisa()]
             }, 10000);
 
 
@@ -535,6 +560,4 @@
 
         })
     </script>
-
-
 @endsection

@@ -71,14 +71,17 @@
                             <div class="col-2">
                                 <div class="mb-4" style="text-align:left;">
                                     <label for="validationCustom05" class="form-label">DDD</label>
-                                    <select class="form-select" id="" name="ddd">
+                                    <select class="form-select" id="validationCustom05" name="ddd">
                                         <option value=""></option>
                                         @foreach($ddd as $ddds)
-                                            <option @if(old ('ddd') == $ddds->id) {{'selected="selected"'}} @endif value="{{ $ddds->id }}">{{$ddds->descricao}}</option>
+                                            <option value="{{ $ddds->descricao }}" @if(old('ddd') == $ddds->descricao) selected="selected" @endif>
+                                                {{ $ddds->descricao }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
+                            
                             <div class="col">
                                 <div class="mb-5" style="text-align:left;">
                                     <label for="validationCustom06" class="form-label">Nr Celular</label>
