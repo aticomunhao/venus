@@ -100,21 +100,23 @@ class GerenciarEntrevistaController extends Controller
         $pesquisaValue = $request->status == null ? 'limpo' : $request->status;
         $nome_pesquisa = $request->nome_pesquisa;
 
+        $pesquisaEntrevista = $request->tipo_entrevista;
+
         if (session()->get('usuario.setor') == 38) {
-            $informacoes = $informacoes->where('encaminhamento.id_tipo_entrevista', 5);
+            $informacoes->where('encaminhamento.id_tipo_entrevista', 5);
         }
         if (session()->get('usuario.setor') == 7) {
-            $informacoes = $informacoes->where('encaminhamento.id_tipo_entrevista', 3);
+            $informacoes->where('encaminhamento.id_tipo_entrevista', 3);
         }
 
         if ($request->nome_pesquisa) {
 
-            $informacoes = $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome_pesquisa%");
+            $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome_pesquisa%");
         }
 
         if ($request->tipo_entrevista) {
-            $informacoes = $informacoes->where('tipo_entrevista.id', $request->tipo_entrevista);
-            $pesquisaEntrevista = $request->tipo_entrevista;
+            $informacoes->where('tipo_entrevista.id', $request->tipo_entrevista);
+            
         }
 
 

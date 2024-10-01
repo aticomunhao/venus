@@ -23,9 +23,7 @@
                                 Status
                                 <select class="form-select" id="status" name="status">
                                     {{-- Select de pesquisa de status --}}
-                                    <option value="" {{ $pesquisaValue ? 'selected' : '' }}>
-                                        Todos
-                                    </option>
+                                    <option value="" {{ $pesquisaValue ? 'selected' : '' }}>Todos</option>
                                     @foreach ($status as $statu)
                                         <option value="{{ $statu->id }}"
                                             {{ $statu->id == $pesquisaValue ? 'selected' : '' }}>
@@ -41,8 +39,8 @@
                                     {{-- Select de pesquisa de tipo entrevista --}}
                                     <option value="">Todos</option>
                                     @foreach ($tipo_entrevista as $tp_ent)
-                                        <option value="{{ $tp_ent->id_ent }}" {{ $tp_ent->id_ent == $pesquisaValue ? 'selected' : '' }}>
-                                            {{ $tp_ent->ent_desc }}
+                                        <option value="{{ $tp_ent->id_ent }}" {{ request('tipo_entrevista') == $tp_ent->id_ent ? 'selected' : '' }}>
+            {{ $tp_ent->ent_desc }}
                                         </option>
                                     @endforeach
                                 </select>

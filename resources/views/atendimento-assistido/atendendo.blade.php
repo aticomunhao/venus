@@ -61,26 +61,19 @@
                                 class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                                 <thead style="text-align: center;">
                                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                                        <th class="col">NR</th>
-                                        <th class="col-2">ATENDENTE PREFERIDO</th>
-                                        <th class="col-1">TIPO AF</th>
-                                        <th class="col-1">HORÁRIO CHEGADA</th>
-                                        <th class="col">PRIORIDADE</th>
-                                        <th class="col-2">ATENDIDO</th>
-                                        <th class="col-2">REPRESENTANTE</th>
-                                        <th class="col-1">STATUS</th>
+                                        <th class="col">NR</th>                    
+                                        <th class="col">HORÁRIO CHEGADA</th>                        
+                                        <th class="col">ATENDIDO</th>
+                                        <th class="col">REPRESENTANTE</th>
+                                        <th class="col">STATUS</th>
                                         <th class="col">AÇÕES</th>
                                     </tr>
                                 </thead>
                                 <tbody style="font-size: 14px; color:#000000; text-align:center;">
                                     @foreach ($assistido as $assistidos)
                                         <tr>
-                                            <td scope="">{{ $assistidos->idat }}</td>
-                                            <td scope="">{{ $assistidos->nm_3 }}</td>
-                                            <td scope="">{{ $assistidos->tipo }}</td>
-                                            <td scope="">
-                                                {{ date('d/m/Y G:i:s', strtotime($assistidos->dh_chegada)) }}</td>
-                                            <td scope="">{{ $assistidos->prdesc }}</td>
+                                            <td scope="">{{ $assistidos->idat }}</td>                                        
+                                            <td scope="">{{ date('d/m/Y G:i:s', strtotime($assistidos->dh_chegada)) }}</td>
                                             <td scope="">{{ $assistidos->nm_1 }}</td>
                                             <td scope="">{{ $assistidos->nm_2 }}</td>
                                             <td scope="">{{ $assistidos->descricao }}</td>
@@ -117,12 +110,12 @@
                                                 <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#modalRel{{ $assistidos->idat }}"><span
-                                                        class="tooltiptext">Reset</span><i class="bi bi-arrow-repeat"
+                                                        class="tooltiptext">Limpar</span><i class="bi bi-arrow-repeat"
                                                         style="font-size: 1rem; color:#000;"></i></button>
                                                 <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#modalF{{ $assistidos->idat }}"><span
-                                                        class="tooltiptext">Finalizado</span><i class="bi bi-door-open"
+                                                        class="tooltiptext">Finalizar</span><i class="bi bi-door-open"
                                                         style="font-size: 1rem; color:#000;"></i></button>
 
 
