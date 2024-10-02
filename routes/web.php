@@ -50,9 +50,7 @@ use App\Http\Controllers\RelatoriosController;
 
 Auth::routes();
 
-Route::fallback(function () {
-    return view('tratamento-erro.erro-404');
-});
+
 
 Route::get('/', [LoginController::class, 'index']);
 Route::any('/login/home', [LoginController::class, 'valida']);
@@ -110,9 +108,10 @@ Route::middleware('rotas:5')->group(function () {
     Route::post('/grava-atualizacao/{ida}', [GerenciarAtendimentoController::class, 'altera'])->name('atealt');
     Route::post('/novo-atendimento', [GerenciarAtendimentoController::class, 'store'])->name('atetore');
     Route::get('/visualizar-atendimentos/{idas}', [GerenciarAtendimentoController::class, 'visual'])->name('atevis');
-    Route::any('/tabela-atendimentos/{assist}/{cpf}/{status}/{dt_ini}', [GerenciarAtendimentoController::class, 'ajaxAtendimento']);
+    Route::any('/tabela-atendimentos/{assist}/{cpf}/{status}/{dt_ini}/{atendente}', [GerenciarAtendimentoController::class, 'ajaxAtendimento']);
     // Route::any('/atendimentos-tabela/{assist}/{cpf}/{status}/{dt_ini}/{atendente}', [GerenciarAtendimentoController::class, 'ajaxAtendimento2']);
     Route::any('/ajaxCRUD', [GerenciarAtendimentoController::class, 'ajaxCRUD']);
+    Route::get('/pessoas-para-atender-atendimento', [GerenciarAtendimentoController::class, 'pessoas_para_atender']);
 });
 
 // Atendente Fraterno Individual
@@ -182,6 +181,9 @@ Route::middleware('rotas:9')->group(function () {
     Route::any('/finalizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'finalizar'])->name('finalizar.entrevista');
     Route::any('/nao-aceito-entrevista/{id}', [GerenciarEntrevistaController::class, 'fim'])->name('');
     Route::any('/inativar-entrevista/{id}/{tp}', [GerenciarEntrevistaController::class, 'inativar'])->name('');
+    Route::post('/inativar-entrevista-encaminhamento/{id}', [GerenciarEntrevistaController::class, 'destroy'])->name('cancelar');
+
+
 });
 
 // Gerenciar Grupos

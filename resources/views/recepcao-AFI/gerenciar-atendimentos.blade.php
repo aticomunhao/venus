@@ -5,7 +5,7 @@
 @endsection
 @section('content')
     <div class="container-fluid">
-        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR ASSISTIDO
+        <h4 class="card-title" style="font-size:20px; text-align: start; color: gray; font-family:calibri">GERENCIAR ASSISTIDO
         </h4>
 
         <div class="row mt-3">
@@ -110,8 +110,7 @@
                     <div class="modal-content">
                         <div class="modal-header" style="background-color:grey;color:white">
                             <h1 class="modal-title fs-5" id="exampleModalLabel">Colunas Visualizadas</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
 
@@ -202,33 +201,39 @@
 
         <hr>
         <div class="row">
-            <div class="table">Total Atendidos: {{ $contar }}
-                <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
-                    <thead style="text-align: center;">
-                        <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                            <th class="col numeroAtendimento">Nr</th>
-                            <th class="col atendentePreferido">AFI PREF</th>
-                            <th class="col tipoAtendente">TIPO AFI</th>
-                            <th class="col horarioChegada">HORÁRIO CHEGADA</th>
-                            <th class="col prioridade">PRIOR</th>
-                            <th class="col atendimento">ATENDIDO</th>
-                            <th class="col representante">REPRESENTANTE</th>
-                            <th class="col atendente">ATENDENTE</th>
-                            <th class="col sala">SALA</th>
-                            <th class="col tipoAtendimento">TIPO</th>
-                            <th class="col statusAtendimento">STATUS</th>
-                            <th class="col">AÇÕES</th>
-                        </tr>
-                    </thead>
-                    <tbody style="font-size: 14px; color:#000000; text-align: center;" id="tabelaPrincipal">
+            <div class="table">
+                <div style="display: flex; align-items: center; font-weight: bold;">
+                    <div>Total Atendidos: {{ $contar }}</div>
+                    <div style="border-inline-start: 2px solid #000; margin: 0 20px;"></div> <!-- Vertical bar -->
+                    <div>Fila de Espera: <span id="id_pessoas_para_atender"></span></div>
+                </div>
+            </div>
+            <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
+                <thead style="text-align: center;">
+                    <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
+                        <th class="col numeroAtendimento">Nr</th>
+                        <th class="col atendentePreferido">AFI PREF</th>
+                        <th class="col tipoAtendente">TIPO AFI</th>
+                        <th class="col horarioChegada">HORÁRIO CHEGADA</th>
+                        <th class="col prioridade">PRIOR</th>
+                        <th class="col atendimento">ATENDIDO</th>
+                        <th class="col representante">REPRESENTANTE</th>
+                        <th class="col atendente">ATENDENTE</th>
+                        <th class="col sala">SALA</th>
+                        <th class="col tipoAtendimento">TIPO</th>
+                        <th class="col statusAtendimento">STATUS</th>
+                        <th class="col">AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody style="font-size: 14px; color:#000000; text-align: center;" id="tabelaPrincipal">
 
 
 
-                    </tbody>
-                </table>
-            </div class="d-flex justify-content-center">
+                </tbody>
+            </table>
+        </div class="d-flex justify-content-center">
 
-        </div>
+    </div>
     </div>
     </div>
 
@@ -251,7 +256,7 @@
                 let status = $('#status').val() == '' ? null : $('#status').val()
                 let dt_ini = $('#dt_ini').val() == '' ? null : $('#dt_ini').val()
                 let atendente = $('#idatendente').val() == '' ? null : $('#idatendente').val();
-              
+
 
 
                 $.ajax({
@@ -559,5 +564,28 @@
             }
 
         })
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            function fetchData() {
+                $.ajax({
+                    type: "GET",
+                    url: "/pessoas-para-atender-atendimento",
+                    dataType: "JSON",
+                    success: function(response) {
+
+                        $('#id_pessoas_para_atender').text(response);
+                    },
+                    error: function(error) {
+                        console.error('Erro ao buscar dados:', error);
+                    }
+                });
+            }
+
+            // Chama a função imediatamente e a cada 5 segundos
+            fetchData(); // Chamada inicial
+            setInterval(fetchData, 5000); // Chamada a cada 5 segundos
+        });
     </script>
 @endsection
