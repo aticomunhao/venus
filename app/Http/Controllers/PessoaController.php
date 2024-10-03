@@ -16,7 +16,7 @@ class PessoaController extends Controller
     public function index(Request $request)
     {
 
-        try {
+    
 
             $ddd = DB::select('select id, descricao from tp_ddd');
 
@@ -33,17 +33,19 @@ class PessoaController extends Controller
 
 
             $nome = $request->nome;
-
             if ($request->nome) {
-                $pessoa->where('p.nome_completo', 'ilike', "%$request->nome%");
+                $pessoa->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome}%"]);
             }
-
+            
             $cpf = $request->cpf;
-
+            
             if ($request->cpf) {
-                $pessoa->where('p.cpf', $request->cpf);
+                // Usar LIKE para permitir pesquisa parcial
+                $pessoa->whereRaw("LOWER(p.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
             }
-
+            
+            
+            
             $status = $request->status;
             //
 
@@ -71,11 +73,7 @@ class PessoaController extends Controller
 
 
             return view('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
-        } catch (\Exception $e) {
-
-            $code = $e->getCode();
-            return view('gerenciar-pessoas erro.erro-inesperado', compact('code'));
-        }
+      
     }
 
     public function store()
@@ -120,8 +118,8 @@ class PessoaController extends Controller
             return redirect()->back()->withInput();
             //dd($e->errors());
         }
-     
 
+        dd($request->input('ddd'));
         if ($vercpf >= 1) {
 
             app('flasher')->addError('Existe outro cadastro usando este número de CPF');
@@ -139,10 +137,10 @@ class PessoaController extends Controller
                 'celular' => $request->input('celular'),
                 'email' => $request->input('email'),
                 'status' => 1
-                
-                
+
+
             ]);
-         
+
 
             $pessoa = DB::table('pessoas')->max('id');
 
@@ -152,8 +150,6 @@ class PessoaController extends Controller
                 'fato' => 2,
                 'pessoa' => $request->input('nome')
             ]);
-           
-
         }
 
         app('flasher')->addSuccess('O cadastro foi realizado com sucesso');
@@ -177,12 +173,38 @@ class PessoaController extends Controller
 
 
 
-            $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.motivo_status,p.sexo, p.status ,tipo_motivo_status_pessoa.id as tipo_motivo_status_pessoa,tipo_motivo_status_pessoa.motivo as motivo_status_pessoa_tipo_motivo, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
-        left join tp_sexo tps on (p.sexo = tps.id)
-        left join tp_ddd d on (p.ddd = d.id)
-        left join tipo_status_pessoa on (tipo_status_pessoa.id = p.status )
-        left join tipo_motivo_status_pessoa on (tipo_motivo_status_pessoa.id = p.motivo_status )
-        where p.id = $idp");
+            //     $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.motivo_status,p.sexo, p.status ,tipo_motivo_status_pessoa.id as tipo_motivo_status_pessoa,tipo_motivo_status_pessoa.motivo as motivo_status_pessoa_tipo_motivo, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
+            // left join tp_sexo tps on (p.sexo = tps.id)
+            // left join tp_ddd d on (p.ddd = d.id)
+            // left join tipo_status_pessoa on (tipo_status_pessoa.id = p.status )
+            // left join tipo_motivo_status_pessoa on (tipo_motivo_status_pessoa.id = p.motivo_status )
+            // where p.id = $idp");
+            $lista = DB::table('pessoas as p')
+                ->select(
+                    'p.id as idp',
+                    'p.nome_completo',
+                    'p.ddd',
+                    'p.dt_nascimento',
+                    'p.motivo_status',
+                    'p.sexo',
+                    'p.status',
+                    'tipo_motivo_status_pessoa.id as tipo_motivo_status_pessoa',
+                    'tipo_motivo_status_pessoa.motivo as motivo_status_pessoa_tipo_motivo',
+                    'tipo_status_pessoa.tipo as tipo_status_pessoa',
+                    'p.email',
+                    'p.cpf',
+                    'p.celular',
+                    'tps.id AS sexid',
+                    'tps.tipo',
+                    'd.id AS did',
+                    'd.descricao as ddesc'
+                )
+                ->leftJoin('tp_sexo as tps', 'p.sexo', '=', 'tps.id')
+                ->leftJoin('tp_ddd as d', 'p.ddd', '=', 'd.id')
+                ->leftJoin('tipo_status_pessoa', 'tipo_status_pessoa.id', '=', 'p.status')
+                ->leftJoin('tipo_motivo_status_pessoa', 'tipo_motivo_status_pessoa.id', '=', 'p.motivo_status')
+                ->where('p.id', $idp)
+                ->get();
 
 
 

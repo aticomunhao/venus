@@ -56,10 +56,11 @@ class GerenciarEntrevistaController extends Controller
             ->leftJoin('associado', 'membro.id_associado', '=', 'associado.id')
             ->leftJoin('pessoas as pessoa_entrevistador', 'associado.id_pessoa', '=', 'pessoa_entrevistador.id')
             ->leftJoin('tipo_status_entrevista as tse', 'entrevistas.status', '=', 'tse.id')
+            ->leftJoin('tipo_status_encaminhamento as tsenc', 'encaminhamento.status_encaminhamento', '=', 'tsenc.id')
             ->where('encaminhamento.id_tipo_encaminhamento', 1)
             ->where(function ($query) {
-                $query->where('encaminhamento.status_encaminhamento', '<', 5);
-                $query->orWhere('entrevistas.id', '<>', NULL);
+                $query->where('encaminhamento.status_encaminhamento', '<=', 6)
+                    ->orWhereNotNull('entrevistas.id');
             })
             ->whereNotIn('tipo_entrevista.id', [8]) // Exclui o tipo de entrevista 8
             ->whereBetween('tipo_entrevista.id', [1, 7]) // Inclui os tipos de entrevista de 1 a 7
@@ -85,14 +86,20 @@ class GerenciarEntrevistaController extends Controller
                 'tipo_encaminhamento.descricao as tipo_encaminhamento_descricao',
                 's.nome as local',
                 's.numero',
+                'tsenc.id as status_encaminhamento_id',
+                'tsenc.descricao as status_encaminhamento_descricao',
                 'pessoa_entrevistador.nome_completo as nome_entrevistador',
                 DB::raw("(CASE WHEN atendimentos.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as emergencia"),
                 'atendimentos.dh_inicio as inicio'
             );
 
+
+
+
         if (!in_array(36, session()->get('usuario.acesso'))) {
             $informacoes =  $informacoes->whereIn('tipo_entrevista.id_setor', session()->get('usuario.setor'));
         }
+
 
         $i = 0;
         $pesquisaNome = null;
@@ -116,7 +123,6 @@ class GerenciarEntrevistaController extends Controller
 
         if ($request->tipo_entrevista) {
             $informacoes->where('tipo_entrevista.id', $request->tipo_entrevista);
-            
         }
 
 
@@ -126,25 +132,29 @@ class GerenciarEntrevistaController extends Controller
             $informacoes->where('entrevistas.status', $pesquisaValue);
         }
 
+
         $informacoes = $informacoes->orderByRaw("CASE 
-        WHEN entrevistas.status IS NULL THEN 1 
-        ELSE entrevistas.status 
+        WHEN entrevistas.status IS NULL AND encaminhamento.status_encaminhamento IS NULL THEN 0  -- 'Aguardando agendamento' no topo
+        WHEN entrevistas.status IS NULL AND encaminhamento.status_encaminhamento = 6 THEN 999  -- 'Inativado' por último
+        ELSE COALESCE(entrevistas.status, 1)  -- Outros status, tratando NULL como 1
     END")
             ->orderBy('atendimentos.emergencia', 'ASC')
             ->orderBy('atendimentos.dh_inicio')
             ->paginate(50);
 
 
+
         $totalAssistidos = $informacoes->total();
 
 
-        $tipo_entrevista = DB::table('tipo_entrevista')->whereIn('id',[3,4,5,6])->select('id as id_ent', 'sigla as ent_desc')->orderby('descricao', 'asc')->get(); 
+        $tipo_entrevista = DB::table('tipo_entrevista')->whereIn('id', [3, 4, 5, 6])->select('id as id_ent', 'sigla as ent_desc')->orderby('descricao', 'asc')->get();
 
 
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get();
+        $motivo = DB::table('tipo_motivo_entrevista')->get();
 
 
-        return view('Entrevistas.gerenciar-entrevistas', compact('nome_pesquisa', 'tipo_entrevista', 'totalAssistidos', 'informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status'));
+        return view('Entrevistas.gerenciar-entrevistas', compact('nome_pesquisa', 'tipo_entrevista', 'totalAssistidos', 'informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status', 'motivo'));
     }
 
 
@@ -203,6 +213,7 @@ class GerenciarEntrevistaController extends Controller
             }
 
 
+
             return view('Entrevistas/criar-entrevista', compact('salas', 'entrevista', 'encaminhamento', 'informacoes', 'pessoas', 'tipo_tratamento', 'tipo_entrevista'));
         } catch (\Exception $e) {
 
@@ -254,6 +265,7 @@ class GerenciarEntrevistaController extends Controller
             $associado = DB::table('membro')->select('membro.id',)
                 ->leftJoin('associado', 'membro.id_associado', 'associado.id')->get();
 
+
             $entrevistas = DB::table('entrevistas AS entre')
 
                 ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
@@ -278,9 +290,6 @@ class GerenciarEntrevistaController extends Controller
                 )
                 ->where('entre.id_encaminhamento', $id)
                 ->first();
-
-
-
             if (!$entrevistas) {
             }
             $usuarios = DB::table('usuario as u')
@@ -288,9 +297,12 @@ class GerenciarEntrevistaController extends Controller
                 ->where('us.id_setor', $entrevistas->id_setor)
                 ->pluck('id_pessoa');
 
+
             $salas = DB::table('salas')->get();
             $encaminhamento = DB::table('encaminhamento')->find($id);
             $pessoas = DB::table('pessoas')->get();
+            // $pessoas_por_setor = DB::table('usuario')->leftJoin('pessoas', 'usuario.id_pessoa', 'pessoas.id')->whereIn('pessoas.id',     $usuarios)->get();
+            // dd($pessoas_por_setor);
             $membros = DB::table('membro')
                 ->rightJoin('associado', 'membro.id_associado', '=', 'associado.id')
                 ->join('pessoas', 'associado.id_pessoa', '=', 'pessoas.id')
@@ -300,6 +312,7 @@ class GerenciarEntrevistaController extends Controller
                 ->distinct('membro.id_associado')
                 ->whereIn('associado.id_pessoa', $usuarios)
                 ->get();
+            dd($membros);
 
 
             $encaminhamento = DB::table('encaminhamento')->find($id);
@@ -675,5 +688,23 @@ class GerenciarEntrevistaController extends Controller
             DB::rollBack();
             return redirect()->back();
         }
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $data = now();
+        $motivo_entrevista = $request->input('motivo_entrevista');
+
+
+        // Para outros casos, tentamos atualizar a tabela de entrevistas
+        DB::table('encaminhamento')
+            ->where('id', '=', $id)
+            ->update([
+                'status_encaminhamento' => 6,
+                'motivo' => $motivo_entrevista
+            ]);
+
+
+        return redirect()->route('gerenciamento')->with('success', 'Inativada entrevista e encaminhamento!');
     }
 }
