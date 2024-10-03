@@ -61,11 +61,11 @@
                                         <input class="form-control pesquisa" type="text" id="assist" name="assist"
                                             value="{{ $assistido }}">
                                     </div>
-                                    {{-- <div class="col">
+                                    <div class="col">
                                         <label for="assist">Atendente</label>
                                         <input class="form-control pesquisa" type="text" id="idatendente" name="atendente"
-                                            value="">
-                                    </div> --}}
+                                            value="{{ $atendente }}">
+                                    </div>
                                     <div class="col mt-3">
                                         <label for="assist">CPF</label>
                                         <input class="form-control pesquisa" type="text" maxlength="11"
@@ -261,7 +261,8 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "/tabela-atendimentos/" + assist + "/" + cpf + "/" + status + "/" + dt_ini,
+                    //url: "/tabela-atendimentos/" + assist + "/" + cpf + "/" + status + "/" + dt_ini,
+                    url: "/tabela-atendimentos/" + assist + "/" + cpf + "/" + status + "/" + dt_ini + "/" + atendente,
                     // url: "/atendimentos-tabela/" + assist + "/" + cpf + "/" + status + "/" + dt_ini + "/" + atendente,
                     dataType: "json",
                     success: function(response) {
@@ -510,7 +511,7 @@
 
             tabelas()
             colunas()
-
+            filaEspera()
 
 
 
@@ -535,8 +536,23 @@
 
             })
 
+            function filaEspera(){
+                $.ajax({
+                    type: "GET",
+                    url: "/pessoas-para-atender-atendimento",
+                    dataType: "JSON",
+                    success: function(response) {
+
+                        $('#id_pessoas_para_atender').text(response);
+                    },
+                    error: function(error) {
+                        console.error('Erro ao buscar dados:', error);
+                    }
+                });
+            }
+
             var intervalId = window.setInterval(function() {
-                [ajax(), tabelas(), colunas(), stopPesquisa()]
+                [ajax(), tabelas(), colunas(), stopPesquisa(), filaEspera()]
             }, 10000);
 
 
@@ -567,6 +583,7 @@
     </script>
 
     <script>
+        /*
         $(document).ready(function() {
             function fetchData() {
                 $.ajax({
@@ -587,5 +604,6 @@
             fetchData(); // Chamada inicial
             setInterval(fetchData, 5000); // Chamada a cada 5 segundos
         });
+        */
     </script>
 @endsection

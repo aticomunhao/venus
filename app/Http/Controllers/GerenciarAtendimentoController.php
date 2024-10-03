@@ -14,7 +14,7 @@ class GerenciarAtendimentoController extends Controller
     ////GERENCIAR ATENDIMENTOS DO DIA
 
 
-    public function ajaxAtendimento(String $assist, String $cpf, String $status, String $dt_ini)
+    public function ajaxAtendimento(String $assist, String $cpf, String $status, String $dt_ini, String $atendente)
     {
 
 
@@ -25,7 +25,7 @@ class GerenciarAtendimentoController extends Controller
 
         if ($dt_ini != 'null') {
             $lista->whereDate('dh_chegada', $dt_ini);
-        } elseif ($assist != 'null' or $cpf != 'null' or $status != 'null') {
+        } elseif ($assist != 'null' or $atendente != 'null' or $cpf != 'null' or $status != 'null') {
         } else {
             $lista->whereDate('dh_chegada', '>', Carbon::today()->toDateString());
         }
@@ -36,6 +36,10 @@ class GerenciarAtendimentoController extends Controller
 
         if ($status != 'null') {
             $lista->where('at.status_atendimento', $status);
+        }
+
+        if ($atendente != 'null') {
+            $lista->where('p.nome_completo', 'ilike', "%$atendente%");
         }
 
 
@@ -50,6 +54,8 @@ class GerenciarAtendimentoController extends Controller
 
 
         $lista = json_encode($lista);
+
+        //var_dump($lista);
 
         return $lista;
     }
@@ -221,6 +227,8 @@ class GerenciarAtendimentoController extends Controller
 
             $assistido = $request->assist;
 
+            $atendente = $request->atendente;
+
             $situacao = $request->status;
 
             if ($request->input('dt_ini')) {
@@ -259,7 +267,7 @@ class GerenciarAtendimentoController extends Controller
             $motivo = DB::table('tipo_motivo_atendimento')->get();
 
 
-            return view('/recepcao-AFI/gerenciar-atendimentos', compact('cpf', 'lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'situacao', 'now', 'motivo'));
+            return view('/recepcao-AFI/gerenciar-atendimentos', compact('cpf', 'lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'atendente', 'situacao', 'now', 'motivo'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('tratamento-erro.erro-inesperado', compact('code'));
