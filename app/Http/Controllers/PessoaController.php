@@ -16,7 +16,7 @@ class PessoaController extends Controller
     public function index(Request $request)
     {
 
-    
+
 
             $ddd = DB::select('select id, descricao from tp_ddd');
 
@@ -36,16 +36,16 @@ class PessoaController extends Controller
             if ($request->nome) {
                 $pessoa->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome}%"]);
             }
-            
+
             $cpf = $request->cpf;
-            
+
             if ($request->cpf) {
                 // Usar LIKE para permitir pesquisa parcial
                 $pessoa->whereRaw("LOWER(p.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
             }
-            
-            
-            
+
+
+
             $status = $request->status;
             //
 
@@ -73,7 +73,7 @@ class PessoaController extends Controller
 
 
             return view('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
-      
+
     }
 
     public function store()
@@ -119,7 +119,7 @@ class PessoaController extends Controller
             //dd($e->errors());
         }
 
-        dd($request->input('ddd'));
+
         if ($vercpf >= 1) {
 
             app('flasher')->addError('Existe outro cadastro usando este número de CPF');
