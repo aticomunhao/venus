@@ -312,7 +312,7 @@ class GerenciarEntrevistaController extends Controller
                 ->distinct('membro.id_associado')
                 ->whereIn('associado.id_pessoa', $usuarios)
                 ->get();
-            dd($membros);
+            // dd($membros);
 
 
             $encaminhamento = DB::table('encaminhamento')->find($id);
