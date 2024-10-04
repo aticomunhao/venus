@@ -141,6 +141,7 @@ class PessoaController extends Controller
 
             ]);
 
+           
 
             $pessoa = DB::table('pessoas')->max('id');
 
@@ -164,21 +165,11 @@ class PessoaController extends Controller
     {
         try {
             $ddd = DB::select('select id, descricao from tp_ddd');
-
             $sexo = DB::select('select id, tipo from tp_sexo');
-
             $status_p = DB::select('select id, tipo from tipo_status_pessoa');
-
             $motivo = DB::select('select id, motivo from tipo_motivo_status_pessoa order by id');
-
-
-
-            //     $lista = DB::select("select p.id as idp, p.nome_completo, p.ddd, p.dt_nascimento, p.motivo_status,p.sexo, p.status ,tipo_motivo_status_pessoa.id as tipo_motivo_status_pessoa,tipo_motivo_status_pessoa.motivo as motivo_status_pessoa_tipo_motivo, tipo_status_pessoa.tipo as tipo_status_pessoa , p.email, p.cpf, p.celular, tps.id AS sexid, tps.tipo, d.id AS did, d.descricao as ddesc from pessoas p
-            // left join tp_sexo tps on (p.sexo = tps.id)
-            // left join tp_ddd d on (p.ddd = d.id)
-            // left join tipo_status_pessoa on (tipo_status_pessoa.id = p.status )
-            // left join tipo_motivo_status_pessoa on (tipo_motivo_status_pessoa.id = p.motivo_status )
-            // where p.id = $idp");
+    
+            // Buscando uma única pessoa pelo ID, mas retornando uma coleção
             $lista = DB::table('pessoas as p')
                 ->select(
                     'p.id as idp',
@@ -204,20 +195,20 @@ class PessoaController extends Controller
                 ->leftJoin('tipo_status_pessoa', 'tipo_status_pessoa.id', '=', 'p.status')
                 ->leftJoin('tipo_motivo_status_pessoa', 'tipo_motivo_status_pessoa.id', '=', 'p.motivo_status')
                 ->where('p.id', $idp)
-                ->get();
-
-
-
-
-
+                ->get(); // Continuando a usar get()
+    
+            // Certifique-se de que a lista não está vazia
+            if ($lista->isEmpty()) {
+                return redirect()->route('gerenciar-pessoas')->withErrors('Pessoa não encontrada.');
+            }
+    
             return view('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p', 'motivo'));
         } catch (\Exception $e) {
-
             $code = $e->getCode();
             return view('administrativo-erro.erro-inesperado', compact('code'));
         }
     }
-
+    
     public function show($idp)
     {
         try {

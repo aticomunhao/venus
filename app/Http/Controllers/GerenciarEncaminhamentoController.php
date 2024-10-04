@@ -49,9 +49,13 @@ class GerenciarEncaminhamentoController extends Controller
                 $lista->where('enc.dh_enc', '>=', $request->dt_enc);
             }
 
+           
             if ($request->assist) {
-                $lista->where('p1.nome_completo', 'ilike', "%$request->assist%");
+                $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->assist}%"]);
             }
+
+
+         
 
             if ($request->status) {
                 $lista->where('enc.status_encaminhamento', $request->status);

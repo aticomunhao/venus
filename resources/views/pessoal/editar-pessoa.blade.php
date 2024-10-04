@@ -92,26 +92,30 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col">
-                                    {{-- <div class="mb-5" style="text-align:left;">
-                                        <div class="row">
-                                            <div class="col-3">
-                                                <label for="validationCustomDDD" class="form-label">DDD</label>
-                                                <input class="form-control" maxlength="4" type="text" name="ddd" 
-                                                       value="{{ old('ddd', substr($lista[0]->celular, 0, 2) ?? '') }}" 
-                                                       oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                                            </div>
                                 
-                                            <div class="col">
-                                                <label for="validationCustomCelular" class="form-label">Nr Celular</label>
-                                                <input class="form-control" maxlength="50" type="text" name="celular" 
-                                                       value="{{ old('celular', substr($lista[0]->celular, 2) ?? '') }}" 
-                                                       oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                                            </div> --}}
+                                    <div class="col-2">
+                                        <div class="mb-4 text-start">
+                                            <label for="validationCustom05" class="form-label">DDD</label>
+                                            <select class="form-select" id="validationCustom05" name="ddd" required>
+                                                <option value="" disabled selected>Selecione o DDD</option>
+                                                @foreach($ddd as $ddds)
+                                                    <option value="{{ $ddds->id }}" @if(old('ddd', $lista[0]->ddd) == $ddds->id) selected @endif>
+                                                        {{ $ddds->descricao }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
-                                </div>
-                                
+                                    
+                                    <div class="col">
+                                        <div class="mb-5 text-start">
+                                            <label for="validationCustom06" class="form-label">Nr Celular</label>
+                                            <input class="form-control" maxlength="11" type="text" name="celular" 
+                                                   value="{{ old('celular', $lista[0]->celular) }}" 
+                                                   oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                                        </div>
+                                    </div>
+                                    
                                 
                             <br>
                                 <div class="row mt-2 justify-content-center">

@@ -59,8 +59,8 @@ class GerenciarTratamentosController extends Controller
             $lista->where('enc.dh_enc', '>=', $request->dt_enc);
         }
 
-        if ($request->assist){
-            $lista->whereRaw("p1.nome_completo ilike '%".$request->assist."%'");
+        if ($request->assist) {
+            $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->assist}%"]);
         }
 
         if ($request->status and $request->status != 'all'){
