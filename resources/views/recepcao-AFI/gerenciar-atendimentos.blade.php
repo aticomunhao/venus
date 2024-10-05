@@ -261,9 +261,7 @@
 
                 $.ajax({
                     type: "GET",
-                    //url: "/tabela-atendimentos/" + assist + "/" + cpf + "/" + status + "/" + dt_ini,
                     url: "/tabela-atendimentos/" + assist + "/" + cpf + "/" + status + "/" + dt_ini + "/" + atendente,
-                    // url: "/atendimentos-tabela/" + assist + "/" + cpf + "/" + status + "/" + dt_ini + "/" + atendente,
                     dataType: "json",
                     success: function(response) {
 
@@ -582,28 +580,4 @@
         })
     </script>
 
-    <script>
-        /*
-        $(document).ready(function() {
-            function fetchData() {
-                $.ajax({
-                    type: "GET",
-                    url: "/pessoas-para-atender-atendimento",
-                    dataType: "JSON",
-                    success: function(response) {
-
-                        $('#id_pessoas_para_atender').text(response);
-                    },
-                    error: function(error) {
-                        console.error('Erro ao buscar dados:', error);
-                    }
-                });
-            }
-
-            // Chama a função imediatamente e a cada 5 segundos
-            fetchData(); // Chamada inicial
-            setInterval(fetchData, 5000); // Chamada a cada 5 segundos
-        });
-        */
-    </script>
 @endsection
