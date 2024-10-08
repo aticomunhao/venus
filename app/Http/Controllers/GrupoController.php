@@ -250,13 +250,7 @@ return redirect('gerenciar-grupos');
 
         $verifica = DB::table('historico_venus')->where('fato', $id)->count('fato');
 
-
         $data = date("Y-m-d H:i:s");
-
-
-
-
-
 
         DB::table('historico_venus')->insert([
 
@@ -266,27 +260,17 @@ return redirect('gerenciar-grupos');
             'obs' => $id
 
         ]);
-
         DB::table('cronograma')->where('id_grupo', $id)->delete();
-
-
-
-
-
 
         DB::table('grupo')->where('id', $id)->delete();
 
-
-
-
-
-        app('flasher')->addError('Excluido com sucesso.');
+        app('flasher')->addSuccess('Excluido com sucesso.');
         return redirect('/gerenciar-grupos');
     }
     catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+        app('flasher')->addError('Este grupo está sendo utilizado em outro lugar.');
+        return redirect('/gerenciar-grupos');
             }
         }
 }

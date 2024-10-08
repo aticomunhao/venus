@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redirect;
 use PhpParser\Node\Expr\AssignOp\Coalesce;
 use PhpParser\Node\Expr\BinaryOp\Coalesce as BinaryOpCoalesce;
+use stdClass;
 
 use function Laravel\Prompts\select;
 
@@ -34,7 +35,7 @@ class AtendimentoFraternoController extends Controller
 
 
 
-        $atendente = session()->get('usuario.id_associado');
+        $atendente = session()->get('usuario.id_associado') ?? 0;
 
         $pref_m = session()->get('usuario.sexo');
 
@@ -1122,5 +1123,17 @@ class AtendimentoFraternoController extends Controller
             DB::rollBack();
             return redirect()->back();
         }
+    }
+
+    public function encaminhamentos_tematicas(String $id){
+
+        $return =  new stdClass();
+
+        $return->encaminhamentos = DB::table('encaminhamento')->where('id_atendimento', $id)->count();
+        $return->tematicas = DB::table('registro_tema')->where('id_atendimento', $id)->count();
+        
+        
+
+        return $return;
     }
 }

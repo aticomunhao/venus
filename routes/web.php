@@ -133,6 +133,7 @@ Route::middleware('rotas:6')->group(function () {
     Route::get('/tratar/{idat}/{idas}', [AtendimentoFraternoController::class, 'tratar'])->name('afitra');
     Route::any('/reset/{idat}', [AtendimentoFraternoController::class, 'reset'])->name('');
     Route::get('/pessoas-para-atender', [AtendimentoFraternoController::class, 'pessoas_para_atender']);
+    Route::get('/encaminhamentos-tematicas/{id}', [AtendimentoFraternoController::class, 'encaminhamentos_tematicas']);
 });
 
 // Atendente Fraterno Específico

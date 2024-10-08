@@ -61,8 +61,8 @@
                                 class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                                 <thead style="text-align: center;">
                                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                                        <th class="col">NR</th>                    
-                                        <th class="col">HORÁRIO CHEGADA</th>                        
+                                        <th class="col">NR</th>
+                                        <th class="col">HORÁRIO CHEGADA</th>
                                         <th class="col">ATENDIDO</th>
                                         <th class="col">REPRESENTANTE</th>
                                         <th class="col">STATUS</th>
@@ -72,8 +72,9 @@
                                 <tbody style="font-size: 14px; color:#000000; text-align:center;">
                                     @foreach ($assistido as $assistidos)
                                         <tr>
-                                            <td scope="">{{ $assistidos->idat }}</td>                                        
-                                            <td scope="">{{ date('d/m/Y G:i:s', strtotime($assistidos->dh_chegada)) }}</td>
+                                            <td scope="">{{ $assistidos->idat }}</td>
+                                            <td scope="">{{ date('d/m/Y G:i:s', strtotime($assistidos->dh_chegada)) }}
+                                            </td>
                                             <td scope="">{{ $assistidos->nm_1 }}</td>
                                             <td scope="">{{ $assistidos->nm_2 }}</td>
                                             <td scope="">{{ $assistidos->descricao }}</td>
@@ -93,8 +94,7 @@
                                                             class="tooltiptext">Iniciar</span><i class="bi bi-check-circle"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                                 <a href="/tratar/{{ $assistidos->idat }}/{{ $assistidos->idas }}"><button
-                                                        type="button"
-                                                        class="btn btn-outline-warning btn-sm tooltips"><span
+                                                        type="button" class="btn btn-outline-warning btn-sm tooltips"><span
                                                             class="tooltiptext">Tratamento</span><i class="bi bi-bandaid"
                                                             style="font-size: 1rem; color:#000;"></i></button></a>
                                                 <a href="/entrevistar/{{ $assistidos->idat }}/{{ $assistidos->idas }}"><button
@@ -152,7 +152,8 @@
 
 
                                                 {{-- Modal de Finalizar --}}
-                                                <form action="/finalizar/{{ $assistidos->idat }}" method="POST">
+                                                <form action="/finalizar/{{ $assistidos->idat }}" method="POST"
+                                                    id="final">
                                                     @csrf
                                                     <div class="modal fade" id="modalF{{ $assistidos->idat }}"
                                                         tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -179,9 +180,6 @@
 
                                                                         </div>
 
-
-
-
                                                                         <div class="col-12 mt-5">
 
                                                                             <input class="form-check-input"
@@ -203,7 +201,7 @@
                                                                     <button type="button" class="btn btn-danger"
                                                                         data-bs-dismiss="modal">Cancelar</button>
 
-                                                                    <button type="submit"
+                                                                    <button type="submit" id="finalizar"
                                                                         class="btn btn-primary">Confirmar
                                                                     </button>
                                                                 </div>
@@ -214,13 +212,103 @@
                                                 {{-- Modal de Finalizar Fim --}}
 
 
+                                                {{-- Inicio modal de confirmação de encaminhamento --}}
+                                                <div class="modal" tabindex="-1" id="confirmacaoEncaminhamento">
+                                                    <div class="modal-dialog">
+
+                                                        <div class="modal-content">
+                                                            <div class="modal-header"
+                                                                style="background-color:rgb(255, 147, 7)">
+                                                                <h5 class="modal-title" id="exampleModalLabel"
+                                                                    style=" color:white">Atenção!</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+
+
+                                                                <div class="row">
+                                                                    <div class="col-12">
+                                                                        Você não gerou nenhum encaminhamento.
+                                                                        <br /><span
+                                                                            style="color:rgb(255, 147, 7); font-weight: bold">Tem
+                                                                            certeza que deseja continuar&#63;</span>
+
+
+                                                                    </div>
+
+
+
+                                                                    </center>
+                                                                </div>
+
+
+                                                            </div>
+
+                                                            <div class="modal-footer mt-2">
+                                                                <button type="button" class="btn btn-danger"
+                                                                    data-bs-dismiss="modal">Cancelar</button>
+
+                                                                <button class="btn btn-primary confirmar">Confirmar
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {{-- FIM modal de confirmação de encaminhamento --}}
+
+                                                {{-- Inicio modal de confirmação de temática --}}
+                                                <div class="modal" tabindex="-1" id="confirmacaoTematica">
+                                                    <div class="modal-dialog">
+
+                                                        <div class="modal-content">
+                                                            <div class="modal-header"
+                                                                style="background-color:rgb(255, 147, 7)">
+                                                                <h5 class="modal-title" id="exampleModalLabel"
+                                                                    style=" color:white">Atenção!</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+
+
+                                                                <div class="row">
+                                                                    <div class="col-12">
+                                                                        Você não gerou nenhuma Temática.
+                                                                        <br /><span
+                                                                            style="color:rgb(255, 147, 7); font-weight: bold">Tem
+                                                                            certeza que deseja continuar&#63;</span>
+
+
+                                                                    </div>
+
+
+
+                                                                    </center>
+                                                                </div>
+
+
+                                                            </div>
+
+                                                            <div class="modal-footer mt-2">
+                                                                <button type="button" class="btn btn-danger"
+                                                                    data-bs-dismiss="modal">Cancelar</button>
+
+                                                                <button class="btn btn-primary confirmar">Confirmar
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {{-- FIM modal de confirmação de temática --}}
+
 
 
 
                                                 <!--<button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#tratamento{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Tratamentos"><i class="bi bi bi-bandaid" style="font-size: 1rem; color:#000;"></i></button>
-                                                                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#entrevista{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi bi-mic" style="font-size: 1rem; color:#000;"></i></button>
-                                                                                    <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#anotacoes{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button>
-                                                                                    <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#finalizar{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i></button>-->
+                                                                                                        <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#entrevista{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi bi-mic" style="font-size: 1rem; color:#000;"></i></button>
+                                                                                                        <button class="btn btn-outline-warning btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#anotacoes{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Entrevistas"><i class="bi bi-journal-bookmark-fill" style="font-size: 1rem; color:#000;"></i></button>
+                                                                                                        <button class="btn btn-outline-danger btn-sm" type="button" id="" data-bs-toggle="modal" data-bs-target="#finalizar{{ $assistidos->idat }}" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="bi bi-door-open" style="font-size: 1rem; color:#000;"></i></button>-->
                                             </td>
                                         </tr>
                                     @endforeach
@@ -245,19 +333,59 @@
     </style>
 
     <script>
+        $(document).ready(function() {
+
+            let numeroAcoes
+
+            function finalAjax() {
+                $.ajax({
+                    type: "GET",
+                    url: "/encaminhamentos-tematicas/" + @JSON($assistido)[0]['idat'],
+                    dataType: "JSON",
+                    success: function(response) {
+                        numeroAcoes = response
+
+                    },
+                });
+            }
+
+            finalAjax()
+            $('#finalizar').click(function(e) {
+                e.preventDefault()
+                finalAjax()
+                console.log(numeroAcoes)
+                $('.modal').modal('hide');
+
+                if (numeroAcoes['encaminhamentos'] == 0) {
+                    $('#confirmacaoEncaminhamento').modal('show');
+                } else if (numeroAcoes['tematicas'] == 0) {
+                    $('#confirmacaoTematica').modal('show');
+                } else {
+                    $('#final').submit()
+                }
+            })
+
+            $('.confirmar').click(function(e) {
+                e.preventDefault()
+                $('#final').submit()
+
+            })
+        });
+    </script>
+    <script>
         $('#emergencia').change(function() {
             $('#hello').toggleClass('emergencia')
         })
     </script>
     <script>
         $(document).ready(function() {
-            function fetchData() {
+            function filaAjax() {
                 $.ajax({
                     type: "GET",
                     url: "/pessoas-para-atender",
                     dataType: "JSON",
                     success: function(response) {
-                
+
                         $('#id_pessoas_para_atender').val(response);
                     },
                     error: function(error) {
@@ -267,8 +395,8 @@
             }
 
             // Chama a função imediatamente e a cada 5 segundos
-            fetchData(); // Chamada inicial
-            setInterval(fetchData, 5000); // Chamada a cada 5 segundos
+            filaAjax(); // Chamada inicial
+            setInterval(filaAjax, 5000); // Chamada a cada 5 segundos
         });
     </script>
 @endsection

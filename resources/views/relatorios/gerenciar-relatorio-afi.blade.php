@@ -65,8 +65,8 @@
             <tr>
                 <td> {{$atendente->id_associado}} </td>
                 <td> {{$atendente->nome_completo}} </td>
-                <td>{{ $atendente->presenca[0] ?? '--' }}</td>
                 <td>{{ $atendente->presenca[1] ?? '--' }}</td>
+                <td>{{ $atendente->presenca[0] ?? '--' }}</td>
                 <td>
                     <a href="/visualizar-presenca-afi?afi={{$atendente->id_associado}}&dt_inicio={{ $dt_inicio }}&dt_fim={{$dt_fim}}" type="button"{{-- botão de histórico --}}
                         class="btn btn-outline-primary btn-sm tooltips">

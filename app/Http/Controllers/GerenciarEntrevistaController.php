@@ -292,6 +292,8 @@ class GerenciarEntrevistaController extends Controller
                 ->first();
             if (!$entrevistas) {
             }
+
+            
             $usuarios = DB::table('usuario as u')
                 ->rightJoin('usuario_setor as us', 'u.id', 'us.id_usuario')
                 ->where('us.id_setor', $entrevistas->id_setor)

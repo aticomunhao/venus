@@ -595,8 +595,7 @@ class GerenciarAtendimentoController extends Controller
             $now = Carbon::today();
             $no = Carbon::today()->addDay(1);
 
-            $atende = DB::table('atendente_dia as atd')->select('atd.id AS nr', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4', 'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')->leftJoin('salas AS s', 'atd.id_sala', 's.id')->leftJoin('grupo AS g', 'atd.id_grupo', 'g.id')->where('atd.id', $idatd)->get();
-
+            $atende = DB::table('atendente_dia as atd')->select('atd.id AS nr', 'atd.id_associado','atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4', 'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')->leftJoin('salas AS s', 'atd.id_sala', 's.id')->leftJoin('cronograma as cro', 'atd.id_grupo', 'cro.id')->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')->where('atd.id', $idatd)->first();
             $st_atend = DB::select("select
         tsp.id,
         tsp.tipo
@@ -605,7 +604,7 @@ class GerenciarAtendimentoController extends Controller
 
             $situacao = DB::table('tipo_status_pessoa')->select('id', 'tipo')->get();
 
-            $grupo = DB::table('grupo')->select('id', 'nome')->where('id_tipo_grupo', 3)->where('status_grupo', 1)->orderBy('nome')->get();
+            $grupos = DB::table('membro as m')->where('id_associado', $atende->id_associado)->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')->leftJoin('grupo as g', 'cro.id_grupo', 'g.id')->whereIn('id_funcao', [5, 6])->orderBy('g.nome')->get();
 
             $salaAtendendo = DB::table('atendente_dia AS atd')->leftjoin('associado AS a', 'atd.id_associado', 'a.id')->where('dh_inicio', '>=', $now)->where('dh_inicio', '<', $no)->where('dh_fim', '=', null)->pluck('id_sala');
 
@@ -615,7 +614,7 @@ class GerenciarAtendimentoController extends Controller
 
             // dd($sala);
 
-            return view('/recepcao-AFI/editar-atendente-dia', compact('atende', 'st_atend', 'grupo', 'sala'));
+            return view('/recepcao-AFI/editar-atendente-dia', compact('atende', 'st_atend', 'grupos', 'sala'));
         } catch (\Exception $e) {
             app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
             DB::rollBack();
@@ -627,6 +626,8 @@ class GerenciarAtendimentoController extends Controller
     public function update_afi(Request $request, $idatd)
     {
         try {
+
+           //dd($request->all());
             $now = Carbon::now()->format('Y-m-d');
 
             $sala = $request->sala;
@@ -640,6 +641,7 @@ class GerenciarAtendimentoController extends Controller
                 DB::table('atendente_dia AS atd')
                     ->where('id', $idatd)
                     ->update([
+                        'id_grupo' => $request->grupo,
                         'id_sala' => $request->input('sala'),
                     ]);
 
