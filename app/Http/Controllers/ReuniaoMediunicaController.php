@@ -34,7 +34,7 @@ class ReuniaoMediunicaController extends Controller
                 'tst.descricao AS tstd',
                 's.sigla as nsigla',
                 'sa.numero',
-                DB::raw("(CASE WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status")
+                DB::raw("(CASE WHEN cro.data_fim is not null THEN 'Inativo' ELSE 'Ativo' END) as status")
             )
             ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
             ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
@@ -64,7 +64,7 @@ class ReuniaoMediunicaController extends Controller
             $reuniao->where(DB::raw('unaccent(gr.nome)'), 'ilike', "%$grupo%");
         }
         // Aplica filtro por status com base na expressão CASE WHEN
-        $statusCaseWhen = DB::raw("(CASE WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END)");
+        $statusCaseWhen = DB::raw("CASE WHEN cro.data_fim is not null THEN 'Inativo' ELSE 'Ativo' END");
 
         if ($status) {
             switch ($status) {
@@ -101,7 +101,12 @@ class ReuniaoMediunicaController extends Controller
 
         // Obtém os dados para os filtros
         $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
-        $tpdia = DB::table('tipo_dia')->select('id AS idtd', 'nome AS nomed')->get();
+
+        $tpdia = DB::table('tipo_dia')
+        ->select('id AS idtd', 'nome AS nomed')
+        ->orderByRaw('CASE WHEN id = 0 THEN 1 ELSE 0 END, idtd ASC')
+        ->get();
+   
 
         // Retorna a view com os dados
         return view('/reuniao-mediunica/gerenciar-reunioes', compact('reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupo'));
@@ -415,11 +420,22 @@ class ReuniaoMediunicaController extends Controller
         $now = Carbon::now()->format('Y-m-d');
 
         // Atualiza a tabela 'cronograma' com a data de término
-        DB::table('cronograma as cro')
-            ->where('cro.id', $id)
-            ->update([
-                'data_fim' => $now
-            ]);
+        if( DB::table('cronograma as cro')->where('cro.id', $id)->whereNull('data_fim')->count() == true){
+            DB::table('cronograma as cro')
+                ->where('cro.id', $id)
+                ->update([
+                    'cro.data_fim' => $now
+                ]);
+
+            app('flasher')->addSuccess('A reunião foi inativada com sucesso.');
+        }
+        else{
+            
+            return redirect()->back();
+
+            app('flasher')->addError('A reunião já está inativa.');
+
+        }
 
         // Verifica se há algum registro com o fato específico na tabela 'historico_venus'
         $verifica = DB::table('historico_venus')

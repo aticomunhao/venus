@@ -16,7 +16,8 @@
                         <div class="row">
                             <div class="col-2">Dia
                                 <select class="form-select semana" id="4" name="semana" type="number">
-
+                                <option value="" {{ $tpdia == $semana ? 'selected' : '' }}>
+                                Todos</option>
                                     @foreach ($tpdia as $dias)
                                         <option value="{{ $dias->idtd }}" {{ $dias->idtd == $semana ? 'selected' : '' }}>
                                             {{ $dias->nomed }}</option>
@@ -29,7 +30,8 @@
                             </div>
                             <div class="col-2">Status
                                 <select class="form-select status" id="4" name="status" type="number">
-
+                                <option value="" {{ $situacao[0]->ids == $status ? 'selected' : '' }}>
+                                Todos</option>
                                     @foreach ($situacao as $situ)
                                         <option value="{{ $situ->ids }}" {{ $situ->ids == $status ? 'selected' : '' }}>
                                             {{ $situ->descs }}</option>

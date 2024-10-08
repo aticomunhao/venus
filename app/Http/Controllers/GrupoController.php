@@ -18,8 +18,18 @@ class GrupoController extends Controller
 
     public function index(Request $request)
     {
-        try {
-            $grupo = DB::table('grupo AS g')
+      //  try {
+
+            // Carregar a lista de setores para o Select2
+            $setor = DB::table('setor')->orderBy('nome', 'asc')->get();
+
+            //dd($setor);
+
+            // Carregar a lista de grupos para o Select2
+            $grupo = DB::table('grupo')->orderBy('nome', 'asc')->get();
+
+
+            $lista = DB::table('grupo AS g')
                 ->leftJoin('tipo_grupo AS tg', 'g.id_tipo_grupo', 'tg.id')
                 ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
                 ->leftJoin('tipo_motivo AS tm', 'g.id_motivo_inativacao', 'tm.id')
@@ -36,33 +46,37 @@ class GrupoController extends Controller
                     'ts.descricao as descricao1',
                     'tm.tipo',
                     'g.id_setor',
-                    'st.nome AS nm_setor'
+                    'st.nome AS nm_setor',
+                    'st.sigla AS sigset'
                 );
 
-            $nome = $request->nome_pesquisa;
-            if ($nome) {
-                $grupo->where('g.nome', 'ilike', "%$nome%");
+            $nomeg = $request->nome_grupo;
+            if ($nomeg) {
+                $lista->where('g.id', $nomeg);
             }
 
-            $setor = $request->nome_setor;
-            if ($setor) {
-                $grupo->where('st.nome', 'ilike', "%$setor%");
+            $nomes = $request->nome_setor;
+            if ($nomes) {
+                $lista->where('st.id', $nomes);
             }
 
-            $contar = $grupo->distinct()->count('g.id');
+           
 
-            $grupo = $grupo->orderBy('g.status_grupo', 'ASC')
+            $lista = $lista->orderBy('g.status_grupo', 'ASC')
                 ->orderBy('g.nome', 'ASC')
-                ->paginate(50);
+                ->paginate(50)->appends([
+                    'nome_grupo' => $request->nome_grupo,
+                    'nome_setor' => $request->nome_setor,
+                ]);
 
-            // Carregar a lista de setores para o Select2
-            $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
+            $contar = $lista->total();
 
-            return view('grupos.gerenciar-grupos', compact('grupo', 'setores','contar'));
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('gerenciar-grupos.erro-inesperado', compact('code'));
-        }
+            
+            return view('grupos.gerenciar-grupos', compact('lista', 'grupo', 'setor','contar', 'nomeg', 'nomes'));
+     //   } catch (\Exception $e) {
+       //     $code = $e->getCode();
+         //   return view('gerenciar-grupos.erro-inesperado', compact('code'));
+        //}
     }
 
 
