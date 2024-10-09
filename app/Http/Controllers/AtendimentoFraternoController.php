@@ -82,10 +82,11 @@ class AtendimentoFraternoController extends Controller
             ->leftJoin('cronograma as cro', 'cro.id', 'ad.id_grupo')
             ->leftJoin('grupo', 'grupo.id', 'cro.id_grupo')
             ->where('ad.id_associado',  $atendente)
+            ->where('dh_inicio', '>', $data_inicio)
             ->whereNull('dh_fim')
             ->value('grupo.nome');
 
-
+ 
 
         //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente, que não sejam AFE
         $assistido = DB::table('atendimentos AS at')

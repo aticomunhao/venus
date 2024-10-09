@@ -296,8 +296,7 @@ class RelatoriosController extends Controller
         // Definir o número de itens por página
         $itemsPerPage = 50;
         $setoresAutorizado = session()->get('usuario.setor');
-
-
+        
         // Obter os atendentes para o select2
         $atendentesParaSelect = DB::table('membro AS m')
             ->select('m.id_associado AS ida', 'p.nome_completo AS nm_4')
@@ -560,7 +559,6 @@ class RelatoriosController extends Controller
             ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
             ->leftJoin('presenca_membros as pm', 'm.id', 'pm.id_membro')
             ->leftJoin('dias_cronograma as dc', 'pm.id_dias_cronograma', 'dc.id')
-            ->where('m.dt_inicio', '>=', $dt_inicio)
             ->where(function ($query) use ($dt_fim) {
                 $query->where('m.dt_fim', '<', $dt_fim);
                 $query->orWhere('m.dt_fim', NULL);
@@ -628,8 +626,5 @@ class RelatoriosController extends Controller
 
         $pdf = \PDF::loadView('relatorios.teste');
         return $pdf->download('invoice.pdf');
-
-
-
     }
 }

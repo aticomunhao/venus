@@ -311,8 +311,9 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('cronograma as cro', 'membro.id_cronograma', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
                 ->select('membro.*', 'pessoas.nome_completo', 'gr.id_setor')
-                ->distinct('membro.id_associado')
                 ->whereIn('associado.id_pessoa', $usuarios)
+                ->whereIn('membro.id_funcao', [1, 2])
+                ->distinct('membro.id_associado')
                 ->get();
             // dd($membros);
 

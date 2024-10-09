@@ -8,21 +8,13 @@
         <div class="col-12">
             <form action="/gerenciar-grupos-membro" class="form-horizontal mt-4" method="GET">
                 <div class="row">
-                <div class="col-2">
-                        Setor
-                        <select class="form-select select2 grupo" type="text" id="setor" name="setor">
-                           <option value="">Todos</option>
-                             @foreach($authsetor as $setores)                
-                             <option value="{{ $setores->id }}"{{ request('setor') == $setores->id ? 'selected' : '' }}>{{ $setores->sigla }}</option>
-                            @endforeach
-                            </select>
-                    </div>
-                    <div class="col">
+                    <div class="col-6">
                         Grupo
-                        <select class="form-select select2 grupo" type="text" id="nome_grupo" name="nome_grupo">
-                             <option value="">Todos</option>
-                            @foreach($membro_cronograma as $grupos)
-                                <option value="{{ $grupos->id }}"{{ request('nome_grupo') == $grupos->id ? 'selected' : '' }}>{{ $grupos->nome_grupo }} - {{ $grupos->dia }}- {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim ))}} - Sala {{ $grupos->sala }}</option>
+                        <select class="form-select select2 grupo" type="text" id="nome_grupo" name="nome_grupo"
+                             value="{{ request('nome_grupo') }}">
+                           <option></option>
+                             @foreach($membro_cronograma as $grupos)
+                             <option value="{{ $grupos->id }}">{{ $grupos->nome_grupo }} - {{ $grupos->dia }}- {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim ))}} - Sala {{ $grupos->sala }}</option>>
                             @endforeach
                             </select>
                     </div>
@@ -30,9 +22,9 @@
                         Membro
                         <select class="form-select select2 membro" type="text" id="nome_membro" name="nome_membro"
                              value="{{ request('nome_grupo') }}">
-                             <option value="">Todos</option>
-                             @foreach($authmembro as $membros)
-                             <option value="{{ $membros->id_associado }}"{{ request('nome_completo') == $membros->id_associado ? 'selected' : '' }}>{{ $membros->nome_completo }}</option>
+                           <option></option>
+                             @foreach($membro as $membros)
+                             <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }}</option>>
                             @endforeach
                             </select>
                     </div>
@@ -58,13 +50,12 @@
         </div>
 
         <hr>
-        TOTAL SELECIONADOS - {{$contar}}
+
         <div class="table">
             <table
                 class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                     <th>ID</th>
-                    <th>SETOR</th>
                     <th>GRUPO</th>
                     <th>DIA</th>
                     <th>HORÁRIO INICIO</th>
@@ -78,7 +69,6 @@
                     @foreach ($membro_cronograma as $membros)
                         <tr>
                             <td>{{ $membros->id}}</td>
-                            <td>{{ $membros->siglast}}</td>
                             <td>{{ $membros->nome_grupo }}</td>
                             <td>{{ $membros->dia }}</td>
                             <td>{{ $membros->h_inicio }}</td>
@@ -99,13 +89,11 @@
                     @endforeach
                 </tbody>
             </table>
-            </div class="d-flex justify-content-center">
-            {{ $membro_cronograma->links('pagination::bootstrap-5') }}
         </div>
     </div>
 
 
-    <!-- <script>
+    <script>
         $(document).ready(function() {
             $('.select2').select2({ theme: 'bootstrap-5'});
 
@@ -114,7 +102,7 @@
             $(".membro").prop("selectedIndex", 0);
 
         });
-    </script> -->
+    </script>
 
 
     <script>

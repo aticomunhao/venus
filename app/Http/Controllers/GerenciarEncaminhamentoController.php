@@ -36,7 +36,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                 ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
-                ->where('enc.id_tipo_tratamento', 1)
+               // ->whereNot('enc.id_tipo_tratamento', null)
                 ->where('enc.id_tipo_encaminhamento', 2);
 
             $data_enc = $request->dt_enc;
@@ -61,7 +61,7 @@ class GerenciarEncaminhamentoController extends Controller
                 $lista->where('enc.status_encaminhamento', $request->status);
             }
           //  ->orderby('status_encaminhamento', 'ASC')->orderby('nm_1', 'ASC')
-            $lista = $lista->orderby('status_encaminhamento', 'ASC')->orderby('at.emergencia', 'DESC')->orderBy('at.dh_fim')->paginate(50);
+            $lista = $lista->orderby('status_encaminhamento', 'ASC')->orderby('at.emergencia', 'DESC')->orderBy('enc.id_tipo_tratamento', 'DESC')->orderBy('at.dh_inicio')->paginate(50);
             //dd($lista)->get();
 
             $contar = $lista->count('enc.id');

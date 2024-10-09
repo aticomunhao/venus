@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-    Relatório Presença AFI
+    Relatório Salas Cronograma
 @endsection
 @section('content')
 <br />

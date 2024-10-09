@@ -74,17 +74,17 @@ Route::middleware('rotas:1')->group(function () {
 
 // Gerenciar Pessoas
 Route::middleware('rotas:2')->group(function () {
-    Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
-    Route::get('/dados-pessoa', [PessoaController::class, 'store'])->name('pesdap');
     Route::get('/editar-pessoa/{idp}', [PessoaController::class, 'edit'])->name('pesedt');
-    Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name('pesdes');
     Route::post('/executa-edicao/{idp}', [PessoaController::class, 'update'])->name('pesexe');
+    Route::get('/excluir-pessoa/{idp}', [PessoaController::class, 'destroy'])->name('pesdes');
 });
 
 // Visualizar Pessoas
 Route::middleware('rotas:3')->group(function () {
     Route::get('/gerenciar-pessoas', [PessoaController::class, 'index'])->name('pesdex');
     Route::get('/visualizar-pessoa/{idp}', [PessoaController::class, 'show'])->name('pesedt');
+    Route::post('/criar-pessoa', [PessoaController::class, 'create'])->name('pescre');
+    Route::get('/dados-pessoa', [PessoaController::class, 'store'])->name('pesdap');
 });
 
 // Gerenciar Atendente Dia
@@ -154,7 +154,7 @@ Route::middleware('rotas:7')->group(function () {
     Route::get('/atender-afe', [AtendimentoFraternoEspecificoController::class, 'atende_agora'])->name('Atender-afe');
     Route::any('/final-afe/{idat}', [AtendimentoFraternoEspecificoController::class, 'final'])->name('');
     Route::post('/finalizar-afe/{idat}', [AtendimentoFraternoEspecificoController::class, 'finaliza'])->name('');
-    Route::any('/reset/{idat}', [AtendimentoFraternoEspecificoController::class, 'reset'])->name('');
+    Route::any('/reset-afe/{idat}', [AtendimentoFraternoEspecificoController::class, 'reset'])->name('');
 });
 
 // Gerenciar Presença Entrevista

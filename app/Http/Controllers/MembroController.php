@@ -12,68 +12,46 @@ class MembroController extends Controller
 {
     public function grupos(Request $request)
     {
-       // try {
+        try {
 
             $now = Carbon::now()->format('Y-m-d');
 
-            $setores = session()->get('usuario.setor');
-            
-            $associado = session()->get('usuario.id_associado');
-            
-            //dd($associado); 
+            $cronogramasLogin = DB::table('membro AS m')->leftJoin('associado', 'associado.id', '=', 'm.id_associado')->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')->whereIn('g.id_setor', session()->get('usuario.setor'));
 
+            if (!in_array(36, session()->get('usuario.acesso'))) {
+                $cronogramasLogin = $cronogramasLogin->where('id_associado', session()->get('usuario.id_associado'))->where('m.id_funcao', [1, 2]);
+            }
+            $cronogramasLogin = $cronogramasLogin->pluck('m.id_cronograma');
 
-            $autoriza = DB::table('grupo AS g')
-                    ->leftJoin('cronograma AS cro', 'g.id', 'cro.id_grupo')
-                    ->leftJoin('membro AS m', 'cro.id', 'm.id_cronograma')
-                    ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
-                    ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', 'tf.id')
-                    ->whereIn('g.id_setor', $setores)
-                    ->where(function($query) use ($associado) {
-                        $query->where('m.id_associado', $associado)
-                              ->orWhereIn('m.id_funcao', [1, 2]);
-                    })
-                   // ->where('m.id_associado', $associado )
-                    //->whereIn('m.id_funcao', [1, 2])
-                    ->select('cro.id AS idcro')
-                    ->groupBy('cro.id')
-                    ->pluck('idcro')
-                    ->toArray();
-                        
+            $cronogramasLogin = json_decode(json_encode($cronogramasLogin), true);
+            $cronogramas = $cronogramasLogin;
+            //dd($cronogramas, session()->get('usuario.id_associado'));
 
-            $authmembro = DB::table('membro AS m')
-                    ->leftJoin('associado AS ass', 'ass.id', 'm.id_associado')
-                    ->leftjoin('pessoas AS p', 'ass.id_pessoa', 'p.id')
-                    ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', 'tf.id')
-                    ->leftJoin('cronograma AS cro', 'm.id_cronograma', 'cro.id')
-                    ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')
-                    ->select('p.nome_completo', 'm.id_associado')
-                    ->whereIn('m.id_cronograma', $autoriza)
-                    ->whereIn('g.id_setor', session()->get('usuario.setor'))
-                    ->groupBy('m.id_associado', 'p.nome_completo')
-                    ->get()
-                    ->toArray();
-        
-                   // dd($authmembro);
-     
-            $authsetor = DB::table('setor')            
-                    ->select('id', 'sigla')
-                    ->whereIn('id', $setores)
-                    ->get();
+            if ($request->nome_membro) {
+                $cronogramasPesquisa = DB::table('membro AS m')
+                    ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
+                    ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
+                    ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+                    ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
+                    ->where('id_associado', $request->nome_membro)
+                    ->pluck('m.id_cronograma');
 
-          
+                $cronogramasPesquisa = json_decode(json_encode($cronogramasPesquisa), true);
+                $cronogramas = array_intersect($cronogramasLogin, $cronogramasPesquisa);
+            }
+
+            // dd($request->all());
 
             $membro_cronograma = DB::table('cronograma as cro')
+
                 ->select(
                     'cro.id',
                     'gr.nome as nome_grupo',
                     'td.nome as dia',
                     'cro.h_inicio',
                     'cro.h_fim',
-                    'st.sigla as siglast',
                     'sl.numero as sala',
                     'tpg.descricao',
-                    'id_setor as idst',
                     DB::raw("
             (CASE
              WHEN cro.modificador = 3  THEN 'Experimental'
@@ -82,60 +60,30 @@ class MembroController extends Controller
              ELSE 'Ativo' END)
              as status"),
                 )
-                ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
-                ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
-                ->leftJoin('salas AS sl', 'cro.id_sala', 'sl.id')
-                ->leftJoin('tipo_status_grupo AS tpg', 'cro.modificador', 'tpg.id')
-                ->leftJoin('setor AS st', 'gr.id_setor', 'st.id')
-                ->leftJoin('membro AS m',  'cro.id', 'm.id_cronograma')
-                ->leftJoin('associado AS as', 'as.id', 'm.id_associado')
-                ->leftjoin('pessoas AS p', 'as.id_pessoa', 'p.id')
-                ->whereIn('cro.id', $autoriza)
+                ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+                ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+                ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+                ->leftJoin('tipo_status_grupo as tpg', 'cro.modificador', 'tpg.id')
+                ->whereIn('cro.id', $cronogramas)
                 ->whereIn('gr.id_setor', session()->get('usuario.setor'));
 
-           
-
-
-            $setor = $request->setor;
-
-            $nome = $request->nome_grupo;
-
-            $membroPesquisa = $request->nome_membro;
-            
-
-            if ($request->setor) {
-                $membro_cronograma->where('gr.id_setor', $request->setor);
-            }
+            $membro = DB::table('membro AS m')->leftJoin('associado', 'associado.id', '=', 'm.id_associado')->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')->leftJoin('cronograma as cro', 'm.id_cronograma', '=', 'cro.id')->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')->select('p.nome_completo', 'm.id_associado')->whereIn('m.id_cronograma', $cronogramasLogin)->whereIn('g.id_setor', session()->get('usuario.setor'))->distinct()->get();
 
             if ($request->nome_grupo) {
-                $membro_cronograma->where('cro.id', $request->nome_grupo);
+                $membro_cronograma = $membro_cronograma->where('cro.id', $request->nome_grupo);
             }
 
-            if ($request->nome_membro) {
-                $membro_cronograma->where('p.nome_completo', $request->nome_membro);
-            }
+            $membro_cronograma = $membro_cronograma->orderBy('status')->orderBy('nome_grupo')->get();
 
-           
-            $membro_cronograma = $membro_cronograma->groupBy('cro.id', 'gr.nome', 'td.nome', 'st.sigla', 'sl.numero', 'tpg.descricao', 'gr.id_setor')->orderBy('status')->orderBy('nome_grupo')->paginate(50)->appends([
-                'setor' => $request->setor,
-                'nome_grupo' => $request->nome_grupo,
-                'nome_membro' => $request->nome_membro,
-            ]);;
+            $nome = $request->nome_grupo;
+            $membroPesquisa = $request->nome_membro;
 
-            $contar = $membro_cronograma->total();
+            return view('membro.listar-grupos-membro', compact('membro_cronograma', 'nome', 'membro', 'membroPesquisa'));
+        } catch (\Exception $e) {
 
-           
-       
-
-           //dd(session()->get('usuario.setor'));
-           
-
-            return view('membro.listar-grupos-membro', compact('membro_cronograma','contar', 'nome', 'setor', 'authmembro', 'membroPesquisa', 'authsetor'));
-        //} catch (\Exception $e) {
-
-         //   $code = $e->getCode();
-         //   return view('listar-grupos erro.erro-inesperado', compact('code'));
-       // }
+            $code = $e->getCode();
+            return view('listar-grupos erro.erro-inesperado', compact('code'));
+        }
     }
 
     public function createGrupo(Request $request, string $id)

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-    Relatório Presença AFI
+    Relatório Reuniao
 @endsection
 @section('content')
     <div class="container">
