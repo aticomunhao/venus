@@ -109,7 +109,7 @@
         </div>
     </div>
 </div>
-<script>
+{{-- <script>
     // Obtém a hora atual
     var now = new Date();
     var currentHour = now.getHours();
@@ -123,7 +123,7 @@
     document.getElementById('hora').setAttribute('min', formattedTime);
     // Define a hora atual como o valor padrão para o input de hora
     document.getElementById('hora').setAttribute('value', formattedTime);
-</script>
+</script>  --}}
 
 
 
@@ -141,7 +141,7 @@
 
     // Define a data mínima no campo de entrada
     document.getElementById('data').setAttribute('min', dataAtual);
-</script>
+</script> 
 
 <script>
     document.getElementById('id_sala').addEventListener('change', function() {

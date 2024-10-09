@@ -107,11 +107,4 @@
     document.getElementById('data').setAttribute('min', dataAtual);
 </script>
 
-<script>
-    // Obtém a data atual no formato 'YYYY-MM-DD'
-    var dataAtual = new Date().toISOString().split('T')[0];
-
-    // Define a data mínima no campo de entrada
-    document.getElementById('data').setAttribute('min', dataAtual);
-</script>
 @endsection

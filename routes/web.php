@@ -37,6 +37,7 @@ use App\Http\Controllers\PresencaController;
 use App\Http\Controllers\PresencaDirigenteController;
 use App\Http\Controllers\GerenciarVersoesControllerController;
 use App\Http\Controllers\RelatoriosController;
+use App\Http\Controllers\GerenciarPassesControllerr;
 
 /*
 |--------------------------------------------------------------------------
@@ -166,6 +167,17 @@ Route::middleware('rotas:8')->group(function () {
     Route::get('/criar-presenca/{id}', [PresencaController::class, 'criar'])->name('');
     Route::get('/visualizar-presenca/{id}', [PresencaController::class, 'show'])->name('');
     Route::any('/inativar-presenca/{id}', [PresencaController::class, 'destroy'])->name('');
+});
+
+// Gerenciar Passes
+Route::middleware('rotas:8')->group(function () {
+Route::get('/gerenciar-passe', [GerenciarPassesControllerr::class, 'index'])->name('');
+Route::get('/editar-passe/{id}', [GerenciarPassesControllerr::class, 'edit'])->name('');
+Route::post('/atualizar-passe/{id}', [GerenciarPassesControllerr::class, 'update'])->name('');
+Route::any('/incluir-passe', [GerenciarPassesControllerr::class, 'incluir']);
+Route::get('/criar-passe/{id}', [GerenciarPassesControllerr::class, 'criar'])->name('');
+Route::get('/visualizar-passe/{id}', [GerenciarPassesControllerr::class, 'show'])->name('');
+
 });
 
 // Gerenciar Entrevistas
