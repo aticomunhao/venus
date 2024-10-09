@@ -174,7 +174,7 @@
 
                                 <div class="col">
                                     <input class="form-check-input coluna" type="checkbox" value=""
-                                        id="tipoAtendimento">
+                                        id="tipoAtendimento" checked>
                                     <label class="form-check-label" for="flexCheckDefault"> Tipo do Atendimento </label>
                                 </div>
 
