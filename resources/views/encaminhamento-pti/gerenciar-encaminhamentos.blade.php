@@ -14,9 +14,15 @@
                     <div class ="col">Data início
                         <input class="form-control" type="date" id="" name="dt_enc" value="{{$data_enc}}">
                     </div>
-                    <div class="col-5">Assistido
+                    <div class="col-md-3">Assistido
                         <input class="form-control" type="text" id="3" name="assist" value="{{$assistido}}">
                     </div>
+                    <div class="col-md-2">CPF
+                        <input class="form-control" type="text" maxlength="11"
+                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                            id="2" name="cpf" value="{{ $cpf }}">
+                   
+                </div>
                     <div class="col">Status
                         <select class="form-select" id="4" name="status" type="number">
                             <option value="{{$situacao}}"></option>

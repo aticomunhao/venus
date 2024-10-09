@@ -24,7 +24,7 @@ class GerenciarEncaminhamentoPTIController extends Controller
 
 
         $lista = DB::table('encaminhamento AS enc')
-                    ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2',  'pa.nome', 'pr.id AS prid', DB::raw("(CASE WHEN at.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as prdesc"), 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla',  'gr.nome AS nomeg' )
+                    ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'p1.cpf AS cpf_assistido', 'pa.nome', 'pr.id AS prid', DB::raw("(CASE WHEN at.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as prdesc"), 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla',  'gr.nome AS nomeg' )
                     ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
                     ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                     ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
@@ -46,15 +46,25 @@ class GerenciarEncaminhamentoPTIController extends Controller
 
         $assistido = $request->assist;
 
-        $situacao = $request->status;   //
+        $situacao = $request->status;   
+
+        $cpf = $request->cpf;
 
 
         if ($request->dt_enc){
             $lista->where('enc.dh_enc', '>=', $request->dt_enc);
         }
 
-        if ($request->assist){
-            $lista->where('p1.nome_completo', 'ilike', "%$request->assist%");
+
+        if ($request->assist) {
+            $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->assist}%"]);
+        }
+
+
+
+        if ($request->cpf) {
+            
+            $lista->whereRaw("LOWER(p1.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
         }
 
         if ($request->status){
@@ -81,7 +91,7 @@ class GerenciarEncaminhamentoPTIController extends Controller
         ");
 
 
-        return view ('/encaminhamento-pti/gerenciar-encaminhamentos', compact('lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'motivo'));
+        return view ('/encaminhamento-pti/gerenciar-encaminhamentos', compact('cpf','lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'motivo'));
 
 
         }
@@ -91,8 +101,8 @@ class GerenciarEncaminhamentoPTIController extends Controller
             $code = $e->getCode( );
             return view('tratamento-erro.erro-inesperado', compact('code'));
                 }
+            
             }
-
             public function agenda($ide, $idtt)
             {
                 try {
