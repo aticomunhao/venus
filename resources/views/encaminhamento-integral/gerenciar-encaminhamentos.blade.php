@@ -11,15 +11,21 @@
     <div class="col-12">
         <div class="row justify-content-center">
             <div>
-                <form action="/gerenciar-encaminhamentos-pti" class="form-horizontal mt-4" method="GET" >
+                <form action="/gerenciar-encaminhamentos-integral" class="form-horizontal mt-4" method="GET" >
                 <div class="row">
-                    <div class ="col">Data início
+                    <div class ="col-md-1">Data início
                         <input class="form-control" type="date" id="" name="dt_enc" value="{{$data_enc}}">
                     </div>
-                    <div class="col-5">Assistido
+                    <div class="col-3">Assistido
                         <input class="form-control" type="text" id="3" name="assist" value="{{$assistido}}">
                     </div>
-                    <div class="col">Status
+                    <div class="col-md-3">CPF
+                        <input class="form-control" type="text" maxlength="11"
+                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                            id="2" name="cpf" value="{{ $cpf }}">
+                   
+                </div>
+                    <div class="col-2">Status
                         <select class="form-select" id="4" name="status" type="number">
                             <option value="{{$situacao}}"></option>
                             @foreach ($stat as $status)

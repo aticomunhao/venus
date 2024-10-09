@@ -18,7 +18,7 @@ class GrupoController extends Controller
 
     public function index(Request $request)
     {
-      //  try {
+        try {
 
             // Carregar a lista de setores para o Select2
             $setor = DB::table('setor')->orderBy('nome', 'asc')->get();
@@ -73,10 +73,10 @@ class GrupoController extends Controller
 
             
             return view('grupos.gerenciar-grupos', compact('lista', 'grupo', 'setor','contar', 'nomeg', 'nomes'));
-     //   } catch (\Exception $e) {
-       //     $code = $e->getCode();
-         //   return view('gerenciar-grupos.erro-inesperado', compact('code'));
-        //}
+        } catch (\Exception $e) {
+            $code = $e->getCode();
+            return view('gerenciar-grupos.erro-inesperado', compact('code'));
+        }
     }
 
 

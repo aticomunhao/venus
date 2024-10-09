@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-
     <div class="container-fluid">
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
             GERENCIAR ENCAMINHAMENTOS</h4>
@@ -15,15 +14,22 @@
 
                     <form action="{{ route('gecdex') }}" class="form-horizontal mt-4" method="GET">
                         <div class="row">
-                            <div class ="col">Data início
+                            <div class ="col-md-2">Data início
                                 <input class="form-control" type="date" id="" name="dt_enc"
                                     value="{{ $data_enc }}">
                             </div>
-                            <div class="col">Assistido
+                            <div class="col-md-3">Assistido
                                 <input class="form-control" type="text" id="3" name="assist"
                                     value="{{ $assistido }}">
                             </div>
-                            <div class="col-2">Status
+
+                                <div class="col-md-2">CPF
+                                    <input class="form-control" type="text" maxlength="11"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                        id="2" name="cpf" value="{{ $cpf }}">
+                               
+                            </div>
+                            <div class="col-md-2">Status
                                 <select class="form-select" id="4" name="status" type="number">
                                     <option value="{{ $situacao }}"></option>
                                     @foreach ($stat as $status)
@@ -65,7 +71,7 @@
         </thead>
         <tbody style="font-size: 14px; color:#000000; text-align: center;">
             @foreach ($lista as $listas)
-            <tr>
+                <tr>
                     <td>{{ $listas->ide }}</td>
                     <td>{{ date('d/m/Y ', strtotime($listas->dh_enc)) }}</td>
                     <td>{{ $listas->prdesc }}</td>
@@ -120,41 +126,41 @@
                                     </div>
                                     <br />
 
-                                        <div class="modal-body">
-                                            <center>
-                                                <label for="recipient-name" class="col-form-label" style="font-size:17px">Tem
-                                                    certeza que deseja inativar:<br /><span
+                                    <div class="modal-body">
+                                        <center>
+                                            <label for="recipient-name" class="col-form-label" style="font-size:17px">Tem
+                                                certeza que deseja inativar:<br /><span
                                                     style="color:#DC4C64; font-weight: bold;">{{ $listas->nm_1 }}</span>&#63;</label>
-                                                    <br />
-                                            </center>
+                                            <br />
+                                        </center>
 
 
 
-                                    <center>
-                                        <div class="mb-2 col-10">
-                                            <label class="col-form-label">Insira o motivo da
-                                                <span style="color:#DC4C64">inativação:</span></label>
-                                            <select class="form-select teste1" name="motivo" required>
+                                        <center>
+                                            <div class="mb-2 col-10">
+                                                <label class="col-form-label">Insira o motivo da
+                                                    <span style="color:#DC4C64">inativação:</span></label>
+                                                <select class="form-select teste1" name="motivo" required>
 
-                                                @foreach ($motivo as $motivos)
-                                                    <option value="{{ $motivos->id }}">{{ $motivos->tipo }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </center>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" data-bs-dismiss="modal"
-                                        class="btn btn-danger">Cancelar</button>
-                                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                    @foreach ($motivo as $motivos)
+                                                        <option value="{{ $motivos->id }}">{{ $motivos->tipo }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </center>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" data-bs-dismiss="modal"
+                                            class="btn btn-danger">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         </div>
                         {{-- fim modal de inativação --}}
                     </form>
 
-            </tr>
+                </tr>
             @endforeach
         </tbody>
     </table>
@@ -164,8 +170,6 @@
 
     </div>
     </div>
-
-
 @endsection
 
 @section('footerScript')

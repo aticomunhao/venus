@@ -30,13 +30,19 @@
                                     @endforeach
                                 </select>
                             </div>
-
-                            <div class="col-3">Assistido
+                            
+                            <div class="col-2">Assistido
                                 <input class="form-control pesquisa" type="text" id="3" name="assist"
-                                    value="{{ $assistido }}">
+                                value="{{ $assistido }}">
                             </div>
-
-                            <div class="col-2">Status
+                            
+                            <div class="col-md-2">CPF
+                                <input class="form-control" type="text" maxlength="11"
+                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                    id="2" name="cpf" value="{{ $cpf }}">
+                           
+                        </div>
+                            <div class="col-1">Status
                                 <select class="form-select teste1" id="4" name="status" type="number">
 
                                     @foreach ($stat as $status)
