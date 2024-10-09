@@ -37,7 +37,7 @@
                                         <span class="tooltiptext">Obrigatório</span>
                                         <span style="color:red">*</span>
                                     </span>
-                                    <input class="form-control" type="numeric" maxlength="11" placeholder="888.888.888-88"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" value="{{old('cpf')}}" id="" name="cpf" required="required" >
+                                    <input class="form-control" type="text" maxlength="11" placeholder="888.888.888-88"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" value="{{old('cpf')}}" id="" name="cpf" required="required" >
                                 </div>
                             </div>
                             <div class="col">
