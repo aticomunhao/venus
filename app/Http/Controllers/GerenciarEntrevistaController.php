@@ -91,14 +91,12 @@ class GerenciarEntrevistaController extends Controller
                 'pessoa_entrevistador.nome_completo as nome_entrevistador',
                 DB::raw("(CASE WHEN atendimentos.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as emergencia"),
                 'atendimentos.dh_inicio as inicio'
-            );
+            )->whereIn('tipo_entrevista.id_setor', session()->get('usuario.setor'));
 
 
 
 
-        if (!in_array(36, session()->get('usuario.acesso'))) {
-            $informacoes =  $informacoes->whereIn('tipo_entrevista.id_setor', session()->get('usuario.setor'));
-        }
+       
 
 
         $i = 0;
