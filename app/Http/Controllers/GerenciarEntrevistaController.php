@@ -115,8 +115,7 @@ class GerenciarEntrevistaController extends Controller
         }
 
         if ($request->nome_pesquisa) {
-
-            $informacoes->where('pessoa_pessoa.nome_completo', 'ilike', "%$request->nome_pesquisa%");
+            $informacoes->whereRaw("UNACCENT(LOWER(pessoa_pessoa.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome_pesquisa}%"]);
         }
 
         if ($request->tipo_entrevista) {
@@ -130,16 +129,21 @@ class GerenciarEntrevistaController extends Controller
             $informacoes->where('entrevistas.status', $pesquisaValue);
         }
 
+      
 
-        $informacoes = $informacoes->orderByRaw("CASE 
-        WHEN entrevistas.status IS NULL AND encaminhamento.status_encaminhamento IS NULL THEN 0  -- 'Aguardando agendamento' no topo
-        WHEN entrevistas.status IS NULL AND encaminhamento.status_encaminhamento = 6 THEN 999  -- 'Inativado' por último
-        ELSE COALESCE(entrevistas.status, 1)  -- Outros status, tratando NULL como 1
-    END")
+        if (!is_array($informacoes)) {
+            $informacoes = $informacoes->orderByRaw("
+                CASE 
+                    WHEN entrevistas.status IS NULL AND encaminhamento.status_encaminhamento IS NULL THEN 0  -- 'Aguardando agendamento' no topo
+                    WHEN entrevistas.status IS NULL AND encaminhamento.status_encaminhamento = 6 THEN 999  -- 'Inativado' por último
+                    ELSE COALESCE(entrevistas.status, 1)  -- Outros status, tratando NULL como 1
+                END
+            ")
             ->orderBy('atendimentos.emergencia', 'ASC')
             ->orderBy('atendimentos.dh_inicio')
             ->paginate(50);
-
+        }
+    
 
 
         $totalAssistidos = $informacoes->total();
