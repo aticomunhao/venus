@@ -18,62 +18,61 @@ class PessoaController extends Controller
 
 
 
-            $ddd = DB::select('select id, descricao from tp_ddd');
+        $ddd = DB::select('select id, descricao from tp_ddd');
 
-            $sexo = DB::select('select id, tipo from tp_sexo');
+        $sexo = DB::select('select id, tipo from tp_sexo');
 
-            $pessoa = DB::table('pessoas AS p')
-                ->select('p.id AS idp', 'p.nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'email', 'ddd', 'celular', 'tsp.id AS idtps', 'p.status', 'tsp.tipo AS tpsta', 'd.id as did', 'd.descricao as ddesc')
-                ->leftjoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
-                ->leftJoin('tp_sexo AS tps', 'p.sexo', 'tps.id')
-                ->leftJoin('tp_ddd AS d', 'p.ddd', 'd.id');
-
-
+        $pessoa = DB::table('pessoas AS p')
+            ->select('p.id AS idp', 'p.nome_completo', 'p.cpf', 'tps.tipo', 'dt_nascimento', 'sexo', 'email', 'ddd', 'celular', 'tsp.id AS idtps', 'p.status', 'tsp.tipo AS tpsta', 'd.id as did', 'd.descricao as ddesc')
+            ->leftjoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
+            ->leftJoin('tp_sexo AS tps', 'p.sexo', 'tps.id')
+            ->leftJoin('tp_ddd AS d', 'p.ddd', 'd.id');
 
 
 
-            $nome = $request->nome;
-            if ($request->nome) {
-                $pessoa->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome}%"]);
+
+
+        $nome = $request->nome;
+        if ($request->nome) {
+            $pessoa->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome}%"]);
+        }
+
+        $cpf = $request->cpf;
+
+        if ($request->cpf) {
+            // Usar LIKE para permitir pesquisa parcial
+            $pessoa->whereRaw("LOWER(p.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
+        }
+
+
+
+        $status = $request->status;
+        //
+
+
+        if ($request->has('status') && $request->status !== "") {
+            if ($request->status == "*") {
+                $pessoa = $pessoa;
+            } else {
+                $pessoa = $pessoa->where('p.status', '=', $request->status);
             }
+        }
 
-            $cpf = $request->cpf;
+        //Diz método Undefined mas ele funciona
+        $pessoa = $pessoa->orderBy('p.status', 'desc')->orderBy('p.nome_completo', 'asc')->paginate(30);
 
-            if ($request->cpf) {
-                // Usar LIKE para permitir pesquisa parcial
-                $pessoa->whereRaw("LOWER(p.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
-            }
-
-
-
-            $status = $request->status;
-            //
-
-
-            if ($request->has('status') && $request->status !== "") {
-                if ($request->status == "*") {
-                    $pessoa = $pessoa;
-                } else {
-                    $pessoa = $pessoa->where('p.status', '=', $request->status);
-                }
-            }
-
-            //Diz método Undefined mas ele funciona
-            $pessoa = $pessoa->orderBy('p.status', 'desc')->orderBy('p.nome_completo', 'asc')->paginate(30);
-
-            $stap = DB::select("select
+        $stap = DB::select("select
                         id as ids,
                         tipo
                         from tipo_status_pessoa t
                         ");
 
-            $soma = $pessoa->count();
+        $soma = $pessoa->count();
 
 
 
 
-            return view('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
-
+        return view('/pessoal/gerenciar-pessoas', compact('pessoa', 'stap', 'soma', 'ddd', 'sexo', 'cpf', 'nome'));
     }
 
     public function store()
@@ -134,14 +133,14 @@ class PessoaController extends Controller
                 'dt_nascimento' => $request->input('dt_na'),
                 'sexo' => $request->input('sex'),
                 'ddd' => $request->input('ddd'),
-                'celular' => $request->input('celular'),
+                'celular' => intval($request->input('celular')),
                 'email' => $request->input('email'),
                 'status' => 1
 
 
             ]);
 
-           
+
 
             $pessoa = DB::table('pessoas')->max('id');
 
@@ -168,7 +167,7 @@ class PessoaController extends Controller
             $sexo = DB::select('select id, tipo from tp_sexo');
             $status_p = DB::select('select id, tipo from tipo_status_pessoa');
             $motivo = DB::select('select id, motivo from tipo_motivo_status_pessoa order by id');
-    
+
             // Buscando uma única pessoa pelo ID, mas retornando uma coleção
             $lista = DB::table('pessoas as p')
                 ->select(
@@ -196,19 +195,19 @@ class PessoaController extends Controller
                 ->leftJoin('tipo_motivo_status_pessoa', 'tipo_motivo_status_pessoa.id', '=', 'p.motivo_status')
                 ->where('p.id', $idp)
                 ->get(); // Continuando a usar get()
-    
+
             // Certifique-se de que a lista não está vazia
             if ($lista->isEmpty()) {
                 return redirect()->route('gerenciar-pessoas')->withErrors('Pessoa não encontrada.');
             }
-    
+
             return view('/pessoal/editar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p', 'motivo'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('administrativo-erro.erro-inesperado', compact('code'));
         }
     }
-    
+
     public function show($idp)
     {
         try {

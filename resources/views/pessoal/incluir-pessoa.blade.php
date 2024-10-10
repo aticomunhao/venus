@@ -71,7 +71,11 @@
                             <div class="col-2">
                                 <div class="mb-4" style="text-align:left;">
                                     <label for="validationCustom05" class="form-label">DDD</label>
-                                    <select class="form-select" id="validationCustom05" name="ddd">
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
+                                    <select class="form-select" id="validationCustom05" name="ddd" required="required">
                                         <option value=""></option>
                                         @foreach($ddd as $ddds)
                                             <option value="{{ $ddds->descricao }}" @if(old('ddd') == $ddds->descricao) selected="selected" @endif>
@@ -85,7 +89,14 @@
                             <div class="col">
                                 <div class="mb-5" style="text-align:left;">
                                     <label for="validationCustom06" class="form-label">Nr Celular</label>
-                                    <input class="form-control" maxlength="9" type="numeric" name="celular" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" >
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
+                                    <input class="form-control" minlength="9" maxlength="9" type="text" name="celular" required="required" 
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 9);" 
+                                        placeholder="" 
+                                        pattern="\d{9}">
                                 </div>
                             </div>
                         </div>

@@ -25,11 +25,8 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom01" class="form-label">Nome completo</label>
-                                        <span class="tooltips">
-                                            <span class="tooltiptext">Obrigatório</span>
-                                            <span style="color:red">*</span>
                                         </span>
-                                        <input class="form-control" type="text" maxlength="40" id="" name="nome" value="{{$lista[0]->nome_completo}}" required="required">
+                                        <input class="form-control" type="text" maxlength="40" id="" name="nome" value="{{$lista[0]->nome_completo}}">
                                     </div>
                                 </div>
                             </div>
@@ -37,21 +34,13 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom02" class="form-label">CPF</label>
-                                        <span class="tooltips">
-                                            <span class="tooltiptext">Obrigatório</span>
-                                            <span style="color:red">*</span>
-                                        </span>
-                                        <input class="form-control" type="numeric" maxlength="11" value="{{$lista[0]->cpf}}" id="" name="cpf" required="required" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
+                                        <input class="form-control" type="numeric" maxlength="11" value="{{$lista[0]->cpf}}" id="" name="cpf" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom04" class="form-label">Sexo</label>
-                                        <span class="tooltips">
-                                            <span class="tooltiptext">Obrigatório</span>
-                                            <span style="color:red">*</span>
-                                        </span>
-                                        <select class="form-select" id="" name="sex" required="required">
+                                        <select class="form-select" id="" name="sex" >
                                             <option value="{{$lista[0]->sexo}}">{{$lista[0]->tipo}}</option>
                                             @foreach($sexo as $sexos)
                                             <option @if (old ('sex') == $sexos->id) {{'selected="selected"'}} @endif value="{{ $sexos->id }}">{{$sexos->tipo}}</option>
@@ -62,11 +51,7 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom03" class="form-label">Data Nascimento</label>
-                                        <span class="tooltips">
-                                            <span class="tooltiptext">Obrigatório</span>
-                                            <span style="color:red">*</span>
-                                        </span>
-                                        <input class="form-control" type="date" value="{{$lista[0]->dt_nascimento}}" id="" name="dt_nasc" required="required">
+                                        <input class="form-control" type="date" value="{{$lista[0]->dt_nascimento}}" id="" name="dt_nasc">
                                     </div>
                                 </div>
                             </div>
@@ -74,7 +59,7 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom05" class="form-label">Status</label>
-                                        <select class="form-select" id="status_pessoa" name="status" required="required">
+                                        <select class="form-select" id="status_pessoa" name="status" >
                                             <option value="{{$lista[0]->status}}" selected>{{$lista[0]->tipo_status_pessoa}}</option>
                                             <option value="1">Ativo</option>
                                             <option value="0">Inativo</option>
@@ -84,7 +69,7 @@
                                 <div class="col">
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom06" class="form-label">Motivo</label>
-                                        <select class="form-select" id="tp_motivo" name="motivo" required="required">
+                                        <select class="form-select" id="tp_motivo" name="motivo" >
                                             <option value="{{ $lista[0]->tipo_motivo_status_pessoa }}">{{ $lista[0]->motivo_status_pessoa_tipo_motivo }}</option>
                                             @foreach($motivo as $motivos)
                                                 <option @if(old('motivo') == $motivos->id) selected @endif value="{{ $motivos->id }}">{{ $motivos->motivo }}</option>
@@ -96,7 +81,7 @@
                                     <div class="col-2">
                                         <div class="mb-4 text-start">
                                             <label for="validationCustom05" class="form-label">DDD</label>
-                                            <select class="form-select" id="validationCustom05" name="ddd" required>
+                                            <select class="form-select" id="validationCustom05" name="ddd" >
                                                 <option value="" disabled selected>Selecione o DDD</option>
                                                 @foreach($ddd as $ddds)
                                                     <option value="{{ $ddds->id }}" @if(old('ddd', $lista[0]->ddd) == $ddds->id) selected @endif>
@@ -112,7 +97,7 @@
                                             <label for="validationCustom06" class="form-label">Nr Celular</label>
                                             <input class="form-control" maxlength="11" type="text" name="celular" 
                                                    value="{{ old('celular', $lista[0]->celular) }}" 
-                                                   oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                                                   oninput="this.value = this.value.replace(/[^0-9]/g, '');" >
                                         </div>
                                     </div>
                                     
