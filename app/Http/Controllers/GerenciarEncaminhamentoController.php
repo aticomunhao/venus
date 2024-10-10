@@ -36,7 +36,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                 ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
-               // ->whereNot('enc.id_tipo_tratamento', null)
+                ->where('enc.id_tipo_tratamento', 1)
                 ->where('enc.id_tipo_encaminhamento', 2);
 
             $data_enc = $request->dt_enc;
