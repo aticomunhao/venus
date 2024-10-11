@@ -17,8 +17,8 @@
                     <select class="form-select select2" name="nome_grupo">
                             <option value="">Selecione o Grupo</option>
                             @foreach ($grupo as $grupos)
-                                <option value="{{ $grupos->id }}"
-                                    {{ request('nome_grupo') == $grupos->id ? 'selected' : '' }}>{{ $grupos->nome }}
+                                <option value="{{ $grupos->idg }}"
+                                    {{ request('nome_grupo') == $grupos->idg ? 'selected' : '' }}>{{ $grupos->nomeg }} - {{ $grupos->sigla }}
                                 </option>
                             @endforeach
                         </select>   

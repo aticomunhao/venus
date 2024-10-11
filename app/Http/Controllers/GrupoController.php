@@ -26,7 +26,7 @@ class GrupoController extends Controller
             //dd($setor);
 
             // Carregar a lista de grupos para o Select2
-            $grupo = DB::table('grupo')->orderBy('nome', 'asc')->get();
+            $grupo = DB::table('grupo AS g')->leftJoin('setor AS s', 'g.id_setor', 's.id')->select('g.id AS idg', 'g.nome AS nomeg', 's.sigla')->orderBy('g.nome', 'asc')->get();
 
 
             $lista = DB::table('grupo AS g')
