@@ -81,7 +81,14 @@ class GerenciarTratamentosController extends Controller
             }
 
 
-            $lista = $lista->orderby('tr.status', 'ASC')->orderby('at.id_prioridade', 'ASC')->orderby('nm_1', 'ASC')->paginate(50);
+            $lista = $lista->orderby('tr.status', 'ASC')
+            ->orderby('at.id_prioridade', 'ASC')
+            ->orderby('nm_1', 'ASC')
+            ->paginate(50)
+            ->appends([
+                'assist' => $assistido,
+                'cpf' => $cpf,
+            ]);
             //dd($lista)->get();
 
             $contar = $lista->count('enc.id');

@@ -12,11 +12,17 @@ class MembroController extends Controller
 {
     public function grupos(Request $request)
     {
-        try {
+        
 
             $now = Carbon::now()->format('Y-m-d');
 
-            $cronogramasLogin = DB::table('membro AS m')->leftJoin('associado', 'associado.id', '=', 'm.id_associado')->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')->whereIn('g.id_setor', session()->get('usuario.setor'));
+            $cronogramasLogin = DB::table('membro AS m')
+            ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
+            ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
+            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+            ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
+            ->whereIn('g.id_setor', session()
+            ->get('usuario.setor'));
 
             if (!in_array(36, session()->get('usuario.acesso'))) {
                 $cronogramasLogin = $cronogramasLogin->where('id_associado', session()->get('usuario.id_associado'))->where('m.id_funcao', [1, 2]);
@@ -52,6 +58,7 @@ class MembroController extends Controller
                     'cro.h_fim',
                     'sl.numero as sala',
                     'tpg.descricao',
+                    's.nome as nome_setor',
                     DB::raw("
             (CASE
              WHEN cro.modificador = 3  THEN 'Experimental'
@@ -61,29 +68,40 @@ class MembroController extends Controller
              as status"),
                 )
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+                ->leftJoin('setor as s', 'gr.id_setor', 's.id')
                 ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
                 ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
                 ->leftJoin('tipo_status_grupo as tpg', 'cro.modificador', 'tpg.id')
                 ->whereIn('cro.id', $cronogramas)
                 ->whereIn('gr.id_setor', session()->get('usuario.setor'));
 
-            $membro = DB::table('membro AS m')->leftJoin('associado', 'associado.id', '=', 'm.id_associado')->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')->leftJoin('cronograma as cro', 'm.id_cronograma', '=', 'cro.id')->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')->select('p.nome_completo', 'm.id_associado')->whereIn('m.id_cronograma', $cronogramasLogin)->whereIn('g.id_setor', session()->get('usuario.setor'))->distinct()->get();
+            $membro = DB::table('membro AS m')
+            ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
+            ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
+            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', '=', 'cro.id')
+            ->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')
+           
+            ->select('p.nome_completo', 'm.id_associado')
+            ->whereIn('m.id_cronograma', $cronogramasLogin)
+            ->whereIn('g.id_setor', session()->get('usuario.setor'))->distinct()->get();
 
             if ($request->nome_grupo) {
                 $membro_cronograma = $membro_cronograma->where('cro.id', $request->nome_grupo);
             }
 
-            $membro_cronograma = $membro_cronograma->orderBy('status')->orderBy('nome_grupo')->get();
+            $membro_cronograma = $membro_cronograma->orderBy('status')
+            ->orderBy('nome_grupo')
+            ->paginate(300);
+        
 
             $nome = $request->nome_grupo;
             $membroPesquisa = $request->nome_membro;
+            $contar = $membro_cronograma->total();
+           
 
-            return view('membro.listar-grupos-membro', compact('membro_cronograma', 'nome', 'membro', 'membroPesquisa'));
-        } catch (\Exception $e) {
-
-            $code = $e->getCode();
-            return view('listar-grupos erro.erro-inesperado', compact('code'));
-        }
+            return view('membro.listar-grupos-membro', compact('membro_cronograma','contar', 'nome', 'membro', 'membroPesquisa'));
+      
     }
 
     public function createGrupo(Request $request, string $id)
