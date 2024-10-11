@@ -29,8 +29,8 @@
                             <option value="">Selecione</option>
                                 Todos</option>
                                     @foreach ($grupos as $gruposs)
-                                        <option value="{{ $gruposs->id }}" {{request('grupo') == $gruposs->id ? 'selected' : ''  }}>
-                                            {{ $gruposs->nome }}</option>
+                                        <option value="{{ $gruposs->idg }}" {{request('grupo') == $gruposs->idg ? 'selected' : ''  }}>
+                                            {{ $gruposs->nomeg }} - {{ $gruposs->sigla }}</option>
                                     @endforeach
                                 </select>
                             </div>
