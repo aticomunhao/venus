@@ -47,6 +47,7 @@ class ReuniaoMediunicaController extends Controller
         // Obtém os valores de pesquisa da requisição
         $semana = $request->input('semana', null);
         $grupo = $request->input('grupo', null);
+        $setor = $request->input('setor', null);
         $status = $request->input('status', null);
 
         // Aplica filtro por setor se não estiver no setor 25
@@ -61,7 +62,12 @@ class ReuniaoMediunicaController extends Controller
 
         // Aplica filtro por nome de grupo com insensibilidade a maiúsculas/minúsculas e acentos
         if ($grupo) {
-            $reuniao->where(DB::raw('unaccent(gr.nome)'), 'ilike', "%$grupo%");
+            $reuniao->where('gr.id', $grupo);
+        }
+
+        // Aplica filtro por setor
+        if ($setor) {
+            $reuniao->where('s.id', $setor);
         }
         // Aplica filtro por status com base na expressão CASE WHEN
         $statusCaseWhen = DB::raw("CASE WHEN cro.data_fim is not null THEN 'Inativo' ELSE 'Ativo' END");
@@ -96,7 +102,8 @@ class ReuniaoMediunicaController extends Controller
             ->appends([
                 'status' => $status,
                 'semana' => $semana,
-                'grupo' => $grupo
+                'grupo' => $grupo,
+                'setor' => $setor
             ]);
 
         // Obtém os dados para os filtros
@@ -106,10 +113,16 @@ class ReuniaoMediunicaController extends Controller
         ->select('id AS idtd', 'nome AS nomed')
         ->orderByRaw('CASE WHEN id = 0 THEN 1 ELSE 0 END, idtd ASC')
         ->get();
+
+        // Carregar a lista de setores para o Select2
+        $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
+
+         // Carregar a lista de grupos para o Select2
+        $grupos = DB::table('grupo')->orderBy('nome', 'asc')->get();
    
 
         // Retorna a view com os dados
-        return view('/reuniao-mediunica/gerenciar-reunioes', compact('reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupo'));
+        return view('/reuniao-mediunica/gerenciar-reunioes', compact('reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores'));
     }
 
 

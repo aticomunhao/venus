@@ -24,9 +24,25 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-4">Grupo
-                                <input class="form-control" type="text" id="" name="grupo"
-                                    value="{{ $grupo }}">
+                            <div class="col">Grupo
+                            <select class="form-select select2" id="" name="grupo" type="number">
+                            <option value="">Selecione</option>
+                                Todos</option>
+                                    @foreach ($grupos as $gruposs)
+                                        <option value="{{ $gruposs->id }}" {{request('grupo') == $gruposs->id ? 'selected' : ''  }}>
+                                            {{ $gruposs->nome }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-2">Setor
+                                <select class="form-select select2" id="" name="setor" type="number">
+                                <option value="">Selecione</option>
+                                Todos</option>
+                                    @foreach ($setores as $setoress)
+                                        <option value="{{ $setoress->id }}" {{request('setor') == $setoress->id ? 'selected' : ''  }}>
+                                            {{ $setoress->sigla }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-2">Status
                                 <select class="form-select status" id="4" name="status" type="number">
