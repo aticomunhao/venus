@@ -118,7 +118,7 @@ class ReuniaoMediunicaController extends Controller
         $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
 
          // Carregar a lista de grupos para o Select2
-        $grupos = DB::table('grupo')->orderBy('nome', 'asc')->get();
+        $grupos = DB::table('grupo AS g')->leftJoin('setor AS s', 'g.id_setor', 's.id')->select('g.id AS idg', 'g.nome AS nomeg', 's.sigla')->orderBy('g.nome', 'asc')->get();
    
 
         // Retorna a view com os dados
