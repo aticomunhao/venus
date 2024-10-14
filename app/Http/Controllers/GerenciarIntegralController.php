@@ -96,7 +96,7 @@ class GerenciarIntegralController extends Controller
      */
     public function show(string $id)
     {
-        //  try{
+          try{
         $result = DB::table('tratamento AS tr')
             ->select('enc.id AS ide', 'tr.id AS idtr', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo', 'sat.descricao AS statat', 'sl.numero as sala')
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
@@ -172,14 +172,14 @@ class GerenciarIntegralController extends Controller
                 ->count();
         }
 
-        return view('integral.historico-integral', compact('result', 'list', 'faul', 'list2', 'faul2'));
+        return view('Integral.historico-integral', compact('result', 'list', 'faul', 'list2', 'faul2'));
     }
-    // catch(\Exception $e){
+    catch(\Exception $e){
 
-    //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
-    //     return redirect()->back();
-    //         }
-    //     }
+        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
+        return redirect()->back();
+            }
+        }
     /**
      * Show the form for editing the specified resource.
      */

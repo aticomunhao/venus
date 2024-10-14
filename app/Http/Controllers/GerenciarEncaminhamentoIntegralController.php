@@ -19,7 +19,6 @@ class GerenciarEncaminhamentoIntegralController extends Controller
     {
         try {
             $now = Carbon::now()->format('Y-m-d');
-
             $lista = DB::table('encaminhamento AS enc')
                 ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'p1.cpf AS cpf_assistido', 'pa.nome', 'pr.id AS prid', DB::raw("(CASE WHEN at.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as prdesc"), 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla', 'gr.nome AS nomeg')
                 ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')

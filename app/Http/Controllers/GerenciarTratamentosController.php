@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\DiasCronograma;
 use App\Jobs\DiasCronogramaOntem;
-use App\Jobs\FaLtas;
+use App\Jobs\Faltas;
 use App\Jobs\FimSemanas;
 use App\Jobs\LimiteFalta;
 use Illuminate\Database\Query\JoinClause;
@@ -292,18 +292,14 @@ class GerenciarTratamentosController extends Controller
     //   }
     public function job()
     {
-        try {
+      
             DiasCronogramaOntem::dispatch();
             DiasCronograma::dispatch();
             LimiteFalta::dispatch();
             FimSemanas::dispatch();
             Faltas::dispatch();
             return redirect()->back();
-        } catch (\Exception $e) {
-
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
+    
     }
 
 

@@ -48,7 +48,7 @@ Agendar Tratamento
                     <div class="row g-2 justify-content-evenly" style="text-align:center;  column-gap:10px;">
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                                <input type="radio" class="btn-check" name="dia" id="option1" value="1" autocomplete="off" {{ $dia_hoje != 1 ? 'checked' : 0 }} {{ $dia_hoje == 1 ? 'disabled' : '' }}>
+                                <input type="radio" class="btn-check" name="dia" id="option1" value="1" autocomplete="off">
                                 <label class="btn btn-outline-dark" for="option1">Segunda</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -74,7 +74,7 @@ Agendar Tratamento
                         </div>
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                                <input type="radio" class="btn-check" name="dia" id="option2" value="2" autocomplete="off" {{ $dia_hoje == 1 ? 'checked' : 0 }} {{ $dia_hoje == 2 ? 'disabled' : '' }}>
+                                <input type="radio" class="btn-check" name="dia" id="option2" value="2" autocomplete="off">
                                 <label class="btn btn-outline-dark" for="option2">Terça</label>
                                 <table class="table table-striped table-bordered" disabled>
                                     <thead>
@@ -100,7 +100,7 @@ Agendar Tratamento
                         </div>
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                                <input type="radio" class="btn-check" name="dia" id="option3" value="3" autocomplete="off" {{ $dia_hoje == 3 ? 'disabled' : '' }}>
+                                <input type="radio" class="btn-check" name="dia" id="option3" value="3" autocomplete="off">
                                 <label class="btn btn-outline-dark" for="option3">Quarta</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -126,7 +126,7 @@ Agendar Tratamento
                         </div>
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                                <input type="radio" class="btn-check" name="dia" id="option4" value="4" autocomplete="off" {{ $dia_hoje == 4 ? 'disabled' : '' }}>
+                                <input type="radio" class="btn-check" name="dia" id="option4" value="4" autocomplete="off">
                                 <label class="btn btn-outline-dark" for="option4">Quinta</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -155,7 +155,7 @@ Agendar Tratamento
                     <div class="row g-2 " style="text-align:center;  column-gap:215px;">
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                                <input type="radio" class="btn-check" name="dia" id="option5" value="5" autocomplete="off" {{ $dia_hoje == 5 ? 'disabled' : '' }}>
+                                <input type="radio" class="btn-check" name="dia" id="option5" value="5" autocomplete="off">
                                 <label class="btn btn-outline-dark" for="option5">Sexta</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -181,7 +181,7 @@ Agendar Tratamento
                         </div>
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                                <input type="radio" class="btn-check" name="dia" id="option6" value="6" autocomplete="off" {{ $dia_hoje == 6 ? 'disabled' : '' }}>
+                                <input type="radio" class="btn-check" name="dia" id="option6" value="6" autocomplete="off">
                                 <label class="btn btn-outline-dark" for="option6">Sábado</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>
@@ -207,7 +207,7 @@ Agendar Tratamento
                         </div>
                         <div class="col" style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">
                             <div class="form-check form-check-inline p-3 d-grid gap-2">
-                            <input type="radio" class="btn-check" name="dia" id="option7" value="0" autocomplete="off" {{ $dia_hoje == 0 ? 'disabled' : '' }}>
+                            <input type="radio" class="btn-check" name="dia" id="option7" value="0" autocomplete="off">
                                 <label class="btn btn-outline-dark" for="option7">Domingo</label>
                                 <table class="table table-striped table-bordered">
                                     <thead>

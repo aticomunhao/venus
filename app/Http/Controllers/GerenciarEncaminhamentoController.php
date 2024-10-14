@@ -21,7 +21,6 @@ class GerenciarEncaminhamentoController extends Controller
     {
        
             $now = Carbon::now()->format('Y-m-d');
-
             $lista = DB::table('encaminhamento AS enc')
                 ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'p1.cpf AS cpf_assistido', 'pa.nome', 'pr.id AS prid', DB::raw("(CASE WHEN at.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as prdesc"), 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla', 'gr.nome AS nomeg')
                 ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
@@ -36,8 +35,17 @@ class GerenciarEncaminhamentoController extends Controller
                 ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                 ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
-                ->where('enc.id_tipo_tratamento', 1)
+              //  ->where('enc.id_tipo_tratamento', 1)
                 ->where('enc.id_tipo_encaminhamento', 2);
+
+
+                $tratamentos_permitidos = Array();
+                in_array(16, session()->get('usuario.acesso')) ? array_push($tratamentos_permitidos, 1) : 0;
+                in_array(22, session()->get('usuario.acesso')) ? array_push($tratamentos_permitidos, 2) : 0;
+                in_array(23, session()->get('usuario.acesso')) ? array_push($tratamentos_permitidos, 6) : 0;
+        
+                $lista = $lista->whereIn('enc.id_tipo_tratamento', $tratamentos_permitidos);
+
 
             $data_enc = $request->dt_enc;
 
@@ -833,11 +841,11 @@ class GerenciarEncaminhamentoController extends Controller
         }
     public function trocarGrupo(Request $request, $ide){
 
-        try{
+   //     try{
 
         $reu = intval($request->reuniao);
 
-        //dd($dia_atual);
+        
         $countVagas = DB::table('tratamento')->where('id_reuniao', '=', "$reu")->where('status', '<', '3' )->count();
         $maxAtend = DB::table('cronograma')->where('id', '=', "$reu")->first();
         $tratID = DB::table('encaminhamento')->where('id', '=', $ide)->get();
@@ -909,11 +917,11 @@ class GerenciarEncaminhamentoController extends Controller
         return redirect('/gerenciar-encaminhamentos');
 
     }
-    catch(\Exception $e){
+    // catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
+    //     $code = $e->getCode( );
+    //     return view('tratamento-erro.erro-inesperado', compact('code'));
+    //         }
+    //     }
 
 }
