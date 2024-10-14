@@ -106,7 +106,7 @@ class GerenciarTratamentosController extends Controller
         from tipo_dia
         ");
 
-            $motivo = DB::table('tipo_motivo')->get();
+            $motivo = DB::table('tipo_mot_inat_at_enc')->get();
 
 
 
