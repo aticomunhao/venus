@@ -48,7 +48,7 @@ class LimiteFalta implements ShouldQueue
             $arrayTratamentoFaltas[$element->id_tratamento][] = $element->data;
         }
 
-         dd($tratamentos_faltas, $arrayTratamentoFaltas);
+       
 
         foreach ($arrayTratamentoFaltas as $key => $faltas) {
             $consecutivo = 1;
