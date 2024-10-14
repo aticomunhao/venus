@@ -175,11 +175,18 @@
                                                                             Tem certeza que deseja finalizar o atendimento
                                                                             de:
                                                                             <br /><span
+                                                                            
                                                                                 style="color:rgb(196, 27, 27);">{{ $assistidos->nm_1 }}</span>&#63;
 
 
                                                                         </div>
+                                                                        <div class="col-10">
+                                                                            Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
+                                                                        Utilizando para isso a ação de visualizar.
 
+
+                                                                        </div>
+                                                                        
                                                                         <div class="col-12 mt-5">
 
                                                                             <input class="form-check-input"
@@ -189,7 +196,7 @@
                                                                             <label class="emergencia" name="hello"
                                                                                 id="hello">Este atendimento é uma <span
                                                                                     style="color:rgb(196, 27, 27);">Emergência</span></label>
-
+                                                                            
                                                                         </div>
 
 
@@ -230,6 +237,8 @@
                                                                 <div class="row">
                                                                     <div class="col-12">
                                                                         Você não gerou nenhum encaminhamento.
+                                                                        Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
+                                                                        Utilizando para isso a ação de visualizar.
                                                                         <br /><span
                                                                             style="color:rgb(255, 147, 7); font-weight: bold">Tem
                                                                             certeza que deseja continuar&#63;</span>
@@ -275,6 +284,8 @@
                                                                 <div class="row">
                                                                     <div class="col-12">
                                                                         Você não gerou nenhuma Temática.
+                                                                        Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
+                                                                        Utilizando para isso a ação de visualizar.
                                                                         <br /><span
                                                                             style="color:rgb(255, 147, 7); font-weight: bold">Tem
                                                                             certeza que deseja continuar&#63;</span>

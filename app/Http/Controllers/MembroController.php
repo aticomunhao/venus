@@ -92,7 +92,7 @@ class MembroController extends Controller
 
             $membro_cronograma = $membro_cronograma->orderBy('status')
             ->orderBy('nome_grupo')
-            ->paginate(300);
+            ->paginate(50);
         
 
             $nome = $request->nome_grupo;
