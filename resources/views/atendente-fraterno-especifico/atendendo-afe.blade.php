@@ -152,6 +152,15 @@
 
 
                                                             </div>
+                                                            <center>
+                                                                <div class="col-9 mt-5">
+                                                                    <span
+                                                                    
+                                                                        style="color:rgb(255, 147, 7); font-weight: bold">*</span>
+                                                                    Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
+                                                                    Utilizando para isso a ação de visualizar.
+                                                                </div>
+                                                            </center>
 
 
 
