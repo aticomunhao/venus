@@ -25,8 +25,6 @@
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-
-
                                             <center>
                                                 <div class="row col-10">
 
