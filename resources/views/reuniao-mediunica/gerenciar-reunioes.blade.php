@@ -141,7 +141,7 @@
                                                         style="font-size:17px">
                                                         Tem certeza que deseja inativar:<br />
                                                         <span
-                                                            style="color:#DC4C64; font-weight: bold;">{{ $reuni->nomeg }}</span>&#63;
+                                                            style="color:#DC4C64; font-weight: bold;">{{ $reuni->nomeg }} - {{ $reuni->nsigla }}</span>&#63;
                                                     </label>
                                                     <br />
 
