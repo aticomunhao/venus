@@ -180,14 +180,23 @@
 
 
                                                                         </div>
+                                                                        
+                                                                        <center>
+                                                                            <div class="col-9 mt-5">
+                                                                                <span
+                                                                                
+                                                                                    style="color:rgb(196, 27, 27);">*</span>
+                                                                                Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
+                                                                                Utilizando para isso a ação de visualizar.
+                                                                            </div>
+                                                                        </center>
                                                                         <div class="col-10">
-                                                                            Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
-                                                                        Utilizando para isso a ação de visualizar.
+                                                                    
 
 
                                                                         </div>
                                                                         
-                                                                        <div class="col-12 mt-5">
+                                                                        <div class="col-12 mt-3">
 
                                                                             <input class="form-check-input"
                                                                                 type="checkbox" name="emergencia"
@@ -236,16 +245,22 @@
 
                                                                 <div class="row">
                                                                     <div class="col-12">
-                                                                        Você não gerou nenhum encaminhamento.
-                                                                        Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
-                                                                        Utilizando para isso a ação de visualizar.
+                                                                      
                                                                         <br /><span
                                                                             style="color:rgb(255, 147, 7); font-weight: bold">Tem
                                                                             certeza que deseja continuar&#63;</span>
 
 
                                                                     </div>
-
+                                                                    <center>
+                                                                        <div class="col-9 mt-5">
+                                                                            <span
+                                                                            
+                                                                                style="color:rgb(255, 147, 7); font-weight: bold">*</span>
+                                                                            Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
+                                                                            Utilizando para isso a ação de visualizar.
+                                                                        </div>
+                                                                    </center>
 
 
                                                                     </center>
@@ -283,15 +298,22 @@
 
                                                                 <div class="row">
                                                                     <div class="col-12">
-                                                                        Você não gerou nenhuma Temática.
-                                                                        Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
-                                                                        Utilizando para isso a ação de visualizar.
+                                                                       
                                                                         <br /><span
                                                                             style="color:rgb(255, 147, 7); font-weight: bold">Tem
                                                                             certeza que deseja continuar&#63;</span>
 
 
                                                                     </div>
+                                                                    <center>
+                                                                        <div class="col-9 mt-5">
+                                                                            <span
+                                                                            
+                                                                                style="color:rgb(255, 147, 7); font-weight: bold">*</span>
+                                                                            Não esqueça de conferir se suas temáticas foram registrados corretamentes,
+                                                                            Utilizando para isso a ação de visualizar.
+                                                                        </div>
+                                                                    </center>
 
 
 

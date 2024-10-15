@@ -124,7 +124,7 @@
                                 </button>
 
                                 <!-- Modal de confirmação de inativação -->
-                                <form action="/-reuniao/{{ $reuni->idr }}" method="POST">
+                                <form action="excluir-reuniao/{{ $reuni->idr }}" method="POST">
                                     @csrf <!-- Adiciona o token CSRF para proteção -->
                                     <div class="modal fade" id="inativa{{ $reuni->idr }}" data-bs-keyboard="false"
                                         tabindex="-1" aria-labelledby="inativarLabel" aria-hidden="true">
