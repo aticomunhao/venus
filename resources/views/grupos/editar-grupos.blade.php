@@ -59,9 +59,9 @@
                                     <div class="col-3">
                                         Motivo
                                         <select class="form-select" aria-label=".form-select-lg example" name="id_motivo_inativacao" id="id_motivo_inativacao" required="required" disabled>
-                                            <option value="{{ $grupo[0]->id_motivo_inativacao }}"> {{ $grupo[0]->tipo }}</option>
+                                            <option value="{{ $grupo[0]->id_motivo_inativacao }}"> {{ $grupo[0]->descricao }}</option>
                                             @foreach ($tipo_motivo as $tipo_motivos)
-                                                <option value="{{ $tipo_motivos->id }}"> {{ $tipo_motivos->tipo }} </option>
+                                                <option value="{{ $tipo_motivos->id }}"> {{ $tipo_motivos->descricao }} </option>
                                             @endforeach
                                         </select>
                                     </div>
