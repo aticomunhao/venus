@@ -47,9 +47,9 @@
                                     <div class="col-3">
                                         Motivo
                                         <select name="id_motivo_inativacao" class="form-control" disabled>
-                                            <option value="{{ $grupo[0]->id_motivo_inativacao }}"> {{ $grupo[0]->tipo }}</option>
+                                            <option value="{{ $grupo[0]->id_motivo_inativacao }}"> {{ $grupo[0]->descricao }}</option>
                                             @foreach ($tipo_motivo as $tipo_motivos)
-                                                <option value="{{ $tipo_motivos->id }}"> {{ $tipo_motivos->tipo }}</option>
+                                                <option value="{{ $tipo_motivos->id }}"> {{ $tipo_motivos->descricao }}</option>
                                             @endforeach
                                         </select>
                                     </div>
