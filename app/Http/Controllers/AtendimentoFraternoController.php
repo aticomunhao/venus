@@ -71,7 +71,7 @@ class AtendimentoFraternoController extends Controller
 
         $data_inicio = $request->input('dt_ini', Carbon::today()->toDateString());
 
-
+        $motivo = DB::table('tipo_motivo_atendimento')->get();
 
 
 
@@ -135,8 +135,8 @@ class AtendimentoFraternoController extends Controller
 
 
         //dd($assistido, $grupo, $now, $nome, $pref_m, $atendente);
-
-        return view('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
+             
+        return view('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo', 'motivo'));
     }
 
     public function pessoas_para_atender()
@@ -1067,6 +1067,9 @@ class AtendimentoFraternoController extends Controller
 
             // dd($grupo);
 
+          
+
+      
 
             return view('/atendimento-assistido/meus-atendimentos', compact('assistido', 'atendente', 'nome', 'grupo'));
         } catch (\Exception $e) {
@@ -1136,5 +1139,25 @@ class AtendimentoFraternoController extends Controller
         
 
         return $return;
+    }
+
+    public function cancelar(Request $request, $id)
+    {
+        try {
+                DB::table('atendimentos AS a')
+                    ->where('id', '=', $id)
+                    ->update([
+                        'status_atendimento' => 6,
+                        'motivo' => $request->motivo
+                    ]);
+
+                app('flasher')->addSuccess('O status do atendimento foi alterado para "Cancelado".');
+                return redirect('/atendendo');
+            
+        } catch (\Exception $e) {
+            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
+            DB::rollBack();
+            return redirect()->back();
+        }
     }
 }
