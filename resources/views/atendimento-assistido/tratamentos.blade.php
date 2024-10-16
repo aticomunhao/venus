@@ -53,7 +53,7 @@
                             <br>
                             <div class="form-check form-check-inline">
                                 <input type="checkbox" id="ptd" name="ptd" class="form-check-input" data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success" data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                                <label for="ptd" class="form-check-label">Passe Tratamento Desobssessivo - PTD</label>
+                                <label for="ptd" class="form-check-label">Passe Tratamento Desobsessivo - PTD</label>
                             </div>
                             <!-- <br>
                             <br>
