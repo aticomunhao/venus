@@ -98,9 +98,17 @@ class MembroController extends Controller
             $nome = $request->nome_grupo;
             $membroPesquisa = $request->nome_membro;
             $contar = $membro_cronograma->total();
-           
+            $grupos2 = DB::table('grupo AS g')
+            ->leftJoin('setor AS s', 'g.id_setor', 's.id')
+            ->leftJoin('cronograma as cro', 'g.id', '=', 'cro.id_grupo')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+            ->select('g.id AS idg', 'g.nome AS nomeg', 's.sigla', 'cro.h_inicio','sl.numero as sala',)
+            ->orderBy('g.nome', 'asc')->get();
 
-            return view('membro.listar-grupos-membro', compact('membro_cronograma','contar', 'nome', 'membro', 'membroPesquisa'));
+         
+
+            return view('membro.listar-grupos-membro', compact('grupos2','membro_cronograma','contar', 'nome', 'membro', 'membroPesquisa'));
       
     }
 
