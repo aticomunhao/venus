@@ -21,67 +21,84 @@ class GerenciarTratamentosController extends Controller
 {
     public function index(Request $request)
     {
-        try {
+        // try {
 
-            $now =  Carbon::now()->format('Y-m-d');
+        $now =  Carbon::now()->format('Y-m-d');
 
 
-            $lista = DB::table('tratamento AS tr')
-                ->select('tr.id AS idtr', 'tr.status', 'enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tst.nome AS tst', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'p1.cpf AS cpf_assistido', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla', 'tr.id AS idtr', 'gr.nome AS nomeg', 'td.nome AS nomed', 'rm.h_inicio', 'tr.dt_fim')
-                ->leftJoin('encaminhamento AS enc',  'tr.id_encaminhamento', 'enc.id')
-                ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-                ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-                ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-                ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-                ->leftJoin('tipo_status_tratamento AS tst', 'tr.status', 'tst.id')
-                ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-                ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-                ->leftjoin('tipo_dia AS td', 'rm.dia_semana', 'td.id')
-                ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
-                ->where('enc.id_tipo_encaminhamento', 2)
-                ->where('enc.id_tipo_tratamento', '<>', 3);
+        $lista = DB::table('tratamento AS tr')
+            ->select('tr.id AS idtr', 'tr.status', 'enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tst.nome AS tst', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'p1.cpf AS cpf_assistido', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla', 'tr.id AS idtr', 'gr.nome AS nomeg', 'td.nome AS nomed', 'rm.h_inicio', 'tr.dt_fim')
+            ->leftJoin('encaminhamento AS enc',  'tr.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+            ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+            ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+            ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+            ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
+            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+            ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+            ->leftJoin('tipo_status_tratamento AS tst', 'tr.status', 'tst.id')
+            ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+            ->leftjoin('tipo_dia AS td', 'rm.dia_semana', 'td.id')
+            ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
+            ->where('enc.id_tipo_encaminhamento', 2)
+            ->where('enc.id_tipo_tratamento', '<>', 3);
 
-            $data_enc = $request->dt_enc;
+        $cronogramas = DB::table('cronograma as cro')
+            ->select('cro.id', 'gr.nome', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 's.sigla as setor')
+            ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+            ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
+            ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
+            ->orderBy('gr.nome')
+            ->get();
 
-            $diaP = $request->dia;
+        // dd($cronogramas);
+        $data_enc = $request->dt_enc;
 
-            $assistido = $request->assist;
+        $diaP = $request->dia;
 
-            $situacao = $request->status;
+        $assistido = $request->assist;
 
-            $cpf = $request->cpf;
+        $situacao = $request->status;
 
-            if ($request->dia != null) {
-                $lista->where('rm.dia_semana', '=', $request->dia);
-            }
+        $cron = $request->grupo;
 
-            if ($request->dt_enc) {
-                $lista->where('enc.dh_enc', '>=', $request->dt_enc);
-            }
+        $cpf = $request->cpf;
 
-            if ($request->assist) {
-                $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->assist}%"]);
-            }
+        if ($request->dia != null) {
+            $lista->where('rm.dia_semana', '=', $request->dia);
+        }
 
-            if ($request->cpf) {
+        if ($request->dt_enc) {
+            $lista->where('enc.dh_enc', '>=', $request->dt_enc);
+        }
 
-                $lista->whereRaw("LOWER(p1.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
+        if ($request->grupo) {
+            $lista->where('rm.id', $request->grupo);
+        }
+
+        if ($request->assist) {
+            $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->assist}%"]);
+        }
+
+
+        if ($request->cpf) {
+
+            $lista->whereRaw("LOWER(p1.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
+        } else {
+
+            if ($request->status && $request->status != 'all') {
+                $lista->where('tr.status', $request->status);
+            } elseif ($request->status == 'all') {
             } else {
 
-                if ($request->status && $request->status != 'all') {
-                    $lista->where('tr.status', $request->status);
-                } elseif ($request->status == 'all') {
-                } else {
-
-                    $lista->where('tr.status', 2);
-                }
+                $lista->where('tr.status', 2);
             }
+        }
 
 
-            $lista = $lista->orderby('tr.status', 'ASC')
+        $lista = $lista->orderby('tr.status', 'ASC')
             ->orderby('at.id_prioridade', 'ASC')
             ->orderby('nm_1', 'ASC')
             ->paginate(50)
@@ -89,33 +106,33 @@ class GerenciarTratamentosController extends Controller
                 'assist' => $assistido,
                 'cpf' => $cpf,
             ]);
-            //dd($lista)->get();
+        //dd($lista)->get();
 
-            $contar = $lista->count('enc.id');
+        $contar = $lista->count('enc.id');
 
 
-            $stat = DB::select("select
+        $stat = DB::select("select
         ts.id,
         ts.nome
         from tipo_status_tratamento ts
         ");
 
-            $dia = DB::select("select
+        $dia = DB::select("select
         id,
         nome
         from tipo_dia
         ");
 
-            $motivo = DB::table('tipo_mot_inat_at_enc')->get();
+        $motivo = DB::table('tipo_mot_inat_at_enc')->get();
 
 
 
-            return view('/recepcao-integrada/gerenciar-tratamentos', compact('cpf', 'lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'dia', 'diaP', 'motivo'));
-        } catch (\Exception $e) {
+        return view('/recepcao-integrada/gerenciar-tratamentos', compact('cron','cronogramas', 'cpf', 'lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'dia', 'diaP', 'motivo'));
+        // } catch (\Exception $e) {
 
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
+        //     $code = $e->getCode();
+        //     return view('tratamento-erro.erro-inesperado', compact('code'));
+        // }
     }
 
     public function destroy(Request $request, string $id)
@@ -171,12 +188,12 @@ class GerenciarTratamentosController extends Controller
 
             app('flasher')->addError('Já foi registrada a presença para este dia.');
 
-            return Redirect('/gerenciar-tratamentos');
+            return Redirect()->back();
         } else if ($lista->dia_semana != $dia_atual) {
 
             app('flasher')->addError('Este assistido não corresponde ao dia de hoje.');
 
-            return Redirect('/gerenciar-tratamentos');
+            return Redirect()->back();
         } else {
 
 
@@ -221,12 +238,12 @@ class GerenciarTratamentosController extends Controller
 
             app('flasher')->addSuccess('Foi registrada a presença com sucesso.');
 
-            return Redirect('/gerenciar-tratamentos');
+            return Redirect()->back();
         }
 
         app('flasher')->addError('Aconteceu um erro inesperado.');
 
-        return Redirect('/gerenciar-tratamentos');
+        return Redirect()->back();
     }
     // catch(\Exception $e){
 
@@ -292,14 +309,13 @@ class GerenciarTratamentosController extends Controller
     //   }
     public function job()
     {
-      
-            DiasCronogramaOntem::dispatch();
-            DiasCronograma::dispatch();
-            LimiteFalta::dispatch();
-            FimSemanas::dispatch();
-            Faltas::dispatch();
-            return redirect()->back();
-    
+
+        DiasCronogramaOntem::dispatch();
+        DiasCronograma::dispatch();
+        LimiteFalta::dispatch();
+        FimSemanas::dispatch();
+        Faltas::dispatch();
+        return redirect()->back();
     }
 
 
