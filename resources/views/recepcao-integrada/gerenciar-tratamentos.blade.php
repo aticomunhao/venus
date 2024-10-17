@@ -14,7 +14,6 @@
                     <form action="{{ route('gtcdex') }}" class="form-horizontal mt-4" method="GET">
                         <div class="row">
 
-
                             <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel"
                                 aria-hidden="true">
                                 <div class="modal-dialog">
@@ -30,39 +29,54 @@
 
                                                     <div class ="col-12">Data início
                                                         <input class="form-control pesquisa" type="date" id="dt_enc"
-                                                            name="dt_enc" value="{{ $data_enc }}">
+                                                            name="dt_enc" value="{{ $data_enc, old('dt_enc') }}">
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-12 mt-3">
                                                         Dia
                                                         <select class="form-select teste pesquisa" id=""
                                                             name="dia" type="number">
                                                             @foreach ($dia as $dias)
                                                                 <option value="{{ $dias->id }}"
-                                                                    {{ $diaP == $dias->id ? 'selected' : '' }}>
+                                                                    {{ $diaP == $dias->id ? 'selected' : '' }}
+                                                                    {{ $dias->id == old('dia') ? 'selected' : '' }}>
                                                                     {{ $dias->nome }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="col-12">Assistido
+                                                    <div class="col-12 mt-3">Assistido
                                                         <input class="form-control pesquisa" type="text" id="3"
-                                                            name="assist" value="{{ $assistido }}">
+                                                            name="assist" value="{{ old('assist') }}">
                                                     </div>
-                                                    <div class="col-md-12">CPF
+                                                    <div class="col-md-12 mt-3">CPF
                                                         <input class="form-control" type="text" maxlength="11"
                                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
                                                             id="2" name="cpf" value="{{ $cpf }}">
                                                     </div>
-                                                    <div class="col-12">Status
+                                                    <div class="col-12 mt-3">Grupo
+                                                        <input class="form-control" autocomplete="off" id="grupo" name="grupo"
+                                                            type="text" list="grupos" value="{{$cron}}">
+                                                            <datalist id="grupos">
+                                                                @foreach ($cronogramas as $cronograma)
+                                                                <option value="{{ $cronograma->id }} - {{ $cronograma->nome }} - {{ $cronograma->dia}} - {{ $cronograma->h_inicio}} - {{ $cronograma->setor }}">
+                                                            @endforeach
+                                                              </datalist>  
+                                                        
+                                       
+                                                    </div>
+                                                    <div class="col-12 mt-3">Status
                                                         <select class="form-select teste1" id="4" name="status"
                                                             type="number">
                                                             @foreach ($stat as $status)
                                                                 <option value="{{ $status->id }}"
-                                                                    {{ $situacao == $status->id ? 'selected' : '' }}>
-                                                                    {{ $status->nome }} </option>
+                                                                    {{ $situacao == $status->id ? 'selected' : '' }}
+                                                                    {{ old('status') == $status->id ? 'selected' : '' }}>
+                                                                    {{ $status->nome }}
+                                                                </option>
                                                             @endforeach
                                                             <option value="all"
                                                                 {{ $situacao == 'all' ? 'selected' : '' }}>
-                                                                Todos os Status </option>
+                                                                Todos os Status
+                                                            </option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -75,7 +89,7 @@
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-danger"
                                                 data-bs-dismiss="modal">Cancelar</button>
-                                            <a class="btn btn-secondary" href="/gerenciar-tratamentos" >Limpar</a>
+                                            <a class="btn btn-secondary" href="/gerenciar-tratamentos">Limpar</a>
                                             <button type="submit" class="btn btn-primary">Confirmar</button>
                                         </div>
                                     </div>
@@ -328,6 +342,12 @@
                 $(".teste").prop("selectedIndex", -1);
             }
 
+            if ({{ $cron === null }}) {
+                $("#grupo").prop("selectedIndex", -1);
+            }
+
+
+
         });
     </script>
 
@@ -342,12 +362,5 @@
 
         });
     </script>
-
-
-    <script>
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    </script>
+   
 @endsection
