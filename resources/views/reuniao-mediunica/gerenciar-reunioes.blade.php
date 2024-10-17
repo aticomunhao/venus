@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-
     <div class="container-fluid";>
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
             GERENCIAR REUNIÕES </h4>
@@ -16,8 +15,8 @@
                         <div class="row">
                             <div class="col-2">Dia
                                 <select class="form-select semana" id="4" name="semana" type="number">
-                                <option value="" {{ $tpdia == $semana ? 'selected' : '' }}>
-                                Todos</option>
+                                    <option value="" {{ $tpdia == $semana ? 'selected' : '' }}>
+                                        Todos</option>
                                     @foreach ($tpdia as $dias)
                                         <option value="{{ $dias->idtd }}" {{ $dias->idtd == $semana ? 'selected' : '' }}>
                                             {{ $dias->nomed }}</option>
@@ -25,29 +24,31 @@
                                 </select>
                             </div>
                             <div class="col">Grupo
-                            <select class="form-select select2" id="" name="grupo" type="number">
-                            <option value="">Selecione</option>
-                                Todos</option>
+                                <select class="form-select select2" id="" name="grupo" type="number">
+                                    <option value="">Selecione</option>
+                                    Todos</option>
                                     @foreach ($grupos as $gruposs)
-                                        <option value="{{ $gruposs->idg }}" {{request('grupo') == $gruposs->idg ? 'selected' : ''  }}>
+                                        <option value="{{ $gruposs->idg }}"
+                                            {{ request('grupo') == $gruposs->idg ? 'selected' : '' }}>
                                             {{ $gruposs->nomeg }} - {{ $gruposs->sigla }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-2">Setor
                                 <select class="form-select select2" id="" name="setor" type="number">
-                                <option value="">Selecione</option>
-                                Todos</option>
+                                    <option value="">Selecione</option>
+                                    Todos</option>
                                     @foreach ($setores as $setoress)
-                                        <option value="{{ $setoress->id }}" {{request('setor') == $setoress->id ? 'selected' : ''  }}>
+                                        <option value="{{ $setoress->id }}"
+                                            {{ request('setor') == $setoress->id ? 'selected' : '' }}>
                                             {{ $setoress->sigla }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-2">Status
                                 <select class="form-select status" id="4" name="status" type="number">
-                                <option value="" {{ $situacao[0]->ids == $status ? 'selected' : '' }}>
-                                Todos</option>
+                                    <option value="" {{ $situacao[0]->ids == $status ? 'selected' : '' }}>
+                                        Todos</option>
                                     @foreach ($situacao as $situ)
                                         <option value="{{ $situ->ids }}" {{ $situ->ids == $status ? 'selected' : '' }}>
                                             {{ $situ->descs }}</option>
@@ -71,93 +72,118 @@
                 <hr />
                 <!-- Conteúdo adicional aqui -->
             </div>
-            
-        Quantidade de  reuniões: {{ $contar }}</div>
-            <div class="row">
-                <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
-                    <thead style="text-align: center;">
-                        <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                            <th class="col">Nr</th>
-                            <th class="col-2">GRUPO</th>
-                            <th class="col">DIA</th>
-                            <th class="col">SALA</th>
-                            <th class="col-2">SETOR</th>
-                            <th class="col-2">TIPO DE TRABALHO</th>
-                            <th class="col">HORÁRIO INÍCIO</th>
-                            <th class="col">HORÁRIO FIM</th>
-                            <th class="col">MAX ATENDIDOS</th>
-                            <th class="col">STATUS</th>
-                            <th class="col">AÇÕES</th>
-                        </tr>
-                    </thead>
-                    <tbody style="font-size: 14px; color:#000000; text-align: center;">
-                        <tr>
-                            @foreach ($reuniao as $reuni)
-                                <td>{{ $reuni->idr }}</td>
-                                <td>{{ $reuni->nomeg }}</td>
-                                <td>{{ $reuni->nomed }}</td>
-                                <td>{{ $reuni->numero }}</td>
-                                <td>{{ $reuni->nsigla }}</td>
-                                <td>{{ $reuni->tstd }}</td>
-                                <td>{{ date('H:i:s', strtotime($reuni->h_inicio)) }}</td>
-                                <td>{{ date('H:i:s', strtotime($reuni->h_fim)) }}</td>
-                                <td>{{ $reuni->max_atend }}</td>
-                                <td>{{ $reuni->status }}</td>
-                                <td>
-                                    <a href="/editar-reuniao/{{ $reuni->idr }}"><button type="button"
-                                            class="btn btn-outline-warning btn-sm tooltips">
-                                            <span class="tooltiptext">Editar</span>
-                                            <i class="bi bi-pencil"
-                                                style="font-size: 1rem; color:#000;"></i></button></a>
-                                    <a href="/visualizar-reuniao/{{ $reuni->idr }}"><button type="button"
-                                            class="btn btn-outline-primary btn-sm tooltips">
-                                            <span class="tooltiptext">Visualizar</span>
-                                            <i class="bi bi-search"
-                                                style="font-size: 1rem; color:#000;"></i></button></a>
 
-                                    <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
-                                        data-bs-target="#modal{{ $reuni->idr }}">
-                                        <span class="tooltiptext">Inativar</span>
-                                        <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>
-
-
-
-                                </td>
-                        </tr>
-
-
-                        <!-- Modal de Exclusao -->
-                        <div class="modal fade" id="modal{{ $reuni->idr }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header" style="background-color:#DC4C64">
-                                        <h5 class="modal-title" id="exampleModalLabel" style="color:white">Confirmação de inativação </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body" style="text-align: center; ">
-                                        Tem certeza que deseja inativar a reunião de <br /><span style="color:#DC4C64; font-weight: bold;">{{ $reuni->nomeg }}</span>&#63;
-                                    </div>
-                                    <div class="modal-footer mt-2">
-                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                                        <a type="button" class="btn btn-primary" href="/excluir-reuniao/{{ $reuni->idr }}">Confirmar</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    {{-- Fim Modal de Exclusao --}}
-
-                        @endforeach
-                    </tbody>
-                </table>
-            </div class="d-flex justify-content-center">
-            {{ $reuniao->links('pagination::bootstrap-5') }}
+            Quantidade de reuniões: {{ $contar }}
         </div>
+        <div class="row">
+            <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
+                <thead style="text-align: center;">
+                    <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
+                        <th class="col">Nr</th>
+                        <th class="col-2">GRUPO</th>
+                        <th class="col">DIA</th>
+                        <th class="col">SALA</th>
+                        <th class="col-2">SETOR</th>
+                        <th class="col-2">TIPO DE TRABALHO</th>
+                        <th class="col">HORÁRIO INÍCIO</th>
+                        <th class="col">HORÁRIO FIM</th>
+                        <th class="col">MAX ATENDIDOS</th>
+                        <th class="col">STATUS</th>
+                        <th class="col">AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody style="font-size: 14px; color:#000000; text-align: center;">
+                    <tr>
+                        @foreach ($reuniao as $reuni)
+                            <td>{{ $reuni->idr }}</td>
+                            <td>{{ $reuni->nomeg }}</td>
+                            <td>{{ $reuni->nomed }}</td>
+                            <td>{{ $reuni->numero }}</td>
+                            <td>{{ $reuni->nsigla }}</td>
+                            <td>{{ $reuni->tstd }}</td>
+                            <td>{{ date('H:i:s', strtotime($reuni->h_inicio)) }}</td>
+                            <td>{{ date('H:i:s', strtotime($reuni->h_fim)) }}</td>
+                            <td>{{ $reuni->max_atend }}</td>
+                            <td>{{ $reuni->status }}</td>
+                            <td>
+                                <a href="/editar-reuniao/{{ $reuni->idr }}"><button type="button"
+                                        class="btn btn-outline-warning btn-sm tooltips">
+                                        <span class="tooltiptext">Editar</span>
+                                        <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="/visualizar-reuniao/{{ $reuni->idr }}"><button type="button"
+                                        class="btn btn-outline-primary btn-sm tooltips">
+                                        <span class="tooltiptext">Visualizar</span>
+                                        <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+
+                                <!-- Botão que aciona o modal -->
+                                <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                    data-bs-target="#inativa{{ $reuni->idr }}">
+                                    <!-- Altere o data-bs-target para o ID correto -->
+                                    <span class="tooltiptext">Inativar</span>
+                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                                </button>
+
+                                <!-- Modal de confirmação de inativação -->
+                                <form action="excluir-reuniao/{{ $reuni->idr }}" method="POST">
+                                    @csrf <!-- Adiciona o token CSRF para proteção -->
+                                    <div class="modal fade" id="inativa{{ $reuni->idr }}" data-bs-keyboard="false"
+                                        tabindex="-1" aria-labelledby="inativarLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header" style="background-color:#DC4C64;color:white">
+                                                    <h1 class="modal-title fs-5" id="inativarLabel">Inativação</h1>
+                                                    <button data-bs-dismiss="modal" type="button" class="btn-close"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <br />
+                                                <div class="modal-body">
+                                                    <label for="recipient-name" class="col-form-label"
+                                                        style="font-size:17px">
+                                                        Tem certeza que deseja inativar:<br />
+                                                        <span
+                                                            style="color:#DC4C64; font-weight: bold;">{{ $reuni->nomeg }} - {{ $reuni->nsigla }}</span>&#63;
+                                                    </label>
+                                                    <br />
+
+                                                    <center>
+                                                        <div class="mb-2 col-10">
+                                                            <label class="col-form-label">Insira o motivo da
+                                                                <span style="color:#DC4C64">inativação:</span>
+                                                            </label>
+                                                            <br>
+                                                            <select class="form-select teste1" name="motivo" required>
+                                                                @foreach ($tipo_motivo as $motivos)
+                                                                    <option value="{{ $motivos->id }}">
+                                                                        {{ $motivos->descricao }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </center>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" data-bs-dismiss="modal"
+                                                        class="btn btn-danger">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <tr>
+                                </form>
+                        @endforeach
+                </tbody>
+            </table>
+        </div class="d-flex justify-content-center">
+        {{ $reuniao->links('pagination::bootstrap-5') }}
+    </div>
     </div>
 
- 
+
     <script>
-        $(document).ready(function(){
+        $(document).ready(function() {
             if (typeof {{ $semana }} === 'undefined') { //Deixa o select status como padrao vazio
                 $(".semana").prop("selectedIndex", -1);
             }
@@ -168,4 +194,3 @@
         })
     </script>
 @endsection
-

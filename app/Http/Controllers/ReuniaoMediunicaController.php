@@ -109,6 +109,8 @@ class ReuniaoMediunicaController extends Controller
         // Obtém os dados para os filtros
         $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
 
+        $tipo_motivo = DB::table('tipo_mot_inat_gr_reu') ->get();
+
         $tpdia = DB::table('tipo_dia')
         ->select('id AS idtd', 'nome AS nomed')
         ->orderByRaw('CASE WHEN id = 0 THEN 1 ELSE 0 END, idtd ASC')
@@ -122,7 +124,7 @@ class ReuniaoMediunicaController extends Controller
    
 
         // Retorna a view com os dados
-        return view('/reuniao-mediunica/gerenciar-reunioes', compact('reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores'));
+        return view('/reuniao-mediunica/gerenciar-reunioes', compact('tipo_motivo','reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores'));
     }
 
 

@@ -869,45 +869,53 @@ class AtendimentoFraternoEspecificoController extends Controller
 
         $nome = session()->get('usuario.nome');
 
-        $assistido = DB::table('atendimentos AS at')
-            ->select('at.id AS ida', 'at.observacao',   'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'ps1.nome_completo AS nm_3', 'at.id_atendente', 'ps2.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao AS tst', 'tsx.tipo', 'pa.nome', 'at.status_atendimento', 'p1.dt_nascimento')
+        $atendente = session()->get('usuario.id_associado');
 
-            ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
+            $nome = session()->get('usuario.nome');
 
-            ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-            ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-
-            ->leftJoin('membro AS m', 'at.id_atendente', 'm.id_associado')
-            ->leftJoin('associado AS ad1', 'm.id_associado', 'ad1.id')
-            ->leftJoin('pessoas AS ps1', 'ad1.id_pessoa', 'ps1.id')
-            ->leftJoin('membro AS m1', 'at.id_atendente_pref', 'm1.id_associado')
-            ->leftJoin('associado AS ad2', 'm1.id_associado', 'ad2.id')
-            ->leftJoin('pessoas AS ps2', 'ad1.id_pessoa', 'ps2.id')
-
-            ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
-            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-            ->leftJoin('tp_sexo AS tsx', 'p1.sexo', 'tsx.id')
-            ->where('id_atendente', $atendente)
-            ->distinct('at.dh_chegada')
-            ->orderBy('at.dh_chegada', 'desc')
-            ->get();
-
-        foreach ($assistido as $key => $teste) {
-            $trata = DB::table('encaminhamento AS enc')
-                ->select('tt.descricao AS tdt')
-                ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-                ->where('enc.id_atendimento', $teste->ida)
-                ->whereNotNull('enc.id_tipo_tratamento')
+            $assistido = DB::table('atendimentos AS at')
+                ->select('at.id AS ida', 'at.observacao',   'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'ps1.nome_completo AS nm_3', 'at.id_atendente', 'ps2.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao AS tst', 'tsx.tipo', 'pa.nome', 'at.status_atendimento', 'p1.dt_nascimento')
+                ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
+                ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+                ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+                ->leftJoin('membro AS m', 'at.id_atendente', 'm.id_associado')
+                ->leftJoin('associado AS ad1', 'm.id_associado', 'ad1.id')
+                ->leftJoin('pessoas AS ps1', 'ad1.id_pessoa', 'ps1.id')
+                ->leftJoin('membro AS m1', 'at.id_atendente_pref', 'm1.id_associado')
+                ->leftJoin('associado AS ad2', 'm1.id_associado', 'ad2.id')
+                ->leftJoin('pessoas AS ps2', 'ad1.id_pessoa', 'ps2.id')
+                ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
+                ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+                ->leftJoin('tp_sexo AS tsx', 'p1.sexo', 'tsx.id')
+                ->leftJoin('registro_tema AS rt', 'at.id', 'rt.id_atendimento')
+                ->where('id_atendente', $atendente)
+                ->distinct('at.dh_chegada')
+                ->orderBy('at.dh_chegada', 'desc')
                 ->get();
-            $teste->tratamentos = $trata;
 
-            $entre = DB::table('encaminhamento AS enc')
-                ->select('te.descricao AS tde')
-                ->leftJoin('tipo_entrevista AS te', 'enc.id_tipo_entrevista', 'te.id')
-                ->where('enc.id_atendimento', $teste->ida)
-                ->whereNotNull('enc.id_tipo_entrevista')
-                ->get();
-            $teste->entrevistas = $entre;
+            foreach ($assistido as $key => $teste) {
+                $trata = DB::table('encaminhamento AS enc')
+                    ->select('tt.descricao AS tdt')
+                    ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+                    ->where('enc.id_atendimento', $teste->ida)
+                    ->whereNotNull('enc.id_tipo_tratamento')
+                    ->get();
+                $teste->tratamentos = $trata;
+
+                $entre = DB::table('encaminhamento AS enc')
+                    ->select('te.descricao AS tde')
+                    ->leftJoin('tipo_entrevista AS te', 'enc.id_tipo_entrevista', 'te.id')
+                    ->where('enc.id_atendimento', $teste->ida)
+                    ->whereNotNull('enc.id_tipo_entrevista')
+                    ->get();
+                $teste->entrevistas = $entre;
+
+                $tematica = DB::table('registro_tema AS rt')
+                    ->select('tt.nm_tca as tematica')
+                    ->leftJoin('tipo_temas as  tt', 'rt.id_tematica', 'tt.id')
+                    ->where('rt.id_atendimento', $teste->ida)
+                    ->get();
+                $teste->tematicas = $tematica;
         }
 
         $now = Carbon::now()->format('Y-m-d');
