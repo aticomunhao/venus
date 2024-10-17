@@ -13,10 +13,9 @@
                         <select class="form-select select2 grupo" type="text" id="nome_grupo" name="nome_grupo"
                             value="{{ request('nome_grupo') }}">
                             <option></option>
-                            @foreach ($membro_cronograma as $grupos)
-                                <option value="{{ $grupos->id }}">{{ $grupos->nome_grupo }} - {{ $grupos->dia }}-
-                                    {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim)) }}
-                                    - Sala {{ $grupos->sala }}</option>>
+                            @foreach ($grupos2 as $gr)
+                                <option value="{{ $gr->idg }}">{{ $gr->nomeg}} - {{ $gr->sigla }}- {{ date('H:i', strtotime($gr->h_inicio)) }}/{{ date('H:i', strtotime($gr->h_fim ))}} 
+                                    - Sala {{ $gr->sala }}</option>>
                             @endforeach
                         </select>
                     </div>
