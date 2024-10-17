@@ -14,8 +14,7 @@
                             value="{{ request('nome_grupo') }}">
                             <option></option>
                             @foreach ($grupos2 as $gr)
-                                <option value="{{ $gr->idg }}">{{ $gr->nomeg}} - {{ $gr->sigla }}-
-                                    {{ date('H:i', strtotime($gr->h_inicio)) }}
+                                <option value="{{ $gr->idg }}">{{ $gr->nomeg}} - {{ $gr->sigla }}- {{ date('H:i', strtotime($gr->h_inicio)) }}/{{ date('H:i', strtotime($gr->h_fim ))}} 
                                     - Sala {{ $gr->sala }}</option>>
                             @endforeach
                         </select>
