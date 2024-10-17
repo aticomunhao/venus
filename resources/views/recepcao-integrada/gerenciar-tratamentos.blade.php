@@ -53,16 +53,15 @@
                                                             id="2" name="cpf" value="{{ $cpf }}">
                                                     </div>
                                                     <div class="col-12 mt-3">Grupo
-                                                        <select class="form-select select2" id="grupo" name="grupo"
-                                                            type="number">
-                                                            @foreach ($cronogramas as $cronograma)
-                                                                <option value="{{ $cronograma->id }}"
-                                                                    {{ $cron == $cronograma->id ? 'selected' : '' }}
-                                                                    {{ old('grupo') == $cronograma->id ? 'selected' : '' }}>
-                                                                    {{ $cronograma->nome }}
-                                                                </option>
+                                                        <input class="form-control" autocomplete="off" id="grupo" name="grupo"
+                                                            type="text" list="grupos" value="{{$cron}}">
+                                                            <datalist id="grupos">
+                                                                @foreach ($cronogramas as $cronograma)
+                                                                <option value="{{ $cronograma->id }} - {{ $cronograma->nome }} - {{ $cronograma->dia}} - {{ $cronograma->h_inicio}} - {{ $cronograma->setor }}">
                                                             @endforeach
-                                                        </select>
+                                                              </datalist>  
+                                                        
+                                       
                                                     </div>
                                                     <div class="col-12 mt-3">Status
                                                         <select class="form-select teste1" id="4" name="status"
@@ -363,11 +362,5 @@
 
         });
     </script>
-    <script>
-        $(document).ready(function() {
-            $('select').select2({
-                dropdownParent: $('#filtros')
-            });
-        });
-    </script>
+   
 @endsection

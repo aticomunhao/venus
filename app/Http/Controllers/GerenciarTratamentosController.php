@@ -25,7 +25,7 @@ class GerenciarTratamentosController extends Controller
 
         $now =  Carbon::now()->format('Y-m-d');
 
-
+        $selectGrupo = explode(' ',$request->grupo);
         $lista = DB::table('tratamento AS tr')
             ->select('tr.id AS idtr', 'tr.status', 'enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tst.nome AS tst', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'p1.cpf AS cpf_assistido', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla', 'tr.id AS idtr', 'gr.nome AS nomeg', 'td.nome AS nomed', 'rm.h_inicio', 'tr.dt_fim')
             ->leftJoin('encaminhamento AS enc',  'tr.id_encaminhamento', 'enc.id')
@@ -74,8 +74,8 @@ class GerenciarTratamentosController extends Controller
             $lista->where('enc.dh_enc', '>=', $request->dt_enc);
         }
 
-        if ($request->grupo) {
-            $lista->where('rm.id', $request->grupo);
+        if (current($selectGrupo) != '') {
+            $lista->where('rm.id', current($selectGrupo));
         }
 
         if ($request->assist) {
