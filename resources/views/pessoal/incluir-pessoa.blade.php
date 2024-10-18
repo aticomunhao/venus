@@ -78,7 +78,7 @@
                                     <select class="form-select" id="validationCustom05" name="ddd" required="required">
                                         <option value=""></option>
                                         @foreach($ddd as $ddds)
-                                            <option value="{{ $ddds->descricao }}" @if(old('ddd') == $ddds->descricao) selected="selected" @endif>
+                                            <option value="{{ $ddds->id }}" @if(old('ddd') == $ddds->descricao) selected="selected" @endif>
                                                 {{ $ddds->descricao }}
                                             </option>
                                         @endforeach
