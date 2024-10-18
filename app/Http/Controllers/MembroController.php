@@ -553,4 +553,9 @@ class MembroController extends Controller
             return view('administrativo-erro.erro-inesperado', compact('code'));
         }
     }
+
+    public function selecionar(Request $request){
+
+        return view('membro.transferir');
+    }
 }
