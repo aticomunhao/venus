@@ -227,9 +227,6 @@ class RelatoriosController extends Controller
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->select('cro.id', 'gr.nome', 'st.nome as setor', 'st.sigla', 'cro.h_inicio', 'cro.h_fim', 'cro.data_inicio', 'cro.data_fim', 'cro.dia_semana', 'td.nome as dia');
 
-
-
-
         $salas = DB::table('salas')->get();
 
         $cronogramasPesquisa = DB::table('cronograma as cro')
@@ -239,6 +236,8 @@ class RelatoriosController extends Controller
             ->orderBy('gr.nome')
             ->get();
 
+        $setoresPesquisa = DB::table('setor')->get();
+
         $requestSala = $request->sala;
         if ($requestSala) {
             $cronogramas = $cronogramas->where('cro.id_sala', $requestSala);
@@ -246,6 +245,10 @@ class RelatoriosController extends Controller
         $requestGrupo = $request->grupo;
         if ($request->grupo) {
             $cronogramas = $cronogramas->where('cro.id_grupo', $requestGrupo);
+        }
+        $requestSetor = $request->setor;
+        if ($request->setor) {
+            $cronogramas = $cronogramas->where('gr.id_setor', $requestSetor);
         }
         // dd($cronogramas->get());
         $cronogramas = $cronogramas->get();
@@ -281,7 +284,7 @@ class RelatoriosController extends Controller
         json_encode($eventosCronogramas);
 
         //   dd($cronogramas, $eventosCronogramas);
-        return view('relatorios.relatorio-salas-cronograma', compact('eventosCronogramas', 'salas', 'cronogramasPesquisa', 'requestSala', 'requestGrupo'));
+        return view('relatorios.relatorio-salas-cronograma', compact('requestSetor', 'setoresPesquisa','eventosCronogramas', 'salas', 'cronogramasPesquisa', 'requestSala', 'requestGrupo'));
     }
 
     public function indexmembro(Request $request)
