@@ -193,10 +193,7 @@ Route::middleware('rotas:9')->group(function () {
     Route::get('/visualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'show'])->name('');
     Route::any('/finalizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'finalizar'])->name('finalizar.entrevista');
     Route::any('/nao-aceito-entrevista/{id}', [GerenciarEntrevistaController::class, 'fim'])->name('');
-    Route::any('/inativar-entrevista/{id}/{tp}', [GerenciarEntrevistaController::class, 'inativar'])->name('');
-    Route::post('/inativar-entrevista-encaminhamento/{id}', [GerenciarEntrevistaController::class, 'destroy'])->name('cancelar');
-
-
+    Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, 'inativar'])->name('cancelar');
 });
 
 // Gerenciar Grupos
