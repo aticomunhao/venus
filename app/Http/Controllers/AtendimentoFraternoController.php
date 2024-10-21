@@ -846,7 +846,7 @@ class AtendimentoFraternoController extends Controller
                 ]);
 
                 app('flasher')->addSuccess('Os encaminhamentos para a AME e PTD foram criados com sucesso.');
-            } elseif ($ame == 1 and $existeEncaminhamento == 0) {
+            } elseif ($ame == 1 and $existeEncaminhamento == 1) {
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
