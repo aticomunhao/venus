@@ -61,7 +61,6 @@
                                                             @endforeach
                                                               </datalist>  
                                                         
-                                       
                                                     </div>
                                                     <div class="col-12 mt-3">Status
                                                         <select class="form-select teste1" id="4" name="status"
