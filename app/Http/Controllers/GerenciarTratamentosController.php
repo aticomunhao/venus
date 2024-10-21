@@ -61,8 +61,8 @@ class GerenciarTratamentosController extends Controller
         $assistido = $request->assist;
 
         $situacao = $request->status;
-
         $cron = $request->grupo;
+        
 
         $cpf = $request->cpf;
 
@@ -75,7 +75,13 @@ class GerenciarTratamentosController extends Controller
         }
 
         if (current($selectGrupo) != '') {
+         if(count($selectGrupo) > 1){
             $lista->where('rm.id', current($selectGrupo));
+         }else{
+        
+            $lista->whereRaw("UNACCENT(LOWER(gr.nome)) ILIKE UNACCENT(LOWER(?))", ["%". current($selectGrupo). "%"]);
+         }
+            
         }
 
         if ($request->assist) {
