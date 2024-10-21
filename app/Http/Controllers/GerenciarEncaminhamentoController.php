@@ -79,15 +79,14 @@ class GerenciarEncaminhamentoController extends Controller
                 $lista->where('enc.status_encaminhamento', $request->status);
             }
           //  ->orderby('status_encaminhamento', 'ASC')->orderby('nm_1', 'ASC')
-            $lista = $lista->orderby('status_encaminhamento', 'ASC')
+            $lista = $lista
+            ->orderby('status_encaminhamento', 'ASC')
             ->orderby('at.emergencia', 'DESC')
             ->orderBy('enc.id_tipo_tratamento', 'DESC')
-            ->orderBy('at.dh_inicio')
-            ->paginate(50)
-            ->appends([
-                'assist' => $assistido,
-                'cpf' => $cpf,
-            ]);
+            ->orderBy('at.dh_inicio');
+          
+
+            dd($lista->get());
             //dd($lista)->get();
 
             $contar = $lista->count('enc.id');
