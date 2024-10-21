@@ -128,6 +128,14 @@ class GerenciarEntrevistaController extends Controller
 
             $informacoes->where('entrevistas.status', $pesquisaValue);
         }
+        if($pesquisaValue == 'limpo' and !$request->nome_pesquisa and !$request->tipo_entrevista){
+            $informacoes->whereNot('encaminhamento.status_encaminhamento', 6)
+            ->where(function($query){
+                $query->whereNotIn('entrevistas.status', [5, 6]);
+                $query->orWhere('entrevistas.status', null);
+            });
+        }
+      
 
       
 
@@ -655,7 +663,7 @@ class GerenciarEntrevistaController extends Controller
             return redirect()->back();
         }
     }
-    public function inativar($id, $tp)
+    public function inativar(Request $request, $id, $tp)
     {
         try {
 
@@ -671,14 +679,23 @@ class GerenciarEntrevistaController extends Controller
             ]);
 
             $entrevistas = DB::table('entrevistas')->where('id_encaminhamento', '=', $id)->first();
-
+            $motivo_entrevista = $request->input('motivo_entrevista');
 
             if ($tp == 1) {
 
                 DB::table('encaminhamento')
                     ->where('id', $id)
-                    ->update(['status_encaminhamento' => 4]);
+                    ->update([
+                        'status_encaminhamento' => 6,
+                        'motivo' => $motivo_entrevista
+                    ]);
             } elseif ($tp == 2) {
+                DB::table('encaminhamento')
+                    ->where('id', $id)
+                    ->update([
+                        'status_encaminhamento' => 6,
+                        'motivo' => $motivo_entrevista
+                ]);
                 DB::table('entrevistas')
                     ->where('id_encaminhamento', '=', $id)
                     ->update(['status' => 6]);
@@ -693,23 +710,5 @@ class GerenciarEntrevistaController extends Controller
             DB::rollBack();
             return redirect()->back();
         }
-    }
-
-    public function destroy(Request $request, $id)
-    {
-        $data = now();
-        $motivo_entrevista = $request->input('motivo_entrevista');
-
-
-        // Para outros casos, tentamos atualizar a tabela de entrevistas
-        DB::table('encaminhamento')
-            ->where('id', '=', $id)
-            ->update([
-                'status_encaminhamento' => 6,
-                'motivo' => $motivo_entrevista
-            ]);
-
-
-        return redirect()->route('gerenciamento')->with('success', 'Inativada entrevista e encaminhamento!');
     }
 }
