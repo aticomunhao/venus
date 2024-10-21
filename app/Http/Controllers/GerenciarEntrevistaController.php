@@ -663,7 +663,7 @@ class GerenciarEntrevistaController extends Controller
             return redirect()->back();
         }
     }
-    public function inativar(Request $request, $id, $tp)
+    public function inativar(Request $request, String $id)
     {
         try {
 
@@ -678,10 +678,10 @@ class GerenciarEntrevistaController extends Controller
 
             ]);
 
-            $entrevistas = DB::table('entrevistas')->where('id_encaminhamento', '=', $id)->first();
+            $tp = DB::table('entrevistas')->where('id_encaminhamento', '=', $id)->count();
             $motivo_entrevista = $request->input('motivo_entrevista');
 
-            if ($tp == 1) {
+            if ($tp < 1) {
 
                 DB::table('encaminhamento')
                     ->where('id', $id)
@@ -689,7 +689,7 @@ class GerenciarEntrevistaController extends Controller
                         'status_encaminhamento' => 6,
                         'motivo' => $motivo_entrevista
                     ]);
-            } elseif ($tp == 2) {
+            } elseif ($tp > 0) {
                 DB::table('encaminhamento')
                     ->where('id', $id)
                     ->update([
