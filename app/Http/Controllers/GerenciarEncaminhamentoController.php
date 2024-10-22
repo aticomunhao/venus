@@ -60,25 +60,22 @@ class GerenciarEncaminhamentoController extends Controller
             if ($request->dt_enc) {
                 $lista->where('enc.dh_enc', '>=', $request->dt_enc);
             }
-
-           
             if ($request->assist) {
                 $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->assist}%"]);
             }
-
-
-
             if ($request->cpf) {
                 
                 $lista->whereRaw("LOWER(p1.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
             }
-
-
-
             if ($request->status) {
                 $lista->where('enc.status_encaminhamento', $request->status);
             }
+            if ($request->tratamento) {
+                $lista->where('enc.id_tipo_tratamento', $request->tratamento);
+            }
           //  ->orderby('status_encaminhamento', 'ASC')->orderby('nm_1', 'ASC')
+
+
             $lista = $lista
             ->orderby('status_encaminhamento', 'ASC')
             ->orderby('at.emergencia', 'DESC')
@@ -108,6 +105,8 @@ class GerenciarEncaminhamentoController extends Controller
         tm.tipo
         from tipo_motivo tm
         ");
+
+         
 
             return view('/recepcao-integrada/gerenciar-encaminhamentos', compact('cpf','lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'motivo'));
        
