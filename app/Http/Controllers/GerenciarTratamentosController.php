@@ -262,6 +262,13 @@ class GerenciarTratamentosController extends Controller
     public function visualizar($idtr)
     {
         // try{
+      
+        $pessoa = DB::table('tratamento')
+            ->leftJoin('encaminhamento', 'tratamento.id_encaminhamento', 'encaminhamento.id')
+            ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
+            ->where('tratamento.id', $idtr)
+            ->first('id_assistido');
+
         $result = DB::table('tratamento AS tr')
             ->select('enc.id AS ide', 'tr.id AS idtr', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'td.nome as nomedia', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo', 'sat.descricao AS statat', 'sl.numero as sala')
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
@@ -282,9 +289,12 @@ class GerenciarTratamentosController extends Controller
             ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
             ->leftJoin('salas as sl', 'rm.id_sala', 'sl.id')
             ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
-            ->where('tr.id', $idtr)
+            ->where('at.id_assistido', $pessoa->id_assistido)
+            ->where('enc.id_tipo_encaminhamento', 2)
+            ->where('enc.status_encaminhamento', '<', 5)
             ->get();
 
+           // dd($result, $pessoa);
         $list = DB::table('tratamento AS tr')
             ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.presenca', 'dc.data', 'gp.nome')
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
@@ -295,6 +305,8 @@ class GerenciarTratamentosController extends Controller
             ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
             ->where('tr.id', $idtr)
             ->get();
+
+          
 
         $faul = DB::table('tratamento AS tr')
             ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp',  'dt.presenca')
