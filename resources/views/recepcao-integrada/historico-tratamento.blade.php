@@ -36,7 +36,7 @@
                     </fieldset>
                     <br>
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Atendimento Fraterno</legend>
-                    @foreach($result as $results)
+
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
@@ -51,17 +51,17 @@
                         </thead>
                         <tbody>
                             <tr style="text-align:center;font-size:13px">
-                                <td>{{$results->ida}}</td>
-                                <td>{{$results->nm_2}}</td>
-                                <td>{{$results->nome}}</td>
-                                <td>{{$results->nm_4}}</td>
-                                <td>{{ date('d/m/Y G:i', strtotime($results->dh_inicio))}}</td>
-                                <td>{{ date('d/m/Y G:i', strtotime($results->dh_fim))}}</td>
-                                <td>{{$results->statat}}</td>
+                                <td>{{current(current($result))->ida}}</td>
+                                <td>{{current(current($result))->nm_2}}</td>
+                                <td>{{current(current($result))->nome}}</td>
+                                <td>{{current(current($result))->nm_4}}</td>
+                                <td>{{ date('d/m/Y G:i', strtotime(current(current($result))->dh_inicio))}}</td>
+                                <td>{{ date('d/m/Y G:i', strtotime(current(current($result))->dh_fim))}}</td>
+                                <td>{{current(current($result))->statat}}</td>
                             </tr>
                         </tbody>
                     </table>
-                    @endforeach
+
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Tratamento</legend>
                     @foreach($result as $results)
                     <table class="table table-sm table-bordered table-striped">
