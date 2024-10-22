@@ -53,7 +53,7 @@
                                                             id="2" name="cpf" value="{{ $cpf }}">
                                                     </div>
                                                     <div class="col-12 mt-3">Grupo
-                                                        <input class="form-control" autocomplete="off" id="grupo" name="grupo"
+                                                        <input class="form-control pesquisa" autocomplete="off" id="grupo" name="grupo"
                                                             type="text" list="grupos" value="{{$cron}}">
                                                             <datalist id="grupos">
                                                                 @foreach ($cronogramas as $cronograma)
@@ -61,7 +61,6 @@
                                                             @endforeach
                                                               </datalist>  
                                                         
-                                       
                                                     </div>
                                                     <div class="col-12 mt-3">Status
                                                         <select class="form-select teste1" id="4" name="status"
