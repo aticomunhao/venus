@@ -380,6 +380,104 @@ class RelatoriosController extends Controller
         return view('relatorios.gerenciar-relatorio-pessoas-grupo', compact('membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect', 'result', 'funcao'));
     }
 
+    public function indexSetor(Request $request)
+    {
+        // Obter os parâmetros de busca
+        $setorId = $request->input('setor');
+        $grupoId = $request->input('grupo');
+        $diaId = $request->input('dia');
+        $nomeId = $request->input('nome');
+        $funcaoId = $request->input('funcao');
+
+        // Definir o número de itens por página
+        $itemsPerPage = 50;
+        $setoresAutorizado = session()->get('usuario.setor');
+        
+        // Obter os atendentes para o select2
+        $atendentesParaSelect = DB::table('membro AS m')
+            ->select('m.id_associado AS ida', 'p.nome_completo AS nm_4')
+            ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
+            ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->where('p.status', 1)
+            ->distinct()
+            ->orderBy('p.nome_completo')
+            ->get();
+
+
+        $membrosQuery = DB::table('membro as m')
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
+            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
+            ->orderBy('st.nome')
+            ->orderBy('td.id')
+            ->orderBy('gr.nome')
+            ->orderBy('tf.id')
+            ->whereIn('gr.id_setor', $setoresAutorizado)
+            ->select('m.id', 'p.nome_completo', 'gr.nome as grupo_nome', 'st.nome as setor_nome', 'st.sigla as setor_sigla', 'td.nome as dia_nome', 'cro.h_inicio', 'cro.h_fim', 'tf.nome as nome_funcao', 'st.nome as sala') // Selecionando o nome da função
+            ->when($setorId, function ($query, $setorId) {
+                return $query->where('st.id', $setorId);
+            })
+            ->when($grupoId, function ($query, $grupoId) {
+
+                return $query->where('gr.id', $grupoId);
+            })
+            ->when($diaId, function ($query, $diaId) {
+                return $query->where('cro.dia_semana', $diaId);
+            })
+            ->when($funcaoId, function ($query, $funcaoId) {
+                return $query->where('m.id_funcao', $funcaoId);
+            })
+            ->when($diaId == 0 && $diaId != null, function ($query) {
+                return $query->where('cro.dia_semana', 0);
+            })
+            ->when($nomeId, function ($query, $nomeId) {
+                return $query->where('m.id_associado', $nomeId);
+            });
+
+
+        // Paginar os resultados
+        $membros = $membrosQuery->get();
+
+        // Obter os grupos
+        $grupo = DB::table('grupo')
+            ->leftJoin('setor', 'grupo.id_setor', 'setor.id')
+            ->select('grupo.id', 'grupo.nome as nome_grupo', 'setor.sigla')
+            ->whereIn('id_setor', $setoresAutorizado)
+            ->get();
+
+        // Obter os setores
+        $setor = DB::table('setor')
+            ->select('id', 'nome', 'sigla')
+            ->whereIn('id', $setoresAutorizado)
+            ->get();
+
+        // Obter os dias
+        $dias = DB::table('tipo_dia')
+            ->select('id', 'nome')
+            ->get();
+
+        $funcao = DB::table('tipo_funcao')->get();
+
+        $result = array();
+        foreach ($membros as $element) {
+            $result[$element->setor_nome . ' - ' .$element->setor_sigla][$element->dia_nome][$element->grupo_nome][$element->nome_funcao][] = $element;
+        }
+
+        //      dd($membros, $result);
+
+        $result = $this->paginate($result, 50);
+        $result->withPath('');
+        return view('relatorios.gerenciar-relatorio-setor-pessoas', compact('membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect', 'result', 'funcao'));
+    }
+
+
+
     public function paginate($items, $perPage = 5, $page = null)
     {
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
