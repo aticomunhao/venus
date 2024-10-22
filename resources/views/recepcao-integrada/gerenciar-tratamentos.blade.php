@@ -104,10 +104,11 @@
 
                                     <div class="col">
 
-
+                                        @if(in_array(38, session()->get('usuario.acesso')))
                                         <a href="/incluir-avulso" class="btn btn-danger btn-sm"
                                             style="box-shadow: 1px 2px 5px #000000; margin:5px;">Atendimento de
                                             Emergência</a>
+                                        @endif
                                         <a href="/gerenciar-encaminhamentos" class="btn btn-warning btn-sm"
                                             style="box-shadow: 1px 2px 5px #000000; margin:5px;">Encaminhamentos</a>
 
