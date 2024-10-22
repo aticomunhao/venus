@@ -10,42 +10,82 @@
             GERENCIAR ENCAMINHAMENTOS</h4>
         <div class="col-12">
             <div class="row justify-content-center">
-                <div>
+                <div class="row">
+
+
 
                     <form action="{{ route('gecdex') }}" class="form-horizontal mt-4" method="GET">
-                        <div class="row">
-                            <div class ="col-md-2">Data início
-                                <input class="form-control" type="date" id="" name="dt_enc"
-                                    value="{{ $data_enc }}">
-                            </div>
-                            <div class="col-md-3">Assistido
-                                <input class="form-control" type="text" id="3" name="assist"
-                                    value="{{ $assistido }}">
-                            </div>
+                        <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header" style="background-color:grey;color:white">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Filtrar Opções</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <center>
+                                            <div class="row col-10">
+                                                <div class ="col-12 mb-3">Data início
+                                                    <input class="form-control" type="date" id="" name="dt_enc"
+                                                        value="{{ $data_enc }}">
+                                                </div>
+                                                <div class="col-12 mb-3">Assistido
+                                                    <input class="form-control" type="text" id="3" name="assist"
+                                                        value="{{ $assistido }}">
+                                                </div>
+                                                <div class="col-12 mb-3">CPF
+                                                    <input class="form-control" type="text" maxlength="11"
+                                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                                        id="2" name="cpf" value="{{ $cpf }}">
+                                                </div>
+                                                <div class="col-12 mb-3">Status
+                                                    <select class="form-select" id="4" name="status"
+                                                        type="number">
+                                                        <option value="{{ $situacao }}"></option>
+                                                        @foreach ($stat as $status)
+                                                            <option value="{{ $status->id }}"
+                                                                {{ $status->id == request('status') ? 'selected' : '' }}>
+                                                                {{ $status->descricao }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-12 mb-3">Tratamento
+                                                    <select class="form-select" id="4" name="tratamento"
+                                                        type="number">
+                                                        <option value=""></option>
 
-                                <div class="col-md-2">CPF
-                                    <input class="form-control" type="text" maxlength="11"
-                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                                        id="2" name="cpf" value="{{ $cpf }}">
-                               
+                                                        <option value="1" {{ 1 == request('tratamento') ? 'selected' : '' }}>Passe Tratamento Desobsessivo</option>
+                                                        <option value="2" {{ 2 == request('tratamento') ? 'selected' : '' }}>Passe Tratamento Intensivo</option>
+                                                        <option value="6" {{ 6 == request('tratamento') ? 'selected' : '' }}>Tratamento Fluidoterápico Integral</option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </center>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger"
+                                            data-bs-dismiss="modal">Cancelar</button>
+                                        <a class="btn btn-secondary" href="/gerenciar-encaminhamentos">Limpar</a>
+                                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-2">Status
-                                <select class="form-select" id="4" name="status" type="number">
-                                    <option value="{{ $situacao }}"></option>
-                                    @foreach ($stat as $status)
-                                        <option value="{{ $status->id }}">{{ $status->descricao }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col"><br />
-                                <input class="btn btn-light btn-sm me-md-2"
-                                    style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
-                                <a href="/gerenciar-encaminhamentos"><input class="btn btn-light btn-sm me-md-2"
-                                        style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
-                                        value="Limpar"></a>
+                        </div>
                     </form>
-                    <a href="/gerenciar-tratamentos" class="btn btn-warning btn-sm"
-                        style="box-shadow: 1px 2px 5px #000000; margin:5px;">Tratamentos</a>
+
+                    <div class="col">
+                        <a href="/gerenciar-tratamentos" class="btn btn-warning btn-sm"
+                            style="box-shadow: 1px 2px 5px #000000; margin:5px;">Tratamentos</a>
+                    </div>
+                    <div class="col d-flex justify-content-end">
+                        <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#filtros"
+                            style="box-shadow: 3px 5px 6px #000000; margin:5px;">
+                            Filtrar <i class="bi bi-funnel"></i>
+                        </button>
+                    </div>
                 </div>
 
 
@@ -97,8 +137,9 @@
                                     style="font-size: 1rem; color:#000;"></i></button>
                         @endif
                         <a href="/visualizar-enc/{{ $listas->ide }}"><button type="button"
-                                class="btn btn-outline-primary btn-sm tooltips"><span class="tooltiptext">Histórico</span><i
-                                    class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>
+                                class="btn btn-outline-primary btn-sm tooltips"><span
+                                    class="tooltiptext">Histórico</span><i class="bi bi-search"
+                                    style="font-size: 1rem; color:#000;"></i></button></a>
 
 
                         @if ($listas->status_encaminhamento < 3)
