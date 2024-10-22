@@ -32,9 +32,9 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Especifico</a>
                                 </li>
                             @endif
-                            @if (in_array(23, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-integral">Encaminhamentos
-                                        Integral</a></li>
+                            @if (in_array(23, $acesso) or in_array(22, $acesso) or in_array(16, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Encaminhamentos
+                                        </a></li>
                             @endif
 
                             @if (in_array(9, $acesso))
@@ -70,7 +70,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(18, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos</a>
+                            <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos/Presença</a>
                             </li>
                             @endif
                         </ul>
@@ -106,7 +106,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-atendimentos">Cadastrar Assistido
                                     </a></li>
                             @endif
-                            @if (in_array(16, $acesso))
+                            @if (in_array(23, $acesso) or in_array(22, $acesso) or in_array(16, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">
                                         Encaminhamentos</a>
                                 </li>
@@ -133,7 +133,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                     <li><a class="dropdown-item" href="/gerenciar-reunioes">Reuniões</a></li>
                                 @endif --}}
                             @if (in_array(18, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos</a>
+                                <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos/Presença</a>
                                 </li>
                             @endif
                             @if (in_array(31, $acesso))
@@ -169,9 +169,8 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
                                 </li>
                             @endif
-                            @if (in_array(22, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-pti">Encaminhamentos
-                                        PTI</a>
+                            @if (in_array(23, $acesso) or in_array(22, $acesso) or in_array(16, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Encaminhamentos</a>
                                 </li>
                             @endif
 
