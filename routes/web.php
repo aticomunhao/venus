@@ -266,7 +266,7 @@ Route::middleware('rotas:15')->group(function () {
 });
 
 // Gerenciar Encaminhamentos
-Route::middleware('rotas:16')->group(function () {
+Route::middleware("rotas:16-22-23")->group(function () {
     Route::get('/gerenciar-encaminhamentos', [GerenciarEncaminhamentoController::class, 'index'])->name('gecdex');
     Route::get('/agendar/{ide}/{idtt}', [GerenciarEncaminhamentoController::class, 'agenda'])->name('gecage');
     Route::get('/agendar-tratamento/{ide}', [GerenciarEncaminhamentoController::class, 'tratamento'])->name('gtctra');
@@ -323,32 +323,6 @@ Route::middleware('rotas:21')->group(function () {
     Route::any('/visualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'show']);
     Route::any('/editar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'edit']);
     Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'update']);
-});
-
-// Gerenciar Encaminhamento PTI
-Route::middleware('rotas:22')->group(function () {
-    Route::get('/gerenciar-encaminhamentos-pti', [GerenciarEncaminhamentoPTIController::class, 'index']);
-    Route::get('/agendar-pti/{ide}/{idtt}', [GerenciarEncaminhamentoPTIController::class, 'agenda']);
-    Route::get('/agendar-tratamento-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'tratamento']);
-    Route::post('incluir-tratamento-pti/{idtr}', [GerenciarEncaminhamentoPTIController::class, 'tratar']);
-    Route::get('/visualizar-enc-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'visualizar']);
-    Route::any('/inativar-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'inative']);
-    Route::get('/alterar-grupo-tratamento-pti/{id}', [GerenciarEncaminhamentoPTIController::class, 'escolherGrupo']);
-    Route::get('/escolher-horario-pti/{id}', [GerenciarEncaminhamentoPTIController::class, 'escolherHorario']);
-    Route::any('/trocar-grupo-tratamento-pti/{id}', [GerenciarEncaminhamentoPTIController::class, 'trocarGrupo']);
-});
-
-// Gerenciar Encaminhamento Integral
-Route::middleware('rotas:23')->group(function () {
-    Route::get('/gerenciar-encaminhamentos-integral', [GerenciarEncaminhamentoIntegralController::class, 'index']);
-    Route::get('/agendar-integral/{ide}/{idtt}', [GerenciarEncaminhamentoIntegralController::class, 'agenda']);
-    Route::get('/agendar-tratamento-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'tratamento']);
-    Route::post('incluir-tratamento-integral/{idtr}', [GerenciarEncaminhamentoIntegralController::class, 'tratar']);
-    Route::get('/visualizar-enc-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'visualizar']);
-    Route::any('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'inative']);
-    Route::get('/alterar-grupo-tratamento-integral/{id}', [GerenciarEncaminhamentoIntegralController::class, 'escolherGrupo']);
-    Route::get('/escolher-horario-integral/{id}', [GerenciarEncaminhamentoIntegralController::class, 'escolherHorario']);
-    Route::any('/trocar-grupo-tratamento-integral/{id}', [GerenciarEncaminhamentoIntegralController::class, 'trocarGrupo']);
 });
 
 // Gerenciar Assistido PTI
