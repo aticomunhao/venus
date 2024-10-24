@@ -94,117 +94,38 @@
         <div class="card">
             <div class="card-body">
 
+                <table class="table  table-striped table-bordered border-secondary table-hover align-middle mt-5">
+                    <thead style="text-align: center;">
+                        <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
+                            <th>SETOR</th>
+                            <th>DIA</th>
+                            <th>GRUPO</th>
+                            <th>FUNCAO</th>
+                            <th>MEMBRO</th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size: 14px; color:#000000; text-align: center;">
 
+                        @foreach($membros as $membro)
 
+                        <tr>
+                            <td> {{$membro->setor_nome}} - {{$membro->setor_sigla}} </td>
+                            <td> {{$membro->dia_nome}} </td>
+                            <td> {{$membro->grupo_nome}} </td>
+                            <td> {{$membro->nome_funcao}} </td>
+                            <td> {{$membro->nome_completo}} </td>
+                        </tr>
 
+                        @endforeach
 
-                <div class="accordion" id="accordionSetor">
+                    </tbody>
+                </table>
 
-
-                    @foreach ($result as $keyItem => $item)
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#setor{{ $loop->index }}" aria-expanded="false"
-                                    aria-controls="flush-collapseOne">
-                                    {{ $keyItem }}
-                                </button>
-                            </h2>
-                            <div id="setor{{ $loop->index }}" class="accordion-collapse collapse show"
-                                data-bs-parent="#accordionSetor">
-                                <div class="accordion-body">
-                                    <div class="accordion" id="accordionDia">
-
-
-                                        @foreach ($item as $keyDia => $dia)
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header">
-                                                    <button class="accordion-button type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#dia{{ $keyDia }}"
-                                                        aria-expanded="false" aria-controls="flush-collapseOne">
-                                                        {{ $keyDia }}
-                                                    </button>
-                                                </h2>
-                                                <div id="dia{{ $keyDia }}" class="accordion-collapse collapse show"
-                                                    data-bs-parent="#accordionDia">
-                                                    <div class="accordion-body">
-                                                        <div class="accordion" id="accordionGrupo">
-
-
-                                                            @foreach ($dia as $keyGrupo => $grupo)
-                                                                <div class="accordion-item">
-                                                                    <h2 class="accordion-header">
-                                                                        <button class="accordion-button"
-                                                                            type="button" data-bs-toggle="collapse"
-                                                                            data-bs-target="#grupo{{ current(current($grupo))->id }}"
-                                                                            aria-expanded="false"
-                                                                            aria-controls="flush-collapseOne">
-                                                                            {{ $keyGrupo }}
-                                                                        </button>
-                                                                    </h2>
-                                                                    <div id="grupo{{ current(current($grupo))->id }}"
-                                                                        class="accordion-collapse collapse show"
-                                                                        data-bs-parent="#accordionGrupo">
-                                                                        <div class="accordion-body">
-                                                                            <div class="accordion"
-                                                                                id="accordionFuncao">
-
-
-                                                                                @foreach ($grupo as $keyFuncao => $funcao)
-                                                                                    <div class="accordion-item">
-                                                                                        <h2 class="accordion-header">
-                                                                                            <button
-                                                                                                class="accordion-button"
-                                                                                                type="button"
-                                                                                                data-bs-toggle="collapse"
-                                                                                                data-bs-target="#funcao{{ current($funcao)->id }}"
-                                                                                                aria-expanded="false"
-                                                                                                aria-controls="flush-collapseOne">
-                                                                                                {{ $keyFuncao }}
-                                                                                            </button>
-                                                                                        </h2>
-                                                                                        <div id="funcao{{ current($funcao)->id }}"
-                                                                                            class="accordion-collapse collapse show"
-                                                                                            data-bs-parent="#accordionFuncao">
-                                                                                            <div class="accordion-body">
-                                                                                                <table class="table">
-                                                                                                    @foreach ($funcao as $integrante)
-                                                                                                        <tr>
-                                                                                                            <td>
-                                                                                                                {{$integrante->nome_completo}}
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    @endforeach
-                                                                                                </table>
-                                                                                            </div>  
-                                                                                        </div>
-                                                                                    </div>
-                                                                                @endforeach
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            @endforeach
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-
-                </div>
             </div>
         </div>
 
         <br />
-        {{ $result->appends(request()->query())->links('pagination::bootstrap-5') }}
+        {{ $membros->links('pagination::bootstrap-5') }}
     </div class="d-flex justify-content-center">
 
     </div>

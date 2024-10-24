@@ -442,7 +442,14 @@ class RelatoriosController extends Controller
 
 
         // Paginar os resultados
-        $membros = $membrosQuery->get();
+        $membros = $membrosQuery->paginate(50)
+        ->appends([
+            'setor' => $setorId,
+            'grupo' => $grupoId,
+            'dia' => $diaId,
+            'funcao' => $funcaoId,
+            'nome' => $nomeId,
+        ]);
 
         // Obter os grupos
         $grupo = DB::table('grupo')
@@ -464,16 +471,13 @@ class RelatoriosController extends Controller
 
         $funcao = DB::table('tipo_funcao')->get();
 
-        $result = array();
-        foreach ($membros as $element) {
-            $result[$element->setor_nome . ' - ' .$element->setor_sigla][$element->dia_nome][$element->grupo_nome][$element->nome_funcao][] = $element;
-        }
+     
 
         //      dd($membros, $result);
 
-        $result = $this->paginate($result, 50);
-        $result->withPath('');
-        return view('relatorios.gerenciar-relatorio-setor-pessoas', compact('membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect', 'result', 'funcao'));
+       
+     
+        return view('relatorios.gerenciar-relatorio-setor-pessoas', compact('membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect', 'funcao'));
     }
 
 
