@@ -53,6 +53,16 @@ class GerenciarTratamentosController extends Controller
             ->orderBy('gr.nome')
             ->get();
 
+        $cronogramasDirigente = DB::table('membro')->where('id_associado', session()->get('usuario.id_associado'))->whereIn('id_funcao', [1, 2])->pluck('id_cronograma');
+   
+
+        //Setor DIVAP ou Master Admin
+        if(!in_array(51, session()->get('usuario.setor')) and  !in_array(36, session()->get('acesso'))){
+            $lista = $lista->whereIn('tr.id_reuniao', $cronogramasDirigente);
+        }
+
+
+        //dd($cronogramasDirigente, $lista->get());
         // dd($cronogramas);
         $data_enc = $request->dt_enc;
 
