@@ -151,7 +151,7 @@ class RelatoriosController extends Controller
 
         //Gera numa variável a contagem total de cada item de presença
         $contaFaltas = array_count_values(array_column($dados, 'presenca'));
-        // dd($diasAtendente, $cronogramaAFI, $dados, $cronogramasParticipa, $contaFaltas);
+         dd($diasAtendente, $cronogramaAFI, $dados, $cronogramasParticipa, $contaFaltas);
 
         // Devolve todos os atendentes membros de uma reunião
         $atendentes = DB::table('membro as m')
@@ -724,11 +724,28 @@ class RelatoriosController extends Controller
 
         return view('relatorios.visualizar-assistido-reuniao', compact('id', 'presencasAssistidosArray', 'presencasMembrosArray', 'presencasCountAssistidos', 'presencasCountMembros', 'dt_inicio', 'dt_fim', 'grupo'));
     }
+    public function vagasGrupos(Request $request){
+
+        $grupos = DB::table('cronograma as cro')
+        ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+        ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+        ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
+        ->select(DB::raw(' (select count(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 5) as trat'),'gr.nome as nome', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 'st.sigla as setor', 'cro.max_atend')
+        ->orderBy('gr.nome');
+        if($request->grupo){
+            $grupos = $grupos->whereRaw("UNACCENT(LOWER(gr.nome)) ILIKE UNACCENT(LOWER(?))", ["%{$request->grupo}%"]);
+        }
+        
+      
+        $grupos = $grupos->paginate(30)->appends(['grupo' => $request->grupo]);
+
+        return view('relatorios.vagas-grupos', compact('grupos'));
+
+
+    }
 
     public function teste()
     {
-
-
         $pdf = \PDF::loadView('relatorios.teste');
         return $pdf->download('invoice.pdf');
     }
