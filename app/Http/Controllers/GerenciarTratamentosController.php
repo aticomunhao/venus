@@ -57,7 +57,7 @@ class GerenciarTratamentosController extends Controller
    
 
         //Setor DIVAP ou Master Admin
-        if(!in_array(51, session()->get('usuario.setor')) and  !in_array(36, session()->get('acesso'))){
+        if(!in_array(51, session()->get('usuario.setor')) and  !in_array(36, session()->get('usuario.acesso'))){
             $lista = $lista->whereIn('tr.id_reuniao', $cronogramasDirigente);
         }
 
