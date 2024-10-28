@@ -202,11 +202,12 @@ class GerenciarEntrevistaController extends Controller
                     ->leftJoin('pessoas AS pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
                     ->leftJoin('tipo_tratamento', 'encaminhamento.id_tipo_tratamento', '=', 'tipo_tratamento.id')
                     ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
+                    ->leftJoin('tp_ddd as ddd', 'pessoa_pessoa.ddd', 'ddd.id')
                     ->select(
                         'atendimentos.id_assistido AS id_pessoa',
                         'pessoa_pessoa.nome_completo AS nome_pessoa',
                         'pessoa_pessoa.celular',
-                        'pessoa_pessoa.ddd',
+                        'ddd.descricao as ddd',
                         'encaminhamento.id_tipo_tratamento',
                         'tipo_tratamento.descricao AS tratamento_descricao',
                         'tipo_tratamento.sigla AS tratamento_sigla',
@@ -389,7 +390,8 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
                 ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
                 ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-                ->select('p.nome_completo', 'p.ddd', 'p.celular', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
+                ->leftJoin('tp_ddd as ddd', 'p.ddd', 'ddd.id')
+                ->select('p.nome_completo', 'ddd.descricao as ddd', 'p.celular', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
                 ->where('entre.id_encaminhamento', $id)
                 ->first();
 
