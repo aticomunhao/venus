@@ -31,7 +31,7 @@ class GerenciarAtendimentoController extends Controller
         }
 
         if ($assist != 'null') {
-            $lista->where('p1.nome_completo', 'ilike', "%$assist%");
+            $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$assist%"]);
         }
 
         if ($status != 'null') {
@@ -39,7 +39,7 @@ class GerenciarAtendimentoController extends Controller
         }
 
         if ($atendente != 'null') {
-            $lista->where('p.nome_completo', 'ilike', "%$atendente%");
+            $lista->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$atendente%"]);
         }
 
 
