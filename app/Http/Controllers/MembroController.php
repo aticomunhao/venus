@@ -20,15 +20,16 @@ class MembroController extends Controller
             ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
             ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-            ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
-            ->whereIn('g.id_setor', session()
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', '=', 'cro.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->whereIn('gr.id_setor', session()
             ->get('usuario.setor'));
-
+    
             if (!in_array(36, session()->get('usuario.acesso'))) {
-                $cronogramasLogin = $cronogramasLogin->where('id_associado', session()->get('usuario.id_associado'))->where('m.id_funcao', [1, 2]);
+                $cronogramasLogin = $cronogramasLogin->where('m.id_associado', session()->get('usuario.id_associado'))->whereIn('m.id_funcao', [1, 2]);
             }
             $cronogramasLogin = $cronogramasLogin->pluck('m.id_cronograma');
-
+        
             $cronogramasLogin = json_decode(json_encode($cronogramasLogin), true);
             $cronogramas = $cronogramasLogin;
             //dd($cronogramas, session()->get('usuario.id_associado'));
@@ -42,10 +43,12 @@ class MembroController extends Controller
                     ->where('id_associado', $request->nome_membro)
                     ->pluck('m.id_cronograma');
 
+                  
+
                 $cronogramasPesquisa = json_decode(json_encode($cronogramasPesquisa), true);
                 $cronogramas = array_intersect($cronogramasLogin, $cronogramasPesquisa);
             }
-
+          
             // dd($request->all());
 
             $membro_cronograma = DB::table('cronograma as cro')
@@ -75,13 +78,13 @@ class MembroController extends Controller
                 ->whereIn('cro.id', $cronogramas)
                 ->whereIn('gr.id_setor', session()->get('usuario.setor'));
 
+               
             $membro = DB::table('membro AS m')
             ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
             ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', '=', 'cro.id')
             ->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')
-           
             ->select('p.nome_completo', 'm.id_associado')
             ->whereIn('m.id_cronograma', $cronogramasLogin)
             ->whereIn('g.id_setor', session()->get('usuario.setor'))->distinct()->get();
@@ -104,6 +107,7 @@ class MembroController extends Controller
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
             ->select('cro.id AS idg', 'g.nome AS nomeg', 's.sigla', 'cro.h_inicio','cro.h_fim','sl.numero as sala',)
+            ->whereIn('cro.id', $cronogramasLogin)
             ->orderBy('g.nome', 'asc')->get();
 
          
