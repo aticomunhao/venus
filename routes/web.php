@@ -276,6 +276,7 @@ Route::middleware("rotas:16-22-23")->group(function () {
     Route::get('/alterar-grupo-tratamento/{id}', [GerenciarEncaminhamentoController::class, 'escolherGrupo']);
     Route::get('/escolher-horario/{id}', [GerenciarEncaminhamentoController::class, 'escolherHorario']);
     Route::any('/trocar-grupo-tratamento/{id}', [GerenciarEncaminhamentoController::class, 'trocarGrupo']);
+    Route::any('/relatorio-vagas-grupos', [RelatoriosController::class, 'vagasGrupos']);
 });
 
 // Jobs de Tratamento
@@ -400,6 +401,7 @@ Route::middleware('rotas:33')->group(function () {
 //Relatório de Membro Grupo
 Route::middleware('rotas:34')->group(function () {
     Route::any('/gerenciar-relatorio-pessoas-grupo', [RelatoriosController::class, 'indexmembro']);
+    Route::any('/gerenciar-relatorio-setor-pessoas', [RelatoriosController::class, 'indexSetor']);
 });
 //Relatório de Reuniões
 Route::middleware('rotas:35')->group(function () {
