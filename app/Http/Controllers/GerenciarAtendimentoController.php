@@ -415,8 +415,8 @@ class GerenciarAtendimentoController extends Controller
                     ->whereNull('at.dh_fim')->where('at.dh_inicio', '>', $hoje)
                     ->select('m.id_associado', 'p.id as iaf', 'p.nome_completo as nm_afi', 'p.ddd', 'p.celular', 'm.id_associado as ida')->get();
 
-                $afiSelecionado = DB::table('associado')->where('id', $result->iap)->pluck('id_pessoa');
-
+                $afiSelecionado = DB::table('associado')->where('id', $result->iap)->select('id_pessoa')->first();
+                $afiSelecionado = $afiSelecionado ? $afiSelecionado->id_pessoa : null;
                 $sexo = DB::select("select
                     id as idsx,
                     tipo,
