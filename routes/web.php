@@ -37,7 +37,7 @@ use App\Http\Controllers\PresencaController;
 use App\Http\Controllers\PresencaDirigenteController;
 use App\Http\Controllers\GerenciarVersoesControllerController;
 use App\Http\Controllers\RelatoriosController;
-use App\Http\Controllers\GerenciarPassesControllerr;
+use App\Http\Controllers\GerenciarPassesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -172,12 +172,14 @@ Route::middleware('rotas:8')->group(function () {
 
 // Gerenciar Passes
 Route::middleware('rotas:8')->group(function () {
-Route::get('/gerenciar-passe', [GerenciarPassesControllerr::class, 'index'])->name('');
-Route::get('/editar-passe/{id}', [GerenciarPassesControllerr::class, 'edit'])->name('');
-Route::post('/atualizar-passe/{id}', [GerenciarPassesControllerr::class, 'update'])->name('');
-Route::any('/incluir-passe', [GerenciarPassesControllerr::class, 'incluir']);
-Route::get('/criar-passe/{id}', [GerenciarPassesControllerr::class, 'criar'])->name('');
-Route::get('/visualizar-passe/{id}', [GerenciarPassesControllerr::class, 'show'])->name('');
+Route::get('/gerenciar-passe', [GerenciarPassesController::class, 'index'])->name('gpasses');
+Route::get('/editar-passe/{id}', [GerenciarPassesController::class, 'edit'])->name('');
+Route::post('/atualizar-passe/{id}', [GerenciarPassesController::class, 'update'])->name('');
+Route::post('/incluir-passe/{id}', [GerenciarPassesController::class, 'store'])->name('incluir.passe');
+Route::get('/criar-passe/{id}', [GerenciarPassesController::class, 'criar'])->name('');
+Route::get('/visualizar-passe/{id}', [GerenciarPassesController::class, 'show'])->name('visualizar.passe');
+
+
 
 });
 
