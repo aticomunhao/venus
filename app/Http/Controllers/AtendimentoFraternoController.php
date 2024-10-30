@@ -704,94 +704,102 @@ class AtendimentoFraternoController extends Controller
             $quimica = isset($request->gdq) ? 1 : 0;
             //dd($harmonia, $desobsessivo, $integral);
 
-            $existeEncaminhamento = DB::table('encaminhamento')->where('id_atendimento', $idat)->first();
-            $existeEncaminhamento = $existeEncaminhamento != null ? 1 : 0;
-
-
             $atendido = DB::table('pessoas AS p')
                 ->select('nome_completo AS nm')
                 ->where('p.id', $idas)
                 ->get();
 
-            $result = DB::table('tratamento AS tr')
-                ->leftJoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
-                ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+
+            $countEncaminhamentos = DB::table('encaminhamento as enc')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->where('enc.id_tipo_encaminhamento', 2)
                 ->where('at.id_assistido', $idas)
-                ->where('enc.id_tipo_tratamento', 1)
-                ->where('tr.status', '<', 4)
-                ->count();
+                ->where('enc.status_encaminhamento', '<', 5)
+                ->pluck('id_tipo_tratamento')->toArray();
 
-            //dd($result > 0 && $desobsessivo > 0);
-            if ($result > 0 && $desobsessivo > 0) {
+           // dd($countEncaminhamentos, in_array(1, $countEncaminhamentos));
 
-                app('flasher')->addError('Existem tratamentos ativos para ' . $atendido[0]->nm);
+            // PTD
+            if(in_array(1, $countEncaminhamentos) and $desobsessivo > 0){
+                app('flasher')->addWarning('Já existe um encaminhamento PTD ativo para esta pessoa!');
+            }else if($desobsessivo > 0){
+                DB::table('encaminhamento AS enc')->insert([
+                    'dh_enc' => $now,
+                    'id_usuario' => $atendente,
+                    'id_tipo_encaminhamento' => 2,
+                    'id_atendimento' => $idat,
+                    'id_tipo_tratamento' => 1,
+                    'status_encaminhamento' =>  1
+                ]);
 
-                return redirect()->back();
-            } else {
-
-                if ($harmonia == 1) {
-                    DB::table('encaminhamento AS enc')->insert([
-                        'dh_enc' => $now,
-                        'id_usuario' => $atendente,
-                        'id_tipo_encaminhamento' => 2,
-                        'id_atendimento' => $idat,
-                        'id_tipo_tratamento' => 3,
-                        'status_encaminhamento' =>  3
-                    ]);
-
-                    app('flasher')->addSuccess('O encaminhamento para PPH foi criado com sucesso.');
-                }
-                if ($desobsessivo == 1 and $existeEncaminhamento == 0) {
-                    DB::table('encaminhamento AS enc')->insert([
-                        'dh_enc' => $now,
-                        'id_usuario' => $atendente,
-                        'id_tipo_encaminhamento' => 2,
-                        'id_atendimento' => $idat,
-                        'id_tipo_tratamento' => 1,
-                        'status_encaminhamento' =>  1
-                    ]);
-
-                    app('flasher')->addSuccess('O encaminhamento para PTD foi criado com sucesso.');
-                } elseif ($desobsessivo == 1 and $existeEncaminhamento == 1) {
-                    app('flasher')->addWarning('O encaminhamento para PTD já foi criado através do PTI.');
-                }
-                if ($acolher == 1) {
-                    DB::table('encaminhamento AS enc')->insert([
-                        'dh_enc' => $now,
-                        'id_usuario' => $atendente,
-                        'id_tipo_encaminhamento' => 3,
-                        'id_atendimento' => $idat,
-                        'id_tipo_tratamento' => 7,
-                        'status_encaminhamento' =>  3
-                    ]);
-
-                    app('flasher')->addSuccess('O encaminhamento para o Grupo Acolher foi criado com sucesso.');
-                }
-                if ($viver == 1) {
-                    DB::table('encaminhamento AS enc')->insert([
-                        'dh_enc' => $now,
-                        'id_usuario' => $atendente,
-                        'id_tipo_encaminhamento' => 3,
-                        'id_atendimento' => $idat,
-                        'id_tipo_tratamento' => 10,
-                        'status_encaminhamento' =>  3
-                    ]);
-
-                    app('flasher')->addSuccess('O encaminhamento para o Grupo Viver foi criado com sucesso.');
-                }
-                if ($quimica == 1) {
-                    DB::table('encaminhamento AS enc')->insert([
-                        'dh_enc' => $now,
-                        'id_usuario' => $atendente,
-                        'id_tipo_encaminhamento' => 3,
-                        'id_atendimento' => $idat,
-                        'id_tipo_tratamento' => 9,
-                        'status_encaminhamento' =>  3
-                    ]);
-
-                    app('flasher')->addSuccess('O encaminhamento para Grupo de Dependência Química foi criado com sucesso.');
-                }
+                app('flasher')->addSuccess('O encaminhamento para PTD foi criado com sucesso.');
             }
+
+            // PTH
+            if($harmonia > 0 and in_array(3, $countEncaminhamentos)){
+                app('flasher')->addWarning('Já existe um encaminhamento para o PTH ativo para esta pessoa!');
+            }else if($harmonia > 0){
+                DB::table('encaminhamento AS enc')->insert([
+                    'dh_enc' => $now,
+                    'id_usuario' => $atendente,
+                    'id_tipo_encaminhamento' => 2,
+                    'id_atendimento' => $idat,
+                    'id_tipo_tratamento' => 3,
+                    'status_encaminhamento' =>  3
+                ]);
+
+                app('flasher')->addSuccess('O encaminhamento para Grupo de Harmonização foi criado com sucesso.');
+            }
+
+            // Acolher
+            if($acolher > 0 and in_array(7, $countEncaminhamentos)){
+                app('flasher')->addWarning('Já existe um encaminhamento para o Grupo Acolher ativo para esta pessoa!');
+            }else if($acolher > 0){
+                DB::table('encaminhamento AS enc')->insert([
+                    'dh_enc' => $now,
+                    'id_usuario' => $atendente,
+                    'id_tipo_encaminhamento' => 3,
+                    'id_atendimento' => $idat,
+                    'id_tipo_tratamento' => 7,
+                    'status_encaminhamento' =>  3
+                ]);
+
+                app('flasher')->addSuccess('O encaminhamento para Grupo Acolher foi criado com sucesso.');
+            }
+
+
+            // Dependência Quimica
+            if($quimica > 0 and in_array(9, $countEncaminhamentos)){
+                app('flasher')->addWarning('Já existe um encaminhamento para o Grupo de Dependência Química ativo para esta pessoa!');
+            }else if($quimica > 0){
+                DB::table('encaminhamento AS enc')->insert([
+                    'dh_enc' => $now,
+                    'id_usuario' => $atendente,
+                    'id_tipo_encaminhamento' => 3,
+                    'id_atendimento' => $idat,
+                    'id_tipo_tratamento' => 9,
+                    'status_encaminhamento' =>  3
+                ]);
+
+                app('flasher')->addSuccess('O encaminhamento para Grupo de Dependência Química foi criado com sucesso.');
+            }
+
+            //Viver
+            if($viver > 0 and in_array(10, $countEncaminhamentos)){
+                app('flasher')->addWarning('Já existe um encaminhamento para o Grupo Viver ativo para esta pessoa!');
+            }else if($viver > 0){
+                DB::table('encaminhamento AS enc')->insert([
+                    'dh_enc' => $now,
+                    'id_usuario' => $atendente,
+                    'id_tipo_encaminhamento' => 3,
+                    'id_atendimento' => $idat,
+                    'id_tipo_tratamento' => 10,
+                    'status_encaminhamento' =>  3
+                ]);
+
+                app('flasher')->addSuccess('O encaminhamento para Grupo Viver foi criado com sucesso.');
+            }
+
 
             return Redirect('/atendendo');
         } catch (\Exception $e) {
@@ -803,7 +811,7 @@ class AtendimentoFraternoController extends Controller
         }
     }
 
-    public function enc_entre(Request $request, $idat)
+    public function enc_entre(Request $request, $idat, String $idas)
     {
 
         try {
@@ -818,24 +826,62 @@ class AtendimentoFraternoController extends Controller
             $nutres = isset($request->nutres) ? 1 : 0;
             $evangelho = isset($request->gel) ? 1 : 0;
 
-            $existeEncaminhamento = DB::table('encaminhamento')->where('id_atendimento', $idat)->first();
-            $existeEncaminhamento = $existeEncaminhamento != null ? 1 : 0;
-
             //  dd($ame, $afe, $diamo, $nutres  );
 
+            $countTratamentos = DB::table('encaminhamento as enc')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->where('enc.id_tipo_encaminhamento', 2)
+            ->where('at.id_assistido', $idas)
+            ->where('enc.status_encaminhamento', '<', 5)
+            ->pluck('id_tipo_tratamento')->toArray();
 
-            if ($ame == 1 and $existeEncaminhamento == 0) {
+            $countEntrevistas = DB::table('encaminhamento as enc')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->where('enc.id_tipo_encaminhamento', 1)
+            ->where('at.id_assistido', $idas)
+            ->where('enc.status_encaminhamento', '<', 5)
+            ->pluck('id_tipo_entrevistas')->toArray();
 
+          
+            //AME
+            if($ame > 0 and in_array(5, $countEntrevistas)){
+                app('flasher')->addWarning('Já existe um encaminhamento para o  Integral ativo para esta pessoa!');
+            }else if($ame > 0 and in_array(1, $countTratamentos)){
+                
+                // Traz todos os encaminhamentos em tratamento daquela pessoa
+               $encaminhamentoPTD = DB::table('tratamento as tr')
+               ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+               ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+               ->where('enc.id_tipo_tratamento', 1)
+               ->where('at.id_assistido', $idas)
+               ->where('tr.status', '<', 3)
+               ->whereNot('tr.dt_fim', null)
+               ->select('tr.id', 'tr.dt_fim')
+               ->get();
 
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento' => 2,
-                    'id_atendimento' => $idat,
-                    'id_tipo_tratamento' => 1,
-                    'status_encaminhamento' =>  1
-                ]);
+               // Atualiza com mais 8 semanas todos os PTDs Ativos
+               foreach($encaminhamentoPTD as $ptd){
+                    $data = Carbon::parse($ptd->dt_fim)->addWeek(8);
+                    DB::table('tratamento')
+                    ->where('id', $ptd->id)
+                    ->update([
+                        'dt_fim' => $data
+                    ]);
+               }
 
+               // Insere a entrevista AME
+               DB::table('encaminhamento AS enc')->insert([
+                'dh_enc' => $now,
+                'id_usuario' => $atendente,
+                'id_tipo_encaminhamento' => 1,
+                'id_atendimento' => $idat,
+                'id_tipo_entrevista' => 5,
+                'status_encaminhamento' =>  1
+            ]);
+
+                'Success';
+            }else if($ame > 0){
+                //Insere entrevista AME
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
@@ -845,32 +891,15 @@ class AtendimentoFraternoController extends Controller
                     'status_encaminhamento' =>  1
                 ]);
 
-                app('flasher')->addSuccess('Os encaminhamentos para a AME e PTD foram criados com sucesso.');
-            } elseif ($ame == 1 and $existeEncaminhamento == 1) {
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento' => 1,
-                    'id_atendimento' => $idat,
-                    'id_tipo_entrevista' => 5,
-                    'status_encaminhamento' =>  1
-                ]);
-
-                app('flasher')->addSuccess('O encaminhamento para a AME foi criado com sucesso.');
+                'Success';
             }
-            if ($afe == 1) {
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento' => 1,
-                    'id_atendimento' => $idat,
-                    'id_tipo_entrevista' => 3,
-                    'status_encaminhamento' =>  1
-                ]);
 
-                app('flasher')->addSuccess('O encaminhamento para o AFE foi criado com sucesso.');
-            }
-            if ($diamo == 1) {
+
+
+            if($diamo > 0 and in_array(6, $countEntrevistas)){
+                app('flasher')->addWarning('Já existe um encaminhamento para o Proamo ativo para esta pessoa!');
+            }else if($diamo > 0){
+                //Inserir Diamo na tabela
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
@@ -879,18 +908,34 @@ class AtendimentoFraternoController extends Controller
                     'id_tipo_entrevista' => 6,
                     'status_encaminhamento' =>  1
                 ]);
-
-                app('flasher')->addSuccess('O encaminhamento para a DIAMO foi criado com sucesso.');
             }
-            if ($nutres == 1 and $existeEncaminhamento == 0) {
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento' => 2,
-                    'id_atendimento' => $idat,
-                    'id_tipo_tratamento' => 1,
-                    'status_encaminhamento' =>  2
+
+
+            if($nutres > 0 and in_array(4, $countEntrevistas)){
+                app('flasher')->addWarning('Já existe um encaminhamento para o PTI ativo para esta pessoa!');
+            }else if($nutres > 0 and in_array(1, $countTratamentos)){
+
+                // Todos aguardando para Aguardando PTI
+                DB::table('encaminhamento as enc')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->where('enc.id_tipo_encaminhamento', 2)
+                ->where('at.id_assistido', $idas)
+                ->where('enc.status_encaminhamento', 1)
+                ->update([
+                    'status_encaminhamento' => 2
                 ]);
+
+
+                // Todos agendado para Agendado PTI
+                DB::table('encaminhamento as enc')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->where('enc.id_tipo_encaminhamento', 2)
+                ->where('at.id_assistido', $idas)
+                ->where('enc.status_encaminhamento', 3)
+                ->update([
+                    'status_encaminhamento' => 4
+                ]);
+
 
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
@@ -901,16 +946,9 @@ class AtendimentoFraternoController extends Controller
                     'status_encaminhamento' =>  1
                 ]);
 
-                app('flasher')->addSuccess('O encaminhamento para o NUTRES e PTD foi criado com sucesso.');
-            } elseif ($nutres == 1 and $existeEncaminhamento == 1) {
+                'Success';
 
-                DB::table('encaminhamento')
-                    ->where('id_atendimento', $idat)
-                    ->update([
-                        'status_encaminhamento' =>  2
-                    ]);
-
-
+            }else if($nutres > 0 ){
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
@@ -920,11 +958,12 @@ class AtendimentoFraternoController extends Controller
                     'status_encaminhamento' =>  1
                 ]);
 
-
-                app('flasher')->addSuccess('O encaminhamento para o NUTRES foi criado com sucesso.');
+                'Success';
             }
 
-            if ($evangelho == 1) {
+            if($evangelho > 0 and in_array(8, $countEntrevistas)){
+                app('flasher')->addWarning('Já existe um encaminhamento para o Grupo de Evangelho no Lar ativo para esta pessoa!');
+            }else if($evangelho > 0){
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
@@ -934,7 +973,7 @@ class AtendimentoFraternoController extends Controller
                     'status_encaminhamento' =>  1
                 ]);
 
-                app('flasher')->addSuccess('O encaminhamento para o Grupo de Evangelho foi criado com sucesso.');
+                'Success';
             }
 
             return Redirect('/atendendo');
