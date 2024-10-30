@@ -48,7 +48,7 @@ class GerenciarAtendimentoController extends Controller
             $lista->where('p1.cpf', 'ilike', "%$cpf%");
         }
 
-        $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
+        $lista = $lista->orderby('ts.descricao', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
 
         $lista = $lista->get();
 
@@ -183,7 +183,7 @@ class GerenciarAtendimentoController extends Controller
                 $lista->where('p1.cpf', $request->cpf);
             }
 
-            $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
+            $lista = $lista->orderby('ts.descricao', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
 
             $lista = $lista->get();
 
