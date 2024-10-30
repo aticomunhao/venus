@@ -135,6 +135,7 @@ Route::middleware('rotas:6')->group(function () {
     Route::any('/reset/{idat}', [AtendimentoFraternoController::class, 'reset'])->name('');
     Route::get('/pessoas-para-atender', [AtendimentoFraternoController::class, 'pessoas_para_atender']);
     Route::get('/encaminhamentos-tematicas/{id}', [AtendimentoFraternoController::class, 'encaminhamentos_tematicas']);
+    Route::get('/cancelar-afi/{id}', [AtendimentoFraternoController::class, 'cancelar']);
 });
 
 // Atendente Fraterno Específico
@@ -192,10 +193,7 @@ Route::middleware('rotas:9')->group(function () {
     Route::get('/visualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'show'])->name('');
     Route::any('/finalizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'finalizar'])->name('finalizar.entrevista');
     Route::any('/nao-aceito-entrevista/{id}', [GerenciarEntrevistaController::class, 'fim'])->name('');
-    Route::any('/inativar-entrevista/{id}/{tp}', [GerenciarEntrevistaController::class, 'inativar'])->name('');
-    Route::post('/inativar-entrevista-encaminhamento/{id}', [GerenciarEntrevistaController::class, 'destroy'])->name('cancelar');
-
-
+    Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, 'inativar'])->name('cancelar');
 });
 
 // Gerenciar Grupos
@@ -234,6 +232,8 @@ Route::middleware('rotas:12')->group(function () {
 Route::middleware('rotas:13')->group(function () {
     Route::get('/criar-membro', [MembroController::class, 'create'])->name('');
     Route::post('/incluir-membro', [MembroController::class, 'store'])->name('membro.store');
+    Route::get('/selecionar-membro/{id}', [MembroController::class, 'selecionar']);
+    Route::post('/transferir-membro', [MembroController::class, 'transferir']);
 });
 
 // Gerenciar Membros
@@ -266,7 +266,7 @@ Route::middleware('rotas:15')->group(function () {
 });
 
 // Gerenciar Encaminhamentos
-Route::middleware('rotas:16')->group(function () {
+Route::middleware("rotas:16-22-23")->group(function () {
     Route::get('/gerenciar-encaminhamentos', [GerenciarEncaminhamentoController::class, 'index'])->name('gecdex');
     Route::get('/agendar/{ide}/{idtt}', [GerenciarEncaminhamentoController::class, 'agenda'])->name('gecage');
     Route::get('/agendar-tratamento/{ide}', [GerenciarEncaminhamentoController::class, 'tratamento'])->name('gtctra');
@@ -276,6 +276,7 @@ Route::middleware('rotas:16')->group(function () {
     Route::get('/alterar-grupo-tratamento/{id}', [GerenciarEncaminhamentoController::class, 'escolherGrupo']);
     Route::get('/escolher-horario/{id}', [GerenciarEncaminhamentoController::class, 'escolherHorario']);
     Route::any('/trocar-grupo-tratamento/{id}', [GerenciarEncaminhamentoController::class, 'trocarGrupo']);
+    Route::any('/relatorio-vagas-grupos', [RelatoriosController::class, 'vagasGrupos']);
 });
 
 // Jobs de Tratamento
@@ -323,32 +324,6 @@ Route::middleware('rotas:21')->group(function () {
     Route::any('/visualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'show']);
     Route::any('/editar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'edit']);
     Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'update']);
-});
-
-// Gerenciar Encaminhamento PTI
-Route::middleware('rotas:22')->group(function () {
-    Route::get('/gerenciar-encaminhamentos-pti', [GerenciarEncaminhamentoPTIController::class, 'index']);
-    Route::get('/agendar-pti/{ide}/{idtt}', [GerenciarEncaminhamentoPTIController::class, 'agenda']);
-    Route::get('/agendar-tratamento-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'tratamento']);
-    Route::post('incluir-tratamento-pti/{idtr}', [GerenciarEncaminhamentoPTIController::class, 'tratar']);
-    Route::get('/visualizar-enc-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'visualizar']);
-    Route::any('/inativar-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'inative']);
-    Route::get('/alterar-grupo-tratamento-pti/{id}', [GerenciarEncaminhamentoPTIController::class, 'escolherGrupo']);
-    Route::get('/escolher-horario-pti/{id}', [GerenciarEncaminhamentoPTIController::class, 'escolherHorario']);
-    Route::any('/trocar-grupo-tratamento-pti/{id}', [GerenciarEncaminhamentoPTIController::class, 'trocarGrupo']);
-});
-
-// Gerenciar Encaminhamento Integral
-Route::middleware('rotas:23')->group(function () {
-    Route::get('/gerenciar-encaminhamentos-integral', [GerenciarEncaminhamentoIntegralController::class, 'index']);
-    Route::get('/agendar-integral/{ide}/{idtt}', [GerenciarEncaminhamentoIntegralController::class, 'agenda']);
-    Route::get('/agendar-tratamento-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'tratamento']);
-    Route::post('incluir-tratamento-integral/{idtr}', [GerenciarEncaminhamentoIntegralController::class, 'tratar']);
-    Route::get('/visualizar-enc-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'visualizar']);
-    Route::any('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'inative']);
-    Route::get('/alterar-grupo-tratamento-integral/{id}', [GerenciarEncaminhamentoIntegralController::class, 'escolherGrupo']);
-    Route::get('/escolher-horario-integral/{id}', [GerenciarEncaminhamentoIntegralController::class, 'escolherHorario']);
-    Route::any('/trocar-grupo-tratamento-integral/{id}', [GerenciarEncaminhamentoIntegralController::class, 'trocarGrupo']);
 });
 
 // Gerenciar Assistido PTI
@@ -426,6 +401,7 @@ Route::middleware('rotas:33')->group(function () {
 //Relatório de Membro Grupo
 Route::middleware('rotas:34')->group(function () {
     Route::any('/gerenciar-relatorio-pessoas-grupo', [RelatoriosController::class, 'indexmembro']);
+    Route::any('/gerenciar-relatorio-setor-pessoas', [RelatoriosController::class, 'indexSetor']);
 });
 //Relatório de Reuniões
 Route::middleware('rotas:35')->group(function () {

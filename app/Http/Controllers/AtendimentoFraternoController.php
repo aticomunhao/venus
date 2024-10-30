@@ -71,7 +71,7 @@ class AtendimentoFraternoController extends Controller
 
         $data_inicio = $request->input('dt_ini', Carbon::today()->toDateString());
 
-
+        $motivo = DB::table('tipo_motivo_atendimento')->get();
 
 
 
@@ -86,7 +86,7 @@ class AtendimentoFraternoController extends Controller
             ->whereNull('dh_fim')
             ->value('grupo.nome');
 
- 
+
 
         //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente, que não sejam AFE
         $assistido = DB::table('atendimentos AS at')
@@ -136,7 +136,7 @@ class AtendimentoFraternoController extends Controller
 
         //dd($assistido, $grupo, $now, $nome, $pref_m, $atendente);
 
-        return view('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo'));
+        return view('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo', 'motivo'));
     }
 
     public function pessoas_para_atender()
@@ -846,7 +846,7 @@ class AtendimentoFraternoController extends Controller
                 ]);
 
                 app('flasher')->addSuccess('Os encaminhamentos para a AME e PTD foram criados com sucesso.');
-            } elseif ($ame == 1 and $existeEncaminhamento == 0) {
+            } elseif ($ame == 1 and $existeEncaminhamento == 1) {
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
@@ -1068,6 +1068,9 @@ class AtendimentoFraternoController extends Controller
             // dd($grupo);
 
 
+
+
+
             return view('/atendimento-assistido/meus-atendimentos', compact('assistido', 'atendente', 'nome', 'grupo'));
         } catch (\Exception $e) {
 
@@ -1126,15 +1129,43 @@ class AtendimentoFraternoController extends Controller
         }
     }
 
-    public function encaminhamentos_tematicas(String $id){
+    public function encaminhamentos_tematicas(String $id)
+    {
 
         $return =  new stdClass();
 
         $return->encaminhamentos = DB::table('encaminhamento')->where('id_atendimento', $id)->count();
         $return->tematicas = DB::table('registro_tema')->where('id_atendimento', $id)->count();
-        
-        
+
+
 
         return $return;
+    }
+
+    public function cancelar(Request $request, $id)
+    {
+        try {
+            DB::table('atendimentos AS a')
+                ->where('id', '=', $id)
+                ->update([
+                    'status_atendimento' => 6,
+                    'motivo' => $request->motivo
+                ]);
+
+            DB::table('encaminhamento')->where('id_atendimento', $id)->delete();
+
+            DB::table('registro_tema')->where('id_atendimento', $id)->delete();
+
+            $c = DB::table('atendimentos')->where('id', $id)->update([
+                'observacao' => null
+            ]);
+
+            app('flasher')->addSuccess('O status do atendimento foi alterado para "Cancelado".');
+            return redirect('/atendendo');
+        } catch (\Exception $e) {
+            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
+            DB::rollBack();
+            return redirect()->back();
+        }
     }
 }

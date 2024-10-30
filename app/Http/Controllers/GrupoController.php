@@ -240,10 +240,10 @@ class GrupoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request,string $id)
 
     {
-        try {
+       // try {
 
             $ids = DB::table('grupo')->select('nome')->where('id', $id)->get();
             $teste = session()->get('usuario');
@@ -251,6 +251,7 @@ class GrupoController extends Controller
             $verifica = DB::table('historico_venus')->where('fato', $id)->count('fato');
 
             $data = date("Y-m-d H:i:s");
+            $hoje = Carbon::today();
 
             DB::table('historico_venus')->insert([
 
@@ -260,16 +261,24 @@ class GrupoController extends Controller
                 'obs' => $id
 
             ]);
-            DB::table('cronograma')->where('id_grupo', $id)->delete();
+            DB::table('cronograma')->where('id_grupo', $id)->update([
+                'modificador' => 2,
+                'data_fim' => $hoje,
+               
+            ]);
 
-            DB::table('grupo')->where('id', $id)->delete();
+            DB::table('grupo')->where('id', $id)->update([
+                'status_grupo' => 2,
+                'data_fim' => $hoje,
+                'id_motivo_inativacao' => $request->motivo
+            ]);
 
-            app('flasher')->addSuccess('Excluido com sucesso.');
+            app('flasher')->addSuccess('Inativado com sucesso.');
             return redirect('/gerenciar-grupos');
-        } catch (\Exception $e) {
+        // } catch (\Exception $e) {
 
-            app('flasher')->addError('Este grupo está sendo utilizado em outro lugar.');
-            return redirect('/gerenciar-grupos');
-        }
+        //     app('flasher')->addError('Este grupo está sendo utilizado em outro lugar.');
+        //     return redirect('/gerenciar-grupos');
+        // }
     }
 }

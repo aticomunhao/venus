@@ -128,6 +128,14 @@ class GerenciarEntrevistaController extends Controller
 
             $informacoes->where('entrevistas.status', $pesquisaValue);
         }
+        if($pesquisaValue == 'limpo' and !$request->nome_pesquisa and !$request->tipo_entrevista){
+            $informacoes->whereNot('encaminhamento.status_encaminhamento', 6)
+            ->where(function($query){
+                $query->whereNotIn('entrevistas.status', [5, 6]);
+                $query->orWhere('entrevistas.status', null);
+            });
+        }
+      
 
       
 
@@ -194,11 +202,12 @@ class GerenciarEntrevistaController extends Controller
                     ->leftJoin('pessoas AS pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
                     ->leftJoin('tipo_tratamento', 'encaminhamento.id_tipo_tratamento', '=', 'tipo_tratamento.id')
                     ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
+                    ->leftJoin('tp_ddd as ddd', 'pessoa_pessoa.ddd', 'ddd.id')
                     ->select(
                         'atendimentos.id_assistido AS id_pessoa',
                         'pessoa_pessoa.nome_completo AS nome_pessoa',
                         'pessoa_pessoa.celular',
-                        'pessoa_pessoa.ddd',
+                        'ddd.descricao as ddd',
                         'encaminhamento.id_tipo_tratamento',
                         'tipo_tratamento.descricao AS tratamento_descricao',
                         'tipo_tratamento.sigla AS tratamento_sigla',
@@ -381,7 +390,8 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
                 ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
                 ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-                ->select('p.nome_completo', 'p.ddd', 'p.celular', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
+                ->leftJoin('tp_ddd as ddd', 'p.ddd', 'ddd.id')
+                ->select('p.nome_completo', 'ddd.descricao as ddd', 'p.celular', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
                 ->where('entre.id_encaminhamento', $id)
                 ->first();
 
@@ -655,7 +665,7 @@ class GerenciarEntrevistaController extends Controller
             return redirect()->back();
         }
     }
-    public function inativar($id, $tp)
+    public function inativar(Request $request, String $id)
     {
         try {
 
@@ -670,15 +680,24 @@ class GerenciarEntrevistaController extends Controller
 
             ]);
 
-            $entrevistas = DB::table('entrevistas')->where('id_encaminhamento', '=', $id)->first();
+            $tp = DB::table('entrevistas')->where('id_encaminhamento', '=', $id)->count();
+            $motivo_entrevista = $request->input('motivo_entrevista');
 
-
-            if ($tp == 1) {
+            if ($tp < 1) {
 
                 DB::table('encaminhamento')
                     ->where('id', $id)
-                    ->update(['status_encaminhamento' => 4]);
-            } elseif ($tp == 2) {
+                    ->update([
+                        'status_encaminhamento' => 6,
+                        'motivo' => $motivo_entrevista
+                    ]);
+            } elseif ($tp > 0) {
+                DB::table('encaminhamento')
+                    ->where('id', $id)
+                    ->update([
+                        'status_encaminhamento' => 6,
+                        'motivo' => $motivo_entrevista
+                ]);
                 DB::table('entrevistas')
                     ->where('id_encaminhamento', '=', $id)
                     ->update(['status' => 6]);
@@ -693,23 +712,5 @@ class GerenciarEntrevistaController extends Controller
             DB::rollBack();
             return redirect()->back();
         }
-    }
-
-    public function destroy(Request $request, $id)
-    {
-        $data = now();
-        $motivo_entrevista = $request->input('motivo_entrevista');
-
-
-        // Para outros casos, tentamos atualizar a tabela de entrevistas
-        DB::table('encaminhamento')
-            ->where('id', '=', $id)
-            ->update([
-                'status_encaminhamento' => 6,
-                'motivo' => $motivo_entrevista
-            ]);
-
-
-        return redirect()->route('gerenciamento')->with('success', 'Inativada entrevista e encaminhamento!');
     }
 }

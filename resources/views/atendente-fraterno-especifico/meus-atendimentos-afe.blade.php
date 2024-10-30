@@ -6,7 +6,6 @@
 
 @section('content')
     <br>
-
     <button type="button" class="btn btn-danger btn-floating btn-lg" id="btn-back-to-top">
         <i class="fas fa-arrow-up"></i>
     </button>
@@ -14,14 +13,15 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12">
+
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                <span>MEUS ATENDIMENTOS</span>
+                                MEUS ATENDIMENTOS
                             </div>
                             <div class="d-md-flex justify-content-md-end col">
-                                <a href="/atendendo-afe" type="button" class="btn btn-outline-danger btn-sm"><i
+                                <a href="/atendendo" type="button" class="btn btn-outline-danger btn-sm"><i
                                         class="bi bi-x-lg"></i></a>
                             </div>
                         </div>
@@ -41,7 +41,7 @@
                                         disabled>
                                 </div>
 
-                                <div class="col-5">Nome do Atendente
+                                <div class="col-5">Nome do Atendete
                                     <input class="form-control"
                                         style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
                                         value="{{ $nome }}" name="nome_usuario" id="" type="text"
@@ -167,9 +167,7 @@
             </div>
         </div>
     </div>
-@endsection
 
-@section('footerScript')
     <style>
         #btn-back-to-top {
             position: fixed;
@@ -178,9 +176,8 @@
             display: none;
         }
     </style>
-
-    <script src="{{ URL::asset('/js/pages/mascaras.init.js') }}"></script>
     <script>
+        //Get the button
         let mybutton = document.getElementById("btn-back-to-top");
 
         // When the user scrolls down 20px from the top of the document, show the button
@@ -206,4 +203,8 @@
             document.documentElement.scrollTop = 0;
         }
     </script>
+@endsection
+
+@section('footerScript')
+    <script src="{{ URL::asset('/js/pages/mascaras.init.js') }}"></script>
 @endsection

@@ -166,20 +166,7 @@
                                                 <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i>
                                             </button>
                                         @endif{{-- Fim Confirmar --}}
-                                        {{-- Inicio excluir --}}
-                                        @if ($informacao->status == 5 or $informacao->status == 6 or $informacao->status_encaminhamento_id === 6)
-                                            <a href="#" type="button"
-                                                class="btn btn-outline-danger btn-sm disabled" data-tt="tooltip"
-                                                data-placement="top" title="Cancelar" disabled>
-                                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
-                                            </a>
-                                        @else
-                                            <button type="button" class="btn btn-outline-danger btn-sm tooltips"
-                                                data-bs-toggle="modal" data-bs-target="#modal{{ $informacao->ide }}">
-                                                <span class="tooltiptext">Cancelar</span>
-                                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
-                                            </button>{{-- Fim excluir --}}
-                                        @endif
+                                       
                                         {{--  Modal de Finalizacao --}} <div class="modal fade" id="modalF{{ $informacao->ide }}"
                                             tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
@@ -275,12 +262,8 @@
                                        </a>
                                         @endif
 
-
-
-
                                         {{-- fim modal de inativação --}}
 
-                                        {{-- Fim Modal de Finalizacao --}}
 
                                         {{-- Modal AFE --}}
                                         <div class="modal fade" id="modalAFE{{ $informacao->ide }}" tabindex="-1"
@@ -314,42 +297,7 @@
                                         {{-- Fim Modal AFE --}}
 
 
-                                        {{--  Modal de Exclusao --}}
-                                        <div class="modal fade" id="modal{{ $informacao->ide }}" tabindex="-1"
-                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-right">
-                                                <div class="modal-content">
-                                                    <div class="modal-header" style="background-color:#DC4C64">
-                                                        <h5 class="modal-title" id="exampleModalLabel"
-                                                            style="color:rgb(255, 255, 255);">Cancelar
-                                                            Tratamento
-                                                        </h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        Tem certeza que deseja cancelar o tratamento de <p
-                                                            style="color:#DC4C64; font-weight">
-                                                            {{ $informacao->nome_pessoa }}&#63;</p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-danger"
-                                                            data-bs-dismiss="modal">Cancelar</button>
-                                                        {{-- <a type="button" class="btn btn-danger" href="/nao-aceito-entrevista/{{ $informacao->ide }}">Cancelar tratamento</a>  --}}
-
-                                                        @if ($informacao->status == 1)
-                                                            <a type="button" class="btn btn-primary"
-                                                                href="/inativar-entrevista/{{ $informacao->ide }}/1">Confirmar
-                                                            </a>
-                                                        @else
-                                                            <a type="button" class="btn btn-primary"
-                                                                href="/inativar-entrevista/{{ $informacao->ide }}/2">Confirmar
-                                                            </a>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {{-- Fim Modal de Exclusao --}}
+                                        
                                     </td>
                                 </tr>
                             @endforeach

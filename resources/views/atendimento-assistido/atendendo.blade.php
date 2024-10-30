@@ -118,6 +118,12 @@
                                                         class="tooltiptext">Finalizar</span><i class="bi bi-door-open"
                                                         style="font-size: 1rem; color:#000;"></i></button>
 
+                                                <button type="button" class="btn btn-outline-danger btn-sm tooltips"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#inativa{{ $assistidos->idat  }}"><span
+                                                        class="tooltiptext">Cancelar</span><i class="bi bi-x-circle"
+                                                        style="font-size: 1rem; color:#000;"></i></button>
+
 
                                                 {{-- Modal de Reset --}}
                                                 <div class="modal fade" id="modalRel{{ $assistidos->idat }}"
@@ -180,14 +186,23 @@
 
 
                                                                         </div>
+                                                                        
+                                                                        <center>
+                                                                            <div class="col-9 mt-5">
+                                                                                <span
+                                                                                
+                                                                                    style="color:rgb(196, 27, 27);">*</span>
+                                                                                Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
+                                                                                Utilizando para isso a ação de visualizar.
+                                                                            </div>
+                                                                        </center>
                                                                         <div class="col-10">
-                                                                            Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
-                                                                        Utilizando para isso a ação de visualizar.
+                                                                    
 
 
                                                                         </div>
                                                                         
-                                                                        <div class="col-12 mt-5">
+                                                                        <div class="col-12 mt-3">
 
                                                                             <input class="form-check-input"
                                                                                 type="checkbox" name="emergencia"
@@ -236,16 +251,22 @@
 
                                                                 <div class="row">
                                                                     <div class="col-12">
-                                                                        Você não gerou nenhum encaminhamento.
-                                                                        Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
-                                                                        Utilizando para isso a ação de visualizar.
+                                                                      
                                                                         <br /><span
                                                                             style="color:rgb(255, 147, 7); font-weight: bold">Tem
                                                                             certeza que deseja continuar&#63;</span>
 
 
                                                                     </div>
-
+                                                                    <center>
+                                                                        <div class="col-9 mt-5">
+                                                                            <span
+                                                                            
+                                                                                style="color:rgb(255, 147, 7); font-weight: bold">*</span>
+                                                                            Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
+                                                                            Utilizando para isso a ação de visualizar.
+                                                                        </div>
+                                                                    </center>
 
 
                                                                     </center>
@@ -283,15 +304,22 @@
 
                                                                 <div class="row">
                                                                     <div class="col-12">
-                                                                        Você não gerou nenhuma Temática.
-                                                                        Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
-                                                                        Utilizando para isso a ação de visualizar.
+                                                                       
                                                                         <br /><span
                                                                             style="color:rgb(255, 147, 7); font-weight: bold">Tem
                                                                             certeza que deseja continuar&#63;</span>
 
 
                                                                     </div>
+                                                                    <center>
+                                                                        <div class="col-9 mt-5">
+                                                                            <span
+                                                                            
+                                                                                style="color:rgb(255, 147, 7); font-weight: bold">*</span>
+                                                                            Não esqueça de conferir se suas temáticas foram registrados corretamentes,
+                                                                            Utilizando para isso a ação de visualizar.
+                                                                        </div>
+                                                                    </center>
 
 
 
@@ -313,6 +341,48 @@
                                                 </div>
                                                 {{-- FIM modal de confirmação de temática --}}
 
+                                                {{-- Modal de Cancelamento --}}
+                                                <form action="/cancelar-afi/{{ $assistidos->idat }} ">
+                                                    <div class="modal fade" id="inativa{{ $assistidos->idat  }}" data-bs-keyboard="false"
+                                                        tabindex="-1" aria-labelledby="inativarLabel" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header" style="background-color:#DC4C64;color:white">
+                                                                    <h1 class="modal-title fs-5" id="inativarLabel">Cancelamento</h1>
+                                                                    <button data-bs-dismiss="modal" type="button" class="btn-close"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <br />
+                                                                <div class="modal-body">
+                                                                    <label for="recipient-name" class="col-form-label" style="font-size:17px">Tem
+                                                                        certeza que deseja cancelar:<br /><span
+                                                                            style="color:#DC4C64; font-weight: bold;">{{ $assistidos->nm_1 }} </span>&#63;</label>
+                                                                    <br />
+                        
+                                                                    <center>
+                                                                        <div class="mb-2 col-10">
+                                                                            <label class="col-form-label">Insira o motivo do
+                                                                                <span style="color:#DC4C64">cancelamento:</span></label>
+                                                                            <select class="form-select teste1" name="motivo" required>
+                        
+                                                                                @foreach ($motivo as $motivos)
+                                                                                    <option value="{{ $motivos->id }}">
+                                                                                        {{ $motivos->descricao }} </option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                    </center>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" data-bs-dismiss="modal"
+                                                                        class="btn btn-danger">Cancelar</button>
+                                                                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                                    {{-- fim modal de inativação --}}
 
 
 
