@@ -97,8 +97,7 @@
                                                                     <span style="color:#198754">número de passes:</span>
                                                                 </label>
                                                                 <input type="number" class="form-control"
-                                                                    name="acompanhantes" placeholder="0" min="0"
-                                                                    required>
+                                                                    name="acompanhantes"  placeholder="0" min="1" max="100" required>
                                                             </div>
                                                         </center>
                                                     </div>

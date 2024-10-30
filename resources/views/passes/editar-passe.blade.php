@@ -88,7 +88,7 @@
                                                                                     class="form-label">Número
                                                                                     de Passes</label>
                                                                                 <input type="number" class="form-control"
-                                                                                    id="nrAcompanhantes" name="nr_acompanhantes"
+                                                                                    id="nrAcompanhantes" name="nr_acompanhantes" placeholder="0" min="1" max="100"
                                                                                     required>
                                                                             </div>
                                                                         </div>
