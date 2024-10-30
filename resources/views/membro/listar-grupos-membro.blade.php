@@ -1,6 +1,9 @@
 @extends('layouts.app')
 @section('title', 'Administrar Grupos')
 @section('content')
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">ADMINISTRAR GRUPOS
         </h4>
@@ -14,7 +17,7 @@
                             value="{{ request('nome_grupo') }}">
                             <option></option>
                             @foreach ($grupos2 as $gr)
-                                <option value="{{ $gr->idg }}">{{ $gr->nomeg}} - {{ $gr->sigla }}- {{ date('H:i', strtotime($gr->h_inicio)) }}/{{ date('H:i', strtotime($gr->h_fim ))}} 
+                                <option value="{{ $gr->idg }}">{{ $gr->nomeg}} - {{ $gr->sigla }}- {{ date('H:i', strtotime($gr->h_inicio)) }}/{{ date('H:i', strtotime($gr->h_fim ))}}
                                     - Sala {{ $gr->sala }}</option>>
                             @endforeach
                         </select>
@@ -47,14 +50,14 @@
                 </div>
 
             </form>
-            
+
         </div>
         <br>
       <hr>
         Quantidade de grupos: {{ $contar }}
         <div class="table">
             <table
-                class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
+                class="table display table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                     <th>ID</th>
                     <th class="small-column">GRUPO</th>
@@ -97,6 +100,7 @@
             </table>
         </div>
     </div>
+
 
 
     <script>

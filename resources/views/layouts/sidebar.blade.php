@@ -188,6 +188,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-mediunidades">
                                         Mediunidades</a></li>
                             @endif
+                            @if (in_array(39, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-passe">
+                                        Passes</a></li>
+                            @endif
                             @if (in_array(30, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença
                                         Trabalhador</a></li>
