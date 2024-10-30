@@ -96,7 +96,7 @@ class GerenciarEntrevistaController extends Controller
 
 
 
-       
+
 
 
         $i = 0;
@@ -123,39 +123,64 @@ class GerenciarEntrevistaController extends Controller
         }
 
 
-        if ($request->status != 1 and $pesquisaValue != 'limpo') {
-
-
+        if ($request->status != 1 and $request->status != 7 and $pesquisaValue != 'limpo') {
             $informacoes->where('entrevistas.status', $pesquisaValue);
         }
-        if($pesquisaValue == 'limpo' and !$request->nome_pesquisa and !$request->tipo_entrevista){
+        if($pesquisaValue == null and !$request->nome_pesquisa and !$request->tipo_entrevista){
             $informacoes->whereNot('encaminhamento.status_encaminhamento', 6)
             ->where(function($query){
                 $query->whereNotIn('entrevistas.status', [5, 6]);
                 $query->orWhere('entrevistas.status', null);
             });
         }
-      
 
-      
+        $informacoes = $informacoes
+        ->orderBy('atendimentos.emergencia', 'DESC')
+        ->orderBy('atendimentos.dh_inicio')
+        ->get();
 
-        if (!is_array($informacoes)) {
-            $informacoes = $informacoes->orderByRaw("
-                CASE 
-                    WHEN entrevistas.status IS NULL AND encaminhamento.status_encaminhamento IS NULL THEN 0  -- 'Aguardando agendamento' no topo
-                    WHEN entrevistas.status IS NULL AND encaminhamento.status_encaminhamento = 6 THEN 999  -- 'Inativado' por último
-                    ELSE COALESCE(entrevistas.status, 1)  -- Outros status, tratando NULL como 1
-                END
-            ")
-            ->orderBy('atendimentos.emergencia', 'ASC')
-            ->orderBy('atendimentos.dh_inicio')
-            ->paginate(50);
+
+
+//
+        if ($request->status == 1) {
+            $info = [];
+            foreach ($informacoes as $dia) {
+                $info[] = $dia;
+            }
+
+            foreach ($info as $check) {
+
+                if ($check->status != 1 or $check->status_encaminhamento_id != 1) {
+                    unset($info[$i]);
+                }
+                $i = $i + 1;
+            }
+               // dd($info);
+            $informacoes = $info;
+            $pesquisaStatus = "Aguardando agendamento";
+            $pesquisaValue = 1;
         }
-    
 
+        if ($request->status == 7) {
+            $info = [];
+            foreach ($informacoes as $dia) {
+                $info[] = $dia;
+            }
 
-        $totalAssistidos = $informacoes->total();
+            foreach ($info as $check) {
 
+                if ($check->status != 1 or $check->status_encaminhamento_id != 6) {
+                    unset($info[$i]);
+                }
+                $i = $i + 1;
+            }
+               // dd($info);
+            $informacoes = $info;
+            $pesquisaStatus = "Inativado";
+            $pesquisaValue = 7;
+        }
+
+        $totalAssistidos = 0;
 
         $tipo_entrevista = DB::table('tipo_entrevista')->whereIn('id', [3, 4, 5, 6])->select('id as id_ent', 'sigla as ent_desc')->orderby('descricao', 'asc')->get();
 
@@ -304,7 +329,7 @@ class GerenciarEntrevistaController extends Controller
             if (!$entrevistas) {
             }
 
-            
+
             $usuarios = DB::table('usuario as u')
                 ->rightJoin('usuario_setor as us', 'u.id', 'us.id_usuario')
                 ->where('us.id_setor', $entrevistas->id_setor)
