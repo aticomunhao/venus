@@ -145,8 +145,10 @@ class GerenciarEntrevistaController extends Controller
         }
 
         $informacoes = $informacoes
+        ->orderBy('encaminhamento.status_encaminhamento')
+        ->orderBy('entrevistas.status', 'ASC')
         ->orderBy('atendimentos.emergencia', 'DESC')
-        ->orderBy('atendimentos.dh_inicio')
+         ->orderBy('atendimentos.dh_inicio')
         ->get()->toArray();
 
 
