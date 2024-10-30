@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -38,7 +40,15 @@ class GerenciarEntrevistaController extends Controller
         return $resultado;
     }
 
-
+    public function paginate($items, $perPage = 5, $page = null)
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $total = count($items);
+        $currentpage = $page;
+        $offset = ($currentpage * $perPage) - $perPage;
+        $itemstoshow = array_slice($items, $offset, $perPage);
+        return new LengthAwarePaginator($itemstoshow, $total, $perPage);
+    }
 
     public function index(Request $request)
     {
@@ -137,7 +147,7 @@ class GerenciarEntrevistaController extends Controller
         $informacoes = $informacoes
         ->orderBy('atendimentos.emergencia', 'DESC')
         ->orderBy('atendimentos.dh_inicio')
-        ->get();
+        ->get()->toArray();
 
 
 
@@ -180,7 +190,7 @@ class GerenciarEntrevistaController extends Controller
             $pesquisaValue = 7;
         }
 
-        $totalAssistidos = 0;
+        $totalAssistidos = count($informacoes);
 
         $tipo_entrevista = DB::table('tipo_entrevista')->whereIn('id', [3, 4, 5, 6])->select('id as id_ent', 'sigla as ent_desc')->orderby('descricao', 'asc')->get();
 
@@ -188,7 +198,8 @@ class GerenciarEntrevistaController extends Controller
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get();
         $motivo = DB::table('tipo_motivo_entrevista')->get();
 
-
+        $informacoes = $this->paginate($informacoes, 50);
+        $informacoes->withPath('');
         return view('Entrevistas.gerenciar-entrevistas', compact('nome_pesquisa', 'tipo_entrevista', 'totalAssistidos', 'informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status', 'motivo'));
     }
 
