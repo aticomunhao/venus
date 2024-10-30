@@ -879,7 +879,7 @@ class AtendimentoFraternoController extends Controller
                 'status_encaminhamento' =>  1
             ]);
 
-                'Success';
+            app('flasher')->addSuccess('O encaminhamento para AME foi criado com sucesso.');
             }else if($ame > 0){
                 //Insere entrevista AME
                 DB::table('encaminhamento AS enc')->insert([
@@ -891,7 +891,16 @@ class AtendimentoFraternoController extends Controller
                     'status_encaminhamento' =>  1
                 ]);
 
-                'Success';
+                DB::table('encaminhamento AS enc')->insert([
+                    'dh_enc' => $now,
+                    'id_usuario' => $atendente,
+                    'id_tipo_encaminhamento' => 2,
+                    'id_atendimento' => $idat,
+                    'id_tipo_tratamento' => 1,
+                    'status_encaminhamento' =>  1
+                ]);
+
+                app('flasher')->addSuccess('O encaminhamento para AME e PTD  foi criado com sucesso.');
             }
 
 
@@ -908,6 +917,8 @@ class AtendimentoFraternoController extends Controller
                     'id_tipo_entrevista' => 6,
                     'status_encaminhamento' =>  1
                 ]);
+
+                app('flasher')->addSuccess('O encaminhamento para o Proamo foi criado com sucesso.');
             }
 
 
@@ -946,7 +957,7 @@ class AtendimentoFraternoController extends Controller
                     'status_encaminhamento' =>  1
                 ]);
 
-                'Success';
+                app('flasher')->addSuccess('O encaminhamento para o PTI foi criado com sucesso.');
 
             }else if($nutres > 0 ){
                 DB::table('encaminhamento AS enc')->insert([
@@ -958,7 +969,16 @@ class AtendimentoFraternoController extends Controller
                     'status_encaminhamento' =>  1
                 ]);
 
-                'Success';
+                DB::table('encaminhamento AS enc')->insert([
+                    'dh_enc' => $now,
+                    'id_usuario' => $atendente,
+                    'id_tipo_encaminhamento' => 2,
+                    'id_atendimento' => $idat,
+                    'id_tipo_tratamento' => 1,
+                    'status_encaminhamento' =>  2
+                ]);
+
+                app('flasher')->addSuccess('O encaminhamento para o PTI e PTD foi criado com sucesso.');
             }
 
             if($evangelho > 0 and in_array(8, $countEntrevistas)){
@@ -973,7 +993,7 @@ class AtendimentoFraternoController extends Controller
                     'status_encaminhamento' =>  1
                 ]);
 
-                'Success';
+                app('flasher')->addSuccess('O encaminhamento para o Grupo de Evangelho no Lar foi criado com sucesso.');
             }
 
             return Redirect('/atendendo');
