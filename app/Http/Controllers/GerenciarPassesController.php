@@ -152,23 +152,36 @@ class GerenciarPassesController extends Controller
     }
 
     public function store(Request $request, $id)
-    {
+{
+    // Obtém a data de hoje
+    $hoje = Carbon::today();
 
-        $hoje = Carbon::today();
-        $request->validate([
+    // Validação dos dados de entrada
+    $request->validate([
+        'acompanhantes' => 'required|integer|min:0', // Validação para garantir que acompanhantes é um número inteiro não negativo
+    ]);
 
-        ]);
+    // Verifica se existe um registro correspondente
+    $registro = DB::table('dias_cronograma')
+        ->where('id_cronograma', $id)
+        ->where('data', $hoje)
+        ->first();
 
+    if ($registro) {
+        // Atualiza o número de acompanhantes
         DB::table('dias_cronograma')
-        ->where('id_cronograma',$id)
-        ->where('data',$hoje)
-        ->update([
-        'nr_acompanhantes' => $request->acompanhantes,
-        ]);
-
+            ->where('id_cronograma', $id)
+            ->where('data', $hoje)
+            ->update([
+                'nr_acompanhantes' => $request->acompanhantes,
+            ]);
 
         return redirect('/gerenciar-passe')->with('success', 'Quantidade de passes registrada com sucesso!');
+    } else {
+        return redirect('/gerenciar-passe')->with('error', 'Registro não encontrado para a data de hoje.');
     }
+}
+
 
 
 
@@ -225,7 +238,7 @@ class GerenciarPassesController extends Controller
     {
 
         $hoje = $request->data;
-       // dd($request->all(), $id);
+
 
         DB::table('dias_cronograma')
         ->where('id_cronograma',$id)
