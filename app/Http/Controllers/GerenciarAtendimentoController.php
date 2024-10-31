@@ -31,7 +31,15 @@ class GerenciarAtendimentoController extends Controller
         }
 
         if ($assist != 'null') {
-            $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$assist%"]);
+
+            $pesquisaAssist = array();
+            $pesquisaAssist = explode(' ', $assist);
+
+            foreach($pesquisaAssist as $itemPesquisaAssist){
+               $lista =  $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAssist%"]);
+            }
+            
+            
         }
 
         if ($status != 'null') {
@@ -39,7 +47,13 @@ class GerenciarAtendimentoController extends Controller
         }
 
         if ($atendente != 'null') {
-            $lista->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$atendente%"]);
+
+                   $pesquisaAtendente = array();
+            $pesquisaAtendente = explode(' ', $assist);
+
+            foreach($pesquisaAtendente as $itemPesquisaAtendente){
+               $lista =  $lista->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAtendente%"]);
+            }
         }
 
 
@@ -210,14 +224,20 @@ class GerenciarAtendimentoController extends Controller
     public function ajaxCRUD(Request $request)
     {
 
-
         $pessoas = DB::table('pessoas')
-            ->select('id', 'nome_completo')
-            ->where(DB::raw('unaccent(lower(nome_completo))'), 'ilike', DB::raw("unaccent(lower('%{$request->nome}%'))"))
-            ->orderBy('nome_completo')
-            ->get();
+            ->select('id', 'nome_completo');
+            
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $request->nome);
+
+            foreach($pesquisaNome as $itemPesquisa){
+               $pessoas->whereRaw("UNACCENT(LOWER(nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+            }
+            
+            $pessoas =  $pessoas->orderBy('nome_completo')->get();
 
         return $pessoas;
+
     }
 
     public function create()
