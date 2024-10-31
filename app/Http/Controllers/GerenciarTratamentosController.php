@@ -57,9 +57,7 @@ class GerenciarTratamentosController extends Controller
 
 
         //Setor DIVAP ou Master Admin
-        if (!in_array(51, session()->get('usuario.setor')) and  !in_array(36, session()->get('usuario.acesso'))) {
-            $lista = $lista->whereIn('tr.id_reuniao', $cronogramasDirigente);
-        }
+    
 
 
         //dd($cronogramasDirigente, $lista->get());
@@ -75,6 +73,12 @@ class GerenciarTratamentosController extends Controller
 
 
         $cpf = $request->cpf;
+
+
+        if (!in_array(51, session()->get('usuario.setor')) and  !in_array(36, session()->get('usuario.acesso'))) {
+            $lista = $lista->whereIn('tr.id_reuniao', $cronogramasDirigente);
+            $request->status ?? $situacao = 'all';
+        }
 
         if ($request->dia != null) {
             $lista->where('rm.dia_semana', '=', $request->dia);
@@ -103,11 +107,10 @@ class GerenciarTratamentosController extends Controller
             $lista->whereRaw("LOWER(p1.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
         } else {
 
-            if ($request->status && $request->status != 'all') {
+            if ($request->status && $situacao != 'all') {
                 $lista->where('tr.status', $request->status);
-            } elseif ($request->status == 'all') {
+            } elseif ($situacao == 'all') {
             } else {
-
                 $lista->where('tr.status', 2);
             }
         }
