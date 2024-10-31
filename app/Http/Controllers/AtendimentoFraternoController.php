@@ -572,7 +572,7 @@ class AtendimentoFraternoController extends Controller
                 ->count();
 
             $atendido = DB::table('pessoas AS p')
-                ->select('nome_completo AS nm')
+                ->select('nome_completo AS nm', 'p.id AS idas')
                 ->where('p.id', $idas)
                 ->get();
 
@@ -599,7 +599,9 @@ class AtendimentoFraternoController extends Controller
                     ->where('at.id', $idat)
                     ->get();
 
-                return view('/atendimento-assistido/entrevistas', compact('assistido'));
+                   // dd($atendido);
+
+                return view('/atendimento-assistido/entrevistas', compact('assistido', 'atendido'));
             } elseif ($verifi > 0) {
 
                 app('flasher')->addError('As entrevistas já foram registradas para o atendido ' . $atendido[0]->nm);
@@ -814,7 +816,7 @@ class AtendimentoFraternoController extends Controller
     public function enc_entre(Request $request, $idat, String $idas)
     {
 
-        try {
+        // try {
 
             $now = Carbon::now()->format('Y-m-d H:m:s');
 
@@ -840,7 +842,7 @@ class AtendimentoFraternoController extends Controller
             ->where('enc.id_tipo_encaminhamento', 1)
             ->where('at.id_assistido', $idas)
             ->where('enc.status_encaminhamento', '<', 5)
-            ->pluck('id_tipo_entrevistas')->toArray();
+            ->pluck('id_tipo_entrevista')->toArray();
 
           
             //AME
@@ -997,13 +999,13 @@ class AtendimentoFraternoController extends Controller
             }
 
             return Redirect('/atendendo');
-        } catch (\Exception $e) {
+        // } catch (\Exception $e) {
 
 
-            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
-            DB::rollBack();
-            return redirect()->back();
-        }
+        //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+        //     DB::rollBack();
+        //     return redirect()->back();
+        // }
     }
 
     public function finaliza(Request $request, $idat)

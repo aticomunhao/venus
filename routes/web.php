@@ -119,7 +119,7 @@ Route::middleware('rotas:6')->group(function () {
     Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name('afidex');
     Route::get('/atender', [AtendimentoFraternoController::class, 'atende_agora'])->name('afiini');
     Route::get('/entrevistar/{idat}/{idas}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
-    Route::post('/entrevistas/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
+    Route::post('/entrevistas/{idat}/{idas}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
     Route::get('/fim-analise/{idat}', [AtendimentoFraternoController::class, 'fimanalise'])->name('afifna');
     Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
     Route::any('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
