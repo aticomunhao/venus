@@ -89,16 +89,28 @@ class GerenciarTratamentosController extends Controller
         }
 
         if (current($selectGrupo) != '') {
-            if (count($selectGrupo) > 1) {
+          
+            if (intval(current($selectGrupo)) != 0) {
                 $lista->where('rm.id', current($selectGrupo));
             } else {
 
-                $lista->whereRaw("UNACCENT(LOWER(gr.nome)) ILIKE UNACCENT(LOWER(?))", ["%" . current($selectGrupo) . "%"]);
+                $pesquisaNome = array();
+                $pesquisaNome = explode(' ', current($selectGrupo));
+    
+                foreach($pesquisaNome as $itemPesquisa){
+                    $lista->whereRaw("UNACCENT(LOWER(gr.nome)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+                }
+                
             }
         }
 
         if ($request->assist) {
-            $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->assist}%"]);
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $request->assist);
+
+            foreach($pesquisaNome as $itemPesquisa){
+                $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+            }
         }
 
 
