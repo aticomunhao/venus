@@ -34,7 +34,15 @@ class PessoaController extends Controller
 
         $nome = $request->nome;
         if ($request->nome) {
-            $pessoa->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome}%"]);
+          
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $request->nome);
+
+            foreach($pesquisaNome as $itemPesquisa){
+               $pessoa =  $pessoa->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+            }
+            
+            
         }
 
         $cpf = $request->cpf;
@@ -60,11 +68,11 @@ class PessoaController extends Controller
 
         //Diz método Undefined mas ele funciona
         $pessoa = $pessoa->orderBy('p.status', 'desc')->orderBy('p.nome_completo', 'asc')->paginate(30)
-        ->appends([
-            'nome' => $nome,
-            'cpf' => $cpf,
-            'status' => $status
-        ]);
+            ->appends([
+                'nome' => $nome,
+                'cpf' => $cpf,
+                'status' => $status
+            ]);
 
         $stap = DB::select("select
                         id as ids,

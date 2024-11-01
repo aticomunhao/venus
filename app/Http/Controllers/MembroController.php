@@ -20,12 +20,14 @@ class MembroController extends Controller
             ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
             ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-            ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+            ->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')
             ->whereIn('g.id_setor', session()
             ->get('usuario.setor'));
 
+
             if (!in_array(36, session()->get('usuario.acesso'))) {
-                $cronogramasLogin = $cronogramasLogin->where('id_associado', session()->get('usuario.id_associado'))->where('m.id_funcao', [1, 2]);
+                $cronogramasLogin = $cronogramasLogin->where('id_associado', session()->get('usuario.id_associado'))->whereIn('m.id_funcao', [1, 2]);
             }
             $cronogramasLogin = $cronogramasLogin->pluck('m.id_cronograma');
 
