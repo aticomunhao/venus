@@ -171,7 +171,7 @@ Route::middleware('rotas:8')->group(function () {
 });
 
 // Gerenciar Passes
-Route::middleware('rotas:8')->group(function () {
+Route::middleware('rotas:39')->group(function () {
 Route::get('/gerenciar-passe', [GerenciarPassesController::class, 'index'])->name('gpasses');
 Route::get('/editar-passe/{id}', [GerenciarPassesController::class, 'edit'])->name('');
 Route::post('/atualizar-passe/{id}', [GerenciarPassesController::class, 'update'])->name('');
