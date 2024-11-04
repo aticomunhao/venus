@@ -105,7 +105,8 @@ class MembroController extends Controller
             ->leftJoin('cronograma as cro', 'g.id', '=', 'cro.id_grupo')
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
-            ->select('cro.id AS idg', 'g.nome AS nomeg', 's.sigla', 'cro.h_inicio','cro.h_fim','sl.numero as sala',)
+            ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
+            ->select('cro.id AS idg', 'g.nome AS nomeg', 's.sigla', 'cro.h_inicio','cro.h_fim','sl.numero as sala','ts.descricao')
             ->orderBy('g.nome', 'asc')->get();
 
 
