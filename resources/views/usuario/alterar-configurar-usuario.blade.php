@@ -7,7 +7,7 @@
 @section('content')
     <br>
     <div class="container">
-        <form class="form-horizontal mt-4" method="POST" action="/usuario-atualizar/{{$resultUsuario[0]->id}}">
+        <form class="form-horizontal mt-4" method="POST" action="/usuario-atualizar/{{ $resultUsuario->id }}">
             @csrf
             <div class="row justify-content-center">
                 <div class="col-12">
@@ -15,7 +15,7 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col">
-                                    EDITAR USUÁRIO
+                                    ALTERAR USUÁRIO
                                 </div>
                             </div>
                         </div>
@@ -50,174 +50,121 @@
 
                             <input type="hidden" name="idPessoa" value="{{ $result[0]->id }}">
                             <div class="table-responsive">
-                                <table class="table table-striped mb-0">
+                                <table class="table table-bordered table-striped mb-0">
                                     <tr>
                                         <td style="text-align:right;">Ativo</td>
                                         <td>
-                                            <input id="ativo" type="checkbox" name="ativo" data-size="small"
-                                                data-size="small" data-toggle="toggle" data-onstyle="success"
-                                                data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não"
-                                                {{ $resultUsuario[0]->ativo ? 'checked' : '' }}>
-                                            <label for="ativo" class="form-check-label"></label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input " type="checkbox" role="switch"
+                                                    id="ativo" name="ativo"
+                                                    {{ $resultUsuario->ativo == 1 ? 'checked' : '' }}>
+
+                                                <label for="bloqueado" class="form-check-label"></label>
+                                            </div>
                                         </td>
                                         <td style="text-align:right;">Bloqueado</td>
                                         <td>
-                                            <input id="bloqueado" type="checkbox" name="bloqueado" data-size="small"
-                                                data-size="small" data-toggle="toggle" data-onstyle="success"
-                                                data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não"
-                                                {{ $resultUsuario[0]->bloqueado ? 'checked' : '' }}>
-                                            <label for="bloqueado" class="form-check-label"></label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input " type="checkbox" role="switch"
+                                                    id="bloqueado" name="bloqueado"
+                                                    {{ $resultUsuario->bloqueado == 1 ? 'checked' : '' }}>
+
+                                                <label for="bloqueado" class="form-check-label"></label>
+                                            </div>
+
                                         </td>
                                     </tr>
                                 </table>
                             </div>
                             <br>
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped mb-0">
 
-                                    @foreach ($resultPerfil as $resultPerfils)
-                                        <tr>
-                                            <td>
+                            <div class="accordion" id="accordionExample">
+
+                                @foreach ($resultPerfil as $resultPerfils)
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#collapseOne{{ $resultPerfils->id }}" aria-expanded="true"
+                                                aria-controls="collapseOne" id="collapseButton{{ $resultPerfils->id }}">
                                                 {{ $resultPerfils->descricao }}
-                                            </td>
-                                            <td>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseOne{{ $resultPerfils->id }}" class="accordion-collapse collapse"
+                                            >
+                                            <div class="accordion-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-striped mb-0" id="myTable"
+                                                        name="myTable">
+                                                        @foreach ($resultSetor as $resultSetors)
+                                                            <tr>
+                                                                <td>
+                                                                    {{ $resultSetors->nome }} - {{ $resultSetors->sigla }}
+                                                                </td>
+                                                                <td>
+                                                                    <div class="form-check form-switch">
+                                                                        <input class="form-check-input " type="checkbox"
+                                                                            role="switch"
+                                                                            id="perfis[{{ $resultPerfils->id }}][{{ $resultSetors->id }}]"
+                                                                            name="perfis[{{ $resultPerfils->id }}][{{ $resultSetors->id }}]">
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
 
-                                                <input id="{{ $resultPerfils->descricao }}" type="checkbox"
-                                                    name="{{ $resultPerfils->descricao }}"
-                                                    value="{{ $resultPerfils->id }}" data-size="small" data-size="small"
-                                                    data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-                                                    data-onlabel="Sim" data-offlabel="Não"
-                                                    {{ in_array($resultPerfils->id, $resultPerfisUsuarioArray) ? 'checked' : '' }}>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    {{--  <div class="card m-1">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col">
-                                SELECIONAR ESTOQUE
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-striped mb-0">
-                                            @foreach ($resultDeposito as $resultDepositos)
-                                                <tr>
-                                                    <td>
-                                                        {{ $resultDepositos->nome }}
-                                                    </td>
-                                                    <td>
-                                                        <input id="{{ $resultDepositos->nome }}" type="checkbox"
-                                                            name="{{ $resultDepositos->nome }}"
-                                                            value="{{ $resultDepositos->id }}" data-size="small"
-                                                            data-size="small" data-toggle="toggle" data-onstyle="success"
-                                                            data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>  --}}
-                    <div class="card m-1">
-                        <div class="card-header">
-                            <div class="row">
-                                <div class="col">
-                                    SETOR
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="form-floating">
-                                            <input class="form-control" type="text" id="nome_pesquisa"
-                                                name="nome_pesquisa">
-                                            <label for="floatingTextarea">Pesquisa de Setor</label>
-                                        </div>
-                                        <br />
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered table-striped mb-0" id="myTable"
-                                                name="myTable">
-                                                @foreach ($resultSetor as $resultSetors)
-                                                    <tr>
-                                                        <td>
-                                                            {{ $resultSetors->nome }}
-                                                        </td>
-                                                        <td>
 
-                                                            <input id="{{ $resultSetors->nome }}" type="checkbox"
-                                                                name="{{ $resultSetors->nome }}"
-                                                                value="{{ $resultSetors->id }}" data-size="small"
-                                                                data-size="small" data-toggle="toggle"
-                                                                data-onstyle="success" data-offstyle="danger"
-                                                                data-onlabel="Sim" data-offlabel="Não"
-                                                                {{ in_array($resultSetors->id_setor, $resultSetorUsuarioArray) ? 'checked' : '' }}>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <br>
-                                <center>
-                                    <div class="row">
-                                        <div class="col">
-                                            <a href="/gerenciar-usuario ">
-                                                <input class="btn btn-danger btn-block col-3" type="button"
-                                                    value="Cancelar">
-                                            </a>
-                                        </div>
-                                        <div class="col ">
-                                            <button type="submit"
-                                                class="btn btn-primary btn-block col-3">Confirmar</button>
-                                        </div>
-                                    </div>
-                                </center>
+
                             </div>
+
+
+
+
                         </div>
                     </div>
                 </div>
             </div>
+            <br />
+            <div class="card">
+                <div class="card-header">
+                    <center>
+                        <div class="row">
+                            <div class="col">
+                                <a href="/gerenciar-usuario ">
+                                    <input class="btn btn-danger btn-block col-5" type="button" value="Cancelar">
+                                </a>
+                            </div>
+                            <div class="col">
+                                <button type="submit" class="btn btn-primary btn-block col-5">Cadastrar</button>
+                            </div>
+                        </div>
+                    </center>
+                </div>
+            </div>
 
         </form>
+        <br />
+        <br />
+        <br />
     </div>
-
 
     <script>
         $(document).ready(function() {
-            $("#nome_pesquisa").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                console.log(value)
-                $("#myTable tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
+            let acessosAutorizados = @JSON($acessosAutorizados);
+            console.log(acessosAutorizados)
+            $.each(acessosAutorizados, function(key, value) {
+                if ($("#collapseOne" + value.id_perfil).hasClass('collapse')) {
+                    $("#collapseOne" + value.id_perfil).addClass('show')
+                    $("#collapseButton" + value.id_perfil).removeClass('collapsed')
+                }
+
+               $("#perfis\\["+ value.id_perfil +"\\]\\["+ value.id_setor + "\\]").prop('checked', true);
             });
         });
     </script>
-@endsection
-
-@section('footerScript')
-    <!-- Required datatable js -->
-    <script src="{{ URL::asset('/libs/datatables/datatables.min.js') }}"></script>
-    <script src="{{ URL::asset('/libs/jszip/jszip.min.js') }}"></script>
-    <script src="{{ URL::asset('/libs/pdfmake/pdfmake.min.js') }}"></script>
-
-    <!-- Datatable init js -->
-    <script src="{{ URL::asset('/js/pages/datatables.init.js') }}"></script>
-    <script src="{{ URL::asset('/libs/select2/select2.min.js') }}"></script>
-    <script src="{{ URL::asset('/js/pages/form-advanced.init.js') }}"></script>
 @endsection
