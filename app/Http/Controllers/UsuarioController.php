@@ -155,10 +155,10 @@ class UsuarioController extends Controller
         $resultSetor = DB::table('rotas_setor')->leftJoin('setor', 'rotas_setor.id_setor', 'setor.id')->distinct('id_setor')->get();
 
         $acessosAutorizados = DB::table('usuario_acesso')->select('id_setor', 'id_perfil')->where('id_usuario', $idUsuario)->get()->toArray();
-        $acessosAutorizados = array_intersect_key($acessosAutorizados,array_unique(array_map('serialize',$acessosAutorizados)));
-        
+        $acessosAutorizados = array_intersect_key($acessosAutorizados, array_unique(array_map('serialize', $acessosAutorizados)));
 
-        return view('/usuario/alterar-configurar-usuario', compact('result','resultUsuario', 'resultPerfil', 'resultSetor', 'acessosAutorizados'));
+
+        return view('/usuario/alterar-configurar-usuario', compact('result', 'resultUsuario', 'resultPerfil', 'resultSetor', 'acessosAutorizados'));
     }
 
 
@@ -166,25 +166,25 @@ class UsuarioController extends Controller
     {
         //try {
 
-            $ativo = isset($request->ativo) ? 1 : 0;
-            $bloqueado = isset($request->bloqueado) ? 1 : 0;
-            // echo $id;
-            // exit();
+        $ativo = isset($request->ativo) ? 1 : 0;
+        $bloqueado = isset($request->bloqueado) ? 1 : 0;
+        // echo $id;
+        // exit();
 
-            DB::table('usuario')
-                ->where('id', $id)
-                ->update([
-                    'ativo' => $ativo,
-                    'bloqueado' => $bloqueado,
-                ]);
+        DB::table('usuario')
+            ->where('id', $id)
+            ->update([
+                'ativo' => $ativo,
+                'bloqueado' => $bloqueado,
+            ]);
 
 
-         
-            $this->excluirUsuarioPerfis($request->input('idPessoa'));
 
-            $this->inserirPerfilUsuario($request->perfis, $request->input('idPessoa'));
-            app('flasher')->addSuccess('Usuário alterado com sucesso!');
-            return redirect('gerenciar-usuario');
+        $this->excluirUsuarioPerfis($request->input('idPessoa'));
+
+        $this->inserirPerfilUsuario($request->perfis, $request->input('idPessoa'));
+        app('flasher')->addSuccess('Usuário alterado com sucesso!');
+        return redirect('gerenciar-usuario');
         // } catch (\Exception $e) {
 
         //     $code = $e->getCode();
@@ -194,8 +194,8 @@ class UsuarioController extends Controller
 
     public function destroy($id)
     {
-        try {
-         
+       // try {
+
             DB::delete('delete from usuario_acesso where id_usuario =?', [$id]);
             $deleted = DB::delete('delete from usuario where id =?', [$id]);
 
@@ -205,11 +205,11 @@ class UsuarioController extends Controller
 
             return Redirect('/gerenciar-usuario');
             //return view('usuario/gerenciar-usuario', compact('result'));
-        } catch (\Exception $e) {
+        // } catch (\Exception $e) {
 
-            $code = $e->getCode();
-            return view('administrativo-erro.erro-inesperado', compact('code'));
-        }
+        //     $code = $e->getCode();
+        //     return view('administrativo-erro.erro-inesperado', compact('code'));
+        // }
     }
 
 
@@ -267,36 +267,59 @@ class UsuarioController extends Controller
 
     public function inserirPerfilUsuario($perfis, $idPessoa)
     {
-      //  try {
-            $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
+        //  try {
+        $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
 
-            if($perfis){
-                foreach ($perfis as $keyPerfil => $perfil) {
+        if ($perfis) {
+            foreach ($perfis as $keyPerfil => $perfil) {
 
-                    $acessoPerfil = DB::table('rotas_perfil')
-                        ->where('id_perfil', $keyPerfil)
-                        ->pluck('id_rotas')->toArray();
-    
-                    foreach ($perfil as $keySetor => $setor) {
-    
+                $acessoPerfil = DB::table('rotas_perfil')
+                    ->where('id_perfil', $keyPerfil)
+                    ->pluck('id_rotas')->toArray();
+
+                foreach ($perfil as $keySetor => $setor) {
+
+                    $setores = DB::table('setor as st')
+                        ->leftJoin('setor as stf', 'st.id', 'stf.setor_pai')
+                        ->leftJoin('setor as stn', 'stf.id', 'stn.setor_pai')
+                        ->select('st.id as ids', 'stf.id as idf', 'stn.id as idn')
+                        ->where('st.id', $keySetor)
+                        ->get()
+                        ->toArray();
+
+                    $setores = (array_unique(array_merge(array_column($setores, 'ids'), array_column($setores, 'idf'), array_column($setores, 'idn'))));
+
+                    foreach ($setores as $setor) {
                         $acessoSetor = DB::table('rotas_setor')
-                            ->where('id_setor', $keySetor)
+                            ->where('id_setor', $setor)
                             ->pluck('id_rotas')
                             ->toArray();
-    
+
                         $acessoTotal = array_intersect($acessoPerfil, $acessoSetor);
-    
+
                         foreach ($acessoTotal as $acesso) {
-                            DB::table('usuario_acesso')->insert([
-                                'id_usuario' => $idUsuario[0]->id,
-                                'id_setor' => $keySetor,
-                                'id_perfil' => $keyPerfil,
-                                'id_acesso' => $acesso
-                            ]);
+
+                            $countInserido = DB::table('usuario_acesso')
+                            ->where('id_usuario',$idUsuario[0]->id)
+                            ->where('id_setor',$setor)
+                            ->where('id_perfil',$keyPerfil)
+                            ->where('id_acesso',$acesso)
+                            ->count();
+
+                            if(!$countInserido){
+                                DB::table('usuario_acesso')->insert([
+                                    'id_usuario' => $idUsuario[0]->id,
+                                    'id_setor' => $setor,
+                                    'id_perfil' => $keyPerfil,
+                                    'id_acesso' => $acesso
+                                ]);
+                            }
+                           
                         }
                     }
                 }
-            } 
+            }
+        }
         // } catch (\Exception $e) {
 
         //     $code = $e->getCode();
