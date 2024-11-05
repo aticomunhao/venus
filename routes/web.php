@@ -37,7 +37,7 @@ use App\Http\Controllers\PresencaController;
 use App\Http\Controllers\PresencaDirigenteController;
 use App\Http\Controllers\GerenciarVersoesControllerController;
 use App\Http\Controllers\RelatoriosController;
-use App\Http\Controllers\GerenciarPassesControllerr;
+use App\Http\Controllers\GerenciarPassesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -119,7 +119,7 @@ Route::middleware('rotas:6')->group(function () {
     Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name('afidex');
     Route::get('/atender', [AtendimentoFraternoController::class, 'atende_agora'])->name('afiini');
     Route::get('/entrevistar/{idat}/{idas}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
-    Route::post('/entrevistas/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
+    Route::post('/entrevistas/{idat}/{idas}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
     Route::get('/fim-analise/{idat}', [AtendimentoFraternoController::class, 'fimanalise'])->name('afifna');
     Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
     Route::any('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
@@ -171,13 +171,15 @@ Route::middleware('rotas:8')->group(function () {
 });
 
 // Gerenciar Passes
-Route::middleware('rotas:8')->group(function () {
-Route::get('/gerenciar-passe', [GerenciarPassesControllerr::class, 'index'])->name('');
-Route::get('/editar-passe/{id}', [GerenciarPassesControllerr::class, 'edit'])->name('');
-Route::post('/atualizar-passe/{id}', [GerenciarPassesControllerr::class, 'update'])->name('');
-Route::any('/incluir-passe', [GerenciarPassesControllerr::class, 'incluir']);
-Route::get('/criar-passe/{id}', [GerenciarPassesControllerr::class, 'criar'])->name('');
-Route::get('/visualizar-passe/{id}', [GerenciarPassesControllerr::class, 'show'])->name('');
+Route::middleware('rotas:39')->group(function () {
+Route::get('/gerenciar-passe', [GerenciarPassesController::class, 'index'])->name('gpasses');
+Route::get('/editar-passe/{id}', [GerenciarPassesController::class, 'edit'])->name('');
+Route::post('/atualizar-passe/{id}', [GerenciarPassesController::class, 'update'])->name('');
+Route::post('/incluir-passe/{id}', [GerenciarPassesController::class, 'store'])->name('incluir.passe');
+Route::get('/criar-passe/{id}', [GerenciarPassesController::class, 'criar'])->name('');
+Route::get('/visualizar-passe/{id}', [GerenciarPassesController::class, 'show'])->name('visualizar.passe');
+
+
 
 });
 
@@ -276,6 +278,7 @@ Route::middleware("rotas:16-22-23")->group(function () {
     Route::get('/alterar-grupo-tratamento/{id}', [GerenciarEncaminhamentoController::class, 'escolherGrupo']);
     Route::get('/escolher-horario/{id}', [GerenciarEncaminhamentoController::class, 'escolherHorario']);
     Route::any('/trocar-grupo-tratamento/{id}', [GerenciarEncaminhamentoController::class, 'trocarGrupo']);
+    Route::any('/relatorio-vagas-grupos', [RelatoriosController::class, 'vagasGrupos']);
 });
 
 // Jobs de Tratamento
@@ -400,6 +403,7 @@ Route::middleware('rotas:33')->group(function () {
 //Relatório de Membro Grupo
 Route::middleware('rotas:34')->group(function () {
     Route::any('/gerenciar-relatorio-pessoas-grupo', [RelatoriosController::class, 'indexmembro']);
+    Route::any('/gerenciar-relatorio-setor-pessoas', [RelatoriosController::class, 'indexSetor']);
 });
 //Relatório de Reuniões
 Route::middleware('rotas:35')->group(function () {
