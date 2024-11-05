@@ -18,7 +18,7 @@
                             @foreach ($grupos2 as $gr)
                                 <option value="{{ $gr->idg }}"
                                     {{ request('nome_grupo') == $gr->idg ? 'selected' : '' }}>
-                                    {{ $gr->nomeg }} ({{ $gr->sigla }})
+                                    {{ $gr->nomeg }} ({{ $gr->sigla }})-{{ $gr->dia_semana }}
                                     | {{ date('H:i', strtotime($gr->h_inicio)) }}/{{ date('H:i', strtotime($gr->h_fim)) }}
                                     | Sala {{ $gr->sala }}
                                     | {{ $gr->status == 'Inativo' ? 'Inativo' : $gr->descricao_status }}

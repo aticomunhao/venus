@@ -113,6 +113,7 @@ class MembroController extends Controller
                 'cro.h_inicio',
                 'cro.h_fim',
                 'sl.numero as sala',
+                'td.nome as dia_semana',
                 'ts.descricao AS descricao_status',
                 DB::raw("(CASE WHEN cro.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status")
             )
@@ -165,12 +166,12 @@ class MembroController extends Controller
             })
             ->where(function ($query) use ($seletedCronograma) {
                 $query->where(function ($hour) use ($seletedCronograma) {
-                    $hour->where('rm.h_inicio', '<=', $seletedCronograma->h_inicio);
-                    $hour->where('rm.h_fim', '>=', $seletedCronograma->h_inicio);
+                    $hour->where('rm.h_inicio', '<', $seletedCronograma->h_inicio);
+                    $hour->where('rm.h_fim', '>', $seletedCronograma->h_inicio);
                 });
                 $query->orWhere(function ($hour) use ($seletedCronograma) {
-                    $hour->where('rm.h_inicio', '<=', $seletedCronograma->h_fim);
-                    $hour->where('rm.h_fim', '>=', $seletedCronograma->h_fim);
+                    $hour->where('rm.h_inicio', '<', $seletedCronograma->h_fim);
+                    $hour->where('rm.h_fim', '>', $seletedCronograma->h_fim);
                 });
             })
             ->first();
@@ -335,12 +336,13 @@ class MembroController extends Controller
                 })
                 ->where(function ($query) use ($seletedCronograma) {
                     $query->where(function ($hour) use ($seletedCronograma) {
-                        $hour->where('rm.h_inicio', '<=', $seletedCronograma->h_inicio);
-                        $hour->where('rm.h_fim', '>=', $seletedCronograma->h_inicio);
+                        $hour->where('rm.h_inicio', '<', $seletedCronograma->h_inicio);
+                        $hour->where('rm.h_fim', '>', $seletedCronograma->h_inicio);
                     });
                     $query->orWhere(function ($hour) use ($seletedCronograma) {
-                        $hour->where('rm.h_inicio', '<=', $seletedCronograma->h_fim);
-                        $hour->where('rm.h_fim', '>=', $seletedCronograma->h_fim);
+                        $hour->where('rm.h_inicio', '<', $seletedCronograma->h_fim);
+                        $hour->where('rm.h_fim', '>', $seletedCronograma->h_fim);
+
                     });
                 })
                 ->first();
