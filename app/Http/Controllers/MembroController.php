@@ -106,8 +106,20 @@ class MembroController extends Controller
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
             ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
-            ->select('cro.id AS idg', 'g.nome AS nomeg', 's.sigla', 'cro.h_inicio','cro.h_fim','sl.numero as sala','ts.descricao')
-            ->orderBy('g.nome', 'asc')->get();
+            ->select(
+                'cro.id AS idg',
+                'g.nome AS nomeg',
+                's.sigla',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'sl.numero as sala',
+                'ts.descricao AS descricao_status',
+                DB::raw("(CASE WHEN cro.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status")
+            )
+            ->orderBy('g.nome', 'asc')
+            ->get();
+
+
 
 
 

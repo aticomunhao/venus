@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Administrar Grupos')
 @section('content')
-<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
-<script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+    <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">ADMINISTRAR GRUPOS
@@ -13,17 +13,16 @@
                 <div class="row">
                     <div class="col-6">
                         Grupo
-                        <select class="form-select select2 grupo" type="text" id="nome_grupo" name="nome_grupo"
-                            value="{{ request('nome_grupo') }}">
-                            <option></option>
+                        <select class="form-select select2 grupo" id="nome_grupo" name="nome_grupo">
+                            <option value=""></option>
                             @foreach ($grupos2 as $gr)
-                            <option value="{{ $gr->idg }}">
-                                {{ $gr->nomeg }} ({{ $gr->sigla }})
-                                | {{ date('H:i', strtotime($gr->h_inicio)) }}/{{ date('H:i', strtotime($gr->h_fim)) }}
-                                | Sala {{ $gr->sala }}
-                                | {{ $gr->descricao }}
-                            </option>
-
+                                <option value="{{ $gr->idg }}"
+                                    {{ request('nome_grupo') == $gr->idg ? 'selected' : '' }}>
+                                    {{ $gr->nomeg }} ({{ $gr->sigla }})
+                                    | {{ date('H:i', strtotime($gr->h_inicio)) }}/{{ date('H:i', strtotime($gr->h_fim)) }}
+                                    | Sala {{ $gr->sala }}
+                                    | {{ $gr->status == 'Inativo' ? 'Inativo' : $gr->descricao_status }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -58,7 +57,7 @@
 
         </div>
         <br>
-      <hr>
+        <hr>
         Quantidade de grupos: {{ $contar }}
         <div class="table">
             <table
