@@ -545,7 +545,7 @@ class GerenciarAtendimentoController extends Controller
                     'g.nome AS nomeg',
                     's.id AS ids',
                     's.numero AS nm_sala',
-                    DB::raw("(CASE WHEN atd.dh_inicio < '$now' OR  NOT atd.dh_fim IS NULL THEN 'Inativo' ELSE 'Ativo' END) as status")
+                    DB::raw("(CASE WHEN NOT atd.dh_fim IS NULL THEN 'Inativo' ELSE 'Ativo' END) as status")
                 )
                 ->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')
                 ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')
