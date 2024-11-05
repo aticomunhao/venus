@@ -1,6 +1,11 @@
 <?php $acesso = session()->get('usuario.acesso');
 
-$setores = DB::table('setor as st')->leftJoin('setor as stp', 'st.setor_pai', 'stp.id')->leftJoin('setor as sta', 'stp.setor_pai', 'sta.id')->select('st.id as ids', 'stp.id as idp', 'sta.id as ida')->whereIn('st.id', session()->get('usuario.setor'))->get()->toArray();
+$setores = DB::table('setor as st')
+    ->leftJoin('setor as stp', 'st.setor_pai', 'stp.id')
+    ->leftJoin('setor as sta', 'stp.setor_pai', 'sta.id')
+    ->select('st.id as ids', 'stp.id as idp', 'sta.id as ida')
+    ->whereIn('st.id', array_column(session()->get('acessoInterno'), 'id_setor'))->get()
+    ->toArray();
 
 $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column($setores, 'idp'), array_column($setores, 'ida')));
 
@@ -34,7 +39,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             @endif
                             @if (in_array(23, $acesso) or in_array(22, $acesso) or in_array(16, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Encaminhamentos
-                                        </a></li>
+                                    </a></li>
                             @endif
 
                             @if (in_array(9, $acesso))
@@ -70,8 +75,8 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(18, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos/Presença</a>
-                            </li>
+                                <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos/Presença</a>
+                                </li>
                             @endif
                         </ul>
                     </li>
