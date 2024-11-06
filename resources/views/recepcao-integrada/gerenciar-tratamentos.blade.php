@@ -171,9 +171,10 @@
 
                         @if ($listas->status == 1 or $listas->status == 2)
                             {{-- Botão de presença --}}
-                            <button type="button" class="btn btn-outline-warning tooltips" data-bs-toggle="modal"
-                                data-bs-target="#presenca{{ $listas->idtr }}"><span class="tooltiptext">Presença</span><i
-                                    class="bi bi bi-exclamation-triangle"
+                            <button type="button" class="btn btn-outline-warning tooltips btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#presenca{{ $listas->idtr }}">
+                                <span class="tooltiptext">Presença</span><i
+                                    class="bi bi-exclamation-triangle"
                                     style="font-size: 1rem; color:#000;"></i></button>
                         @else
                             <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"

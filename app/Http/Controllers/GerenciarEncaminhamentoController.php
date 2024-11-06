@@ -61,7 +61,14 @@ class GerenciarEncaminhamentoController extends Controller
                 $lista->where('enc.dh_enc', '>=', $request->dt_enc);
             }
             if ($request->assist) {
-                $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->assist}%"]);
+
+                $pesquisaNome = array();
+                $pesquisaNome = explode(' ', $request->assist);
+    
+                foreach($pesquisaNome as $itemPesquisa){
+                    $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+                }
+
             }
             if ($request->cpf) {
                 
