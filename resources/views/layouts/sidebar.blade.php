@@ -1,6 +1,11 @@
 <?php $acesso = session()->get('usuario.acesso');
 
-$setores = DB::table('setor as st')->leftJoin('setor as stp', 'st.setor_pai', 'stp.id')->leftJoin('setor as sta', 'stp.setor_pai', 'sta.id')->select('st.id as ids', 'stp.id as idp', 'sta.id as ida')->whereIn('st.id', session()->get('usuario.setor'))->get()->toArray();
+$setores = DB::table('setor as st')
+    ->leftJoin('setor as stp', 'st.setor_pai', 'stp.id')
+    ->leftJoin('setor as sta', 'stp.setor_pai', 'sta.id')
+    ->select('st.id as ids', 'stp.id as idp', 'sta.id as ida')
+    ->whereIn('st.id', array_column(session()->get('acessoInterno'), 'id_setor'))->get()
+    ->toArray();
 
 $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column($setores, 'idp'), array_column($setores, 'ida')));
 
@@ -32,9 +37,9 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Especifico</a>
                                 </li>
                             @endif
-                            @if (in_array(23, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-integral">Encaminhamentos
-                                        Integral</a></li>
+                            @if (in_array(23, $acesso) or in_array(22, $acesso) or in_array(16, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Encaminhamentos
+                                    </a></li>
                             @endif
 
                             @if (in_array(9, $acesso))
@@ -70,8 +75,8 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(18, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos</a>
-                            </li>
+                                <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos/Presença</a>
+                                </li>
                             @endif
                         </ul>
                     </li>
@@ -106,7 +111,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-atendimentos">Cadastrar Assistido
                                     </a></li>
                             @endif
-                            @if (in_array(16, $acesso))
+                            @if (in_array(23, $acesso) or in_array(22, $acesso) or in_array(16, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">
                                         Encaminhamentos</a>
                                 </li>
@@ -133,7 +138,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                     <li><a class="dropdown-item" href="/gerenciar-reunioes">Reuniões</a></li>
                                 @endif --}}
                             @if (in_array(18, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos</a>
+                                <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos/Presença</a>
                                 </li>
                             @endif
                             @if (in_array(31, $acesso))
@@ -169,9 +174,8 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
                                 </li>
                             @endif
-                            @if (in_array(22, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-encaminhamentos-pti">Encaminhamentos
-                                        PTI</a>
+                            @if (in_array(23, $acesso) or in_array(22, $acesso) or in_array(16, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Encaminhamentos</a>
                                 </li>
                             @endif
 
@@ -188,6 +192,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             @if (in_array(15, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-mediunidades">
                                         Mediunidades</a></li>
+                            @endif
+                            @if (in_array(39, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-passe">
+                                        Passes</a></li>
                             @endif
                             @if (in_array(30, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença

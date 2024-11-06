@@ -102,7 +102,7 @@
                                 <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
                                     data-bs-target="#inativa{{ $listas->id }}">
                                     <!-- Altere o data-bs-target para o ID correto -->
-                                    <span class="tooltiptext">Excluir</span>
+                                    <span class="tooltiptext">Inativar</span>
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </button>
 
@@ -114,7 +114,7 @@
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header" style="background-color:#DC4C64;color:white">
-                                                    <h1 class="modal-title fs-5" id="inativarLabel">Exclusão</h1>
+                                                    <h1 class="modal-title fs-5" id="inativarLabel">Inativação</h1>
                                                     <button data-bs-dismiss="modal" type="button" class="btn-close"
                                                         aria-label="Close"></button>
                                                 </div>
@@ -122,16 +122,16 @@
                                                 <div class="modal-body">
                                                     <label for="recipient-name" class="col-form-label"
                                                         style="font-size:17px">
-                                                        Tem certeza que deseja excluir:<br />
+                                                        Tem certeza que deseja inativar:<br />
                                                         <span
-                                                            style="color:#DC4C64; font-weight: bold;">{{ $listas->nome }}</span>&#63;
+                                                            style="color:#DC4C64; font-weight: bold;">{{ $listas->nome }} - {{ $listas->sigset }}</span>&#63;
                                                     </label>
                                                     <br />
 
                                                     <center>
                                                         <div class="mb-2 col-10">
                                                             <label class="col-form-label">Insira o motivo da
-                                                                <span style="color:#DC4C64">exclusão:</span>
+                                                                <span style="color:#DC4C64">inativação:</span>
                                                             </label>
                                                             <br>
                                                             <select class="form-select teste1" name="motivo" required>

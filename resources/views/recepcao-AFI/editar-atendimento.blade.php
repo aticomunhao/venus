@@ -184,7 +184,7 @@
                             <option></option>
                             @foreach ($afi as $afis)
                                 <option value="{{ $afis->iaf }}"
-                                    {{ isset($afiSelecionado[0]) == $afis->iaf ? 'selected' : '' }}> {{ $afis->nm_afi }}
+                                    {{ $afiSelecionado == $afis->iaf ? 'selected' : '' }}> {{ $afis->nm_afi }}
                                 </option>
                             @endforeach
                         </select>

@@ -47,6 +47,15 @@ class Faltas implements ShouldQueue
 
         $inseridos = json_decode(json_encode($inseridos), true);
 
+        $idsTrocaDeGrupo = DB::table('tratamento_grupos')
+        ->leftJoin('cronograma', 'tratamento_grupos.id_cronograma', 'cronograma.id')
+        ->where('tratamento_grupos.dt_inicio', $data_atual)
+        ->where('dia_semana', $dia_atual)
+        ->pluck('id_tratamento');
+
+        
+
+
         $lista = DB::table('tratamento AS tr')
         ->select('tr.id', 'tr.id_reuniao')
         ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
@@ -56,7 +65,8 @@ class Faltas implements ShouldQueue
             $query->where('rm.modificador', NULL);
             $query->orWhere('rm.modificador','<>', 4);
         })
-        ->whereNotIn('tr.id', $inseridos )
+        ->whereNotIn('tr.id', $inseridos)
+        ->whereNotIn('tr.id', $idsTrocaDeGrupo)
         ->get();
 
 

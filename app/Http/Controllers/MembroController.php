@@ -12,7 +12,7 @@ class MembroController extends Controller
 {
     public function grupos(Request $request)
     {
-        
+
 
             $now = Carbon::now()->format('Y-m-d');
 
@@ -20,12 +20,14 @@ class MembroController extends Controller
             ->leftJoin('associado', 'associado.id', '=', 'm.id_associado')
             ->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
-            ->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+            ->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')
             ->whereIn('g.id_setor', session()
             ->get('usuario.setor'));
 
+
             if (!in_array(36, session()->get('usuario.acesso'))) {
-                $cronogramasLogin = $cronogramasLogin->where('id_associado', session()->get('usuario.id_associado'))->where('m.id_funcao', [1, 2]);
+                $cronogramasLogin = $cronogramasLogin->where('id_associado', session()->get('usuario.id_associado'))->whereIn('m.id_funcao', [1, 2]);
             }
             $cronogramasLogin = $cronogramasLogin->pluck('m.id_cronograma');
 
@@ -81,7 +83,7 @@ class MembroController extends Controller
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', '=', 'cro.id')
             ->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')
-           
+
             ->select('p.nome_completo', 'm.id_associado')
             ->whereIn('m.id_cronograma', $cronogramasLogin)
             ->whereIn('g.id_setor', session()->get('usuario.setor'))->distinct()->get();
@@ -93,7 +95,7 @@ class MembroController extends Controller
             $membro_cronograma = $membro_cronograma->orderBy('status')
             ->orderBy('nome_grupo')
             ->paginate(50);
-        
+
 
             $nome = $request->nome_grupo;
             $membroPesquisa = $request->nome_membro;
@@ -103,13 +105,27 @@ class MembroController extends Controller
             ->leftJoin('cronograma as cro', 'g.id', '=', 'cro.id_grupo')
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
-            ->select('cro.id AS idg', 'g.nome AS nomeg', 's.sigla', 'cro.h_inicio','cro.h_fim','sl.numero as sala',)
-            ->orderBy('g.nome', 'asc')->get();
+            ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
+            ->select(
+                'cro.id AS idg',
+                'g.nome AS nomeg',
+                's.sigla',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'sl.numero as sala',
+                'td.nome as dia_semana',
+                'ts.descricao AS descricao_status',
+                DB::raw("(CASE WHEN cro.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status")
+            )
+            ->orderBy('g.nome', 'asc')
+            ->get();
 
-         
+
+
+
 
             return view('membro.listar-grupos-membro', compact('grupos2','membro_cronograma','contar', 'nome', 'membro', 'membroPesquisa'));
-      
+
     }
 
     public function createGrupo(Request $request, string $id)
@@ -150,12 +166,12 @@ class MembroController extends Controller
             })
             ->where(function ($query) use ($seletedCronograma) {
                 $query->where(function ($hour) use ($seletedCronograma) {
-                    $hour->where('rm.h_inicio', '<=', $seletedCronograma->h_inicio);
-                    $hour->where('rm.h_fim', '>=', $seletedCronograma->h_inicio);
+                    $hour->where('rm.h_inicio', '<', $seletedCronograma->h_inicio);
+                    $hour->where('rm.h_fim', '>', $seletedCronograma->h_inicio);
                 });
                 $query->orWhere(function ($hour) use ($seletedCronograma) {
-                    $hour->where('rm.h_inicio', '<=', $seletedCronograma->h_fim);
-                    $hour->where('rm.h_fim', '>=', $seletedCronograma->h_fim);
+                    $hour->where('rm.h_inicio', '<', $seletedCronograma->h_fim);
+                    $hour->where('rm.h_fim', '>', $seletedCronograma->h_fim);
                 });
             })
             ->first();
@@ -168,9 +184,9 @@ class MembroController extends Controller
         ->join('cronograma AS c', 'm.id_cronograma', '=', 'c.id')
         ->where('m.id_associado', $request->input('id_associado'))
         ->where('m.id_funcao', $request->input('id_funcao'))
-        ->where('c.id', $request->input('id_reuniao'))
+        ->where('c.id', $id)
         ->exists();
-     
+
     // Se o membro já estiver registrado na mesma função e grupo, bloquear o cadastro
     if ($repetfuncao) {
         app('flasher')->addError('Este membro já está cadastrado nesta função para o mesmo grupo.');
@@ -225,8 +241,9 @@ class MembroController extends Controller
                     DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END) as status")
                 )
                 ->orderBy('status')
+                ->orderBy('id_funcao')
                 ->orderBy('p.nome_completo', 'ASC');
-      
+
 
             // Filtros
             $nome = $request->nome_pesquisa;
@@ -319,12 +336,13 @@ class MembroController extends Controller
                 })
                 ->where(function ($query) use ($seletedCronograma) {
                     $query->where(function ($hour) use ($seletedCronograma) {
-                        $hour->where('rm.h_inicio', '<=', $seletedCronograma->h_inicio);
-                        $hour->where('rm.h_fim', '>=', $seletedCronograma->h_inicio);
+                        $hour->where('rm.h_inicio', '<', $seletedCronograma->h_inicio);
+                        $hour->where('rm.h_fim', '>', $seletedCronograma->h_inicio);
                     });
                     $query->orWhere(function ($hour) use ($seletedCronograma) {
-                        $hour->where('rm.h_inicio', '<=', $seletedCronograma->h_fim);
-                        $hour->where('rm.h_fim', '>=', $seletedCronograma->h_fim);
+                        $hour->where('rm.h_inicio', '<', $seletedCronograma->h_fim);
+                        $hour->where('rm.h_fim', '>', $seletedCronograma->h_fim);
+
                     });
                 })
                 ->first();
@@ -552,5 +570,10 @@ class MembroController extends Controller
             $code = $e->getCode();
             return view('administrativo-erro.erro-inesperado', compact('code'));
         }
+    }
+
+    public function selecionar(Request $request){
+
+        return view('membro.transferir');
     }
 }

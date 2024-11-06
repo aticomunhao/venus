@@ -23,6 +23,14 @@
                 @endforeach
                 </select>
             </div>
+            <div class="col-2">
+                Setor
+                <select class="form-select select2" id="setor" name="setor">
+                    @foreach ($setoresPesquisa as $setorPesquisa)
+                    <option value="{{$setorPesquisa->id}}" {{$requestSetor == $setorPesquisa->id ? 'selected' : ''}}>{{$setorPesquisa->nome}} - {{$setorPesquisa->sigla}}</option>
+                @endforeach
+                </select>
+            </div>
             <div class="col mt-3">
                 <input class="btn btn-light btn-sm me-md-2"
                     style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
@@ -107,7 +115,7 @@
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
 
-                locale: 'br',
+                locale: 'us',
                 timeZone: 'BRT',
                 themeSystem: 'bootstrap5',
                 aspectRatio: 1.8,
