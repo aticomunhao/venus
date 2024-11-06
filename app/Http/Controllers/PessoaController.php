@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pessoa;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -34,8 +35,34 @@ class PessoaController extends Controller
 
         $nome = $request->nome;
         if ($request->nome) {
-            $pessoa->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome}%"]);
+
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $request->nome);
+            $margemErro = 0;
+            foreach ($pesquisaNome as $itemPesquisa) {
+
+                $bufferPessoa = (clone $pessoa);
+                $pessoa =  $pessoa->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+
+                if (count($pessoa->get()->toArray()) < 1) {
+                    $pessoaVazia = (clone $pessoa);
+                    $pessoa = $bufferPessoa;
+                    $margemErro += 1;
+                }
+            }
+
+
+            if ($margemErro == 0) {
+            } else if ($margemErro < (count($pesquisaNome) / 2)) {
+                app('flasher')->addWarning('Nenhum Item Encontrado. Mostrando Pesquisa Aproximada');
+            } else {
+                //Transforma a variavel em algo vazio
+                $pessoa = $pessoaVazia;
+                app('flasher')->addError('Nenhum Item Encontrado!');
+            }
         }
+
+
 
         $cpf = $request->cpf;
 
@@ -60,11 +87,11 @@ class PessoaController extends Controller
 
         //Diz método Undefined mas ele funciona
         $pessoa = $pessoa->orderBy('p.status', 'desc')->orderBy('p.nome_completo', 'asc')->paginate(30)
-        ->appends([
-            'nome' => $nome,
-            'cpf' => $cpf,
-            'status' => $status
-        ]);
+            ->appends([
+                'nome' => $nome,
+                'cpf' => $cpf,
+                'status' => $status
+            ]);
 
         $stap = DB::select("select
                         id as ids,
@@ -73,7 +100,6 @@ class PessoaController extends Controller
                         ");
 
         $soma = $pessoa->count();
-
 
 
 

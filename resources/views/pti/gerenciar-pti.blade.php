@@ -100,14 +100,14 @@
                                     <span class="tooltiptext">Declarar Alta</span>
                                     <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                              
+
                             @else
                                 <button type="button" class="btn btn-outline-warning btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
                                     <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                              
+
                             @endif
 
                             <a href="/visualizar-pti/{{ $encaminhamento->id }}" type="button"
@@ -136,11 +136,11 @@
 
                                         </div>
                                         <div class="modal-footer mt-2">
-                                            <button type="button" class="btn btn-secondary"
+                                            <button type="button" class="btn btn-danger"
                                                 data-bs-dismiss="modal">Cancelar</button>
-                                            <a type="button" class="btn btn-danger"
+                                            <a type="button" class="btn btn-primary"
                                                 href="/alta-pti/{{ $encaminhamento->id }}">Confirmar
-                                                Alta</a>
+                                                </a>
                                         </div>
                                     </div>
                                 </div>
