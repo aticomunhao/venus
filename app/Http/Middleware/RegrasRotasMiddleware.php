@@ -16,15 +16,15 @@ class RegrasRotasMiddleware
      */
     public function handle(Request $request, Closure $next, Mixed $rota): Response
     {
-        
+
         try {
             $rotasAutorizadas = session()->get('usuario.acesso');
-          
+            session()->put('acessoAtual', $rota);
             if (!$rotasAutorizadas) {
                 app('flasher')->addError('É necessário fazer login para acessar!');
                 return redirect('/');
             } else if(count(explode('-', $rota)) > 1){
-              
+
                 foreach(explode('-', $rota) as $id){
                     if(in_array($id, $rotasAutorizadas)){
                         return $next($request);
