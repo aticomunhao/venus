@@ -23,7 +23,7 @@
                             <input class="form-control" type="text" name="nome" value="{{$assistido[0]->nm_1}}" disabled>
                         </div>
                     </div>
-                    <form class="form-horizontal mt-4" method="POST" action="/entrevistas/{{$assistido[0]->idat}}">
+                    <form class="form-horizontal mt-4" method="POST" action="/entrevistas/{{$assistido[0]->idat}}/{{$atendido[0]->idas}}">
                     @csrf
                     <div class="row">
                         <div class="col">
