@@ -55,10 +55,7 @@ class GerenciarPassesController extends Controller
         $status = $request->input('status', null);
 
 
-        // Aplica filtro por setor se não estiver no setor 25
-        if (!in_array(25, session()->get('usuario.setor'))) {
-            $reuniao->whereIn('gr.id_setor', session()->get('usuario.setor'));
-        }
+      
 
         // Aplica filtro por semana
         if ($semana && $semana !== 'todos') {
