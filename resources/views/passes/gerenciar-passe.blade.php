@@ -42,7 +42,7 @@
         <div class="row">
             <div class="table-responsive">
                 <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
-                    <thead style="text-align: center; position: sticky; top: 0; z-index: 10; background-color: #d6e3ff;">
+                    <thead style="text-align: center; background-color: #d6e3ff;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             {{-- <th>NR</th> --}}
                             <th>GRUPO</th>
