@@ -151,7 +151,7 @@ class RelatoriosController extends Controller
 
         //Gera numa variável a contagem total de cada item de presença
         $contaFaltas = array_count_values(array_column($dados, 'presenca'));
-         dd($diasAtendente, $cronogramaAFI, $dados, $cronogramasParticipa, $contaFaltas);
+        dd($diasAtendente, $cronogramaAFI, $dados, $cronogramasParticipa, $contaFaltas);
 
         // Devolve todos os atendentes membros de uma reunião
         $atendentes = DB::table('membro as m')
@@ -284,7 +284,7 @@ class RelatoriosController extends Controller
         json_encode($eventosCronogramas);
 
         //   dd($cronogramas, $eventosCronogramas);
-        return view('relatorios.relatorio-salas-cronograma', compact('requestSetor', 'setoresPesquisa','eventosCronogramas', 'salas', 'cronogramasPesquisa', 'requestSala', 'requestGrupo'));
+        return view('relatorios.relatorio-salas-cronograma', compact('requestSetor', 'setoresPesquisa', 'eventosCronogramas', 'salas', 'cronogramasPesquisa', 'requestSala', 'requestGrupo'));
     }
 
     public function indexmembro(Request $request)
@@ -298,8 +298,12 @@ class RelatoriosController extends Controller
 
         // Definir o número de itens por página
         $itemsPerPage = 50;
-        $setoresAutorizado = session()->get('usuario.setor');
-        
+        $setoresAutorizado = array();
+        foreach (session()->get('acessoInterno') as $perfil) {
+
+            $setoresAutorizado = array_merge($setoresAutorizado, array_column($perfil, 'id_setor'));
+        }
+
         // Obter os atendentes para o select2
         $atendentesParaSelect = DB::table('membro AS m')
             ->select('m.id_associado AS ida', 'p.nome_completo AS nm_4')
@@ -391,8 +395,13 @@ class RelatoriosController extends Controller
 
         // Definir o número de itens por página
         $itemsPerPage = 50;
-        $setoresAutorizado = session()->get('usuario.setor');
-        
+        $itemsPerPage = 50;
+        $setoresAutorizado = array();
+        foreach (session()->get('acessoInterno') as $perfil) {
+
+            $setoresAutorizado = array_merge($setoresAutorizado, array_column($perfil, 'id_setor'));
+        }
+
         // Obter os atendentes para o select2
         $atendentesParaSelect = DB::table('membro AS m')
             ->select('m.id_associado AS ida', 'p.nome_completo AS nm_4')
@@ -443,13 +452,13 @@ class RelatoriosController extends Controller
 
         // Paginar os resultados
         $membros = $membrosQuery->paginate(50)
-        ->appends([
-            'setor' => $setorId,
-            'grupo' => $grupoId,
-            'dia' => $diaId,
-            'funcao' => $funcaoId,
-            'nome' => $nomeId,
-        ]);
+            ->appends([
+                'setor' => $setorId,
+                'grupo' => $grupoId,
+                'dia' => $diaId,
+                'funcao' => $funcaoId,
+                'nome' => $nomeId,
+            ]);
 
         // Obter os grupos
         $grupo = DB::table('grupo')
@@ -471,12 +480,12 @@ class RelatoriosController extends Controller
 
         $funcao = DB::table('tipo_funcao')->get();
 
-     
+
 
         //      dd($membros, $result);
 
-       
-     
+
+
         return view('relatorios.gerenciar-relatorio-setor-pessoas', compact('membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect', 'funcao'));
     }
 
@@ -724,24 +733,23 @@ class RelatoriosController extends Controller
 
         return view('relatorios.visualizar-assistido-reuniao', compact('id', 'presencasAssistidosArray', 'presencasMembrosArray', 'presencasCountAssistidos', 'presencasCountMembros', 'dt_inicio', 'dt_fim', 'grupo'));
     }
-    public function vagasGrupos(Request $request){
+    public function vagasGrupos(Request $request)
+    {
 
         $grupos = DB::table('cronograma as cro')
-        ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
-        ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
-        ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
-        ->select(DB::raw(' (select count(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 5) as trat'),'gr.nome as nome', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 'st.sigla as setor', 'cro.max_atend')
-        ->orderBy('gr.nome');
-        if($request->grupo){
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
+            ->select(DB::raw(' (select count(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 5) as trat'), 'gr.nome as nome', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 'st.sigla as setor', 'cro.max_atend')
+            ->orderBy('gr.nome');
+        if ($request->grupo) {
             $grupos = $grupos->whereRaw("UNACCENT(LOWER(gr.nome)) ILIKE UNACCENT(LOWER(?))", ["%{$request->grupo}%"]);
         }
-        
-      
+
+
         $grupos = $grupos->paginate(30)->appends(['grupo' => $request->grupo]);
 
         return view('relatorios.vagas-grupos', compact('grupos'));
-
-
     }
 
     public function teste()
