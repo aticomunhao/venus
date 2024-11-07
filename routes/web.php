@@ -71,6 +71,7 @@ Route::middleware('rotas:1')->group(function () {
     Route::any('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
     Route::get('/usuario/excluir/{id}', [UsuarioController::class, 'destroy']);
     Route::get('/usuario-incluir', [UsuarioController::class, 'create']);
+    Route::get('/usuario-regenerar-acessos', [UsuarioController::class, 'regenerarAcessos']);
 });
 
 // Gerenciar Pessoas
