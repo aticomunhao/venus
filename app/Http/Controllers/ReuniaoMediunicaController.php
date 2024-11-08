@@ -138,7 +138,7 @@ class ReuniaoMediunicaController extends Controller
                 }
             }
 
-            // Fetch the results
+
             $grupo = $grupo->get();
 
 
@@ -161,7 +161,7 @@ class ReuniaoMediunicaController extends Controller
             ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
             ->get();
 
-          
+
 
 
         return view('/reuniao-mediunica/criar-reuniao', compact('grupo', 'tipo',  'tratamento',  'dia', 'salas'));
@@ -304,7 +304,14 @@ class ReuniaoMediunicaController extends Controller
                 ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
                 ->where('id_tipo_grupo', 1)
                 ->orderBy('gr.nome');
+                if (is_array(session()->get('usuario.setor')) && !empty(session()->get('usuario.setor'))) {
+                    if (!in_array(25, session()->get('usuario.setor'))) {
+                        $grupo = $grupo->whereIn('gr.id_setor', session()->get('usuario.setor') ?? []);
+                    }
+                }
 
+
+                $grupo = $grupo->get();
 
             $tipo = DB::table('tipo_grupo AS tg')
                 ->select('tg.id AS idtg', 'tg.nm_tipo_grupo')
@@ -335,12 +342,7 @@ class ReuniaoMediunicaController extends Controller
                 ->where('crn.id', "$id")
                 ->first();
 
-            if (in_array(25, session()->get('usuario.setor'))) {
-            } else {
-                $grupo = $grupo->whereIn('gr.id_setor', session()->get('usuario.setor'));
-            }
 
-            $grupo = $grupo->get();
 
             return view('/reuniao-mediunica/editar-reuniao', compact('info', 'salas', 'grupo', 'tipo',  'tratamento',  'dia'));
         } catch (\Exception $e) {
