@@ -81,7 +81,7 @@
             <tbody>
                 @foreach ($membro as $membros)
                     <tr>
-                        <td>{{ $membros->idm }}</td>
+                        <td>{{ $membros->ida }}</td>
                         <td>{{ $membros->nome_completo }}</td>
                         <td>{{ $membros->nome_funcao }}</td>
                         <td>{{ $membros->status }}</td>

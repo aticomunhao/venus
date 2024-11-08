@@ -267,6 +267,7 @@ class MembroController extends Controller
             ->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')
             ->where('m.id_cronograma', $id)
             ->select(
+                'associado.id as ida',
                 'p.nome_completo',
                 'm.id AS idm',
                 'm.id_associado',
