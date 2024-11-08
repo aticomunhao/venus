@@ -55,7 +55,7 @@ class GerenciarPassesController extends Controller
         $status = $request->input('status', null);
 
 
-      
+
 
         // Aplica filtro por semana
         if ($semana && $semana !== 'todos') {
@@ -163,14 +163,22 @@ class GerenciarPassesController extends Controller
         ->where('id_cronograma', $id)
         ->where('data', $hoje)
         ->first();
+        if ($registro) {
+            // Atualiza o número de acompanhantes
+            DB::table('dias_cronograma')
+                ->where('id_cronograma', $id)
+                ->where('data', $hoje)
+                ->update([
+                    'nr_acompanhantes' => $request->acompanhantes,
+                ]);
 
-    if ($registro) {
-        // Atualiza o número de acompanhantes
-        DB::table('dias_cronograma')
-            ->where('id_cronograma', $id)
-            ->where('data', $hoje)
-            ->update([
-                'nr_acompanhantes' => $request->acompanhantes,
+            // Insere um registro no histórico
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $hoje,
+                'pessoa' => $request->input('nome'),
+                'obs' => 'Quantidade de passes registrada no cronograma.',
+                'fato' => 22,
             ]);
 
         return redirect('/gerenciar-passe')->with('success', 'Quantidade de passes registrada com sucesso!');
@@ -235,13 +243,21 @@ class GerenciarPassesController extends Controller
     {
 
         $hoje = $request->data;
-
+        
 
         DB::table('dias_cronograma')
         ->where('id_cronograma',$id)
         ->where('data',$hoje)
         ->update([
         'nr_acompanhantes' => $request->nr_acompanhantes,
+        ]);
+
+        DB::table('historico_venus')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $hoje,
+            'pessoa' => $request->input('nome'),
+            'obs' => 'Quantidade de passes editada no cronograma.',
+            'fato' => 23,
         ]);
 
         return redirect('/gerenciar-passe')->with('success', 'Quantidade de passes alterada com sucesso!');
