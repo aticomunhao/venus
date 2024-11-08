@@ -116,7 +116,7 @@ class ReuniaoMediunicaController extends Controller
 
          // Carregar a lista de grupos para o Select2
         $grupos = DB::table('grupo AS g')->leftJoin('setor AS s', 'g.id_setor', 's.id')->select('g.id AS idg', 'g.nome AS nomeg', 's.sigla')->orderBy('g.nome', 'asc')->get();
-   
+
 
         // Retorna a view com os dados
         return view('/reuniao-mediunica/gerenciar-reunioes', compact('tipo_motivo','reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores'));
@@ -131,6 +131,15 @@ class ReuniaoMediunicaController extends Controller
             ->leftJoin('setor as s', 'gr.id_setor', 's.id')
             ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
             ->orderBy('gr.nome');
+
+            if (is_array(session()->get('usuario.setor')) && !empty(session()->get('usuario.setor'))) {
+                if (!in_array(25, session()->get('usuario.setor'))) {
+                    $grupo = $grupo->whereIn('gr.id_setor', session()->get('usuario.setor') ?? []);
+                }
+            }
+
+            // Fetch the results
+            $grupo = $grupo->get();
 
 
         $tipo = DB::table('tipo_grupo AS tg')
@@ -152,12 +161,7 @@ class ReuniaoMediunicaController extends Controller
             ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
             ->get();
 
-        if (in_array(25, session()->get('usuario.setor'))) {
-        } else {
-            $grupo = $grupo->whereIn('gr.id_setor', session()->get('usuario.setor'));
-        }
-
-        $grupo = $grupo->get();
+          
 
 
         return view('/reuniao-mediunica/criar-reuniao', compact('grupo', 'tipo',  'tratamento',  'dia', 'salas'));
@@ -440,7 +444,7 @@ class ReuniaoMediunicaController extends Controller
             app('flasher')->addSuccess('A reunião foi inativada com sucesso.');
         }
         else{
-            
+
             return redirect()->back();
 
             app('flasher')->addError('A reunião já está inativa.');
