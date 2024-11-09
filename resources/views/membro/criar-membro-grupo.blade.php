@@ -7,7 +7,7 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col">
-                        CADASTRAR MEMBR
+                        CADASTRAR MEMBRO
                     </div>
                 </div>
             </div>
