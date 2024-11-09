@@ -176,7 +176,7 @@ class MembroController extends Controller
             $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas order by nome_completo asc');
             $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao order by nome asc');
             $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-            $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('pessoas.nome_completo', 'associado.id')->orderBy('pessoas.nome_completo', 'asc')->get();
+            $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa','associado.nr_associado')->select('pessoas.nome_completo', 'associado.id','associado.nr_associado')->orderBy('pessoas.nome_completo', 'asc')->get();
 
             return view('membro/criar-membro-grupo', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao', 'id'));
         } catch (\Exception $e) {
@@ -349,7 +349,7 @@ class MembroController extends Controller
         $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas order by nome_completo asc');
         $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao order by nome asc');
         $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-        $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('pessoas.nome_completo', 'associado.id')->orderBy('pessoas.nome_completo', 'asc')->get();
+        $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('pessoas.nome_completo', 'associado.id','associado.nr_associado')->orderBy('pessoas.nome_completo', 'asc')->get();
 
 
 
