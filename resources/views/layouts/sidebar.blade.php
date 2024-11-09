@@ -4,7 +4,7 @@ $setores = Array();
 foreach(session()->get('acessoInterno') as $perfil){
 
    $setores = array_merge($setores, array_column($perfil, 'id_setor'));
- 
+
 }
 
 
@@ -15,7 +15,7 @@ $setores = DB::table('setor as st')
     ->whereIn('st.id', $setores)
     ->get()
     ->toArray();
-   
+
 $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column($setores, 'idp'), array_column($setores, 'ida')));
 ?>
 
@@ -57,10 +57,6 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
 
                             @if (in_array(3, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-pessoas">Pessoas</a></li>
-                            @endif
-
-                            @if (in_array(19, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-reunioes">Reuniões </a></li>
                             @endif
 
                             @if (in_array(25, $acesso))

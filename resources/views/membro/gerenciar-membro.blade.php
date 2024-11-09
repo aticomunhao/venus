@@ -14,14 +14,14 @@
                         <select class="form-select select2" name="nome_pesquisa">
                             <option value=""></option>
                             @foreach ($membro as $membros)
-                                <option value="{{ $membros->nome_completo }}" 
+                                <option value="{{ $membros->nome_completo }}"
                                     {{ request('nome_pesquisa') == $membros->nome_completo ? 'selected' : '' }}>
                                     {{ $membros->nome_completo }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    
+
                     <div class="col-2">
                         Status
                         <select class="form-select" name="status">
@@ -33,9 +33,9 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div> 
-                    
-                     
+                    </div>
+
+
 
                     <div class="col">
                         <br>
@@ -71,7 +71,7 @@
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
             <thead>
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                    <th>ID</th>
+                    <th>NºASSOCIADO</th>
                     <th>NOME DO MÉDIUM</th>
                     <th>FUNÇÃO</th>
                     <th>STATUS PESSOA</th>
@@ -81,7 +81,7 @@
             <tbody>
                 @foreach ($membro as $membros)
                     <tr>
-                        <td>{{ $membros->ida }}</td>
+                        <td>{{ $membros->nr_associado }}</td>
                         <td>{{ $membros->nome_completo }}</td>
                         <td>{{ $membros->nome_funcao }}</td>
                         <td>{{ $membros->status }}</td>
@@ -142,7 +142,7 @@
                                                 <input type="date" name="data_inativacao" id="data_inativacao{{ $membros->idm }}" class="form-control mb-3" required>
                                             </div>
                                         </center>
-                                        
+
                                             <div class="modal-footer mt-3 ">
                                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
                                                 <button type="submit" class="btn btn-primary">Confirmar</button>
@@ -152,7 +152,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
 
                     <!-- Modal de confirmação para deletar -->
                     <div class="modal fade" id="confirmDelete{{ $membros->idm }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

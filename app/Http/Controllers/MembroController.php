@@ -123,7 +123,7 @@ class MembroController extends Controller
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', '=', 'cro.id')
             ->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')
-            ->select('p.nome_completo', 'm.id_associado')
+            ->select('p.nome_completo', 'm.id_associado','associado.nr_associado')
             ->whereIn('m.id_cronograma', $cronogramasLogin)
            // ->whereIn('g.id_setor', session()->get('usuario.setor'))
             ->distinct()
@@ -268,6 +268,7 @@ class MembroController extends Controller
             ->where('m.id_cronograma', $id)
             ->select(
                 'associado.id as ida',
+                'associado.nr_associado',
                 'p.nome_completo',
                 'm.id AS idm',
                 'm.id_associado',
