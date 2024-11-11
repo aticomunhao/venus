@@ -123,7 +123,7 @@ class MembroController extends Controller
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', '=', 'cro.id')
             ->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')
-            ->select('p.nome_completo', 'm.id_associado')
+            ->select('p.nome_completo', 'm.id_associado','associado.nr_associado')
             ->whereIn('m.id_cronograma', $cronogramasLogin)
            // ->whereIn('g.id_setor', session()->get('usuario.setor'))
             ->distinct()
@@ -176,7 +176,7 @@ class MembroController extends Controller
             $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas order by nome_completo asc');
             $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao order by nome asc');
             $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-            $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('pessoas.nome_completo', 'associado.id')->orderBy('pessoas.nome_completo', 'asc')->get();
+            $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa','associado.nr_associado')->select('pessoas.nome_completo', 'associado.id','associado.nr_associado')->orderBy('pessoas.nome_completo', 'asc')->get();
 
             return view('membro/criar-membro-grupo', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao', 'id'));
         } catch (\Exception $e) {
@@ -268,6 +268,7 @@ class MembroController extends Controller
             ->where('m.id_cronograma', $id)
             ->select(
                 'associado.id as ida',
+                'associado.nr_associado',
                 'p.nome_completo',
                 'm.id AS idm',
                 'm.id_associado',
@@ -348,7 +349,7 @@ class MembroController extends Controller
         $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas order by nome_completo asc');
         $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao order by nome asc');
         $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-        $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('pessoas.nome_completo', 'associado.id')->orderBy('pessoas.nome_completo', 'asc')->get();
+        $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('pessoas.nome_completo', 'associado.id','associado.nr_associado')->orderBy('pessoas.nome_completo', 'asc')->get();
 
 
 

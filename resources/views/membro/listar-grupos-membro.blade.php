@@ -32,7 +32,7 @@
                             value="{{ request('nome_grupo') }}">
                             <option></option>
                             @foreach ($membro as $membros)
-                                <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }} - {{ $membros->id_associado }}</option>>
+                                <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }} - {{ $membros->nr_associado }}</option>>
                             @endforeach
                         </select>
                     </div>
