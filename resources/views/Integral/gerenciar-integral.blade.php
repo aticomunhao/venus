@@ -58,6 +58,7 @@
                     <th>HORÁRIO INÍCIO</th>
                     <th>HORÁRIO FIM</th>
                     <th>STATUS</th>
+                    <th>MACA</th>
                     <th>AÇÕES</th>
                 </tr>
 
@@ -70,6 +71,7 @@
                             <td>{{ $encaminhamento->h_inicio }}</td>
                             <td>{{ $encaminhamento->h_fim }}</td>
                             <td>{{ $encaminhamento->status }}</td>
+                            <td>{{ $encaminhamento->maca }}</td>
 
 
                             <td>
@@ -93,14 +95,24 @@
                                         <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>
                                     </button>
                                 @endif
+                                @if ($encaminhamento->id_status == 1)
+                                    <!-- Button trigger modal (Desabilitado) -->
+                                    <button type="button" style="font-size: 1rem; color:#000;"
+                                        class="btn btn-outline-warning btn-sm tooltips" data-bs-toggle="modal"
+                                        data-bs-target="#maca{{ $encaminhamento->id }}" disabled>
+                                        <span class="tooltiptext">Maca</span>
+                                        <i class="bi bi-moon-stars" style="font-size: 1rem; color:#000;"></i>
+                                    </button>
+                                @else
+                                    <!-- Button trigger modal (Ativo) -->
+                                    <button type="button" style="font-size: 1rem; color:#000;"
+                                        class="btn btn-outline-warning btn-sm tooltips" data-bs-toggle="modal"
+                                        data-bs-target="#maca{{ $encaminhamento->id }}">
+                                        <span class="tooltiptext">Maca</span>
+                                        <i class="bi bi-moon-stars" style="font-size: 1rem; color:#000;"></i>
+                                    </button>
+                                @endif
 
-                                <!-- Button trigger modal -->
-                                <button type="button" style="font-size: 1rem; color:#000;"
-                                    class="btn  btn-outline-warning btn-sm tooltips" data-bs-toggle="modal"
-                                    data-bs-target="#maca{{ $encaminhamento->id }}">
-                                    <span class="tooltiptext">Maca</span>
-                                    <i class="bi bi-moon-stars" style="font-size: 1rem; color:#000;"></i>
-                                </button>
 
 
                                 <a href="/visualizar-integral/{{ $encaminhamento->id }}" type="button"
@@ -145,7 +157,8 @@
                                                                     type="number">
                                                                     @foreach ($macasDisponiveis as $maca)
                                                                         @if ($encaminhamento->maca < $maca and $encaminhamento->maca > $i)
-                                                                            <option value="{{ $encaminhamento->maca }}" selected>
+                                                                            <option value="{{ $encaminhamento->maca }}"
+                                                                                selected>
                                                                                 {{ $encaminhamento->maca }}</option>
                                                                         @endif
                                                                         <option value="{{ $maca }}">

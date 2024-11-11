@@ -53,7 +53,7 @@ class GerenciarIntegralController extends Controller
                 ->whereIn('tr.status', [1, 2])
                 ->whereIn('tr.id_reuniao', $grupos_autorizados);
 
-               
+
 
             if ($request->nome_pesquisa) {
                 $encaminhamentos = $encaminhamentos->where('p.nome_completo', 'ilike', "%$request->nome_pesquisa%");
@@ -97,6 +97,7 @@ class GerenciarIntegralController extends Controller
      */
     public function store(Request $request, String $id)
     {
+
         //Salva a maca no tratamento
         DB::table('tratamento')->where('id', $id)->update([
             'maca' => $request->maca
