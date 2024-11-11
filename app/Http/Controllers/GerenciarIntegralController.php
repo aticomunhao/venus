@@ -23,13 +23,16 @@ class GerenciarIntegralController extends Controller
                 ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
                 ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
                 ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
-                ->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
-                ->where('id_funcao', '<', 3)
                 ->where('cr.id_tipo_tratamento', 6)
                 // ->where('cr.status_reuniao', '<>', 2)
-                ->distinct('gr.id')
-                ->get();
+                ->distinct('gr.id');
 
+                if(!in_array(36,session()->get('usuario.acesso'))){
+                    $dirigentes =  $dirigentes->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
+                    ->where('id_funcao', '<', 3);
+                }
+
+                $dirigentes = $dirigentes->get();
             $grupos_autorizados = [];
             foreach ($dirigentes as $dir) {
                 $grupos_autorizados[] = $dir->id;
@@ -39,7 +42,7 @@ class GerenciarIntegralController extends Controller
 
 
             $encaminhamentos = DB::table('tratamento as tr')
-                ->select('tr.id', 'p.nome_completo', 'cro.h_inicio', 'cro.h_fim', 'gr.nome', 'tr.dt_fim', 'tse.nome as status', 'tr.status as id_status')
+                ->select('tr.id', 'p.nome_completo', 'cro.h_inicio', 'cro.h_fim', 'gr.nome', 'tr.dt_fim', 'tse.nome as status', 'tr.status as id_status', 'tr.maca')
                 ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
                 ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
@@ -50,6 +53,7 @@ class GerenciarIntegralController extends Controller
                 ->whereIn('tr.status', [1, 2])
                 ->whereIn('tr.id_reuniao', $grupos_autorizados);
 
+               
 
             if ($request->nome_pesquisa) {
                 $encaminhamentos = $encaminhamentos->where('p.nome_completo', 'ilike', "%$request->nome_pesquisa%");
@@ -63,7 +67,12 @@ class GerenciarIntegralController extends Controller
                 $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', $grupos_autorizados[0]);
             }
 
-            $encaminhamentos = $encaminhamentos->get();
+            $vagas = DB::table('cronograma')->where('id', $selected_grupo)->pluck('max_atend')->toArray();
+            $ocupadas = DB::table('tratamento')->whereNot('maca', null)->where('id_reuniao', $selected_grupo)->pluck('maca')->toArray();
+
+            $macasDisponiveis = array_diff(range(1, current($vagas)), $ocupadas);
+            $encaminhamentos = $encaminhamentos->get()->toArray();
+
         } catch (\Exception $e) {
 
             app('flasher')->addError("Você não tem autorização para acessar esta página");
@@ -72,7 +81,7 @@ class GerenciarIntegralController extends Controller
 
 
 
-        return view('Integral.gerenciar-integral', compact('encaminhamentos', 'dirigentes', 'selected_grupo'));
+        return view('Integral.gerenciar-integral', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'macasDisponiveis'));
     }
 
     /**
@@ -86,9 +95,14 @@ class GerenciarIntegralController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, String $id)
     {
-        //
+        //Salva a maca no tratamento
+        DB::table('tratamento')->where('id', $id)->update([
+            'maca' => $request->maca
+        ]);
+
+        return redirect('/gerenciar-integral');
     }
 
     /**

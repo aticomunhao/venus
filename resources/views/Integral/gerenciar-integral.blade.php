@@ -94,6 +94,15 @@
                                     </button>
                                 @endif
 
+                                <!-- Button trigger modal -->
+                                <button type="button" style="font-size: 1rem; color:#000;"
+                                    class="btn  btn-outline-warning btn-sm tooltips" data-bs-toggle="modal"
+                                    data-bs-target="#maca{{ $encaminhamento->id }}">
+                                    <span class="tooltiptext">Maca</span>
+                                    <i class="bi bi-moon-stars" style="font-size: 1rem; color:#000;"></i>
+                                </button>
+
+
                                 <a href="/visualizar-integral/{{ $encaminhamento->id }}" type="button"
                                     class="btn btn-outline-primary btn-sm tooltips">
                                     <span class="tooltiptext">Visualizar</span>
@@ -105,13 +114,67 @@
                                 </a>
 
 
+
+                                <form action="/maca-integral/{{ $encaminhamento->id }}">
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="maca{{ $encaminhamento->id }}" tabindex="-1"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header" style="background-color:orange">
+                                                    <h1 class="modal-title fs-5" id="exampleModalLabel"
+                                                        style=" color:white">
+                                                        Indicar Maca</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <center>
+                                                        <div class="row col-10">
+                                                            <div class="mb-3">
+                                                                <label for="recipient-name" class="col-form-label"
+                                                                    style="font-size:17px">Designar maca
+                                                                    para:<br /><span
+                                                                        style="color:orange">{{ $encaminhamento->nome_completo }}</span>&#63;</label>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <label class="col-form-label">Escolha a maca
+                                                                    <span style="color:orange">desejada:</span></label>
+                                                                <?php $i = 0; ?>
+                                                                <select class="form-select" id="maca" name="maca"
+                                                                    type="number">
+                                                                    @foreach ($macasDisponiveis as $maca)
+                                                                        @if ($encaminhamento->maca < $maca and $encaminhamento->maca > $i)
+                                                                            <option value="{{ $encaminhamento->maca }}" selected>
+                                                                                {{ $encaminhamento->maca }}</option>
+                                                                        @endif
+                                                                        <option value="{{ $maca }}">
+                                                                            {{ $maca }}</option>
+                                                                        {{ $i = $maca }};
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </center>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-danger"
+                                                        data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
                                 {{--  Modal de Exclusao --}}
                                 <div class="modal fade" id="modal{{ $encaminhamento->id }}" tabindex="-1"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header" style="background-color:#DC4C64">
-                                                <h5 class="modal-title" id="exampleModalLabel" style=" color:white">Retirar
+                                                <h5 class="modal-title" id="exampleModalLabel" style=" color:white">
+                                                    Retirar
                                                     Tempo Limite</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close"></button>
