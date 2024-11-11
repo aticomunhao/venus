@@ -14,10 +14,19 @@
             <div class="card-header">
                 <form action="/relatorio-vagas-grupos">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-4">
                             Nome
                             <input class="form-control" type="text" id="" name="grupo" value=""
                                 placeholder="Nome do grupo...">
+                        </div>
+                        <div class="col-4">
+                            Setor
+                            <select class="form-select select2" id="setor" name="setor">
+                                <option value="0">Todos</option>
+                                @foreach ($setores as $setor)
+                                    <option value="{{$setor->id}}" {{$setor->id == request('setor') ? 'selected' : ''}}>{{ $setor->nome }} - {{$setor->sigla}} </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="col-1">
                             <br />
