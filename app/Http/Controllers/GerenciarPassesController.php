@@ -14,7 +14,6 @@ class GerenciarPassesController extends Controller
 
     public function index(Request $request)
     {
-
         // Obtém a data atual formatada
         $now = Carbon::now()->format('Y-m-d');
 
@@ -39,10 +38,12 @@ class GerenciarPassesController extends Controller
             ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
             ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('setor as s', 'gr.id_setor', 's.id')
-            ->leftJoin('membro AS me', 'gr.id', 'me.id_cronograma')
+            ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
             ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
             ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
-            ->where('s.id', '=', 48);
+            ->where('s.id', '=', 48)
+            ->where('me.id_associado', session()->get('usuario.id_associado'))
+            ->whereIn('me.id_funcao', [1, 2]);
 
 
 
