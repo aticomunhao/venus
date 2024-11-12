@@ -132,11 +132,6 @@ class ReuniaoMediunicaController extends Controller
             ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
             ->orderBy('gr.nome');
 
-            if (is_array(session()->get('usuario.setor')) && !empty(session()->get('usuario.setor'))) {
-                if (!in_array(25, session()->get('usuario.setor'))) {
-                    $grupo = $grupo->whereIn('gr.id_setor', session()->get('usuario.setor') ?? []);
-                }
-            }
 
 
             $grupo = $grupo->get();
@@ -273,7 +268,7 @@ class ReuniaoMediunicaController extends Controller
                 ->get();
 
             $info = DB::table('cronograma as crn')
-                ->select('crn.id', 'gr.nome', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim', 'crn.id_sala', 'sl.id_localizacao as nome_localizacao', 'crn.data_inicio', 'crn.data_fim')
+                ->select('crn.id', 'gr.id as id_grupo', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim', 'crn.id_sala', 'sl.id_localizacao as nome_localizacao', 'crn.data_inicio', 'crn.data_fim')
                 ->leftJoin('grupo as gr', 'crn.id_grupo', 'gr.id')
                 ->leftJoin('tipo_dia as tpd', 'crn.dia_semana', 'tpd.id')
                 ->leftJoin('tipo_tratamento as tpt', 'crn.id_tipo_tratamento', 'tpt.id')
@@ -304,11 +299,7 @@ class ReuniaoMediunicaController extends Controller
                 ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
                 ->where('id_tipo_grupo', 1)
                 ->orderBy('gr.nome');
-                if (is_array(session()->get('usuario.setor')) && !empty(session()->get('usuario.setor'))) {
-                    if (!in_array(25, session()->get('usuario.setor'))) {
-                        $grupo = $grupo->whereIn('gr.id_setor', session()->get('usuario.setor') ?? []);
-                    }
-                }
+         
 
 
                 $grupo = $grupo->get();
@@ -334,7 +325,7 @@ class ReuniaoMediunicaController extends Controller
                 ->get();
 
             $info = DB::table('cronograma as crn')
-                ->select('crn.id', 'gr.nome', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim', 'crn.id_sala', 'sl.id_localizacao as nome_localizacao', 'crn.data_inicio', 'crn.data_fim')
+                ->select('crn.id', 'gr.id as id_grupo', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim', 'crn.id_sala', 'sl.id_localizacao as nome_localizacao', 'crn.data_inicio', 'crn.data_fim')
                 ->leftJoin('grupo as gr', 'crn.id_grupo', 'gr.id')
                 ->leftJoin('tipo_dia as tpd', 'crn.dia_semana', 'tpd.id')
                 ->leftJoin('tipo_tratamento as tpt', 'crn.id_tipo_tratamento', 'tpt.id')

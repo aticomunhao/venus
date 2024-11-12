@@ -742,14 +742,21 @@ class RelatoriosController extends Controller
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->select(DB::raw(' (select count(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 5) as trat'), 'gr.nome as nome', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 'st.sigla as setor', 'cro.max_atend')
             ->orderBy('gr.nome');
+
+        $setores = DB::table('setor')->orderBy('nome')->get();
+       
+
         if ($request->grupo) {
             $grupos = $grupos->whereRaw("UNACCENT(LOWER(gr.nome)) ILIKE UNACCENT(LOWER(?))", ["%{$request->grupo}%"]);
+        }
+        if ($request->setor) {
+            $grupos = $grupos->where('gr.id_setor',$request->setor);
         }
 
 
         $grupos = $grupos->paginate(30)->appends(['grupo' => $request->grupo]);
 
-        return view('relatorios.vagas-grupos', compact('grupos'));
+        return view('relatorios.vagas-grupos', compact('setores','grupos'));
     }
 
     public function teste()

@@ -22,13 +22,13 @@ class MembroController extends Controller
         $acessos = DB::table('usuario_acesso')->where('id_usuario', session()->get('usuario.id_usuario'))->where('id_acesso', session()->get('acessoAtual'))->get()->toArray();
 
         // Gera um array organizado por perfis e seus respectivos setores
-        $arraySetores = Array();
+        $arraySetores = array();
         foreach ($acessos as $element) {
             $arraySetores[$element->id_perfil][] = $element->id_setor;
         }
 
         // Cria um array de armazenagem para os IDs
-        $cronogramasLogin = Array();
+        $cronogramasLogin = array();
         foreach ($arraySetores as $perfil => $setores) {
             // Checka se o perfil utilizado tem master admin
             $master = DB::table('usuario_acesso')->where('id_usuario', session()->get('usuario.id_usuario'))->where('id_perfil', $perfil)->pluck('id_acesso')->toArray();
@@ -49,9 +49,9 @@ class MembroController extends Controller
                     ->pluck('id_cronograma')
                     ->toArray();
 
-                    $cronogramasLogin = array_merge($cronogramasLogin, $cronogramasAcesso);
+                $cronogramasLogin = array_merge($cronogramasLogin, $cronogramasAcesso);
 
-            // Caso seja master admin, só checka os setores
+                // Caso seja master admin, só checka os setores
             } else {
 
                 $cronogramasAcesso = DB::table('membro AS m')
@@ -65,7 +65,7 @@ class MembroController extends Controller
                     ->pluck('id_cronograma')
                     ->toArray();
 
-                    $cronogramasLogin = array_merge($cronogramasLogin, $cronogramasAcesso);
+                $cronogramasLogin = array_merge($cronogramasLogin, $cronogramasAcesso);
             }
         }
 
@@ -123,9 +123,9 @@ class MembroController extends Controller
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', '=', 'cro.id')
             ->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')
-            ->select('p.nome_completo', 'm.id_associado','associado.nr_associado')
+            ->select('p.nome_completo', 'm.id_associado', 'associado.nr_associado')
             ->whereIn('m.id_cronograma', $cronogramasLogin)
-           // ->whereIn('g.id_setor', session()->get('usuario.setor'))
+            // ->whereIn('g.id_setor', session()->get('usuario.setor'))
             ->distinct()
             ->get();
 
@@ -164,7 +164,6 @@ class MembroController extends Controller
 
 
         return view('membro.listar-grupos-membro', compact('grupos2', 'membro_cronograma', 'contar', 'nome', 'membro', 'membroPesquisa'));
-
     }
 
     public function createGrupo(Request $request, string $id)
@@ -176,7 +175,7 @@ class MembroController extends Controller
             $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas order by nome_completo asc');
             $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao order by nome asc');
             $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-            $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa','associado.nr_associado')->select('pessoas.nome_completo', 'associado.id','associado.nr_associado')->orderBy('pessoas.nome_completo', 'asc')->get();
+            $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa', 'associado.nr_associado')->select('pessoas.nome_completo', 'associado.id', 'associado.nr_associado')->orderBy('pessoas.nome_completo', 'asc')->get();
 
             return view('membro/criar-membro-grupo', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao', 'id'));
         } catch (\Exception $e) {
@@ -243,7 +242,6 @@ class MembroController extends Controller
 
         app('flasher')->addSuccess('Cadastrado com Sucesso');
         return redirect("gerenciar-membro/$id");
-
     }
 
     public function index(Request $request, string $id)
@@ -331,7 +329,6 @@ class MembroController extends Controller
 
         // Retorno da view com os dados
         return view('membro.gerenciar-membro', compact('membro', 'id', 'grupo', 'status', 'statu', 'grupos'));
-
     }
 
     public function create()
@@ -349,12 +346,11 @@ class MembroController extends Controller
         $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas order by nome_completo asc');
         $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao order by nome asc');
         $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-        $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('pessoas.nome_completo', 'associado.id','associado.nr_associado')->orderBy('pessoas.nome_completo', 'asc')->get();
+        $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('pessoas.nome_completo', 'associado.id', 'associado.nr_associado')->orderBy('pessoas.nome_completo', 'asc')->get();
 
 
 
         return view('membro/criar-membro', compact('associado', 'tipo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao'));
-
     }
 
     public function store(Request $request)
@@ -383,7 +379,6 @@ class MembroController extends Controller
                     $query->orWhere(function ($hour) use ($seletedCronograma) {
                         $hour->where('rm.h_inicio', '<', $seletedCronograma->h_fim);
                         $hour->where('rm.h_fim', '>', $seletedCronograma->h_fim);
-
                     });
                 })
                 ->first();
@@ -613,9 +608,75 @@ class MembroController extends Controller
         }
     }
 
-    public function selecionar(Request $request)
+    public function selecionar(String $id)
     {
+        $membros = DB::table('membro as m')
+        ->select('m.id', 'ass.nr_associado', 'p.nome_completo', 'tf.nome')
+        ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
+        ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+        ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
+            ->where('m.dt_fim', null)
+            ->where('m.id_cronograma', $id)
+            ->get();
 
-        return view('membro.transferir');
+
+            $grupos = DB::table('grupo AS g')
+            ->leftJoin('setor AS s', 'g.id_setor', 's.id')
+            ->leftJoin('cronograma as cro', 'g.id', '=', 'cro.id_grupo')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+            ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
+            ->select(
+                'cro.id AS idg',
+                'g.nome AS nomeg',
+                's.sigla',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'sl.numero as sala',
+                'td.nome as dia_semana',
+                'ts.descricao AS descricao_status',
+                DB::raw("(CASE WHEN cro.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status")
+            )
+            ->orderBy('g.nome', 'asc')
+            ->get();
+     
+
+        return view('membro.transferir', compact('membros', 'grupos', 'id'));
+    }
+
+    public function transferir(Request $request, String $id){
+        
+        foreach($request->check as $membro){
+
+            $ontem = Carbon::yesterday();
+            $hoje = Carbon::today();
+
+            $membroAtual = DB::table('membro as m')
+            ->select('ass.id', 'm.id_funcao')
+            ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
+            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
+                ->where('m.dt_fim', null)
+                ->where('m.id', $membro)
+                ->first();
+
+  
+            DB::table('membro')
+            ->where('id', $membro)
+            ->update([
+                'dt_fim' => $ontem
+            ]);
+
+            DB::table('membro')->insert([
+                'id_associado' => $membroAtual->id,
+                'id_cronograma' => $request->nome_grupo,
+                'id_funcao' => $membroAtual->id_funcao,
+                'dt_inicio' => $hoje
+            ]);
+        }
+
+        return redirect("/gerenciar-membro/$id");
+ 
+
     }
 }

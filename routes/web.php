@@ -236,7 +236,7 @@ Route::middleware('rotas:13')->group(function () {
     Route::get('/criar-membro', [MembroController::class, 'create'])->name('');
     Route::post('/incluir-membro', [MembroController::class, 'store'])->name('membro.store');
     Route::get('/selecionar-membro/{id}', [MembroController::class, 'selecionar']);
-    Route::post('/transferir-membro', [MembroController::class, 'transferir']);
+    Route::any('/transferir-membro/{id}', [MembroController::class, 'transferir']);
 });
 
 // Gerenciar Membros
@@ -341,6 +341,7 @@ Route::middleware('rotas:25')->group(function () {
     Route::get('/gerenciar-integral', [GerenciarIntegralController::class, 'index']);
     Route::get('/alta-integral/{id}', [GerenciarIntegralController::class, 'update']);
     Route::get('/visualizar-integral/{id}', [GerenciarIntegralController::class, 'show']);
+    Route::any('/maca-integral/{id}', [GerenciarIntegralController::class, 'store']);
 });
 
 // Gerenciar Perfis
