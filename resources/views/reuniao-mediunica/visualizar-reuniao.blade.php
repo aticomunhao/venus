@@ -25,7 +25,7 @@
                                     <label for="grupo" class="form-label">Grupo</label>
                                     <select class="form-control slct" id="grupo" name="grupo" required disabled>
                                         @foreach ($grupo as $grupos)
-                                            <option value="{{ $grupos->idg }}" {{$grupos->nome == $info->nome ? 'selected' : ''}}>{{ $grupos->nome }}-{{ $grupos->nsigla }}</option>
+                                            <option value="{{ $grupos->idg }}" {{$grupos->idg == $info->id_grupo ? 'selected' : ''}}>{{ $grupos->nome }}-{{ $grupos->nsigla }}</option>
                                         @endforeach
                                     </select>
                                 </div>

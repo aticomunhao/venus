@@ -29,7 +29,7 @@
                                     </span>
                                     <select class="form-select select2" id="grupo" name="grupo" required>
                                         @foreach ($grupo as $grupos)
-                                            <option value="{{ $grupos->idg }}" {{$grupos->nome == $info->nome ? 'selected' : ''}}>{{ $grupos->nome }} - {{ $grupos->nsigla }}</option>
+                                            <option value="{{ $grupos->idg }}" {{$grupos->idg == $info->id_grupo ? 'selected' : ''}}>{{ $grupos->nome }} - {{ $grupos->nsigla }}</option>
                                         @endforeach
                                     </select>
                                 </div>
