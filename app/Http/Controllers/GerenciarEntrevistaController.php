@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -38,10 +40,24 @@ class GerenciarEntrevistaController extends Controller
         return $resultado;
     }
 
-
+    public function paginate($items, $perPage = 5, $page = null)
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $total = count($items);
+        $currentpage = $page;
+        $offset = ($currentpage * $perPage) - $perPage;
+        $itemstoshow = array_slice($items, $offset, $perPage);
+        return new LengthAwarePaginator($itemstoshow, $total, $perPage);
+    }
 
     public function index(Request $request)
     {
+
+        $setores = array();
+        foreach (session()->get('acessoInterno') as $perfil) {
+
+            $setores = array_merge($setores, array_column($perfil, 'id_setor'));
+        }
 
         $informacoes = DB::table('encaminhamento')
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
@@ -91,12 +107,17 @@ class GerenciarEntrevistaController extends Controller
                 'pessoa_entrevistador.nome_completo as nome_entrevistador',
                 DB::raw("(CASE WHEN atendimentos.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as emergencia"),
                 'atendimentos.dh_inicio as inicio'
-            )->whereIn('tipo_entrevista.id_setor', session()->get('usuario.setor'));
+            )->whereIn('tipo_entrevista.id_setor', $setores);
 
 
 
+   // if (in_array(38 , $setores)) {
+        //     $informacoes->where('encaminhamento.id_tipo_entrevista', 5);
+        // }
+        // if (in_array(7, $setores)) {
+        //     $informacoes->where('encaminhamento.id_tipo_entrevista', 3);
+        // }
 
-       
 
 
         $i = 0;
@@ -107,12 +128,12 @@ class GerenciarEntrevistaController extends Controller
 
         $pesquisaEntrevista = $request->tipo_entrevista;
 
-        if (session()->get('usuario.setor') == 38) {
-            $informacoes->where('encaminhamento.id_tipo_entrevista', 5);
-        }
-        if (session()->get('usuario.setor') == 7) {
-            $informacoes->where('encaminhamento.id_tipo_entrevista', 3);
-        }
+        // if (in_array(38 , $setores)) {
+        //     $informacoes->where('encaminhamento.id_tipo_entrevista', 5);
+        // }
+        // if (in_array(7, $setores)) {
+        //     $informacoes->where('encaminhamento.id_tipo_entrevista', 3);
+        // }
 
         if ($request->nome_pesquisa) {
             $informacoes->whereRaw("UNACCENT(LOWER(pessoa_pessoa.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome_pesquisa}%"]);
@@ -123,31 +144,66 @@ class GerenciarEntrevistaController extends Controller
         }
 
 
-        if ($request->status != 1 and $pesquisaValue != 'limpo') {
-
-
+        if ($request->status != 1 and $request->status != 7 and $pesquisaValue != 'limpo') {
             $informacoes->where('entrevistas.status', $pesquisaValue);
         }
-
-      
-
-        if (!is_array($informacoes)) {
-            $informacoes = $informacoes->orderByRaw("
-                CASE 
-                    WHEN entrevistas.status IS NULL AND encaminhamento.status_encaminhamento IS NULL THEN 0  -- 'Aguardando agendamento' no topo
-                    WHEN entrevistas.status IS NULL AND encaminhamento.status_encaminhamento = 6 THEN 999  -- 'Inativado' por último
-                    ELSE COALESCE(entrevistas.status, 1)  -- Outros status, tratando NULL como 1
-                END
-            ")
-            ->orderBy('atendimentos.emergencia', 'ASC')
-            ->orderBy('atendimentos.dh_inicio')
-            ->paginate(50);
+        if ($pesquisaValue == null and !$request->nome_pesquisa and !$request->tipo_entrevista) {
+            $informacoes->whereNot('encaminhamento.status_encaminhamento', 6)
+                ->where(function ($query) {
+                    $query->whereNotIn('entrevistas.status', [5, 6]);
+                    $query->orWhere('entrevistas.status', null);
+                });
         }
-    
+
+        $informacoes = $informacoes
+            ->orderBy('encaminhamento.status_encaminhamento')
+            ->orderBy('entrevistas.status', 'ASC')
+            ->orderBy('atendimentos.emergencia', 'DESC')
+            ->orderBy('atendimentos.dh_inicio')
+            ->get()->toArray();
 
 
-        $totalAssistidos = $informacoes->total();
 
+        //
+        if ($request->status == 1) {
+            $info = [];
+            foreach ($informacoes as $dia) {
+                $info[] = $dia;
+            }
+
+            foreach ($info as $check) {
+
+                if ($check->status != 1 or $check->status_encaminhamento_id != 1) {
+                    unset($info[$i]);
+                }
+                $i = $i + 1;
+            }
+            // dd($info);
+            $informacoes = $info;
+            $pesquisaStatus = "Aguardando agendamento";
+            $pesquisaValue = 1;
+        }
+
+        if ($request->status == 7) {
+            $info = [];
+            foreach ($informacoes as $dia) {
+                $info[] = $dia;
+            }
+
+            foreach ($info as $check) {
+
+                if ($check->status != 1 or $check->status_encaminhamento_id != 6) {
+                    unset($info[$i]);
+                }
+                $i = $i + 1;
+            }
+            // dd($info);
+            $informacoes = $info;
+            $pesquisaStatus = "Inativado";
+            $pesquisaValue = 7;
+        }
+
+        $totalAssistidos = count($informacoes);
 
         $tipo_entrevista = DB::table('tipo_entrevista')->whereIn('id', [3, 4, 5, 6])->select('id as id_ent', 'sigla as ent_desc')->orderby('descricao', 'asc')->get();
 
@@ -155,7 +211,8 @@ class GerenciarEntrevistaController extends Controller
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get();
         $motivo = DB::table('tipo_motivo_entrevista')->get();
 
-
+        $informacoes = $this->paginate($informacoes, 50);
+        $informacoes->withPath('');
         return view('Entrevistas.gerenciar-entrevistas', compact('nome_pesquisa', 'tipo_entrevista', 'totalAssistidos', 'informacoes', 'pesquisaNome', 'pesquisaStatus', 'pesquisaValue', 'status', 'motivo'));
     }
 
@@ -194,11 +251,12 @@ class GerenciarEntrevistaController extends Controller
                     ->leftJoin('pessoas AS pessoa_pessoa', 'atendimentos.id_assistido', '=', 'pessoa_pessoa.id')
                     ->leftJoin('tipo_tratamento', 'encaminhamento.id_tipo_tratamento', '=', 'tipo_tratamento.id')
                     ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', '=', 'tipo_entrevista.id')
+                    ->leftJoin('tp_ddd as ddd', 'pessoa_pessoa.ddd', 'ddd.id')
                     ->select(
                         'atendimentos.id_assistido AS id_pessoa',
                         'pessoa_pessoa.nome_completo AS nome_pessoa',
                         'pessoa_pessoa.celular',
-                        'pessoa_pessoa.ddd',
+                        'ddd.descricao as ddd',
                         'encaminhamento.id_tipo_tratamento',
                         'tipo_tratamento.descricao AS tratamento_descricao',
                         'tipo_tratamento.sigla AS tratamento_sigla',
@@ -295,7 +353,7 @@ class GerenciarEntrevistaController extends Controller
             if (!$entrevistas) {
             }
 
-            
+
             $usuarios = DB::table('usuario as u')
                 ->rightJoin('usuario_setor as us', 'u.id', 'us.id_usuario')
                 ->where('us.id_setor', $entrevistas->id_setor)
@@ -381,7 +439,8 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
                 ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
                 ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-                ->select('p.nome_completo', 'p.ddd', 'p.celular', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
+                ->leftJoin('tp_ddd as ddd', 'p.ddd', 'ddd.id')
+                ->select('p.nome_completo', 'ddd.descricao as ddd', 'p.celular', 's.nome', 's.numero', 'tpl.nome as local', 'enc.id', 'entre.id', 'entre.id_entrevistador', 'entre.data', 'entre.hora',)
                 ->where('entre.id_encaminhamento', $id)
                 ->first();
 
@@ -655,7 +714,7 @@ class GerenciarEntrevistaController extends Controller
             return redirect()->back();
         }
     }
-    public function inativar($id, $tp)
+    public function inativar(Request $request, String $id)
     {
         try {
 
@@ -670,15 +729,24 @@ class GerenciarEntrevistaController extends Controller
 
             ]);
 
-            $entrevistas = DB::table('entrevistas')->where('id_encaminhamento', '=', $id)->first();
+            $tp = DB::table('entrevistas')->where('id_encaminhamento', '=', $id)->count();
+            $motivo_entrevista = $request->input('motivo_entrevista');
 
-
-            if ($tp == 1) {
+            if ($tp < 1) {
 
                 DB::table('encaminhamento')
                     ->where('id', $id)
-                    ->update(['status_encaminhamento' => 4]);
-            } elseif ($tp == 2) {
+                    ->update([
+                        'status_encaminhamento' => 6,
+                        'motivo' => $motivo_entrevista
+                    ]);
+            } elseif ($tp > 0) {
+                DB::table('encaminhamento')
+                    ->where('id', $id)
+                    ->update([
+                        'status_encaminhamento' => 6,
+                        'motivo' => $motivo_entrevista
+                    ]);
                 DB::table('entrevistas')
                     ->where('id_encaminhamento', '=', $id)
                     ->update(['status' => 6]);
@@ -693,23 +761,5 @@ class GerenciarEntrevistaController extends Controller
             DB::rollBack();
             return redirect()->back();
         }
-    }
-
-    public function destroy(Request $request, $id)
-    {
-        $data = now();
-        $motivo_entrevista = $request->input('motivo_entrevista');
-
-
-        // Para outros casos, tentamos atualizar a tabela de entrevistas
-        DB::table('encaminhamento')
-            ->where('id', '=', $id)
-            ->update([
-                'status_encaminhamento' => 6,
-                'motivo' => $motivo_entrevista
-            ]);
-
-
-        return redirect()->route('gerenciamento')->with('success', 'Inativada entrevista e encaminhamento!');
     }
 }

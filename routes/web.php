@@ -37,7 +37,7 @@ use App\Http\Controllers\PresencaController;
 use App\Http\Controllers\PresencaDirigenteController;
 use App\Http\Controllers\GerenciarVersoesControllerController;
 use App\Http\Controllers\RelatoriosController;
-use App\Http\Controllers\GerenciarPassesControllerr;
+use App\Http\Controllers\GerenciarPassesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,6 +71,7 @@ Route::middleware('rotas:1')->group(function () {
     Route::any('usuario-atualizar/{id}', [UsuarioController::class, 'update']);
     Route::get('/usuario/excluir/{id}', [UsuarioController::class, 'destroy']);
     Route::get('/usuario-incluir', [UsuarioController::class, 'create']);
+    Route::get('/usuario-regenerar-acessos', [UsuarioController::class, 'regenerarAcessos']);
 });
 
 // Gerenciar Pessoas
@@ -119,7 +120,7 @@ Route::middleware('rotas:6')->group(function () {
     Route::get('/atendendo', [AtendimentoFraternoController::class, 'index'])->name('afidex');
     Route::get('/atender', [AtendimentoFraternoController::class, 'atende_agora'])->name('afiini');
     Route::get('/entrevistar/{idat}/{idas}', [AtendimentoFraternoController::class, 'entrevistar'])->name('afitent');
-    Route::post('/entrevistas/{idat}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
+    Route::post('/entrevistas/{idat}/{idas}', [AtendimentoFraternoController::class, 'enc_entre'])->name('afiete');
     Route::get('/fim-analise/{idat}', [AtendimentoFraternoController::class, 'fimanalise'])->name('afifna');
     Route::get('/final/{idat}', [AtendimentoFraternoController::class, 'final'])->name('afifin');
     Route::any('/finalizar/{idat}', [AtendimentoFraternoController::class, 'finaliza'])->name('afifim');
@@ -171,13 +172,15 @@ Route::middleware('rotas:8')->group(function () {
 });
 
 // Gerenciar Passes
-Route::middleware('rotas:8')->group(function () {
-Route::get('/gerenciar-passe', [GerenciarPassesControllerr::class, 'index'])->name('');
-Route::get('/editar-passe/{id}', [GerenciarPassesControllerr::class, 'edit'])->name('');
-Route::post('/atualizar-passe/{id}', [GerenciarPassesControllerr::class, 'update'])->name('');
-Route::any('/incluir-passe', [GerenciarPassesControllerr::class, 'incluir']);
-Route::get('/criar-passe/{id}', [GerenciarPassesControllerr::class, 'criar'])->name('');
-Route::get('/visualizar-passe/{id}', [GerenciarPassesControllerr::class, 'show'])->name('');
+Route::middleware('rotas:39')->group(function () {
+Route::get('/gerenciar-passe', [GerenciarPassesController::class, 'index'])->name('gpasses');
+Route::get('/editar-passe/{id}', [GerenciarPassesController::class, 'edit'])->name('');
+Route::post('/atualizar-passe/{id}', [GerenciarPassesController::class, 'update'])->name('');
+Route::post('/incluir-passe/{id}', [GerenciarPassesController::class, 'store'])->name('incluir.passe');
+Route::get('/criar-passe/{id}', [GerenciarPassesController::class, 'criar'])->name('');
+Route::get('/visualizar-passe/{id}', [GerenciarPassesController::class, 'show'])->name('visualizar.passe');
+
+
 
 });
 
@@ -193,10 +196,7 @@ Route::middleware('rotas:9')->group(function () {
     Route::get('/visualizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'show'])->name('');
     Route::any('/finalizar-entrevista/{id}', [GerenciarEntrevistaController::class, 'finalizar'])->name('finalizar.entrevista');
     Route::any('/nao-aceito-entrevista/{id}', [GerenciarEntrevistaController::class, 'fim'])->name('');
-    Route::any('/inativar-entrevista/{id}/{tp}', [GerenciarEntrevistaController::class, 'inativar'])->name('');
-    Route::post('/inativar-entrevista-encaminhamento/{id}', [GerenciarEntrevistaController::class, 'destroy'])->name('cancelar');
-
-
+    Route::any('/inativar-entrevista/{id}', [GerenciarEntrevistaController::class, 'inativar'])->name('cancelar');
 });
 
 // Gerenciar Grupos
@@ -236,7 +236,7 @@ Route::middleware('rotas:13')->group(function () {
     Route::get('/criar-membro', [MembroController::class, 'create'])->name('');
     Route::post('/incluir-membro', [MembroController::class, 'store'])->name('membro.store');
     Route::get('/selecionar-membro/{id}', [MembroController::class, 'selecionar']);
-    Route::post('/transferir-membro', [MembroController::class, 'transferir']);
+    Route::any('/transferir-membro/{id}', [MembroController::class, 'transferir']);
 });
 
 // Gerenciar Membros
@@ -269,7 +269,7 @@ Route::middleware('rotas:15')->group(function () {
 });
 
 // Gerenciar Encaminhamentos
-Route::middleware('rotas:16')->group(function () {
+Route::middleware("rotas:16-22-23")->group(function () {
     Route::get('/gerenciar-encaminhamentos', [GerenciarEncaminhamentoController::class, 'index'])->name('gecdex');
     Route::get('/agendar/{ide}/{idtt}', [GerenciarEncaminhamentoController::class, 'agenda'])->name('gecage');
     Route::get('/agendar-tratamento/{ide}', [GerenciarEncaminhamentoController::class, 'tratamento'])->name('gtctra');
@@ -279,6 +279,7 @@ Route::middleware('rotas:16')->group(function () {
     Route::get('/alterar-grupo-tratamento/{id}', [GerenciarEncaminhamentoController::class, 'escolherGrupo']);
     Route::get('/escolher-horario/{id}', [GerenciarEncaminhamentoController::class, 'escolherHorario']);
     Route::any('/trocar-grupo-tratamento/{id}', [GerenciarEncaminhamentoController::class, 'trocarGrupo']);
+    Route::any('/relatorio-vagas-grupos', [RelatoriosController::class, 'vagasGrupos']);
 });
 
 // Jobs de Tratamento
@@ -328,32 +329,6 @@ Route::middleware('rotas:21')->group(function () {
     Route::any('/atualizar-atendentes-plantonistas/{id}', [AtendentePlantonistaController::class, 'update']);
 });
 
-// Gerenciar Encaminhamento PTI
-Route::middleware('rotas:22')->group(function () {
-    Route::get('/gerenciar-encaminhamentos-pti', [GerenciarEncaminhamentoPTIController::class, 'index']);
-    Route::get('/agendar-pti/{ide}/{idtt}', [GerenciarEncaminhamentoPTIController::class, 'agenda']);
-    Route::get('/agendar-tratamento-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'tratamento']);
-    Route::post('incluir-tratamento-pti/{idtr}', [GerenciarEncaminhamentoPTIController::class, 'tratar']);
-    Route::get('/visualizar-enc-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'visualizar']);
-    Route::any('/inativar-pti/{ide}', [GerenciarEncaminhamentoPTIController::class, 'inative']);
-    Route::get('/alterar-grupo-tratamento-pti/{id}', [GerenciarEncaminhamentoPTIController::class, 'escolherGrupo']);
-    Route::get('/escolher-horario-pti/{id}', [GerenciarEncaminhamentoPTIController::class, 'escolherHorario']);
-    Route::any('/trocar-grupo-tratamento-pti/{id}', [GerenciarEncaminhamentoPTIController::class, 'trocarGrupo']);
-});
-
-// Gerenciar Encaminhamento Integral
-Route::middleware('rotas:23')->group(function () {
-    Route::get('/gerenciar-encaminhamentos-integral', [GerenciarEncaminhamentoIntegralController::class, 'index']);
-    Route::get('/agendar-integral/{ide}/{idtt}', [GerenciarEncaminhamentoIntegralController::class, 'agenda']);
-    Route::get('/agendar-tratamento-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'tratamento']);
-    Route::post('incluir-tratamento-integral/{idtr}', [GerenciarEncaminhamentoIntegralController::class, 'tratar']);
-    Route::get('/visualizar-enc-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'visualizar']);
-    Route::any('/inativar-integral/{ide}', [GerenciarEncaminhamentoIntegralController::class, 'inative']);
-    Route::get('/alterar-grupo-tratamento-integral/{id}', [GerenciarEncaminhamentoIntegralController::class, 'escolherGrupo']);
-    Route::get('/escolher-horario-integral/{id}', [GerenciarEncaminhamentoIntegralController::class, 'escolherHorario']);
-    Route::any('/trocar-grupo-tratamento-integral/{id}', [GerenciarEncaminhamentoIntegralController::class, 'trocarGrupo']);
-});
-
 // Gerenciar Assistido PTI
 Route::middleware('rotas:24')->group(function () {
     Route::get('/gerenciar-pti', [GerenciarPTIController::class, 'index']);
@@ -366,6 +341,7 @@ Route::middleware('rotas:25')->group(function () {
     Route::get('/gerenciar-integral', [GerenciarIntegralController::class, 'index']);
     Route::get('/alta-integral/{id}', [GerenciarIntegralController::class, 'update']);
     Route::get('/visualizar-integral/{id}', [GerenciarIntegralController::class, 'show']);
+    Route::any('/maca-integral/{id}', [GerenciarIntegralController::class, 'store']);
 });
 
 // Gerenciar Perfis
@@ -429,6 +405,7 @@ Route::middleware('rotas:33')->group(function () {
 //Relatório de Membro Grupo
 Route::middleware('rotas:34')->group(function () {
     Route::any('/gerenciar-relatorio-pessoas-grupo', [RelatoriosController::class, 'indexmembro']);
+    Route::any('/gerenciar-relatorio-setor-pessoas', [RelatoriosController::class, 'indexSetor']);
 });
 //Relatório de Reuniões
 Route::middleware('rotas:35')->group(function () {

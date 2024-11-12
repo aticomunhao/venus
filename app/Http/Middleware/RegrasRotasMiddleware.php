@@ -14,15 +14,25 @@ class RegrasRotasMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $rota): Response
+    public function handle(Request $request, Closure $next, Mixed $rota): Response
     {
+
         try {
             $rotasAutorizadas = session()->get('usuario.acesso');
-
+            session()->put('acessoAtual', $rota);
             if (!$rotasAutorizadas) {
                 app('flasher')->addError('É necessário fazer login para acessar!');
                 return redirect('/');
-            } elseif (in_array($rota, $rotasAutorizadas)) {
+            } else if(count(explode('-', $rota)) > 1){
+
+                foreach(explode('-', $rota) as $id){
+                    if(in_array($id, $rotasAutorizadas)){
+                        return $next($request);
+                    }
+                }
+                app('flasher')->addError('Você não tem autorização para acessar esta funcionalidade!');
+                return redirect('/login/valida');
+            } elseif (in_array(current(explode('-', $rota)), $rotasAutorizadas)) {
                 return $next($request);
             } else {
                 app('flasher')->addError('Você não tem autorização para acessar esta funcionalidade!');

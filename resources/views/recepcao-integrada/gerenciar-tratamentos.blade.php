@@ -53,7 +53,7 @@
                                                             id="2" name="cpf" value="{{ $cpf }}">
                                                     </div>
                                                     <div class="col-12 mt-3">Grupo
-                                                        <input class="form-control" autocomplete="off" id="grupo" name="grupo"
+                                                        <input class="form-control pesquisa" autocomplete="off" id="grupo" name="grupo"
                                                             type="text" list="grupos" value="{{$cron}}">
                                                             <datalist id="grupos">
                                                                 @foreach ($cronogramas as $cronograma)
@@ -61,7 +61,6 @@
                                                             @endforeach
                                                               </datalist>  
                                                         
-                                       
                                                     </div>
                                                     <div class="col-12 mt-3">Status
                                                         <select class="form-select teste1" id="4" name="status"
@@ -105,10 +104,11 @@
 
                                     <div class="col">
 
-
+                                        @if(in_array(38, session()->get('usuario.acesso')))
                                         <a href="/incluir-avulso" class="btn btn-danger btn-sm"
                                             style="box-shadow: 1px 2px 5px #000000; margin:5px;">Atendimento de
                                             Emergência</a>
+                                        @endif
                                         <a href="/gerenciar-encaminhamentos" class="btn btn-warning btn-sm"
                                             style="box-shadow: 1px 2px 5px #000000; margin:5px;">Encaminhamentos</a>
 
@@ -171,9 +171,10 @@
 
                         @if ($listas->status == 1 or $listas->status == 2)
                             {{-- Botão de presença --}}
-                            <button type="button" class="btn btn-outline-warning tooltips" data-bs-toggle="modal"
-                                data-bs-target="#presenca{{ $listas->idtr }}"><span class="tooltiptext">Presença</span><i
-                                    class="bi bi bi-exclamation-triangle"
+                            <button type="button" class="btn btn-outline-warning tooltips btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#presenca{{ $listas->idtr }}">
+                                <span class="tooltiptext">Presença</span><i
+                                    class="bi bi-exclamation-triangle"
                                     style="font-size: 1rem; color:#000;"></i></button>
                         @else
                             <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"

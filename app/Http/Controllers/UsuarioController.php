@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\ModelUsuario;
@@ -17,124 +17,115 @@ class UsuarioController extends Controller
     // Enviar email traduziado
     public function sendPasswordResetNotification($token)
     {
-        try{
-        $this->notify(new ResetPassword($token));
-    }
-    catch(\Exception $e){
+        try {
+            $this->notify(new ResetPassword($token));
+        } catch (\Exception $e) {
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
         }
+    }
     private $objUsuario;
 
     public function __construct()
     {
-        try{
-        $this->objUsuario = new ModelUsuario();
-    }
-    catch(\Exception $e){
+        try {
+            $this->objUsuario = new ModelUsuario();
+        } catch (\Exception $e) {
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
         }
+    }
 
     public function getUsuarios()
     {
-        try{
-        $result = DB::table('usuario as u')->select('u.id', 'u.id_pessoa', 'p.cpf', 'p.nome_completo', 'u.ativo', 'u.bloqueado', 'u.data_ativacao')->leftJoin('pessoas as p', 'u.id_pessoa', 'p.id');
+        try {
+            $result = DB::table('usuario as u')->select('u.id', 'u.id_pessoa', 'p.cpf', 'p.nome_completo', 'u.ativo', 'u.bloqueado', 'u.data_ativacao')->leftJoin('pessoas as p', 'u.id_pessoa', 'p.id');
 
-        return $result;
+            return $result;
+        } catch (\Exception $e) {
+
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
+        }
     }
-    catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+    public function index(Request $request)
+    {
 
-        public function index(Request $request)
-        {
-           
-                // Supondo que getUsuarios retorne um query builder
-                $query = $this->getUsuarios();
-        
-                // Aplicar filtros com base na requisição
-                if ($request->nome) {
-                    $query->whereRaw('unaccent(lower(p.nome_completo)) ILIKE ?', ['%' . strtolower($request->nome) . '%']);
-                }
-                if ($request->cpf) {
-                    $query->whereRaw('unaccent(lower(p.cpf)) ILIKE ?', ['%' . strtolower($request->cpf) . '%']);
-                }
-        
-                // Contar o número total de registros que atendem aos critérios de pesquisa
-                $contar = $query->distinct()->count('p.id');
-        
-                // Aplicar ordenação e paginação na consulta
-                $result = $query->orderBy('p.nome_completo', 'ASC')
-                                ->paginate(50);
-        
-                // Retornar a view com as variáveis necessárias
-                return view('usuario/gerenciar-usuario', compact('result', 'contar'));
-           
-        }
-        
+        // Supondo que getUsuarios retorne um query builder
+        $query = $this->getUsuarios();
 
-        public function create(Request $request)
-{
-    try {
-        $pessoa = new ModelPessoa();
-        $result = $pessoa;
-
-        // Conta os registros distintos de 'id'
-        $contar = $result->distinct()->count('id'); 
-
+        // Aplicar filtros com base na requisição
         if ($request->nome) {
-            $result = $result->whereRaw("UNACCENT(LOWER(nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome}%"]);
+            $query->whereRaw('unaccent(lower(p.nome_completo)) ILIKE ?', ['%' . strtolower($request->nome) . '%']);
         }
         if ($request->cpf) {
-            $result = $result->whereRaw("UNACCENT(LOWER(cpf)) ILIKE UNACCENT(LOWER(?))", ["%{$request->cpf}%"]);
+            $query->whereRaw('unaccent(lower(p.cpf)) ILIKE ?', ['%' . strtolower($request->cpf) . '%']);
         }
 
-        $result = $result->orderBy('nome_completo', 'ASC')
-            ->paginate(50); 
+        // Contar o número total de registros que atendem aos critérios de pesquisa
+        $contar = $query->distinct()->count('p.id');
 
-        return view('usuario/incluir-usuario', compact('result', 'contar'));
-    } catch (\Exception $e) {
-        $code = $e->getCode();
-        return view('administrativo-erro.erro-inesperado', compact('code', 'contar'));
+        // Aplicar ordenação e paginação na consulta
+        $result = $query->orderBy('p.nome_completo', 'ASC')
+            ->paginate(50);
+
+        // Retornar a view com as variáveis necessárias
+        return view('usuario/gerenciar-usuario', compact('result', 'contar'));
     }
-}
 
-        
+
+    public function create(Request $request)
+    {
+        try {
+            $pessoa = new ModelPessoa();
+            $result = $pessoa;
+
+            // Conta os registros distintos de 'id'
+            $contar = $result->distinct()->count('id');
+
+            if ($request->nome) {
+                $result = $result->whereRaw("UNACCENT(LOWER(nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome}%"]);
+            }
+            if ($request->cpf) {
+                $result = $result->whereRaw("UNACCENT(LOWER(cpf)) ILIKE UNACCENT(LOWER(?))", ["%{$request->cpf}%"]);
+            }
+
+            $result = $result->orderBy('nome_completo', 'ASC')
+                ->paginate(50);
+
+            return view('usuario/incluir-usuario', compact('result', 'contar'));
+        } catch (\Exception $e) {
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code', 'contar'));
+        }
+    }
+
+
 
     public function store(Request $request)
     {
 
-        $keys_request = array_keys($request->input());
+
         $senha_inicial = $this->gerarSenhaInicial($request->input('idPessoa'));
         $contaUsuarios = DB::table('usuario')->where('id_pessoa', $request->input('idPessoa'))->count();
 
 
 
-        if($contaUsuarios < 1){
+        if ($contaUsuarios < 1) {
             $this->inserirUsuario($request, $senha_inicial);
             app('flasher')->addSuccess('O usuário foi criado com sucesso.');
-        }else{
+        } else {
             app('flasher')->addWarning('Usuário já inserido. Dados Atualizados!');
         }
 
+
+
         $this->excluirUsuarioPerfis($request->input('idPessoa'));
 
-        $this->inserirperfilUsuario($keys_request, $request->input('idPessoa'));
-
-        //$this->inserirUsuarioDeposito($keys_request, $request->input('idPessoa'));
-
-        $this->inserirUsuarioSetor($keys_request, $request->input('idPessoa'));
-
-
-
+        $this->inserirperfilUsuario($request->perfis, $request->input('idPessoa'));
 
         return Redirect('/gerenciar-usuario');
 
@@ -153,52 +144,27 @@ class UsuarioController extends Controller
 
     public function edit($idUsuario)
     {
-        try{
-        $resultPerfil = DB::table('perfil')->get();
+        $resultUsuario = DB::table('usuario')->where('id', $idUsuario)->first();
 
-        //$resultDeposito = $this->getDeposito();
+        $result = DB::table('pessoas')
+            ->where('id', $resultUsuario->id_pessoa)
+            ->get();
+
+        $resultPerfil = DB::table('perfil')->get();
 
         $resultSetor = DB::table('rotas_setor')->leftJoin('setor', 'rotas_setor.id_setor', 'setor.id')->distinct('id_setor')->get();
 
-        $resultUsuario = DB::table('usuario')->where('id', $idUsuario)->get();
+        $acessosAutorizados = DB::table('usuario_acesso')->select('id_setor', 'id_perfil')->where('id_usuario', $idUsuario)->get()->toArray();
+        $acessosAutorizados = array_intersect_key($acessosAutorizados, array_unique(array_map('serialize', $acessosAutorizados)));
 
-        $result = DB::table('pessoas')
-            ->where('id', $resultUsuario[0]->id_pessoa)
-            ->get();
 
-        $resultPerfisUsuario = DB::select('select * from usuario_perfil where id_usuario =' . $idUsuario);
-
-        $resultPerfisUsuarioArray = [];
-        foreach ($resultPerfisUsuario as $resultPerfisUsuarios) {
-            $resultPerfisUsuarioArray[] = $resultPerfisUsuarios->id_perfil;
-        }
-
-        $resultDepositoUsuario = DB::select('select * from usuario_deposito where id_usuario =' . $idUsuario);
-
-        $resultDepositoUsuarioArray = [];
-        foreach ($resultDepositoUsuario as $resultDepositoUsuarios) {
-            $resultDepositoUsuarioArray[] = $resultDepositoUsuarios->id_deposito;
-        }
-
-        $resultSetorUsuario = DB::select('select * from usuario_setor where id_usuario =' . $idUsuario);
-
-        $resultSetorUsuarioArray = [];
-        foreach ($resultSetorUsuario as $resultSetorUsuarios) {
-            $resultSetorUsuarioArray[] = $resultSetorUsuarios->id_setor;
-        }
-
-        return view('/usuario/alterar-configurar-usuario', compact('result', 'resultPerfil', 'resultSetor', 'resultUsuario', 'resultPerfisUsuarioArray', 'resultDepositoUsuarioArray', 'resultSetorUsuarioArray'));
+        return view('/usuario/alterar-configurar-usuario', compact('result', 'resultUsuario', 'resultPerfil', 'resultSetor', 'acessosAutorizados'));
     }
-    catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
 
     public function update(Request $request, $id)
     {
-        try{
+        //try {
 
         $ativo = isset($request->ativo) ? 1 : 0;
         $bloqueado = isset($request->bloqueado) ? 1 : 0;
@@ -212,196 +178,177 @@ class UsuarioController extends Controller
                 'bloqueado' => $bloqueado,
             ]);
 
-        $keys_request = array_keys($request->input());
+
 
         $this->excluirUsuarioPerfis($request->input('idPessoa'));
 
-        $this->inserirPerfilUsuario($keys_request, $request->input('idPessoa'));
-
-       // $this->inserirUsuarioDeposito($keys_request, $request->input('idPessoa'));
-
-        $this->inserirUsuarioSetor($keys_request, $request->input('idPessoa'));
-
-
+        $this->inserirPerfilUsuario($request->perfis, $request->input('idPessoa'));
         app('flasher')->addSuccess('Usuário alterado com sucesso!');
         return redirect('gerenciar-usuario');
-    }
-    catch(\Exception $e){
+        // } catch (\Exception $e) {
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+        //     $code = $e->getCode();
+        //     return view('administrativo-erro.erro-inesperado', compact('code'));
+        // }
+    }
+
+    public function regenerarAcessos(){
+
+        $counter = 0;
+        $acessos = DB::table('usuario_acesso')->get();
+
+        $perfis = array();
+        foreach ($acessos as $element) {
+            $perfis[$element->id_usuario][$element->id_perfil][$element->id_setor] = 'on';
         }
+
+        foreach($perfis as $key => $usuario){
+            $id_pessoa = DB::table('usuario')->where('id', $key)->pluck('id_pessoa')->toArray();
+            $this->inserirPerfilUsuario($usuario, current($id_pessoa));
+
+            $counter++;
+        }
+
+        app('flasher')->addSuccess("Acessos de $counter usuários atualizados com sucesso!");
+        return redirect()->back();
+    }
 
     public function destroy($id)
     {
-        try{
-        DB::delete('delete from usuario_perfil where id_usuario =?', [$id]);
-        DB::delete('delete from usuario_deposito where id_usuario =?', [$id]);
-        DB::delete('delete from usuario_setor where id_usuario =?', [$id]);
-        $deleted = DB::delete('delete from usuario where id =?', [$id]);
+       // try {
 
-        $result = $this->getUsuarios();
+            DB::delete('delete from usuario_acesso where id_usuario =?', [$id]);
+            $deleted = DB::delete('delete from usuario where id =?', [$id]);
 
-        app('flasher')->addSuccess('O usuário foi excluido com sucesso.');
+            $result = $this->getUsuarios();
 
-        return Redirect('/gerenciar-usuario');
-        //return view('usuario/gerenciar-usuario', compact('result'));
+            app('flasher')->addSuccess('O usuário foi excluido com sucesso.');
+
+            return Redirect('/gerenciar-usuario');
+            //return view('usuario/gerenciar-usuario', compact('result'));
+        // } catch (\Exception $e) {
+
+        //     $code = $e->getCode();
+        //     return view('administrativo-erro.erro-inesperado', compact('code'));
+        // }
     }
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
 
 
     public function configurarUsuario($id)
     {
-        try{
+        //  try{
         $resultPerfil = DB::table('perfil')->get();
 
 
-        $resultSetor = DB::table('rotas_setor')->leftJoin('setor', 'rotas_setor.id_setor', 'setor.id')->distinct('id_setor')->get();
+        $resultSetor = DB::table('rotas_setor')->leftJoin('setor', 'rotas_setor.id_setor', 'setor.id')->distinct('setor.nome')->orderBy('setor.nome')->get();
 
         $result = DB::table('pessoas')->where('id', $id)->get();
 
         return view('/usuario/configurar-usuario', compact('result', 'resultPerfil', 'resultSetor'));
     }
-    catch(\Exception $e){
+    // catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+    //     $code = $e->getCode( );
+    //     return view('administrativo-erro.erro-inesperado', compact('code'));
+    //         }
+    //     }
 
     public function inserirUsuario($request, $senha_inicial)
     {
-        try{
-        $ativo = isset($request->ativo) ? 1 : 0;
-        $bloqueado = isset($request->bloqueado) ? 1 : 0;
+        try {
+            $ativo = isset($request->ativo) ? 1 : 0;
+            $bloqueado = isset($request->bloqueado) ? 1 : 0;
 
-        DB::table('usuario')->insert([
-            'id_pessoa' => $request->input('idPessoa'),
-            'ativo' => $ativo,
-            'data_criacao' => date('Y-m-d'),
-            'data_ativacao' => date('Y-m-d'),
-            'bloqueado' => $bloqueado,
-            'hash_senha' => $senha_inicial,
-        ]);
-    }
-    catch(\Exception $e){
+            DB::table('usuario')->insert([
+                'id_pessoa' => $request->input('idPessoa'),
+                'ativo' => $ativo,
+                'data_criacao' => date('Y-m-d'),
+                'data_ativacao' => date('Y-m-d'),
+                'bloqueado' => $bloqueado,
+                'hash_senha' => $senha_inicial,
+            ]);
+        } catch (\Exception $e) {
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
         }
+    }
 
     public function excluirUsuarioPerfis($idPessoa)
     {
-        try{
-        $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
+        try {
+            $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
+            DB::delete('delete from usuario_acesso where id_usuario =?', [$idUsuario[0]->id]);
+        } catch (\Exception $e) {
 
-        DB::delete('delete from usuario_setor where id_usuario =?', [$idUsuario[0]->id]);
-        DB::delete('delete from usuario_deposito where id_usuario =?', [$idUsuario[0]->id]);
-        DB::delete('delete from usuario_perfil where id_usuario =?', [$idUsuario[0]->id]);
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
+        }
     }
-    catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
-
-    public function inserirPerfilUsuario($perfil, $idPessoa)
+    public function inserirPerfilUsuario($perfis, $idPessoa)
     {
-        try{
+       
+        //  try {
         $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
-        $resultPerfil = DB::table('perfil')->get();
 
-        foreach ($perfil as $perfils) {
-            foreach ($resultPerfil as $resultPerfils) {
-                if ($resultPerfils->descricao == str_replace('_', ' ', $perfils)) {
-                    //echo $resultPerfils->id;
+        if ($perfis) {
+            foreach ($perfis as $keyPerfil => $perfil) {
 
-                    DB::table('usuario_perfil')->insert([
-                        'id_usuario' => $idUsuario[0]->id,
-                        'id_perfil' => $resultPerfils->id,
-                    ]);
-                }
+                $acessoPerfil = DB::table('rotas_perfil')
+                    ->where('id_perfil', $keyPerfil)
+                    ->pluck('id_rotas')->toArray();
 
-            }
-        }
+                foreach ($perfil as $keySetor => $setor) {
 
-    }
-    catch(\Exception $e){
+                    $setores = DB::table('setor as st')
+                        ->leftJoin('setor as stf', 'st.id', 'stf.setor_pai')
+                        ->leftJoin('setor as stn', 'stf.id', 'stn.setor_pai')
+                        ->select('st.id as ids', 'stf.id as idf', 'stn.id as idn')
+                        ->where('st.id', $keySetor)
+                        ->get()
+                        ->toArray();
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+                    $setores = (array_unique(array_merge(array_column($setores, 'ids'), array_column($setores, 'idf'), array_column($setores, 'idn'))));
 
-    // public function inserirTipoEstque($tpEstoque,$idPessoa)
-    // {
-    //     $idUsuario = DB::select("select id from usuario where id_pessoa =".$idPessoa);
-    //     $resultEstoque = DB::select("select id, nome from tipo_estoque");
+                    foreach ($setores as $setor) {
+                        $acessoSetor = DB::table('rotas_setor')
+                            ->where('id_setor', $setor)
+                            ->pluck('id_rotas')
+                            ->toArray();
 
-    //      foreach ($tpEstoque as $tpEstoques) {
-    //         foreach ($resultEstoque as $resultEstoques) {
+                        $acessoTotal = array_intersect($acessoPerfil, $acessoSetor);
 
-    //             if($resultEstoques->nome ==  str_replace("_", " ",$tpEstoques) ){
+                        foreach ($acessoTotal as $acesso) {
 
-    //                 DB::table('usuario_tipo_estoque')->insert([
-    //                         'id_usuario' => $idUsuario[0]->id,
-    //                         'id_tp_estoque' => $resultEstoques->id,
+                            $countInserido = DB::table('usuario_acesso')
+                            ->where('id_usuario',$idUsuario[0]->id)
+                            ->where('id_setor',$setor)
+                            ->where('id_perfil',$keyPerfil)
+                            ->where('id_acesso',$acesso)
+                            ->count();
 
-    //                 ]);
-    //             }
-    //         }
-    //     }
-    // }
-
-    // public function inserirUsuarioDeposito($deposito, $idPessoa)
-    // {
-    //     $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
-    //     $resultDeposito = $this->getDeposito();
-    //     //dd($resultDeposito);
-    //     foreach ($deposito as $depositos) {
-    //         foreach ($resultDeposito as $resultDepositos) {
-    //             if ($resultDepositos->nome == str_replace('_', ' ', $depositos)) {
-    //                 DB::table('usuario_deposito')->insert([
-    //                     'id_usuario' => $idUsuario[0]->id,
-    //                     'id_deposito' => $resultDepositos->id,
-    //                 ]);
-    //             }
-    //         }
-    //     }
-    // }
-
-
-    public function inserirUsuarioSetor($setor, $idPessoa)
-    {
-        try{
-        $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
-        $resultSetor = DB::table('rotas_setor')->leftJoin('setor', 'rotas_setor.id_setor', 'setor.id')->distinct('id_setor')->get();
-        //dd($resultDeposito);
-        foreach ($setor as $setors) {
-            foreach ($resultSetor as $resultSetors) {
-                if ($resultSetors->nome == str_replace('_', ' ', $setors)) {
-                    DB::table('usuario_setor')->insert([
-                        'id_usuario' => $idUsuario[0]->id,
-                        'id_setor' => $resultSetors->id,
-                    ]);
+                            if(!$countInserido){
+                                DB::table('usuario_acesso')->insert([
+                                    'id_usuario' => $idUsuario[0]->id,
+                                    'id_setor' => $setor,
+                                    'id_perfil' => $keyPerfil,
+                                    'id_acesso' => $acesso
+                                ]);
+                            }
+                           
+                        }
+                    }
                 }
             }
         }
-    }
-    catch(\Exception $e){
+        // } catch (\Exception $e) {
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+        //     $code = $e->getCode();
+        //     return view('administrativo-erro.erro-inesperado', compact('code'));
+        // }
+    }
+
 
     public function gerarSenhaInicial($id_pessoa)
     {
@@ -419,40 +366,39 @@ class UsuarioController extends Controller
 
     public function gravaSenha(Request $request)
     {
-        try{
-        //dd($request);
-        $id_usuario = session()->get('usuario.id_usuario');
-        $senhaAtual = $request->input('senhaAtual');
-        $resultSenhaAtualHash = DB::select("select hash_senha from usuario where id = $id_usuario");
+        try {
+            //dd($request);
+            $id_usuario = session()->get('usuario.id_usuario');
+            $senhaAtual = $request->input('senhaAtual');
+            $resultSenhaAtualHash = DB::select("select hash_senha from usuario where id = $id_usuario");
 
-        if (Hash::check($senhaAtual, $resultSenhaAtualHash[0]->hash_senha)) {
-            if($request->input('senhaNova') == $request->input('senhaAtual')){
-                app('flasher')->addError('Sua nova senha não pode ser igual a antiga!');
-                return redirect()->back();
+            if (Hash::check($senhaAtual, $resultSenhaAtualHash[0]->hash_senha)) {
+                if ($request->input('senhaNova') == $request->input('senhaAtual')) {
+                    app('flasher')->addError('Sua nova senha não pode ser igual a antiga!');
+                    return redirect()->back();
+                }
+                $senha_nova = Hash::make($request->input('senhaNova'));
+
+                DB::table('usuario')
+                    ->where('id', $id_usuario)
+                    ->update([
+                        'hash_senha' => $senha_nova,
+                    ]);
+
+                //return view('login.alterar-senha')->with('mensagem', 'Senha Alterada com sucesso!');
+
+                app('flasher')->addSuccess('Senha Alterada com sucesso!');
+
+                return redirect('/login/valida');
             }
-            $senha_nova = Hash::make($request->input('senhaNova'));
+            return redirect()->back()->with('mensagemErro', 'Senha atual incorreta!');
+            //return view('login.alterar-senha')->withErrors(['Senha atual incorreta']);
+        } catch (\Exception $e) {
 
-            DB::table('usuario')
-                ->where('id', $id_usuario)
-                ->update([
-                    'hash_senha' => $senha_nova,
-                ]);
-
-            //return view('login.alterar-senha')->with('mensagem', 'Senha Alterada com sucesso!');
-
-            app('flasher')->addSuccess('Senha Alterada com sucesso!');
-
-            return redirect('/login/valida');
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
         }
-        return redirect()->back()->with('mensagemErro', 'Senha atual incorreta!');
-        //return view('login.alterar-senha')->withErrors(['Senha atual incorreta']);
     }
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
 
     public function gerarSenha($id_pessoa)
     {
