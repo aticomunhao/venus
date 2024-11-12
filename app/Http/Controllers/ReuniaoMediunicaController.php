@@ -132,11 +132,6 @@ class ReuniaoMediunicaController extends Controller
             ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
             ->orderBy('gr.nome');
 
-            if (is_array(session()->get('usuario.setor')) && !empty(session()->get('usuario.setor'))) {
-                if (!in_array(25, session()->get('usuario.setor'))) {
-                    $grupo = $grupo->whereIn('gr.id_setor', session()->get('usuario.setor') ?? []);
-                }
-            }
 
 
             $grupo = $grupo->get();
@@ -304,11 +299,7 @@ class ReuniaoMediunicaController extends Controller
                 ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
                 ->where('id_tipo_grupo', 1)
                 ->orderBy('gr.nome');
-                if (is_array(session()->get('usuario.setor')) && !empty(session()->get('usuario.setor'))) {
-                    if (!in_array(25, session()->get('usuario.setor'))) {
-                        $grupo = $grupo->whereIn('gr.id_setor', session()->get('usuario.setor') ?? []);
-                    }
-                }
+         
 
 
                 $grupo = $grupo->get();
