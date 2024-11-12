@@ -341,6 +341,7 @@ Route::middleware('rotas:25')->group(function () {
     Route::get('/gerenciar-integral', [GerenciarIntegralController::class, 'index']);
     Route::get('/alta-integral/{id}', [GerenciarIntegralController::class, 'update']);
     Route::get('/visualizar-integral/{id}', [GerenciarIntegralController::class, 'show']);
+    Route::any('/maca-integral/{id}', [GerenciarIntegralController::class, 'store']);
 });
 
 // Gerenciar Perfis

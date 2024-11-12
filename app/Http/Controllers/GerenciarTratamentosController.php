@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\DiasCronograma;
 use App\Jobs\DiasCronogramaOntem;
 use App\Jobs\Faltas;
+use App\Jobs\FaltasTrabalhador;
 use App\Jobs\FimSemanas;
 use App\Jobs\LimiteFalta;
 use Illuminate\Database\Query\JoinClause;
@@ -392,6 +393,8 @@ class GerenciarTratamentosController extends Controller
         LimiteFalta::dispatch();
         FimSemanas::dispatch();
         Faltas::dispatch();
+        FaltasTrabalhador::dispatch();
+        
         return redirect()->back();
     }
 
