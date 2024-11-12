@@ -94,7 +94,7 @@
                                 <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
                                     class="btn btn-outline-warning btn-sm tooltips">
                                     <span class="tooltiptext">Gerenciar</span>
-                                    <i class="bi bi-three-dots" style="font-size: 1rem; color:#000;"></i>
+                                    <i class="bi bi-gear" style="font-size: 1rem; color:#000;"></i>
                                 </a>
 
                             </td>
