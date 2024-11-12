@@ -47,7 +47,7 @@
                             type="button">Limpar</a>
 
                         <a href="/gerenciar-grupos-membro" class="btn btn-primary btn-sm me-md-2  offset-1"
-                            type="button">Retornar para tela inicial</a>
+                            type="button">Retornar</a>
                         @if ($grupo->modificador == 4)
                             <a href="/ferias-reuniao/{{ $id }}/2"><input class="btn btn-warning btn-sm me-md-2"
                                     style="font-size: 0.9rem;" type="button" value="Retomar de Férias"></a>
@@ -59,6 +59,8 @@
                         @if( in_array(29, session()->get('usuario.acesso')) )
                         <a href="/criar-membro-grupo/{{ $id }}"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
                             type="button" value="Novo membro +"></a>
+                        <a href="/selecionar-membro/{{ $id }}"><input class="btn btn-warning btn-sm me-md-2" style="font-size: 0.9rem;"
+                            type="button" value="Transferir Membros"></a>
                             @endif
                     </div>
                 </div>
