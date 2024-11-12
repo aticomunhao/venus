@@ -125,7 +125,7 @@ class AtendimentoFraternoController extends Controller
             ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
             ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
             ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-            ->where('at.status_atendimento', '<', 5)
+            ->where('at.status_atendimento', '<', 6)
             ->where('at.afe',  null)
             ->where('at.id_atendente', $atendente)
             ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
@@ -170,7 +170,7 @@ class AtendimentoFraternoController extends Controller
             ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')
             ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
             ->whereDate('dh_chegada', Carbon::today()->toDateString())
-            ->where('at.status_atendimento', '=', 1)
+            ->where('at.status_atendimento', '=', 2)
             ->where(function ($query) use ($id_associado) {
                 $query->where('at.id_atendente_pref', '=',   $id_associado)
                     ->orWhereNull('at.id_atendente_pref'); // Inclui registros onde não há atendente preferencial
@@ -202,7 +202,7 @@ class AtendimentoFraternoController extends Controller
                 ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
                 ->where('at.id_atendente', $atendente)
                 ->whereNull('afe')
-                ->where('at.status_atendimento', '<', 5)
+                ->where('at.status_atendimento', '<', 6)
                 ->count();
             //dd($atendendo);
 
@@ -210,7 +210,7 @@ class AtendimentoFraternoController extends Controller
 
             //Conta quantos atendimentos estão Aguardando Atendimento
             $atende = DB::table('atendimentos')
-                ->where('status_atendimento', 1)
+                ->where('status_atendimento', 2)
                 ->whereNull('afe')
                 ->whereNull('id_atendente_pref')
                 ->whereNull('pref_tipo_atendente')
@@ -220,14 +220,14 @@ class AtendimentoFraternoController extends Controller
 
             //$atende = json_decode(json_encode($atende), true);
 
-            $atende1 = DB::table('atendimentos')->where('status_atendimento', 1)
+            $atende1 = DB::table('atendimentos')->where('status_atendimento', 2)
                 ->whereNull('afe')
                 ->where('id_atendente_pref', $atendente)
                 ->pluck('id')
                 ->toArray();
 
             // $atende1 = json_decode(json_encode($atende1), true);
-            $atende2 = DB::table('atendimentos')->where('status_atendimento', 1)
+            $atende2 = DB::table('atendimentos')->where('status_atendimento', 2)
                 ->whereNull('afe')
                 ->where('pref_tipo_atendente', $pref_m)
                 ->pluck('id')
@@ -274,7 +274,7 @@ class AtendimentoFraternoController extends Controller
                     //->limit(1)
                     //->whereNull('afe')
                     //->orWhereNot('afe')
-                    ->where('status_atendimento', 1)
+                    ->where('status_atendimento', 2)
                     ->where(function ($query) {
                         $query->whereNull('afe')
                             ->orWhere('afe', false);
@@ -293,7 +293,7 @@ class AtendimentoFraternoController extends Controller
                     ->update([
                         'id_atendente' => $atendente,
                         'id_sala' => $sala,
-                        'status_atendimento' => 2
+                        'status_atendimento' => 4
                     ]);
 
                 //dd($lixo);
@@ -392,7 +392,7 @@ class AtendimentoFraternoController extends Controller
                 return redirect('/atendendo');
             }
             //99% dos casos
-            if ($atendendo = $atendente && $status > 1) {
+            if ($atendendo = $atendente && $status > 2) {
                 app('flasher')->addInfo('Retomando análise.');
 
                 return view('/atendimento-assistido/historico-assistido', compact('atendente', 'analisa'));
@@ -400,10 +400,10 @@ class AtendimentoFraternoController extends Controller
             //Caso inútil, já que é impossivel ter um atendente para um atendimento com atendente em status 1, mas precaução
             if ($atendendo = $atendente && $status = 1) {
                 DB::table('atendimentos AS at')
-                    ->where('status_atendimento', '=', 1)
+                    ->where('status_atendimento', '=', 2)
                     ->where('at.id', $idat)
                     ->update([
-                        'status_atendimento' => 2,
+                        'status_atendimento' => 4,
                         'id_atendente' => $atendente
                     ]);
 
@@ -430,14 +430,14 @@ class AtendimentoFraternoController extends Controller
 
             $sit = DB::table('atendimentos AS at')
                 ->where('at.id', $idat)
-                ->where('at.status_atendimento', 2)
+                ->where('at.status_atendimento', 4)
                 ->count();
 
             $status =  DB::table('atendimentos AS at')
                 ->where('at.id', $idat)
                 ->value('status_atendimento');
 
-            if ($status > 2) {
+            if ($status > 4) {
 
                 app('flasher')->addError('Esta ação não pode ser executada, este status já foi ultrapassado.');
 
@@ -447,10 +447,10 @@ class AtendimentoFraternoController extends Controller
                 //Atualiza o status para Aguardando Assistido, atualizar o id_atendente não muda nada,
                 // logo que o usuário só ve atendimentos dele, atualizando sempre pro mesmo valor original
                 DB::table('atendimentos AS at')
-                    ->where('status_atendimento', '=', 2)
+                    ->where('status_atendimento', '=', 4)
                     ->where('at.id', $idat)
                     ->update([
-                        'status_atendimento' => 3,
+                        'status_atendimento' => 1,
                         'id_atendente' => $atendente
                     ]);
             }
@@ -478,19 +478,19 @@ class AtendimentoFraternoController extends Controller
             $atendente = session()->get('usuario.id_associado');
 
 
-            if (DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento') > 3) {
+            if (DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento') > 5) {
 
                 app('flasher')->addError('O início do atendimento já foi registrado.');
 
                 return redirect()->back();
             }
             // Troca o Status do Atendimento para Em Atendimento
-            elseif (DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento') < 4) {
+            elseif (DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento') < 5) {
 
                 DB::table('atendimentos AS at')
                     ->where('at.id', $idat)
                     ->update([
-                        'status_atendimento' => 4,
+                        'status_atendimento' => 5,
                         'dh_inicio' => $now
                     ]);
 
@@ -515,7 +515,7 @@ class AtendimentoFraternoController extends Controller
 
             $sit = DB::table('atendimentos AS at')
                 ->where('at.id', $idat)
-                ->where('status_atendimento', '<', 4)
+                ->where('status_atendimento', '<', 5)
                 ->count();
 
             $atendido = DB::table('pessoas AS p')
@@ -568,7 +568,7 @@ class AtendimentoFraternoController extends Controller
 
             $sit = DB::table('atendimentos AS at')
                 ->where('at.id', $idat)
-                ->where('status_atendimento', '<', 4)
+                ->where('status_atendimento', '<', 5)
                 ->count();
 
             $atendido = DB::table('pessoas AS p')
@@ -623,7 +623,7 @@ class AtendimentoFraternoController extends Controller
 
         try {
 
-            $sit = DB::table('atendimentos AS at')->where('at.id', $idat)->where('status_atendimento', '<', 4)->count();
+            $sit = DB::table('atendimentos AS at')->where('at.id', $idat)->where('status_atendimento', '<', 5)->count();
 
 
             if ($sit > 0) {
@@ -1018,23 +1018,23 @@ class AtendimentoFraternoController extends Controller
             $emergencia = $request->emergencia == 'on' ? 1 : 0;
             $atendente = session()->get('usuario.id_associado');
 
-            $sit = DB::table('atendimentos AS at')->where('at.id_atendente', $atendente)->where('at.status_atendimento', '<', 5)->count();
+           // $sit = DB::table('atendimentos AS at')->where('at.id_atendente', $atendente)->where('at.status_atendimento', '<', 5)->count();
 
             $atendendo = DB::table('atendimentos AS at')->where('at.id', $idat)->value('id_atendente');
 
             $status =  DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento');
 
-            if ($status = 4 && $atendendo <> $atendente) {
+            if ($status = 5 && $atendendo <> $atendente) {
 
                 app('flasher')->addError('Este atendimento não é sua responsabilidade.');
 
                 return redirect('/atendendo');
-            } elseif ($status = 4 && $atendendo = $atendente) {
+            } elseif ($status = 5 && $atendendo = $atendente) {
                 DB::table('atendimentos AS at')
-                    ->where('status_atendimento', '=', 4)
+                    ->where('status_atendimento', '=', 5)
                     ->where('at.id', $idat)
                     ->update([
-                        'status_atendimento' => 5,
+                        'status_atendimento' => 6,
                         'id_atendente' => $atendente,
                         'dh_fim' => $now,
                         'emergencia' => $emergencia
@@ -1209,7 +1209,7 @@ class AtendimentoFraternoController extends Controller
             DB::table('atendimentos AS a')
                 ->where('id', '=', $id)
                 ->update([
-                    'status_atendimento' => 6,
+                    'status_atendimento' => 7,
                     'motivo' => $request->motivo
                 ]);
 
