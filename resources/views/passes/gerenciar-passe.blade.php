@@ -5,6 +5,9 @@
 @endsection
 
 @section('content')
+   
+
+
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align:left; color:gray; font-family:calibri">
             GERENCIAR PASSES
@@ -19,8 +22,10 @@
                             <option value="">Selecione</option>
                             @foreach ($grupos as $gruposs)
                                 <option value="{{ $gruposs->idg }}"
-                                    {{ request('grupo') == $gruposs->idg ? 'selected' : '' }}>
-                                    {{ $gruposs->nomeg }} - {{ $gruposs->sigla }}
+                                    {{ request('nome_grupo') == $gruposs->idg ? 'selected' : '' }}>
+                                    {{ $gruposs->nomeg }} ({{ $gruposs->sigla }})-{{ $gruposs->dia_semana }}
+                                    | {{ date('H:i', strtotime($gruposs->h_inicio)) }}/{{ date('H:i', strtotime($gruposs->h_fim)) }}
+                                    | Sala {{ $gruposs->sala }}
                                 </option>
                             @endforeach
                         </select>
@@ -97,7 +102,8 @@
                                                                     <span style="color:#198754">número de passes:</span>
                                                                 </label>
                                                                 <input type="number" class="form-control"
-                                                                    name="acompanhantes"  placeholder="0" min="1" max="100" required>
+                                                                    name="acompanhantes" placeholder="0" min="1"
+                                                                    max="100" required>
                                                             </div>
                                                         </center>
                                                     </div>
@@ -129,4 +135,7 @@
             </div>
         </div>
     </div>
+
+
+   
 @endsection
