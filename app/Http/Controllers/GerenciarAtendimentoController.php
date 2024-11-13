@@ -404,7 +404,7 @@ class GerenciarAtendimentoController extends Controller
         try {
             $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
-            if ($status > 1) {
+            if ($status != 2) {
                 app('flasher')->addError('Somente são permitidas alterações quando o status é "Aguardando atendimento".');
                 return redirect('/gerenciar-atendimentos');
             } else {
