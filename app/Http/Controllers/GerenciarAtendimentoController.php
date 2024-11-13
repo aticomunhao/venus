@@ -62,7 +62,7 @@ class GerenciarAtendimentoController extends Controller
             $lista->where('p1.cpf', 'ilike', "%$cpf%");
         }
 
-        $lista = $lista->orderby('ts.descricao', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
+        $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
 
         $lista = $lista->get();
 
@@ -124,10 +124,10 @@ class GerenciarAtendimentoController extends Controller
             $now = Carbon::now()->format('Y-m-d');
 
             DB::table('atendimentos')
-                ->where('status_atendimento', '<', 5)
+                ->where('status_atendimento', '<', 6)
                 ->where('dh_chegada', '<', $now)
                 ->update([
-                    'status_atendimento' => 6,
+                    'status_atendimento' => 7,
                 ]);
 
             $atende = DB::select("select
@@ -197,7 +197,7 @@ class GerenciarAtendimentoController extends Controller
                 $lista->where('p1.cpf', $request->cpf);
             }
 
-            $lista = $lista->orderby('ts.descricao', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
+            $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
 
             $lista = $lista->get();
 
@@ -309,7 +309,7 @@ class GerenciarAtendimentoController extends Controller
 
             $assistido = $request->assist;
 
-            $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 5)->where('id_assistido', $assistido)->count();
+            $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 6)->where('id_assistido', $assistido)->count();
 
             //dd($resultado);
             if ($resultado > 0) {
@@ -332,7 +332,7 @@ class GerenciarAtendimentoController extends Controller
                 'pref_tipo_atendente' => $request->input('tipo_afi'),
                 'id_prioridade' => $request->input('priori'),
                 'menor_auto' => $menor,
-                'status_atendimento' => 1,
+                'status_atendimento' => 2,
             ]);
 
 
@@ -378,14 +378,14 @@ class GerenciarAtendimentoController extends Controller
 
             $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
-            if ($status > 1) {
+            if ($status != 2) {
                 app('flasher')->addError('Somente é permitido "Cancelar" atendimentos no status "Aguardando atendimento".');
                 return redirect('/gerenciar-atendimentos');
             } else {
                 DB::table('atendimentos AS a')
                     ->where('id', '=', $ida)
                     ->update([
-                        'status_atendimento' => 6,
+                        'status_atendimento' => 7,
                         'motivo' => $request->motivo
                     ]);
 
@@ -777,7 +777,7 @@ class GerenciarAtendimentoController extends Controller
             $salaAFE = DB::table('atendimentos')
                 ->where('dh_marcada', '>=', $now)
                 ->where('dh_marcada', '<', $no)
-                ->whereIn('status_atendimento', [1, 7])
+                ->whereIn('status_atendimento', [2, 3])
                 ->pluck('id_sala');
 
             $sala = DB::table('salas AS s')
