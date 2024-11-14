@@ -2,7 +2,6 @@
 @php use Carbon\Carbon; @endphp
 @section('title', 'Editar Grupos')
 @section('content')
-
     <br>
     <div class="container">
         <div class="row justify-content-center">
@@ -11,7 +10,8 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                {{ $cronograma->nome }}-{{ $cronograma->setor }}- {{ $cronograma->dia }} - {{ $cronograma->h_inicio }} -
+                                {{ $cronograma->nome }}-{{ $cronograma->setor }}- {{ $cronograma->dia }} -
+                                {{ $cronograma->h_inicio }} -
                                 {{ $cronograma->h_fim }}
                             </div>
                         </div>
@@ -32,7 +32,8 @@
                                             </button>
                                         </h2>
                                         <div id="collapse{{ $index }}" class="accordion-collapse collapse"
-                                            aria-labelledby="heading{{ $index }}" data-bs-parent="#accordionExample">
+                                            aria-labelledby="heading{{ $index }}"
+                                            data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
 
                                                 <table class="table">
@@ -82,22 +83,26 @@
                                                                     @csrf
                                                                     <center>
                                                                         <div class="col-10 mt-3">
-                                                                            <input type="hidden" id="passId" name="passId">
+                                                                            <input type="hidden" id="passId"
+                                                                                name="passId">
                                                                             <div class="mb-3">
                                                                                 <label for="nrAcompanhantes"
                                                                                     class="form-label">Número
                                                                                     de Passes</label>
                                                                                 <input type="number" class="form-control"
-                                                                                    id="nrAcompanhantes" name="nr_acompanhantes" placeholder="0" min="1" max="100"
-                                                                                    required>
+                                                                                    id="nrAcompanhantes"
+                                                                                    name="nr_acompanhantes" placeholder="0"
+                                                                                    min="1" max="100" required>
                                                                             </div>
                                                                         </div>
                                                                     </center>
 
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button data-bs-dismiss="modal" class="btn btn-danger">Cancelar</button>
-                                                                <button type="submit" class="btn btn-primary">Confirmar</button>
+                                                                <button data-bs-dismiss="modal"
+                                                                    class="btn btn-danger">Cancelar</button>
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">Confirmar</button>
                                                             </div>
                                                             </form>
                                                         </div>
@@ -141,4 +146,14 @@
             });
         });
     </script>
+    <style>
+        #btn-back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 10px;
+            display: none;
+            z-index: 100;
+        }
+    </style>
+   
 @endsection

@@ -2,7 +2,9 @@
 @php use Carbon\Carbon; @endphp
 @section('title', 'Visualizar Passes')
 @section('content')
-
+<button type="button" class="btn btn-danger btn-floating btn-lg" id="btn-back-to-top">
+    <i class="bi bi-arrow-up"></i>
+</button>
     <br>
     <div class="container">
         <div class="row justify-content-center">
@@ -48,6 +50,42 @@
             </div>
         </div>
     </div>
+    <style>
+        #btn-back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 10px;
+            display: none;
+            z-index: 100;
+        }
+    </style>
+    <script>
+        //Get the button
+        let mybutton = document.getElementById("btn-back-to-top");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function() {
+            scrollFunction();
+        };
+
+        function scrollFunction() {
+            if (
+                document.body.scrollTop > 20 ||
+                document.documentElement.scrollTop > 20
+            ) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+        // When the user clicks on the button, scroll to the top of the document
+        mybutton.addEventListener("click", backToTop);
+
+        function backToTop() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
 @endsection
 
 @section('footerScript')
