@@ -75,8 +75,9 @@ class GerenciarTratamentosController extends Controller
 
         $cpf = $request->cpf;
 
-        $acesso = DB::table('usuario_acesso')->where('id_usuario', session()->get('usuario.id_usuario'))->where('id_acesso', session()->get('acessoAtual'))->where('id_setor', '51')->get();
-        if (!$acesso and  !in_array(36, session()->get('usuario.acesso'))) {
+        $acesso = DB::table('usuario_acesso')->where('id_usuario', session()->get('usuario.id_usuario'))->where('id_acesso', session()->get('acessoAtual'))->where('id_setor', '51')->first();
+        
+        if (!$acesso and !in_array(36, session()->get('usuario.acesso'))) {
             $lista = $lista->whereIn('tr.id_reuniao', $cronogramasDirigente);
             $request->status ?? $situacao = 'all';
         }
@@ -292,7 +293,9 @@ class GerenciarTratamentosController extends Controller
             ->leftJoin('encaminhamento', 'tratamento.id_encaminhamento', 'encaminhamento.id')
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
             ->where('tratamento.id', $idtr)
-            ->first('id_assistido');
+            ->first();
+
+
 
         $result = DB::table('tratamento AS tr')
             ->select(
@@ -350,9 +353,17 @@ class GerenciarTratamentosController extends Controller
             ->leftJoin('salas as sl', 'rm.id_sala', 'sl.id')
             ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
             ->where('at.id_assistido', $pessoa->id_assistido)
-            ->where('enc.id_tipo_encaminhamento', 2)
-            ->where('enc.status_encaminhamento', '<', 5)
-            ->get();
+            ->where('enc.id_tipo_encaminhamento', 2);
+
+            if($pessoa->status_encaminhamento < 5){
+                $result = $result->where('enc.status_encaminhamento', '<', 5)
+                ->get();
+            }else{
+                
+                $result = $result->where('tr.id', $idtr)->get();
+                
+            }
+           
 
         // dd($result, $pessoa);
         $list = DB::table('tratamento AS tr')
