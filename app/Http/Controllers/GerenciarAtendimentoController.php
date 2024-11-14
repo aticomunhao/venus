@@ -31,7 +31,15 @@ class GerenciarAtendimentoController extends Controller
         }
 
         if ($assist != 'null') {
-            $lista->where('p1.nome_completo', 'ilike', "%$assist%");
+
+            $pesquisaAssist = array();
+            $pesquisaAssist = explode(' ', $assist);
+
+            foreach($pesquisaAssist as $itemPesquisaAssist){
+               $lista =  $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAssist%"]);
+            }
+            
+            
         }
 
         if ($status != 'null') {
@@ -39,7 +47,13 @@ class GerenciarAtendimentoController extends Controller
         }
 
         if ($atendente != 'null') {
-            $lista->where('p.nome_completo', 'ilike', "%$atendente%");
+
+                   $pesquisaAtendente = array();
+            $pesquisaAtendente = explode(' ', $assist);
+
+            foreach($pesquisaAtendente as $itemPesquisaAtendente){
+               $lista =  $lista->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAtendente%"]);
+            }
         }
 
 
@@ -110,10 +124,10 @@ class GerenciarAtendimentoController extends Controller
             $now = Carbon::now()->format('Y-m-d');
 
             DB::table('atendimentos')
-                ->where('status_atendimento', '<', 5)
+                ->where('status_atendimento', '<', 6)
                 ->where('dh_chegada', '<', $now)
                 ->update([
-                    'status_atendimento' => 6,
+                    'status_atendimento' => 7,
                 ]);
 
             $atende = DB::select("select
@@ -210,14 +224,20 @@ class GerenciarAtendimentoController extends Controller
     public function ajaxCRUD(Request $request)
     {
 
-
         $pessoas = DB::table('pessoas')
-            ->select('id', 'nome_completo')
-            ->where(DB::raw('unaccent(lower(nome_completo))'), 'ilike', DB::raw("unaccent(lower('%{$request->nome}%'))"))
-            ->orderBy('nome_completo')
-            ->get();
+            ->select('id', 'nome_completo');
+            
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $request->nome);
+
+            foreach($pesquisaNome as $itemPesquisa){
+               $pessoas->whereRaw("UNACCENT(LOWER(nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+            }
+            
+            $pessoas =  $pessoas->orderBy('nome_completo')->get();
 
         return $pessoas;
+
     }
 
     public function create()
@@ -289,7 +309,7 @@ class GerenciarAtendimentoController extends Controller
 
             $assistido = $request->assist;
 
-            $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 5)->where('id_assistido', $assistido)->count();
+            $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 6)->where('id_assistido', $assistido)->count();
 
             //dd($resultado);
             if ($resultado > 0) {
@@ -312,7 +332,7 @@ class GerenciarAtendimentoController extends Controller
                 'pref_tipo_atendente' => $request->input('tipo_afi'),
                 'id_prioridade' => $request->input('priori'),
                 'menor_auto' => $menor,
-                'status_atendimento' => 1,
+                'status_atendimento' => 2,
             ]);
 
 
@@ -358,14 +378,14 @@ class GerenciarAtendimentoController extends Controller
 
             $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
-            if ($status > 1) {
+            if ($status != 2) {
                 app('flasher')->addError('Somente é permitido "Cancelar" atendimentos no status "Aguardando atendimento".');
                 return redirect('/gerenciar-atendimentos');
             } else {
                 DB::table('atendimentos AS a')
                     ->where('id', '=', $ida)
                     ->update([
-                        'status_atendimento' => 6,
+                        'status_atendimento' => 7,
                         'motivo' => $request->motivo
                     ]);
 
@@ -384,7 +404,7 @@ class GerenciarAtendimentoController extends Controller
         try {
             $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
-            if ($status > 1) {
+            if ($status != 2) {
                 app('flasher')->addError('Somente são permitidas alterações quando o status é "Aguardando atendimento".');
                 return redirect('/gerenciar-atendimentos');
             } else {
@@ -415,8 +435,8 @@ class GerenciarAtendimentoController extends Controller
                     ->whereNull('at.dh_fim')->where('at.dh_inicio', '>', $hoje)
                     ->select('m.id_associado', 'p.id as iaf', 'p.nome_completo as nm_afi', 'p.ddd', 'p.celular', 'm.id_associado as ida')->get();
 
-                $afiSelecionado = DB::table('associado')->where('id', $result->iap)->pluck('id_pessoa');
-
+                $afiSelecionado = DB::table('associado')->where('id', $result->iap)->select('id_pessoa')->first();
+                $afiSelecionado = $afiSelecionado ? $afiSelecionado->id_pessoa : null;
                 $sexo = DB::select("select
                     id as idsx,
                     tipo,
@@ -525,7 +545,7 @@ class GerenciarAtendimentoController extends Controller
                     'g.nome AS nomeg',
                     's.id AS ids',
                     's.numero AS nm_sala',
-                    DB::raw("(CASE WHEN atd.dh_inicio < '$now' OR  NOT atd.dh_fim IS NULL THEN 'Inativo' ELSE 'Ativo' END) as status")
+                    DB::raw("(CASE WHEN NOT atd.dh_fim IS NULL THEN 'Inativo' ELSE 'Ativo' END) as status")
                 )
                 ->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')
                 ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')
@@ -757,7 +777,7 @@ class GerenciarAtendimentoController extends Controller
             $salaAFE = DB::table('atendimentos')
                 ->where('dh_marcada', '>=', $now)
                 ->where('dh_marcada', '<', $no)
-                ->whereIn('status_atendimento', [1, 7])
+                ->whereIn('status_atendimento', [2, 3])
                 ->pluck('id_sala');
 
             $sala = DB::table('salas AS s')

@@ -323,7 +323,7 @@
                         let descricao = this.descricao == null ? '' : this.descricao
 
 
-                        if (this.status_atendimento == 3) {
+                        if (this.status_atendimento == 1) {
 
                             $('#tabelaPrincipal').append(
 

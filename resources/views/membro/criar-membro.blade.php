@@ -28,7 +28,7 @@
                                 <select class="form-select select2" aria-label=".form-select-lg example"
                                     name="id_associado">
                                     @foreach ($associado as $associados)
-                                        <option value="{{ $associados->id }}">{{ $associados->nome_completo }}</option>
+                                        <option value="{{ $associados->id }}">{{ $associados->nome_completo }} - {{ $associados->nr_associado}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -71,7 +71,7 @@
                                 </span>
                                 <select class="form-select select2" aria-label=".form-select-lg example" name="id_reuniao">
                                     @foreach ($grupo as $grupos)
-                                       
+
                                         <option value="{{ $grupos->id }}">{{ $grupos->nome }} - {{ $grupos->dia }}-
                                             {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim)) }}
                                             - Sala {{ $grupos->numero }}  -  {{ $grupos->nsigla }}</option>

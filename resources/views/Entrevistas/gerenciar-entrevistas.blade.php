@@ -166,7 +166,7 @@
                                                 <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i>
                                             </button>
                                         @endif{{-- Fim Confirmar --}}
-                                       
+
                                         {{--  Modal de Finalizacao --}} <div class="modal fade" id="modalF{{ $informacao->ide }}"
                                             tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
@@ -297,7 +297,7 @@
                                         {{-- Fim Modal AFE --}}
 
 
-                                        
+
                                     </td>
                                 </tr>
                             @endforeach

@@ -35,6 +35,8 @@
 
                                 <a href="/usuario-incluir"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
                                         type="button" value="Incluir Usuário"></a>
+                                <a href="/usuario-regenerar-acessos"><input class="btn btn-primary btn-sm me-md-2" style="font-size: 0.9rem;"
+                                        type="button" value="Regenerar Acessos"></a>
 
                                 </div>
                                 </div>

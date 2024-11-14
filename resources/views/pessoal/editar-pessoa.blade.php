@@ -26,7 +26,7 @@
                                     <div class="mb-4" style="text-align:left;">
                                         <label for="validationCustom01" class="form-label">Nome completo</label>
                                         </span>
-                                        <input class="form-control" type="text" maxlength="40" id="" name="nome" value="{{$lista[0]->nome_completo}}">
+                                        <input class="form-control" type="text" maxlength="80" id="" name="nome" value="{{$lista[0]->nome_completo}}">
                                     </div>
                                 </div>
                             </div>
@@ -77,7 +77,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                
+
                                     <div class="col-2">
                                         <div class="mb-4 text-start">
                                             <label for="validationCustom05" class="form-label">DDD</label>
@@ -91,17 +91,17 @@
                                             </select>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col">
                                         <div class="mb-5 text-start">
                                             <label for="validationCustom06" class="form-label">Nr Celular</label>
-                                            <input class="form-control" maxlength="11" type="text" name="celular" 
-                                                   value="{{ old('celular', $lista[0]->celular) }}" 
+                                            <input class="form-control" maxlength="11" type="text" name="celular"
+                                                   value="{{ old('celular', $lista[0]->celular) }}"
                                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');" >
                                         </div>
                                     </div>
-                                    
-                                
+
+
                             <br>
                                 <div class="row mt-2 justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">

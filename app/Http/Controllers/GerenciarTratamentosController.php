@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\DiasCronograma;
 use App\Jobs\DiasCronogramaOntem;
 use App\Jobs\Faltas;
+use App\Jobs\FaltasTrabalhador;
 use App\Jobs\FimSemanas;
 use App\Jobs\LimiteFalta;
 use Illuminate\Database\Query\JoinClause;
@@ -74,8 +75,8 @@ class GerenciarTratamentosController extends Controller
 
         $cpf = $request->cpf;
 
-
-        if (!in_array(51, session()->get('usuario.setor')) and  !in_array(36, session()->get('usuario.acesso'))) {
+        $acesso = DB::table('usuario_acesso')->where('id_usuario', session()->get('usuario.id_usuario'))->where('id_acesso', session()->get('acessoAtual'))->where('id_setor', '51')->get();
+        if (!$acesso and  !in_array(36, session()->get('usuario.acesso'))) {
             $lista = $lista->whereIn('tr.id_reuniao', $cronogramasDirigente);
             $request->status ?? $situacao = 'all';
         }
@@ -392,6 +393,8 @@ class GerenciarTratamentosController extends Controller
         LimiteFalta::dispatch();
         FimSemanas::dispatch();
         Faltas::dispatch();
+        FaltasTrabalhador::dispatch();
+        
         return redirect()->back();
     }
 
