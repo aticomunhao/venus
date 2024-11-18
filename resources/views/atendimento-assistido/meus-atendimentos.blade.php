@@ -64,7 +64,7 @@
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                             data-bs-target="#flush-collapse{{ $b++ }}" aria-expanded="false"
                                             aria-controls="flush-collapse{{ $c++ }}">
-                                            {{ date('d/m/Y', strtotime($assistidos->dh_chegada)) }}
+                                            {{ date('d/m/Y', strtotime($assistidos->dh_chegada)) }} -- {{$assistidos->nm_1}}
                                         </button>
                                     </h2>
                                     <div id="flush-collapse{{ $d++ }}" class="accordion-collapse collapse"

@@ -142,11 +142,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr style="text-align:center;font-size:11px">
-                                                        @foreach ($analisas->tratamentos as $tratas)
+                                                    @foreach ($analisas->tratamentos as $tratas)
+                                                        <tr style="text-align:center;font-size:11px">
                                                             <td>{{ $tratas->tdt }}</td>
-                                                        @endforeach
-                                                    </tr>
+                                                        </tr>
+                                                    @endforeach
                                                 </tbody>
                                             </table>
                                             <table class="table table-sm table-bordered table-striped">
@@ -156,11 +156,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr style="text-align:center;font-size:11px">
-                                                        @foreach ($analisas->entrevistas as $entres)
+                                                    @foreach ($analisas->entrevistas as $entres)
+                                                        <tr style="text-align:center;font-size:11px">
                                                             <td>{{ $entres->tde }}</td>
-                                                        @endforeach
-                                                    </tr>
+                                                        </tr>
+                                                    @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
