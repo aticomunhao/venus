@@ -339,16 +339,12 @@
 
     <script>
         $(document).ready(function() {
+
+   
             if ({{ $diaP == null }}) { //Deixa o select status como padrao vazio
                 $(".teste").prop("selectedIndex", -1);
             }
-
-            if ({{ $cron === null }}) {
-                $("#grupo").prop("selectedIndex", -1);
-            }
-
-
-
+            
         });
     </script>
 
