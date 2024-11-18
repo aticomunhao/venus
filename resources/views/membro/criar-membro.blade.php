@@ -71,7 +71,6 @@
                                 </span>
                                 <select class="form-select select2" aria-label=".form-select-lg example" name="id_reuniao">
                                     @foreach ($grupo as $grupos)
-
                                         <option value="{{ $grupos->id }}">{{ $grupos->nome }} - {{ $grupos->dia }}-
                                             {{ date('H:i', strtotime($grupos->h_inicio)) }}/{{ date('H:i', strtotime($grupos->h_fim)) }}
                                             - Sala {{ $grupos->numero }}  -  {{ $grupos->nsigla }}</option>
