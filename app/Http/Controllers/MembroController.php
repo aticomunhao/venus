@@ -679,4 +679,14 @@ class MembroController extends Controller
  
 
     }
+
+    public function transferirLote(Request $request){
+
+        
+
+
+
+
+
+    }
 }

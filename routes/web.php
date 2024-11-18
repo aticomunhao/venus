@@ -235,8 +235,7 @@ Route::middleware('rotas:12')->group(function () {
 Route::middleware('rotas:13')->group(function () {
     Route::get('/criar-membro', [MembroController::class, 'create'])->name('');
     Route::post('/incluir-membro', [MembroController::class, 'store'])->name('membro.store');
-    Route::get('/selecionar-membro/{id}', [MembroController::class, 'selecionar']);
-    Route::any('/transferir-membro/{id}', [MembroController::class, 'transferir']);
+    Route::post('/transferir-membros-lote', [MembroController::class, 'transferirLote']);
 });
 
 // Gerenciar Membros
@@ -255,6 +254,8 @@ Route::middleware('rotas:14')->group(function () {
 Route::middleware('rotas:29')->group(function () {
     Route::get('/criar-membro-grupo/{id}', [MembroController::class, 'createGrupo'])->name('');
     Route::any('/incluir-membro-grupo/{id}', [MembroController::class, 'storeGrupo'])->name('');
+    Route::get('/selecionar-membro/{id}', [MembroController::class, 'selecionar']);
+    Route::any('/transferir-membro/{id}', [MembroController::class, 'transferir']);
 });
 
 // Gerenciar Mediunidades
