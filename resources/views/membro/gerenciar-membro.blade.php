@@ -4,6 +4,8 @@
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPO -
             {{ Str::upper($grupo->nome) }} - {{ Str::upper($grupo->dia) }}
+            {{ date('H:i', strtotime($grupo->h_inicio)) }}/{{ date('H:i', strtotime($grupo->h_fim)) }} - {{ $grupo->nsigla }}
+
         </h4>
 
         <div class="col-12">

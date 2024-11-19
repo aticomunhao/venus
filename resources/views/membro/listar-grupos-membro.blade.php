@@ -32,7 +32,8 @@
                             value="{{ request('nome_grupo') }}">
                             <option></option>
                             @foreach ($membro as $membros)
-                                <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }} - {{ $membros->nr_associado }}</option>>
+                                <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }} -
+                                    {{ $membros->nr_associado }}</option>>
                             @endforeach
                         </select>
                     </div>
@@ -46,63 +47,86 @@
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Limpar"></a>
 
-                        @if (in_array(13, session()->get('usuario.acesso')))
-                            <a href="/criar-membro"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
-                                    type="button" value="Novo membro +"></a>
-                        @endif
-                    </div>
-                </div>
-
             </form>
+            @if (in_array(13, session()->get('usuario.acesso')))
+                <a href="/criar-membro"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
+                        type="button" value="Novo membro +"></a>
 
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    Transferir 
+                </button>
+
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          ...
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="button" class="btn btn-primary">Understood</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+            @endif
         </div>
-        <br>
-        <hr>
-        Quantidade de grupos: {{ $contar }}
-        <div class="table">
-            <table
-                class="table display table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
-                <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                    <th>ID</th>
-                    <th class="small-column">GRUPO</th>
-                    <th>DIA</th>
-                    <th>HORÁRIO INICIO</th>
-                    <th>HORÁRIO FIM</th>
-                    <th>SALA</th>
-                    <th class="small-column">SETOR</th>
-                    <th>STATUS</th>
-                    <th>AÇÕES</th>
-
-                </tr>
+    </div>
 
 
+    </div>
+    <br>
+    <hr>
+    Quantidade de grupos: {{ $contar }}
+    <div class="table">
+        <table
+            class="table display table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
+            <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
+                <th>ID</th>
+                <th class="small-column">GRUPO</th>
+                <th>DIA</th>
+                <th>HORÁRIO INICIO</th>
+                <th>HORÁRIO FIM</th>
+                <th>SALA</th>
+                <th class="small-column">SETOR</th>
+                <th>STATUS</th>
+                <th>AÇÕES</th>
 
-                <tbody>
-                    @foreach ($membro_cronograma as $membros)
-                        <tr>
-                            <td>{{ $membros->id }}</td>
-                            <td>{{ $membros->nome_grupo }}</td>
-                            <td>{{ $membros->dia }}</td>
-                            <td>{{ $membros->h_inicio }}</td>
-                            <td>{{ $membros->h_fim }}</td>
-                            <td>{{ $membros->sala }}</td>
-                            <td>{{ $membros->nome_setor }}</td>
-                            <td>{{ $membros->status }}</td>
+            </tr>
 
-                            <td>
 
-                                <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
-                                    class="btn btn-outline-warning btn-sm tooltips">
-                                    <span class="tooltiptext">Gerenciar</span>
-                                    <i class="bi bi-gear" style="font-size: 1rem; color:#000;"></i>
-                                </a>
 
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+            <tbody>
+                @foreach ($membro_cronograma as $membros)
+                    <tr>
+                        <td>{{ $membros->id }}</td>
+                        <td>{{ $membros->nome_grupo }}</td>
+                        <td>{{ $membros->dia }}</td>
+                        <td>{{ $membros->h_inicio }}</td>
+                        <td>{{ $membros->h_fim }}</td>
+                        <td>{{ $membros->sala }}</td>
+                        <td>{{ $membros->nome_setor }}</td>
+                        <td>{{ $membros->status }}</td>
+
+                        <td>
+
+                            <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
+                                class="btn btn-outline-warning btn-sm tooltips">
+                                <span class="tooltiptext">Gerenciar</span>
+                                <i class="bi bi-gear" style="font-size: 1rem; color:#000;"></i>
+                            </a>
+
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
     </div>
 
 
