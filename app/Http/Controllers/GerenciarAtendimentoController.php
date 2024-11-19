@@ -107,7 +107,7 @@ class GerenciarAtendimentoController extends Controller
             ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')
             ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
             ->whereDate('at.dh_chegada', Carbon::today()->toDateString())
-            ->where('at.status_atendimento', '=', 1)
+            ->where('at.status_atendimento', '=', 2)
             ->get();
 
         $contagem = $numero_de_assistidos_para_atender->count();
