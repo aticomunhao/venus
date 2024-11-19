@@ -143,6 +143,7 @@ class AtendimentoFraternoController extends Controller
     {
 
         $id_associado = session()->get('usuario.id_associado');
+        $sexo = session()->get('usuario.sexo');
         $numero_de_assistidos_para_atender = DB::table('atendimentos AS at')
             ->select(
                 'at.id as ida',
@@ -174,7 +175,11 @@ class AtendimentoFraternoController extends Controller
             ->where(function ($query) use ($id_associado) {
                 $query->where('at.id_atendente_pref', '=',   $id_associado)
                     ->orWhereNull('at.id_atendente_pref'); // Inclui registros onde não há atendente preferencial
-            });;
+            })
+            ->where(function ($query) use ($sexo) {
+                $query->where('at.pref_tipo_atendente', '=',   $sexo)
+                    ->orWhereNull('at.pref_tipo_atendente'); // Inclui registros onde não há atendente preferencial
+            });
 
 
         $numero_de_assistidos_para_atender = $numero_de_assistidos_para_atender->count();
