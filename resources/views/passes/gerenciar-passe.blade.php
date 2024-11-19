@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-   
+
 
 
     <div class="container-fluid">
@@ -103,7 +103,7 @@
                                                                 </label>
                                                                 <input type="number" class="form-control"
                                                                     name="acompanhantes" placeholder="0" min="1"
-                                                                    max="100" required>
+                                                                    max="500" required>
                                                             </div>
                                                         </center>
                                                     </div>
@@ -137,5 +137,5 @@
     </div>
 
 
-   
+
 @endsection

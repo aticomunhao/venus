@@ -92,7 +92,7 @@
                                                                                 <input type="number" class="form-control"
                                                                                     id="nrAcompanhantes"
                                                                                     name="nr_acompanhantes" placeholder="0"
-                                                                                    min="1" max="100" required>
+                                                                                    min="1" max="500" required>
                                                                             </div>
                                                                         </div>
                                                                     </center>
@@ -155,5 +155,5 @@
             z-index: 100;
         }
     </style>
-   
+
 @endsection
