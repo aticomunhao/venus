@@ -71,10 +71,11 @@
                                         <table class="table table-sm table-bordered table-striped">
                                             <thead style="text-align:center; background: #daffe0;">
                                                 <tr style="text-align:center; font-weight: bold; font-size:13px">
-                                                <th class="col-2">NR REU</th>
+                                                <th class="col">NR REU</th>
+                                                <th class="col-3">DIRIGENTE</th>
                                                 <th class="col-2">GRUPO</th>
                                                 <th class="col">SALA</th>
-                                                <th class="col-2">TRATAMENTO</th>
+                                                <th class="col">TRATAMENTO</th>
                                                 <th class="col">HORÁRIO INÍCIO</th>
                                                 <th class="col">HORÁRIO FIM</th>
                                                 <th class="col">MAX ATENDIDOS</th>
@@ -85,6 +86,7 @@
                                             <tbody>
                                                 <tr style="text-align:center;font-size:14px">
                                                 <td>{{$tratas->idr}}</td>
+                                                <td>{{$tratas->nome_completo}}</td>
                                                 <td>{{$tratas->nomeg}}</td>
                                                 <td>{{$tratas->numero}}</td>
                                                 <td>{{$tratas->tstd}}</td>

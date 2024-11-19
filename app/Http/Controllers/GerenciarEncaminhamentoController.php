@@ -328,7 +328,7 @@ class GerenciarEncaminhamentoController extends Controller
 
     public function tratamento(Request $request, $ide)
     {
-        try {
+      //  try {
 
             $hoje = Carbon::today();
 
@@ -356,12 +356,14 @@ class GerenciarEncaminhamentoController extends Controller
 
             $trata = DB::table('cronograma AS reu')
 
-                ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'), 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
+                ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'), 'p.nome_completo','reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
                 ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
                 ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                 ->leftJoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
                 ->leftJoin('membro AS me', 'reu.id', 'me.id_cronograma')
+                ->leftJoin('associado as ass', 'me.id_associado','ass.id')
+                ->leftJoin('pessoas as p', 'ass.id_pessoa','p.id')
                 ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
                 ->leftJoin('tipo_dia AS td', 'reu.dia_semana', 'td.id')
                 ->where(function ($query) use ($hoje) {
@@ -371,24 +373,26 @@ class GerenciarEncaminhamentoController extends Controller
                     $query->where('reu.modificador', NULL);
                     $query->orWhere('reu.modificador', '<>', 4);
                 })
+                ->where('me.id_funcao', 1)
                 ->where('reu.dia_semana', $dia)
                 ->where('reu.id_tipo_tratamento', $tp_trat)
                 ->orWhere('tr.status', null)
                 ->where('tr.status', '<', 3)
-                ->groupBy('reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
+                ->groupBy('p.nome_completo','reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
                 ->orderBy('h_inicio')
                 ->get();
 
+             
             if (sizeof($trata) == 0) {
                 app('flasher')->addWarning('Não existem grupos para este dia');
                 return redirect()->back();
             }
 
             return view('/recepcao-integrada/agendar-tratamento', compact('result', 'trata', 'dia'));
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
+        // } catch (\Exception $e) {
+        //     $code = $e->getCode();
+        //     return view('tratamento-erro.erro-inesperado', compact('code'));
+        // }
     }
 
     public function tratar(Request $request, $ide)
@@ -823,20 +827,23 @@ class GerenciarEncaminhamentoController extends Controller
 
             $trata = DB::table('cronograma AS reu')
 
-                ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'), 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
+                ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'),'p.nome_completo', 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
                 ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
                 ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                 ->leftJoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
                 ->leftJoin('cronograma as cro', 'gr.id', 'cro.id_grupo')
                 ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
+                ->leftJoin('associado as ass', 'me.id_associado','ass.id')
+                ->leftJoin('pessoas as p', 'ass.id_pessoa','p.id')
                 ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
                 ->leftJoin('tipo_dia AS td', 'reu.dia_semana', 'td.id')
                 ->where('reu.dia_semana', $dia)
+                ->where('me.id_funcao',1)
                 ->where('reu.id_tipo_tratamento', $tp_trat)
                 ->orWhere('tr.status', null)
                 ->where('tr.status', '<', 3)
-                ->groupBy('reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
+                ->groupBy('p.nome_completo','reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
                 ->orderBy('h_inicio')
                 ->get();
 
