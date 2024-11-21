@@ -52,7 +52,7 @@ use App\Http\Controllers\GerenciarPassesController;
 Auth::routes();
 
 
-
+Route::any('/logout-invalidate', [LoginController::class, 'logout'])->name('logout-invalidate');
 Route::get('/', [LoginController::class, 'index']);
 Route::any('/login/home', [LoginController::class, 'valida']);
 Route::any('/login/valida', [LoginController::class, 'validaUserLogado'])->name('home.post');
