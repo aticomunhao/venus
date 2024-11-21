@@ -171,9 +171,14 @@ class LoginController extends Controller
             return view('tratamento-erro.erro-inesperado', compact('code'));
         }
     }
-    public function create()
+    public function logout()
     {
-        //
+        Auth::logout();
+
+        session()->invalidate();
+        session()->regenerateToken();
+        
+        return redirect('/');
     }
 
     public function store(Request $request)
