@@ -73,7 +73,7 @@ class RelatoriosController extends Controller
                 ->select('cro.id', 'dc.data', 'gr.nome', 'cro.h_inicio', 'td.nome as dia')
                 ->orderBy('dc.data')->get();
 
-            //Confere se a data de uma reunião está presente na lista de distinct criada acima, gerando um array completo, com o dado de presenca   
+            //Confere se a data de uma reunião está presente na lista de distinct criada acima, gerando um array completo, com o dado de presenca
             foreach ($cronogramaAFI as $datas) {
                 $i = 0;
                 foreach ($diasAtendente as $diaAtendente) {
@@ -136,7 +136,7 @@ class RelatoriosController extends Controller
             ->select('cro.id', 'dc.data', 'gr.nome', 'cro.h_inicio', 'td.nome as dia')
             ->orderBy('dc.data')->get();
 
-        //Confere se a data de uma reunião está presente na lista de distinct criaada acima, gerando um array completo, com o dado de presenca   
+        //Confere se a data de uma reunião está presente na lista de distinct criaada acima, gerando um array completo, com o dado de presenca
         foreach ($cronogramaAFI as $datas) {
             $i = 0;
             foreach ($diasAtendente as $diaAtendente) {
@@ -151,7 +151,7 @@ class RelatoriosController extends Controller
 
         //Gera numa variável a contagem total de cada item de presença
         $contaFaltas = array_count_values(array_column($dados, 'presenca'));
-        dd($diasAtendente, $cronogramaAFI, $dados, $cronogramasParticipa, $contaFaltas);
+        // dd($diasAtendente, $cronogramaAFI, $dados, $cronogramasParticipa, $contaFaltas);
 
         // Devolve todos os atendentes membros de uma reunião
         $atendentes = DB::table('membro as m')
@@ -735,29 +735,117 @@ class RelatoriosController extends Controller
     }
     public function vagasGrupos(Request $request)
     {
-
+        // Iniciar a consulta
         $grupos = DB::table('cronograma as cro')
+            ->leftJoin('tipo_tratamento as t', 'cro.id_tipo_tratamento', 't.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
-            ->select(DB::raw(' (select count(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 3) as trat'), 'gr.nome as nome', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 'st.sigla as setor', 'cro.max_atend')
+            ->select(
+                DB::raw('
+                (select count(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 3) as trat'),
+                't.id',
+                't.descricao',
+                'cro.id',
+                'gr.nome as nome',
+                'td.nome as dia',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'st.sigla as setor',
+                'cro.max_atend'
+            )
+            ->orderBy('gr.nome');
+        // Consultar setores para o filtro
+        $setores = DB::table('setor')
+            ->where('nome', 'NOT LIKE', '%Assessoria de Estudos e Aplicações de Medicina Espiritual%')
+            ->orderBy('nome')
+            ->get();
+
+        // Consultar grupos
+        $grupo2 = DB::table('cronograma as cro')
+            ->leftJoin('tipo_tratamento as t', 'cro.id_tipo_tratamento', 't.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
+            ->select('t.id', 't.descricao', 'cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'st.sigla as setor', 'td.nome as dia_semana')
+            ->get();
+
+
+        // Consultar tratamentos
+        $tratamento = DB::table('tipo_tratamento')->get();
+
+        // Filtros
+        if ($request->grupo != null) {
+            $grupos = $grupos->where('cro.id', $request->grupo);
+        }
+
+        if ($request->setor) {
+            $grupos = $grupos->where('gr.id_setor', $request->setor);
+        }
+
+        if ($request->tratamento) {
+            $grupos = $grupos->where('t.id', $request->tratamento);
+        }
+
+        // Paginação dos grupos
+        $grupos = $grupos->paginate(30)->appends([
+            'grupo' => $request->grupo,
+            'setor' => $request->setor,
+            'tratamento' => $request->tratamento,
+        ]);
+
+        // Calcular a quantidade de vagas por tratamento (total)
+        $quantidade_vagas_tipo_tratamento = 0;
+        $tipo_de_tratamento = null;
+        if ($request->tratamento) {
+            // Somando as vagas de cada grupo conforme o tratamento selecionado
+            foreach ($grupos as $grupo) {
+                $quantidade_vagas_tipo_tratamento += $grupo->max_atend - $grupo->trat;
+            }
+            $tipo_de_tratamento = DB::table('tipo_tratamento')->where('id', '=', $request->input('tratamento'))->first();
+            // dd($tipo_de_tratamento);
+        }
+
+
+        // Retornar a view com os dados
+        return view('relatorios.vagas-grupos', compact('setores', 'grupos', 'grupo2', 'tratamento', 'quantidade_vagas_tipo_tratamento','tipo_de_tratamento'));
+    }
+
+    public function vagasGruposAjax($id)
+    {
+        // Iniciar a consulta
+        $grupos = DB::table('cronograma as cro')
+            ->leftJoin('tipo_tratamento as t', 'cro.id_tipo_tratamento', 't.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
+            ->select(
+                DB::raw(' (select count(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 3) as trat'),
+                't.id',
+                't.descricao',
+                'cro.id',
+                'gr.nome as nome',
+                'td.nome as dia',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'st.sigla as setor',
+                'cro.max_atend',
+                'td.nome as dia_semana'
+            )
             ->orderBy('gr.nome');
 
-        $setores = DB::table('setor')->orderBy('nome')->get();
-       
-
-        if ($request->grupo) {
-            $grupos = $grupos->whereRaw("UNACCENT(LOWER(gr.nome)) ILIKE UNACCENT(LOWER(?))", ["%{$request->grupo}%"]);
-        }
-        if ($request->setor) {
-            $grupos = $grupos->where('gr.id_setor',$request->setor);
+        // Se o ID de tratamento for diferente de 0, aplique o filtro para o tratamento selecionado
+        if ($id != 0) {
+            $grupos = $grupos->where('t.id', '=', $id);
         }
 
+        // Executa a consulta
+        $grupos = $grupos->get();
 
-        $grupos = $grupos->paginate(30)->appends(['grupo' => $request->grupo]);
-
-        return view('relatorios.vagas-grupos', compact('setores','grupos'));
+        // Retorna a resposta como JSON
+        return response()->json($grupos);
     }
+
 
     public function teste()
     {
