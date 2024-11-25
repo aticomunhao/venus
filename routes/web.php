@@ -173,15 +173,12 @@ Route::middleware('rotas:8')->group(function () {
 
 // Gerenciar Passes
 Route::middleware('rotas:39')->group(function () {
-Route::get('/gerenciar-passe', [GerenciarPassesController::class, 'index'])->name('gpasses');
-Route::get('/editar-passe/{id}', [GerenciarPassesController::class, 'edit'])->name('');
-Route::post('/atualizar-passe/{id}', [GerenciarPassesController::class, 'update'])->name('');
-Route::post('/incluir-passe/{id}', [GerenciarPassesController::class, 'store'])->name('incluir.passe');
-Route::get('/criar-passe/{id}', [GerenciarPassesController::class, 'criar'])->name('');
-Route::get('/visualizar-passe/{id}', [GerenciarPassesController::class, 'show'])->name('visualizar.passe');
-
-
-
+    Route::get('/gerenciar-passe', [GerenciarPassesController::class, 'index'])->name('gpasses');
+    Route::get('/editar-passe/{id}', [GerenciarPassesController::class, 'edit'])->name('');
+    Route::post('/atualizar-passe/{id}', [GerenciarPassesController::class, 'update'])->name('');
+    Route::post('/incluir-passe/{id}', [GerenciarPassesController::class, 'store'])->name('incluir.passe');
+    Route::get('/criar-passe/{id}', [GerenciarPassesController::class, 'criar'])->name('');
+    Route::get('/visualizar-passe/{id}', [GerenciarPassesController::class, 'show'])->name('visualizar.passe');
 });
 
 // Gerenciar Entrevistas
@@ -281,6 +278,7 @@ Route::middleware("rotas:16-22-23")->group(function () {
     Route::get('/escolher-horario/{id}', [GerenciarEncaminhamentoController::class, 'escolherHorario']);
     Route::any('/trocar-grupo-tratamento/{id}', [GerenciarEncaminhamentoController::class, 'trocarGrupo']);
     Route::any('/relatorio-vagas-grupos', [RelatoriosController::class, 'vagasGrupos']);
+    Route::any('/vagasGruposAjax/{id}', [RelatoriosController::class, 'vagasGruposAjax']);
 });
 
 // Jobs de Tratamento
