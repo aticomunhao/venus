@@ -274,7 +274,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             <li><a class="dropdown-item" id="sair"><i
                                         class="mdi mdi-power font-size-17 text-muted align-middle mr-1 text-danger"></i>
                                     {{ __('Sair') }}</a></li>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                            <form id="logout-form" action="{{ route('logout-invalidate') }}" method="POST"
                                 style="display: none;">
                                 @csrf
                             </form>
@@ -318,6 +318,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
             } else {
                 console.log(session)
                 document.getElementById('logout-form').submit();
+                //document.getElementById('logout-form').submit();
             }
         }, 1000);
 

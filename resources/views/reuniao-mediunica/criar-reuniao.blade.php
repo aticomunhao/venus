@@ -61,7 +61,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col">
+                                <div class="col-2">
                                     <label for="h_inicio" class="form-label">Hora de início</label>
                                     <span class="tooltips">
                                         <span class="tooltiptext">Obrigatório</span>
@@ -69,13 +69,22 @@
                                     </span>
                                     <input class="form-control" type="time" id="h_inicio" name="h_inicio" required>
                                 </div>
-                                <div class="col">
+                                <div class="col-2">
                                     <label for="h_fim" class="form-label">Hora de fim</label>
                                     <span class="tooltips">
                                         <span class="tooltiptext">Obrigatório</span>
                                         <span style="color:red">*</span>
                                     </span>
                                     <input class="form-control" type="time" id="h_fim" name="h_fim" required>
+                                </div>
+                                <div class="col-4">
+                                    <label for="h_fim" class="form-label">Observação</label>
+                                    <select class="form-select slct" id="observacao" name="observacao">
+                                        <option></option>
+                                        @foreach ($observacao as $obs)
+                                            <option value="{{ $obs->id }}">{{ $obs->descricao }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
 
                             </div>

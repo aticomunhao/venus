@@ -104,22 +104,22 @@ class ReuniaoMediunicaController extends Controller
         // Obtém os dados para os filtros
         $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
 
-        $tipo_motivo = DB::table('tipo_mot_inat_gr_reu') ->get();
+        $tipo_motivo = DB::table('tipo_mot_inat_gr_reu')->get();
 
         $tpdia = DB::table('tipo_dia')
-        ->select('id AS idtd', 'nome AS nomed')
-        ->orderByRaw('CASE WHEN id = 0 THEN 1 ELSE 0 END, idtd ASC')
-        ->get();
+            ->select('id AS idtd', 'nome AS nomed')
+            ->orderByRaw('CASE WHEN id = 0 THEN 1 ELSE 0 END, idtd ASC')
+            ->get();
 
         // Carregar a lista de setores para o Select2
         $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
 
-         // Carregar a lista de grupos para o Select2
+        // Carregar a lista de grupos para o Select2
         $grupos = DB::table('grupo AS g')->leftJoin('setor AS s', 'g.id_setor', 's.id')->select('g.id AS idg', 'g.nome AS nomeg', 's.sigla')->orderBy('g.nome', 'asc')->get();
 
 
         // Retorna a view com os dados
-        return view('/reuniao-mediunica/gerenciar-reunioes', compact('tipo_motivo','reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores'));
+        return view('/reuniao-mediunica/gerenciar-reunioes', compact('tipo_motivo', 'reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores'));
     }
 
 
@@ -134,7 +134,7 @@ class ReuniaoMediunicaController extends Controller
 
 
 
-            $grupo = $grupo->get();
+        $grupo = $grupo->get();
 
 
         $tipo = DB::table('tipo_grupo AS tg')
@@ -156,10 +156,9 @@ class ReuniaoMediunicaController extends Controller
             ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
             ->get();
 
+        $observacao = DB::table('tipo_observacao_reuniao')->get();
 
-
-
-        return view('/reuniao-mediunica/criar-reuniao', compact('grupo', 'tipo',  'tratamento',  'dia', 'salas'));
+        return view('/reuniao-mediunica/criar-reuniao', compact('grupo', 'tipo',  'tratamento',  'dia', 'salas', 'observacao'));
     }
 
     public function store(Request $request)
@@ -180,20 +179,25 @@ class ReuniaoMediunicaController extends Controller
             ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
             ->leftJoin('salas AS s', 'rm.id_sala', 's.id')
             ->where('rm.dia_semana', $dia)
-            ->whereNot('rm.data_fim', '<', $now)
             ->where('rm.id_sala', $numero)
+            ->where(function ($query) use ($now) {
+                $query->where('rm.data_fim', '>=', $now);
+                $query->orWhere('rm.data_fim', null);
+            })
             ->where(function ($query) use ($h_inicio, $h_fim) {
                 $query->where(function ($hour) use ($h_inicio) {
-                    $hour->where('rm.h_inicio', '<=', $h_inicio);
-                    $hour->where('rm.h_fim', '>=', $h_inicio);
+                    $hour->where('rm.h_inicio', '<', $h_inicio);
+                    $hour->where('rm.h_fim', '>', $h_inicio);
                 });
                 $query->orWhere(function ($hour) use ($h_fim) {
-                    $hour->where('rm.h_inicio', '<=', $h_fim);
-                    $hour->where('rm.h_fim', '>=', $h_fim);
+                    $hour->where('rm.h_inicio', '<', $h_fim);
+                    $hour->where('rm.h_fim', '>', $h_fim);
                 });
+                
             })
             ->count();
 
+      //  dd($repeat, $h_inicio, $h_fim, $numero);
 
 
         if ($repeat > 0) {
@@ -214,7 +218,8 @@ class ReuniaoMediunicaController extends Controller
             'dia_semana' => $request->input('dia'),
             'id_tipo_tratamento' => $request->input('tratamento'),
             'data_inicio' => $data_inicio,
-            'data_fim' => $request->dt_fim
+            'data_fim' => $request->dt_fim,
+            'observacao' => $request->observacao
         ]);
 
         $result = DB::table('cronograma')->max('id');
@@ -239,51 +244,52 @@ class ReuniaoMediunicaController extends Controller
 
     public function show(string $id)
     {
-        try {
+        // try {
 
-            $grupo = DB::table('grupo AS gr')
-                ->leftJoin('setor as s', 'gr.id_setor', 's.id')
-                ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
-                ->where('id_tipo_grupo', 1)
-                ->orderBy('gr.nome')
-                ->get();
+        $grupo = DB::table('grupo AS gr')
+            ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+            ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
+            ->where('id_tipo_grupo', 1)
+            ->orderBy('gr.nome')
+            ->get();
 
-            $tipo = DB::table('tipo_grupo AS tg')
-                ->select('tg.id AS idtg', 'tg.nm_tipo_grupo')
-                ->get();
+        $tipo = DB::table('tipo_grupo AS tg')
+            ->select('tg.id AS idtg', 'tg.nm_tipo_grupo')
+            ->get();
 
-            $tratamento = DB::table('tipo_tratamento AS tt')
-                ->select('tt.id AS idt', 'tt.descricao', 'tt.sigla')
-                ->get();
+        $tratamento = DB::table('tipo_tratamento AS tt')
+            ->select('tt.id AS idt', 'tt.descricao', 'tt.sigla')
+            ->get();
 
-            $salas = DB::table('salas')
-                ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
-                ->where('id_finalidade', 6)
-                ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
-                ->orderBy('numero', 'asc')
-                ->get();
+        $salas = DB::table('salas')
+            ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
+            ->where('id_finalidade', 6)
+            ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
+            ->orderBy('numero', 'asc')
+            ->get();
 
-            $dia = DB::table('tipo_dia AS td')
-                ->select('td.id AS idd', 'td.nome', 'td.sigla')
-                ->get();
+        $dia = DB::table('tipo_dia AS td')
+            ->select('td.id AS idd', 'td.nome', 'td.sigla')
+            ->get();
 
-            $info = DB::table('cronograma as crn')
-                ->select('crn.id', 'gr.id as id_grupo', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim', 'crn.id_sala', 'sl.id_localizacao as nome_localizacao', 'crn.data_inicio', 'crn.data_fim')
-                ->leftJoin('grupo as gr', 'crn.id_grupo', 'gr.id')
-                ->leftJoin('tipo_dia as tpd', 'crn.dia_semana', 'tpd.id')
-                ->leftJoin('tipo_tratamento as tpt', 'crn.id_tipo_tratamento', 'tpt.id')
-                ->leftJoin('salas as sl', 'crn.id_sala', 'sl.id')
-                ->where('crn.id', "$id")
-                ->first();
+        $info = DB::table('cronograma as crn')
+            ->select('tor.descricao as obs', 'crn.id', 'gr.id as id_grupo', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim', 'crn.id_sala', 'sl.id_localizacao as nome_localizacao', 'crn.data_inicio', 'crn.data_fim')
+            ->leftJoin('grupo as gr', 'crn.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as tpd', 'crn.dia_semana', 'tpd.id')
+            ->leftJoin('tipo_tratamento as tpt', 'crn.id_tipo_tratamento', 'tpt.id')
+            ->leftJoin('salas as sl', 'crn.id_sala', 'sl.id')
+            ->leftJoin('tipo_observacao_reuniao as tor', 'crn.observacao', 'tor.id')
+            ->where('crn.id', "$id")
+            ->first();
 
 
 
-            return view('/reuniao-mediunica/visualizar-reuniao', compact('info', 'salas', 'grupo', 'tipo',  'tratamento',  'dia'));
-        } catch (\Exception $e) {
+        return view('/reuniao-mediunica/visualizar-reuniao', compact('info', 'salas', 'grupo', 'tipo',  'tratamento',  'dia'));
+        // } catch (\Exception $e) {
 
-            $code = $e->getCode();
-            return view('administrativo-erro.erro-inesperado', compact('code'));
-        }
+        //     $code = $e->getCode();
+        //     return view('administrativo-erro.erro-inesperado', compact('code'));
+        // }
     }
 
     /**
@@ -299,10 +305,10 @@ class ReuniaoMediunicaController extends Controller
                 ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
                 ->where('id_tipo_grupo', 1)
                 ->orderBy('gr.nome');
-         
 
 
-                $grupo = $grupo->get();
+
+            $grupo = $grupo->get();
 
             $tipo = DB::table('tipo_grupo AS tg')
                 ->select('tg.id AS idtg', 'tg.nm_tipo_grupo')
@@ -325,7 +331,7 @@ class ReuniaoMediunicaController extends Controller
                 ->get();
 
             $info = DB::table('cronograma as crn')
-                ->select('crn.id', 'gr.id as id_grupo', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim', 'crn.id_sala', 'sl.id_localizacao as nome_localizacao', 'crn.data_inicio', 'crn.data_fim')
+                ->select('crn.observacao as obs', 'crn.id', 'gr.id as id_grupo', 'tpd.nome as dia', 'tpt.descricao', 'crn.max_atend', 'sl.numero', 'sl.nome as sala', 'crn.h_inicio', 'crn.h_fim', 'crn.id_sala', 'sl.id_localizacao as nome_localizacao', 'crn.data_inicio', 'crn.data_fim')
                 ->leftJoin('grupo as gr', 'crn.id_grupo', 'gr.id')
                 ->leftJoin('tipo_dia as tpd', 'crn.dia_semana', 'tpd.id')
                 ->leftJoin('tipo_tratamento as tpt', 'crn.id_tipo_tratamento', 'tpt.id')
@@ -333,9 +339,9 @@ class ReuniaoMediunicaController extends Controller
                 ->where('crn.id', "$id")
                 ->first();
 
+            $observacao = DB::table('tipo_observacao_reuniao')->get();
 
-
-            return view('/reuniao-mediunica/editar-reuniao', compact('info', 'salas', 'grupo', 'tipo',  'tratamento',  'dia'));
+            return view('/reuniao-mediunica/editar-reuniao', compact('observacao', 'info', 'salas', 'grupo', 'tipo',  'tratamento',  'dia'));
         } catch (\Exception $e) {
 
             $code = $e->getCode();
@@ -395,7 +401,8 @@ class ReuniaoMediunicaController extends Controller
                 'dia_semana' => $request->input('dia'),
                 'id_tipo_tratamento' => $request->input('tratamento'),
                 'data_inicio' => $data_inicio,
-                'data_fim' => $request->dt_fim
+                'data_fim' => $request->dt_fim,
+                'observacao' => $request->observacao
             ]);
 
             $result = DB::table('cronograma')->max('id');
@@ -427,7 +434,7 @@ class ReuniaoMediunicaController extends Controller
         $now = Carbon::now()->format('Y-m-d');
 
         // Atualiza a tabela 'cronograma' com a data de término
-        if( DB::table('cronograma as cro')->where('cro.id', $id)->whereNull('data_fim')->count() == true){
+        if (DB::table('cronograma as cro')->where('cro.id', $id)->whereNull('data_fim')->count() == true) {
             DB::table('cronograma as cro')
                 ->where('cro.id', $id)
                 ->update([
@@ -435,13 +442,11 @@ class ReuniaoMediunicaController extends Controller
                 ]);
 
             app('flasher')->addSuccess('A reunião foi inativada com sucesso.');
-        }
-        else{
+        } else {
 
             return redirect()->back();
 
             app('flasher')->addError('A reunião já está inativa.');
-
         }
 
         // Verifica se há algum registro com o fato específico na tabela 'historico_venus'

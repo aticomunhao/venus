@@ -150,7 +150,7 @@
         
             var intervalId = window.setInterval(function(){
                 [toast(), setTime()]
-              }, 3600000);
+              }, 360000);
         
         
         
