@@ -671,7 +671,7 @@ class GerenciarEntrevistaController extends Controller
                     ->update(['status' => 5,]);
 
 
-                DB::table('encaminhamento')->where('id', $id)->update(['status_encaminhamento' => 3]);;
+                DB::table('encaminhamento')->where('id', $id)->update(['status_encaminhamento' => 5]);;
 
                 $data = date("Y-m-d H:i:s");
 
