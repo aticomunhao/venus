@@ -54,6 +54,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-integral">Tratamento
                                         Integral</a></li>
                             @endif
+                            @if (in_array(18, $acesso))
+                            <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos/Presença</a>
+                            </li>
+                        @endif
                             @if (in_array(30, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença
                                         Trabalhador</a></li>
@@ -69,10 +73,11 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Reuniões</a>
                                 </li>
                             @endif
-                            @if (in_array(18, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos/Presença</a>
-                                </li>
-                            @endif
+                            @if (in_array(23, $acesso))
+                            <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
+                                    Vagas em Grupos</a>
+                            </li>
+                        @endif
                         </ul>
                     </li>
                 </ul>
@@ -155,11 +160,14 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Reuniões</a>
                                 </li>
                             @endif
-                            @if (in_array(35, $acesso))
+<<<<<<< Updated upstream
+=======
+                            @if (in_array(16, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
                                         Vagas em Grupos</a>
                                 </li>
                             @endif
+>>>>>>> Stashed changes
                         </ul>
                     </li>
                 </ul>
@@ -222,7 +230,12 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Reuniões</a>
                                 </li>
                             @endif
+                            @if (in_array(22, $acesso))
+                            <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
+                                Vagas em Grupos</a>
+                            </li>
                         </ul>
+                    @endif
                     </li>
                 </ul>
             @endif
