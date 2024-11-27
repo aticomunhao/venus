@@ -105,7 +105,7 @@ class GerenciarTratamentosController extends Controller
             }
 
             if ($situacao == 'all') {
-                $lista->whereIn('tr.status',[1, 2]);
+                $lista->whereIn('tr.status', [1, 2]);
             }
         }
 
@@ -126,7 +126,7 @@ class GerenciarTratamentosController extends Controller
             if ($request->status && $situacao != 'all') {
                 $lista->where('tr.status', $request->status);
             } elseif ($situacao == 'all') {
-            } elseif(current($selectGrupo) == '') {
+            } elseif (current($selectGrupo) == '') {
                 $lista->where('tr.status', 2);
             }
         }
@@ -172,22 +172,40 @@ class GerenciarTratamentosController extends Controller
     public function destroy(Request $request, string $id)
     {
 
-        try {
-            $hoje = Carbon::today();
-            $tratamento = DB::table('tratamento')->where('id', $id)->first();
+          try {
+
+        $hoje = Carbon::today();
+        $tratamento = DB::table('tratamento')->where('id', $id)->first();
 
 
-            DB::table('tratamento')->where('id', $id)->update(['status' => 6, 'motivo' => $request->motivo, 'dt_fim' => $hoje]);
-            DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 5]);
+        DB::table('tratamento')->where('id', $id)->update(['status' => 6, 'motivo' => $request->motivo, 'dt_fim' => $hoje]);
+        DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 5]);
 
 
-            return redirect()->back();
+        // Recupera o nome completo da pessoa associado ao id_usuario
+        $nomePessoa = DB::table('pessoas')
+            ->where('id', session()->get('usuario.id_usuario'))
+            ->value('nome_completo');
+
+        // Realiza a inserção na tabela 'historico_venus'
+        DB::table('historico_venus')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $hoje,
+            'fato' => 24,
+            'obs' => 'Tratamento inativado',
+            'pessoa' => $nomePessoa,
+        ]);
+
+
+
+         return redirect()->back();
+
         } catch (\Exception $e) {
 
             $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
-    }
+        return view('tratamento-erro.erro-inesperado', compact('code'));
+    }}
+
 
 
     public function presenca(Request $request, $idtr)
