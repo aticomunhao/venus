@@ -9,7 +9,7 @@
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
             ATENDIMENTO FRATERNO INDIVIDUAL</h4>
         <div class="col-12">
-            <hr>
+            <br />
             <div class="card">
                 <div class="card-body">
                     <div class="row">

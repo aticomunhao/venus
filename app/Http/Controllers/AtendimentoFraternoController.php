@@ -30,62 +30,24 @@ class AtendimentoFraternoController extends Controller
     /--------------------------------------------------------------------------
     */
 
-    public function index(Request $request)
+    public function index()
     {
 
+        $atendente = session()->get('usuario.id_associado') ?? 0; // Usuário está logado? Boolean
+        $pref_m = session()->get('usuario.sexo'); // Dados se a pessoa é [ 1 => 'Masculino', 2 => 'Feminino', 3 => 'Outros']
+        $nome = session()->get('usuario.nome'); // Nome completo de quem está logado, vem de tabela pessoas
+        $now =  Carbon::now()->format('Y-m-d'); // Pega a data de hoje com formato de banco de dados
+        $data_inicio = Carbon::today()->toDateString(); // Data de hoje
+        $motivo = DB::table('tipo_motivo_atendimento')->get(); // Traz os motivos para o modal de cancelamento
 
 
-        $atendente = session()->get('usuario.id_associado') ?? 0;
-
-        $pref_m = session()->get('usuario.sexo');
-
-        $nome = session()->get('usuario.nome');
-
-        $now =  Carbon::now()->format('Y-m-d');
-
-        $lista = DB::table('atendimentos AS at')
-            ->select(
-                'at.id as ida',
-                'p1.id as idas',
-                'p.nome_completo as nm_3',
-                'at.status_atendimento',
-                'at.id_prioridade',
-                'at.dh_chegada',
-                'tx.tipo',
-                'tp.descricao as prdesc',
-                'p1.nome_completo as nm_1',
-                'p2.nome_completo as nm_2',
-                'p3.nome_completo as nm_4',
-                'sl.numero as nr_sala',
-                'ts.descricao',
-                DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe")
-            )->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')
-            ->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')
-            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
-            ->leftJoin('pessoas as p3', 'ass1.id_pessoa', 'p3.id')
-            ->leftJoin('tp_sexo as tx', 'at.pref_tipo_atendente', 'tx.id')
-            ->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')
-            ->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')
-            ->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')
-            ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
-
-        $data_inicio = $request->input('dt_ini', Carbon::today()->toDateString());
-
-        $motivo = DB::table('tipo_motivo_atendimento')->get();
-
-
-
-        // $grupo = DB::table('atendente_dia AS ad')
-        //     ->leftJoin('grupo AS g', 'ad.id_grupo', 'g.id')
-        //     ->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente)->value('g.nome');
-        $grupo = DB::table('atendente_dia AS ad')
+        $grupo = DB::table('atendente_dia AS ad') // traz o grupo que a pessoa foi indicada em Atendente Dia
             ->leftJoin('cronograma as cro', 'cro.id', 'ad.id_grupo')
             ->leftJoin('grupo', 'grupo.id', 'cro.id_grupo')
             ->where('ad.id_associado',  $atendente)
-            ->where('dh_inicio', '>', $data_inicio)
-            ->whereNull('dh_fim')
+            ->where('dh_inicio', '>', $data_inicio) // dh_inicio é um datetime, por isso tem que ser maior e não igual
+            ->whereNull('dh_fim') // Só traz ativos
             ->value('grupo.nome');
-
 
 
         //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente, que não sejam AFE
@@ -125,25 +87,23 @@ class AtendimentoFraternoController extends Controller
             ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
             ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
             ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-            ->where('at.status_atendimento', '<', 6)
-            ->where('at.afe',  null)
-            ->where('at.id_atendente', $atendente)
-            ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
-            ->orderby('status_atendimento', 'ASC')
+            ->whereIn('at.status_atendimento', [1, 4, 5]) // Apenas aguardando assistido, analisando, ou Em Atendimento
+            ->where('at.afe',  null) // Exclui os atendimentos para Atendente Fraterno Específico
+            ->where('at.id_atendente', $atendente) // Garante que seja o seu atendimento
             ->get();
 
 
-
-        //dd($assistido, $grupo, $now, $nome, $pref_m, $atendente);
-
-        return view('/atendimento-assistido/atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo', 'motivo'));
+        return view('atendimento-assistido.atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo', 'motivo'));
     }
 
     public function pessoas_para_atender()
     {
 
-        $id_associado = session()->get('usuario.id_associado');
-        $sexo = session()->get('usuario.sexo');
+        $id_associado = session()->get('usuario.id_associado'); // ID associado do usuário logado
+        $sexo = session()->get('usuario.sexo'); // // Dados se a pessoa é [ 1 => 'Masculino', 2 => 'Feminino', 3 => 'Outros']
+
+
+        // Count de atendimentos que seguem as regras de preferidos (Atendente e Sexo)
         $numero_de_assistidos_para_atender = DB::table('atendimentos AS at')
             ->select(
                 'at.id as ida',
@@ -170,22 +130,19 @@ class AtendimentoFraternoController extends Controller
             ->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')
             ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')
             ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
-            ->whereDate('dh_chegada', Carbon::today()->toDateString())
-            ->where('at.status_atendimento', '=', 2)
+            ->whereDate('dh_chegada', Carbon::today()->toDateString()) // Cofere se as datas do DateTime e do Carbon batem
+            ->where('at.status_atendimento', 2) // Status Aguardando Atendimento
             ->where(function ($query) use ($id_associado) {
-                $query->where('at.id_atendente_pref', '=',   $id_associado)
+                $query->where('at.id_atendente_pref', $id_associado) // Atendente prefrido é o usuário logado
                     ->orWhereNull('at.id_atendente_pref'); // Inclui registros onde não há atendente preferencial
             })
             ->where(function ($query) use ($sexo) {
-                $query->where('at.pref_tipo_atendente', '=',   $sexo)
+                $query->where('at.pref_tipo_atendente', $sexo) // Sexo preferido é o mesmo que o do usuário logado
                     ->orWhereNull('at.pref_tipo_atendente'); // Inclui registros onde não há atendente preferencial
-            });
+            })->count(); // Conta 
 
 
-        $numero_de_assistidos_para_atender = $numero_de_assistidos_para_atender->count();
-
-
-        return response()->json($numero_de_assistidos_para_atender);
+        return response()->json($numero_de_assistidos_para_atender); // Retorna para o Ajax o número de pessoas na fila
     }
 
     public function atende_agora()
@@ -195,116 +152,101 @@ class AtendimentoFraternoController extends Controller
 
         try {
 
-            $now =  Carbon::today();
-            $no =  Carbon::today()->addDay(1);
-            $atendente = session()->get('usuario.id_associado');
-            $pref_m = session()->get('usuario.sexo');
+            $hoje =  Carbon::today(); // Data de Hoje
+            $atendente = session()->get('usuario.id_associado'); // Id associado de quem está logado
+            $pref_m = session()->get('usuario.sexo'); // Dados se a pessoa é [ 1 => 'Masculino', 2 => 'Feminino', 3 => 'Outros']
 
-            //Conta todos os atendimentos do específico atendente, que não sejam AFE e não estejam finalizados
+
+            //Conta todos os atendimentos  ativos do atendente
             $atendendo = DB::table('atendimentos AS at')
                 ->leftjoin('membro AS m', 'at.id_atendente', 'm.id')
                 ->leftjoin('associado AS a', 'm.id_associado', 'a.id')
                 ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
                 ->where('at.id_atendente', $atendente)
-                ->whereNull('afe')
-                ->where('at.status_atendimento', '<', 6)
+                ->whereNull('afe') // Não conta os Atendimentos Fraternos Específicos
+                ->whereIn('at.status_atendimento', [1, 4, 5]) // Apenas aguardando assistido, analisando, ou Em Atendimento
                 ->count();
-            //dd($atendendo);
 
 
-
-            //Conta quantos atendimentos estão Aguardando Atendimento
+            //Devolve os IDs atendimento que estão Aguardando Atendimento
             $atende = DB::table('atendimentos')
                 ->where('status_atendimento', 2)
                 ->whereNull('afe')
-                ->whereNull('id_atendente_pref')
-                ->whereNull('pref_tipo_atendente')
+                ->whereNull('id_atendente_pref') // Atendente preferido null
+                ->whereNull('pref_tipo_atendente') // Sexo de atendimento preferido null 
                 ->pluck('id')
                 ->toArray();
 
-
-            //$atende = json_decode(json_encode($atende), true);
-
+            // Devolve os IDs que estão Aguardando Atendimento
             $atende1 = DB::table('atendimentos')->where('status_atendimento', 2)
                 ->whereNull('afe')
-                ->where('id_atendente_pref', $atendente)
+                ->where('id_atendente_pref', $atendente) // O atendente preferido é o usuário logado
                 ->pluck('id')
                 ->toArray();
 
-            // $atende1 = json_decode(json_encode($atende1), true);
+
+            /* Devolve os IDs que estão Aguardando Atendimento
+                    *Caso o Atendente esteja sem sexo em pessoas, esse item não pegará nada, 
+                    gerando um bug que ele não consegue buscar essas pessoas */
             $atende2 = DB::table('atendimentos')->where('status_atendimento', 2)
                 ->whereNull('afe')
-                ->where('pref_tipo_atendente', $pref_m)
+                ->where('pref_tipo_atendente', $pref_m) // O Sexo de preferência é o mesmo do Atendente
                 ->pluck('id')
                 ->toArray();
-            //$atende2 = json_decode(json_encode($atende2), true);
-            $atendeFinal = array_merge($atende, $atende1, $atende2);
 
-            $assistido = count($atendeFinal);
+            $atendeFinal = array_merge($atende, $atende1, $atende2); // Une os ids em uma única variável
+            $assistido = count($atendeFinal); // Conta a quaantidade de IDs retornados
 
 
-            //traz os dados de atendente_dia, no intervalo entre o começo do dia de hoje e o fim de ontem, onde não estejam finalizados, para o atendente
+            // Usado para validar se o atendente está em uma sala
             $sala = DB::table('atendente_dia AS atd')
-                ->where('dh_inicio', '>', $now)
-                ->where('dh_inicio', '<', $no)
-                ->whereNull('dh_fim')
-                ->where('id_associado', $atendente)
+                ->whereDate('dh_inicio', Carbon::today()->toDateString()) // Se o item de sala dele é do dia de hoje
+                ->whereNull('dh_fim') // Não pode ter sido finalizado
+                ->where('id_associado', $atendente) // Apenas para o usuário logado
                 ->value('id_sala');
 
 
-            if ($atendendo > 0) {
+            if ($atendendo > 0) { // Valida se outra pessoa já está em atendimento
 
                 app('flasher')->addError('Você não pode atender dois assistidos ao mesmo tempo.');
 
                 return redirect('/atendendo');
-            } elseif ($assistido < 1) {
+            } elseif ($assistido < 1) { // Checa se, seguindo as regras de sexo e atendimento preferido, existe pessoas na fila
 
                 app('flasher')->addError('Todos os assistidos foram atendidos.');
 
                 return redirect('/atendendo');
-            } elseif ($atendendo < 1 && $sala == null) {
+            } elseif ($atendendo < 1 && $sala == null) { // Se não estiver atendendo niguém, porém sem uma sala cadastrada
 
                 app('flasher')->addError('O atendente deve estar designado para o trabalho de hoje.');
 
                 return redirect('/atendendo');
-            } elseif ($atendendo < 1 && $sala > 0) {
+            } elseif ($atendendo < 1 && $sala > 0) { // Se não estiver atendendo ninguem e com uma sala cadastrada
 
-                //Pega todos os atendimentos em ordem de status, prioridade e chegada, apenas um por vez, e troca o status para analisando e adiciona o atendente a ele
-
-
-                //dd($atendente);
-                $lixo = DB::table('atendimentos')
-                    //->whereIn('id', $atendeFinal)
-                    //->orderby('status_atendimento', 'ASC')->orderby('id_prioridade')->orderBy('dh_chegada')
-                    //->limit(1)
-                    //->whereNull('afe')
-                    //->orWhereNot('afe')
-                    ->where('status_atendimento', 2)
+                // Atualiza os atendimentos para o Atendente
+                DB::table('atendimentos')
+                    ->where('status_atendimento', 2) // Status tem que ser Aguardando Atendimento
                     ->where(function ($query) {
-                        $query->whereNull('afe')
-                            ->orWhere('afe', false);
+                        $query->whereNull('afe')  // AFE tem que ser null
+                            ->orWhere('afe', false); // Caso alguma funcionalidade inclua AFE como false, Fallback
                     })
                     ->where(function ($query) use ($atendente) {
-                        $query->whereNull('id_atendente_pref')
-                            ->orWhere('id_atendente_pref', $atendente);
+                        $query->whereNull('id_atendente_pref') // Atendente preferido vazio
+                            ->orWhere('id_atendente_pref', $atendente); // Atendente preferido sendo o usuário logado
                     })
                     ->where(function ($query) use ($pref_m) {
-                        $query->whereNull('pref_tipo_atendente')
-                            ->orWhere('pref_tipo_atendente', $pref_m);
+                        $query->whereNull('pref_tipo_atendente') // Sexo preferido null
+                            ->orWhere('pref_tipo_atendente', $pref_m); // Sexo preferido igual ao do usuário logado
                     })
-                    ->orderby('id_prioridade')->orderBy('dh_chegada')
-                    ->limit(1)
-                    //->get();
+                    ->orderby('id_prioridade')->orderBy('dh_chegada') // Ordena pela prioridade e após pelo horário de chegada
+                    ->limit(1) // Traz apenas um por vez
                     ->update([
-                        'id_atendente' => $atendente,
-                        'id_sala' => $sala,
-                        'status_atendimento' => 4
+                        'id_atendente' => $atendente, // Marca o usuário logado como atendente deste atendimento
+                        'id_sala' => $sala, // Marca a sala que o usuário logado está
+                        'status_atendimento' => 4 // Troca o status do atendimento para Analisando
                     ]);
 
-                //dd($lixo);
-
                 app('flasher')->addSuccess('O assistido foi selecionado com sucesso.');
-
                 DB::commit();
                 return redirect('/atendendo');
             }
@@ -322,12 +264,32 @@ class AtendimentoFraternoController extends Controller
 
         try {
 
-            $atendimentos = DB::table('atendimentos AS at')->where('id_assistido', $idas)->get('id');
-            //dd($atendimentos);
-
-
+            // Armazena todos os dados dos atendimentos para ser usado no Accordion
             $analisa = DB::table('atendimentos AS at')
-                ->select('at.id AS ida', 'at.observacao', 'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'ps1.nome_completo AS nm_3', 'at.id_atendente', 'ps2.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao AS tst', 'tsx.tipo', 'pa.nome', 'p1.dt_nascimento')
+                ->select(
+                    'at.id AS ida',
+                    'at.observacao',
+                    'p1.id AS idas',
+                    'p1.ddd',
+                    'p1.sexo',
+                    'p1.celular',
+                    'at.dh_chegada',
+                    'at.dh_inicio',
+                    'at.dh_fim',
+                    'at.id_assistido',
+                    'p1.nome_completo AS nm_1',
+                    'at.id_representante',
+                    'p2.nome_completo AS nm_2',
+                    'at.id_atendente_pref',
+                    'ps1.nome_completo AS nm_3',
+                    'at.id_atendente',
+                    'ps2.nome_completo AS nm_4',
+                    'at.pref_tipo_atendente',
+                    'ts.descricao AS tst',
+                    'tsx.tipo',
+                    'pa.nome',
+                    'p1.dt_nascimento'
+                )
                 ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                 ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                 ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
@@ -343,81 +305,39 @@ class AtendimentoFraternoController extends Controller
                 ->orderBy('at.dh_chegada', 'desc')
                 ->get();
 
-            //Pega uma variável e popula com dados de duas tabelas diferentes
+            //Pega a variável e popula com dados de duas tabelas diferentes
             foreach ($analisa as $key => $teste) {
-                $trata = DB::table('encaminhamento AS enc')
+
+                $trata = DB::table('encaminhamento AS enc') // Traz todos os tipos de encaminhamento do Atendimento Atual
                     ->select('tt.descricao AS tdt')
                     ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
                     ->where('enc.id_atendimento', $teste->ida)
                     ->whereNotNull('enc.id_tipo_tratamento')
                     ->get();
-                $teste->tratamentos = $trata;
+                $teste->tratamentos = $trata; // Para cada atendimento insere os tipos de tratamento dele
 
-                $entre = DB::table('encaminhamento AS enc')
+                $entre = DB::table('encaminhamento AS enc') // Traz todos os encaminhamentos de entrevita para o Atendimento Atual
                     ->select('te.descricao AS tde')
                     ->leftJoin('tipo_entrevista AS te', 'enc.id_tipo_entrevista', 'te.id')
                     ->where('enc.id_atendimento', $teste->ida)
                     ->whereNotNull('enc.id_tipo_entrevista')
                     ->get();
-                $teste->entrevistas = $entre;
+                $teste->entrevistas = $entre; // Para cada atendimento insere os tipos de entrevista dele
 
-                $tematica = DB::table('registro_tema AS rt')
+                $tematica = DB::table('registro_tema AS rt') // Busca todas as temáticas do Atendimento Atual
                     ->select('tt.nm_tca as tematica')
                     ->leftJoin('tipo_temas as  tt', 'rt.id_tematica', 'tt.id')
                     ->where('rt.id_atendimento', $teste->ida)
                     ->get();
-                $teste->tematicas = $tematica;
+                $teste->tematicas = $tematica; // Insere todas as temáticas do Atendimento Atual
             }
 
-
-            //dd($analisa);
-            $now = Carbon::now()->format('Y-m-d H:m:s');
-
-            $atendente = session()->get('usuario.id_associado');
-
-            $nome = DB::table('atendimentos AS at')->select('at.id_atendente')->where('at.id', $idat);
-
-            $grupo = DB::table('atendente_dia AS ad')->select('ad.id_grupo')->where('dh_inicio', '>=', $now)->where('ad.id_associado', $atendente);
-
-            $atendendo = DB::table('atendimentos AS at')->where('at.id', $idat)->value('id_atendente');
-            //dd($atendendo);
-            $status = DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento');
-
-            $sit = DB::table('atendimentos AS at')->where('at.id_atendente', $atendente)->where('at.status_atendimento', '<', 5)->count();
-
-
-            if ($sit > 0 && $atendendo == null) {
-                app('flasher')->addError('Não é permitido atender dois assistidos ao mesmo tempo.');
-
-                return redirect('/atendendo');
-            }
-            //99% dos casos
-            if ($atendendo = $atendente && $status > 2) {
-                app('flasher')->addInfo('Retomando análise.');
-
-                return view('/atendimento-assistido/historico-assistido', compact('atendente', 'analisa'));
-            }
-            //Caso inútil, já que é impossivel ter um atendente para um atendimento com atendente em status 1, mas precaução
-            if ($atendendo = $atendente && $status = 1) {
-                DB::table('atendimentos AS at')
-                    ->where('status_atendimento', '=', 2)
-                    ->where('at.id', $idat)
-                    ->update([
-                        'status_atendimento' => 4,
-                        'id_atendente' => $atendente
-                    ]);
-
-                app('flasher')->addSuccess('O status do atendimento foi alterado para em análise.');
-            }
-
-            return view('/atendimento-assistido/historico-assistido', compact('atendente', 'analisa', 'grupo'));
+            return view('/atendimento-assistido/historico-assistido', compact('analisa'));
         } catch (\Exception $e) {
-
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
             return redirect()->back();
         }
     }
-    //dd($assistido);
 
     //Botão Chamar Assistido na VIEW
     public function fimanalise($idat)
@@ -426,26 +346,16 @@ class AtendimentoFraternoController extends Controller
         DB::beginTransaction();
         try {
 
-            $atendente = session()->get('usuario.id_associado');
+            $atendente = session()->get('usuario.id_associado'); // Traz o ID associado do usuário atual
 
+            // Conta se o atendimento está no status Analisando
             $sit = DB::table('atendimentos AS at')
                 ->where('at.id', $idat)
-                ->where('at.status_atendimento', 4)
+                ->where('at.status_atendimento', 4) // Status Analisando
                 ->count();
 
-            $status =  DB::table('atendimentos AS at')
-                ->where('at.id', $idat)
-                ->value('status_atendimento');
-
-            if ($status > 4) {
-
-                app('flasher')->addError('Esta ação não pode ser executada, este status já foi ultrapassado.');
-
-                return redirect()->back();
-            }
-            if ($sit = 1) {
-                //Atualiza o status para Aguardando Assistido, atualizar o id_atendente não muda nada,
-                // logo que o usuário só ve atendimentos dele, atualizando sempre pro mesmo valor original
+            if ($sit == 1) {
+                //Atualiza o status para Aguardando Assistido
                 DB::table('atendimentos AS at')
                     ->where('status_atendimento', '=', 4)
                     ->where('at.id', $idat)
@@ -453,12 +363,14 @@ class AtendimentoFraternoController extends Controller
                         'status_atendimento' => 1,
                         'id_atendente' => $atendente
                     ]);
+
+                app('flasher')->addSuccess('O status do atendimento foi alterado para "Aguardando o assistido".');
+                DB::commit();
+                return redirect()->back();
+            } else {
+                app('flasher')->addError('Esta ação não pode ser executada, este status já foi ultrapassado.');
+                return redirect()->back();
             }
-
-            app('flasher')->addSuccess('O status do atendimento foi alterado para "Aguardando o assistido".');
-
-            DB::commit();
-            return redirect()->back();
         } catch (\Exception $e) {
 
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
@@ -474,19 +386,10 @@ class AtendimentoFraternoController extends Controller
         try {
 
             $now =  Carbon::now();
+            $statusAtendimento = DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento');
+            if ($statusAtendimento == 1) { // status igual a Aguardando Assistido
 
-            $atendente = session()->get('usuario.id_associado');
-        
-
-            if (DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento') > 4) {
-
-                app('flasher')->addError('O início do atendimento já foi registrado.');
-
-                return redirect()->back();
-            }
-            // Troca o Status do Atendimento para Em Atendimento
-            elseif (DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento') < 5) {
-
+                // Troca o Status para Em Atendimento e Marca o Inicio como Agora
                 DB::table('atendimentos AS at')
                     ->where('at.id', $idat)
                     ->update([
@@ -495,12 +398,15 @@ class AtendimentoFraternoController extends Controller
                     ]);
 
                 app('flasher')->addSuccess('O status do atendimento foi alterado para "Em atendimento".');
-
                 DB::commit();
-                return redirect()->back();
+            } elseif ($statusAtendimento == 5) {
+                app('flasher')->addError('Atendimento já iniciado!');
+            } else {
+                app('flasher')->addError('Chame o assistido antes de iniciar!');
             }
-        } catch (\Exception $e) {
 
+            return redirect()->back();
+        } catch (\Exception $e) {
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
             DB::rollBack();
             return redirect()->back();
@@ -510,48 +416,55 @@ class AtendimentoFraternoController extends Controller
     //Método CREATE do BotãoTratamento
     public function tratar($idat, $idas)
     {
-
         try {
 
+            // Confere se o tratamento está em Atendimento
             $sit = DB::table('atendimentos AS at')
                 ->where('at.id', $idat)
-                ->where('status_atendimento', '<', 5)
+                ->where('status_atendimento', 5)
                 ->count();
 
+            // Traz o nome completo do assistido para a view, através do id_pessoa
             $atendido = DB::table('pessoas AS p')
                 ->select('nome_completo AS nm')
                 ->where('p.id', $idas)
                 ->get();
 
-            // Confere se tem algum encaminhamento de tratamento já criado
+            // Confere se tem algum encaminhamento de tratamento já criado, para bloquear nova inclusão
             $verifi = DB::table('encaminhamento AS enc')
                 ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-                ->where('at.id', $idat)
-                ->where('id_tipo_encaminhamento', [2, 3])
-                ->where('id_tipo_tratamento', '<>', 1)
+                ->where('at.id', $idat) // Para esse atendimento
+                ->whereIn('id_tipo_encaminhamento', [2, 3]) // Tratamento ou Grupo de Apoio
                 ->count();
 
-            if ($sit > 0) {
+            // Confere se o atendimento está ativo e se não tem nenhum encaminhamento
+            if ($sit == 1 and $verifi == 0) {
 
-                app('flasher')->addError('Para registrar encaminhamentos o atendimento deve estar no mínimo no status "Em atendimento"');
-
-                return redirect()->back();
-            }
-            if ($verifi < 1) {
-
+                // Traz os dados necessários do atendimento para a view
                 $assistido = DB::table('atendimentos AS at')
-                    ->select('at.id as idat', 'at.id_assistido as idas', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'at.id_atendente')
+                    ->select(
+                        'at.id as idat',
+                        'at.id_assistido as idas',
+                        'at.dh_chegada',
+                        'at.dh_inicio',
+                        'at.dh_fim',
+                        'at.id_assistido',
+                        'p1.nome_completo AS nm_1',
+                        'at.id_representante',
+                        'at.id_atendente'
+                    )
                     ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                     ->where('at.id', $idat)
                     ->get();
 
                 return view('/atendimento-assistido/tratamentos', compact('assistido'));
+            }
+            elseif ($verifi > 0) { // Se tiver algum encaminhamento
+                app('flasher')->addError('Tratamentos já rcriados! Limpe para recriá-los!');
+                return redirect()->back();
 
-                //Se já tiver encaminhamentos de tratamento, trava para nao reinserir dados
-            } elseif ($verifi > 0) {
-
-                app('flasher')->addError('Os tratamentos já foram registrados para o atendido ' . $atendido[0]->nm);
-
+            } elseif ($sit != 1) { // Se o status não for Em Atendimento
+                app('flasher')->addError('O assistido deve estar "Em atendimento" para a marcação de tratamentos!');
                 return redirect()->back();
             }
         } catch (\Exception $e) {
@@ -599,7 +512,7 @@ class AtendimentoFraternoController extends Controller
                     ->where('at.id', $idat)
                     ->get();
 
-                   // dd($atendido);
+                // dd($atendido);
 
                 return view('/atendimento-assistido/entrevistas', compact('assistido', 'atendido'));
             } elseif ($verifi > 0) {
@@ -719,12 +632,12 @@ class AtendimentoFraternoController extends Controller
                 ->where('enc.status_encaminhamento', '<', 5)
                 ->pluck('id_tipo_tratamento')->toArray();
 
-           // dd($countEncaminhamentos, in_array(1, $countEncaminhamentos));
+            // dd($countEncaminhamentos, in_array(1, $countEncaminhamentos));
 
             // PTD
-            if(in_array(1, $countEncaminhamentos) and $desobsessivo > 0){
+            if (in_array(1, $countEncaminhamentos) and $desobsessivo > 0) {
                 app('flasher')->addWarning('Já existe um encaminhamento PTD ativo para esta pessoa!');
-            }else if($desobsessivo > 0){
+            } else if ($desobsessivo > 0) {
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
@@ -738,9 +651,9 @@ class AtendimentoFraternoController extends Controller
             }
 
             // PTH
-            if($harmonia > 0 and in_array(3, $countEncaminhamentos)){
+            if ($harmonia > 0 and in_array(3, $countEncaminhamentos)) {
                 app('flasher')->addWarning('Já existe um encaminhamento para o PTH ativo para esta pessoa!');
-            }else if($harmonia > 0){
+            } else if ($harmonia > 0) {
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
@@ -754,9 +667,9 @@ class AtendimentoFraternoController extends Controller
             }
 
             // Acolher
-            if($acolher > 0 and in_array(7, $countEncaminhamentos)){
+            if ($acolher > 0 and in_array(7, $countEncaminhamentos)) {
                 app('flasher')->addWarning('Já existe um encaminhamento para o Grupo Acolher ativo para esta pessoa!');
-            }else if($acolher > 0){
+            } else if ($acolher > 0) {
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
@@ -771,9 +684,9 @@ class AtendimentoFraternoController extends Controller
 
 
             // Dependência Quimica
-            if($quimica > 0 and in_array(9, $countEncaminhamentos)){
+            if ($quimica > 0 and in_array(9, $countEncaminhamentos)) {
                 app('flasher')->addWarning('Já existe um encaminhamento para o Grupo de Dependência Química ativo para esta pessoa!');
-            }else if($quimica > 0){
+            } else if ($quimica > 0) {
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
@@ -787,9 +700,9 @@ class AtendimentoFraternoController extends Controller
             }
 
             //Viver
-            if($viver > 0 and in_array(10, $countEncaminhamentos)){
+            if ($viver > 0 and in_array(10, $countEncaminhamentos)) {
                 app('flasher')->addWarning('Já existe um encaminhamento para o Grupo Viver ativo para esta pessoa!');
-            }else if($viver > 0){
+            } else if ($viver > 0) {
                 DB::table('encaminhamento AS enc')->insert([
                     'dh_enc' => $now,
                     'id_usuario' => $atendente,
@@ -818,61 +731,61 @@ class AtendimentoFraternoController extends Controller
 
         // try {
 
-            $now = Carbon::now()->format('Y-m-d H:m:s');
+        $now = Carbon::now()->format('Y-m-d H:m:s');
 
-            $atendente = session()->get('usuario.id_pessoa');
+        $atendente = session()->get('usuario.id_pessoa');
 
-            $ame = isset($request->ame) ? 1 : 0;
-            $afe = isset($request->afe) ? 1 : 0;
-            $diamo = isset($request->diamo) ? 1 : 0;
-            $nutres = isset($request->nutres) ? 1 : 0;
-            $evangelho = isset($request->gel) ? 1 : 0;
+        $ame = isset($request->ame) ? 1 : 0;
+        $afe = isset($request->afe) ? 1 : 0;
+        $diamo = isset($request->diamo) ? 1 : 0;
+        $nutres = isset($request->nutres) ? 1 : 0;
+        $evangelho = isset($request->gel) ? 1 : 0;
 
-            //  dd($ame, $afe, $diamo, $nutres  );
+        //  dd($ame, $afe, $diamo, $nutres  );
 
-            $countTratamentos = DB::table('encaminhamento as enc')
+        $countTratamentos = DB::table('encaminhamento as enc')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
             ->where('enc.id_tipo_encaminhamento', 2)
             ->where('at.id_assistido', $idas)
             ->where('enc.status_encaminhamento', '<', 5)
             ->pluck('id_tipo_tratamento')->toArray();
 
-            $countEntrevistas = DB::table('encaminhamento as enc')
+        $countEntrevistas = DB::table('encaminhamento as enc')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
             ->where('enc.id_tipo_encaminhamento', 1)
             ->where('at.id_assistido', $idas)
             ->where('enc.status_encaminhamento', '<', 5)
             ->pluck('id_tipo_entrevista')->toArray();
 
-          
-            //AME
-            if($ame > 0 and in_array(5, $countEntrevistas)){
-                app('flasher')->addWarning('Já existe um encaminhamento para o  Integral ativo para esta pessoa!');
-            }else if($ame > 0 and in_array(1, $countTratamentos)){
-                
-                // Traz todos os encaminhamentos em tratamento daquela pessoa
-               $encaminhamentoPTD = DB::table('tratamento as tr')
-               ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-               ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-               ->where('enc.id_tipo_tratamento', 1)
-               ->where('at.id_assistido', $idas)
-               ->where('tr.status', '<', 3)
-               ->whereNot('tr.dt_fim', null)
-               ->select('tr.id', 'tr.dt_fim')
-               ->get();
 
-               // Atualiza com mais 8 semanas todos os PTDs Ativos
-               foreach($encaminhamentoPTD as $ptd){
-                    $data = Carbon::parse($ptd->dt_fim)->addWeek(8);
-                    DB::table('tratamento')
+        //AME
+        if ($ame > 0 and in_array(5, $countEntrevistas)) {
+            app('flasher')->addWarning('Já existe um encaminhamento para o  Integral ativo para esta pessoa!');
+        } else if ($ame > 0 and in_array(1, $countTratamentos)) {
+
+            // Traz todos os encaminhamentos em tratamento daquela pessoa
+            $encaminhamentoPTD = DB::table('tratamento as tr')
+                ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->where('enc.id_tipo_tratamento', 1)
+                ->where('at.id_assistido', $idas)
+                ->where('tr.status', '<', 3)
+                ->whereNot('tr.dt_fim', null)
+                ->select('tr.id', 'tr.dt_fim')
+                ->get();
+
+            // Atualiza com mais 8 semanas todos os PTDs Ativos
+            foreach ($encaminhamentoPTD as $ptd) {
+                $data = Carbon::parse($ptd->dt_fim)->addWeek(8);
+                DB::table('tratamento')
                     ->where('id', $ptd->id)
                     ->update([
                         'dt_fim' => $data
                     ]);
-               }
+            }
 
-               // Insere a entrevista AME
-               DB::table('encaminhamento AS enc')->insert([
+            // Insere a entrevista AME
+            DB::table('encaminhamento AS enc')->insert([
                 'dh_enc' => $now,
                 'id_usuario' => $atendente,
                 'id_tipo_encaminhamento' => 1,
@@ -882,54 +795,54 @@ class AtendimentoFraternoController extends Controller
             ]);
 
             app('flasher')->addSuccess('O encaminhamento para AME foi criado com sucesso.');
-            }else if($ame > 0){
-                //Insere entrevista AME
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento' => 1,
-                    'id_atendimento' => $idat,
-                    'id_tipo_entrevista' => 5,
-                    'status_encaminhamento' =>  1
-                ]);
+        } else if ($ame > 0) {
+            //Insere entrevista AME
+            DB::table('encaminhamento AS enc')->insert([
+                'dh_enc' => $now,
+                'id_usuario' => $atendente,
+                'id_tipo_encaminhamento' => 1,
+                'id_atendimento' => $idat,
+                'id_tipo_entrevista' => 5,
+                'status_encaminhamento' =>  1
+            ]);
 
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento' => 2,
-                    'id_atendimento' => $idat,
-                    'id_tipo_tratamento' => 1,
-                    'status_encaminhamento' =>  1
-                ]);
+            DB::table('encaminhamento AS enc')->insert([
+                'dh_enc' => $now,
+                'id_usuario' => $atendente,
+                'id_tipo_encaminhamento' => 2,
+                'id_atendimento' => $idat,
+                'id_tipo_tratamento' => 1,
+                'status_encaminhamento' =>  1
+            ]);
 
-                app('flasher')->addSuccess('O encaminhamento para AME e PTD  foi criado com sucesso.');
-            }
-
-
-
-            if($diamo > 0 and in_array(6, $countEntrevistas)){
-                app('flasher')->addWarning('Já existe um encaminhamento para o Proamo ativo para esta pessoa!');
-            }else if($diamo > 0){
-                //Inserir Diamo na tabela
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento' => 1,
-                    'id_atendimento' => $idat,
-                    'id_tipo_entrevista' => 6,
-                    'status_encaminhamento' =>  1
-                ]);
-
-                app('flasher')->addSuccess('O encaminhamento para o Proamo foi criado com sucesso.');
-            }
+            app('flasher')->addSuccess('O encaminhamento para AME e PTD  foi criado com sucesso.');
+        }
 
 
-            if($nutres > 0 and in_array(4, $countEntrevistas)){
-                app('flasher')->addWarning('Já existe um encaminhamento para o PTI ativo para esta pessoa!');
-            }else if($nutres > 0 and in_array(1, $countTratamentos)){
 
-                // Todos aguardando para Aguardando PTI
-                DB::table('encaminhamento as enc')
+        if ($diamo > 0 and in_array(6, $countEntrevistas)) {
+            app('flasher')->addWarning('Já existe um encaminhamento para o Proamo ativo para esta pessoa!');
+        } else if ($diamo > 0) {
+            //Inserir Diamo na tabela
+            DB::table('encaminhamento AS enc')->insert([
+                'dh_enc' => $now,
+                'id_usuario' => $atendente,
+                'id_tipo_encaminhamento' => 1,
+                'id_atendimento' => $idat,
+                'id_tipo_entrevista' => 6,
+                'status_encaminhamento' =>  1
+            ]);
+
+            app('flasher')->addSuccess('O encaminhamento para o Proamo foi criado com sucesso.');
+        }
+
+
+        if ($nutres > 0 and in_array(4, $countEntrevistas)) {
+            app('flasher')->addWarning('Já existe um encaminhamento para o PTI ativo para esta pessoa!');
+        } else if ($nutres > 0 and in_array(1, $countTratamentos)) {
+
+            // Todos aguardando para Aguardando PTI
+            DB::table('encaminhamento as enc')
                 ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
                 ->where('enc.id_tipo_encaminhamento', 2)
                 ->where('at.id_assistido', $idas)
@@ -939,8 +852,8 @@ class AtendimentoFraternoController extends Controller
                 ]);
 
 
-                // Todos agendado para Agendado PTI
-                DB::table('encaminhamento as enc')
+            // Todos agendado para Agendado PTI
+            DB::table('encaminhamento as enc')
                 ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
                 ->where('enc.id_tipo_encaminhamento', 2)
                 ->where('at.id_assistido', $idas)
@@ -950,55 +863,54 @@ class AtendimentoFraternoController extends Controller
                 ]);
 
 
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento' => 1,
-                    'id_atendimento' => $idat,
-                    'id_tipo_entrevista' => 4,
-                    'status_encaminhamento' =>  1
-                ]);
+            DB::table('encaminhamento AS enc')->insert([
+                'dh_enc' => $now,
+                'id_usuario' => $atendente,
+                'id_tipo_encaminhamento' => 1,
+                'id_atendimento' => $idat,
+                'id_tipo_entrevista' => 4,
+                'status_encaminhamento' =>  1
+            ]);
 
-                app('flasher')->addSuccess('O encaminhamento para o PTI foi criado com sucesso.');
+            app('flasher')->addSuccess('O encaminhamento para o PTI foi criado com sucesso.');
+        } else if ($nutres > 0) {
+            DB::table('encaminhamento AS enc')->insert([
+                'dh_enc' => $now,
+                'id_usuario' => $atendente,
+                'id_tipo_encaminhamento' => 1,
+                'id_atendimento' => $idat,
+                'id_tipo_entrevista' => 4,
+                'status_encaminhamento' =>  1
+            ]);
 
-            }else if($nutres > 0 ){
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento' => 1,
-                    'id_atendimento' => $idat,
-                    'id_tipo_entrevista' => 4,
-                    'status_encaminhamento' =>  1
-                ]);
+            DB::table('encaminhamento AS enc')->insert([
+                'dh_enc' => $now,
+                'id_usuario' => $atendente,
+                'id_tipo_encaminhamento' => 2,
+                'id_atendimento' => $idat,
+                'id_tipo_tratamento' => 1,
+                'status_encaminhamento' =>  2
+            ]);
 
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento' => 2,
-                    'id_atendimento' => $idat,
-                    'id_tipo_tratamento' => 1,
-                    'status_encaminhamento' =>  2
-                ]);
+            app('flasher')->addSuccess('O encaminhamento para o PTI e PTD foi criado com sucesso.');
+        }
 
-                app('flasher')->addSuccess('O encaminhamento para o PTI e PTD foi criado com sucesso.');
-            }
+        if ($evangelho > 0 and in_array(8, $countEntrevistas)) {
+            app('flasher')->addWarning('Já existe um encaminhamento para o Grupo de Evangelho no Lar ativo para esta pessoa!');
+        } else if ($evangelho > 0) {
+            DB::table('encaminhamento AS enc')->insert([
+                'dh_enc' => $now,
+                'id_usuario' => $atendente,
+                'id_tipo_encaminhamento' => 1,
+                'id_atendimento' => $idat,
+                'id_tipo_entrevista' => 8,
+                'status_encaminhamento' =>  1
+            ]);
 
-            if($evangelho > 0 and in_array(8, $countEntrevistas)){
-                app('flasher')->addWarning('Já existe um encaminhamento para o Grupo de Evangelho no Lar ativo para esta pessoa!');
-            }else if($evangelho > 0){
-                DB::table('encaminhamento AS enc')->insert([
-                    'dh_enc' => $now,
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento' => 1,
-                    'id_atendimento' => $idat,
-                    'id_tipo_entrevista' => 8,
-                    'status_encaminhamento' =>  1
-                ]);
+            app('flasher')->addSuccess('O encaminhamento para o Grupo de Evangelho no Lar foi criado com sucesso.');
+        }
 
-                app('flasher')->addSuccess('O encaminhamento para o Grupo de Evangelho no Lar foi criado com sucesso.');
-            }
-
-            return Redirect('/atendendo');
+        return Redirect('/atendendo');
         // } catch (\Exception $e) {
 
 
@@ -1018,7 +930,7 @@ class AtendimentoFraternoController extends Controller
             $emergencia = $request->emergencia == 'on' ? 1 : 0;
             $atendente = session()->get('usuario.id_associado');
 
-           // $sit = DB::table('atendimentos AS at')->where('at.id_atendente', $atendente)->where('at.status_atendimento', '<', 5)->count();
+            // $sit = DB::table('atendimentos AS at')->where('at.id_atendente', $atendente)->where('at.status_atendimento', '<', 5)->count();
 
             $atendendo = DB::table('atendimentos AS at')->where('at.id', $idat)->value('id_atendente');
 
