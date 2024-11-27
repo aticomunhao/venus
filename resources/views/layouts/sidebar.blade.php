@@ -164,6 +164,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
                                         Vagas em Grupos</a>
                                 </li>
+                            @endif
                         </ul>
                     </li>
                 </ul>
