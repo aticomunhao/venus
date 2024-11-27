@@ -476,9 +476,9 @@ class AtendimentoFraternoController extends Controller
             $now =  Carbon::now();
 
             $atendente = session()->get('usuario.id_associado');
+        
 
-
-            if (DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento') > 5) {
+            if (DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento') > 4) {
 
                 app('flasher')->addError('O início do atendimento já foi registrado.');
 
