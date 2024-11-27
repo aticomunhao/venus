@@ -160,14 +160,11 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Reuniões</a>
                                 </li>
                             @endif
-<<<<<<< Updated upstream
-=======
                             @if (in_array(16, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
                                         Vagas em Grupos</a>
                                 </li>
                             @endif
->>>>>>> Stashed changes
                         </ul>
                     </li>
                 </ul>
