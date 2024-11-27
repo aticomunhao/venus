@@ -172,40 +172,44 @@ class GerenciarTratamentosController extends Controller
     public function destroy(Request $request, string $id)
     {
 
-          try {
+        try {
 
-        $hoje = Carbon::today();
-        $tratamento = DB::table('tratamento')->where('id', $id)->first();
-
-
-        DB::table('tratamento')->where('id', $id)->update(['status' => 6, 'motivo' => $request->motivo, 'dt_fim' => $hoje]);
-        DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 5]);
+            $hoje = Carbon::today();
+            $tratamento = DB::table('tratamento')->where('id', $id)->first();
 
 
-        // Recupera o nome completo da pessoa associado ao id_usuario
-        $nomePessoa = DB::table('pessoas')
-            ->where('id', session()->get('usuario.id_usuario'))
-            ->value('nome_completo');
-
-        // Realiza a inserção na tabela 'historico_venus'
-        DB::table('historico_venus')->insert([
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $hoje,
-            'fato' => 24,
-            'obs' => 'Tratamento inativado',
-            'pessoa' => $nomePessoa,
-        ]);
+            DB::table('tratamento')->where('id', $id)->update(['status' => 6, 'motivo' => $request->motivo, 'dt_fim' => $hoje]);
+            DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 5]);
 
 
+            // Recupera o nome completo da pessoa associado ao id_usuario
+            $nomePessoa = DB::table('pessoas')
+                ->where('id', session()->get('usuario.id_usuario'))
+                ->value('nome_completo');
 
-         return redirect()->back();
+            // Realiza a inserção na tabela 'historico_venus'
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $hoje,
+                'fato' => 24,
+                'obs' => 'Tratamento inativado',
+                'pessoa' => $nomePessoa,
+            ]);
 
-        } catch (\Exception $e) {
 
-            $code = $e->getCode();
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-    }}
 
+          app('flasher')->addwarning('Tratamento inativado.');
+
+          return redirect()->back();
+      } catch (\Exception $e) {
+
+          app('flasher')->addDanger('Erro ao inativar o tratamento.');
+
+
+          $code = $e->getCode();
+          return view('tratamento-erro.erro-inesperado', compact('code'));
+      }
+  }
 
 
     public function presenca(Request $request, $idtr)
@@ -268,7 +272,19 @@ class GerenciarTratamentosController extends Controller
 
                 $acompanhantes = isset($acompanhantes->nr_acompanhantes)  ? $acompanhantes->nr_acompanhantes : 0;
                 $nrAcomp = $acompanhantes + $request->acompanhantes;
+                // Recupera o nome completo da pessoa associado ao id_usuario
+                $nomePessoa = DB::table('pessoas')
+                    ->where('id', session()->get('usuario.id_usuario'))
+                    ->value('nome_completo');
 
+                // Realiza a inserção na tabela 'historico_venus'
+                DB::table('historico_venus')->insert([
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'data' => $data_atual,
+                    'fato' => 25,
+                    'obs' => 'Presença em tratamento',
+                    'pessoa' => $nomePessoa,
+                ]);
 
                 DB::table('dias_cronograma')
                     ->where('id_cronograma', $lista->id_reuniao)
