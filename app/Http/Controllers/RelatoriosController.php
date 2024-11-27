@@ -767,8 +767,8 @@ class RelatoriosController extends Controller
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
-            ->select('t.id', 't.descricao', 'cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'st.sigla as setor', 'td.nome as dia_semana')
-            ->get();
+            ->select('t.id', 't.descricao', 'cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'st.sigla as setor', 'td.nome as dia_semana');
+            
 
 
         // Consultar tratamentos
@@ -785,7 +785,10 @@ class RelatoriosController extends Controller
 
         if ($request->tratamento) {
             $grupos = $grupos->where('t.id', $request->tratamento);
+            $grupo2 = $grupo2->where('t.id', $request->tratamento);
+            
         }
+        $grupo2 = $grupo2->get();
 
         // Paginação dos grupos
         $grupos = $grupos->paginate(30)->appends([
@@ -811,41 +814,7 @@ class RelatoriosController extends Controller
         return view('relatorios.vagas-grupos', compact('setores', 'grupos', 'grupo2', 'tratamento', 'quantidade_vagas_tipo_tratamento','tipo_de_tratamento'));
     }
 
-    public function vagasGruposAjax($id)
-    {
-        // Iniciar a consulta
-        $grupos = DB::table('cronograma as cro')
-            ->leftJoin('tipo_tratamento as t', 'cro.id_tipo_tratamento', 't.id')
-            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
-            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
-            ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
-            ->select(
-                DB::raw(' (select count(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 3) as trat'),
-                't.id',
-                't.descricao',
-                'cro.id',
-                'gr.nome as nome',
-                'td.nome as dia',
-                'cro.h_inicio',
-                'cro.h_fim',
-                'st.sigla as setor',
-                'cro.max_atend',
-                'td.nome as dia_semana'
-            )
-            ->orderBy('gr.nome');
-
-        // Se o ID de tratamento for diferente de 0, aplique o filtro para o tratamento selecionado
-        if ($id != 0) {
-            $grupos = $grupos->where('t.id', '=', $id);
-        }
-
-        // Executa a consulta
-        $grupos = $grupos->get();
-
-        // Retorna a resposta como JSON
-        return response()->json($grupos);
-    }
-
+   
 
     public function teste()
     {

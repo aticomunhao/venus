@@ -41,12 +41,11 @@
             </div>
         </div>
         <br>
-        <div style="text-align:left;">
-            <hr />
-        </div>
+
+    
+      
         <div class="row">
-            <div class="table-responsive">
-                <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
+                <table class="table table-sm table-striped table-bordered border-secondary table-hover">
                     <thead style="text-align: center; background-color: #d6e3ff;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             {{-- <th>NR</th> --}}
@@ -70,7 +69,7 @@
 
                                     <button type="button" class="btn btn-outline-success btn-sm tooltips"
                                         data-bs-toggle="modal" data-bs-target="#presenca{{ $reuni->idr }}">
-                                        <span class="tooltiptext" style="z-index:10000">Novo passe</span>
+                                        <span class="tooltiptext">Novo passe</span>
                                         <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
                                     </button>
                                     {{-- Modal de presença --}}
@@ -133,7 +132,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
     </div>
 
 

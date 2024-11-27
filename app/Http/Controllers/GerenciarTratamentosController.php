@@ -105,7 +105,7 @@ class GerenciarTratamentosController extends Controller
             }
 
             if ($situacao == 'all') {
-                $lista->whereIn('tr.status',[1, 2]);
+                $lista->whereIn('tr.status', [1, 2]);
             }
         }
 
@@ -126,7 +126,7 @@ class GerenciarTratamentosController extends Controller
             if ($request->status && $situacao != 'all') {
                 $lista->where('tr.status', $request->status);
             } elseif ($situacao == 'all') {
-            } elseif(current($selectGrupo) == '') {
+            } elseif (current($selectGrupo) == '') {
                 $lista->where('tr.status', 2);
             }
         }
@@ -173,6 +173,7 @@ class GerenciarTratamentosController extends Controller
     {
 
         try {
+
             $hoje = Carbon::today();
             $tratamento = DB::table('tratamento')->where('id', $id)->first();
 
@@ -181,13 +182,34 @@ class GerenciarTratamentosController extends Controller
             DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 5]);
 
 
-            return redirect()->back();
-        } catch (\Exception $e) {
+            // Recupera o nome completo da pessoa associado ao id_usuario
+            $nomePessoa = DB::table('pessoas')
+                ->where('id', session()->get('usuario.id_usuario'))
+                ->value('nome_completo');
 
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
-    }
+            // Realiza a inserção na tabela 'historico_venus'
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $hoje,
+                'fato' => 24,
+                'obs' => 'Tratamento inativado',
+                'pessoa' => $nomePessoa,
+            ]);
+
+
+
+          app('flasher')->addwarning('Tratamento inativado.');
+
+          return redirect()->back();
+      } catch (\Exception $e) {
+
+          app('flasher')->addDanger('Erro ao inativar o tratamento.');
+
+
+          $code = $e->getCode();
+          return view('tratamento-erro.erro-inesperado', compact('code'));
+      }
+  }
 
 
     public function presenca(Request $request, $idtr)
@@ -250,7 +272,19 @@ class GerenciarTratamentosController extends Controller
 
                 $acompanhantes = isset($acompanhantes->nr_acompanhantes)  ? $acompanhantes->nr_acompanhantes : 0;
                 $nrAcomp = $acompanhantes + $request->acompanhantes;
+                // Recupera o nome completo da pessoa associado ao id_usuario
+                $nomePessoa = DB::table('pessoas')
+                    ->where('id', session()->get('usuario.id_usuario'))
+                    ->value('nome_completo');
 
+                // Realiza a inserção na tabela 'historico_venus'
+                DB::table('historico_venus')->insert([
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'data' => $data_atual,
+                    'fato' => 25,
+                    'obs' => 'Presença em tratamento',
+                    'pessoa' => $nomePessoa,
+                ]);
 
                 DB::table('dias_cronograma')
                     ->where('id_cronograma', $lista->id_reuniao)
