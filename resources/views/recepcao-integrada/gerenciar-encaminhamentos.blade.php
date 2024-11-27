@@ -81,7 +81,7 @@
                             style="box-shadow: 1px 2px 5px #000000; margin:5px;">Tratamentos</a>
                     </div>
                     <div class="col-2">
-                        <a href="/relatorio-vagas-grupos" class="btn btn-warning btn-sm"
+                        <a href="/relatorio-vagas-grupos" class="btn btn-primary btn-sm"
                             style="box-shadow: 1px 2px 5px #000000; margin:5px;">Vagas Disponíveis</a>
                     </div>
                     <div class="col d-flex justify-content-end">

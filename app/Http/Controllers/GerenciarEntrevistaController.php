@@ -53,6 +53,12 @@ class GerenciarEntrevistaController extends Controller
     public function index(Request $request)
     {
 
+        $setores = array();
+        foreach (session()->get('acessoInterno') as $perfil) {
+
+            $setores = array_merge($setores, array_column($perfil, 'id_setor'));
+        }
+
         $informacoes = DB::table('encaminhamento')
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', '=', 'atendimentos.id')
             ->leftJoin('entrevistas', 'encaminhamento.id', '=', 'entrevistas.id_encaminhamento')
@@ -101,11 +107,16 @@ class GerenciarEntrevistaController extends Controller
                 'pessoa_entrevistador.nome_completo as nome_entrevistador',
                 DB::raw("(CASE WHEN atendimentos.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as emergencia"),
                 'atendimentos.dh_inicio as inicio'
-            )->whereIn('tipo_entrevista.id_setor', session()->get('usuario.setor'));
+            )->whereIn('tipo_entrevista.id_setor', $setores);
 
 
 
-
+   // if (in_array(38 , $setores)) {
+        //     $informacoes->where('encaminhamento.id_tipo_entrevista', 5);
+        // }
+        // if (in_array(7, $setores)) {
+        //     $informacoes->where('encaminhamento.id_tipo_entrevista', 3);
+        // }
 
 
 
@@ -117,12 +128,12 @@ class GerenciarEntrevistaController extends Controller
 
         $pesquisaEntrevista = $request->tipo_entrevista;
 
-        if (session()->get('usuario.setor') == 38) {
-            $informacoes->where('encaminhamento.id_tipo_entrevista', 5);
-        }
-        if (session()->get('usuario.setor') == 7) {
-            $informacoes->where('encaminhamento.id_tipo_entrevista', 3);
-        }
+        // if (in_array(38 , $setores)) {
+        //     $informacoes->where('encaminhamento.id_tipo_entrevista', 5);
+        // }
+        // if (in_array(7, $setores)) {
+        //     $informacoes->where('encaminhamento.id_tipo_entrevista', 3);
+        // }
 
         if ($request->nome_pesquisa) {
             $informacoes->whereRaw("UNACCENT(LOWER(pessoa_pessoa.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome_pesquisa}%"]);
@@ -136,24 +147,24 @@ class GerenciarEntrevistaController extends Controller
         if ($request->status != 1 and $request->status != 7 and $pesquisaValue != 'limpo') {
             $informacoes->where('entrevistas.status', $pesquisaValue);
         }
-        if($pesquisaValue == null and !$request->nome_pesquisa and !$request->tipo_entrevista){
+        if ($pesquisaValue == null and !$request->nome_pesquisa and !$request->tipo_entrevista) {
             $informacoes->whereNot('encaminhamento.status_encaminhamento', 6)
-            ->where(function($query){
-                $query->whereNotIn('entrevistas.status', [5, 6]);
-                $query->orWhere('entrevistas.status', null);
-            });
+                ->where(function ($query) {
+                    $query->whereNotIn('entrevistas.status', [5, 6]);
+                    $query->orWhere('entrevistas.status', null);
+                });
         }
 
         $informacoes = $informacoes
-        ->orderBy('encaminhamento.status_encaminhamento')
-        ->orderBy('entrevistas.status', 'ASC')
-        ->orderBy('atendimentos.emergencia', 'DESC')
-         ->orderBy('atendimentos.dh_inicio')
-        ->get()->toArray();
+            ->orderBy('encaminhamento.status_encaminhamento')
+            ->orderBy('entrevistas.status', 'ASC')
+            ->orderBy('atendimentos.emergencia', 'DESC')
+            ->orderBy('atendimentos.dh_inicio')
+            ->get()->toArray();
 
 
 
-//
+        //
         if ($request->status == 1) {
             $info = [];
             foreach ($informacoes as $dia) {
@@ -167,7 +178,7 @@ class GerenciarEntrevistaController extends Controller
                 }
                 $i = $i + 1;
             }
-               // dd($info);
+            // dd($info);
             $informacoes = $info;
             $pesquisaStatus = "Aguardando agendamento";
             $pesquisaValue = 1;
@@ -186,7 +197,7 @@ class GerenciarEntrevistaController extends Controller
                 }
                 $i = $i + 1;
             }
-               // dd($info);
+            // dd($info);
             $informacoes = $info;
             $pesquisaStatus = "Inativado";
             $pesquisaValue = 7;
@@ -660,7 +671,7 @@ class GerenciarEntrevistaController extends Controller
                     ->update(['status' => 5,]);
 
 
-                DB::table('encaminhamento')->where('id', $id)->update(['status_encaminhamento' => 3]);;
+                DB::table('encaminhamento')->where('id', $id)->update(['status_encaminhamento' => 5]);;
 
                 $data = date("Y-m-d H:i:s");
 
@@ -735,7 +746,7 @@ class GerenciarEntrevistaController extends Controller
                     ->update([
                         'status_encaminhamento' => 6,
                         'motivo' => $motivo_entrevista
-                ]);
+                    ]);
                 DB::table('entrevistas')
                     ->where('id_encaminhamento', '=', $id)
                     ->update(['status' => 6]);

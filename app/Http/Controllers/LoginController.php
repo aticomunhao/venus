@@ -86,6 +86,7 @@ class LoginController extends Controller
                     'id_associado' => $result->id_associado,
                     'nome' => $result->nome_completo,
                     'cpf' => $result->cpf,
+                    'sexo' => $result->sexo,
                     'acesso' => $acessos
                 ]);
 
@@ -152,6 +153,7 @@ class LoginController extends Controller
                     'id_associado' => $result->id_associado,
                     'nome' => $result->nome_completo,
                     'cpf' => $result->cpf,
+                    'sexo' => $result->sexo,
                     'acesso' => $acessos
                 ]);
 

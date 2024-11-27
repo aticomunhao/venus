@@ -3,7 +3,9 @@
 @section('content')
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPO -
-            {{ Str::upper($grupo->nome) }} - {{ Str::upper($grupo->dia) }}
+            {{ Str::upper($grupo->nome) }} ({{ $grupo->nsigla }}) - {{ Str::upper($grupo->dia) }}
+            {{ date('H:i', strtotime($grupo->h_inicio)) }}/{{ date('H:i', strtotime($grupo->h_fim)) }}
+
         </h4>
 
         <div class="col-12">
@@ -14,14 +16,14 @@
                         <select class="form-select select2" name="nome_pesquisa">
                             <option value=""></option>
                             @foreach ($membro as $membros)
-                                <option value="{{ $membros->nome_completo }}" 
+                                <option value="{{ $membros->nome_completo }}"
                                     {{ request('nome_pesquisa') == $membros->nome_completo ? 'selected' : '' }}>
                                     {{ $membros->nome_completo }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    
+
                     <div class="col-2">
                         Status
                         <select class="form-select" name="status">
@@ -33,9 +35,9 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div> 
-                    
-                     
+                    </div>
+
+
 
                     <div class="col">
                         <br>
@@ -47,7 +49,7 @@
                             type="button">Limpar</a>
 
                         <a href="/gerenciar-grupos-membro" class="btn btn-primary btn-sm me-md-2  offset-1"
-                            type="button">Retornar para tela inicial</a>
+                            type="button">Retornar</a>
                         @if ($grupo->modificador == 4)
                             <a href="/ferias-reuniao/{{ $id }}/2"><input class="btn btn-warning btn-sm me-md-2"
                                     style="font-size: 0.9rem;" type="button" value="Retomar de Férias"></a>
@@ -59,19 +61,21 @@
                         @if( in_array(29, session()->get('usuario.acesso')) )
                         <a href="/criar-membro-grupo/{{ $id }}"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
                             type="button" value="Novo membro +"></a>
+                        <a href="/selecionar-membro/{{ $id }}"><input class="btn btn-warning btn-sm me-md-2" style="font-size: 0.9rem;"
+                            type="button" value="Transferir Membros"></a>
                             @endif
                     </div>
                 </div>
             </form>
 
         </div>
-
         <hr>
+        Total de Membros: {{$membro->count()}}
 
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
             <thead>
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                    <th>ID</th>
+                    <th>NºASSOCIADO</th>
                     <th>NOME DO MÉDIUM</th>
                     <th>FUNÇÃO</th>
                     <th>STATUS PESSOA</th>
@@ -81,7 +85,7 @@
             <tbody>
                 @foreach ($membro as $membros)
                     <tr>
-                        <td>{{ $membros->idm }}</td>
+                        <td>{{ $membros->nr_associado }}</td>
                         <td>{{ $membros->nome_completo }}</td>
                         <td>{{ $membros->nome_funcao }}</td>
                         <td>{{ $membros->status }}</td>
@@ -142,7 +146,7 @@
                                                 <input type="date" name="data_inativacao" id="data_inativacao{{ $membros->idm }}" class="form-control mb-3" required>
                                             </div>
                                         </center>
-                                        
+
                                             <div class="modal-footer mt-3 ">
                                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
                                                 <button type="submit" class="btn btn-primary">Confirmar</button>
@@ -152,7 +156,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
 
                     <!-- Modal de confirmação para deletar -->
                     <div class="modal fade" id="confirmDelete{{ $membros->idm }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

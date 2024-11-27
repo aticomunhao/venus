@@ -1,21 +1,12 @@
 <?php $acesso = session()->get('usuario.acesso');
 
-$setores = Array();
-foreach(session()->get('acessoInterno') as $perfil){
-
-   $setores = array_merge($setores, array_column($perfil, 'id_setor'));
- 
+$setores = [];
+foreach (session()->get('acessoInterno') as $perfil) {
+    $setores = array_merge($setores, array_column($perfil, 'id_setor'));
 }
 
+$setores = DB::table('setor as st')->leftJoin('setor as stp', 'st.setor_pai', 'stp.id')->leftJoin('setor as sta', 'stp.setor_pai', 'sta.id')->select('st.id as ids', 'stp.id as idp', 'sta.id as ida')->whereIn('st.id', $setores)->get()->toArray();
 
-$setores = DB::table('setor as st')
-    ->leftJoin('setor as stp', 'st.setor_pai', 'stp.id')
-    ->leftJoin('setor as sta', 'stp.setor_pai', 'sta.id')
-    ->select('st.id as ids', 'stp.id as idp', 'sta.id as ida')
-    ->whereIn('st.id', $setores)
-    ->get()
-    ->toArray();
-   
 $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column($setores, 'idp'), array_column($setores, 'ida')));
 ?>
 
@@ -57,10 +48,6 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
 
                             @if (in_array(3, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-pessoas">Pessoas</a></li>
-                            @endif
-
-                            @if (in_array(19, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-reunioes">Reuniões </a></li>
                             @endif
 
                             @if (in_array(25, $acesso))
@@ -173,14 +160,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Reuniões</a>
                                 </li>
                             @endif
-<<<<<<< Updated upstream
-=======
                             @if (in_array(16, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
                                         Vagas em Grupos</a>
                                 </li>
-                            @endif
->>>>>>> Stashed changes
                         </ul>
                     </li>
                 </ul>

@@ -59,8 +59,8 @@
                                                                 @foreach ($cronogramas as $cronograma)
                                                                 <option value="{{ $cronograma->id }} - {{ $cronograma->nome }} - {{ $cronograma->dia}} - {{ $cronograma->h_inicio}} - {{ $cronograma->setor }}">
                                                             @endforeach
-                                                              </datalist>  
-                                                        
+                                                              </datalist>
+
                                                     </div>
                                                     <div class="col-12 mt-3">Status
                                                         <select class="form-select teste1" id="4" name="status"
@@ -225,8 +225,8 @@
                                                     Registrar Presença
                                                 </button>
                                             @else
-                                                <button type="submit" class="btn btn-primary">Registrar
-                                                    Presença</button>
+                                                <button type="submit" class="btn btn-primary">Confirmar
+                                                    </button>
                                             @endif
                                         </div>
                                     </div>
@@ -260,15 +260,10 @@
                         </div>
                         </form>
 
-
-
-
                         <a href="/visualizar-tratamento/{{ $listas->idtr }}" type="button"{{-- botão de histórico --}}
                             class="btn btn-outline-primary btn-sm tooltips">
                             <span class="tooltiptext">Histórico</span>
                             <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></a>
-
-
 
                         @if ($listas->status == 1 or $listas->status == 2)
                             {{-- botao de inativar --}}
@@ -339,15 +334,11 @@
 
     <script>
         $(document).ready(function() {
+
+
             if ({{ $diaP == null }}) { //Deixa o select status como padrao vazio
                 $(".teste").prop("selectedIndex", -1);
             }
-
-            if ({{ $cron === null }}) {
-                $("#grupo").prop("selectedIndex", -1);
-            }
-
-
 
         });
     </script>
@@ -363,5 +354,5 @@
 
         });
     </script>
-   
+
 @endsection

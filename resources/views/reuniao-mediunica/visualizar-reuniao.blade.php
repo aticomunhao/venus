@@ -25,7 +25,7 @@
                                     <label for="grupo" class="form-label">Grupo</label>
                                     <select class="form-control slct" id="grupo" name="grupo" required disabled>
                                         @foreach ($grupo as $grupos)
-                                            <option value="{{ $grupos->idg }}" {{$grupos->nome == $info->nome ? 'selected' : ''}}>{{ $grupos->nome }}-{{ $grupos->nsigla }}</option>
+                                            <option value="{{ $grupos->idg }}" {{$grupos->idg == $info->id_grupo ? 'selected' : ''}}>{{ $grupos->nome }}-{{ $grupos->nsigla }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -66,14 +66,18 @@
                                     <input  type="number" class="form-control" id="max_atend" min="1" max="800"
                                         name="max_atend" value="{{ $info->max_atend }}" disabled>
                                 </div>
-                                <div class="col">
+                                <div class="col-2">
                                     <label class="form-label">Data Inicio</label>
                                     <input type="date" class="form-control" id="dt_inicio" name="dt_inicio" value="{{ $info->data_inicio }}" disabled>
                                 </div>
-                                <div class="col">
+                                <div class="col-2">
                                     <label class="form-label">Data Fim</label>
                                     <input type="date" class="form-control" id="dt_fim" min="1" max="800"
                                         name="dt_fim" value="{{ $info->data_fim }}" disabled>
+                                </div>
+                                <div class="col-4">
+                                    <label for="h_fim" class="form-label">Observação</label>
+                                    <input class="form-control slct" id="observacao" name="observacao" value="{{$info->obs}}" disabled>
                                 </div>
                             </div>
                             <br />

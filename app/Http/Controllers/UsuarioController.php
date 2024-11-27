@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\ModelUsuario;
@@ -192,6 +192,27 @@ class UsuarioController extends Controller
         // }
     }
 
+    public function regenerarAcessos(){
+
+        $counter = 0;
+        $acessos = DB::table('usuario_acesso')->get();
+
+        $perfis = array();
+        foreach ($acessos as $element) {
+            $perfis[$element->id_usuario][$element->id_perfil][$element->id_setor] = 'on';
+        }
+
+        foreach($perfis as $key => $usuario){
+            $id_pessoa = DB::table('usuario')->where('id', $key)->pluck('id_pessoa')->toArray();
+            $this->inserirPerfilUsuario($usuario, current($id_pessoa));
+
+            $counter++;
+        }
+
+        app('flasher')->addSuccess("Acessos de $counter usuários atualizados com sucesso!");
+        return redirect()->back();
+    }
+
     public function destroy($id)
     {
        // try {
@@ -267,6 +288,7 @@ class UsuarioController extends Controller
 
     public function inserirPerfilUsuario($perfis, $idPessoa)
     {
+       
         //  try {
         $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
 
@@ -327,66 +349,6 @@ class UsuarioController extends Controller
         // }
     }
 
-    // public function inserirTipoEstque($tpEstoque,$idPessoa)
-    // {
-    //     $idUsuario = DB::select("select id from usuario where id_pessoa =".$idPessoa);
-    //     $resultEstoque = DB::select("select id, nome from tipo_estoque");
-
-    //      foreach ($tpEstoque as $tpEstoques) {
-    //         foreach ($resultEstoque as $resultEstoques) {
-
-    //             if($resultEstoques->nome ==  str_replace("_", " ",$tpEstoques) ){
-
-    //                 DB::table('usuario_tipo_estoque')->insert([
-    //                         'id_usuario' => $idUsuario[0]->id,
-    //                         'id_tp_estoque' => $resultEstoques->id,
-
-    //                 ]);
-    //             }
-    //         }
-    //     }
-    // }
-
-    // public function inserirUsuarioDeposito($deposito, $idPessoa)
-    // {
-    //     $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
-    //     $resultDeposito = $this->getDeposito();
-    //     //dd($resultDeposito);
-    //     foreach ($deposito as $depositos) {
-    //         foreach ($resultDeposito as $resultDepositos) {
-    //             if ($resultDepositos->nome == str_replace('_', ' ', $depositos)) {
-    //                 DB::table('usuario_deposito')->insert([
-    //                     'id_usuario' => $idUsuario[0]->id,
-    //                     'id_deposito' => $resultDepositos->id,
-    //                 ]);
-    //             }
-    //         }
-    //     }
-    // }
-
-
-    public function inserirUsuarioSetor($setor, $idPessoa)
-    {
-        try {
-            $idUsuario = DB::select('select id from usuario where id_pessoa =' . $idPessoa);
-            $resultSetor = DB::table('rotas_setor')->leftJoin('setor', 'rotas_setor.id_setor', 'setor.id')->distinct('id_setor')->get();
-            //dd($resultDeposito);
-            foreach ($setor as $setors) {
-                foreach ($resultSetor as $resultSetors) {
-                    if ($resultSetors->nome == str_replace('_', ' ', $setors)) {
-                        DB::table('usuario_setor')->insert([
-                            'id_usuario' => $idUsuario[0]->id,
-                            'id_setor' => $resultSetors->id,
-                        ]);
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-
-            $code = $e->getCode();
-            return view('administrativo-erro.erro-inesperado', compact('code'));
-        }
-    }
 
     public function gerarSenhaInicial($id_pessoa)
     {

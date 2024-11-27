@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\DiasCronograma;
 use App\Jobs\DiasCronogramaOntem;
 use App\Jobs\Faltas;
+use App\Jobs\FaltasTrabalhador;
 use App\Jobs\FimSemanas;
 use App\Jobs\LimiteFalta;
 use Illuminate\Database\Query\JoinClause;
@@ -57,7 +58,7 @@ class GerenciarTratamentosController extends Controller
 
 
         //Setor DIVAP ou Master Admin
-    
+
 
 
         //dd($cronogramasDirigente, $lista->get());
@@ -74,8 +75,9 @@ class GerenciarTratamentosController extends Controller
 
         $cpf = $request->cpf;
 
+        $acesso = DB::table('usuario_acesso')->where('id_usuario', session()->get('usuario.id_usuario'))->where('id_acesso', session()->get('acessoAtual'))->where('id_setor', '51')->first();
 
-        if (!in_array(51, session()->get('usuario.setor')) and  !in_array(36, session()->get('usuario.acesso'))) {
+        if (!$acesso and !in_array(36, session()->get('usuario.acesso'))) {
             $lista = $lista->whereIn('tr.id_reuniao', $cronogramasDirigente);
             $request->status ?? $situacao = 'all';
         }
@@ -89,18 +91,21 @@ class GerenciarTratamentosController extends Controller
         }
 
         if (current($selectGrupo) != '') {
-          
+
             if (intval(current($selectGrupo)) != 0) {
                 $lista->where('rm.id', current($selectGrupo));
             } else {
 
                 $pesquisaNome = array();
                 $pesquisaNome = explode(' ', current($selectGrupo));
-    
-                foreach($pesquisaNome as $itemPesquisa){
+
+                foreach ($pesquisaNome as $itemPesquisa) {
                     $lista->whereRaw("UNACCENT(LOWER(gr.nome)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
                 }
-                
+            }
+
+            if ($situacao == 'all') {
+                $lista->whereIn('tr.status',[1, 2]);
             }
         }
 
@@ -108,21 +113,20 @@ class GerenciarTratamentosController extends Controller
             $pesquisaNome = array();
             $pesquisaNome = explode(' ', $request->assist);
 
-            foreach($pesquisaNome as $itemPesquisa){
+            foreach ($pesquisaNome as $itemPesquisa) {
                 $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
             }
         }
 
 
         if ($request->cpf) {
-
             $lista->whereRaw("LOWER(p1.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
         } else {
 
             if ($request->status && $situacao != 'all') {
                 $lista->where('tr.status', $request->status);
             } elseif ($situacao == 'all') {
-            } else {
+            } elseif(current($selectGrupo) == '') {
                 $lista->where('tr.status', 2);
             }
         }
@@ -174,7 +178,7 @@ class GerenciarTratamentosController extends Controller
 
 
             DB::table('tratamento')->where('id', $id)->update(['status' => 6, 'motivo' => $request->motivo, 'dt_fim' => $hoje]);
-            DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 4]);
+            DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 5]);
 
 
             return redirect()->back();
@@ -188,99 +192,98 @@ class GerenciarTratamentosController extends Controller
 
     public function presenca(Request $request, $idtr)
     {
-         try{
+        try {
 
-        $infoTrat = DB::table('tratamento')->leftJoin('encaminhamento', 'tratamento.id_encaminhamento', 'encaminhamento.id')->where('tratamento.id', $idtr)->first();
+            $infoTrat = DB::table('tratamento')->leftJoin('encaminhamento', 'tratamento.id_encaminhamento', 'encaminhamento.id')->where('tratamento.id', $idtr)->first();
 
-        $data_atual = Carbon::now();
-        $dia_atual = $data_atual->weekday();
+            $data_atual = Carbon::now();
+            $dia_atual = $data_atual->weekday();
 
-        $confere = DB::table('presenca_cronograma AS ds')
-            ->leftJoin('dias_cronograma as dc', 'ds.id_dias_cronograma', 'dc.id')
-            ->where('dc.data', $data_atual)
-            ->where('ds.id_tratamento', $idtr)
-            ->count();
+            $confere = DB::table('presenca_cronograma AS ds')
+                ->leftJoin('dias_cronograma as dc', 'ds.id_dias_cronograma', 'dc.id')
+                ->where('dc.data', $data_atual)
+                ->where('ds.id_tratamento', $idtr)
+                ->count();
 
-        $lista = DB::table('tratamento AS tr')
-            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-            ->where('tr.id', $idtr)
-            ->first();
-
-
-
-        $dia_cronograma = DB::table('dias_cronograma')->where('id_cronograma', $lista->id_reuniao)->where('data', $data_atual)->first();
-
-        $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $data_atual)->first();
+            $lista = DB::table('tratamento AS tr')
+                ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+                ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+                ->where('tr.id', $idtr)
+                ->first();
 
 
-        if ($confere > 0) {
 
-            app('flasher')->addError('Já foi registrada a presença para este dia.');
+            $dia_cronograma = DB::table('dias_cronograma')->where('id_cronograma', $lista->id_reuniao)->where('data', $data_atual)->first();
 
-            return Redirect()->back();
-        } else if ($lista->dia_semana != $dia_atual) {
-
-            app('flasher')->addError('Este assistido não corresponde ao dia de hoje.');
-
-            return Redirect()->back();
-        } else {
+            $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $data_atual)->first();
 
 
-            $encaminhamentosPTD = DB::table('encaminhamento')->where('id_atendimento', $lista->id_atendimento)->where('id_tipo_tratamento', 1)->where('status_encaminhamento', 4)->first();
+            if ($confere > 0) {
 
-            if ($infoTrat->status == 1) {
-                DB::table('tratamento')->where('id', $idtr)->update([
-                    'status' => 2
-                ]);
+                app('flasher')->addError('Já foi registrada a presença para este dia.');
 
-                if ($infoTrat->id_tipo_tratamento == 2) {
-                    DB::table('encaminhamento')->where('id', $encaminhamentosPTD->id)->update([
-                        'status_encaminhamento' => 5
+                return Redirect()->back();
+            } else if ($lista->dia_semana != $dia_atual) {
+
+                app('flasher')->addError('Este assistido não corresponde ao dia de hoje.');
+
+                return Redirect()->back();
+            } else {
+
+
+                $encaminhamentosPTD = DB::table('encaminhamento')->where('id_atendimento', $lista->id_atendimento)->where('id_tipo_tratamento', 1)->where('status_encaminhamento', 4)->first();
+
+                if ($infoTrat->status == 1) {
+                    DB::table('tratamento')->where('id', $idtr)->update([
+                        'status' => 2
                     ]);
+
+                    if ($infoTrat->id_tipo_tratamento == 2) {
+                        DB::table('encaminhamento')->where('id', $encaminhamentosPTD->id)->update([
+                            'status_encaminhamento' => 5
+                        ]);
+                    }
                 }
+
+
+                $presenca = isset($request->presenca) ? true : false;
+
+                $acompanhantes = isset($acompanhantes->nr_acompanhantes)  ? $acompanhantes->nr_acompanhantes : 0;
+                $nrAcomp = $acompanhantes + $request->acompanhantes;
+
+
+                DB::table('dias_cronograma')
+                    ->where('id_cronograma', $lista->id_reuniao)
+                    ->where('data', $data_atual)
+                    ->update([
+                        'nr_acompanhantes' => $nrAcomp
+                    ]);
+
+                DB::table('presenca_cronograma')
+                    ->insert([
+                        'id_tratamento' => $idtr,
+                        'presenca' => true,
+                        'id_dias_cronograma' => $dia_cronograma->id
+                    ]);
+
+
+
+
+
+                app('flasher')->addSuccess('Foi registrada a presença com sucesso.');
+
+                return Redirect()->back();
             }
 
-
-            $presenca = isset($request->presenca) ? true : false;
-
-            $acompanhantes = isset($acompanhantes->nr_acompanhantes)  ? $acompanhantes->nr_acompanhantes : 0;
-            $nrAcomp = $acompanhantes + $request->acompanhantes;
-
-
-            DB::table('dias_cronograma')
-                ->where('id_cronograma', $lista->id_reuniao)
-                ->where('data', $data_atual)
-                ->update([
-                    'nr_acompanhantes' => $nrAcomp
-                ]);
-
-            DB::table('presenca_cronograma')
-                ->insert([
-                    'id_tratamento' => $idtr,
-                    'presenca' => true,
-                    'id_dias_cronograma' => $dia_cronograma->id
-                ]);
-
-
-
-
-
-            app('flasher')->addSuccess('Foi registrada a presença com sucesso.');
+            app('flasher')->addError('Aconteceu um erro inesperado.');
 
             return Redirect()->back();
+        } catch (\Exception $e) {
+
+            $code = $e->getCode();
+            return view('tratamento-erro.erro-inesperado', compact('code'));
         }
-
-        app('flasher')->addError('Aconteceu um erro inesperado.');
-
-        return Redirect()->back();
     }
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('tratamento-erro.erro-inesperado', compact('code'));
-            }
-        }
 
 
     public function visualizar($idtr)
@@ -291,7 +294,9 @@ class GerenciarTratamentosController extends Controller
             ->leftJoin('encaminhamento', 'tratamento.id_encaminhamento', 'encaminhamento.id')
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
             ->where('tratamento.id', $idtr)
-            ->first('id_assistido');
+            ->first();
+
+
 
         $result = DB::table('tratamento AS tr')
             ->select(
@@ -349,9 +354,16 @@ class GerenciarTratamentosController extends Controller
             ->leftJoin('salas as sl', 'rm.id_sala', 'sl.id')
             ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
             ->where('at.id_assistido', $pessoa->id_assistido)
-            ->where('enc.id_tipo_encaminhamento', 2)
-            ->where('enc.status_encaminhamento', '<', 5)
-            ->get();
+            ->where('enc.id_tipo_encaminhamento', 2);
+
+        if ($pessoa->status_encaminhamento < 5) {
+            $result = $result->where('enc.status_encaminhamento', '<', 5)
+                ->get();
+        } else {
+
+            $result = $result->where('tr.id', $idtr)->get();
+        }
+
 
         // dd($result, $pessoa);
         $list = DB::table('tratamento AS tr')
@@ -392,6 +404,8 @@ class GerenciarTratamentosController extends Controller
         LimiteFalta::dispatch();
         FimSemanas::dispatch();
         Faltas::dispatch();
+        FaltasTrabalhador::dispatch();
+
         return redirect()->back();
     }
 

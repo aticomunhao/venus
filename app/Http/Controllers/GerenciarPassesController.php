@@ -14,7 +14,6 @@ class GerenciarPassesController extends Controller
 
     public function index(Request $request)
     {
-
         // Obtém a data atual formatada
         $now = Carbon::now()->format('Y-m-d');
 
@@ -39,10 +38,12 @@ class GerenciarPassesController extends Controller
             ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
             ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('setor as s', 'gr.id_setor', 's.id')
-            ->leftJoin('membro AS me', 'gr.id', 'me.id_cronograma')
+            ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
             ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
             ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
-            ->where('s.id', '=', 48);
+            ->where('s.id', '=', 48)
+            ->where('me.id_associado', session()->get('usuario.id_associado'))
+            ->whereIn('me.id_funcao', [1, 2]);
 
 
 
@@ -55,10 +56,7 @@ class GerenciarPassesController extends Controller
         $status = $request->input('status', null);
 
 
-        // Aplica filtro por setor se não estiver no setor 25
-        if (!in_array(25, session()->get('usuario.setor'))) {
-            $reuniao->whereIn('gr.id_setor', session()->get('usuario.setor'));
-        }
+
 
         // Aplica filtro por semana
         if ($semana && $semana !== 'todos') {
@@ -109,11 +107,27 @@ class GerenciarPassesController extends Controller
 
         // Carregar a lista de grupos para o Select2
         $grupos = DB::table('grupo AS g')
-            ->leftJoin('setor AS s', 'g.id_setor', 's.id')
-            ->select('g.id AS idg', 'g.nome AS nomeg', 's.sigla')
-            ->where('s.id', '=', '48')
-            ->orderBy('g.nome', 'asc')
-            ->get();
+        ->leftJoin('setor AS s', 'g.id_setor', '=', 's.id')
+        ->leftJoin('cronograma AS cro', 'g.id', '=', 'cro.id_grupo')
+        ->leftJoin('tipo_dia AS td', 'cro.dia_semana', '=', 'td.id')
+        ->leftJoin('salas AS sl', 'cro.id_sala', '=', 'sl.id')
+        ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', '=', 'ts.id')
+        ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
+        ->where('me.id_associado', session()->get('usuario.id_associado'))
+        ->whereIn('me.id_funcao', [1, 2])
+        ->select(
+            'g.id AS idg',
+            'g.nome AS nomeg',
+            's.sigla',
+            'cro.h_inicio',
+            'cro.h_fim',
+            'sl.numero AS sala',
+            'td.nome AS dia_semana'
+        )
+        ->where('s.id', '=', 48)
+        ->orderBy('g.nome', 'asc')
+        ->get();
+    
 
 
         // Retorna a view com os dados
@@ -166,14 +180,22 @@ class GerenciarPassesController extends Controller
         ->where('id_cronograma', $id)
         ->where('data', $hoje)
         ->first();
+        if ($registro) {
+            // Atualiza o número de acompanhantes
+            DB::table('dias_cronograma')
+                ->where('id_cronograma', $id)
+                ->where('data', $hoje)
+                ->update([
+                    'nr_acompanhantes' => $request->acompanhantes,
+                ]);
 
-    if ($registro) {
-        // Atualiza o número de acompanhantes
-        DB::table('dias_cronograma')
-            ->where('id_cronograma', $id)
-            ->where('data', $hoje)
-            ->update([
-                'nr_acompanhantes' => $request->acompanhantes,
+            // Insere um registro no histórico
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $hoje,
+                'pessoa' => $request->input('nome'),
+                'obs' => 'Quantidade de passes registrada no cronograma.',
+                'fato' => 22,
             ]);
 
         return redirect('/gerenciar-passe')->with('success', 'Quantidade de passes registrada com sucesso!');
@@ -238,13 +260,21 @@ class GerenciarPassesController extends Controller
     {
 
         $hoje = $request->data;
-
+        
 
         DB::table('dias_cronograma')
         ->where('id_cronograma',$id)
         ->where('data',$hoje)
         ->update([
         'nr_acompanhantes' => $request->nr_acompanhantes,
+        ]);
+
+        DB::table('historico_venus')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $hoje,
+            'pessoa' => $request->input('nome'),
+            'obs' => 'Quantidade de passes editada no cronograma.',
+            'fato' => 23,
         ]);
 
         return redirect('/gerenciar-passe')->with('success', 'Quantidade de passes alterada com sucesso!');
