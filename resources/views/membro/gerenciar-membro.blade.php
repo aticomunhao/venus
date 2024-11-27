@@ -3,7 +3,9 @@
 @section('content')
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPO -
-            {{ Str::upper($grupo->nome) }} - {{ Str::upper($grupo->dia) }}
+            {{ Str::upper($grupo->nome) }} ({{ $grupo->nsigla }}) - {{ Str::upper($grupo->dia) }}
+            {{ date('H:i', strtotime($grupo->h_inicio)) }}/{{ date('H:i', strtotime($grupo->h_fim)) }}
+
         </h4>
 
         <div class="col-12">
@@ -67,8 +69,8 @@
             </form>
 
         </div>
-
         <hr>
+        Total de Membros: {{$membro->count()}}
 
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
             <thead>

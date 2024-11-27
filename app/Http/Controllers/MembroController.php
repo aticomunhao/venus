@@ -249,9 +249,10 @@ class MembroController extends Controller
 
         // Busca os detalhes do grupo
         $grupo = DB::table('cronograma as cro')
-            ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.modificador')
+            ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.modificador','s.sigla as nsigla')
             ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('setor as s', 'gr.id_setor', 's.id')
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->where('cro.id', $id)
             ->first();
@@ -639,13 +640,13 @@ class MembroController extends Controller
             )
             ->orderBy('g.nome', 'asc')
             ->get();
-     
+
 
         return view('membro.transferir', compact('membros', 'grupos', 'id'));
     }
 
     public function transferir(Request $request, String $id){
-        
+
         foreach($request->check as $membro){
 
             $ontem = Carbon::yesterday();
@@ -660,7 +661,7 @@ class MembroController extends Controller
                 ->where('m.id', $membro)
                 ->first();
 
-  
+
             DB::table('membro')
             ->where('id', $membro)
             ->update([
@@ -676,7 +677,17 @@ class MembroController extends Controller
         }
 
         return redirect("/gerenciar-membro/$id");
- 
+
+
+    }
+
+    public function transferirLote(Request $request){
+
+
+
+
+
+
 
     }
 }

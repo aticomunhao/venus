@@ -107,11 +107,27 @@ class GerenciarPassesController extends Controller
 
         // Carregar a lista de grupos para o Select2
         $grupos = DB::table('grupo AS g')
-            ->leftJoin('setor AS s', 'g.id_setor', 's.id')
-            ->select('g.id AS idg', 'g.nome AS nomeg', 's.sigla')
-            ->where('s.id', '=', '48')
-            ->orderBy('g.nome', 'asc')
-            ->get();
+        ->leftJoin('setor AS s', 'g.id_setor', '=', 's.id')
+        ->leftJoin('cronograma AS cro', 'g.id', '=', 'cro.id_grupo')
+        ->leftJoin('tipo_dia AS td', 'cro.dia_semana', '=', 'td.id')
+        ->leftJoin('salas AS sl', 'cro.id_sala', '=', 'sl.id')
+        ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', '=', 'ts.id')
+        ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
+        ->where('me.id_associado', session()->get('usuario.id_associado'))
+        ->whereIn('me.id_funcao', [1, 2])
+        ->select(
+            'g.id AS idg',
+            'g.nome AS nomeg',
+            's.sigla',
+            'cro.h_inicio',
+            'cro.h_fim',
+            'sl.numero AS sala',
+            'td.nome AS dia_semana'
+        )
+        ->where('s.id', '=', 48)
+        ->orderBy('g.nome', 'asc')
+        ->get();
+    
 
 
         // Retorna a view com os dados

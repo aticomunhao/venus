@@ -143,6 +143,7 @@ class AtendimentoFraternoController extends Controller
     {
 
         $id_associado = session()->get('usuario.id_associado');
+        $sexo = session()->get('usuario.sexo');
         $numero_de_assistidos_para_atender = DB::table('atendimentos AS at')
             ->select(
                 'at.id as ida',
@@ -174,7 +175,11 @@ class AtendimentoFraternoController extends Controller
             ->where(function ($query) use ($id_associado) {
                 $query->where('at.id_atendente_pref', '=',   $id_associado)
                     ->orWhereNull('at.id_atendente_pref'); // Inclui registros onde não há atendente preferencial
-            });;
+            })
+            ->where(function ($query) use ($sexo) {
+                $query->where('at.pref_tipo_atendente', '=',   $sexo)
+                    ->orWhereNull('at.pref_tipo_atendente'); // Inclui registros onde não há atendente preferencial
+            });
 
 
         $numero_de_assistidos_para_atender = $numero_de_assistidos_para_atender->count();
@@ -323,22 +328,17 @@ class AtendimentoFraternoController extends Controller
 
             $analisa = DB::table('atendimentos AS at')
                 ->select('at.id AS ida', 'at.observacao', 'p1.id AS idas', 'p1.ddd', 'p1.sexo', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'p2.nome_completo AS nm_2', 'at.id_atendente_pref', 'ps1.nome_completo AS nm_3', 'at.id_atendente', 'ps2.nome_completo AS nm_4', 'at.pref_tipo_atendente', 'ts.descricao AS tst', 'tsx.tipo', 'pa.nome', 'p1.dt_nascimento')
-
                 ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                 ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                 ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-
-
                 ->leftJoin('associado AS ad1', 'at.id_atendente', 'ad1.id')
                 ->leftJoin('pessoas AS ps1', 'ad1.id_pessoa', 'ps1.id')
                 ->leftJoin('membro AS m1', 'at.id_atendente_pref', 'm1.id_associado')
                 ->leftJoin('associado AS ad2', 'm1.id_associado', 'ad2.id')
                 ->leftJoin('pessoas AS ps2', 'ad1.id_pessoa', 'ps2.id')
-
                 ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
                 ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
                 ->leftJoin('tp_sexo AS tsx', 'p1.sexo', 'tsx.id')
-                ->leftJoin('registro_tema AS rt', 'at.id', 'rt.id_atendimento')
                 ->where('at.id_assistido', $idas)
                 ->orderBy('at.dh_chegada', 'desc')
                 ->get();
