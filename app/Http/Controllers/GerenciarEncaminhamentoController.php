@@ -328,67 +328,67 @@ class GerenciarEncaminhamentoController extends Controller
 
     public function tratamento(Request $request, $ide)
     {
-      //  try {
+        //  try {
 
-            $hoje = Carbon::today();
+        $hoje = Carbon::today();
 
-            $dia = intval($request->dia);
+        $dia = intval($request->dia);
 
-            $ide = intval($ide);
+        $ide = intval($ide);
 
-            $verifica = DB::table('cronograma AS rm')->select('rm.dia_semana', 'rm.id AS idrm', 'enc.id_tipo_tratamento AS trenc', 'rm.id_tipo_tratamento AS trtr')->leftJoin('tratamento AS tr', 'tr.id_reuniao', 'rm.id')->leftJoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')->where('rm.dia_semana', $dia)->distinct('rm.id')->whereRaw('enc.id_tipo_tratamento = rm.id_tipo_tratamento')->get();
+        $verifica = DB::table('cronograma AS rm')->select('rm.dia_semana', 'rm.id AS idrm', 'enc.id_tipo_tratamento AS trenc', 'rm.id_tipo_tratamento AS trtr')->leftJoin('tratamento AS tr', 'tr.id_reuniao', 'rm.id')->leftJoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')->where('rm.dia_semana', $dia)->distinct('rm.id')->whereRaw('enc.id_tipo_tratamento = rm.id_tipo_tratamento')->get();
 
-            $tp_trat = DB::table('encaminhamento AS enc')->select('enc.id_tipo_tratamento')->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')->where('enc.id', $ide)->value('enc.id_tipo_tratamento');
+        $tp_trat = DB::table('encaminhamento AS enc')->select('enc.id_tipo_tratamento')->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')->where('enc.id', $ide)->value('enc.id_tipo_tratamento');
 
-            $result = DB::table('encaminhamento AS enc')
-                ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat')
-                ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-                ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-                ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-                ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-                ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
-                ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-                ->where('enc.id', $ide)
-                ->get();
+        $result = DB::table('encaminhamento AS enc')
+            ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat')
+            ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+            ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+            ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+            ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+            ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
+            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+            ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+            ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
+            ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+            ->where('enc.id', $ide)
+            ->get();
 
-            $trata = DB::table('cronograma AS reu')
+        $trata = DB::table('cronograma AS reu')
 
-                ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'), 'p.nome_completo','reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
-                ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
-                ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
-                ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
-                ->leftJoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
-                ->leftJoin('membro AS me', 'reu.id', 'me.id_cronograma')
-                ->leftJoin('associado as ass', 'me.id_associado','ass.id')
-                ->leftJoin('pessoas as p', 'ass.id_pessoa','p.id')
-                ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
-                ->leftJoin('tipo_dia AS td', 'reu.dia_semana', 'td.id')
-                ->where(function ($query) use ($hoje) {
-                    $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
-                })
-                ->where(function ($query) {
-                    $query->where('reu.modificador', NULL);
-                    $query->orWhere('reu.modificador', '<>', 4);
-                })
-                ->where('me.id_funcao', 1)
-                ->where('reu.dia_semana', $dia)
-                ->where('reu.id_tipo_tratamento', $tp_trat)
-                ->orWhere('tr.status', null)
-                ->where('tr.status', '<', 3)
-                ->groupBy('p.nome_completo','reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
-                ->orderBy('h_inicio')
-                ->get();
+            ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'), 'p.nome_completo', 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
+            ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
+            ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
+            ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
+            ->leftJoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
+            ->leftJoin('membro AS me', 'reu.id', 'me.id_cronograma')
+            ->leftJoin('associado as ass', 'me.id_associado', 'ass.id')
+            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
+            ->leftJoin('tipo_dia AS td', 'reu.dia_semana', 'td.id')
+            ->where(function ($query) use ($hoje) {
+                $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
+            })
+            ->where(function ($query) {
+                $query->where('reu.modificador', NULL);
+                $query->orWhere('reu.modificador', '<>', 4);
+            })
+            ->where('me.id_funcao', 1)
+            ->where('reu.dia_semana', $dia)
+            ->where('reu.id_tipo_tratamento', $tp_trat)
+            ->orWhere('tr.status', null)
+            ->where('tr.status', '<', 3)
+            ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
+            ->orderBy('h_inicio')
+            ->get();
 
-             
-            if (sizeof($trata) == 0) {
-                app('flasher')->addWarning('Não existem grupos para este dia');
-                return redirect()->back();
-            }
 
-            return view('/recepcao-integrada/agendar-tratamento', compact('result', 'trata', 'dia'));
+        if (sizeof($trata) == 0) {
+            app('flasher')->addWarning('Não existem grupos para este dia');
+            return redirect()->back();
+        }
+
+        return view('/recepcao-integrada/agendar-tratamento', compact('result', 'trata', 'dia'));
         // } catch (\Exception $e) {
         //     $code = $e->getCode();
         //     return view('tratamento-erro.erro-inesperado', compact('code'));
@@ -494,45 +494,44 @@ class GerenciarEncaminhamentoController extends Controller
 
     public function visualizar($ide)
     {
-        try {
+        // try {
 
-            $pessoa = DB::table('encaminhamento')
-                ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
-                ->where('encaminhamento.id', $ide)
-                ->first('id_assistido');
+        $pessoa = DB::table('encaminhamento')
+            ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
+            ->where('encaminhamento.id', $ide)
+            ->first('id_assistido');
 
-            $result = DB::table('encaminhamento AS enc')
-                ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'td.nome as nomedia', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'tse.descricao AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo')
-                ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-                ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-                ->leftjoin('associado AS ass', 'at.id_atendente', 'ass.id')
-                ->leftjoin('pessoas AS p4', 'ass.id_pessoa', 'p4.id')
-                ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-                ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
-                ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-                ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
-                ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
-                ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-                ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
-                ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
-                ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
-                ->where('at.id_assistido', $pessoa->id_assistido)
-                ->where('enc.id_tipo_encaminhamento', 2)
-                ->where('enc.status_encaminhamento', '<', 5)
-                ->get();
+        $result = DB::table('encaminhamento AS enc')
+            ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'td.nome as nomedia', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'tse.descricao AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo')
+            ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+            ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+            ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+            ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+            ->leftjoin('associado AS ass', 'at.id_atendente', 'ass.id')
+            ->leftjoin('pessoas AS p4', 'ass.id_pessoa', 'p4.id')
+            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+            ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+            ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
+            ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+            ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
+            ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
+            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+            ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
+            ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
+            ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
+            ->where('at.id_assistido', $pessoa->id_assistido)
+            ->where('enc.id_tipo_encaminhamento', 2)
+            ->where('enc.status_encaminhamento', '<=', 6)
+            ->get();
 
-            $list = DB::table('presenca_cronograma as pc')->select('pc.id as idp', 'dc.data', 'pc.presenca')->leftJoin('dias_cronograma as dc', 'id_dias_cronograma', 'dc.id')->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')->where('id_encaminhamento', $ide)->get();
+        $list = DB::table('presenca_cronograma as pc')->select('pc.id as idp', 'dc.data', 'pc.presenca')->leftJoin('dias_cronograma as dc', 'id_dias_cronograma', 'dc.id')->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')->where('id_encaminhamento', $ide)->get();
 
-            $faul = DB::table('presenca_cronograma as pc')->leftJoin('dias_cronograma as dc', 'id_dias_cronograma', 'dc.id')->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')->where('id_encaminhamento', $ide)->where('pc.presenca', 0)->count();
-
-            return view('/recepcao-integrada/historico-encaminhamento', compact('result', 'list', 'faul'));
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
+        $faul = DB::table('presenca_cronograma as pc')->leftJoin('dias_cronograma as dc', 'id_dias_cronograma', 'dc.id')->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')->where('id_encaminhamento', $ide)->where('pc.presenca', 0)->count();
+        return view('/recepcao-integrada/historico-encaminhamento', compact('result', 'list', 'faul'));
+        //     } catch (\Exception $e) {
+        //         $code = $e->getCode();
+        //         return view('tratamento-erro.erro-inesperado', compact('code'));
+        //     }
     }
     public function inative(Request $request, $ide)
     {
@@ -827,23 +826,23 @@ class GerenciarEncaminhamentoController extends Controller
 
             $trata = DB::table('cronograma AS reu')
 
-                ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'),'p.nome_completo', 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
+                ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'), 'p.nome_completo', 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
                 ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
                 ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                 ->leftJoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
                 ->leftJoin('cronograma as cro', 'gr.id', 'cro.id_grupo')
                 ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
-                ->leftJoin('associado as ass', 'me.id_associado','ass.id')
-                ->leftJoin('pessoas as p', 'ass.id_pessoa','p.id')
+                ->leftJoin('associado as ass', 'me.id_associado', 'ass.id')
+                ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
                 ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
                 ->leftJoin('tipo_dia AS td', 'reu.dia_semana', 'td.id')
                 ->where('reu.dia_semana', $dia)
-                ->where('me.id_funcao',1)
+                ->where('me.id_funcao', 1)
                 ->where('reu.id_tipo_tratamento', $tp_trat)
                 ->orWhere('tr.status', null)
                 ->where('tr.status', '<', 3)
-                ->groupBy('p.nome_completo','reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
+                ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
                 ->orderBy('h_inicio')
                 ->get();
 
