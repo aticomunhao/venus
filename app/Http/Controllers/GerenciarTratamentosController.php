@@ -198,7 +198,7 @@ class GerenciarTratamentosController extends Controller
 
 
 
-          app('flasher')->addwarning('Tratamento inativado.');
+          app('flasher')->addSuccess('O tratamento foi inativado.');
 
           return redirect()->back();
       } catch (\Exception $e) {
