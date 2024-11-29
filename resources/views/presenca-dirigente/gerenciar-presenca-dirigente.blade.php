@@ -15,7 +15,9 @@ Gerenciar Presença Trabalhador
                 <select class="form-select select2" name="grupo">
                     @foreach ($reunioes as $reuniao)
                     <option value="{{ $reuniao->id }}" {{ $reuniao->id == $reunioesDirigentes[0] ? 'selected' : '' }}>
-                        {{ $reuniao->nome . ' - ' . $reuniao->dia }}
+                        {{ $reuniao->nome }} ({{ $reuniao->sigla }})-{{ $reuniao->dia }}
+                        | {{ date('H:i', strtotime($reuniao->h_inicio)) }}/{{ date('H:i', strtotime($reuniao->h_fim)) }}
+                        | Sala {{ $reuniao->numero }}
                     </option>
                     @endforeach
                 </select>
