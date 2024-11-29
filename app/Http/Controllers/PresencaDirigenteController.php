@@ -24,13 +24,14 @@ class PresencaDirigenteController extends Controller
 
         //Traz todas as reuniões onde a pessoa logada é Dirigente ou Sub-dirigente
         $reunioesDirigentes = DB::table('membro as mem')
-            ->select('ass.id_pessoa', 'gr.nome', 'cr.id', 'gr.status_grupo', 'd.nome as dia')
+            ->select('ass.id_pessoa', 'gr.nome', 'cr.id','cr.h_inicio','cr.h_fim', 'gr.status_grupo', 'd.nome as dia','sl.numero','s.sigla')
             ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
             ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
+            ->leftJoin('salas as sl', 'cr.id_sala', 'sl.id')
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
+            ->leftJoin('setor AS s', 'gr.id_setor', 's.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
-            ->orderBy('gr.nome')
-            ->distinct('gr.nome');
+            ->distinct('gr.id');
 
 
             if(in_array(36,session()->get('usuario.acesso'))){
@@ -41,8 +42,8 @@ class PresencaDirigenteController extends Controller
                 $reunioesDirigentes = $reunioesDirigentes->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
                 ->where('id_funcao', '<', 3);
             }
-        
-            
+
+
         //Salva esse select completo em uma variável separada
         $reunioes = $reunioesDirigentes->get();
 
@@ -62,8 +63,8 @@ class PresencaDirigenteController extends Controller
         ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
         ->where('m.dt_fim', null)
         ->where('m.id_cronograma', $reunioesDirigentes[0])
-        ->whereNot('m.id_funcao',  6); // Exclui id_funcao 5 e 6
-        
+        ->whereNot('m.id_funcao',  6); // Exclui id_funcao e 6
+
         // Filtra pelo nome do setor se estiver presente na requisição
         if ($request->nome_setor) {
             $query->where('m.id', $request->nome_setor);
