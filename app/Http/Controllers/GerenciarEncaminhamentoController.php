@@ -356,8 +356,9 @@ class GerenciarEncaminhamentoController extends Controller
 
         $trata = DB::table('cronograma AS reu')
 
-            ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'), 'p.nome_completo', 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
+            ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'), 'p.nome_completo', 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.sigla AS tstd', 'sa.numero', 'reu.observacao','tor.descricao AS des')
             ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
+            ->leftJoin('tipo_observacao_reuniao AS tor', 'reu.observacao', 'tor.id')
             ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
             ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
             ->leftJoin('tipo_status_grupo AS tsg', 'gr.status_grupo', 'tsg.id')
@@ -378,7 +379,7 @@ class GerenciarEncaminhamentoController extends Controller
             ->where('reu.id_tipo_tratamento', $tp_trat)
             ->orWhere('tr.status', null)
             ->where('tr.status', '<', 3)
-            ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
+            ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.sigla', 'sa.numero','tor.descricao')
             ->orderBy('h_inicio')
             ->get();
 
