@@ -20,8 +20,6 @@
             </div>
         </div>
 
-
-
         {{-- Modal Filtros --}}
         <form action="/gerenciar-pti" class="form-horizontal" method="GET">
             <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
