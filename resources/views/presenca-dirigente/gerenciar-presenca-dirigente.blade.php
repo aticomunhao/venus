@@ -61,12 +61,12 @@ Gerenciar Presença Trabalhador
                     <td>
 
                         @if(in_array($membro->id, $presencas))
-                        <a href="/cancelar-presenca/{{ $membro->id }}/{{$reunioesDirigentes[0]}}" class="btn btn-danger marcar" id="marcar-{{ $membro->id }}">
-                            Cancelar
+                        <a href="/cancelar-presenca/{{ $membro->id }}/{{$reunioesDirigentes[0]}}" class="btn btn-success marcar" id="marcar-{{ $membro->id }}">
+                            Presente
                         </a>
                         @else
-                        <a href="/marcar-presenca/{{ $membro->id }}/{{$reunioesDirigentes[0]}}" class="btn btn-success marcar" id="marcar-{{ $membro->id }}">
-                            Presença
+                        <a href="/marcar-presenca/{{ $membro->id }}/{{$reunioesDirigentes[0]}}" class="btn btn-danger marcar" id="marcar-{{ $membro->id }}">
+                            Ausente
                         </a>
                         @endif
 
