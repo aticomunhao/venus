@@ -72,14 +72,15 @@
                                             <thead style="text-align:center; background: #daffe0;">
                                                 <tr style="text-align:center; font-weight: bold; font-size:13px">
                                                 <th class="col">NR REU</th>
-                                                <th class="col-3">DIRIGENTE</th>
-                                                <th class="col-2">GRUPO</th>
+                                                <th class="col-">DIRIGENTE</th>
+                                                <th class="col-">GRUPO</th>
+                                                <th class="col-">OBS</th>
                                                 <th class="col">SALA</th>
                                                 <th class="col">TRATAMENTO</th>
-                                                <th class="col">HORÁRIO INÍCIO</th>
-                                                <th class="col">HORÁRIO FIM</th>
+                                                <th class="col">INÍCIO</th>
+                                                <th class="col">FIM</th>
                                                 <th class="col">MAX ATENDIDOS</th>
-                                                <th class="col">NR VAGAS</th>
+                                                <th class="col">VAGAS</th>
                                                 <th class="col">MARCAR</th>
                                                 </tr>
                                             </thead>
@@ -88,6 +89,7 @@
                                                 <td>{{$tratas->idr}}</td>
                                                 <td>{{$tratas->nome_completo}}</td>
                                                 <td>{{$tratas->nomeg}}</td>
+                                                <td>{{$tratas->des}}</td>
                                                 <td>{{$tratas->numero}}</td>
                                                 <td>{{$tratas->tstd}}</td>
                                                 <td>{{date('H:i:s', strtotime($tratas->h_inicio))}}</td>
