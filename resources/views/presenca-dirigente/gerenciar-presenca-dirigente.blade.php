@@ -91,11 +91,15 @@
 
 
         window.addEventListener("beforeunload", (event) => {
+            localStorage.removeItem("scrollPosition");
             localStorage.setItem("scrollPosition", window.scrollY);
       });
 
+      $(document).ready(function () {
         const scroll = localStorage.getItem("scrollPosition");
-        window.scrollTo(0, scroll); // values are x,y-offset
+        window.scroll(0, scroll); // values are x,y-offset
+      });
+
 
 
         </script>
