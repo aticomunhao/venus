@@ -113,9 +113,11 @@ class GerenciarIntegralController extends Controller
     {
           try{
         $result = DB::table('tratamento AS tr')
-            ->select('enc.id AS ide', 'tr.id AS idtr', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo', 'sat.descricao AS statat', 'sl.numero as sala')
+            ->select('enc.id AS ide', 'tr.id AS idtr', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo', 'sat.descricao AS statat', 'sl.numero as sala','t.cod_tca')
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('registro_tema AS rt', 'at.id', 'rt.id_atendimento')
+            ->leftJoin('tipo_temas AS t', 'rt.id_tematica', 't.id')
             ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
             ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
             ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
@@ -132,11 +134,12 @@ class GerenciarIntegralController extends Controller
             ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
             ->leftJoin('salas as sl', 'rm.id_sala', 'sl.id')
             ->where('tr.id', $id)
-            ->first();
+            ->get();
+
 
         $encaminhamento = DB::table('tratamento as tr')
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-            ->where('enc.id_atendimento', $result->ida)
+            ->where('enc.id_atendimento', $result[0]->ida)
             ->where('enc.id_tipo_tratamento', 1)
             ->select('tr.id')
             ->first();
