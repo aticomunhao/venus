@@ -238,13 +238,8 @@ Route::middleware('rotas:13')->group(function () {
 // Gerenciar Membros
 Route::middleware('rotas:14')->group(function () {
     Route::get('/gerenciar-membro/{id}', [MembroController::class, 'index'])->name('lista');
-    Route::get('/editar-membro/{idcro}/{id}', [MembroController::class, 'edit'])->name('');
-    Route::any('/atualizar-membro/{idcro}/{id}', [MembroController::class, 'update'])->name('');
-    Route::post('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('membro.destroy');
-    Route::post('/inativar-membro/{idcro}/{id}', [MembroController::class, 'inactivate'])->name('membro.inactivate');
     Route::get('/visualizar-membro/{idcro}/{id}', [MembroController::class, 'show'])->name('');
     Route::get('/gerenciar-grupos-membro', [MembroController::class, 'grupos'])->name('');
-    Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
 });
 
 // Incluir Membro Grupo
@@ -253,6 +248,11 @@ Route::middleware('rotas:29')->group(function () {
     Route::any('/incluir-membro-grupo/{id}', [MembroController::class, 'storeGrupo'])->name('');
     Route::get('/selecionar-membro/{id}', [MembroController::class, 'selecionar']);
     Route::any('/transferir-membro/{id}', [MembroController::class, 'transferir']);
+    Route::get('/editar-membro/{idcro}/{id}', [MembroController::class, 'edit'])->name('');
+    Route::any('/atualizar-membro/{idcro}/{id}', [MembroController::class, 'update'])->name('');
+    Route::post('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('membro.destroy');
+    Route::post('/inativar-membro/{idcro}/{id}', [MembroController::class, 'inactivate'])->name('membro.inactivate');
+    Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
 });
 
 // Gerenciar Mediunidades

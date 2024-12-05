@@ -50,27 +50,27 @@
 
                         <a href="/gerenciar-grupos-membro" class="btn btn-primary btn-sm me-md-2  offset-1"
                             type="button">Retornar</a>
-                        @if ($grupo->modificador == 4)
+
+                        @if ($grupo->modificador == 4 && in_array(29, session()->get('usuario.acesso')))
                             <a href="/ferias-reuniao/{{ $id }}/2"><input class="btn btn-warning btn-sm me-md-2"
                                     style="font-size: 0.9rem;" type="button" value="Retomar de Férias"></a>
-                        @else
+
                             <a href="/ferias-reuniao/{{ $id }}/1"><input class="btn btn-danger btn-sm me-md-2"
                                     style="font-size: 0.9rem;" type="button" value="Declarar Férias"></a>
                         @endif
 
-                        @if( in_array(29, session()->get('usuario.acesso')) )
-                        <a href="/criar-membro-grupo/{{ $id }}"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
-                            type="button" value="Novo membro +"></a>
-                        <a href="/selecionar-membro/{{ $id }}"><input class="btn btn-warning btn-sm me-md-2" style="font-size: 0.9rem;"
-                            type="button" value="Transferir Membros"></a>
-                            @endif
+                        @if (in_array(29, session()->get('usuario.acesso')))
+                            <a href="/criar-membro-grupo/{{ $id }}"><input class="btn btn-success btn-sm me-md-2"
+                                    style="font-size: 0.9rem;" type="button" value="Novo membro +"></a>
+                            <a href="/selecionar-membro/{{ $id }}"><input class="btn btn-warning btn-sm me-md-2"
+                                    style="font-size: 0.9rem;" type="button" value="Transferir Membros"></a>
+                        @endif
                     </div>
                 </div>
             </form>
-
         </div>
         <hr>
-        Total de Membros: {{$membro->count()}}
+        Total de Membros: {{ $membro->count() }}
 
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
             <thead>
@@ -79,7 +79,9 @@
                     <th>NOME DO MÉDIUM</th>
                     <th>FUNÇÃO</th>
                     <th>STATUS PESSOA</th>
-                    <th>AÇÕES</th>
+                    @if (in_array(29, session()->get('usuario.acesso')))
+                        <th>AÇÕES</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -89,98 +91,113 @@
                         <td>{{ $membros->nome_completo }}</td>
                         <td>{{ $membros->nome_funcao }}</td>
                         <td>{{ $membros->status }}</td>
-                        <td>
-                            <!-- Botão para editar -->
-                            @if($membros->status == 'Inativo')
-                                <button type="button" class="btn btn-outline-warning btn-sm" data-tt="tooltip" data-placement="top"
-                                    title="Editar" disabled>
-                                    <i class="bi bi-pen" style="font-size: 1rem; color:#000;"></i>
-                                </button>
+                        @if (in_array(29, session()->get('usuario.acesso')))
+                            <td>
+                                <!-- Botão para editar -->
+                                @if ($membros->status = 'Inativo' && in_array(29, session()->get('usuario.acesso')))
+                                    <a href="/editar-membro/{{ $id }}/{{ $membros->idm }}" type="button"
+                                        class="btn btn-outline-warning btn-sm tooltips">
+                                        <span class="tooltiptext">Editar</span>
+                                        <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
+                                    </a>
+                                @else
+                                    <a href="/editar-membro/{{ $id }}/{{ $membros->idm }}"
+                                        class="btn btn-outline-warning btn-sm tooltips">
+                                        <span class="tooltiptext">Editar</span>
+                                        <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
+                                    </a>
+                                @endif
+                        <!-- Botão para inativar -->
+                        @if ($membros->status == 'Inativo' && in_array(29, session()->get('usuario.acesso')))
+                            <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                data-bs-target="#confirmInactivate{{ $membros->idm }}">
+                                <span class="tooltiptext">Inativar</span>
+                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                            </button>
                             @else
-                                <a href="/editar-membro/{{ $id }}/{{ $membros->idm }}" type="button" class="btn btn-outline-warning btn-sm tooltips">
-                                    <span class="tooltiptext">Editar</span>
-                                    <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
-                                </a>
-                            @endif
-
-                            <!-- Botão para inativar -->
-                            @if($membros->status == 'Inativo')
-                                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#confirmInactivate{{ $membros->idm }}" data-tt="tooltip"
-                                    data-placement="top" title="Inativar" disabled>
-                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
-                                </button>
-                            @else
-                                <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
-                                    data-bs-target="#confirmInactivate{{ $membros->idm }}">
-                                    <span class="tooltiptext">Inativar</span>
-                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
-                                </button>
-                            @endif
-
+                            <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#confirmInactivate{{ $membros->idm }}">
+                                <span class="tooltiptext">Inativar</span>
+                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                            </button>
+                        @endif
+                        @if (in_array(29, session()->get('usuario.acesso')))
                             <!-- Botão para deletar -->
                             <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
                                 data-bs-target="#confirmDelete{{ $membros->idm }}">
                                 <span class="tooltiptext">Deletar</span>
                                 <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
                             </button>
-                        </td>
+                            </td>
+                        @endif
                     </tr>
-
-                    <!-- Modal de confirmação para inativar -->
-                    <div class="modal fade" id="confirmInactivate{{ $membros->idm }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header" style="background-color:#DC4C64">
-                                    <h5 class="modal-title" id="exampleModalLabel" style="color:white">Inativar membro</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body " style="text-align: center;">
-                                    Tem certeza que deseja inativar o membro<br /><span style="color:#DC4C64; font-weight: bold;">
-                                        {{ $membros->nome_completo }}</span>?
-                                        <form action="{{ route('membro.inactivate', ['idcro' => $id, 'id' => $membros->idm]) }}" method="POST">
-                                            @csrf
-                                            <center>
-                                            <div class="col-10">
-                                                <label for="data_inativacao" class="form-label mt-3">Escolha a data de inativação:</label>
-                                                <input type="date" name="data_inativacao" id="data_inativacao{{ $membros->idm }}" class="form-control mb-3" required>
-                                            </div>
-                                        </center>
-
-                                            <div class="modal-footer mt-3 ">
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                                                <button type="submit" class="btn btn-primary">Confirmar</button>
-                                            </div>
-                                        </form>
-                                    </div>
+                @endif
+                <!-- Modal de confirmação para inativar -->
+                <div class="modal fade" id="confirmInactivate{{ $membros->idm }}" tabindex="-1"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color:#DC4C64">
+                                <h5 class="modal-title" id="exampleModalLabel" style="color:white">Inativar membro</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                             </div>
-                        </div>
-                    </div>
+                            <div class="modal-body " style="text-align: center;">
+                                Tem certeza que deseja inativar o membro<br /><span
+                                    style="color:#DC4C64; font-weight: bold;">
+                                    {{ $membros->nome_completo }}</span>?
+                                <form action="{{ route('membro.inactivate', ['idcro' => $id, 'id' => $membros->idm]) }}"
+                                    method="POST">
+                                    @csrf
+                                    <center>
+                                        <div class="col-10">
+                                            <label for="data_inativacao" class="form-label mt-3">Escolha a data de
+                                                inativação:</label>
+                                            <input type="date" name="data_inativacao"
+                                                id="data_inativacao{{ $membros->idm }}" class="form-control mb-3"
+                                                required>
+                                        </div>
+                                    </center>
 
-
-                    <!-- Modal de confirmação para deletar -->
-                    <div class="modal fade" id="confirmDelete{{ $membros->idm }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header" style="background-color:#DC4C64">
-                                    <h5 class="modal-title" id="exampleModalLabel" style="color:white">Deletar membro</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body" style="text-align: center;">
-                                    Tem certeza que deseja deletar o membro<br /><span style="color:#DC4C64; font-weight: bold;">
-                                        {{ $membros->nome_completo }}</span>?
-                                </div>
-                                <div class="modal-footer mt-3">
-                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                                    <form action="{{ route('membro.destroy', ['idcro' => $id, 'id' => $membros->idm]) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        <input type="hidden" name="action" value="delete">
+                                    <div class="modal-footer mt-3 ">
+                                        <button type="button" class="btn btn-danger"
+                                            data-bs-dismiss="modal">Cancelar</button>
                                         <button type="submit" class="btn btn-primary">Confirmar</button>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
+                </div>
+
+
+                <!-- Modal de confirmação para deletar -->
+                <div class="modal fade" id="confirmDelete{{ $membros->idm }}" tabindex="-1"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color:#DC4C64">
+                                <h5 class="modal-title" id="exampleModalLabel" style="color:white">Deletar membro
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" style="text-align: center;">
+                                Tem certeza que deseja deletar o membro<br /><span
+                                    style="color:#DC4C64; font-weight: bold;">
+                                    {{ $membros->nome_completo }}</span>?
+                            </div>
+                            <div class="modal-footer mt-3">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                <form action="{{ route('membro.destroy', ['idcro' => $id, 'id' => $membros->idm]) }}"
+                                    method="POST" style="display:inline;">
+                                    @csrf
+                                    <input type="hidden" name="action" value="delete">
+                                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 @endforeach
             </tbody>
         </table>
