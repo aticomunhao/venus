@@ -61,12 +61,6 @@
                                     <span class="tooltiptext">Editar</span>
                                     <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                                 </a>
-                                @else
-                                <button href="/editar-pessoa/{{ $pessoas->idp }}" type="button"
-                                    class="btn btn-outline-warning btn-sm tooltips" disabled>
-                                    <span class="tooltiptext" disabled>Editar</span>
-                                    <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
-                                </button>
                                 @endif
                                 <a href="/visualizar-pessoa/{{ $pessoas->idp }}" type="button"
                                     class="btn btn-outline-primary btn-sm tooltips">
@@ -79,13 +73,8 @@
                                     <span class="tooltiptext">Deletar</span>
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                                @else
-                                <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modal{{ $pessoas->idp }}" disabled>
-                                    <span class="tooltiptext">Deletar</span>
-                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
-                                </button>
                                 @endif
-                                
+
 
 
                                 <!-- Modal de Exclusao -->
