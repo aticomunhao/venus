@@ -249,7 +249,7 @@ class MembroController extends Controller
 
         // Busca os detalhes do grupo
         $grupo = DB::table('cronograma as cro')
-            ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.modificador','s.sigla as nsigla')
+            ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.modificador', 's.sigla as nsigla')
             ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('setor as s', 'gr.id_setor', 's.id')
@@ -487,43 +487,61 @@ class MembroController extends Controller
 
     public function destroy(string $idcro, string $id)
     {
-            $data = date('Y-m-d H:i:s');
+        $data = date('Y-m-d H:i:s');
 
-            // Insere o histórico antes de deletar o membro
-            DB::table('historico_venus')->insert([
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'data' => $data,
-                'fato' => 7,
-                'obs' => $id,
-            ]);
+        // Obtém o nome do usuário da tabela 'pessoas'
+        $nomeUsuario = DB::table('pessoas')
+            ->where('id', session()->get('usuario.id_usuario'))
+            ->value('nome_completo'); //
 
-            // Verifica se o membro existe
-            $membro = DB::table('membro')->where('id', $id)->first();
+        // Insere o histórico
+        DB::table('historico_venus')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'fato' => 7, //
+            'obs' => 'Membro deletado',
+            'pessoa' => $nomeUsuario
+        ]);
 
-            if (!$membro) {
-                app('flasher')->addError('O membro não foi encontrado.');
-                return redirect("/gerenciar-membro/$idcro");
-            }
+        // Verifica se o membro existe
+        $membro = DB::table('membro')->where('id', $id)->first();
 
-            // Deleta o membro
-            DB::table('membro')->where('id', $id)->delete();
-
-            app('flasher')->addSuccess('Membro deletado com sucesso.');
+        if (!$membro) {
+            app('flasher')->addError('O membro não foi encontrado.');
             return redirect("/gerenciar-membro/$idcro");
         }
+
+        // Exclui as presenças do membro antes de deletá-lo
+        DB::table('presenca_membros')->where('id_membro', $id)->delete();
+
+        // Deleta o membro
+        DB::table('membro')->where('id', $id)->delete();
+
+        app('flasher')->addSuccess('Membro deletado com sucesso.');
+        return redirect("/gerenciar-membro/$idcro");
+    }
+
 
 
     public function inactivate(string $idcro, string $id, Request $request)
     {
         $data = date('Y-m-d H:i:s');
 
+        // Obtém o nome do usuário da tabela 'pessoas'
+        $nomeUsuario = DB::table('pessoas')
+            ->where('id', session()->get('usuario.id_usuario'))
+            ->value('nome_completo'); //
+
         // Insere o histórico
         DB::table('historico_venus')->insert([
             'id_usuario' => session()->get('usuario.id_usuario'),
             'data' => $data,
-            'fato' => 6, // Indica que é uma inativação
-            'obs' => $id,
+            'fato' => 6, 
+            'obs' => 'Membro inativado',
+            'pessoa' => $nomeUsuario
         ]);
+
+
 
         // Verifica se o membro existe
         $membro = DB::table('membro')->where('id', $id)->first();
@@ -607,16 +625,16 @@ class MembroController extends Controller
     public function selecionar(String $id)
     {
         $membros = DB::table('membro as m')
-        ->select('m.id', 'ass.nr_associado', 'p.nome_completo', 'tf.nome')
-        ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
-        ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
-        ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
+            ->select('m.id', 'ass.nr_associado', 'p.nome_completo', 'tf.nome')
+            ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
+            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
             ->where('m.dt_fim', null)
             ->where('m.id_cronograma', $id)
             ->get();
 
 
-            $grupos = DB::table('grupo AS g')
+        $grupos = DB::table('grupo AS g')
             ->leftJoin('setor AS s', 'g.id_setor', 's.id')
             ->leftJoin('cronograma as cro', 'g.id', '=', 'cro.id_grupo')
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
@@ -640,28 +658,29 @@ class MembroController extends Controller
         return view('membro.transferir', compact('membros', 'grupos', 'id'));
     }
 
-    public function transferir(Request $request, String $id){
+    public function transferir(Request $request, String $id)
+    {
 
-        foreach($request->check as $membro){
+        foreach ($request->check as $membro) {
 
             $ontem = Carbon::yesterday();
             $hoje = Carbon::today();
 
             $membroAtual = DB::table('membro as m')
-            ->select('ass.id', 'm.id_funcao')
-            ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
-            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
-            ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
+                ->select('ass.id', 'm.id_funcao')
+                ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
+                ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+                ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
                 ->where('m.dt_fim', null)
                 ->where('m.id', $membro)
                 ->first();
 
 
             DB::table('membro')
-            ->where('id', $membro)
-            ->update([
-                'dt_fim' => $ontem
-            ]);
+                ->where('id', $membro)
+                ->update([
+                    'dt_fim' => $ontem
+                ]);
 
             DB::table('membro')->insert([
                 'id_associado' => $membroAtual->id,
@@ -672,17 +691,7 @@ class MembroController extends Controller
         }
 
         return redirect("/gerenciar-membro/$id");
-
-
     }
 
-    public function transferirLote(Request $request){
-
-
-
-
-
-
-
-    }
+    public function transferirLote(Request $request) {}
 }

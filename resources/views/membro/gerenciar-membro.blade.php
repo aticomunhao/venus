@@ -51,10 +51,10 @@
                         <a href="/gerenciar-grupos-membro" class="btn btn-primary btn-sm me-md-2  offset-1"
                             type="button">Retornar</a>
 
-                        @if ($grupo->modificador == 4 && in_array(29, session()->get('usuario.acesso')))
+                            @if ($grupo->modificador == 4 && in_array(29, session()->get('usuario.acesso')))
                             <a href="/ferias-reuniao/{{ $id }}/2"><input class="btn btn-warning btn-sm me-md-2"
                                     style="font-size: 0.9rem;" type="button" value="Retomar de Férias"></a>
-
+                        @else
                             <a href="/ferias-reuniao/{{ $id }}/1"><input class="btn btn-danger btn-sm me-md-2"
                                     style="font-size: 0.9rem;" type="button" value="Declarar Férias"></a>
                         @endif
@@ -107,26 +107,27 @@
                                         <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                                     </a>
                                 @endif
-                        <!-- Botão para inativar -->
-                        @if ($membros->status == 'Inativo' && in_array(29, session()->get('usuario.acesso')))
-                            <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
-                                data-bs-target="#confirmInactivate{{ $membros->idm }}">
-                                <span class="tooltiptext">Inativar</span>
-                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
-                            </button>
-                            @else
-                            <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#confirmInactivate{{ $membros->idm }}">
-                                <span class="tooltiptext">Inativar</span>
-                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
-                            </button>
-                        @endif
-                        @if (in_array(29, session()->get('usuario.acesso')))
-                            <!-- Botão para deletar -->
-                            <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
-                                data-bs-target="#confirmDelete{{ $membros->idm }}">
-                                <span class="tooltiptext">Deletar</span>
-                                <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
-                            </button>
+                                <!-- Botão para inativar -->
+                                @if ($membros->status == 'Inativo' && in_array(29, session()->get('usuario.acesso')))
+                                    <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                        data-bs-target="#confirmInactivate{{ $membros->idm }}">
+                                        <span class="tooltiptext">Inativar</span>
+                                        <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                                    </button>
+                                @else
+                                    <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                        data-bs-target="#confirmInactivate{{ $membros->idm }}">
+                                        <span class="tooltiptext">Inativar</span>
+                                        <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                                    </button>
+                                @endif
+                                @if (in_array(29, session()->get('usuario.acesso')))
+                                    <!-- Botão para deletar -->
+                                    <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                        data-bs-target="#confirmDelete{{ $membros->idm }}">
+                                        <span class="tooltiptext">Deletar</span>
+                                        <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
+                                    </button>
                             </td>
                         @endif
                     </tr>
