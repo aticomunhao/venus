@@ -96,7 +96,7 @@
                                 </div>
                                 <div class="col">
                                     <div class="mb-5" style="text-align:left;">
-                                        <label for="validationCustom06" class="form-label">Nr Celular</label>
+                                        <label for="validationCustom06" class="form-label">Celular</label>
                                         <span class="tooltips">
                                             <span class="tooltiptext">Obrigatório</span>
                                             <span style="color:red">*</span>
@@ -108,6 +108,25 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-6 mb-5" style="text-align:left;">
+                                    <label for="validationCustom06" class="form-label">Telefone Estrangeiro</label>
+                                    <span class="tooltips"></span>
+                                    <input class="form-control" type="text" name="cel_estrangeiro" value="{{ old('cel_estrangeiro') }}"
+                                        oninput="this.value = this.value.replace(/[^+\d\(\)\-\s]/g, '').slice(0, 15);"
+                                        placeholder="Ex: +1 (415) 555-1234" pattern="[\+]?[0-15]{1,3}[\s]?[(]?[0-9]{1,3}[)]?[\s]?[0-9]{3}[\-]?[0-9]{4}">
+                                </div>
+
+                                <div class="col-6 mb-5" style="text-align:left;">
+                                    <label for="validationCustom06" class="form-label">Telefone Alternativo</label>
+                                    <span class="tooltips"></span>
+                                    <input class="form-control" type="text" name="tel_fixo" value="{{ old('tel_fixo') }}"
+                                        oninput="this.value = this.value.replace(/[^+\d\(\)\-\s]/g, '').slice(0, 15);"
+                                         pattern="[\+]?[0-15]{1,3}[\s]?[(]?[0-9]{1,3}[)]?[\s]?[0-9]{3}[\-]?[0-9]{4}">
+                                </div>
+                            </div>
+
+
                             <br>
                             <div class="row mt-1 justify-content-center">
                                 <div class="d-grid gap-1 col-4 mx-auto">

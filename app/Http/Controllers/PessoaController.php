@@ -165,6 +165,8 @@ class PessoaController extends Controller
                 'sexo' => $request->input('sex'),
                 'ddd' => $request->input('ddd'),
                 'celular' => intval($request->input('celular')),
+                'cel_estrangeiro' => $request->input('cel_estrangeiro'),
+                'tel_fixo' => $request->input('tel_fixo'),
                 'email' => $request->input('email'),
                 'status' => 1
 
