@@ -487,7 +487,6 @@ class MembroController extends Controller
 
     public function destroy(string $idcro, string $id)
     {
-        try {
             $data = date('Y-m-d H:i:s');
 
             // Insere o histórico antes de deletar o membro
@@ -511,11 +510,7 @@ class MembroController extends Controller
 
             app('flasher')->addSuccess('Membro deletado com sucesso.');
             return redirect("/gerenciar-membro/$idcro");
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('administrativo-erro.erro-inesperado', compact('code'));
         }
-    }
 
 
     public function inactivate(string $idcro, string $id, Request $request)
