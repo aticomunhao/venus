@@ -133,8 +133,8 @@ class GerenciarTratamentosController extends Controller
 
 
         $lista = $lista->orderby('tr.status', 'ASC')
-            ->orderby('at.id_prioridade', 'ASC')
             ->orderby('nm_1', 'ASC')
+            ->orderby('at.id_prioridade', 'ASC')
             ->paginate(50)
             ->appends([
                 'assist' => $assistido,
@@ -198,18 +198,18 @@ class GerenciarTratamentosController extends Controller
 
 
 
-          app('flasher')->addSuccess('O tratamento foi inativado.');
+            app('flasher')->addSuccess('O tratamento foi inativado.');
 
-          return redirect()->back();
-      } catch (\Exception $e) {
+            return redirect()->back();
+        } catch (\Exception $e) {
 
-          app('flasher')->addDanger('Erro ao inativar o tratamento.');
+            app('flasher')->addDanger('Erro ao inativar o tratamento.');
 
 
-          $code = $e->getCode();
-          return view('tratamento-erro.erro-inesperado', compact('code'));
-      }
-  }
+            $code = $e->getCode();
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+        }
+    }
 
 
     public function presenca(Request $request, $idtr)
