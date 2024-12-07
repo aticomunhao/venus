@@ -233,6 +233,14 @@ Route::middleware('rotas:13')->group(function () {
     Route::get('/criar-membro', [MembroController::class, 'create'])->name('');
     Route::post('/incluir-membro', [MembroController::class, 'store'])->name('membro.store');
     Route::post('/transferir-membros-lote', [MembroController::class, 'transferirLote']);
+    Route::any('/incluir-membro-grupo/{id}', [MembroController::class, 'storeGrupo'])->name('');
+    Route::get('/selecionar-membro/{id}', [MembroController::class, 'selecionar']);
+    Route::any('/transferir-membro/{id}', [MembroController::class, 'transferir']);
+    Route::get('/editar-membro/{idcro}/{id}', [MembroController::class, 'edit'])->name('');
+    Route::any('/atualizar-membro/{idcro}/{id}', [MembroController::class, 'update'])->name('');
+    Route::post('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('membro.destroy');
+    Route::post('/inativar-membro/{idcro}/{id}', [MembroController::class, 'inactivate'])->name('membro.inactivate');
+    Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
 });
 
 // Gerenciar Membros
@@ -245,14 +253,6 @@ Route::middleware('rotas:14')->group(function () {
 // Incluir Membro Grupo
 Route::middleware('rotas:29')->group(function () {
     Route::get('/criar-membro-grupo/{id}', [MembroController::class, 'createGrupo'])->name('');
-    Route::any('/incluir-membro-grupo/{id}', [MembroController::class, 'storeGrupo'])->name('');
-    Route::get('/selecionar-membro/{id}', [MembroController::class, 'selecionar']);
-    Route::any('/transferir-membro/{id}', [MembroController::class, 'transferir']);
-    Route::get('/editar-membro/{idcro}/{id}', [MembroController::class, 'edit'])->name('');
-    Route::any('/atualizar-membro/{idcro}/{id}', [MembroController::class, 'update'])->name('');
-    Route::post('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('membro.destroy');
-    Route::post('/inativar-membro/{idcro}/{id}', [MembroController::class, 'inactivate'])->name('membro.inactivate');
-    Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
 });
 
 // Gerenciar Mediunidades
