@@ -69,11 +69,8 @@
             <thead>
                 <tr style="background-color: #d6e3ff; font-size: 14px; color: #000000">
                     <th class="small-column">GRUPO</th>
-                    <th>DIA</th>
-                    <th>INICIO</th>
-                    <th>FIM</th>
-                    <th>SALA</th>
                     <th>SETOR</th>
+                    <th>DETALHES</th>
                     <th>STATUS</th>
                     <th>AÇÕES</th>
                 </tr>
@@ -83,12 +80,27 @@
                 @foreach ($membro_cronograma as $membros)
                     <tr>
                         <td>{{ $membros->nome_grupo }}</td>
-                        <td>{{ $membros->dia }}</td>
-                        <td>{{ \Carbon\Carbon::parse($membros->h_inicio)->format('H:i') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($membros->h_fim)->format('H:i') }}</td>
-                        <td>{{ $membros->sala }}</td>
                         <td>{{ $membros->sigla }}</td>
+
+                        <!-- Coluna de Detalhes com o Popover -->
+                        <td>
+                            <button type="button" class="btn btn-info btn-sm"
+                                data-bs-toggle="popover"
+                                data-bs-placement="top"
+                                data-bs-html="true"
+                                data-bs-title="Detalhes do Cronograma"
+                                data-bs-content="
+                                    <strong>Dia:</strong> {{ $membros->dia }}<br>
+                                    <strong>Início:</strong> {{ \Carbon\Carbon::parse($membros->h_inicio)->format('H:i') }}<br>
+                                    <strong>Fim:</strong> {{ \Carbon\Carbon::parse($membros->h_fim)->format('H:i') }}<br>
+                                    <strong>Sala:</strong> {{ $membros->sala }}"
+                                style="font-size: 0.8rem; padding: 5px 10px;">
+                                Detalhes
+                            </button>
+                        </td>
+
                         <td>{{ $membros->status }}</td>
+
                         <td>
                             <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
                                 class="btn btn-outline-warning btn-sm tooltips">
@@ -107,6 +119,15 @@
     </div>
 
     <script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl)
+        })
+    });
+
+
         $('.select2').select2({
             width: '100%' // Garante que o select2 ocupe 100% da largura disponível
         });
