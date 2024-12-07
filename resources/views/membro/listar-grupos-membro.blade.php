@@ -7,12 +7,12 @@
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">ADMINISTRAR GRUPOS
         </h4>
-
         <div class="col-12">
             <form action="/gerenciar-grupos-membro" class="form-horizontal mt-4" method="GET">
-                <div class="row">
-                    <div class="col-6">
-                        Grupo
+                <div class="row d-flex flex-wrap align-items-center">
+                    <!-- Grupo Field -->
+                    <div class="col-12 col-sm-6 col-md-3 mb-2">
+                        <label for="nome_grupo" class="form-label">Grupo</label>
                         <select class="form-select select2 grupo" id="nome_grupo" name="nome_grupo">
                             <option value=""></option>
                             @foreach ($grupos2 as $gr)
@@ -26,109 +26,131 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-2">
-                        Membro
-                        <select class="form-select select2 membro" type="text" id="nome_membro" name="nome_membro"
-                            value="{{ request('nome_grupo') }}">
+
+                    <!-- Membro Field -->
+                    <div class="col-12 col-sm-6 col-md-3 mb-2">
+                        <label for="nome_membro" class="form-label">Membro</label>
+                        <select class="form-select select2 membro" id="nome_membro" name="nome_membro">
                             <option></option>
                             @foreach ($membro as $membros)
                                 <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }} -
-                                    {{ $membros->nr_associado }}</option>>
+                                    {{ $membros->nr_associado }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="col">
-                        <br>
-                        <input class="btn btn-light btn-sm me-md-2"
-                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
+                    <!-- Pesquisar Button -->
+                    <div class="col-6 col-md-1 mt-3">
+                        <input class="btn btn-light btn-sm w-100"
+                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit"
                             value="Pesquisar">
-                        <a href="/gerenciar-grupos-membro"><input class="btn btn-light btn-sm me-md-2"
-                                style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
-                                value="Limpar"></a>
+                    </div>
 
-            </form>
-            @if (in_array(13, session()->get('usuario.acesso')))
-                <a href="/criar-membro"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
-                        type="button" value="Novo membro +"></a>
+                    <!-- Limpar Button -->
+                    <div class="col-6 col-md-1 mt-3">
+                        <a href="/gerenciar-grupos-membro">
+                            <input class="btn btn-light btn-sm w-100"
+                                style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="button"
+                                value="Limpar">
+                        </a>
+                    </div>
 
-
-            @endif
-        </div>
-    </div>
-
-
-    </div>
-    <br>
-    <hr>
-    Quantidade de grupos: {{ $contar }}
-    <div class="table">
-        <table
-            class="table display table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
-            <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                <th>ID</th>
-                <th class="small-column">GRUPO</th>
-                <th>DIA</th>
-                <th>HORÁRIO INICIO</th>
-                <th>HORÁRIO FIM</th>
-                <th>SALA</th>
-                <th class="small-column">SETOR</th>
-                <th>STATUS</th>
-                <th>AÇÕES</th>
-
-            </tr>
-
-
-
-            <tbody>
-                @foreach ($membro_cronograma as $membros)
-                    <tr>
-                        <td>{{ $membros->id }}</td>
-                        <td>{{ $membros->nome_grupo }}</td>
-                        <td>{{ $membros->dia }}</td>
-                        <td>{{ $membros->h_inicio }}</td>
-                        <td>{{ $membros->h_fim }}</td>
-                        <td>{{ $membros->sala }}</td>
-                        <td>{{ $membros->nome_setor }}</td>
-                        <td>{{ $membros->status }}</td>
-
-                        <td>
-
-                            <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
-                                class="btn btn-outline-warning btn-sm tooltips">
-                                <span class="tooltiptext">Gerenciar</span>
-                                <i class="bi bi-gear" style="font-size: 1rem; color:#000;"></i>
+                    <!-- Novo Membro Button -->
+                    @if (in_array(13, session()->get('usuario.acesso')))
+                        <div class="col-12 col-md-1 mt-3">
+                            <a href="/criar-membro">
+                                <input class="btn btn-success btn-sm w-100" style="font-size: 0.9rem; margin: 5px;"
+                                    type="button" value="Novo membro +">
                             </a>
+                        </div>
+                    @endif
+                </div>
+            </form>
+        </div>
 
-                        </td>
+        <br>
+        Total de Grupos: {{ $contar }}
+
+        <div class="table-responsive">
+            <table
+                class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
+                <thead>
+                    <tr style="background-color: #d6e3ff; font-size: 14px; color: #000000">
+                        <th class="small-column">GRUPO</th>
+                        <th>SETOR</th>
+                        <th class="reuniao-column">DETALHES</th>
+                        <th>STATUS</th>
+                        <th>AÇÕES</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-    </div>
+                </thead>
 
+                <tbody>
+                    @foreach ($membro_cronograma as $membros)
+                        <tr>
+                            <td>{{ $membros->nome_grupo }}</td>
+                            <td>{{ $membros->sigla }}</td>
 
+                            <!-- Coluna de Detalhes com o Popover -->
+                            <td>
+                                <button type="button" class="btn btn-outline-primary btn-sm"
+                                        data-bs-toggle="popover" data-bs-placement="top"
+                                        data-bs-html="true" data-bs-title="Detalhes da reunião"
+                                        data-bs-content="
+                                            <strong>Dia:</strong> {{ $membros->dia }}<br>
+                                            <strong>Início:</strong> {{ \Carbon\Carbon::parse($membros->h_inicio)->format('H:i') }}<br>
+                                            <strong>Fim:</strong> {{ \Carbon\Carbon::parse($membros->h_fim)->format('H:i') }}<br>
+                                            <strong>Sala:</strong> {{ $membros->sala }}"
+                                        style="font-size: 0.8rem; padding: 5px 10px;">
+                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                                </button>
+                            <td>{{ $membros->status }}</td>
+
+                            <td>
+                                <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
+                                    class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Gerenciar</span>
+                                    <i class="bi bi-gear" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+    </div class="d-flex justify-content-center">
+    {{ $membro_cronograma->links('pagination::bootstrap-5') }}
+    </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+            var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl)
+            })
+        });
+
+
+        $('.select2').select2({
+            width: '100%' // Garante que o select2 ocupe 100% da largura disponível
+        });
+
         $(document).ready(function() {
             $('.select2').select2({
                 theme: 'bootstrap-5'
             });
 
-            //Deixa o select status como padrao vazio
+            //Deixa o select status como padrão vazio
             $(".grupo").prop("selectedIndex", 0);
             $(".membro").prop("selectedIndex", 0);
-
         });
     </script>
 
-
     <script>
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
+        });
 
         function confirmarExclusao(id, nome) {
             document.getElementById('btn-confirmar-exclusao').setAttribute('data-id', id);
@@ -141,14 +163,36 @@
             window.location.href = '/deletar-membro/' + id;
         }
     </script>
+
     <style>
+        .reuniao-column {
+            width: 10%;
+            /* Ajuste o valor conforme necessário */
+        }
+
         .small-column {
             width: 22%;
         }
+
+        @media (max-width: 576px) {
+            .small-column {
+                width: 25%;
+            }
+
+            .table th,
+            .table td {
+                font-size: 12px;
+                /* Ajusta o tamanho da fonte da tabela em dispositivos móveis */
+            }
+
+            .btn {
+                font-size: 0.8rem;
+                /* Ajusta o tamanho do botão para dispositivos móveis */
+            }
+
+            .card-title {
+                font-size: 16px;
+            }
+        }
     </style>
-
-    </div class="d-flex justify-content-center">
-    {{ $membro_cronograma->links('pagination::bootstrap-5') }}
-    </div>
-
 @endsection

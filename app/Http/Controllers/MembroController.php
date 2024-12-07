@@ -102,6 +102,7 @@ class MembroController extends Controller
                 'sl.numero as sala',
                 'tpg.descricao',
                 's.nome as nome_setor',
+                's.sigla',
                 DB::raw("
             (CASE
              WHEN cro.modificador = 3  THEN 'Experimental'
@@ -536,7 +537,7 @@ class MembroController extends Controller
         DB::table('historico_venus')->insert([
             'id_usuario' => session()->get('usuario.id_usuario'),
             'data' => $data,
-            'fato' => 6, 
+            'fato' => 6,
             'obs' => 'Membro inativado',
             'pessoa' => $nomeUsuario
         ]);
