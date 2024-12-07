@@ -38,12 +38,12 @@
                     </div>
 
                     <!-- Pesquisar Button -->
-                    <div class="col-4 col-md-1 mt-4">
+                    <div class="col col-md-1 mt-4">
                         <input class="btn btn-light btn-sm w-100" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit" value="Pesquisar">
                     </div>
 
                     <!-- Limpar Button -->
-                    <div class="col-4 col-md-1 mt-4">
+                    <div class="col col-md-1 mt-4">
                         <a href="/gerenciar-grupos-membro">
                             <input class="btn btn-light btn-sm w-100" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="button" value="Limpar">
                         </a>
@@ -51,7 +51,7 @@
 
                     <!-- Novo Membro Button -->
                     @if (in_array(13, session()->get('usuario.acesso')))
-                        <div class="col-4 col-md-1 mt-4">
+                        <div class="col col-md-1 mt-4">
                             <a href="/criar-membro">
                                 <input class="btn btn-success btn-sm w-100" style="font-size: 0.9rem; margin: 5px;" type="button" value="Novo membro +">
                             </a>
