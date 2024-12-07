@@ -11,7 +11,7 @@
             <form action="/gerenciar-grupos-membro" class="form-horizontal mt-4" method="GET">
                 <div class="row d-flex flex-wrap align-items-center">
                     <!-- Grupo Field -->
-                    <div class="col-11 col-sm-6 col-md-3 mb-2">
+                    <div class="col-12 col-sm-6 col-md-3 mb-2">
                         <label for="nome_grupo" class="form-label">Grupo</label>
                         <select class="form-select select2 grupo" id="nome_grupo" name="nome_grupo">
                             <option value=""></option>
@@ -27,7 +27,7 @@
                     </div>
 
                     <!-- Membro Field -->
-                    <div class="col-11 col-sm-6 col-md-3 mb-2">
+                    <div class="col-12 col-sm-6 col-md-3 mb-2">
                         <label for="nome_membro" class="form-label">Membro</label>
                         <select class="form-select select2 membro" id="nome_membro" name="nome_membro">
                             <option></option>
@@ -38,12 +38,12 @@
                     </div>
 
                     <!-- Pesquisar Button -->
-                    <div class="col-3 col-md-1 mt-4">
+                    <div class="col-6 col-md-1 mt-3">
                         <input class="btn btn-light btn-sm w-100" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit" value="Pesquisar">
                     </div>
 
                     <!-- Limpar Button -->
-                    <div class="col-3 col-md-1 mt-4">
+                    <div class="col-6 col-md-1 mt-3">
                         <a href="/gerenciar-grupos-membro">
                             <input class="btn btn-light btn-sm w-100" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="button" value="Limpar">
                         </a>
@@ -51,7 +51,7 @@
 
                     <!-- Novo Membro Button -->
                     @if (in_array(13, session()->get('usuario.acesso')))
-                        <div class="col-4 col-md-1 mt-4">
+                        <div class="col-12 col-md-1 mt-3">
                             <a href="/criar-membro">
                                 <input class="btn btn-success btn-sm w-100" style="font-size: 0.9rem; margin: 5px;" type="button" value="Novo membro +">
                             </a>
@@ -60,6 +60,7 @@
                 </div>
             </form>
         </div>
+
         <br>
     Total de Grupos: {{ $contar }}
 
