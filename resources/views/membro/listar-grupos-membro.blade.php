@@ -78,7 +78,7 @@
                     <tr style="background-color: #d6e3ff; font-size: 14px; color: #000000">
                         <th class="small-column">GRUPO</th>
                         <th>SETOR</th>
-                        <th class="reuniao-column">REUNIÃO</th>
+                        <th class="reuniao-column">DETALHES</th>
                         <th>STATUS</th>
                         <th>AÇÕES</th>
                     </tr>
@@ -92,9 +92,9 @@
 
                             <!-- Coluna de Detalhes com o Popover -->
                             <td>
-                                <button type="button" class="btn btn-info btn-sm"
+                                <button type="button" class="btn btn-outline-primary btn-sm"
                                         data-bs-toggle="popover" data-bs-placement="top"
-                                        data-bs-html="true" data-bs-title="Detalhes do Cronograma"
+                                        data-bs-html="true" data-bs-title="Detalhes da reunião"
                                         data-bs-content="
                                             <strong>Dia:</strong> {{ $membros->dia }}<br>
                                             <strong>Início:</strong> {{ \Carbon\Carbon::parse($membros->h_inicio)->format('H:i') }}<br>
