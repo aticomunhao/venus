@@ -10,13 +10,13 @@
         <div class="col-12">
             <form action="/gerenciar-grupos-membro" class="form-horizontal mt-4" method="GET">
                 <div class="row d-flex flex-wrap align-items-center">
-                    <div class="col-12 col-sm-6 col-md-4 mb-2">
+                    <!-- Grupo Field -->
+                    <div class="col-12 col-sm-6 col-md-3 mb-2">
                         <label for="nome_grupo" class="form-label">Grupo</label>
                         <select class="form-select select2 grupo" id="nome_grupo" name="nome_grupo">
                             <option value=""></option>
                             @foreach ($grupos2 as $gr)
-                                <option value="{{ $gr->idg }}"
-                                    {{ request('nome_grupo') == $gr->idg ? 'selected' : '' }}>
+                                <option value="{{ $gr->idg }}" {{ request('nome_grupo') == $gr->idg ? 'selected' : '' }}>
                                     {{ $gr->nomeg }} ({{ $gr->sigla }})-{{ $gr->dia_semana }}
                                     | {{ date('H:i', strtotime($gr->h_inicio)) }}/{{ date('H:i', strtotime($gr->h_fim)) }}
                                     | Sala {{ $gr->sala }}
@@ -25,42 +25,43 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-12 col-sm-6 col-md-4 mb-2">
+
+                    <!-- Membro Field -->
+                    <div class="col-12 col-sm-6 col-md-3 mb-2">
                         <label for="nome_membro" class="form-label">Membro</label>
                         <select class="form-select select2 membro" id="nome_membro" name="nome_membro">
                             <option></option>
                             @foreach ($membro as $membros)
-                                <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }} -
-                                    {{ $membros->nr_associado }}</option>
+                                <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }} - {{ $membros->nr_associado }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-6 col-sm-auto d-flex align-items-center justify-content-start mb-1 mt-4">
-                        <div class="d-flex w-100">
-                            <input class="btn btn-light btn-sm w-100 w-sm-auto"
-                                style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit"
-                                value="Pesquisar">
-                            <a href="/gerenciar-grupos-membro">
-                                <input class="btn btn-light btn-sm w-100 w-sm-auto"
-                                    style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="button"
-                                    value="Limpar">
+
+                    <!-- Pesquisar Button -->
+                    <div class="col-12 col-md-1 mt-3">
+                        <input class="btn btn-light btn-sm w-100" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit" value="Pesquisar">
+                    </div>
+
+                    <!-- Limpar Button -->
+                    <div class="col-12 col-md-1 mt-3">
+                        <a href="/gerenciar-grupos-membro">
+                            <input class="btn btn-light btn-sm w-100" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="button" value="Limpar">
+                        </a>
+                    </div>
+
+                    <!-- Novo Membro Button -->
+                    @if (in_array(13, session()->get('usuario.acesso')))
+                        <div class="col-12 col-md-1 mt-3">
+                            <a href="/criar-membro">
+                                <input class="btn btn-success btn-sm w-100" style="font-size: 0.9rem; margin: 5px;" type="button" value="Novo membro +">
                             </a>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </form>
         </div>
 
-        @if (in_array(13, session()->get('usuario.acesso')))
-            <a href="/criar-membro">
-                <input class="btn btn-success btn-sm" style="font-size: 0.9rem;" type="button" value="Novo membro +">
-            </a>
-        @endif
-    </div>
-    </div>
-    <br>
-    <hr>
-    Quantidade de grupos: {{ $contar }}
+    Total: {{ $contar }}
 
     <div class="table-responsive">
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
