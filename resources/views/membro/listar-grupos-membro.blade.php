@@ -16,7 +16,8 @@
                         <select class="form-select select2 grupo" id="nome_grupo" name="nome_grupo">
                             <option value=""></option>
                             @foreach ($grupos2 as $gr)
-                                <option value="{{ $gr->idg }}" {{ request('nome_grupo') == $gr->idg ? 'selected' : '' }}>
+                                <option value="{{ $gr->idg }}"
+                                    {{ request('nome_grupo') == $gr->idg ? 'selected' : '' }}>
                                     {{ $gr->nomeg }} ({{ $gr->sigla }})-{{ $gr->dia_semana }}
                                     | {{ date('H:i', strtotime($gr->h_inicio)) }}/{{ date('H:i', strtotime($gr->h_fim)) }}
                                     | Sala {{ $gr->sala }}
@@ -32,20 +33,25 @@
                         <select class="form-select select2 membro" id="nome_membro" name="nome_membro">
                             <option></option>
                             @foreach ($membro as $membros)
-                                <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }} - {{ $membros->nr_associado }}</option>
+                                <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }} -
+                                    {{ $membros->nr_associado }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <!-- Pesquisar Button -->
                     <div class="col-6 col-md-1 mt-3">
-                        <input class="btn btn-light btn-sm w-100" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit" value="Pesquisar">
+                        <input class="btn btn-light btn-sm w-100"
+                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit"
+                            value="Pesquisar">
                     </div>
 
                     <!-- Limpar Button -->
                     <div class="col-6 col-md-1 mt-3">
                         <a href="/gerenciar-grupos-membro">
-                            <input class="btn btn-light btn-sm w-100" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="button" value="Limpar">
+                            <input class="btn btn-light btn-sm w-100"
+                                style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="button"
+                                value="Limpar">
                         </a>
                     </div>
 
@@ -53,7 +59,8 @@
                     @if (in_array(13, session()->get('usuario.acesso')))
                         <div class="col-12 col-md-1 mt-3">
                             <a href="/criar-membro">
-                                <input class="btn btn-success btn-sm w-100" style="font-size: 0.9rem; margin: 5px;" type="button" value="Novo membro +">
+                                <input class="btn btn-success btn-sm w-100" style="font-size: 0.9rem; margin: 5px;"
+                                    type="button" value="Novo membro +">
                             </a>
                         </div>
                     @endif
@@ -62,70 +69,66 @@
         </div>
 
         <br>
-    Total de Grupos: {{ $contar }}
+        Total de Grupos: {{ $contar }}
 
-    <div class="table-responsive">
-        <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
-            <thead>
-                <tr style="background-color: #d6e3ff; font-size: 14px; color: #000000">
-                    <th class="small-column">GRUPO</th>
-                    <th>SETOR</th>
-                    <th>DETALHES</th>
-                    <th>STATUS</th>
-                    <th>AÇÕES</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                @foreach ($membro_cronograma as $membros)
-                    <tr>
-                        <td>{{ $membros->nome_grupo }}</td>
-                        <td>{{ $membros->sigla }}</td>
-
-                        <!-- Coluna de Detalhes com o Popover -->
-                        <td>
-                            <button type="button" class="btn btn-info btn-sm"
-                                data-bs-toggle="popover"
-                                data-bs-placement="top"
-                                data-bs-html="true"
-                                data-bs-title="Detalhes do Cronograma"
-                                data-bs-content="
-                                    <strong>Dia:</strong> {{ $membros->dia }}<br>
-                                    <strong>Início:</strong> {{ \Carbon\Carbon::parse($membros->h_inicio)->format('H:i') }}<br>
-                                    <strong>Fim:</strong> {{ \Carbon\Carbon::parse($membros->h_fim)->format('H:i') }}<br>
-                                    <strong>Sala:</strong> {{ $membros->sala }}"
-                                style="font-size: 0.8rem; padding: 5px 10px;">
-                                Detalhes
-                            </button>
-                        </td>
-
-                        <td>{{ $membros->status }}</td>
-
-                        <td>
-                            <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
-                                class="btn btn-outline-warning btn-sm tooltips">
-                                <span class="tooltiptext">Gerenciar</span>
-                                <i class="bi bi-gear" style="font-size: 1rem; color:#000;"></i>
-                            </a>
-                        </td>
+        <div class="table-responsive">
+            <table
+                class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
+                <thead>
+                    <tr style="background-color: #d6e3ff; font-size: 14px; color: #000000">
+                        <th class="small-column">GRUPO</th>
+                        <th>SETOR</th>
+                        <th class="reuniao-column">REUNIÃO</th>
+                        <th>STATUS</th>
+                        <th>AÇÕES</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+                </thead>
+
+                <tbody>
+                    @foreach ($membro_cronograma as $membros)
+                        <tr>
+                            <td>{{ $membros->nome_grupo }}</td>
+                            <td>{{ $membros->sigla }}</td>
+
+                            <!-- Coluna de Detalhes com o Popover -->
+                            <td>
+                                <button type="button" class="btn btn-info btn-sm"
+                                        data-bs-toggle="popover" data-bs-placement="top"
+                                        data-bs-html="true" data-bs-title="Detalhes do Cronograma"
+                                        data-bs-content="
+                                            <strong>Dia:</strong> {{ $membros->dia }}<br>
+                                            <strong>Início:</strong> {{ \Carbon\Carbon::parse($membros->h_inicio)->format('H:i') }}<br>
+                                            <strong>Fim:</strong> {{ \Carbon\Carbon::parse($membros->h_fim)->format('H:i') }}<br>
+                                            <strong>Sala:</strong> {{ $membros->sala }}"
+                                        style="font-size: 0.8rem; padding: 5px 10px;">
+                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                                </button>
+                            <td>{{ $membros->status }}</td>
+
+                            <td>
+                                <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
+                                    class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Gerenciar</span>
+                                    <i class="bi bi-gear" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
     </div class="d-flex justify-content-center">
     {{ $membro_cronograma->links('pagination::bootstrap-5') }}
     </div>
 
     <script>
-
-    document.addEventListener('DOMContentLoaded', function () {
-        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-            return new bootstrap.Popover(popoverTriggerEl)
-        })
-    });
+        document.addEventListener('DOMContentLoaded', function() {
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+            var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl)
+            })
+        });
 
 
         $('.select2').select2({
@@ -162,6 +165,11 @@
     </script>
 
     <style>
+        .reuniao-column {
+            width: 10%;
+            /* Ajuste o valor conforme necessário */
+        }
+
         .small-column {
             width: 22%;
         }
