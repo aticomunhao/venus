@@ -784,24 +784,24 @@ class AtendimentoFraternoController extends Controller
                 'tr.dt_fim' => null
             ]);
 
-          //Inserir estrevista Diamo na tabela
+          //Inserir estrevista DiAMO na tabela
             DB::table('encaminhamento AS enc')->insert([
                 'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
                 'id_tipo_entrevista' => 6,
-                'status_encaminhamento' =>  1
+                'status_encaminhamento' =>  8
             ]);
 
             app('flasher')->addSuccess('O encaminhamento para o Proamo foi criado com sucesso.');
         } else if ($diamo) {
-               //Insere entrevista AME
+               //Insere entrevista DIAMO
                DB::table('encaminhamento AS enc')->insert([
                 'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
-                'id_tipo_entrevista' => 5,
-                'status_encaminhamento' =>  1
+                'id_tipo_entrevista' => 6,
+                'status_encaminhamento' =>  8
             ]);
 
             // Insere o encaminhamento PTD

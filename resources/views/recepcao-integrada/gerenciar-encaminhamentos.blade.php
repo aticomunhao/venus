@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Gerenciar Atendimentos
+    Gerenciar Encaminhamentos
 @endsection
 
 @section('content')
