@@ -10,9 +10,7 @@
         <div class="col-12">
             <form action="/gerenciar-grupos-membro" class="form-horizontal mt-4" method="GET">
                 <div class="row">
-                    <!-- Grupo Field -->
                     <div class=" col-xxl-4 col-lg-12">
-
                         <label for="nome_grupo" class="form-label">Grupo</label>
                         <select class="form-select select2 grupo" id="nome_grupo" name="nome_grupo" data-width="100%">
                             <option value=""></option>
@@ -27,8 +25,6 @@
                             @endforeach
                         </select>
                     </div>
-
-                    <!-- Membro Field -->
                     <div class="col-xxl-4 col-lg-12">
 
                         <label for="nome_membro" class="form-label">Membro</label>
@@ -42,11 +38,10 @@
                     </div>
                     <!-- Pesquisar Button -->
                     <div class="col-xxl-1 col-lg-4 mt-3">
-                          <input class="btn btn-light col-12 btn-sm mt-3"
+                        <input class="btn btn-light col-12 btn-sm mt-3"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit"
                             value="Pesquisar">
                     </div>
-
                     <!-- Limpar Button -->
                     <div class="col-xxl-1 col-lg-4 mt-3">
                         <a href="/gerenciar-grupos-membro">
@@ -87,7 +82,6 @@
                             <td>{{ $membros->nome_grupo }}</td>
                             <td>{{ $membros->sigla }}</td>
 
-                            <!-- Coluna de Detalhes com o Popover -->
                             <td>{{ $membros->status }}</td>
                             <td>
                                 <div class="d-flex justify-content-center">
@@ -96,12 +90,12 @@
                                         data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true"
                                         data-bs-title="Detalhes da reunião"
                                         data-bs-content="
-                                                <strong>Grupo:</strong> {{ $membros->nome_grupo }}<br>
-                                                <strong>Setor:</strong> {{ $membros->sigla }}<br>
-                                                <strong>Dia:</strong> {{ $membros->dia }}<br>
-                                                <strong>Início:</strong> {{ \Carbon\Carbon::parse($membros->h_inicio)->format('H:i') }}<br>
-                                                <strong>Fim:</strong> {{ \Carbon\Carbon::parse($membros->h_fim)->format('H:i') }}<br>
-                                                <strong>Sala:</strong> {{ $membros->sala }}"
+                                            <strong>Grupo:</strong> {{ $membros->nome_grupo }}<br>
+                                            <strong>Setor:</strong> {{ $membros->sigla }}<br>
+                                            <strong>Dia:</strong> {{ $membros->dia }}<br>
+                                            <strong>Início:</strong> {{ \Carbon\Carbon::parse($membros->h_inicio)->format('H:i') }}<br>
+                                            <strong>Fim:</strong> {{ \Carbon\Carbon::parse($membros->h_fim)->format('H:i') }}<br>
+                                            <strong>Sala:</strong> {{ $membros->sala }}"
                                         style="font-size: 0.8rem; padding: 5px 10px;">
                                         <i class="bi bi-search tooltips" style="font-size: 1rem; color:#000;"></i>
                                         <span class="tooltiptext">Visualizar Reunião</span>
@@ -123,6 +117,31 @@
     {{ $membro_cronograma->links('pagination::bootstrap-5') }}
     </div>
 
+    <!-- Script para iniciar e fechar popovers -->
+    <script>
+        // Inicializa os popovers ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+            var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl, {
+                    trigger: 'click', // Para abrir com o clique
+                    container: 'body' // Garante que o popover aparece no body
+                });
+            });
+        });
+
+        // Fecha o popover quando o clique for fora dele
+        document.addEventListener('click', function(event) {
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+            popoverTriggerList.forEach(function(popoverTriggerEl) {
+                var popover = bootstrap.Popover.getInstance(
+                    popoverTriggerEl); // Obtém a instância do popover
+                if (popover && !popoverTriggerEl.contains(event.target)) {
+                    popover.hide(); // Fecha o popover
+                }
+            });
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
