@@ -56,7 +56,6 @@ class GerenciarEncaminhamentoController extends Controller
 
                 }
             }
-
             if ($margemErro == 0) { // Caso não tenha sofrido nenhum erro, passa direto
             } else if ($margemErro < (count($pesquisaNome) / 2)) { // Caso o número de erros seja inferior a 50% dos dados indicados
                 app('flasher')->addWarning('Nenhum Item Encontrado. Mostrando Pesquisa Aproximada');
@@ -66,7 +65,6 @@ class GerenciarEncaminhamentoController extends Controller
                 app('flasher')->addError('Nenhum Item Encontrado!');
             }
         }
-
         if ($request->cpf) {
 
             $lista->where('p1.cpf', $request->cpf); // Pesquisa CPF
@@ -88,9 +86,7 @@ class GerenciarEncaminhamentoController extends Controller
             ->appends([
                 'assist' => $assistido, // Caso troque de pagina, mantém a pesquisa de Assisitido
                 'cpf' => $cpf, // Caso troque de pagina, mantém a pesquisa de CPF
-            ]);;
-
-
+            ]);
 
         $stat = DB::select("select
         ts.id,
@@ -103,8 +99,6 @@ class GerenciarEncaminhamentoController extends Controller
         tm.tipo
         from tipo_motivo tm
         ");
-
-
 
         return view('/recepcao-integrada/gerenciar-encaminhamentos', compact('cpf', 'lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'motivo'));
     }
@@ -163,7 +157,7 @@ class GerenciarEncaminhamentoController extends Controller
         return view('recepcao-integrada.agendar-dia', compact('result', 'dadosDias'));
     }
 
-    public function tratamento(Request $request, $ide)
+    public function tratamento(Request $request, $ide) //
     {
         $hoje = Carbon::today(); // Data de Hoje
         $dia = intval($request->dia); // Pega o dia do request
@@ -171,9 +165,9 @@ class GerenciarEncaminhamentoController extends Controller
 
         // Descobre o tipo de tratamento do encaminhamento atual
         $tp_trat = DB::table('encaminhamento AS enc')
-        ->select('enc.id_tipo_tratamento')
-        ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-        ->where('enc.id', $ide)->value('enc.id_tipo_tratamento');
+            ->select('enc.id_tipo_tratamento')
+            ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+            ->where('enc.id', $ide)->value('enc.id_tipo_tratamento');
 
         // Retorna todos os dados do encaminhamento, para o header com informaçoes para confirmação visual
         $result = DB::table('encaminhamento AS enc')
@@ -209,7 +203,7 @@ class GerenciarEncaminhamentoController extends Controller
                 $query->where('reu.modificador', NULL);
                 $query->orWhere('reu.modificador', '<>', 4);
             })
-            ->where('me.id_funcao', 1)// Busca apenas dirigentes, gera um bug de duplicação caso um grupo tenha mais de um dirigente
+            ->where('me.id_funcao', 1) // Busca apenas dirigentes, gera um bug de duplicação caso um grupo tenha mais de um dirigente
             ->where('reu.dia_semana', $dia)
             ->where('reu.id_tipo_tratamento', $tp_trat)
             ->orWhere('tr.status', null)
@@ -230,21 +224,21 @@ class GerenciarEncaminhamentoController extends Controller
     public function tratar(Request $request, $ide)
     {
         try {
-            $reu = intval($request->reuniao);// Guarda nuuma varia
-            $data_atual = Carbon::now();// Dia de hoje, com dia e horário
+            $reu = intval($request->reuniao); // Guarda nuuma varia
+            $data_atual = Carbon::now(); // Dia de hoje, com dia e horário
             $dia_atual = $data_atual->weekday(); // ID do dia de hoje (Ex.: 0 => Domingo, 3 => Quarta-Feira)
 
             // Busca o ID dia da semana do cronograma escolhido
             $dia_semana = DB::table('cronograma AS reu')->where('id', $reu)->value('dia_semana');
             $data_fim_antes = Carbon::today()->weekday($dia_semana)->addWeek(8); // Pega a data de daqui a 8 semanas
-            $data_fim_depois = Carbon::today()->weekday($dia_semana)->addWeek(7);// Pega a data de daqui a 7 semanas
+            $data_fim_depois = Carbon::today()->weekday($dia_semana)->addWeek(7); // Pega a data de daqui a 7 semanas
 
             // Conta a quantidade de tratamentos ativos para a reunião escolhida
             $countVagas = DB::table('tratamento')
                 ->where('id_reuniao', $reu)
                 ->where('status', '<', '3')
                 ->count();
-            
+
             // Traz o cronograma/reunião escolhida, com todos os seus dados
             $maxAtend = DB::table('cronograma')
                 ->where('id', $reu)
@@ -260,8 +254,8 @@ class GerenciarEncaminhamentoController extends Controller
             }
 
             // Caso o dia seja superior ao dia de hoje, ou hoje
-            if ($dia_atual < $dia_semana) {
-                
+            if ($dia_atual < $dia_semana) { // TODO Colocar tudo que deve acontecer na marcação
+
                 DB::table('tratamento AS tr')->insert([
                     'id_reuniao' => $reu,
                     'id_encaminhamento' => $ide,
@@ -269,15 +263,12 @@ class GerenciarEncaminhamentoController extends Controller
                     'dt_fim' => $data_fim_depois,
                 ]);
 
-                    DB::table('encaminhamento AS enc')
-                        ->where('enc.id', $ide)
-                        ->update([
-                            'status_encaminhamento' => 3,
-                        ]);
-
-
-            } elseif ($dia_atual > $dia_semana or $dia_atual == $dia_semana) {
-           
+                DB::table('encaminhamento AS enc')
+                    ->where('enc.id', $ide)
+                    ->update([
+                        'status_encaminhamento' => 3,
+                    ]);
+            } elseif ($dia_atual > $dia_semana or $dia_atual == $dia_semana) { // TODO Colocar tudo que deve acontecer na marcação
 
                 DB::table('tratamento AS tr')->insert([
                     'id_reuniao' => $reu,
@@ -299,11 +290,10 @@ class GerenciarEncaminhamentoController extends Controller
                             'status_encaminhamento' => 3,
                         ]);
                 }
-
-            }else{
-                app('flasher')->addDanger('Ocorreu um erro. Busque suporte');
+            } else {
+                app('flasher')->addDanger('Ocorreu um erro inesperado!');
             }
-            
+
             app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
             return redirect('/gerenciar-encaminhamentos');
         } catch (\Exception $e) {
@@ -317,17 +307,44 @@ class GerenciarEncaminhamentoController extends Controller
     {
         try {
 
+            // Devolve o ID pessoa daquele encaminhamento, para buscar outros encaminhamentos, mesmo que não conectados
             $pessoa = DB::table('encaminhamento')
                 ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
                 ->where('encaminhamento.id', $ide)
                 ->first('id_assistido');
 
+            // Traz todas as informações da view exceto o header com nome, e o footer com as faltas
             $result = DB::table('encaminhamento AS enc')
-                ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'td.nome as nomedia', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'tse.descricao AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo')
+                ->select(
+                    'enc.id AS ide',
+                    'td.nome as nomedia', // Utilizado em Dados Encaminhamento para o Dia do Grupo
+                    'tr.dt_inicio',
+                    'tse.descricao AS tsenc', // Status do encaminhamento, em String
+                    'at.id AS ida',
+                    'at.id_assistido',
+                    'p1.dt_nascimento',
+                    'p1.nome_completo AS nm_1',
+                    'at.id_representante as idr',
+                    'p2.nome_completo as nm_2',
+                    'pa.id AS pid',
+                    'pa.nome',
+                    'pr.id AS prid',
+                    'pr.descricao AS prdesc',
+                    'pr.sigla AS prsigla',
+                    'tt.descricao AS desctrat',
+                    'tx.tipo',
+                    'p4.nome_completo AS nm_4',
+                    'at.dh_inicio',
+                    'at.dh_fim',
+                    'tse.descricao AS tst',
+                    'tr.id AS idtr',
+                    'gr.nome AS nomeg',
+                    'rm.h_inicio AS rm_inicio',
+                    'tm.tipo AS tpmotivo'
+                )
                 ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
                 ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+                ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id') 
                 ->leftjoin('associado AS ass', 'at.id_atendente', 'ass.id')
                 ->leftjoin('pessoas AS p4', 'ass.id_pessoa', 'p4.id')
                 ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
@@ -349,7 +366,7 @@ class GerenciarEncaminhamentoController extends Controller
 
             $faul = DB::table('presenca_cronograma as pc')->leftJoin('dias_cronograma as dc', 'id_dias_cronograma', 'dc.id')->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')->where('id_encaminhamento', $ide)->where('pc.presenca', 0)->count();
 
-            return view('/recepcao-integrada/historico-encaminhamento', compact('result', 'list', 'faul'));
+            return view('recepcao-integrada.historico-encaminhamento', compact('result', 'list', 'faul'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('tratamento-erro.erro-inesperado', compact('code'));
