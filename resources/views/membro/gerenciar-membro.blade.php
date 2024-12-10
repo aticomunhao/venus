@@ -44,7 +44,6 @@
                         <a href="/gerenciar-membro/{{ $id }}" class="btn btn-light col-12 btn-sm mt-3"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit"
                             type="button">Limpar</a>
-
                     </div>
                     <div class="col-xxl-1 col-lg-4 mt-3">
                         <a href="/gerenciar-grupos-membro" class="btn btn-primary col-12 btn-sm mt-3"
@@ -52,20 +51,20 @@
                             type="button">Retornar</a>
                     </div>
                     <!-- Botão para abrir o modal -->
+                    @if (in_array(13, session()->get('usuario.acesso')))
                     <div class="col-xxl-1 col-lg-4 mt-3">
                         <button type="button" class="btn btn-success col-12 btn-sm mt-3"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;"data-bs-toggle="modal"
                             data-bs-target="#meuModal">
                             OPÇÕES
                         </button>
+                     @endif
                     </div>
                 </div>
         </div>
         </form>
     </div>
-
     <hr>
-
     Total de Membros: {{ $membro->count() }}
 
     <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
@@ -128,6 +127,7 @@
                     @endif
                 </tr>
             @endif
+
             <!-- Modal de confirmação para inativar -->
             <div class="modal fade" id="confirmInactivate{{ $membros->idm }}" tabindex="-1"
                 aria-labelledby="exampleModalLabel" aria-hidden="true">
