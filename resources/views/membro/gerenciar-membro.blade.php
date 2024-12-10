@@ -36,25 +36,25 @@
                         </select>
                     </div>
                     <div class="col-xxl-1 col-lg-4 mt-3">
-                        <input class="btn btn-light col-12 btn-sm mt-3"
-                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit"
+                        <input class="btn btn-light col-12 btn-sm mt-2"
+                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;" type="submit"
                             value="Pesquisar">
                     </div>
-                    <div class="col-xxl-1 col-lg-4 mt-3">
-                        <a href="/gerenciar-membro/{{ $id }}" class="btn btn-light col-12 btn-sm mt-3"
-                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit"
+                    <div class="col-xxl-1 col-lg-4">
+                        <a href="/gerenciar-membro/{{ $id }}" class="btn btn-light col-12 btn-sm mt-4"
+                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;" type="submit"
                             type="button">Limpar</a>
                     </div>
-                    <div class="col-xxl-1 col-lg-4 mt-3">
-                        <a href="/gerenciar-grupos-membro" class="btn btn-primary col-12 btn-sm mt-3"
-                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;"
+                    <div class="col-xxl-1 col-lg-4">
+                        <a href="/gerenciar-grupos-membro" class="btn btn-primary col-12 btn-sm mt-4"
+                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"
                             type="button">Retornar</a>
                     </div>
                     <!-- Botão para abrir o modal -->
                     @if (in_array(13, session()->get('usuario.acesso')))
-                    <div class="col-xxl-1 col-lg-4 mt-3">
-                        <button type="button" class="btn btn-success col-12 btn-sm mt-3"
-                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;"data-bs-toggle="modal"
+                    <div class="col-xxl-1 col-lg-4">
+                        <button type="button" class="btn btn-success col-12 btn-sm mt-4"
+                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"data-bs-toggle="modal"
                             data-bs-target="#meuModal">
                             OPÇÕES
                         </button>
