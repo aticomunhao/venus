@@ -1,10 +1,8 @@
 @extends('layouts.app')
-
 @section('content')
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR PTI
         </h4>
-
         <div class="col-12 mt-3 row">
             <div class="col d-flex justify-content-start mb-3">
                 <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#filtros"
@@ -19,7 +17,6 @@
                 </a>
             </div>
         </div>
-
         {{-- Modal Filtros --}}
         <form action="/gerenciar-pti" class="form-horizontal" method="GET">
             <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -61,36 +58,24 @@
                 </div>
         </form>
         {{-- Fim modal filtros --}}
-
     </div>
-
-
-
     <hr>
-
     <div class="table">
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                <th>ID</th>
                 <th>NOME</th>
                 <th>NOME GRUPO</th>
-                <th>HORÁRIO INÍCIO</th>
-                <th>HORÁRIO FIM</th>
                 <th>STATUS</th>
                 <th>AÇÕES</th>
             </tr>
-
             <tbody>
                 @foreach ($encaminhamentos as $encaminhamento)
                     <tr>
-                        <td>{{ $encaminhamento->id }}</td>
                         <td>{{ $encaminhamento->nome_completo }}</td>
                         <td>{{ $encaminhamento->nome }}</td>
-                        <td>{{ $encaminhamento->h_inicio }}</td>
-                        <td>{{ $encaminhamento->h_fim }}</td>
+                        {{-- <td>{{ $encaminhamento->h_inicio }}</td>
+                        <td>{{ $encaminhamento->h_fim }}</td> --}}
                         <td>{{ $encaminhamento->status }}</td>
-
-
                         <td>
                             @if ($encaminhamento->id_status == 1)
                                 <button disabled type="button" class="btn btn-outline-warning btn-sm tooltips"
