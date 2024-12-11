@@ -9,9 +9,9 @@
         </h4>
         <div class="col-12">
             <form action="/gerenciar-grupos-membro" class="form-horizontal mt-4" method="GET">
-                <div class="row">
-                    <div class=" col-xxl-4 col-lg-12">
-                        <label for="nome_grupo" class="form-label">Grupo</label>
+                <div class="row" style="margin-top: 10px">
+                    <div class="col-xxl-4 col-lg-12">
+                        <label for="nome_grupo">Grupo</label>
                         <select class="form-select select2 grupo" id="nome_grupo" name="nome_grupo" data-width="100%">
                             <option value=""></option>
                             @foreach ($grupos2 as $gr)
@@ -26,8 +26,7 @@
                         </select>
                     </div>
                     <div class="col-xxl-4 col-lg-12">
-
-                        <label for="nome_membro" class="form-label">Membro</label>
+                        <label for="nome_membro">Membro</label>
                         <select class="form-select select2 membro" id="nome_membro" name="nome_membro" data-width="100%">
                             <option></option>
                             @foreach ($membro as $membros)
@@ -38,25 +37,22 @@
                     </div>
                     <!-- Pesquisar Button -->
                     <div class="col-xxl-1 col-lg-4 mt-3">
-                        <input class="btn btn-light col-12 btn-sm mt-3"
-                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit"
-                            value="Pesquisar">
+                        <input class="btn btn-light btn-sm col-6 col-12 mt-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"
+                            type="submit" value="Pesquisar">
                     </div>
                     <!-- Limpar Button -->
-                    <div class="col-xxl-1 col-lg-4 mt-3">
+                    <div class="col-xxl-1 col-lg-4">
                         <a href="/gerenciar-grupos-membro">
-                            <input class="btn btn-light col-12 btn-sm mt-3"
-                                style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="button"
-                                value="Limpar">
+                            <input class="btn btn-light btn-sm col-6 col-12 mt-4" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"
+                                type="button" value="Limpar">
                         </a>
                     </div>
                     <!-- Novo Membro Button -->
                     @if (in_array(13, session()->get('usuario.acesso')))
-                        <div class=" col-xxl-2 col-lg-3 mt-4">
+                        <div class="col-xxl-2 col-lg-4">
                             <a href="/criar-membro">
-                                <input class="btn btn-success col-12 btn-sm"
-                                    style="font-size: 0.9rem; margin: 10px; white-space: nowrap;"" type="button"
-                                    value="Novo Membro +">
+                                <input class="btn btn-success btn-sm col-12 mt-4" style="font-size: 0.9rem; white-space: nowrap;"
+                                    type="button" value="Novo Membro +">
                             </a>
                         </div>
                     @endif

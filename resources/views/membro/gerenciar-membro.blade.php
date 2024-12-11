@@ -193,7 +193,7 @@
     </table>
     <!-- Modal de opções do grupo -->
     <div class="modal fade" id="meuModal" tabindex="-1" aria-labelledby="meuModalLabel" aria-hidden="true">
-        data-bs-backdrop="static" data-bs-keyboard="false">
+        <data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
