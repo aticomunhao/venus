@@ -23,23 +23,23 @@
                         <fieldset class="border rounded border-secondary p-2">
                             <div class="form-group row">
                                 <div class="col">Tipo Prioridade:
-                                    <input type="text" class="form-control" value="{{ $result[0]->prdesc }}"
+                                    <input type="text" class="form-control" value="{{ $result->prdesc }}"
                                         Disabled="Disabled">
                                 </div>
                                 <div class="col">Nome do assistido:
-                                    <input type="text" class="form-control" value="{{ $result[0]->nm_1 }}"
+                                    <input type="text" class="form-control" value="{{ $result->nm_1 }}"
                                         Disabled="Disabled">
                                 </div>
                                 <div class="col">Nome do representante:
-                                    <input type="text" class="form-control" value="{{ $result[0]->nm_2 }}"
+                                    <input type="text" class="form-control" value="{{ $result->nm_2 }}"
                                         Disabled="Disabled">
                                 </div>
                                 <div class="col">Parentesco:
-                                    <input type="text" class="form-control" value="{{ $result[0]->nome }}"
+                                    <input type="text" class="form-control" value="{{ $result->nome }}"
                                         Disabled="Disabled">
                                 </div>
                                 <div class="col">Tratamento:
-                                    <input type="text" class="form-control" value="{{ $result[0]->desctrat }}"
+                                    <input type="text" class="form-control" value="{{ $result->desctrat }}"
                                         Disabled="Disabled">
                                 </div>
                             </div>
@@ -50,7 +50,7 @@
                         </div>
 
                         <form class="form-horizontal mt-2" method="get"
-                            action="/agendar-tratamento/{{ $result[0]->ide }}">
+                            action="/agendar-tratamento/{{ $result->ide }}">
                             @csrf
                             <div class="row g-2 justify-content-evenly" style="text-align:center;  column-gap:10px;">
                                 @foreach ($dadosDias as $dadoDia)

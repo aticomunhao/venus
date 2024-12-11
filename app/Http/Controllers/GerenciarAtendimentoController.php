@@ -35,11 +35,9 @@ class GerenciarAtendimentoController extends Controller
             $pesquisaAssist = array();
             $pesquisaAssist = explode(' ', $assist);
 
-            foreach($pesquisaAssist as $itemPesquisaAssist){
-               $lista =  $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAssist%"]);
+            foreach ($pesquisaAssist as $itemPesquisaAssist) {
+                $lista =  $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAssist%"]);
             }
-            
-            
         }
 
         if ($status != 'null') {
@@ -48,11 +46,11 @@ class GerenciarAtendimentoController extends Controller
 
         if ($atendente != 'null') {
 
-                   $pesquisaAtendente = array();
+            $pesquisaAtendente = array();
             $pesquisaAtendente = explode(' ', $assist);
 
-            foreach($pesquisaAtendente as $itemPesquisaAtendente){
-               $lista =  $lista->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAtendente%"]);
+            foreach ($pesquisaAtendente as $itemPesquisaAtendente) {
+                $lista =  $lista->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAtendente%"]);
             }
         }
 
@@ -226,18 +224,17 @@ class GerenciarAtendimentoController extends Controller
 
         $pessoas = DB::table('pessoas')
             ->select('id', 'nome_completo');
-            
-            $pesquisaNome = array();
-            $pesquisaNome = explode(' ', $request->nome);
 
-            foreach($pesquisaNome as $itemPesquisa){
-               $pessoas->whereRaw("UNACCENT(LOWER(nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
-            }
-            
-            $pessoas =  $pessoas->orderBy('nome_completo')->get();
+        $pesquisaNome = array();
+        $pesquisaNome = explode(' ', $request->nome);
+
+        foreach ($pesquisaNome as $itemPesquisa) {
+            $pessoas->whereRaw("UNACCENT(LOWER(nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+        }
+
+        $pessoas =  $pessoas->orderBy('nome_completo')->get();
 
         return $pessoas;
-
     }
 
     public function create()
@@ -499,7 +496,32 @@ class GerenciarAtendimentoController extends Controller
         try {
             $result = DB::table('atendimentos AS at')
                 ->where('p1.id', $idas)
-                ->select('at.id AS ida', 'at.pref_tipo_atendente', 'p1.dt_nascimento', 'at.dh_chegada', 'at.dh_fim', 'at.dh_inicio', 'at.id_assistido', 'at.id_representante', 'at.id_atendente_pref', 'at.id_atendente', 'at.parentesco', 'tdd.descricao AS ddd', 'p1.celular', 'p1.id AS idas', 'p1.nome_completo AS nm_1', 'p2.nome_completo as nm_2', 'p3.id AS idp', 'p3.nome_completo as nm_3', 'p4.nome_completo as nm_4', 'ts.descricao', 'tp.nome', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo')
+                ->select(
+                    'at.id AS ida',
+                    'at.pref_tipo_atendente',
+                    'p1.dt_nascimento',
+                    'at.dh_chegada',
+                    'at.dh_fim',
+                    'at.dh_inicio',
+                    'at.id_assistido',
+                    'at.id_representante',
+                    'at.id_atendente_pref',
+                    'at.id_atendente',
+                    'at.parentesco',
+                    'tdd.descricao AS ddd',
+                    'p1.celular',
+                    'p1.id AS idas',
+                    'p1.nome_completo AS nm_1',
+                    'p2.nome_completo as nm_2',
+                    'p3.id AS idp',
+                    'p3.nome_completo as nm_3',
+                    'p4.nome_completo as nm_4',
+                    'ts.descricao',
+                    'tp.nome',
+                    'tp.id AS idp',
+                    'tpsx.id AS idsx',
+                    'tpsx.tipo'
+                )
                 ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                 ->leftJoin('membro AS m', 'at.id_atendente', 'm.id')
                 ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
@@ -616,7 +638,7 @@ class GerenciarAtendimentoController extends Controller
             $now = Carbon::today();
             $no = Carbon::today()->addDay(1);
 
-            $atende = DB::table('atendente_dia as atd')->select('atd.id AS nr', 'atd.id_associado','atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4', 'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')->leftJoin('salas AS s', 'atd.id_sala', 's.id')->leftJoin('cronograma as cro', 'atd.id_grupo', 'cro.id')->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')->where('atd.id', $idatd)->first();
+            $atende = DB::table('atendente_dia as atd')->select('atd.id AS nr', 'atd.id_associado', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4', 'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')->leftJoin('salas AS s', 'atd.id_sala', 's.id')->leftJoin('cronograma as cro', 'atd.id_grupo', 'cro.id')->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')->where('atd.id', $idatd)->first();
             $st_atend = DB::select("select
         tsp.id,
         tsp.tipo
@@ -648,7 +670,7 @@ class GerenciarAtendimentoController extends Controller
     {
         try {
 
-           //dd($request->all());
+            //dd($request->all());
             $now = Carbon::now()->format('Y-m-d');
 
             $sala = $request->sala;

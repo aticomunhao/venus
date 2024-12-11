@@ -22,15 +22,15 @@
                     <div class="form-group row">
                         <div class="col">
                             <label for="disabledTextInput" class="form-label">Assistido:</label>
-                            <input type="text" id="" value="{{$result[0]->nm_1}}" class="form-control" placeholder="Disabled input" disabled>
+                            <input type="text" id="" value="{{$result[0]->nm_1}}" class="form-control" disabled>
                         </div>
                         <div class="col-2">
                             <label for="disabledTextInput" class="form-label">Sexo:</label>
-                            <input type="text" id="" value="{{$result[0]->tipo}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
+                            <input type="text" id="" value="{{$result[0]->tipo}}" style="text-align:center;" class="form-control"  disabled>
                         </div>
                         <div class="col-3">
                             <label for="disabledTextInput" class="form-label">Dt nascimento:</label>
-                            <input type="date" class="form-control" id=""  name="date"  value="{{$result[0]->dt_nascimento}}"   class="form-control" placeholder="Disabled input" disabled>
+                            <input type="date" class="form-control" id=""  name="date"  value="{{$result[0]->dt_nascimento}}"   class="form-control" disabled>
                         </div>
                     </div>
                     </fieldset>
@@ -70,7 +70,8 @@
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
                                 <td class="col">NR</td>
-                                <td class="col">DATA</td>
+                                <td class="col">INICIO</td>
+                                <td class="col">FINAL</td>
                                 <td class="col">TRATAMENTO</td>
                                 <td class="col">GRUPO</td>
                                 <td class="col">DIA</td>
@@ -84,6 +85,7 @@
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$results->ide}}</td>
                                 <td>{{date ('d-m-Y', strtotime($results->dt_inicio))}}</td>
+                                <td>{{ $results->final != null ? date('d/m/Y', strtotime($results->final)) : '-' }}</td>
                                 <td>{{$results->desctrat}}</td>
                                 <td>{{$results->nomeg}}</td>
                                 <td>{{$results->nomedia}}</td>
@@ -102,6 +104,7 @@
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
                                 <td class="col">NR</td>
                                 <td class="col">DATA</td>
+                                <td class="col">GRUPO</td>
                                 <td class="col">PRESENÇA</td>
                             </tr>
 
@@ -111,6 +114,7 @@
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$lists->idp}}</td>
                                 <td>{{date ('d-m-Y', strtotime($lists->data))}}</td>
+                                <td>{{$lists->nome}}</td>
 
                                 @if ($lists->presenca == true)
                                 <td style="background-color:#90EE90;">Sim</td>
