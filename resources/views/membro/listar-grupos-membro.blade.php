@@ -61,7 +61,7 @@
         </div>
         <br>
         Total de Grupos: {{ $contar }}
-        <div class="table-responsive">
+        <div class="table">
             <table
                 class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
                 <thead>
