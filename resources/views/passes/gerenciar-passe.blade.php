@@ -5,68 +5,63 @@
 @endsection
 
 @section('content')
-
-
-
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align:left; color:gray; font-family:calibri">
             GERENCIAR PASSES
         </h4>
         <br>
-        <div class="col-12">
-            <div class="row justify-content-center">
-                <form method="GET" action="/gerenciar-passe" class="d-flex align-items-center">
-                    <div class="col-md-5">
-                        <div>Grupo</div>
-                        <select class="form-select select2" name="grupo">
+            <form method="GET" action="/gerenciar-passe">
+            <div class="row">
+                    <div class="col-lg-4 col-12">
+                        Grupo
+                        <select class="form-select select2" name="grupo"  data-width="100%">>
                             <option value="">Selecione</option>
                             @foreach ($grupos as $gruposs)
                                 <option value="{{ $gruposs->idg }}"
                                     {{ request('nome_grupo') == $gruposs->idg ? 'selected' : '' }}>
                                     {{ $gruposs->nomeg }} ({{ $gruposs->sigla }})-{{ $gruposs->dia_semana }}
-                                    | {{ date('H:i', strtotime($gruposs->h_inicio)) }}/{{ date('H:i', strtotime($gruposs->h_fim)) }}
+                                    |
+                                    {{ date('H:i', strtotime($gruposs->h_inicio)) }}/{{ date('H:i', strtotime($gruposs->h_fim)) }}
                                     | Sala {{ $gruposs->sala }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-auto">
+                    <!-- Pesquisar Button -->
+                    <div class="col-lg-2 col-md-12">
                         <br />
-                        <input class="btn btn-light btn-sm me-md-2" style="box-shadow: 1px 2px 5px #000000; margin:5px;"
-                            type="submit" value="Pesquisar">
-                        <a href="/gerenciar-passe"><input class="btn btn-light btn-sm me-md-2"
-                                style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar"></a>
+                        <center>
+                            <button class="btn btn-light btn-sm col-6" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"
+                                type="submit">Pesquisar</button>
+                                <a href="/gerenciar-passes">
+                                    <button class="btn btn-light btn-sm col-5" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"
+                                        type="button">Limpar</button>
+                                </a>
+                        </center>
                     </div>
-                </form>
-            </div>
-        </div>
+                </div>
+            </form>
         <br>
-
-    
-      
-        <div class="row">
-                <table class="table table-sm table-striped table-bordered border-secondary table-hover">
-                    <thead style="text-align: center; background-color: #d6e3ff;">
-                        <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                            {{-- <th>NR</th> --}}
+        <div class="table">
+            <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
+                <thead style="text-align: center;">
+                    <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             <th>GRUPO</th>
-                            <th>DATA</th>
-                            <th>HORÁRIO INÍCIO</th>
-                            <th>HORÁRIO FIM</th>
+                            <th>DIA</th>
+                            <th>INÍCIO</th>
+                            <th>FIM</th>
                             <th>AÇÕES</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 14px; color:#000000; text-align: center;">
                         @foreach ($reuniao as $reuni)
                             <tr>
-                                {{-- <td>{{ $reuni->idr }}</td> --}}
                                 <td>{{ $reuni->nomeg }}</td>
                                 <td>{{ $reuni->nomed }}</td>
                                 <td>{{ date('H:i:s', strtotime($reuni->h_inicio)) }}</td>
                                 <td>{{ date('H:i:s', strtotime($reuni->h_fim)) }}</td>
                                 <td>
                                     <!-- Botão para abrir o modal de presença -->
-
                                     <button type="button" class="btn btn-outline-success btn-sm tooltips"
                                         data-bs-toggle="modal" data-bs-target="#presenca{{ $reuni->idr }}">
                                         <span class="tooltiptext">Novo passe</span>
@@ -89,7 +84,7 @@
                                                     <div class="modal-body">
                                                         <div class="mb-3">
                                                             <label for="recipient-name" class="col-form-label"
-                                                                style="font-size:17px">
+                                                                style="font-size:14px">
                                                                 Registrar de quantidade de passes no grupo
                                                                 <br />
                                                                 <span style="color:#198754">{{ $reuni->nomeg }}</span>&#63;
@@ -100,9 +95,8 @@
                                                                 <label class="col-form-label">Insira o
                                                                     <span style="color:#198754">número de passes:</span>
                                                                 </label>
-                                                                <input type="number" class="form-control"
-                                                                    name="acompanhantes" placeholder="0" min="1"
-                                                                    max="500" required>
+                                                                <input type="number" class="form-control" name="acompanhantes"
+                                                                    placeholder="0" min="1" max="500" required>
                                                             </div>
                                                         </center>
                                                     </div>
@@ -115,12 +109,11 @@
                                             </div>
                                         </form>
                                     </div>
-                                    <a href="/editar-passe/{{ $reuni->idr }}"
-                                        class="btn btn-outline-warning btn-sm tooltips">
-                                        <span class="tooltiptext" style="z-index:10000">Editar</span>
-                                        <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
-                                    </a>
-
+                                    {{-- <a href="/editar-passe/{{ $reuni->idr }}"
+                                            class="btn btn-outline-warning btn-sm tooltips">
+                                            <span class="tooltiptext" style="z-index:10000">Editar</span>
+                                            <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
+                                        </a> --}}
                                     <a href="/visualizar-passe/{{ $reuni->idr }}"
                                         class="btn btn-outline-primary btn-sm tooltips">
                                         <span class="tooltiptext" style="z-index:10000">Visualizar</span>
@@ -133,7 +126,4 @@
                 </table>
             </div>
     </div>
-
-
-
 @endsection
