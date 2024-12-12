@@ -33,7 +33,7 @@
                         <center>
                             <button class="btn btn-light btn-sm col-6" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"
                                 type="submit">Pesquisar</button>
-                                <a href="/gerenciar-passes">
+                                <a href="/gerenciar-passe">
                                     <button class="btn btn-light btn-sm col-5" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"
                                         type="button">Limpar</button>
                                 </a>
