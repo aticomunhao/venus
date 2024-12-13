@@ -68,10 +68,10 @@ class GerenciarIntegralController extends Controller
             }
 
             $vagas = DB::table('cronograma')->where('id', $selected_grupo)->pluck('max_atend')->toArray();
-            $ocupadas = DB::table('tratamento')->whereNot('maca', null)->where('id_reuniao', $selected_grupo)->pluck('maca')->toArray();
+            $ocupadas = DB::table('tratamento')->whereNot('maca', null)->where('id_reuniao', $selected_grupo)->where('status', 2)->pluck('maca')->toArray();
 
             $macasDisponiveis = array_diff(range(1, current($vagas)), $ocupadas);
-            $encaminhamentos = $encaminhamentos->get()->toArray();
+            $encaminhamentos = $encaminhamentos->orderBy('tr.status', 'DESC')->orderBy('p.nome_completo')->get()->toArray();
 
         } catch (\Exception $e) {
 

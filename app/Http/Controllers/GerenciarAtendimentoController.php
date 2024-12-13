@@ -18,7 +18,32 @@ class GerenciarAtendimentoController extends Controller
     {
 
 
-        $lista = DB::table('atendimentos AS at')->select('at.id as ida', 'p1.id as idas', 'p.nome_completo as nm_3', 'at.status_atendimento', 'at.id_prioridade', 'at.dh_chegada', 'tx.tipo', 'tp.descricao as prdesc', 'p1.nome_completo as nm_1', 'p2.nome_completo as nm_2', 'p3.nome_completo as nm_4', 'sl.numero as nr_sala', 'ts.descricao', DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe"))->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')->leftJoin('pessoas as p3', 'ass1.id_pessoa', 'p3.id')->leftJoin('tp_sexo as tx', 'at.pref_tipo_atendente', 'tx.id')->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')->leftJoin('salas as sl', 'at.id_sala', 'sl.id')->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
+        $lista = DB::table('atendimentos AS at')
+            ->select(
+                'at.id as ida',
+                'p1.id as idas',
+                'p.nome_completo as nm_3',
+                'at.status_atendimento',
+                'at.id_prioridade',
+                'at.dh_chegada',
+                'tx.tipo',
+                'tp.descricao as prdesc',
+                'p1.nome_completo as nm_1',
+                'p2.nome_completo as nm_2',
+                'p3.nome_completo as nm_4',
+                'sl.numero as nr_sala',
+                'ts.descricao',
+                DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe")
+            )->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')
+            ->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')
+            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->leftJoin('pessoas as p3', 'ass1.id_pessoa', 'p3.id')
+            ->leftJoin('tp_sexo as tx', 'at.pref_tipo_atendente', 'tx.id')
+            ->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')
+            ->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')
+            ->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')
+            ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')
+            ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
 
         // Filtra pela data de início, se fornecida, caso contrário, usa a data atual
 
@@ -32,14 +57,13 @@ class GerenciarAtendimentoController extends Controller
 
         if ($assist != 'null') {
 
+
             $pesquisaAssist = array();
             $pesquisaAssist = explode(' ', $assist);
 
-            foreach($pesquisaAssist as $itemPesquisaAssist){
-               $lista =  $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAssist%"]);
+            foreach ($pesquisaAssist as $itemPesquisaAssist) {
+                $lista =  $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAssist%"]);
             }
-            
-            
         }
 
         if ($status != 'null') {
@@ -48,11 +72,10 @@ class GerenciarAtendimentoController extends Controller
 
         if ($atendente != 'null') {
 
-                   $pesquisaAtendente = array();
-            $pesquisaAtendente = explode(' ', $assist);
-
-            foreach($pesquisaAtendente as $itemPesquisaAtendente){
-               $lista =  $lista->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAtendente%"]);
+            $pesquisaAtendente = array();
+            $pesquisaAtendente = explode(' ', $atendente);
+            foreach ($pesquisaAtendente as $itemPesquisaAtendente) {
+                $lista =  $lista->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAtendente%"]);
             }
         }
 
@@ -226,18 +249,17 @@ class GerenciarAtendimentoController extends Controller
 
         $pessoas = DB::table('pessoas')
             ->select('id', 'nome_completo');
-            
-            $pesquisaNome = array();
-            $pesquisaNome = explode(' ', $request->nome);
 
-            foreach($pesquisaNome as $itemPesquisa){
-               $pessoas->whereRaw("UNACCENT(LOWER(nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
-            }
-            
-            $pessoas =  $pessoas->orderBy('nome_completo')->get();
+        $pesquisaNome = array();
+        $pesquisaNome = explode(' ', $request->nome);
+
+        foreach ($pesquisaNome as $itemPesquisa) {
+            $pessoas->whereRaw("UNACCENT(LOWER(nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+        }
+
+        $pessoas =  $pessoas->orderBy('nome_completo')->get();
 
         return $pessoas;
-
     }
 
     public function create()
@@ -616,7 +638,7 @@ class GerenciarAtendimentoController extends Controller
             $now = Carbon::today();
             $no = Carbon::today()->addDay(1);
 
-            $atende = DB::table('atendente_dia as atd')->select('atd.id AS nr', 'atd.id_associado','atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4', 'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')->leftJoin('salas AS s', 'atd.id_sala', 's.id')->leftJoin('cronograma as cro', 'atd.id_grupo', 'cro.id')->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')->where('atd.id', $idatd)->first();
+            $atende = DB::table('atendente_dia as atd')->select('atd.id AS nr', 'atd.id_associado', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4', 'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')->leftJoin('salas AS s', 'atd.id_sala', 's.id')->leftJoin('cronograma as cro', 'atd.id_grupo', 'cro.id')->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')->where('atd.id', $idatd)->first();
             $st_atend = DB::select("select
         tsp.id,
         tsp.tipo
@@ -648,7 +670,7 @@ class GerenciarAtendimentoController extends Controller
     {
         try {
 
-           //dd($request->all());
+            //dd($request->all());
             $now = Carbon::now()->format('Y-m-d');
 
             $sala = $request->sala;
