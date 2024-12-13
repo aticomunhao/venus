@@ -528,10 +528,12 @@ class RelatoriosController extends Controller
             ->distinct('gr.nome');
 
         $reunioesPesquisa = DB::table('membro as mem')
-            ->select('cr.id', 'gr.nome', 'd.nome as dia', 'cr.h_inicio', 'cr.h_fim')
+            ->select('cr.id', 'gr.nome', 'd.nome as dia', 'cr.h_inicio', 'cr.h_fim', 'st.sigla','t.sigla as SiglaTratamento',)
             ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
             ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
+            ->leftJoin('tipo_tratamento as t', 'cr.id_tipo_tratamento', 't.id')
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
+            ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
             ->orderBy('gr.nome')
             ->distinct('gr.nome');
@@ -768,7 +770,7 @@ class RelatoriosController extends Controller
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->select('t.id', 't.descricao', 'cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'st.sigla as setor', 'td.nome as dia_semana');
-            
+
 
 
         // Consultar tratamentos
@@ -786,7 +788,7 @@ class RelatoriosController extends Controller
         if ($request->tratamento) {
             $grupos = $grupos->where('t.id', $request->tratamento);
             $grupo2 = $grupo2->where('t.id', $request->tratamento);
-            
+
         }
         $grupo2 = $grupo2->get();
 
@@ -814,7 +816,7 @@ class RelatoriosController extends Controller
         return view('relatorios.vagas-grupos', compact('setores', 'grupos', 'grupo2', 'tratamento', 'quantidade_vagas_tipo_tratamento','tipo_de_tratamento'));
     }
 
-   
+
 
     public function teste()
     {
