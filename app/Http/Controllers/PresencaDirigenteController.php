@@ -31,6 +31,7 @@ class PresencaDirigenteController extends Controller
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
             ->leftJoin('setor AS s', 'gr.id_setor', 's.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
+            ->whereNull('cr.data_fim')
             ->distinct('gr.id');
 
 
