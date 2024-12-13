@@ -61,7 +61,7 @@
                                         <input class="form-control pesquisa" type="text" id="assist" name="assist"
                                             value="{{ $assistido }}">
                                     </div>
-                                    <div class="col">
+                                    <div class="col mt-3">
                                         <label for="assist">Atendente</label>
                                         <input class="form-control pesquisa" type="text" id="idatendente" name="atendente"
                                             value="{{ $atendente }}">
@@ -520,9 +520,9 @@
             $('#limpar').click(function() {
                 $('#assist').val("")
                 $('#cpf').val("")
+                $('#idatendente').val("")
                 $('#status').prop('selectedIndex', -1)
                 $('#dt_ini').val("{{ $data_inicio ?? now()->toDateString() }}")
-
             })
 
             $('.pesq').click(function() {
