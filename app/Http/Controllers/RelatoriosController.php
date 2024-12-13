@@ -535,8 +535,7 @@ class RelatoriosController extends Controller
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
-            ->orderBy('gr.nome')
-            ->distinct('gr.nome');
+            ->distinct('gr.id');
 
         $presencasCountAssistidos = DB::table('presenca_cronograma as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
