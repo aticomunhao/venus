@@ -527,13 +527,37 @@ class RelatoriosController extends Controller
 
             ->distinct('gr.nome');
 
-        $reunioesPesquisa = DB::table('cronograma as cr')
-            ->select('cr.id', 'gr.nome', 'd.nome as dia', 'cr.h_inicio', 'cr.h_fim', 'st.sigla','t.sigla as SiglaTratamento',)
+            $reunioesPesquisa = DB::table('cronograma as cr')
+            ->select(
+                'cr.id',
+                'gr.nome',
+                'd.nome as dia',
+                'cr.h_inicio',
+                'cr.h_fim',
+                'st.sigla',
+                't.sigla as SiglaTratamento',
+                'cr.modificador',
+                'ts.descricao',
+                DB::raw("(CASE WHEN cr.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status") // Correção aqui
+            )
             ->leftJoin('tipo_tratamento as t', 'cr.id_tipo_tratamento', 't.id')
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
-            ->groupBy('cr.id', 'gr.nome', 'd.nome', 'cr.h_inicio', 'cr.h_fim', 'st.sigla', 't.sigla')->orderBy('gr.nome','asc');
+            ->leftJoin('tipo_status_grupo AS ts', 'gr.status_grupo', 'ts.id')
+            ->groupBy(
+                'cr.id',
+                'gr.nome',
+                'd.nome',
+                'cr.h_inicio',
+                'cr.h_fim',
+                'st.sigla',
+                't.sigla',
+                'ts.descricao'
+            )
+            ->orderBy('gr.nome', 'asc');
+
+
 
 
         $presencasCountAssistidos = DB::table('presenca_cronograma as pc')
