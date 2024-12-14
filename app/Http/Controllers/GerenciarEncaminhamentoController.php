@@ -356,7 +356,25 @@ class GerenciarEncaminhamentoController extends Controller
 
         $trata = DB::table('cronograma AS reu')
 
-            ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'), 'p.nome_completo', 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.sigla AS tstd', 'sa.numero', 'reu.observacao','tor.descricao AS des')
+            ->select(
+                DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'),
+                'p.nome_completo',
+                'reu.id AS idr',
+                'gr.nome AS nomeg',
+                'reu.dia_semana',
+                'reu.id_sala',
+                'reu.id_tipo_tratamento',
+                'reu.h_inicio',
+                'td.nome AS nomed',
+                'reu.h_fim',
+                'reu.max_atend',
+                'gr.status_grupo AS idst',
+                'tsg.descricao AS descst',
+                'tst.sigla AS tstd',
+                'sa.numero',
+                'reu.observacao',
+                'tor.descricao AS des'
+            )
             ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
             ->leftJoin('tipo_observacao_reuniao AS tor', 'reu.observacao', 'tor.id')
             ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
@@ -379,7 +397,7 @@ class GerenciarEncaminhamentoController extends Controller
             ->where('reu.id_tipo_tratamento', $tp_trat)
             ->orWhere('tr.status', null)
             ->where('tr.status', '<', 3)
-            ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.sigla', 'sa.numero','tor.descricao')
+            ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.sigla', 'sa.numero', 'tor.descricao')
             ->orderBy('h_inicio')
             ->get();
 
@@ -786,9 +804,7 @@ class GerenciarEncaminhamentoController extends Controller
     public function escolherHorario(Request $request, $ide)
     {
 
-
         try {
-
             $dia = intval($request->dia);
 
             $ide = intval($ide);
@@ -827,7 +843,26 @@ class GerenciarEncaminhamentoController extends Controller
 
             $trata = DB::table('cronograma AS reu')
 
-                ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'), 'p.nome_completo', 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
+                ->select(
+                    DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'),
+                    'p.nome_completo',
+                    'reu.id AS idr',
+                    'gr.nome AS nomeg',
+                    'reu.dia_semana',
+                    'reu.id_sala',
+                    'reu.id_tipo_tratamento',
+                    'reu.h_inicio',
+                    'td.nome AS nomed',
+                    'reu.h_fim',
+                    'reu.max_atend',
+                    'gr.status_grupo AS idst',
+                    'tsg.descricao AS descst',
+                    'tst.descricao AS tstd',
+                    'sa.numero',
+                    'reu.observacao',
+                    'tor.descricao as des',
+                    'tst.sigla AS siglas',
+                )
                 ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
                 ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
@@ -838,14 +873,16 @@ class GerenciarEncaminhamentoController extends Controller
                 ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
                 ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
                 ->leftJoin('tipo_dia AS td', 'reu.dia_semana', 'td.id')
+                ->leftJoin('tipo_observacao_reuniao AS tor', 'reu.observacao', 'tor.id')
                 ->where('reu.dia_semana', $dia)
                 ->where('me.id_funcao', 1)
                 ->where('reu.id_tipo_tratamento', $tp_trat)
                 ->orWhere('tr.status', null)
                 ->where('tr.status', '<', 3)
-                ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
+                ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero', 'tor.descricao', 'tst.sigla')
                 ->orderBy('h_inicio')
                 ->get();
+
 
             return view('/recepcao-integrada/agendar-horario-tratamento', compact('result', 'trata', 'dia'));
         } catch (\Exception $e) {
@@ -853,99 +890,99 @@ class GerenciarEncaminhamentoController extends Controller
             $code = $e->getCode();
             return view('tratamento-erro.erro-inesperado', compact('code'));
         }
+
+
     }
     public function trocarGrupo(Request $request, $ide)
     {
 
-        //     try{
+        try {
 
-        $reu = intval($request->reuniao);
-
-
-        $countVagas = DB::table('tratamento')->where('id_reuniao', '=', "$reu")->where('status', '<', '3')->count();
-        $maxAtend = DB::table('cronograma')->where('id', '=', "$reu")->first();
-        $tratID = DB::table('encaminhamento')->where('id', '=', $ide)->get();
-        $idt = DB::table('tratamento')->where('id_encaminhamento', $ide)->first();
-        $data_ontem = Carbon::yesterday();
-        $data_hoje = Carbon::today();
-
-        if ($idt->dt_fim) {
-            $dia_fim = Carbon::createFromFormat('Y-m-d G:i:s', "$idt->dt_fim 00:00:00");
-            $dia_fim->weekday($maxAtend->dia_semana);
+            $reu = intval($request->reuniao);
 
 
-            if ($tratID[0]->id_tipo_tratamento == 2 and $countVagas >= $maxAtend->max_atend) {
+            $countVagas = DB::table('tratamento')->where('id_reuniao', '=', "$reu")->where('status', '<', '3')->count();
+            $maxAtend = DB::table('cronograma')->where('id', '=', "$reu")->first();
+            $tratID = DB::table('encaminhamento')->where('id', '=', $ide)->get();
+            $idt = DB::table('tratamento')->where('id_encaminhamento', $ide)->first();
+            $data_ontem = Carbon::yesterday();
+            $data_hoje = Carbon::today();
 
-                app('flasher')->addError('Número de vagas insuficientes');
-                return redirect()->back();
+            if ($idt->dt_fim) {
+                $dia_fim = Carbon::createFromFormat('Y-m-d G:i:s', "$idt->dt_fim 00:00:00");
+                $dia_fim->weekday($maxAtend->dia_semana);
+
+
+                if ($tratID[0]->id_tipo_tratamento == 2 and $countVagas >= $maxAtend->max_atend) {
+
+                    app('flasher')->addError('Número de vagas insuficientes');
+                    return redirect()->back();
+                }
+
+                if ($data_hoje->weekOfYear == $dia_fim->weekOfYear and $data_hoje->diffInDays($dia_fim, false) < 0) {
+
+                    app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
+                    return redirect()->back();
+                } elseif ($data_hoje->weekOfYear == ($dia_fim->weekOfYear + 1) and $data_hoje->diffInDays($dia_fim, false) < 0 and $maxAtend->dia_semana == 0) {
+                    app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
+                    return redirect()->back();
+                }
             }
 
-            if ($data_hoje->weekOfYear == $dia_fim->weekOfYear and $data_hoje->diffInDays($dia_fim, false) < 0) {
+            $data = date("Y-m-d H:i:s");
 
-                app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
-                return redirect()->back();
-            } elseif ($data_hoje->weekOfYear == ($dia_fim->weekOfYear + 1) and $data_hoje->diffInDays($dia_fim, false) < 0 and $maxAtend->dia_semana == 0) {
-                app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
-                return redirect()->back();
+            DB::table('historico_venus')->insert([
+
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $data,
+                'fato' => 19,
+                'obs' => $ide
+
+            ]);
+
+            $data = date("Y-m-d H:i:s");
+
+
+            DB::table('tratamento_grupos')
+                ->where('dt_fim', null)
+                ->where('id_tratamento', $idt->id)
+                ->update([
+                    'dt_fim' => $data_ontem,
+                ]);
+
+
+            DB::table('tratamento_grupos')
+                ->insert([
+                    'id_cronograma' => $reu,
+                    'id_tratamento' => $idt->id,
+                    'dt_inicio' => $data,
+                ]);
+
+
+
+            if ($idt->dt_fim) {
+                DB::table('tratamento')
+                    ->where('id_encaminhamento', $ide)
+                    ->update([
+                        'id_reuniao' => $reu,
+                        'dt_fim' => $dia_fim
+                    ]);
+            } else {
+                DB::table('tratamento')
+                    ->where('id_encaminhamento', $ide)
+                    ->update([
+                        'id_reuniao' => $reu
+                    ]);
             }
+
+
+
+            app('flasher')->addSuccess('Troca efetuada com sucesso!');
+            return redirect('/gerenciar-encaminhamentos');
+        } catch (\Exception $e) {
+
+            $code = $e->getCode();
+            return view('tratamento-erro.erro-inesperado', compact('code'));
         }
-
-        $data = date("Y-m-d H:i:s");
-
-        DB::table('historico_venus')->insert([
-
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $data,
-            'fato' => 19,
-            'obs' => $ide
-
-        ]);
-
-        $data = date("Y-m-d H:i:s");
-
-
-        DB::table('tratamento_grupos')
-            ->where('dt_fim', null)
-            ->where('id_tratamento', $idt->id)
-            ->update([
-                'dt_fim' => $data_ontem,
-            ]);
-
-
-        DB::table('tratamento_grupos')
-            ->insert([
-                'id_cronograma' => $reu,
-                'id_tratamento' => $idt->id,
-                'dt_inicio' => $data,
-            ]);
-
-
-
-        if ($idt->dt_fim) {
-            DB::table('tratamento')
-                ->where('id_encaminhamento', $ide)
-                ->update([
-                    'id_reuniao' => $reu,
-                    'dt_fim' => $dia_fim
-                ]);
-        } else {
-            DB::table('tratamento')
-                ->where('id_encaminhamento', $ide)
-                ->update([
-                    'id_reuniao' => $reu
-                ]);
-        }
-
-
-
-        app('flasher')->addSuccess('Troca efetuada com sucesso!');
-        return redirect('/gerenciar-encaminhamentos');
     }
-    // catch(\Exception $e){
-
-    //     $code = $e->getCode( );
-    //     return view('tratamento-erro.erro-inesperado', compact('code'));
-    //         }
-    //     }
-
 }
