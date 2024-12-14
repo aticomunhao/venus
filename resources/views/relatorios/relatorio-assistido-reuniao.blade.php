@@ -14,7 +14,7 @@
                     <select class="form-select select2 grupo" type="text" id="nome_grupo" name="nome_grupo"
                          value="{{ request('nome_grupo') }}">
                          @foreach($reunioesPesquisa as $reuniao)
-                         <option value="{{ $reuniao->id }}" {{request('nome_grupo') == $reuniao->id ? 'selected' : ''}}>{{ $reuniao->nome }}({{ $reuniao->sigla }})-{{ $reuniao->SiglaTratamento }}-{{ $reuniao->dia }}-{{ date('H:i', strtotime($reuniao->h_inicio)) }}/{{ date('H:i', strtotime($reuniao->h_fim ))}}</option>>
+                         <option value="{{ $reuniao->id }}" {{request('nome_grupo') == $reuniao->id ? 'selected' : ''}}>{{ $reuniao->nome }}-({{ $reuniao->sigla }})-{{ $reuniao->SiglaTratamento }}-{{ $reuniao->dia }}-{{ date('H:i', strtotime($reuniao->h_inicio)) }}/{{ date('H:i', strtotime($reuniao->h_fim ))}}  | {{ $reuniao->status == 'Inativo' ? 'Inativo' : $reuniao->descricao}}</option>>
                         @endforeach
                         </select>
                 </div>

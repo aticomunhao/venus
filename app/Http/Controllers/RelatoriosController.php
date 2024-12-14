@@ -524,18 +524,41 @@ class RelatoriosController extends Controller
             ->when($idCronogramaPesquisa, function ($query, $idCronogramaPesquisa) {
                 return $query->where('cr.id', $idCronogramaPesquisa);
             })
-            ->orderBy('gr.nome')
+
             ->distinct('gr.nome');
 
-        $reunioesPesquisa = DB::table('membro as mem')
-            ->select('cr.id', 'gr.nome', 'd.nome as dia', 'cr.h_inicio', 'cr.h_fim', 'st.sigla','t.sigla as SiglaTratamento',)
-            ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
-            ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
+            $reunioesPesquisa = DB::table('cronograma as cr')
+            ->select(
+                'cr.id',
+                'gr.nome',
+                'd.nome as dia',
+                'cr.h_inicio',
+                'cr.h_fim',
+                'st.sigla',
+                't.sigla as SiglaTratamento',
+                'cr.modificador',
+                'ts.descricao',
+                DB::raw("(CASE WHEN cr.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status") // Correção aqui
+            )
             ->leftJoin('tipo_tratamento as t', 'cr.id_tipo_tratamento', 't.id')
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
-            ->distinct('gr.id');
+            ->leftJoin('tipo_status_grupo AS ts', 'gr.status_grupo', 'ts.id')
+            ->groupBy(
+                'cr.id',
+                'gr.nome',
+                'd.nome',
+                'cr.h_inicio',
+                'cr.h_fim',
+                'st.sigla',
+                't.sigla',
+                'ts.descricao'
+            )
+            ->orderBy('gr.nome', 'asc');
+
+
+
 
         $presencasCountAssistidos = DB::table('presenca_cronograma as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
@@ -651,8 +674,6 @@ class RelatoriosController extends Controller
 
 
 
-
-
         $presencasAssistidos = DB::table('tratamento as tr')
             ->leftJoin('tipo_status_tratamento as tst', 'tr.status', 'tst.id')
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
@@ -662,7 +683,6 @@ class RelatoriosController extends Controller
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
-            ->where('enc.dh_enc', '>=', $dt_inicio)
             ->where('enc.dh_enc', '<', $dt_fim)
             ->where('id_reuniao', $id)
             ->select('tr.id', 'p.nome_completo', 'tst.nome as status', 'dc.data', 'gr.nome as grupo', 'pc.presenca',)
