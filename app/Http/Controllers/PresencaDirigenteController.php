@@ -23,16 +23,14 @@ class PresencaDirigenteController extends Controller
         $hoje = Carbon::today();
 
         //Traz todas as reuniões onde a pessoa logada é Dirigente ou Sub-dirigente
-        $reunioesDirigentes = DB::table('membro as mem')
-            ->select('ass.id_pessoa', 'gr.nome', 'cr.id','cr.h_inicio','cr.h_fim', 'gr.status_grupo', 'd.nome as dia','sl.numero','s.sigla')
-            ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
-            ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
+        $reunioesDirigentes = DB::table('cronograma as cr')
+            ->select('gr.nome', 'cr.id','cr.h_inicio','cr.h_fim', 'd.nome as dia','sl.numero','s.sigla')
             ->leftJoin('salas as sl', 'cr.id_sala', 'sl.id')
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
             ->leftJoin('setor AS s', 'gr.id_setor', 's.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
             ->whereNull('cr.data_fim')
-            ->distinct('gr.id');
+            ->groupBy('gr.nome','cr.h_inicio','cr.h_fim','d.nome','s.sigla','sl.numero','cr.id')->orderBy('gr.nome','asc');
 
 
             if(in_array(36,session()->get('usuario.acesso'))){
