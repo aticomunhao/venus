@@ -29,6 +29,8 @@ class PresencaDirigenteController extends Controller
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
             ->leftJoin('setor AS s', 'gr.id_setor', 's.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
+            ->leftJoin('membro as m', 'cr.id', 'm.id_cronograma')
+            ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
             ->whereNull('cr.data_fim')
             ->groupBy('gr.nome','cr.h_inicio','cr.h_fim','d.nome','s.sigla','sl.numero','cr.id')->orderBy('gr.nome','asc');
 
@@ -45,7 +47,6 @@ class PresencaDirigenteController extends Controller
 
         //Salva esse select completo em uma variável separada
         $reunioes = $reunioesDirigentes->get();
-
         //Caso nenhum, grupo seja pesquisado, traz o primeiro da lista como padrão, senão o pesquisado
         if ($request->grupo == null) {
 
