@@ -50,8 +50,6 @@ class RelatoriosController extends Controller
             }
 
 
-
-
             // Pega um array com todas as reuniões que o atendente participa
             $cronogramasParticipa = DB::table('membro')
                 ->where('id_associado', $atendente->id_associado)
