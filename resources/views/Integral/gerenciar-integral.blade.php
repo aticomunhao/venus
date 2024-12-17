@@ -38,7 +38,6 @@
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Gerenciar Grupo"></a>
 
-
                     </div>
                 </div>
 
