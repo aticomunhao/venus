@@ -52,11 +52,8 @@
             <table
                 class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                    <th>ID</th>
                     <th>NOME</th>
-                    <th>NOME GRUPO</th>
-                    <th>HORÁRIO INÍCIO</th>
-                    <th>HORÁRIO FIM</th>
+                    <th>GRUPO</th>
                     <th>STATUS</th>
                     <th>MACA</th>
                     <th>AÇÕES</th>
@@ -65,11 +62,8 @@
                 <tbody>
                     @foreach ($encaminhamentos as $encaminhamento)
                         <tr>
-                            <td>{{ $encaminhamento->id }}</td>
                             <td>{{ $encaminhamento->nome_completo }}</td>
                             <td>{{ $encaminhamento->nome }}</td>
-                            <td>{{ $encaminhamento->h_inicio }}</td>
-                            <td>{{ $encaminhamento->h_fim }}</td>
                             <td>{{ $encaminhamento->status }}</td>
                             <td>{{ $encaminhamento->maca }}</td>
 
