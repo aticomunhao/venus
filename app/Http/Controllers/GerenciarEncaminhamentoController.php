@@ -81,6 +81,7 @@ class GerenciarEncaminhamentoController extends Controller
         }
         //  ->orderby('status_encaminhamento', 'ASC')->orderby('nm_1', 'ASC')
 
+        $contar = $lista->count('enc.id');
 
         $lista = $lista
             ->orderby('status_encaminhamento', 'ASC')
@@ -97,7 +98,7 @@ class GerenciarEncaminhamentoController extends Controller
 
         //       dd($lista)->get();
 
-        $contar = $lista->count('enc.id');
+
 
         $stat = DB::select("select
         ts.id,
