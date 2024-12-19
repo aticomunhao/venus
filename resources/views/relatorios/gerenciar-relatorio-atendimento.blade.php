@@ -81,18 +81,27 @@
                 <table class="table table-striped table-bordered border-secondary table-hover align-middle">
                     <thead style="text-align: center; background-color: #d6e3ff; font-size: 14px; color: #000000;">
                         <tr>
-                            @if (count(current($grupos)) == 5)
+
+                            @if (count(current($grupos)) > 4)
                                 <th class="col-3">GRUPO</th>
+                                <th class="col">DIA</th>
+                                <th class="col">INICIO</th>
+                                <th class="col">FIM</th>
+
                             @endif
                             <th class="col-3">TRATAMENTO</th>
-                            <th class="col-2">QUANTIDADE</th>
+                            <th class="col-2">ATENDIMENTOS</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 14px; color: #000000; text-align: center;">
                         @foreach ($grupos as $trat)
                             <tr>
-                                @if (count(current($grupos)) == 5)
+                                @if (count(current($grupos)) > 4)
                                     <td>{{ $trat['nome'] }}</td>
+                                    <td>{{ $trat['dia_semana'] }}</td>
+                                    <td>{{ $trat['h_inicio'] }}</td>
+                                    <td>{{ $trat['h_fim'] }}</td>
+
                                 @endif
                                 <td>{{ $trat['descricao'] }} ({{ $trat['sigla'] }})</td>
                                 <td>{{ $trat['atendimentos'] }}</td>
