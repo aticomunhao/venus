@@ -525,7 +525,7 @@ class RelatoriosController extends Controller
 
             ->distinct('gr.nome');
 
-            $reunioesPesquisa = DB::table('cronograma as cr')
+        $reunioesPesquisa = DB::table('cronograma as cr')
             ->select(
                 'cr.id',
                 'gr.nome',
@@ -815,7 +815,6 @@ class RelatoriosController extends Controller
             $grupos = $grupos->where('t.id', $request->tratamento);
             $grupo2 = $grupo2->where('t.id', $request->tratamento);
             $setores->where('id', $grupos->pluck('id_setor')->toArray());
-
         }
         $grupo2 = $grupo2->get();
         $setores = $setores->get();
@@ -840,14 +839,175 @@ class RelatoriosController extends Controller
 
 
         // Retornar a view com os dados
-        return view('relatorios.vagas-grupos', compact('setores', 'grupos', 'grupo2', 'tratamento', 'quantidade_vagas_tipo_tratamento','tipo_de_tratamento'));
+        return view('relatorios.vagas-grupos', compact('setores', 'grupos', 'grupo2', 'tratamento', 'quantidade_vagas_tipo_tratamento', 'tipo_de_tratamento'));
     }
 
-
-
-    public function teste()
+    public function AtendimentosRel(Request $request)
     {
-        $pdf = \PDF::loadView('relatorios.teste');
-        return $pdf->download('invoice.pdf');
+
+        $now = Carbon::now()->format('Y-m-d');
+        $dt_inicio = $request->dt_inicio == null ? (Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d')) : $request->dt_inicio;
+        $dt_fim =  $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
+        // Iniciar a consulta
+        $grupos = DB::table('cronograma as cro')
+            ->leftJoin('tratamento as tr', 'cro.id', 'tr.id')
+            ->leftJoin('tipo_tratamento as t', 'cro.id_tipo_tratamento', 't.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
+            ->whereIn('t.id', [1, 2, 3, 4, 6])
+            ->whereIn('tr.status', [2, 3, 4])
+            ->select(
+                'cro.id',
+                'cro.h_inicio',
+                'cro.h_fim',
+                't.descricao',
+                't.id as id_tp_tratamento',
+                'tr.status',
+                'cro.max_atend',
+                'gr.nome as nome',
+                'td.nome as dia',
+                't.sigla',
+                'st.sigla as setor',
+                'st.id as id_setor',
+            )
+            ->orderBy('gr.nome');
+
+
+        // Consultar setores para o filtro
+        $setores = DB::table('setor')
+            ->orderBy('nome');
+
+        // Consultar grupos
+        $grupo2 =  DB::table('cronograma as cro')
+            ->leftJoin('tratamento as tr', 'cro.id', 'tr.id')
+            ->leftJoin('tipo_tratamento as t', 'cro.id_tipo_tratamento', 't.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
+            ->whereIn('t.id', [1, 2, 3, 4, 6])
+            ->whereIn('tr.status', [2, 3, 4])
+            ->select(
+                'cro.id',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'gr.nome as nome',
+                'td.nome as dia_semana',
+                't.sigla',
+                'st.sigla as setor',
+                'st.id as id_setor',
+            )
+            ->orderBy('gr.nome');
+
+
+        // Consultar tratamentos
+        $tratamento = DB::table('tipo_tratamento')->whereIn('id', [1, 2, 3, 4, 6])->get();
+
+        // Filtros
+        if ($request->setor) {
+            $grupos = $grupos->where('gr.id_setor', $request->setor);
+        }
+
+        if ($request->tratamento) {
+            $grupos = $grupos->where('t.id', $request->tratamento);
+            $grupo2 = $grupo2->where('t.id', $request->tratamento);
+            $setores->where('id', $grupos->pluck('id_setor')->toArray());
+        }
+        $grupos = $grupos->get()->toArray();
+        $grupo2 = $grupo2->get();
+        $setores = $setores->get();
+
+        // Insere os atendimentos
+        foreach ($grupos as $key => $grupo) {
+
+            $tratamentosAtivos = DB::table('tratamento as tra')
+                ->leftJoin('encaminhamento as enc', 'tra.id', 'enc.id')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->where('id_reuniao', $grupo->id)
+                ->where(function($query) use ($dt_inicio, $dt_fim){
+
+                    // Data Inicio Tratamento
+                    $query->where(function($subQuery) use ($dt_inicio, $dt_fim){
+                        $subQuery->where(function($innerQuery) use ($dt_inicio, $dt_fim){
+                            $innerQuery->where('tra.dt_inicio', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
+                        });
+                        $subQuery->orWhere('tra.dt_inicio', '<', $dt_inicio);
+                    });
+
+                    // Data Fim Tratamento
+                    $query->where(function($subQuery) use ($dt_inicio, $dt_fim){
+                        $subQuery->where(function($innerQuery) use ($dt_inicio, $dt_fim){
+                            $innerQuery->where('tra.dt_fim', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
+                        });
+                        $subQuery->orWhere('tra.dt_fim', '>', $dt_fim);
+                        $subQuery->orWhere('tra.dt_fim', NULL);
+                    });
+
+                })
+                ->count();
+
+                $passes = DB::table('dias_cronograma')
+                ->where('id_cronograma', $grupo->id)
+                ->where('data', '>=', $dt_inicio)
+                ->where('data', '<', $dt_fim)
+                ->sum('nr_acompanhantes');
+
+            if($grupo->id_tp_tratamento == 3){ // Caso seja um grupo de PTH, conta os assistidos
+               $grupos[$key]->atendimentos =  $passes;
+            }else{
+                $grupos[$key]->atendimentos =  $tratamentosAtivos;
+                $grupos[$key]->acompanhantes =  $passes;
+            }
+
+        }
+
+
+
+        // Pesquisa de grupos
+        if ($request->grupo != null) {
+
+            $buffer = array();
+            foreach ($grupos as $grupo) {
+                if (in_array($grupo->id, $request->grupo)) {
+                    $buffer[$grupo->id]['descricao'] = $grupo->descricao;
+                    $buffer[$grupo->id]['nome'] = $grupo->nome;
+                    $buffer[$grupo->id]['sigla'] =  $grupo->sigla;
+                    $buffer[$grupo->id]['atendimentos'] = $grupo->atendimentos;
+                    $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
+                    $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
+                    $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
+                    $buffer[$grupo->id]['h_fim'] = $grupo->h_fim;
+                    $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento;
+                    $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
+
+                }
+            }
+            $grupos = $buffer;
+        } else {
+
+            $buffer = array();
+            foreach ($grupos as $grupo) {
+                $buffer[$grupo->id_tp_tratamento]['descricao'] = $grupo->descricao;
+                $buffer[$grupo->id_tp_tratamento]['sigla'] =  $grupo->sigla;
+                $buffer[$grupo->id_tp_tratamento]['id'] =  $grupo->id;
+
+
+                array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
+                    $buffer[$grupo->id_tp_tratamento]['atendimentos'] += $grupo->atendimentos :
+                    $buffer[$grupo->id_tp_tratamento]['atendimentos'] = $grupo->atendimentos;
+            }
+
+            $grupos = $buffer;
+        }
+
+        // Retornar a view com os dados
+        return view('relatorios.gerenciar-relatorio-atendimento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
     }
+
+
+    // public function teste()
+    // {
+    //     $pdf = \PDF::loadView('relatorios.teste');
+    //     return $pdf->download('invoice.pdf');
+    // }
 }
