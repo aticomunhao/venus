@@ -859,6 +859,8 @@ class RelatoriosController extends Controller
             ->whereIn('tr.status', [2, 3, 4])
             ->select(
                 'cro.id',
+                'cro.h_inicio',
+                'cro.h_fim',
                 't.descricao',
                 't.id as id_tp_tratamento',
                 'tr.status',
@@ -921,19 +923,45 @@ class RelatoriosController extends Controller
             $tratamentosAtivos = DB::table('tratamento as tra')
                 ->leftJoin('encaminhamento as enc', 'tra.id', 'enc.id')
                 ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-                ->where('at.dh_chegada', '>=', $dt_inicio)
-                ->where('at.dh_chegada', '<', $dt_fim)
                 ->where('id_reuniao', $grupo->id)
+                ->where(function($query) use ($dt_inicio, $dt_fim){
+
+                    // Data Inicio Tratamento
+                    $query->where(function($subQuery) use ($dt_inicio, $dt_fim){
+                        $subQuery->where(function($innerQuery) use ($dt_inicio, $dt_fim){
+                            $innerQuery->where('tra.dt_inicio', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
+                        });
+                        $subQuery->orWhere('tra.dt_inicio', '<', $dt_inicio);
+                    });
+
+                    // Data Fim Tratamento
+                    $query->where(function($subQuery) use ($dt_inicio, $dt_fim){
+                        $subQuery->where(function($innerQuery) use ($dt_inicio, $dt_fim){
+                            $innerQuery->where('tra.dt_fim', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
+                        });
+                        $subQuery->orWhere('tra.dt_fim', '>', $dt_fim);
+                        $subQuery->orWhere('tra.dt_fim', NULL);
+                    });
+
+                })
                 ->count();
 
-            $passes = DB::table('dias_cronograma')
+                $passes = DB::table('dias_cronograma')
                 ->where('id_cronograma', $grupo->id)
                 ->where('data', '>=', $dt_inicio)
-                ->where('data', '<', $dt_fim);
+                ->where('data', '<', $dt_fim)
+                ->sum('nr_acompanhantes');
 
+            if($grupo->id_tp_tratamento == 3){ // Caso seja um grupo de PTH, conta os assistidos
+               $grupos[$key]->atendimentos =  $passes;
+            }else{
+                $grupos[$key]->atendimentos =  $tratamentosAtivos;
+                $grupos[$key]->acompanhantes =  $passes;
+            }
 
-            $grupos[$key]->atendimentos =  $tratamentosAtivos;
         }
+
+
 
         // Pesquisa de grupos
         if ($request->grupo != null) {
@@ -945,7 +973,13 @@ class RelatoriosController extends Controller
                     $buffer[$grupo->id]['nome'] = $grupo->nome;
                     $buffer[$grupo->id]['sigla'] =  $grupo->sigla;
                     $buffer[$grupo->id]['atendimentos'] = $grupo->atendimentos;
+                    $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
+                    $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
+                    $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
+                    $buffer[$grupo->id]['h_fim'] = $grupo->h_fim;
                     $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento;
+                    $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
+
                 }
             }
             $grupos = $buffer;
@@ -956,6 +990,7 @@ class RelatoriosController extends Controller
                 $buffer[$grupo->id_tp_tratamento]['descricao'] = $grupo->descricao;
                 $buffer[$grupo->id_tp_tratamento]['sigla'] =  $grupo->sigla;
                 $buffer[$grupo->id_tp_tratamento]['id'] =  $grupo->id;
+
 
                 array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
                     $buffer[$grupo->id_tp_tratamento]['atendimentos'] += $grupo->atendimentos :
@@ -970,9 +1005,9 @@ class RelatoriosController extends Controller
     }
 
 
-    public function teste()
-    {
-        $pdf = \PDF::loadView('relatorios.teste');
-        return $pdf->download('invoice.pdf');
-    }
+    // public function teste()
+    // {
+    //     $pdf = \PDF::loadView('relatorios.teste');
+    //     return $pdf->download('invoice.pdf');
+    // }
 }
