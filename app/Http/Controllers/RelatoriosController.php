@@ -974,11 +974,11 @@ class RelatoriosController extends Controller
                     $buffer[$grupo->id]['sigla'] =  $grupo->sigla;
                     $buffer[$grupo->id]['atendimentos'] = $grupo->atendimentos;
                     $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
-                    $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
                     $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
                     $buffer[$grupo->id]['h_fim'] = $grupo->h_fim;
                     $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento;
-                    $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
+
+                   isset( $grupo->acompanhantes) ?  $buffer[$grupo->id]['acompanhantes'] = $grupo->acompanhantes : null;
 
                 }
             }
@@ -991,23 +991,33 @@ class RelatoriosController extends Controller
                 $buffer[$grupo->id_tp_tratamento]['sigla'] =  $grupo->sigla;
                 $buffer[$grupo->id_tp_tratamento]['id'] =  $grupo->id;
 
-
                 array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
                     $buffer[$grupo->id_tp_tratamento]['atendimentos'] += $grupo->atendimentos :
                     $buffer[$grupo->id_tp_tratamento]['atendimentos'] = $grupo->atendimentos;
-            }
+
+                    if (isset($grupo->acompanhantes)) {
+                        array_key_exists("acompanhantes", $buffer[$grupo->id_tp_tratamento]) ?
+                        $buffer[$grupo->id_tp_tratamento]['acompanhantes'] += $grupo->acompanhantes :
+                        $buffer[$grupo->id_tp_tratamento]['acompanhantes'] = $grupo->acompanhantes;
+                    }
+
 
             $grupos = $buffer;
         }
 
         // Retornar a view com os dados
-        return view('relatorios.gerenciar-relatorio-atendimento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
     }
+    return view('relatorios.gerenciar-relatorio-atendimento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
+}
 
+
+
+
+}
 
     // public function teste()
     // {
     //     $pdf = \PDF::loadView('relatorios.teste');
     //     return $pdf->download('invoice.pdf');
     // }
-}
+
