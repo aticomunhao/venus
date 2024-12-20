@@ -1,3 +1,5 @@
+
+
 @extends('layouts.app')
 @section('title')
     Relatório de Atendimentos
@@ -82,7 +84,7 @@
                     <thead style="text-align: center; background-color: #d6e3ff; font-size: 14px; color: #000000;">
                         <tr>
 
-                            @if (count(current($grupos)) > 4)
+                            @if (count(current($grupos)) > 5)
                                 <th class="col-3">GRUPO</th>
                                 <th class="col">DIA</th>
                                 <th class="col">INICIO</th>
@@ -90,13 +92,14 @@
 
                             @endif
                             <th class="col-3">TRATAMENTO</th>
-                            <th class="col-2">ATENDIMENTOS</th>
+                            <th class="col-1">ASSISTIDOS</th>
+                            <th class="col-1">ACOMPANHANTES</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 14px; color: #000000; text-align: center;">
                         @foreach ($grupos as $trat)
                             <tr>
-                                @if (count(current($grupos)) > 4)
+                                @if (count(current($grupos)) > 5)
                                     <td>{{ $trat['nome'] }}</td>
                                     <td>{{ $trat['dia_semana'] }}</td>
                                     <td>{{ $trat['h_inicio'] }}</td>
@@ -105,6 +108,7 @@
                                 @endif
                                 <td>{{ $trat['descricao'] }} ({{ $trat['sigla'] }})</td>
                                 <td>{{ $trat['atendimentos'] }}</td>
+                                <td>{{ isset($trat['acompanhantes']) ?  $trat['acompanhantes'] : null }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -113,3 +117,5 @@
         </div>
     </div>
 @endsection
+
+
