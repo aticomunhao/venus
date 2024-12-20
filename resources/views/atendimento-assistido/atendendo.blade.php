@@ -181,27 +181,27 @@
                                                                             Tem certeza que deseja finalizar o atendimento
                                                                             de:
                                                                             <br /><span
-                                                                            
+
                                                                                 style="color:rgb(196, 27, 27);">{{ $assistidos->nm_1 }}</span>&#63;
 
 
                                                                         </div>
-                                                                        
+
                                                                         <center>
                                                                             <div class="col-9 mt-5">
                                                                                 <span
-                                                                                
+
                                                                                     style="color:rgb(196, 27, 27);">*</span>
-                                                                                Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
-                                                                                Utilizando para isso a ação de visualizar.
+                                                                                    Não esqueça de conferir se os seus encaminhamentos foram registrados corretamente,
+                                                                                    utilizando para isso o botão 'Meus Atendimentos'.
                                                                             </div>
                                                                         </center>
                                                                         <div class="col-10">
-                                                                    
+
 
 
                                                                         </div>
-                                                                        
+
                                                                         <div class="col-12 mt-3">
 
                                                                             <input class="form-check-input"
@@ -211,7 +211,7 @@
                                                                             <label class="emergencia" name="hello"
                                                                                 id="hello">Este atendimento é uma <span
                                                                                     style="color:rgb(196, 27, 27);">Emergência</span></label>
-                                                                            
+
                                                                         </div>
 
 
@@ -251,7 +251,7 @@
 
                                                                 <div class="row">
                                                                     <div class="col-12">
-                                                                      
+
                                                                         <br /><span
                                                                             style="color:rgb(255, 147, 7); font-weight: bold">Tem
                                                                             certeza que deseja continuar&#63;</span>
@@ -261,10 +261,10 @@
                                                                     <center>
                                                                         <div class="col-9 mt-5">
                                                                             <span
-                                                                            
+
                                                                                 style="color:rgb(255, 147, 7); font-weight: bold">*</span>
-                                                                            Não esqueça de conferir se os seus encaminhamentos foram registrados corretamentes,
-                                                                            Utilizando para isso a ação de visualizar.
+                                                                                Não esqueça de conferir se suas temáticas foram registradas corretamente,
+                                                                                utilizando para isso o botão 'Meus Atendimentos'.
                                                                         </div>
                                                                     </center>
 
@@ -304,7 +304,7 @@
 
                                                                 <div class="row">
                                                                     <div class="col-12">
-                                                                       
+
                                                                         <br /><span
                                                                             style="color:rgb(255, 147, 7); font-weight: bold">Tem
                                                                             certeza que deseja continuar&#63;</span>
@@ -314,10 +314,10 @@
                                                                     <center>
                                                                         <div class="col-9 mt-5">
                                                                             <span
-                                                                            
+
                                                                                 style="color:rgb(255, 147, 7); font-weight: bold">*</span>
-                                                                            Não esqueça de conferir se suas temáticas foram registrados corretamentes,
-                                                                            Utilizando para isso a ação de visualizar.
+                                                                                Não esqueça de conferir se suas temáticas foram registradas corretamente,
+                                                                                utilizando para isso o botão 'Meus Atendimentos'.
                                                                         </div>
                                                                     </center>
 
@@ -358,13 +358,13 @@
                                                                         certeza que deseja cancelar:<br /><span
                                                                             style="color:#DC4C64; font-weight: bold;">{{ $assistidos->nm_1 }} </span>&#63;</label>
                                                                     <br />
-                        
+
                                                                     <center>
                                                                         <div class="mb-2 col-10">
                                                                             <label class="col-form-label">Insira o motivo do
                                                                                 <span style="color:#DC4C64">cancelamento:</span></label>
                                                                             <select class="form-select teste1" name="motivo" required>
-                        
+
                                                                                 @foreach ($motivo as $motivos)
                                                                                     <option value="{{ $motivos->id }}">
                                                                                         {{ $motivos->descricao }} </option>
