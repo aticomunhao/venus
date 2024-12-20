@@ -48,7 +48,7 @@
 
         <hr>
 
-        <div class="table">
+        <div class="table">Total de assistidos: {{ $totalAssistidos }}
             <table
                 class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
@@ -235,7 +235,10 @@
                     @endforeach
                 </tbody>
             </table>
-        </div>
+        </div class="d-flex justify-content-center">
+        {{ $encaminhamentos->links('pagination::bootstrap-5') }}
+    </div>
+    </div>
     </div>
 
 
