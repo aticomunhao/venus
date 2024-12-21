@@ -64,7 +64,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             @endif
                             @if (in_array(35, $acesso))
                             <li><a class="dropdown-item" href="/gerenciar-relatorio-tratamento">Relatório de
-                                    Tratamento</a>
+                                    Tratamentos</a>
                             </li>
                         @endif
                             @if (in_array(34, $acesso))
@@ -147,7 +147,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             @endif
                             @if (in_array(35, $acesso))
                             <li><a class="dropdown-item" href="/gerenciar-relatorio-tratamento">Relatório de
-                                    Tratamento</a>
+                                    Tratamentos</a>
                             </li>
                         @endif
                             @if (in_array(31, $acesso))
@@ -225,7 +225,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             @endif --}}
                             @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-tratamento">Relatório de
-                                        Tratamento</a>
+                                        Tratamentos</a>
                                 </li>
                             @endif
                             @if (in_array(34, $acesso))
