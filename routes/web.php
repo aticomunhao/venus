@@ -408,7 +408,7 @@ Route::middleware('rotas:34')->group(function () {
 });
 
 //Relatório de Atendimentos
-Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'AtendimentosRel']);
+Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
 
 //Relatório de Reuniões
 Route::middleware('rotas:35')->group(function () {
