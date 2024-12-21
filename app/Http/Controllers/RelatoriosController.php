@@ -876,7 +876,8 @@ class RelatoriosController extends Controller
 
         // Consultar setores para o filtro
         $setores = DB::table('setor')
-            ->orderBy('nome');
+        ->whereIn('id', [48, 50, 46, 72])
+        ->orderBy('nome');
 
         // Consultar grupos
         $grupo2 =  DB::table('cronograma as cro')
@@ -1007,7 +1008,7 @@ class RelatoriosController extends Controller
 
         // Retornar a view com os dados
     }
-    return view('relatorios.gerenciar-relatorio-atendimento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
+    return view('relatorios.gerenciar-relatorio-tratamento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
 }
 
 
