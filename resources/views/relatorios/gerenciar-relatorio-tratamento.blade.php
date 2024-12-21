@@ -2,12 +2,12 @@
 
 @extends('layouts.app')
 @section('title')
-    Relatório de Atendimentos
+    Relatório de Tratamentos
 @endsection
 @section('content')
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family: calibri">
-            RELATÓRIO DE ATENDIMENTOS
+            RELATÓRIO DE TRATAMENTOS
         </h4>
         <br>
         <form action="/gerenciar-relatorio-atendimento" method="GET">
