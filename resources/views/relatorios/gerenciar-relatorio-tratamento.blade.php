@@ -10,7 +10,7 @@
             RELATÓRIO DE TRATAMENTOS
         </h4>
         <br>
-        <form action="/gerenciar-relatorio-atendimento" method="GET">
+        <form action="/gerenciar-relatorio-tratamento" method="GET">
             <div class="row align-items-center">
                 <!-- Data de Início -->
                 <div class="col-md-1 mb-2">
@@ -67,7 +67,7 @@
                 </div>
                 <!-- Botão Limpar -->
                 <div class="col-md-1 mb-2">
-                    <a href="/gerenciar-relatorio-atendimento">
+                    <a href="/gerenciar-relatorio-tratamento">
                         <button type="button" class="btn btn-light w-100"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin-top: 27px;">
                             Limpar
