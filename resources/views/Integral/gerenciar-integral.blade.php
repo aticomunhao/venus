@@ -94,7 +94,7 @@
                                         class="btn btn-outline-warning btn-sm tooltips" data-bs-toggle="modal"
                                         data-bs-target="#maca{{ $encaminhamento->id }}" disabled>
                                         <span class="tooltiptext">Maca</span>
-                                        <i class="bi bi-moon-stars" style="font-size: 1rem; color:#000;"></i>
+                                        <i class="fas fa-bed" style="font-size: 1rem; color:#000;"></i>
                                     </button>
                                 @else
                                     <!-- Button trigger modal (Ativo) -->
@@ -102,11 +102,9 @@
                                         class="btn btn-outline-warning btn-sm tooltips" data-bs-toggle="modal"
                                         data-bs-target="#maca{{ $encaminhamento->id }}">
                                         <span class="tooltiptext">Maca</span>
-                                        <i class="bi bi-moon-stars" style="font-size: 1rem; color:#000;"></i>
+                                        <i class="fas fa-bed" style="font-size: 1rem; color:#000;"></i>
                                     </button>
                                 @endif
-
-
 
                                 <a href="/visualizar-integral/{{ $encaminhamento->id }}" type="button"
                                     class="btn btn-outline-primary btn-sm tooltips">
@@ -114,12 +112,7 @@
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
                                         data-bs-target="#pessoa"></i>
                                 </a>
-
-
                                 </a>
-
-
-
                                 <form action="/maca-integral/{{ $encaminhamento->id }}">
                                     <!-- Modal -->
                                     <div class="modal fade" id="maca{{ $encaminhamento->id }}" tabindex="-1"
@@ -240,5 +233,7 @@
     </div>
     </div>
 
+    <!-- Incluindo FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
 @endsection
