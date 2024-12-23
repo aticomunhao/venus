@@ -326,11 +326,13 @@ class MembroController extends Controller
             $membroQuery->where(DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END)"), '=', $status);
         }
 
-        // Paginação dos resultados
-        $membro = $membroQuery->orderBy('status', 'asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
+    // Paginação dos resultados
+    $membro = $membroQuery->orderBy('status', 'asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
 
+    // Contagem total de membros sem considerar dt_fim
+    $contar = $membroQuery->whereNull('m.dt_fim')->count(); // Co
         // Retorno da view com os dados
-        return view('membro.gerenciar-membro', compact('membro', 'id', 'grupo', 'status', 'statu', 'grupos'));
+        return view('membro.gerenciar-membro', compact('contar','membro', 'id', 'grupo', 'status', 'statu', 'grupos'));
     }
 
     public function create()

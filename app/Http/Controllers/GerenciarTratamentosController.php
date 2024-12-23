@@ -22,7 +22,7 @@ class GerenciarTratamentosController extends Controller
 {
     public function index(Request $request)
     {
-        // try {
+        try {
 
         $now =  Carbon::now()->format('Y-m-d');
 
@@ -131,7 +131,7 @@ class GerenciarTratamentosController extends Controller
             }
         }
 
-
+        $contar = $lista->count('enc.id');
         $lista = $lista->orderby('tr.status', 'ASC')
             ->orderby('nm_1', 'ASC')
             ->orderby('at.id_prioridade', 'ASC')
@@ -140,9 +140,6 @@ class GerenciarTratamentosController extends Controller
                 'assist' => $assistido,
                 'cpf' => $cpf,
             ]);
-        //dd($lista)->get();
-
-        $contar = $lista->count('enc.id');
 
 
         $stat = DB::select("select
@@ -162,11 +159,11 @@ class GerenciarTratamentosController extends Controller
 
 
         return view('/recepcao-integrada/gerenciar-tratamentos', compact('cron', 'cronogramas', 'cpf', 'lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'now', 'dia', 'diaP', 'motivo'));
-        // } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-        //     $code = $e->getCode();
-        //     return view('tratamento-erro.erro-inesperado', compact('code'));
-        // }
+            $code = $e->getCode();
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+        }
     }
 
     public function destroy(Request $request, string $id)
