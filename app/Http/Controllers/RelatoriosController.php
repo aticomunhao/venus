@@ -1011,7 +1011,18 @@ class RelatoriosController extends Controller
     return view('relatorios.gerenciar-relatorio-tratamento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
 }
 
+public function Atendimentos(Request $request)
+{
 
+    $atendimento = DB::table('atendimentos as at')
+    ->leftJoin('pessoas as p','at.id_assistido','p.id')
+    ->leftJoin('encaminhamento as enc','at.id','enc.id')
+    ->leftJoin('tipo_tratamento as tt','enc.id','tt.id')
+    ->select('at.id','at.dh_inicio','at.dh_fim','at.dh_chegada','p.nome_completo','tt.descricao')
+    ->get();
+
+    return view('relatorios.gerenciar-relatorio-atendimento', compact('atendimento'));
+}
 
 
 }
