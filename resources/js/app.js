@@ -1,3 +1,5 @@
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 import './bootstrap';
 
 import '../sass/app.scss';
@@ -26,13 +28,13 @@ window.$ = $;
          .hide()
          .find('input[type=date]')
          .prop('required', false);
- 
+
      $('[name^=id_tp_mediunidade]').change(function() {
          $('.data_manifestou')
              .hide()
              .find('input[type=date]')
              .prop('required', false);
- 
+
          $('[name^=id_tp_mediunidade]:checked').each(function() {
              var tipoId = $(this).val();
              $('#data_inicio_' + tipoId)
@@ -43,6 +45,5 @@ window.$ = $;
      });
      $('[name^=id_tp_mediunidade]').change();
  });
- 
 
- 
+
