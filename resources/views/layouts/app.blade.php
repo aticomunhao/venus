@@ -52,7 +52,8 @@
     <!-- Outros links de head aqui -->
 
     <!-- Font Awesome manualmente -->
-    <link rel="stylesheet" href="{{ asset('font-awesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
+
 
 
 
