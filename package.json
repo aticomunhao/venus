@@ -20,6 +20,7 @@
         "bootstrap-icons": "^1.11.2",
         "bootstrap4-toggle": "^3.6.1",
         "bootstrap5-toggle": "^5.1.1",
+        "chart.js": "^4.4.7",
         "cloudflare": "^3.5.0",
         "crypto": "^1.0.1",
         "googleapis": "^140.0.1",
