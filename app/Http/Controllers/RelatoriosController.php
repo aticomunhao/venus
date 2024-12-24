@@ -1013,15 +1013,45 @@ class RelatoriosController extends Controller
 
 public function Atendimentos(Request $request)
 {
+    $now = Carbon::now()->format('Y-m-d');
+    $dt_inicio = $request->dt_inicio == null ? Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d') : $request->dt_inicio;
+    $dt_fim = $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
 
-    $atendimento = DB::table('atendimentos as at')
-    ->leftJoin('pessoas as p','at.id_assistido','p.id')
-    ->leftJoin('encaminhamento as enc','at.id','enc.id')
-    ->leftJoin('tipo_tratamento as tt','enc.id','tt.id')
-    ->select('at.id','at.dh_inicio','at.dh_fim','at.dh_chegada','p.nome_completo','tt.descricao')
-    ->get();
+    // Consulta base para registros completos
+    $atendimentos = DB::table('atendimentos as at')
+        ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+        ->leftJoin('encaminhamento as enc', 'at.id', 'enc.id')
+        ->leftJoin('tipo_tratamento as tt', 'enc.id', 'tt.id')
+        ->select('at.id', 'at.status_atendimento', 'at.menor_auto')
+        ->whereBetween('at.dh_inicio', [$dt_inicio, $dt_fim])
+        ->get();
 
-    return view('relatorios.gerenciar-relatorio-atendimento', compact('atendimento'));
+    // Contagens específicas com joins para garantir os mesmos critérios de filtragem
+    $finalizados = DB::table('atendimentos as at')
+        ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+        ->leftJoin('encaminhamento as enc', 'at.id', 'enc.id')
+        ->leftJoin('tipo_tratamento as tt', 'enc.id', 'tt.id')
+        ->where('at.status_atendimento', 6)
+        ->whereBetween('at.dh_inicio', [$dt_inicio, $dt_fim])
+        ->count();
+
+    $cancelados = DB::table('atendimentos as at')
+        ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+        ->leftJoin('encaminhamento as enc', 'at.id', 'enc.id')
+        ->leftJoin('tipo_tratamento as tt', 'enc.id', 'tt.id')
+        ->where('at.status_atendimento', 7)
+        ->whereBetween('at.dh_inicio', [$dt_inicio, $dt_fim])
+        ->count();
+
+    $menores = DB::table('atendimentos as at')
+        ->leftJoin('pessoas as p', 'at.id_assistido','p.id')
+        ->leftJoin('encaminhamento as enc', 'at.id', 'enc.id')
+        ->leftJoin('tipo_tratamento as tt', 'enc.id', 'tt.id')
+        ->where('at.menor_auto', true)
+        ->whereBetween('at.dh_inicio', [$dt_inicio, $dt_fim])
+        ->count();
+
+    return view('relatorios.gerenciar-relatorio-atendimento', compact('atendimentos', 'dt_inicio', 'dt_fim', 'finalizados', 'cancelados', 'menores'));
 }
 
 
