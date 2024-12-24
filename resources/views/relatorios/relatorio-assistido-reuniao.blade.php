@@ -127,7 +127,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Presenças de Assistidos'
+                            text: ' Assistidos'
                         }
                     }
                 },
@@ -155,7 +155,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Presenças de Trabalhadores'
+                            text: 'Trabalhadores'
                         }
                     }
                 },
