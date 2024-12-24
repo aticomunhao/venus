@@ -149,6 +149,11 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             <li><a class="dropdown-item" href="/gerenciar-relatorio-tratamento">Relatório de
                                     Tratamentos</a>
                             </li>
+                            @if (in_array(35, $acesso))
+                            <li><a class="dropdown-item" href="/gerenciar-relatorio-atendimento">Relatório de
+                                    Atendimentos</a>
+                            </li>
+                        @endif
                         @endif
                             @if (in_array(31, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-afi">Relatório de Presença
