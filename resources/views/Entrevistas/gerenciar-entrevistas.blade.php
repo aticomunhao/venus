@@ -16,7 +16,7 @@
                             <div class="col-4">
                                 Nome
                                 <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa"
-                                    value="{{ $nome_pesquisa }}">
+                                    value="{{ request('nome_pesquisa') }}">
                             </div>
 
                             <div class="col-3">
@@ -68,6 +68,7 @@
                         <thead style="text-align: center;">
                             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                                 {{-- <th class="col">Nr</th> --}}
+                                <th class="col">ID</th>
                                 <th class="col">DATA E HORÁRIO</th>
                                 <th class="col">PRIORIDADE</th>
                                 <th class="col">NOME</th>
@@ -82,6 +83,10 @@
                             @foreach ($informacoes as $informacao)
                                 <tr>
                                     {{-- <td>{{ $informacao->ide }}</td>Traz o ID do encaminhamento --}}
+                                    @if (in_array(36, session()->get('usuario.acesso')))
+                                        <td>{{ $informacao->ident ? 'ENT:' . $informacao->ident : 'ENC:' . $informacao->ide }}
+                                        </td>
+                                    @endif
                                     <td>{{ date('d/m/Y  G:i', strtotime($informacao->inicio)) }}</td>{{-- Prioridade do atendimento --}}
                                     <td>{{ $informacao->emergencia }}</td>{{-- Prioridade do atendimento --}}
                                     <td>{{ $informacao->nome_pessoa }}</td>{{-- Traz o nome do encaminhado --}}
@@ -90,7 +95,9 @@
                                     <td>{{ $informacao->numero }}</td>{{-- Sala que foi agendada a entrevista --}}
                                     <td>
                                         @if ($informacao->status === 1 && $informacao->status_encaminhamento_id === 6)
-                                            {{ $informacao->status_encaminhamento_descricao }}
+                                            Inativado
+                                        @elseif ($informacao->status_encaminhamento_id == 7 and $informacao->id_tipo_entrevista == 6)
+                                            Aguardando Requisitos
                                         @elseif ($informacao->status === 1)
                                             Aguardando agendamento
                                         @else
@@ -99,7 +106,7 @@
                                     </td>
                                     <td>
                                         {{-- Inicio botao editar --}}
-                                        @if ($informacao->status == 1 or $informacao->status == 6 or $informacao->status == 5)
+                                        @if ($informacao->status == 1 or $informacao->status > 4)
                                             <a href="#" type="button" class="btn btn-outline-warning btn-sm disabled"
                                                 data-tt="tooltip" data-placement="top" title="Editar" disabled>
                                                 <i class="bi bi-pencil"style="font-size: 1rem; color:#000;"></i>
@@ -112,7 +119,7 @@
                                             </a>
                                         @endif{{-- Fim botao editar --}}
 
-                                        @if ($informacao->status !== 1 or $informacao->status_encaminhamento_id === 6)
+                                        @if ($informacao->status != 1 or $informacao->status_encaminhamento_id == 7 and $informacao->id_tipo_entrevista == 6)
                                             {{-- Inicio botao Agendar --}}
                                             <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
                                                 data-tt="tooltip" data-placement="top" title="Agendar" disabled>
@@ -200,7 +207,7 @@
                                                 data-bs-target="#inativar{{ $informacao->ide }}" type="button"
                                                 class="btn btn-outline-danger btn-sm tooltips">
                                                 <span class="tooltiptext">Inativar</span>
-                                                <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
+                                                <i class="bi bi-slash-circle" style="font-size: 1rem; color:#000;"></i>
                                             </a>
 
                                             <form action="{{ route('cancelar', ['id' => $informacao->ide]) }}"
@@ -253,13 +260,13 @@
                                                     </div>
                                                 </div>
                                             </form>
-                                           @else
-                                           <a href="#" data-bs-toggle="modal"
-                                           data-bs-target="#inativar{{ $informacao->ide }}" type="button"
-                                           class="btn btn-outline-danger btn-sm tooltips disabled" >
-                                           <span class="tooltiptext">Inativar</span>
-                                           <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
-                                       </a>
+                                        @else
+                                            <a href="#" data-bs-toggle="modal"
+                                                data-bs-target="#inativar{{ $informacao->ide }}" type="button"
+                                                class="btn btn-outline-danger btn-sm tooltips disabled">
+                                                <span class="tooltiptext">Inativar</span>
+                                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                                            </a>
                                         @endif
 
                                         {{-- fim modal de inativação --}}

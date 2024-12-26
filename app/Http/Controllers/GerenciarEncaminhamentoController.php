@@ -252,7 +252,7 @@ class GerenciarEncaminhamentoController extends Controller
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
             ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
             ->where('at.id_assistido', $tratID->id_assistido)
-            ->where('enc.status_encaminhamento', '<', 5) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+            ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
             ->pluck('id_tipo_tratamento')->toArray();
 
         // Retorna todos os IDs dos encaminhamentos de entrevista
@@ -332,6 +332,8 @@ class GerenciarEncaminhamentoController extends Controller
             if ($tratID->id_tipo_tratamento == 1) {
                 //Caso ele tenha uma entrevista ou tratamento PTI ou PROAMO, é criado um tratamento permanente
                 if ((in_array(2, $countTratamentos) or in_array(4, $countTratamentos)) or (in_array(4, $countEntrevistas) or (in_array(6, $countEntrevistas)))) {
+
+                    // FIX Esse bug abaixo
 
                     /* XXX Caso um Integral Infinito
                     / consiga cancelar o PTD infinito, 

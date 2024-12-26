@@ -11,14 +11,14 @@
             </div>
             <br>
             <div class="card-body">
-                <form class="form-horizontal mt-2" method="post" action="/atualizar-entrevista/{{ $encaminhamento->id }}">
+                <form class="form-horizontal mt-2" method="post" action="/atualizar-entrevista/{{ $id }}">
                     @csrf
 
                     <div class="row mb-5">
                         <div class="col">
                             <label for="id_encaminhamento" class="form-label">Nome do assistido</label>
                             <select class="form-select" id="id_encaminhamento" name="id_encaminhamento"disabled>
-                                <option value="{{ $encaminhamento->id }}">{{ $entrevistas->nome_completo }}</option>
+                                <option value="{{ $id }}">{{ $entrevistas->nome_completo }}</option>
                             </select>
                         </div>
                     </div>
@@ -59,6 +59,8 @@
                                     value="{{ $entrevistas->hora }}">
                             </div>
                         </div>
+                    </div>
+                </div>
 
                         <br>
                         <div class="form-group row">
