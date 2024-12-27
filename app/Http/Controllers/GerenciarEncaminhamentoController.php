@@ -270,7 +270,7 @@ class GerenciarEncaminhamentoController extends Controller
         $tfiInfinito = $tfiInfinito ? $countTratamentos[$tfiInfinito] : false; // Caso tenha encontrado, retorna os dados de Integral
         $tfiInfinito = $tfiInfinito ? ($tfiInfinito->dt_fim == null and $tfiInfinito->id != null and in_array(6, array_column($countTratamentos, 'id_tipo_tratamento'))) : false; // Confere se é um Integral Permanente caso os dados existam
 
-        // O encaminhamento não seja PTD (Cujo é permitido exder as vagas) e o número de Vagas seja menor ou igual ao de tratamentos
+        // O encaminhamento não seja PTD (Cujo é permitido exceder as vagas) e o número de Vagas seja menor ou igual ao de tratamentos
         if ($tratID->id_tipo_tratamento != 1 and $countVagas >= $maxAtend->max_atend) {
             app('flasher')->addError('Número de vagas insuficientes');
             return redirect()->back();
