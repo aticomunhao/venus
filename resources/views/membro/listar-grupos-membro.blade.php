@@ -37,22 +37,22 @@
                     </div>
                     <!-- Pesquisar Button -->
                     <div class="col-xxl-1 col-lg-4 mt-3">
-                        <input class="btn btn-light btn-sm col-6 col-12 mt-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"
-                            type="submit" value="Pesquisar">
+                        <input class="btn btn-light btn-sm col-6 col-12 mt-2"
+                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;" type="submit" value="Pesquisar">
                     </div>
                     <!-- Limpar Button -->
                     <div class="col-xxl-1 col-lg-4">
                         <a href="/gerenciar-grupos-membro">
-                            <input class="btn btn-light btn-sm col-6 col-12 mt-4" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"
-                                type="button" value="Limpar">
+                            <input class="btn btn-light btn-sm col-6 col-12 mt-4"
+                                style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;" type="button" value="Limpar">
                         </a>
                     </div>
                     <!-- Novo Membro Button -->
                     @if (in_array(13, session()->get('usuario.acesso')))
                         <div class="col-xxl-2 col-lg-4">
                             <a href="/criar-membro">
-                                <input class="btn btn-success btn-sm col-12 mt-4" style="font-size: 0.9rem; white-space: nowrap;"
-                                    type="button" value="Novo Membro +">
+                                <input class="btn btn-success btn-sm col-12 mt-4"
+                                    style="font-size: 0.9rem; white-space: nowrap;" type="button" value="Novo Membro +">
                             </a>
                         </div>
                     @endif
@@ -66,10 +66,11 @@
                 class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
                 <thead>
                     <tr style="background-color: #d6e3ff; font-size: 14px; color: #000000">
-                        <th>GRUPO</th>
-                        <th>SETOR</th>
-                        <th>STATUS</th>
-                        <th>AÇÕES</th>
+                        <th style="width: 35%;">GRUPO</th>
+                        <th style="width: 10%;">SETOR</th>
+                        <th style="width: 10%;">STATUS</th>
+                        <th style="width: 07%;">CRONOGRAMA</th>
+                        <th style="width: 10%;">AÇÕES</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -77,37 +78,36 @@
                         <tr>
                             <td>{{ $membros->nome_grupo }}</td>
                             <td>{{ $membros->sigla }}</td>
-
                             <td>{{ $membros->status }}</td>
                             <td>
-                                <div class="d-flex justify-content-center">
-                                    <!-- Botão de Detalhes com o Popover -->
-                                    <button type="button" class="btn btn-outline-primary btn-sm me-2 tooltips"
-                                        data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true"
-                                        data-bs-title="Detalhes da reunião"
-                                        data-bs-content="
-                                            <strong>Grupo:</strong> {{ $membros->nome_grupo }}<br>
-                                            <strong>Setor:</strong> {{ $membros->sigla }}<br>
-                                            <strong>Dia:</strong> {{ $membros->dia }}<br>
-                                            <strong>Início:</strong> {{ \Carbon\Carbon::parse($membros->h_inicio)->format('H:i') }}<br>
-                                            <strong>Fim:</strong> {{ \Carbon\Carbon::parse($membros->h_fim)->format('H:i') }}<br>
-                                            <strong>Sala:</strong> {{ $membros->sala }}"
-                                        style="font-size: 0.8rem; padding: 5px 10px;">
-                                        <i class="bi bi-search tooltips" style="font-size: 1rem; color:#000;"></i>
-                                        <span class="tooltiptext">Visualizar Reunião</span>
-                                    </button>
-                                    <!-- Botão de Gerenciar -->
-                                    <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
-                                        class="btn btn-outline-warning btn-sm tooltips">
-                                        <span class="tooltiptext">Gerenciar</span>
-                                        <i class="bi bi-gear" style="font-size: 1rem; color:#000;"></i>
+                                <button type="button" class="btn btn-link p-0 text-decoration-none tooltips"
+                                    data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true"
+                                    data-bs-title="Detalhes da reunião"
+                                    data-bs-content="
+                                        <strong>Grupo:</strong> {{ $membros->nome_grupo }}<br>
+                                        <strong>Setor:</strong> {{ $membros->sigla }}<br>
+                                        <strong>Dia:</strong> {{ $membros->dia }}<br>
+                                        <strong>Início:</strong> {{ \Carbon\Carbon::parse($membros->h_inicio)->format('H:i') }}<br>
+                                        <strong>Fim:</strong> {{ \Carbon\Carbon::parse($membros->h_fim)->format('H:i') }}<br>
+                                        <strong>Sala:</strong> {{ $membros->sala }}">
+                                    <span class="tooltiptext">Visualizar reunião </span>
+                                    <i class="fa-solid fa-circle-info"></i>
                                     </a>
-                                </div>
+                                </button>
                             </td>
-                    @endforeach
-                </tbody>
-            </table>
+                            <td>
+                                <!-- Botão de Gerenciar -->
+                                <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
+                                    class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Gerenciar</span>
+                                    <i class="bi bi-gear" style="font-size: 1rem; color:#000;"></i>
+                                </a>
         </div>
+        </td>
+        @endforeach
+        </tbody>
+        </table>
+    </div>
 
     </div class="d-flex justify-content-center">
     {{ $membro_cronograma->links('pagination::bootstrap-5') }}
