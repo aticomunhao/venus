@@ -28,11 +28,11 @@
                     <div class="form-group row">
                         <div class="col">
                             <label for="disabledTextInput" class="form-label">Assistido:</label>
-                            <input type="text" id="" value="{{$result[0]->nm_1}}" class="form-control" placeholder="Disabled input" disabled>
+                            <input type="text" id="" value="{{$result[0]->nm_1}}" class="form-control" disabled>
                         </div>
                         <div class="col-2">
                             <label for="disabledTextInput" class="form-label">Sexo:</label>
-                            <input type="text" id="" value="{{$result[0]->tipo}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
+                            <input type="text" id="" value="{{$result[0]->tipo}}" style="text-align:center;" class="form-control" disabled>
                         </div>
                         <div class="col-3">
                             <label for="disabledTextInput" class="form-label">Dt nascimento:</label>
@@ -87,7 +87,7 @@
                         <tbody>
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$results->ide}}</td>
-                                <td>{{date ('d-m-Y', strtotime($results->dh_enc))}}</td>
+                                <td>{{date ('d-m-Y', strtotime($results->dt_inicio))}}</td>
                                 <td>{{$results->desctrat}}</td>
                                 <td>{{$results->nomeg}}</td>
                                 <td>{{$results->rm_inicio}}</td>

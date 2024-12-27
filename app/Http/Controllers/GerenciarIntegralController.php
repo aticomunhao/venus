@@ -15,8 +15,9 @@ class GerenciarIntegralController extends Controller
     {
 
 
-        try {
+       // try {
 
+            // Retorna todos os cronogramas de tratamento Integral
             $dirigentes = DB::table('membro as mem')
                 ->select('ass.id_pessoa', 'gr.nome', 'cr.id', 'gr.status_grupo', 'd.nome as dia')
                 ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
@@ -24,25 +25,36 @@ class GerenciarIntegralController extends Controller
                 ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
                 ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
                 ->where('cr.id_tipo_tratamento', 6)
-                // ->where('cr.status_reuniao', '<>', 2)
                 ->distinct('gr.id');
 
-                if(!in_array(36,session()->get('usuario.acesso'))){
-                    $dirigentes =  $dirigentes->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
-                    ->where('id_funcao', '<', 3);
-                }
+            // Caso o usuário não seja Master Admin, retorna apenas os cronogramas no qual ele é dirigente ou subdirigente
+            if (!in_array(36, session()->get('usuario.acesso'))) {
+                $dirigentes =  $dirigentes->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
+                    ->where('id_funcao', '<', 3); // 1 => Dirigente, 2 => Sub-Dirigente
+            }
 
-                $dirigentes = $dirigentes->get();
+            $dirigentes = $dirigentes->get();
+
+            // Guarda os IDs dos cronogramas selecionados
             $grupos_autorizados = [];
             foreach ($dirigentes as $dir) {
                 $grupos_autorizados[] = $dir->id;
             }
 
-
-
-
+            // Retorna todos os tratamentos ativos em todas as reuniões
             $encaminhamentos = DB::table('tratamento as tr')
-                ->select('tr.id', 'p.nome_completo', 'cro.h_inicio', 'cro.h_fim', 'gr.nome', 'tr.dt_fim', 'tse.nome as status', 'tr.status as id_status', 'tr.maca')
+                ->select(
+                    'tr.id',
+                    'atd.id as ida',
+                    'p.nome_completo',
+                    'cro.h_inicio',
+                    'cro.h_fim',
+                    'gr.nome',
+                    'tr.dt_fim',
+                    'tse.nome as status',
+                    'tr.status as id_status',
+                    'tr.maca'
+                )
                 ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
                 ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
@@ -55,33 +67,50 @@ class GerenciarIntegralController extends Controller
 
 
 
+            // Caso seja pesquisado um nome
             if ($request->nome_pesquisa) {
                 $encaminhamentos = $encaminhamentos->where('p.nome_completo', 'ilike', "%$request->nome_pesquisa%");
             }
+
+            // Pesquisa de Grupo
             $selected_grupo = $request->grupo;
-            if ($request->grupo) {
+            if ($request->grupo) { // Caso um cronograma seja pesquisado
                 $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', $request->grupo);
-            }
-            if (!$request->grupo) {
-                $selected_grupo = $grupos_autorizados[0];
-                $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', $grupos_autorizados[0]);
+            } else { // Caso não seja pesquisado, traz um valor padrão
+                $selected_grupo = current($grupos_autorizados);
+                $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', current($grupos_autorizados));
             }
 
-            $vagas = DB::table('cronograma')->where('id', $selected_grupo)->pluck('max_atend')->toArray();
-            $ocupadas = DB::table('tratamento')->whereNot('maca', null)->where('id_reuniao', $selected_grupo)->pluck('maca')->toArray();
-
-            $macasDisponiveis = array_diff(range(1, current($vagas)), $ocupadas);
             $encaminhamentos = $encaminhamentos->get()->toArray();
+            $hoje = Carbon::today();
+            foreach ($encaminhamentos as $key => $encaminhamento) {
 
-        } catch (\Exception $e) {
+                // Busca se existe um PTD para este assistido e retorna dados para faltas
+                $encaminhamentoPTD = DB::table('tratamento as tr')
+                    ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+                    ->where('enc.id_atendimento', $encaminhamento->ida)
+                    ->where('enc.id_tipo_tratamento', 1)
+                    ->select('tr.id')
+                    ->first();
 
-            app('flasher')->addError("Você não tem autorização para acessar esta página");
-            return redirect('/login/valida');
-        }
+                $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
+                if ($encaminhamento->dt_fim) {
+                    $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_fim));
+                } else {
+                    $encaminhamento->contagem = null;
+                }
+            }
+            // Usado para Macas
+            $vagas = DB::table('cronograma')->where('id', $selected_grupo)->pluck('max_atend')->toArray(); // Retorna o número máximo de assistidos de um cronograma
+            $ocupadas = DB::table('tratamento')->whereNot('maca', null)->where('id_reuniao', $selected_grupo)->pluck('maca')->toArray(); // Retorna um array com todas as macas ocuopadas do grupo
+            $macasDisponiveis = array_diff(range(1, current($vagas)), $ocupadas); // Gera os números das macas e retira as ocupadas
 
 
-
-        return view('Integral.gerenciar-integral', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'macasDisponiveis'));
+            return view('Integral.gerenciar-integral', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'macasDisponiveis'));
+        // } catch (\Exception $e) {
+        //     app('flasher')->addError("Você não tem autorização para acessar esta página");
+        //     return redirect('/login/valida');
+        // }
     }
 
     /**
@@ -111,18 +140,38 @@ class GerenciarIntegralController extends Controller
      */
     public function show(string $id)
     {
-          try{
+        //try {
+
+        // Traz todos os dados do assistido e do Tratamento
         $result = DB::table('tratamento AS tr')
-            ->select('enc.id AS ide', 'tr.id AS idtr', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.dt_nascimento', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid',  'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tx.tipo', 'p4.nome_completo AS nm_4', 'at.dh_inicio', 'at.dh_fim', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'gr.nome AS nomeg', 'rm.h_inicio AS rm_inicio', 'tm.tipo AS tpmotivo', 'sat.descricao AS statat', 'sl.numero as sala')
+            ->select(
+                'enc.id AS ide',
+                'tr.dt_inicio',
+                'tr.dt_fim',
+                'tse.descricao AS tsenc',
+                'at.id AS ida',
+                'p1.dt_nascimento',
+                'p1.nome_completo AS nm_1',
+                'p2.nome_completo as nm_2',
+                'pa.nome',
+                'tt.descricao AS desctrat',
+                'tx.tipo',
+                'p4.nome_completo AS nm_4',
+                'at.dh_inicio',
+                'at.dh_fim',
+                'gr.nome AS nomeg',
+                'rm.h_inicio AS rm_inicio',
+                'tm.tipo AS tpmotivo',
+                'sat.descricao AS statat',
+                'sl.numero as sala'
+            )
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
             ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
             ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-            ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
             ->leftjoin('associado as ass', 'at.id_atendente', 'ass.id')
             ->leftjoin('pessoas AS p4', 'ass.id_pessoa', 'p4.id')
             ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-            ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
             ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
             ->leftJoin('tipo_status_atendimento AS sat', 'at.status_atendimento', 'sat.id')
             ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
@@ -134,6 +183,7 @@ class GerenciarIntegralController extends Controller
             ->where('tr.id', $id)
             ->first();
 
+        // Busca se existe um PTD para este assistido e retorna dados para faltas
         $encaminhamento = DB::table('tratamento as tr')
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
             ->where('enc.id_atendimento', $result->ida)
@@ -141,21 +191,28 @@ class GerenciarIntegralController extends Controller
             ->select('tr.id')
             ->first();
 
-
-        $list = DB::table('tratamento AS tr')
-            ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.presenca', 'dc.data', 'gp.nome')
+        // Traz todas as presenças do assistido nesse Tratamento
+        $list = DB::table('presenca_cronograma AS dt')
+            ->select(
+                'dt.id AS idp',
+                'dt.presenca',
+                'dc.data',
+                'gp.nome',
+            )
+            ->leftJoin('tratamento as tr','dt.id_tratamento' , 'tr.id')
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-            ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
             ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
             ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
             ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
             ->where('tr.id', $id)
             ->get();
 
-
+        // Conta a quantidade de faltas do assistido nesse Tratamento
         $faul = DB::table('tratamento AS tr')
-            ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp',  'dt.presenca')
+            ->select(
+                'dt.presenca'
+            )
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
             ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
@@ -163,23 +220,33 @@ class GerenciarIntegralController extends Controller
             ->where('dt.presenca', 0)
             ->count();
 
-            $list2 = [];
-            $faul2 = '';
+        // Inicializa as variáveis, logo que existe uma chance que elas não sejam inicializadas no IF
+        $list2 = [];
+        $faul2 = '';
 
-        if ($encaminhamento) {
-            $list2 = DB::table('tratamento AS tr')
-                ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.presenca', 'dc.data', 'gp.nome')
+        if ($encaminhamento) { // Caso tenha um encaminhamento PTD
+            // Retorna as faltas do PTD
+            $list2 = DB::table('presenca_cronograma AS dt')
+                ->select(
+                    'dt.id AS idp',
+                    'dt.presenca',
+                    'dc.data',
+                    'gp.nome'
+                )
+                ->leftJoin('tratamento AS tr','dt.id_tratamento' , 'tr.id')
                 ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-                ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
                 ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
                 ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
                 ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
                 ->where('tr.id', $encaminhamento->id)
                 ->get();
 
+            // Conta a quantidade de Faltas no PTD
             $faul2 = DB::table('tratamento AS tr')
-                ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp',  'dt.presenca')
+                ->select(
+                    'dt.presenca'
+                )
                 ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                 ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
@@ -187,14 +254,13 @@ class GerenciarIntegralController extends Controller
                 ->count();
         }
 
-        return view('Integral.historico-integral', compact('result', 'list', 'faul', 'list2', 'faul2'));
-    }
-    catch(\Exception $e){
+        return view('Integral.historico-integral', compact('result', 'list', 'faul', 'list2', 'faul2', 'encaminhamento'));
+        // } catch (\Exception $e) {
 
-        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode( ));
-        return redirect()->back();
-            }
-        }
+        //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+        //     return redirect()->back();
+        // }
+    }
     /**
      * Show the form for editing the specified resource.
      */

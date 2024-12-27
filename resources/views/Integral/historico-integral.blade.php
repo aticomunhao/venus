@@ -13,7 +13,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            HISTÓRICO DO TRATAMENTO
+                            HISTÓRICO DO TRATAMENTO @if(!$encaminhamento) - <span style="color:red">Este assistido não está em um Tratamento PTD!</span> @endif
                         </div>
                     </div>
                 </div>
@@ -68,7 +68,8 @@
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
                                 <td class="col">NR</td>
-                                <td class="col">DATA</td>
+                                <td class="col">INICIO</td>
+                                <td class="col">FIM</td>
                                 <td class="col">TRATAMENTO</td>
                                 <td class="col">GRUPO</td>
                                 <td class="col">HORÁRIO</td>
@@ -81,7 +82,8 @@
                         <tbody>
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$result->ide}}</td>
-                                <td>{{date ('d-m-Y', strtotime($result->dh_enc))}}</td>
+                                <td>{{date ('d-m-Y', strtotime($result->dt_inicio))}}</td>
+                                <td>{{$result->dt_fim ? date('d-m-Y', strtotime($result->dt_fim)) : '-'}}</td>
                                 <td>{{$result->desctrat}}</td>
                                 <td>{{$result->nomeg}}</td>
                                 <td>{{$result->rm_inicio}}</td>

@@ -153,7 +153,13 @@ class GerenciarEntrevistaController extends Controller
         $motivo = DB::table('tipo_motivo_entrevista')->get(); // Usado no Select de Motivo no Modal de Inativação
 
         $informacoes = $this->paginate($informacoes, 50); // Pagina o Array
-        $informacoes->withPath(''); // Usado para que ao trocar de página, as pesquisas se mantenham
+        $informacoes->withPath('')->appends(
+            [
+                'status' => $request->status,
+                'tipo_entrevista' => $request->tipo_entrevista,
+                'nome_pesquisa' => $request->nome_pesquisa
+            ]
+        ); // Usado para que ao trocar de página, as pesquisas se mantenham
         return view('Entrevistas.gerenciar-entrevistas', compact('tipo_entrevista', 'totalAssistidos', 'informacoes', 'pesquisaValue', 'status', 'motivo'));
     }
 
@@ -527,8 +533,8 @@ class GerenciarEntrevistaController extends Controller
                 ->where('id_encaminhamento', $id)
                 ->update(['status' => 5,]);
 
-            // Atualiza o status do Encaminhamento para Finalizado // FIX conferir se esse status está certo
-            DB::table('encaminhamento')->where('id', $id)->update(['status_encaminhamento' => 5]);
+            // Atualiza o status do Encaminhamento para Finalizado
+            DB::table('encaminhamento')->where('id', $id)->update(['status_encaminhamento' => 3]);
         }
 
         // Insere os dados na tabela de audit
@@ -609,35 +615,49 @@ class GerenciarEntrevistaController extends Controller
 
 
             $ptdAtivo = DB::table('tratamento as t')
-            ->select('t.id','t.dt_fim', 'c.dia_semana')
-            ->leftJoin('encaminhamento as e', 't.id_encaminhamento','e.id')
-            ->leftJoin('atendimentos as a','e.id_atendimento','a.id')
-            ->leftJoin('cronograma as c','t.id_reuniao','c.id')
-            ->where('a.id_assistido',$idAssistido)
-            ->where('t.status','<', 3)
-            ->where('e.id_tipo_tratamento', 1)
-            ->first();
+                ->select('t.id', 'e.id as ide', 't.dt_fim', 'c.dia_semana')
+                ->leftJoin('encaminhamento as e', 't.id_encaminhamento', 'e.id')
+                ->leftJoin('atendimentos as a', 'e.id_atendimento', 'a.id')
+                ->leftJoin('cronograma as c', 't.id_reuniao', 'c.id')
+                ->where('a.id_assistido', $idAssistido)
+                ->where('t.status', '<', 3)
+                ->where('e.id_tipo_tratamento', 1)
+                ->first();
 
-            // Caso aquela entrevista tenha um PTD marcado, e ele seja infinito, tire de infinito
+            // Caso aquela entrevista tenha um PTD marcado, e ele seja infinito, e o motivo do cancelamento foi alta da avaliação, tire de infinito
             $ptdAtivoInfinito = $ptdAtivo ? $ptdAtivo->dt_fim == null : false; //
-            if($ptdAtivoInfinito){
-                $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
-                
+            $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
+            if ($ptdAtivoInfinito and $motivo_entrevista == 11) {
+
                 // Caso o tratamento seja num dia da semana anterior ou igual a hoje
-                if($data < $dataFim or $data == $dataFim){
+                if ($data < $dataFim or $data == $dataFim) {
                     DB::table('tratamento')
-                    ->where('id', $ptdAtivo->id)
-                    ->update([
-                        'dt_fim' => $dataFim->addWeek(8)
-                    ]);
-                }else{ // Caso seja num dia da semana superior a hoje
+                        ->where('id', $ptdAtivo->id)
+                        ->update([
+                            'dt_fim' => $dataFim->addWeek(8)
+                        ]);
+                } else { // Caso seja num dia da semana superior a hoje
                     DB::table('tratamento')
-                    ->where('id', $ptdAtivo->id)
-                    ->update([
-                        'dt_fim' => $dataFim->addWeek(7)
-                    ]);
+                        ->where('id', $ptdAtivo->id)
+                        ->update([
+                            'dt_fim' => $dataFim->addWeek(7)
+                        ]);
                 }
-            }
+            } else if ($ptdAtivoInfinito) { // Caso não seja Alta, Cancela o PTD Infinito junto com a entrevista
+
+                DB::table('tratamento')
+                    ->where('id', $ptdAtivo->id)
+                    ->update([
+                        'dt_fim' => $dataFim,
+                        'status' => 6, // Inativado
+                    ]);
+
+                DB::table('encaminhamento')
+                    ->where('id', $ptdAtivo->ide)
+                    ->update([
+                        'status_encaminhamento' => 4 // Inativado
+                    ]);
+            } // Caso não seja alta da avaliação, finaliza o tratamento ptd
 
             // Cancela o encaminhamento da entrevista selecionada
             DB::table('encaminhamento')
@@ -652,19 +672,17 @@ class GerenciarEntrevistaController extends Controller
                 ->where('id_encaminhamento', $id)
                 ->update(['status' => 6]); // Entrevista Cancelada 
 
-
-
         }
 
-            DB::table('historico_venus')->insert([
-    
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'data' => $data,
-                'fato' => 14, // Inativou a Entrevista
-                'obs' => $id
-    
-            ]);
-    
+        DB::table('historico_venus')->insert([
+
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'fato' => 14, // Inativou a Entrevista
+            'obs' => $id
+
+        ]);
+
         return redirect()->route('gerenciamento')->with('success', 'Entrevista Cancelada com Sucesso!');
         // } catch (\Exception $e) {
         //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
