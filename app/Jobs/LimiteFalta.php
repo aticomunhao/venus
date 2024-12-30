@@ -29,48 +29,56 @@ class LimiteFalta implements ShouldQueue
     public function handle(): void
     {
 
-
-
-
+        // Retorna todas as faltas de todos os tratamentos ativos
         $tratamentos_faltas = DB::table('presenca_cronograma as pc')
             ->select('pc.id_tratamento', 'dc.data')
             ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
-            ->where('pc.id_tratamento', '<>', null)
-            ->where('pc.presenca', false)
-            ->whereIn('enc.status_encaminhamento', [3, 4])
+            ->whereNot('pc.id_tratamento', null) // Apenas tratamentos, sem Avulsos
+            ->where('pc.presenca', false) // Falta
+            ->where('enc.status_encaminhamento', 2)
             ->get()->toArray();
 
+        // Organiza os dados por ID tratamento, para facilitar o foreach
         $arrayTratamentoFaltas = array();
         foreach ($tratamentos_faltas as $element) {
             $arrayTratamentoFaltas[$element->id_tratamento][] = $element->data;
         }
 
-       
 
+        // Para cada ID tratamento
         foreach ($arrayTratamentoFaltas as $key => $faltas) {
-            $consecutivo = 1;
-            foreach ($faltas as $falta) {
-                foreach ($faltas as $faltaCross) {
+            $consecutivo = 1; // Contagem de faltas consecutivas
 
+            foreach ($faltas as $falta) { // Para cada falta
+                foreach ($faltas as $faltaCross) { // Para cada falta
+
+                    // Confere se as faltas são consecutivas com as ultimas, aumentando a contagem
                     if (Carbon::parse($falta)->addWeek($consecutivo) == Carbon::parse($faltaCross)) {
                         $consecutivo += 1;
                     }
                 }
-                if ($consecutivo > 2) {
+
+                // Caso alcance a terceira falta consecutiva
+                if ($consecutivo > 3) {
+
+                    // Descobre o id_encaminhamento do tratamento atual
                     $id_encaminhamento = DB::table('tratamento')->select('id_encaminhamento')->where('id', $key)->first();
+
+                    // Inativa o tratamento por faltas
                     DB::table('tratamento')
                         ->where('id', $key)
                         ->update([
-                            'status' => 5
+                            'status' => 5 // Finalizado por faltas
                         ]);
 
+                    // Inativa o encaminhamento
                     DB::table('encaminhamento')
                         ->where('id', $id_encaminhamento->id_encaminhamento)
                         ->update([
-                            'status_encaminhamento' => 6
+                            'status_encaminhamento' => 4 // Inativado
                         ]);
                 }
             }

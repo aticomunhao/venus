@@ -28,6 +28,7 @@ class GerenciarEncaminhamentoController extends Controller
         in_array(16, session()->get('usuario.acesso')) ? array_push($tratamentos_permitidos, 1) : 0; // Se tiver permissão PTD, adiciona o ID de PTD
         in_array(22, session()->get('usuario.acesso')) ? array_push($tratamentos_permitidos, 2) : 0; // Se tiver permissão PTI, adiciona o ID de PTI
         in_array(23, session()->get('usuario.acesso')) ? array_push($tratamentos_permitidos, 6) : 0; // Se tiver permissão Integral, adiciona o ID de Integral
+        in_array(40, session()->get('usuario.acesso')) ? array_push($tratamentos_permitidos, 4) : 0; // Se tiver permissão PROAMO, adiciona o ID de PROAMO
 
         $lista = $lista->whereIn('enc.id_tipo_tratamento', $tratamentos_permitidos); // Busca apenas os IDs Permitidos na tela
 
@@ -262,7 +263,10 @@ class GerenciarEncaminhamentoController extends Controller
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
             ->where('enc.id_tipo_encaminhamento', 1) // Encaminhamento de Entrevista
             ->where('at.id_assistido', $tratID->id_assistido)
-            ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+            ->where(function($query){
+                $query->where('enc.status_encaminhamento', '<', 3); // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+                $query->orWhere('enc.status_encaminhamento', 7); // Entrevista Proamo Aguardando Requisitos
+            })
             ->pluck('id_tipo_entrevista')->toArray();
 
 
@@ -346,7 +350,7 @@ class GerenciarEncaminhamentoController extends Controller
                         'id_encaminhamento' => $ide,
                         'status' => 1,
                         'dt_inicio' => $data_antes,
-                        'dt_fim' => $data_antes->copy()->addWeek(8) // Adiciona 8 semanas, pois o PTD tem 8 semanas de duração,
+                        'dt_fim' => $data_antes->copy()->addWeek(7) // Adiciona 8 semanas, pois o PTD tem 8 semanas de duração,
                     ]);
                 }
             } elseif ($tratID->id_tipo_tratamento == 2 or $tratID->id_tipo_tratamento == 4) { // PTI ou PROAMO

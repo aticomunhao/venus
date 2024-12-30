@@ -7,6 +7,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\Faltas;
 use App\Jobs\FaltasTrabalhador;
+use App\Jobs\FilaEncaminhamentos;
 use App\Jobs\FimSemanas;
 use App\Jobs\LimiteFalta;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,7 @@ class Kernel extends ConsoleKernel
           $schedule->job( new DiasCronograma());
           $schedule->job( new LimiteFalta());
           $schedule->job( new FimSemanas());
+          $schedule->job( new FilaEncaminhamentos());
     }
 
     /**

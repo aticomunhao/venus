@@ -150,7 +150,7 @@ class GerenciarEntrevistaController extends Controller
 
 
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get(); // Traz os itens para pesquisa de Status
-        $motivo = DB::table('tipo_motivo_entrevista')->get(); // Usado no Select de Motivo no Modal de Inativação
+       $motivo = DB::table('tipo_motivo_entrevista')->orderBy('descricao')->get(); // Usado no Select de Motivo no Modal de Inativação
 
         $informacoes = $this->paginate($informacoes, 50); // Pagina o Array
         $informacoes->withPath('')->appends(

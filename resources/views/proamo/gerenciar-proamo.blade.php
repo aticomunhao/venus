@@ -60,23 +60,17 @@
                             <td>{{ $encaminhamento->h_fim }}</td>
                             <td>{{ $encaminhamento->status }}</td>
                             <td>
-                                @if (is_null($encaminhamento->dt_fim))
+                                @if ($encaminhamento->id_status != 1)
                                 <button type="button" class="btn btn-outline-warning btn-sm tooltips"
                                 data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
                                 <span class="tooltiptext">Declarar Alta</span>
                                 <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
                             </button>
-                                @elseif($encaminhamento->id_status == 1)
+                                @else
                                 <button type="button" disabled class="btn btn-outline-warning btn-sm tooltips"
                                 data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
                                 <span class="tooltiptext">Declarar Alta</span>
-                                <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>
-                            </button>
-                                @else
-                                <button type="button" class="btn btn-outline-warning btn-sm tooltips"
-                                data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
-                                <span class="tooltiptext">Sem limite</span>
-                                <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>
+                                <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
                             </button>
                                 @endif
 
@@ -101,30 +95,13 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                        <a href="/alta-integral/{{ $encaminhamento->id }}" class="btn btn-primary">Confirmar</a>
+                                        <a href="/alta-proamo/{{ $encaminhamento->id }}" class="btn btn-primary">Confirmar</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Modal Retirar Limite -->
-                        <div class="modal fade" id="modal{{ $encaminhamento->id }}" tabindex="-1" aria-labelledby="modalLabel{{ $encaminhamento->id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-danger text-white">
-                                        <h5 class="modal-title">Retirar Tempo Limite</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Tem certeza que deseja retirar o limite de semanas de <span class="text-danger">{{ $encaminhamento->nome_completo }}</span>?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                        <a href="/alta-integral/{{ $encaminhamento->id }}" class="btn btn-primary">Confirmar</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                      
                     @endforeach
                 </tbody>
             </table>

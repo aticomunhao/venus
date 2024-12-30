@@ -13,111 +13,106 @@ class GerenciarProamoController extends Controller
      */
     public function index(Request $request)
     {
-            // Retorna todos os cronogramas de tratamento Integral
-            $dirigentes = DB::table('membro as mem')
-                ->select('ass.id_pessoa', 'gr.nome', 'cr.id', 'gr.status_grupo', 'd.nome as dia')
-                ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
-                ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
-                ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
-                ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
-                ->where('cr.id_tipo_tratamento', 4)
-                ->distinct('gr.id');
+        // Retorna todos os cronogramas de tratamento Integral
+        $dirigentes = DB::table('membro as mem')
+            ->select('ass.id_pessoa', 'gr.nome', 'cr.id', 'gr.status_grupo', 'd.nome as dia')
+            ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
+            ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
+            ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
+            ->where('cr.id_tipo_tratamento', 4)
+            ->distinct('gr.id');
 
-            // Caso o usuário não seja Master Admin, retorna apenas os cronogramas no qual ele é dirigente ou subdirigente
-            if (!in_array(36, session()->get('usuario.acesso'))) {
-                $dirigentes =  $dirigentes->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
-                    ->where('id_funcao', '<', 3); // 1 => Dirigente, 2 => Sub-Dirigente
-            }
+        // Caso o usuário não seja Master Admin, retorna apenas os cronogramas no qual ele é dirigente ou subdirigente
+        if (!in_array(36, session()->get('usuario.acesso'))) {
+            $dirigentes =  $dirigentes->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
+                ->where('id_funcao', '<', 3); // 1 => Dirigente, 2 => Sub-Dirigente
+        }
 
-            $dirigentes = $dirigentes->get();
+        $dirigentes = $dirigentes->get();
 
-            // Guarda os IDs dos cronogramas selecionados
-            $grupos_autorizados = [];
-            foreach ($dirigentes as $dir) {
-                $grupos_autorizados[] = $dir->id;
-            }
+        // Guarda os IDs dos cronogramas selecionados
+        $grupos_autorizados = [];
+        foreach ($dirigentes as $dir) {
+            $grupos_autorizados[] = $dir->id;
+        }
 
-            // Retorna todos os tratamentos ativos em todas as reuniões
-            $encaminhamentos = DB::table('tratamento as tr')
-                ->select(
-                    'tr.id',
-                    'atd.id as ida',
-                    'p.nome_completo',
-                    'cro.h_inicio',
-                    'cro.h_fim',
-                    'gr.nome',
-                    'tr.dt_fim',
-                    'tse.nome as status',
-                    'tr.status as id_status',
-                    'tr.maca'
-                )
+        // Retorna todos os tratamentos ativos em todas as reuniões
+        $encaminhamentos = DB::table('tratamento as tr')
+            ->select(
+                'tr.id',
+                'atd.id as ida',
+                'p.nome_completo',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'gr.nome',
+                'tr.dt_fim',
+                'tse.nome as status',
+                'tr.status as id_status',
+                'tr.maca'
+            )
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+            ->leftJoin('pessoas as p', 'atd.id_assistido', 'p.id')
+            ->leftJoin('tipo_status_tratamento as tse', 'tr.status', 'tse.id')
+            ->where('enc.id_tipo_tratamento', 4)
+            ->whereIn('tr.status', [1, 2])
+            ->whereIn('tr.id_reuniao', $grupos_autorizados);
+
+
+        // Caso seja pesquisado um nome
+        if ($request->nome_pesquisa) {
+            $encaminhamentos = $encaminhamentos->where('p.nome_completo', 'ilike', "%$request->nome_pesquisa%");
+        }
+
+        // Pesquisa de Grupo
+        $selected_grupo = $request->grupo;
+        if ($request->grupo) { // Caso um cronograma seja pesquisado
+            $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', $request->grupo);
+        } else { // Caso não seja pesquisado, traz um valor padrão
+            $selected_grupo = current($grupos_autorizados);
+            $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', current($grupos_autorizados));
+        }
+
+        $encaminhamentos = $encaminhamentos->get()->toArray();
+        $hoje = Carbon::today();
+        foreach ($encaminhamentos as $key => $encaminhamento) {
+
+            // Busca se existe um PTD para este assistido e retorna dados para faltas
+            $encaminhamentoPTD = DB::table('tratamento as tr')
                 ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-                ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
-                ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
-                ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
-                ->leftJoin('pessoas as p', 'atd.id_assistido', 'p.id')
-                ->leftJoin('tipo_status_tratamento as tse', 'tr.status', 'tse.id')
-                ->where('enc.id_tipo_tratamento', 4)
-                ->whereIn('tr.status', [1, 2])
-                ->whereIn('tr.id_reuniao', $grupos_autorizados);
+                ->where('enc.id_atendimento', $encaminhamento->ida)
+                ->where('enc.id_tipo_tratamento', 1)
+                ->select('tr.id')
+                ->first();
 
-
-            // Caso seja pesquisado um nome
-            if ($request->nome_pesquisa) {
-                $encaminhamentos = $encaminhamentos->where('p.nome_completo', 'ilike', "%$request->nome_pesquisa%");
+            $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
+            if ($encaminhamento->dt_fim) {
+                $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_fim));
+            } else {
+                $encaminhamento->contagem = null;
             }
+        }
 
-            // Pesquisa de Grupo
-            $selected_grupo = $request->grupo;
-            if ($request->grupo) { // Caso um cronograma seja pesquisado
-                $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', $request->grupo);
-            } else { // Caso não seja pesquisado, traz um valor padrão
-                $selected_grupo = current($grupos_autorizados);
-                $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', current($grupos_autorizados));
-            }
-
-            $encaminhamentos = $encaminhamentos->get()->toArray();
-            $hoje = Carbon::today();
-            foreach ($encaminhamentos as $key => $encaminhamento) {
-
-                // Busca se existe um PTD para este assistido e retorna dados para faltas
-                $encaminhamentoPTD = DB::table('tratamento as tr')
-                    ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-                    ->where('enc.id_atendimento', $encaminhamento->ida)
-                    ->where('enc.id_tipo_tratamento', 1)
-                    ->select('tr.id')
-                    ->first();
-
-                $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
-                if ($encaminhamento->dt_fim) {
-                    $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_fim));
-                } else {
-                    $encaminhamento->contagem = null;
-                }
-            }
-           
-            return view('Proamo.gerenciar-proamo', compact('encaminhamentos', 'dirigentes', 'selected_grupo'));
-      
+        return view('proamo.gerenciar-proamo', compact('encaminhamentos', 'dirigentes', 'selected_grupo'));
     }
 
-   
+
     public function create()
     {
         //
     }
 
-   
-    public function store(Request $request, String $id)
-    {
 
-      
-    }
+    public function store(Request $request, String $id) {}
 
 
-    
+
     public function show(string $id)
     {
-        
+
 
         // Traz todos os dados do assistido e do Tratamento
         $result = DB::table('tratamento AS tr')
@@ -176,7 +171,7 @@ class GerenciarProamoController extends Controller
                 'dc.data',
                 'gp.nome',
             )
-            ->leftJoin('tratamento as tr','dt.id_tratamento' , 'tr.id')
+            ->leftJoin('tratamento as tr', 'dt.id_tratamento', 'tr.id')
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
             ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
@@ -210,7 +205,7 @@ class GerenciarProamoController extends Controller
                     'dc.data',
                     'gp.nome'
                 )
-                ->leftJoin('tratamento AS tr','dt.id_tratamento' , 'tr.id')
+                ->leftJoin('tratamento AS tr', 'dt.id_tratamento', 'tr.id')
                 ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                 ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
@@ -231,19 +226,17 @@ class GerenciarProamoController extends Controller
                 ->count();
         }
 
-        return view('Proamo.visualizar-proamo', compact('result', 'list', 'faul', 'list2', 'faul2', 'encaminhamento'));
-       
-    }
-   
-    public function edit(string $id)
-    {
-    
+        return view('proamo.visualizar-proamo', compact('result', 'list', 'faul', 'list2', 'faul2', 'encaminhamento'));
     }
 
-    
+    public function edit(string $id) {}
+
+
     public function update(Request $request, string $id)
     {
-        
-    
-}
+        $hoje = Carbon::today();
+        $id_encaminhamento = DB::table('tratamento')->where('id', $id)->first();
+        DB::table('tratamento')->where('id', $id)->update(['status' => 4, 'dt_fim' => $hoje]);
+        DB::table('encaminhamento')->where('id', $id_encaminhamento->id_encaminhamento)->update(['status_encaminhamento' => 3]);
+    }
 }

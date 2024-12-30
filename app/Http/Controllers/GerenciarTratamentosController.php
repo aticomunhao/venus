@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Jobs\DiasCronograma;
 use App\Jobs\DiasCronogramaOntem;
+use App\Jobs\EntrevistaProamo;
 use App\Jobs\Faltas;
 use App\Jobs\FaltasTrabalhador;
+use App\Jobs\FilaEncaminhamentos;
 use App\Jobs\FimSemanas;
 use App\Jobs\LimiteFalta;
 use Illuminate\Database\Query\JoinClause;
@@ -376,7 +378,7 @@ class GerenciarTratamentosController extends Controller
                 'enc.id AS ide',
                 'tr.id AS idtr',
                 'enc.id_tipo_encaminhamento',
-                'dh_enc',
+                'tr.dt_inicio',
                 'enc.id_atendimento',
                 'enc.status_encaminhamento',
                 'tse.descricao AS tsenc',
@@ -478,6 +480,8 @@ class GerenciarTratamentosController extends Controller
         FimSemanas::dispatch();
         Faltas::dispatch();
         FaltasTrabalhador::dispatch();
+        FilaEncaminhamentos::dispatch();
+        EntrevistaProamo::dispatch();
 
         return redirect()->back();
     }

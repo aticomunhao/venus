@@ -345,7 +345,7 @@ Route::middleware('rotas:25')->group(function () {
 });
 
 //Gerenciar Assistido Proamo
-Route::middleware('rotas:25')->group(function () {
+Route::middleware('rotas:41')->group(function () {
     Route::get('/gerenciar-proamo', [GerenciarProamoController::class, 'index']);
     Route::get('/alta-proamo/{id}', [GerenciarProamoController::class, 'update']);
     Route::get('/visualizar-proamo/{id}', [GerenciarProamoController::class, 'show']);
