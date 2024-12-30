@@ -119,11 +119,7 @@
 
 
 
-                            <a href="/visualizar-integral/{{ $encaminhamento->id }}" type="button"
-                                class="btn btn-outline-primary btn-sm tooltips">
-                                <span class="tooltiptext">Visualizar</span>
-                                <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
-                            </a>
+                           
 
 
                             </a>
