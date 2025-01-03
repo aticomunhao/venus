@@ -196,8 +196,8 @@ class RelatoriosController extends Controller
             ->rightJoin('tipo_temas as tm', 'rt.id_tematica', 'tm.id')
             ->where('at.dh_chegada', '>=', $dt_inicio)
             ->where('at.dh_chegada', '<', $dt_fim)
-            ->groupBy('nm_tca')
-            ->select('nm_tca', DB::raw("count(*) as total"))
+            ->groupBy('nm_tca', 'rt.id')
+            ->select('nm_tca', 'rt.id', DB::raw("count(*) as total"))
             ->get();
 
         $tematicas = json_decode(json_encode($tematicas), true);
@@ -209,7 +209,7 @@ class RelatoriosController extends Controller
         }
 
 
-        return view('relatorios.tematicas', compact('tematicasArray', 'dt_inicio', 'dt_fim'));
+        return view('relatorios.tematicas', compact('tematicasArray', 'dt_inicio', 'dt_fim', 'tematicas'));
     }
 
     /**
@@ -876,8 +876,8 @@ class RelatoriosController extends Controller
 
         // Consultar setores para o filtro
         $setores = DB::table('setor')
-        ->whereIn('id', [48, 50, 46, 72])
-        ->orderBy('nome');
+            ->whereIn('id', [48, 50, 46, 72])
+            ->orderBy('nome');
 
         // Consultar grupos
         $grupo2 =  DB::table('cronograma as cro')
@@ -925,41 +925,39 @@ class RelatoriosController extends Controller
                 ->leftJoin('encaminhamento as enc', 'tra.id', 'enc.id')
                 ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
                 ->where('id_reuniao', $grupo->id)
-                ->where(function($query) use ($dt_inicio, $dt_fim){
+                ->where(function ($query) use ($dt_inicio, $dt_fim) {
 
                     // Data Inicio Tratamento
-                    $query->where(function($subQuery) use ($dt_inicio, $dt_fim){
-                        $subQuery->where(function($innerQuery) use ($dt_inicio, $dt_fim){
+                    $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
+                        $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
                             $innerQuery->where('tra.dt_inicio', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
                         });
                         $subQuery->orWhere('tra.dt_inicio', '<', $dt_inicio);
                     });
 
                     // Data Fim Tratamento
-                    $query->where(function($subQuery) use ($dt_inicio, $dt_fim){
-                        $subQuery->where(function($innerQuery) use ($dt_inicio, $dt_fim){
+                    $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
+                        $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
                             $innerQuery->where('tra.dt_fim', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
                         });
                         $subQuery->orWhere('tra.dt_fim', '>', $dt_fim);
                         $subQuery->orWhere('tra.dt_fim', NULL);
                     });
-
                 })
                 ->count();
 
-                $passes = DB::table('dias_cronograma')
+            $passes = DB::table('dias_cronograma')
                 ->where('id_cronograma', $grupo->id)
                 ->where('data', '>=', $dt_inicio)
                 ->where('data', '<', $dt_fim)
                 ->sum('nr_acompanhantes');
 
-            if($grupo->id_tp_tratamento == 3){ // Caso seja um grupo de PTH, conta os assistidos
-               $grupos[$key]->atendimentos =  $passes;
-            }else{
+            if ($grupo->id_tp_tratamento == 3) { // Caso seja um grupo de PTH, conta os assistidos
+                $grupos[$key]->atendimentos =  $passes;
+            } else {
                 $grupos[$key]->atendimentos =  $tratamentosAtivos;
                 $grupos[$key]->acompanhantes =  $passes;
             }
-
         }
 
 
@@ -979,8 +977,7 @@ class RelatoriosController extends Controller
                     $buffer[$grupo->id]['h_fim'] = $grupo->h_fim;
                     $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento;
 
-                   isset( $grupo->acompanhantes) ?  $buffer[$grupo->id]['acompanhantes'] = $grupo->acompanhantes : null;
-
+                    isset($grupo->acompanhantes) ?  $buffer[$grupo->id]['acompanhantes'] = $grupo->acompanhantes : null;
                 }
             }
             $grupos = $buffer;
@@ -996,65 +993,56 @@ class RelatoriosController extends Controller
                     $buffer[$grupo->id_tp_tratamento]['atendimentos'] += $grupo->atendimentos :
                     $buffer[$grupo->id_tp_tratamento]['atendimentos'] = $grupo->atendimentos;
 
-                    if (isset($grupo->acompanhantes)) {
-                        array_key_exists("acompanhantes", $buffer[$grupo->id_tp_tratamento]) ?
+                if (isset($grupo->acompanhantes)) {
+                    array_key_exists("acompanhantes", $buffer[$grupo->id_tp_tratamento]) ?
                         $buffer[$grupo->id_tp_tratamento]['acompanhantes'] += $grupo->acompanhantes :
                         $buffer[$grupo->id_tp_tratamento]['acompanhantes'] = $grupo->acompanhantes;
-                    }
+                }
 
 
-            $grupos = $buffer;
+                $grupos = $buffer;
+            }
+
+            // Retornar a view com os dados
+        }
+        return view('relatorios.gerenciar-relatorio-tratamento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
+    }
+
+    public function Atendimentos(Request $request)
+    {
+        $now = Carbon::now()->format('Y-m-d');
+        $dt_inicio = $request->dt_inicio == null ? Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d') : $request->dt_inicio;
+        $dt_fim = $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
+
+
+
+        $atendimentos = DB::table('atendimentos as at')
+        ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+            ->where('at.dh_chegada', '>=', $dt_inicio)
+            ->where('at.dh_chegada', '<', $dt_fim);
+
+
+        if ($request->status_atendimento == 1) {
+            $nomeStatus = DB::table('tipo_status_atendimento')->where('id', $request->status_atendimento)->first();
+            $dadosChart = [
+                $nomeStatus->descricao => (clone $atendimentos)->where('at.status_atendimento', $request->status_atendimento)->count(),
+            ];
+        } else if ($request->status_atendimento == 2) {
+            $dadosChart = [
+                'Homens' => (clone $atendimentos)->where('p.sexo', 1)->count(),
+                'Mulheres' => (clone $atendimentos)->where('p.sexo', 2)->count(),
+            ];
+        } else {
+            $dadosChart = [
+                'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->count(),
+                'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->count(),
+                'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
+            ];
         }
 
-        // Retornar a view com os dados
+
+        return view('relatorios.gerenciar-relatorio-atendimento', compact('dt_inicio', 'dt_fim', 'dadosChart'));
     }
-    return view('relatorios.gerenciar-relatorio-tratamento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
-}
-
-public function Atendimentos(Request $request)
-{
-    $now = Carbon::now()->format('Y-m-d');
-    $dt_inicio = $request->dt_inicio == null ? Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d') : $request->dt_inicio;
-    $dt_fim = $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
-
-    // Consulta base para registros completos
-    $atendimentos = DB::table('atendimentos as at')
-        ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
-        ->leftJoin('encaminhamento as enc', 'at.id', 'enc.id')
-        ->leftJoin('tipo_tratamento as tt', 'enc.id', 'tt.id')
-        ->select('at.id', 'at.status_atendimento', 'at.menor_auto')
-        ->whereBetween('at.dh_inicio', [$dt_inicio, $dt_fim])
-        ->get();
-
-    // Contagens específicas com joins para garantir os mesmos critérios de filtragem
-    $finalizados = DB::table('atendimentos as at')
-        ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
-        ->leftJoin('encaminhamento as enc', 'at.id', 'enc.id')
-        ->leftJoin('tipo_tratamento as tt', 'enc.id', 'tt.id')
-        ->where('at.status_atendimento', 6)
-        ->whereBetween('at.dh_inicio', [$dt_inicio, $dt_fim])
-        ->count();
-
-    $cancelados = DB::table('atendimentos as at')
-        ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
-        ->leftJoin('encaminhamento as enc', 'at.id', 'enc.id')
-        ->leftJoin('tipo_tratamento as tt', 'enc.id', 'tt.id')
-        ->where('at.status_atendimento', 7)
-        ->whereBetween('at.dh_inicio', [$dt_inicio, $dt_fim])
-        ->count();
-
-    $menores = DB::table('atendimentos as at')
-        ->leftJoin('pessoas as p', 'at.id_assistido','p.id')
-        ->leftJoin('encaminhamento as enc', 'at.id', 'enc.id')
-        ->leftJoin('tipo_tratamento as tt', 'enc.id', 'tt.id')
-        ->where('at.menor_auto', true)
-        ->whereBetween('at.dh_inicio', [$dt_inicio, $dt_fim])
-        ->count();
-
-    return view('relatorios.gerenciar-relatorio-atendimento', compact('atendimentos', 'dt_inicio', 'dt_fim', 'finalizados', 'cancelados', 'menores'));
-}
-
-
 }
 
     // public function teste()
@@ -1062,4 +1050,3 @@ public function Atendimentos(Request $request)
     //     $pdf = \PDF::loadView('relatorios.teste');
     //     return $pdf->download('invoice.pdf');
     // }
-

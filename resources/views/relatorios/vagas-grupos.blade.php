@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-    Relatório de Temáticas
+    Relatório de Vagas em Grupos
 @endsection
 @section('content')
     <div class="container-fluid">
