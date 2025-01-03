@@ -35,6 +35,7 @@ class PresencaDirigenteController extends Controller
             ->groupBy('gr.nome','cr.h_inicio','cr.h_fim','d.nome','s.sigla','sl.numero','cr.id')->orderBy('gr.nome','asc');
 
 
+
             if(in_array(36,session()->get('usuario.acesso'))){
 
             }elseif(in_array(37,session()->get('usuario.acesso'))){
@@ -63,8 +64,8 @@ class PresencaDirigenteController extends Controller
         ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
         ->where('m.dt_fim', null)
         ->where('m.id_cronograma', $reunioesDirigentes[0])
-        ->whereNot('m.id_funcao',  6); // Exclui id_funcao e 6
-
+        ->whereNot('m.id_funcao',  6) // Exclui id_funcao e 6
+        ->orderBy('m.id_funcao', 'ASC','p.nome_completo');
         // Filtra pelo nome do setor se estiver presente na requisição
         if ($request->nome_setor) {
             $query->where('m.id', $request->nome_setor);
