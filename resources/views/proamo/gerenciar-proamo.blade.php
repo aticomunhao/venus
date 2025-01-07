@@ -40,7 +40,10 @@
         </div>
 
         <hr>
-        <span class="text-danger" style="font-size: 14px;">*Assistidos sem PTD</span>
+        <div class="col">
+            <span class="text-danger" style="font-size: 14px;">*Assistidos sem PTD</span>
+            <span class="text-warning" style="font-size: 14px;">*Assistidos em Análise</span>
+        </div>
         <div class="col">
             <table
                 class="table table-sm table-striped table-bordered border-secondary table-hover text-center align-middle">
@@ -56,35 +59,40 @@
                 </thead>
                 <tbody>
                     @foreach ($encaminhamentos as $encaminhamento)
-                        <tr class="{{ $encaminhamento->ptd ? '' : 'table-danger' }}">
-                            <td>{{ $encaminhamento->id }}</td>
-                            <td>{{ $encaminhamento->nome_completo }}</td>
-                            <td>{{ $encaminhamento->nome }}</td>
-                            <td>{{ $encaminhamento->h_inicio }}</td>
-                            <td>{{ $encaminhamento->h_fim }}</td>
-                            <td>{{ $encaminhamento->status }}</td>
-                            <td>
-                                @if ($encaminhamento->id_status != 1)
-                                    <button type="button" class="btn btn-outline-warning btn-sm tooltips"
-                                        data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
-                                        <span class="tooltiptext">Declarar Alta</span>
-                                        <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
-                                    </button>
-                                @else
-                                    <button type="button" disabled class="btn btn-outline-warning btn-sm tooltips"
-                                        data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
-                                        <span class="tooltiptext">Declarar Alta</span>
-                                        <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
-                                    </button>
-                                @endif
+                        @if (!$encaminhamento->ptd)
+                            <tr class="table-danger">
+                            @elseif($encaminhamento->id_status == 2 and $encaminhamento->contagem < 31)
+                            <tr class="table-warning">
+                            @else
+                            <tr>
+                        @endif
 
-                                <a href="/visualizar-proamo/{{ $encaminhamento->id }}" type="button"
-                                    class="btn btn-outline-primary btn-sm tooltips">
-                                    <span class="tooltiptext">Visualizar</span>
-                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"
-                                        data-bs-target="#pessoa"></i>
-                                </a>
-                            </td>
+                        <td>{{ $encaminhamento->nome_completo }}</td>
+                        <td>{{ $encaminhamento->nome }}</td>
+                        <td>{{ $encaminhamento->h_inicio }}</td>
+                        <td>{{ $encaminhamento->h_fim }}</td>
+                        <td>{{ $encaminhamento->status }}</td>
+                        <td>
+                            @if ($encaminhamento->id_status != 1)
+                                <button type="button" class="btn btn-outline-warning btn-sm tooltips"
+                                    data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
+                                    <span class="tooltiptext">Declarar Alta</span>
+                                    <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
+                                </button>
+                            @else
+                                <button type="button" disabled class="btn btn-outline-warning btn-sm tooltips"
+                                    data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
+                                    <span class="tooltiptext">Declarar Alta</span>
+                                    <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
+                                </button>
+                            @endif
+
+                            <a href="/visualizar-proamo/{{ $encaminhamento->id }}" type="button"
+                                class="btn btn-outline-primary btn-sm tooltips">
+                                <span class="tooltiptext">Visualizar</span>
+                                <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
+                            </a>
+                        </td>
                         </tr>
 
                         <!-- Modal Declarar Alta -->
@@ -113,7 +121,7 @@
                     @endforeach
                 </tbody>
             </table>
-        </div> 
         </div>
+    </div>
     </div>
 @endsection

@@ -65,11 +65,7 @@
 
                 <tbody>
                     @foreach ($encaminhamentos as $encaminhamento)
-                        @if ($encaminhamento->ptd)
-                            <tr>
-                            @else
-                            <tr class="table-danger">
-                        @endif
+                       <tr class="{{ $encaminhamento->ptd ? 'table-danger': '' }}">
                         <td>{{ $encaminhamento->id }}</td>
                         <td>{{ $encaminhamento->nome_completo }}</td>
                         <td>{{ $encaminhamento->nome }}</td>

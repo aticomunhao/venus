@@ -49,7 +49,8 @@ class GerenciarProamoController extends Controller
                 'tr.dt_fim',
                 'tse.nome as status',
                 'tr.status as id_status',
-                'tr.maca'
+                'tr.maca',
+                'atd.id_assistido'
             )
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
@@ -80,15 +81,18 @@ class GerenciarProamoController extends Controller
         $hoje = Carbon::today();
         foreach ($encaminhamentos as $key => $encaminhamento) {
 
-            // Busca se existe um PTD para este assistido e retorna dados para faltas
+            // Busca se existe um PTD ou PTI para este assistido e retorna dados para faltas
             $encaminhamentoPTD = DB::table('tratamento as tr')
                 ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-                ->where('enc.id_atendimento', $encaminhamento->ida)
-                ->where('enc.id_tipo_tratamento', 1)
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->where('enc.id_atendimento', $encaminhamento->id_assistido)
+                ->whereIn('enc.id_tipo_tratamento', [1, 2]) // PTD e PTI
+                ->where('status_encaminhamento', '<', 3) // Finalizado
                 ->select('tr.id')
                 ->first();
 
             $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
+
             if ($encaminhamento->dt_fim) {
                 $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_fim));
             } else {

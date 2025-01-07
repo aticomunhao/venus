@@ -25,7 +25,7 @@ class GerenciarEntrevistaController extends Controller
 
     public function index(Request $request)
     {
-
+ // FIX existe um bug que ocorre quando um PROAMO tem seu PTD encerrado por faltas
         $setores = array(); // Inicializa um Array
         foreach (session()->get('acessoInterno') as $perfil) {
 
