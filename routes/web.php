@@ -30,6 +30,7 @@ use App\Http\Controllers\GerenciarTratamentosController;
 use App\Http\Controllers\GerenciarEntrevistaController;
 use App\Http\Controllers\GerenciarPTIController;
 use App\Http\Controllers\GerenciarIntegralController;
+use App\Http\Controllers\GerenciarProamoController;
 use App\Http\Controllers\GerenciarPerfil;
 use App\Http\Controllers\GerenciarSetor;
 use App\Http\Controllers\GerenciarVersoesController;
@@ -341,6 +342,13 @@ Route::middleware('rotas:25')->group(function () {
     Route::get('/alta-integral/{id}', [GerenciarIntegralController::class, 'update']);
     Route::get('/visualizar-integral/{id}', [GerenciarIntegralController::class, 'show']);
     Route::any('/maca-integral/{id}', [GerenciarIntegralController::class, 'store']);
+});
+
+//Gerenciar Assistido Proamo
+Route::middleware('rotas:41')->group(function () {
+    Route::get('/gerenciar-proamo', [GerenciarProamoController::class, 'index']);
+    Route::get('/alta-proamo/{id}', [GerenciarProamoController::class, 'update']);
+    Route::get('/visualizar-proamo/{id}', [GerenciarProamoController::class, 'show']);
 });
 
 // Gerenciar Perfis

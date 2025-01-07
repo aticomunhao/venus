@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Jobs\DiasCronograma;
 use App\Jobs\DiasCronogramaOntem;
+use App\Jobs\EntrevistaProamo;
 use App\Jobs\Faltas;
 use App\Jobs\FaltasTrabalhador;
+use App\Jobs\FilaEncaminhamentos;
 use App\Jobs\FimSemanas;
 use App\Jobs\LimiteFalta;
 use Illuminate\Database\Query\JoinClause;
@@ -66,9 +68,7 @@ class GerenciarTratamentosController extends Controller
         $data_enc = $request->dt_enc;
 
         $diaP = $request->dia;
-
         $assistido = $request->assist;
-
         $situacao = $request->status;
         $cron = $request->grupo;
 
@@ -137,10 +137,15 @@ class GerenciarTratamentosController extends Controller
             ->orderby('at.id_prioridade', 'ASC')
             ->paginate(50)
             ->appends([
-                'assist' => $assistido,
-                'cpf' => $cpf,
+                'dt_enc' => $data_enc, // Caso troque de pagina, matém a pesquisa de dt_enc
+                'dia' => $diaP,
+                'grupo' => $cron,
+                'assist' => $assistido, // Caso troque de pagina, mantém a pesquisa de Assisitido
+                'tratamento' => $request->tratamento, // Caso troque de pagina, matém a pesquisa de tratamento
+                'status' => $situacao, // Caso troque de pagina, matém a pesquisa de  status
             ]);
 
+    
 
         $stat = DB::select("select
         ts.id,
@@ -169,43 +174,101 @@ class GerenciarTratamentosController extends Controller
     public function destroy(Request $request, string $id)
     {
 
-        try {
-
+      //  try {
             $hoje = Carbon::today();
             $tratamento = DB::table('tratamento')->where('id', $id)->first();
 
+            $today = Carbon::today()->format('Y-m-d');
 
-            DB::table('tratamento')->where('id', $id)->update(['status' => 6, 'motivo' => $request->motivo, 'dt_fim' => $hoje]);
-            DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 5]);
+            $idAssistido = DB::table('encaminhamento')->where('encaminhamento.id', $tratamento->id_encaminhamento)
+                ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
+                ->pluck('atendimentos.id_assistido')->toArray();
+
+            // Retorna todos os IDs dos encaminhamentos de tratamento
+            $countTratamentos = DB::table('encaminhamento as enc')
+                ->select('id_tipo_tratamento', 't.dt_fim', 't.id')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->leftJoin('tratamento as t', 'enc.id', 't.id_encaminhamento')
+                ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
+                ->where('at.id_assistido', $idAssistido)
+                ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+                ->whereNot('enc.id', $tratamento->id_encaminhamento) // Exclui o tratamento de agora
+                ->get()->toArray();
+
+            // Retorna todos os IDs dos encaminhamentos de entrevista
+            $countEntrevistas = DB::table('encaminhamento as enc')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->where('enc.id_tipo_encaminhamento', 1) // Encaminhamento de Entrevista
+                ->where('at.id_assistido', $idAssistido)
+                ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+                ->pluck('id_tipo_entrevista')->toArray();
 
 
-            // Recupera o nome completo da pessoa associado ao id_usuario
-            $nomePessoa = DB::table('pessoas')
-                ->where('id', session()->get('usuario.id_usuario'))
-                ->value('nome_completo');
+            $tfiInfinito = array_search(6, array_column($countTratamentos, 'id_tipo_tratamento')); // Busca, caso exista, a array key dos dados de Integral
+            $tfiInfinito = $tfiInfinito ? $countTratamentos[$tfiInfinito] : false; // Caso tenha encontrado, retorna os dados de Integral
+            $tfiInfinito = $tfiInfinito ? ($tfiInfinito->dt_fim == null and $tfiInfinito->id != null and in_array(6, array_column($countTratamentos, 'id_tipo_tratamento'))) : false; // Confere se é um Integral Permanente caso os dados existam
+            // Essa é a clausula para um PTD infinito que está sendo apoiado em outro tratamento
+            //      Tratamento PTI                                                         Entrevista NUTRES (PTI)                Tratamento PROAMO                                             Entrevista DIAMO (PROAMO)   Tratamento Integral Permanente
+            if (in_array(2, array_column($countTratamentos, 'id_tipo_tratamento')) or in_array(4, $countEntrevistas) or in_array(4, array_column($countTratamentos, 'id_tipo_tratamento')) or in_array(6, $countEntrevistas) or $tfiInfinito) {
 
-            // Realiza a inserção na tabela 'historico_venus'
-            DB::table('historico_venus')->insert([
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'data' => $hoje,
-                'fato' => 24,
-                'obs' => 'Tratamento inativado',
-                'pessoa' => $nomePessoa,
-            ]);
+                // Não executa nenhum comando especial, apenas o padrão do método
 
+            } else {
 
+                $ptdAtivo = DB::table('tratamento as t')
+                    ->select('t.id', 'e.id as ide', 't.dt_fim', 'c.dia_semana')
+                    ->leftJoin('encaminhamento as e', 't.id_encaminhamento', 'e.id')
+                    ->leftJoin('atendimentos as a', 'e.id_atendimento', 'a.id')
+                    ->leftJoin('cronograma as c', 't.id_reuniao', 'c.id')
+                    ->where('a.id_assistido', $idAssistido)
+                    ->where('t.status', '<', 3)
+                    ->where('e.id_tipo_tratamento', 1)
+                    ->first();
 
-            app('flasher')->addSuccess('O tratamento foi inativado.');
+                // Caso aquela entrevista tenha um PTD marcado, e ele seja infinito, e o motivo do cancelamento foi alta da avaliação, tire de infinito
+                $ptdAtivoInfinito = $ptdAtivo ? $ptdAtivo->dt_fim == null : false; //
+                $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
+                if ($ptdAtivoInfinito) {
+
+                    // Inativa o PTD infinito
+                  DB::table('tratamento')
+                        ->where('id', $ptdAtivo->id)
+                        ->update([
+                            'dt_fim' => $dataFim,
+                            'status' => 6, // Inativado
+                        ]);
+
+                    // Inativa o encaminhamento do PTD infinito
+                    DB::table('encaminhamento')
+                        ->where('id', $ptdAtivo->ide)
+                        ->update([
+                            'status_encaminhamento' => 4 // Inativado
+                        ]);
+                }
+            }
+
+            DB::table('encaminhamento AS enc') // Atualiza o encaminhamento para cancelado
+                ->where('enc.id', $tratamento->id_encaminhamento)
+                ->update([
+                    'status_encaminhamento' => 4,
+                    'motivo' => $request->input('motivo'), // Vem de um select na view, os dados vem da variável $motivo do metodo index()
+                ]);
+
+            // Caso esse encaminhamento tenha um tratamento
+            DB::table('tratamento')
+                ->where('id', $id)
+                ->update([
+                    'dt_fim' => $today,
+                    'status' => 6, // Inativado
+                    'motivo' => $request->input('motivo')
+                ]);
 
             return redirect()->back();
-        } catch (\Exception $e) {
+        // } catch (\Exception $e) {
 
-            app('flasher')->addDanger('Erro ao inativar o tratamento.');
-
-
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
+        //     $code = $e->getCode();
+        //     return view('tratamento-erro.erro-inesperado', compact('code'));
+        // }
     }
 
 
@@ -249,19 +312,10 @@ class GerenciarTratamentosController extends Controller
                 return Redirect()->back();
             } else {
 
-
-                $encaminhamentosPTD = DB::table('encaminhamento')->where('id_atendimento', $lista->id_atendimento)->where('id_tipo_tratamento', 1)->where('status_encaminhamento', 4)->first();
-
                 if ($infoTrat->status == 1) {
                     DB::table('tratamento')->where('id', $idtr)->update([
                         'status' => 2
                     ]);
-
-                    if ($infoTrat->id_tipo_tratamento == 2) {
-                        DB::table('encaminhamento')->where('id', $encaminhamentosPTD->id)->update([
-                            'status_encaminhamento' => 5
-                        ]);
-                    }
                 }
 
 
@@ -334,7 +388,7 @@ class GerenciarTratamentosController extends Controller
                 'enc.id AS ide',
                 'tr.id AS idtr',
                 'enc.id_tipo_encaminhamento',
-                'dh_enc',
+                'tr.dt_inicio',
                 'enc.id_atendimento',
                 'enc.status_encaminhamento',
                 'tse.descricao AS tsenc',
@@ -387,8 +441,8 @@ class GerenciarTratamentosController extends Controller
             ->where('at.id_assistido', $pessoa->id_assistido)
             ->where('enc.id_tipo_encaminhamento', 2);
 
-        if ($pessoa->status_encaminhamento < 5) {
-            $result = $result->where('enc.status_encaminhamento', '<', 5)
+        if ($pessoa->status_encaminhamento < 3) {
+            $result = $result->where('enc.status_encaminhamento', '<', 3)
                 ->get();
         } else {
 
@@ -436,6 +490,8 @@ class GerenciarTratamentosController extends Controller
         FimSemanas::dispatch();
         Faltas::dispatch();
         FaltasTrabalhador::dispatch();
+        FilaEncaminhamentos::dispatch();
+        EntrevistaProamo::dispatch();
 
         return redirect()->back();
     }
