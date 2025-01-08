@@ -147,7 +147,7 @@
                                     style="font-size: 1rem; color:#000;"></i></button></a>
 
 
-                        @if ($listas->status_encaminhamento == 1)
+                        @if ($listas->status_encaminhamento < 3)
                             <button class="btn btn-outline-danger btn-sm tooltips" type="button" id=""
                                 data-bs-toggle="modal" data-bs-target="#inativar{{ $listas->ide }}"><span
                                     class="tooltiptext">Inativar</span><i class="bi bi-x-circle"

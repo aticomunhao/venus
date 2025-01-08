@@ -82,15 +82,15 @@
 
                         <tbody>
                             <tr style="text-align:center;font-size:13px">
-                                <td>{{$result->ide}}</td>
-                                <td>{{date ('d-m-Y', strtotime($result->dt_inicio))}}</td>
-                                <td>{{$result->dt_fim ? date('d-m-Y', strtotime($result->dt_fim)) : '-'}}</td>
-                                <td>{{$result->desctrat}}</td>
-                                <td>{{$result->nomeg}}</td>
-                                <td>{{$result->rm_inicio}}</td>
-                                <td>{{$result->sala}}</td>
-                                <td>{{$result->tsenc}}</td>
-                                <td>{{$result->tpmotivo}}</td>
+                                <td>{{current(current($result))->ide}}</td>
+                                <td>{{date ('d-m-Y', strtotime(current(current($result))->dt_inicio))}}</td>
+                                <td>{{current(current($result))->dt_fim ? date('d-m-Y', strtotime(current(current($result))->dt_fim)) : '-'}}</td>
+                                <td>{{current(current($result))->desctrat}}</td>
+                                <td>{{current(current($result))->nomeg}}</td>
+                                <td>{{current(current($result))->rm_inicio}}</td>
+                                <td>{{current(current($result))->sala}}</td>
+                                <td>{{current(current($result))->tsenc}}</td>
+                                <td>{{current(current($result))->tpmotivo}}</td>
                             </tr>
                         </tbody>
                     </table>
