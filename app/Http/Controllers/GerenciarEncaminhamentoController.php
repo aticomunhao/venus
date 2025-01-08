@@ -263,7 +263,7 @@ class GerenciarEncaminhamentoController extends Controller
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
             ->where('enc.id_tipo_encaminhamento', 1) // Encaminhamento de Entrevista
             ->where('at.id_assistido', $tratID->id_assistido)
-            ->where(function($query){
+            ->where(function ($query) {
                 $query->where('enc.status_encaminhamento', '<', 3); // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
                 $query->orWhere('enc.status_encaminhamento', 7); // Entrevista Proamo Aguardando Requisitos
             })
@@ -399,13 +399,61 @@ class GerenciarEncaminhamentoController extends Controller
     {
         try {
             //TODO Mudar a vizualização de Dados do Encaminhamento - Proposta: Mostrar o atual, e em outra parte os adjacentes daquela pessoa
+
             // Devolve o ID pessoa daquele encaminhamento, para buscar outros encaminhamentos, mesmo que não conectados
             $pessoa = DB::table('encaminhamento')
                 ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
                 ->where('encaminhamento.id', $ide)
                 ->first('id_assistido');
 
-    
+            // Traz todas as informações da view exceto o header com nome, e o footer com as faltas
+            $result = DB::table('encaminhamento AS enc')
+                ->select(
+                    'enc.id AS ide',
+                    'td.nome as nomedia', // Utilizado em Dados Encaminhamento para o Dia do Grupo
+                    'tr.dt_inicio',
+                    'tse.descricao AS tsenc', // Status do encaminhamento, em String
+                    'at.id AS ida', // ID atendimento, usado em Dados Atendimento Fraterno
+                    'p1.dt_nascimento', // Data de Nascimento Assistido usado em header
+                    'p1.nome_completo AS nm_1', // Nome do Assistido usado em header
+                    'p2.nome_completo as nm_2', // Nome do representante, usado em Dados do Atendimento Fraterno
+                    'pa.nome', // Parentesco do representante com o Assistido (Ex.: Pai, Irmão)
+                    'tt.descricao AS desctrat', // Tipo de tratamento, usado em Dados do Encaminhamento (Ex.: Passe de Tratamento Desobsessivo)
+                    'tx.tipo', // Sexo do assistido, usado no header
+                    'p4.nome_completo AS nm_4', // Nome do Atendente, usado em Dados do Atendimento Fraterno
+                    'at.dh_inicio', // Datetime de Inicio do atendimento
+                    'at.dh_fim', // Datetime de fim do atendimento
+                    'tsa.descricao AS tst', // Status do atendimento, em String
+                    'gr.nome AS nomeg', // Nome do grupo, mostrado em Dados do Encaminhamento
+                    'rm.h_inicio AS rm_inicio', // Inicio do Cronograma do Tratamento Marcado 
+                    'tm.tipo AS tpmotivo', // Motivo de cancelamento do encaminhamento
+                    'tr.dt_fim as final',
+                )
+                ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
+                ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+                ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
+                ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
+                ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+                ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
+                ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
+                ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+                ->leftJoin('tipo_status_atendimento AS tsa', 'at.status_atendimento', 'tsa.id')
+                ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+                ->leftjoin('associado AS ass', 'at.id_atendente', 'ass.id')
+                ->leftjoin('pessoas AS p4', 'ass.id_pessoa', 'p4.id')
+                ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+                ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
+                ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+                ->where('at.id_assistido', $pessoa->id_assistido) // Todos daquele assistido
+                ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
+                ->whereNot('enc.id_tipo_tratamento', 3) // Remove da lista o PTH (Passe de Tratamento de Harmonização)
+                ->where(function ($query) use ($ide) {
+                    $query->where('enc.status_encaminhamento', '<', 3); // Todos os encaminhamentos ativos
+                    $query->orWhere('enc.id', $ide); // O encaminhamento em questÃO
+                })
+                ->get();
+
+
             // Retorna todos os dados de presença do encaminhamento atual
             $list = DB::table('presenca_cronograma as pc')
                 ->select('pc.id as idp', 'dc.data', 'pc.presenca', 'gr.nome')
@@ -417,7 +465,14 @@ class GerenciarEncaminhamentoController extends Controller
                 ->get();
 
             // Conta a quantidade de faltas do encaminhamento atual   
-            $faul = $list->where('pc.presenca', false)->count();
+            $faul = DB::table('tratamento AS tr')
+                ->select('dt.presenca')
+                ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
+                ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+                ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
+                ->where('enc.id', $ide)
+                ->where('dt.presenca', 0)
+                ->count();
 
             return view('recepcao-integrada.historico-encaminhamento', compact('result', 'list', 'faul'));
         } catch (\Exception $e) {
@@ -613,6 +668,7 @@ class GerenciarEncaminhamentoController extends Controller
     public function escolherHorario(Request $request, $ide)
     {
 
+
         try {
 
             $hoje = Carbon::today(); // Data de Hoje
@@ -697,13 +753,11 @@ class GerenciarEncaminhamentoController extends Controller
             $code = $e->getCode();
             return view('tratamento-erro.erro-inesperado', compact('code'));
         }
-
-
     }
     public function trocarGrupo(Request $request, $ide)
     {
 
-        try {
+        //     try{
 
         $reu = intval($request->reuniao); // Guarda em uma variável o ID do cronograma escolhido
         $countVagas = DB::table('tratamento')->where('id_reuniao', "$reu")->where('status', '<', '3')->count(); // Conta a quantidade de tratamentos ativos nessa reunião
@@ -737,6 +791,7 @@ class GerenciarEncaminhamentoController extends Controller
                 app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
                 return redirect()->back();
             }
+        }
 
 
         $data = date("Y-m-d H:i:s");
@@ -784,4 +839,11 @@ class GerenciarEncaminhamentoController extends Controller
         app('flasher')->addSuccess('Troca efetuada com sucesso!');
         return redirect('/gerenciar-encaminhamentos');
     }
+    // catch(\Exception $e){
+
+    //     $code = $e->getCode( );
+    //     return view('tratamento-erro.erro-inesperado', compact('code'));
+    //         }
+    //     }
+
 }

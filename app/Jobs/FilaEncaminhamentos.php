@@ -29,7 +29,7 @@ class FilaEncaminhamentos implements ShouldQueue
     {
         $data = Carbon::today()->subDay(30);
 
-
+        // FIX PROAMO que ficam muito tempo caem quando trocam de status
         // Retorna todas as entrevistas com mais de 30 dias de criação
         $a = DB::table('encaminhamento as ent')
         ->leftJoin('atendimentos as at', 'ent.id_atendimento', 'at.id')
