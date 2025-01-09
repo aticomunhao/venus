@@ -48,7 +48,9 @@
 
         <hr>
         Total de assistidos: {{ $totalAssistidos }} 
-        <span style="font-size: 14px; color:red">*Assistidos sem PTD</span>
+        <br>
+        <span class="text-danger" style="font-size: 20px;">&#9632;</span>
+        <span style="font-size: 14px;">Assistidos sem PTD</span>
         <div class="table">
             <table
                 class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">

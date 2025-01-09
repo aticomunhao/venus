@@ -41,8 +41,10 @@
 
         <hr>
         <div class="col">
-            <span class="text-danger" style="font-size: 14px;">*Assistidos sem PTD</span>
-            <span class="text-warning" style="font-size: 14px;">*Assistidos em Análise</span>
+            <span class="text-danger" style="font-size: 20px;">&#9632;</span>
+            <span style="font-size: 14px;">Assistidos sem PTD</span>
+            <span class="text-warning" style="font-size: 20px;">&#9632;</span>
+            <span  style="font-size: 14px;">Assistidos em Análise</span>
         </div>
         <div class="col">
             <table
