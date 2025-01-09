@@ -13,7 +13,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            HISTÓRICO DO TRATAMENTO 
+                            HISTÓRICO DO TRATAMENTO
                         </div>
                     </div>
                 </div>
@@ -115,7 +115,7 @@
 
                                 </tbody>
                             </table>
-                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de Presenças Integral</legend>
+                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de Presenças PTI</legend>
                     Nr de faltas: {{$faul}}
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
@@ -143,13 +143,13 @@
                         </tbody>
                     </table>
 
-    
+
 
                     <br/>
 
                     <div class="row">
                         <div class="col">
-                            <a class="btn btn-danger" href="/gerenciar-integral" style="text-align:right;" role="button">Fechar</a>
+                            <a class="btn btn-danger" href="/gerenciar-pti" style="text-align:right;" role="button">Fechar</a>
                         </div>
                     </div>
                 </div>
