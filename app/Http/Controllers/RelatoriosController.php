@@ -681,7 +681,7 @@ class RelatoriosController extends Controller
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
-            ->where('enc.dh_enc', '<', $dt_fim)
+            ->where('enc.dh_enc', '<=', $dt_fim)
             ->where('id_reuniao', $id)
             ->select('tr.id', 'p.nome_completo', 'tst.nome as status', 'dc.data', 'gr.nome as grupo', 'pc.presenca',)
             ->orderBy('p.nome_completo')
