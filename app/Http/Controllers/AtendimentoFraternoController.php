@@ -570,7 +570,7 @@ class AtendimentoFraternoController extends Controller
 
     public function enc_trat(Request $request, $idat, $idas)
     {
-        $now = Carbon::now()->format('Y-m-d H:m:s'); // datetime de agora
+        $now = Carbon::today(); // datetime de agora
 
         // Transforma o "on" do toggle em boolean
         $harmonia = isset($request->pph) ? 1 : 0;
@@ -579,18 +579,20 @@ class AtendimentoFraternoController extends Controller
         $viver = isset($request->gv) ? 1 : 0;
         $quimica = isset($request->gdq) ? 1 : 0;
 
-        // Busca todos os encaminhamentos ativos da pessoa que está sendo atendida
+        // Busca todos os encaminhamentos de Tratamento ativos da pessoa que está sendo atendida
         $countEncaminhamentos = DB::table('encaminhamento as enc')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('tratamento as trat', 'enc.id', 'trat.id_encaminhamento')
             ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento tipo "Tratamento"
             ->where('at.id_assistido', $idas) // Do Assistido
             ->where('enc.status_encaminhamento', '<', 3) // Para agendar, Agendado, ou seja, apenas ativos
+            ->whereNot('trat.dt_fim', $now) // Tratamentos que acabam no dia do atendimento, podem ser renovados
             ->pluck('id_tipo_tratamento')->toArray();
 
-        // Busca todos os encaminhamentos ativos da pessoa que está sendo atendida
+        // Busca todos os encaminhamentos  de Grupo de Apoio ativos da pessoa que está sendo atendida
         $countGrupoApoio = DB::table('encaminhamento as enc')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-            ->where('enc.id_tipo_encaminhamento', 3) // Encaminhamento tipo "Tratamento"
+            ->where('enc.id_tipo_encaminhamento', 3) // Encaminhamento tipo "Grupo de Apoio"
             ->where('at.id_assistido', $idas) // Do Assistido
             ->where('enc.status_encaminhamento', '<', 3) // Para agendar, Agendado, ou seja, apenas ativos
             ->pluck('id_tipo_tratamento')->toArray();
@@ -604,7 +606,6 @@ class AtendimentoFraternoController extends Controller
             app('flasher')->addWarning('Existe um encaminhamento PTI ativo para esta pessoa!');
         } else if ($desobsessivo) {
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 2,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 1,
@@ -619,7 +620,6 @@ class AtendimentoFraternoController extends Controller
             app('flasher')->addWarning('Já existe um encaminhamento para o PTH ativo para esta pessoa!');
         } else if ($harmonia) {
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 2,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 3,
@@ -637,7 +637,6 @@ class AtendimentoFraternoController extends Controller
         // } 
         if ($acolher) {
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 3,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 7,
@@ -654,7 +653,6 @@ class AtendimentoFraternoController extends Controller
         // } 
         if ($quimica) {
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 3,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 9,
@@ -670,7 +668,6 @@ class AtendimentoFraternoController extends Controller
         // } 
         if ($viver) {
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 3,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 10,
@@ -687,7 +684,7 @@ class AtendimentoFraternoController extends Controller
     {
 
 
-        $now = Carbon::now()->format('Y-m-d H:m:s'); // datetime de agora
+        $hoje = Carbon::today(); // datetime de agora
 
         // Transforma o "on" do toggle em boolean
         $ame = isset($request->ame) ? 1 : 0;
@@ -699,9 +696,11 @@ class AtendimentoFraternoController extends Controller
         // Retorna todos os IDs dos encaminhamentos de tratamento
         $countTratamentos = DB::table('encaminhamento as enc')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('tratamento as trat', 'enc.id', 'trat.id_encaminhamento')
             ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
             ->where('at.id_assistido', $idas)
-            ->where('enc.status_encaminhamento', '<', 5) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+            ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+            ->whereNot('trat.dt_fim', $hoje) // Tratamentos que acabam no dia do atendimento, podem ser renovados
             ->pluck('id_tipo_tratamento')->toArray();
 
         // Retorna todos os IDs dos encaminhamentos de entrevista
@@ -723,7 +722,6 @@ class AtendimentoFraternoController extends Controller
         } else if ($afe) {
             // Insere a entrevista AFE
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
                 'id_tipo_entrevista' => 3,
@@ -739,7 +737,6 @@ class AtendimentoFraternoController extends Controller
         } else if ((in_array(1, $countTratamentos) or in_array(2, $countTratamentos)) and $ame) {
             // Insere a entrevista AME
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
                 'id_tipo_entrevista' => 5,
@@ -750,7 +747,6 @@ class AtendimentoFraternoController extends Controller
         } else if ($ame) {
             //Insere entrevista AME
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
                 'id_tipo_entrevista' => 5,
@@ -759,7 +755,6 @@ class AtendimentoFraternoController extends Controller
 
             // Insere o encaminhamento PTD
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 2,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 1,
@@ -786,7 +781,6 @@ class AtendimentoFraternoController extends Controller
 
           //Inserir estrevista DiAMO na tabela
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
                 'id_tipo_entrevista' => 6,
@@ -797,7 +791,6 @@ class AtendimentoFraternoController extends Controller
         } else if ($diamo) {
                //Insere entrevista DIAMO
                DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
                 'id_tipo_entrevista' => 6,
@@ -806,7 +799,6 @@ class AtendimentoFraternoController extends Controller
 
             // Insere o encaminhamento PTD
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 2,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 1,
@@ -834,7 +826,6 @@ class AtendimentoFraternoController extends Controller
 
             // Insere a entrevista PTI
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
                 'id_tipo_entrevista' => 4,
@@ -845,7 +836,6 @@ class AtendimentoFraternoController extends Controller
         } else if ($nutres) {
             // Insere a entrevista PTI
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
                 'id_tipo_entrevista' => 4,
@@ -854,7 +844,6 @@ class AtendimentoFraternoController extends Controller
 
             // Insere um novo Encaminhamento PTD
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 2,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 1,
@@ -870,7 +859,6 @@ class AtendimentoFraternoController extends Controller
         // } 
         if ($evangelho) {
             DB::table('encaminhamento AS enc')->insert([
-                'dh_enc' => $now,
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
                 'id_tipo_entrevista' => 8,
