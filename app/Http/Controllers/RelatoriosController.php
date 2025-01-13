@@ -196,8 +196,8 @@ class RelatoriosController extends Controller
             ->rightJoin('tipo_temas as tm', 'rt.id_tematica', 'tm.id')
             ->where('at.dh_chegada', '>=', $dt_inicio)
             ->where('at.dh_chegada', '<', $dt_fim)
-            ->groupBy('nm_tca', 'rt.id')
-            ->select('nm_tca', 'rt.id', DB::raw("count(*) as total"))
+            ->groupBy('nm_tca')
+            ->select('nm_tca', DB::raw("count(*) as total"))
             ->get();
 
         $tematicas = json_decode(json_encode($tematicas), true);
@@ -528,9 +528,6 @@ class RelatoriosController extends Controller
         $reunioesPesquisa = DB::table('cronograma as cr')
             ->select(
                 'cr.id',
-                'gr.nome',
-                'd.nome as dia',
-                'cr.h_inicio',
                 'cr.h_fim',
                 'st.sigla',
                 't.sigla as SiglaTratamento',
