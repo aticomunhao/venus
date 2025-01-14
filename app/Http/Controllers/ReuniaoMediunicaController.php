@@ -175,36 +175,40 @@ class ReuniaoMediunicaController extends Controller
         $h_fim = Carbon::createFromFormat('G:i', $request->h_fim)->addMinutes(30);
         $dia = intval($request->dia);
 
+        // Conta cronogramas que ocupam a mesma sala no mesmo horário, no mesmo dia da semana
         $repeat = DB::table('cronograma AS rm')
             ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
             ->leftJoin('salas AS s', 'rm.id_sala', 's.id')
-            ->where('rm.dia_semana', $dia)
-            ->where('rm.id_sala', $numero)
-            ->where(function ($query) use ($now) {
+            ->where('rm.dia_semana', $dia) // Mesmo dia da semana
+            ->where('rm.id_sala', $numero) // Mesmo ID_sala
+            ->where(function ($query) use ($now) { // Apenas cronogramas Ativos
                 $query->where('rm.data_fim', '>=', $now);
                 $query->orWhere('rm.data_fim', null);
-            })
-            ->where(function ($query) use ($h_inicio, $h_fim) {
-                $query->where(function ($hour) use ($h_inicio) {
-                    $hour->where('rm.h_inicio', '<', $h_inicio);
-                    $hour->where('rm.h_fim', '>', $h_inicio);
+            }) 
+            ->where(function ($query) use ($h_inicio, $h_fim) { // Função de reconhecimento de horários
+                
+                $query->where(function ($hour) use ($h_inicio, $h_fim) {  // A reunião criada inicia antes que outra, mas termina durante ou depois (  <----|---->  |  ou <----|-----|----> )
+                    $hour->where('rm.h_inicio', '>=', $h_inicio);
+                    $hour->where('rm.h_inicio', '<=', $h_fim);
                 });
-                $query->orWhere(function ($hour) use ($h_fim) {
-                    $hour->where('rm.h_inicio', '<', $h_fim);
-                    $hour->where('rm.h_fim', '>', $h_fim);
+                $query->orWhere(function ($hour) use ($h_inicio, $h_fim) { // A reunião foi criada com a H_inicio interna de outra reunião (  | <-----|----> ou <----|------|---->  )
+                   $hour->where('rm.h_fim', '>=', $h_inicio);
+                    $hour->where('rm.h_fim', '<=', $h_fim);
+                });
+                $query->orWhere(function ($hour) use ($h_fim, $h_inicio) { // A reunião está completamente interna a outra (  | <---------> |  )
+                   $hour->where('rm.h_inicio', '<=', $h_inicio);
+                    $hour->where('rm.h_fim', '>=', $h_fim);
                 });
                 
             })
-            ->count();
+            ->get();
 
-      //  dd($repeat, $h_inicio, $h_fim, $numero);
-
-
+            dd($repeat, $h_inicio ,$h_fim);
         if ($repeat > 0) {
 
             app('flasher')->addError('Existe uma outra reunião nesse horário.');
 
-            return redirect('/gerenciar-reunioes');
+            return redirect()->back();
         } else {
         }
 
