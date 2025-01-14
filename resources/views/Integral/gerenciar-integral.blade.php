@@ -31,9 +31,15 @@
                         <input class="btn btn-light btn-sm me-md-2"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
                             value="Pesquisar">
-                        <a href="/gerenciar-integral"><input class="btn btn-light btn-sm me-md-2"
+                            @if(request('grupo'))
+                        <a href="/gerenciar-integral?grupo={{request('grupo')}}"><input class="btn btn-light btn-sm me-md-2"
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Limpar"></a>
+                                @else
+                                <a href="/gerenciar-integral"><input class="btn btn-light btn-sm me-md-2"
+                                    style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
+                                    value="Limpar"></a>
+                                @endif
                         <a href="/gerenciar-membro/{{ $selected_grupo }}"><input class="btn btn-primary btn-sm me-md-2"
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Gerenciar Grupo"></a>
@@ -58,7 +64,7 @@
                     <th>ID</th>
                     <th>NOME</th>
                     <th>NOME GRUPO</th>
-                    <th>FIM</th>
+                    <th>SEMANA</th>
                     <th>STATUS</th>
                     <th>MACA</th>
                     <th>AÇÕES</th>

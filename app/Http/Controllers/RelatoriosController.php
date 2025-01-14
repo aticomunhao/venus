@@ -533,6 +533,10 @@ class RelatoriosController extends Controller
                 't.sigla as SiglaTratamento',
                 'cr.modificador',
                 'ts.descricao',
+                'gr.nome',
+                'cr.dia_semana as dia',
+                'cr.h_inicio',
+                'cr.h_fim',
                 DB::raw("(CASE WHEN cr.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status") // Correção aqui
             )
             ->leftJoin('tipo_tratamento as t', 'cr.id_tipo_tratamento', 't.id')
@@ -552,9 +556,6 @@ class RelatoriosController extends Controller
             )
             ->orderBy('gr.nome', 'asc');
 
-
-
-
         $presencasCountAssistidos = DB::table('presenca_cronograma as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->where('dc.data', '>=', $dt_inicio)
@@ -562,7 +563,7 @@ class RelatoriosController extends Controller
             ->groupBy('presenca')
             ->select('presenca', DB::raw("count(*) as total"));
 
-        $acompanhantes = DB::table('dias_cronograma');
+        $acompanhantes = DB::table('dias_cronograma as dc')->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')->whereNot('id_tipo_tratamento', 3);
 
         $presencasCountMembros = DB::table('presenca_membros as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
@@ -1014,7 +1015,7 @@ class RelatoriosController extends Controller
 
 
         $atendimentos = DB::table('atendimentos as at')
-        ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
             ->where('at.dh_chegada', '>=', $dt_inicio)
             ->where('at.dh_chegada', '<', $dt_fim);
 
@@ -1022,7 +1023,9 @@ class RelatoriosController extends Controller
         if ($request->status_atendimento == 1) {
             $nomeStatus = DB::table('tipo_status_atendimento')->where('id', $request->status_atendimento)->first();
             $dadosChart = [
-                $nomeStatus->descricao => (clone $atendimentos)->where('at.status_atendimento', $request->status_atendimento)->count(),
+                'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->count(),
+                'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->count(),
+                'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
             ];
         } else if ($request->status_atendimento == 2) {
             $dadosChart = [
@@ -1036,8 +1039,7 @@ class RelatoriosController extends Controller
                 'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
             ];
         }
-
-
+      //  dd($dadosChart);
         return view('relatorios.gerenciar-relatorio-atendimento', compact('dt_inicio', 'dt_fim', 'dadosChart'));
     }
 }

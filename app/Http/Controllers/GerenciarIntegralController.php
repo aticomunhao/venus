@@ -99,7 +99,7 @@ class GerenciarIntegralController extends Controller
 
                     $encaminhamento->ptd  = $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
                 if ($encaminhamento->dt_fim) {
-                    $encaminhamento->contagem = $hoje->diffInDays(Carbon::parse($encaminhamento->dt_inicio));
+                    $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_inicio));
                 } else {
                     $encaminhamento->contagem = null;
                 }

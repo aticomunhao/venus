@@ -7,13 +7,43 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 
 
+    if($a == null){
+        $a = '-';
+    }else{
+        $a;
+    }
+
+    $a == null ? $a = '-' : $a;
+
+    $a ?? '-';
+
 class GerenciarEncaminhamentoController extends Controller
 {
     public function index(Request $request)
     {
         // Lista de Dados que aparece na view
         $lista = DB::table('encaminhamento AS enc')
-            ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'p1.cpf AS cpf_assistido', 'pr.id AS prid', DB::raw("(CASE WHEN at.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as prdesc"), 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla')
+            ->select(
+                'enc.id AS ide',
+                'enc.id_tipo_encaminhamento',
+                'enc.id_atendimento',
+                'enc.status_encaminhamento',
+                'tse.descricao AS tsenc',
+                'enc.id_tipo_tratamento AS idtt',
+                'id_tipo_entrevista',
+                'at.id AS ida',
+                'at.id_assistido',
+                'at.dh_fim',
+                'p1.nome_completo AS nm_1',
+                'at.id_representante as idr',
+                'p2.nome_completo as nm_2',
+                'p1.cpf AS cpf_assistido',
+                'pr.id AS prid',
+                DB::raw("(CASE WHEN at.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as prdesc"),
+                'pr.sigla AS prsigla',
+                'tt.descricao AS desctrat',
+                'tt.sigla'
+            )
             ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
             ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
             ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
@@ -172,9 +202,16 @@ class GerenciarEncaminhamentoController extends Controller
             ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
             ->where('enc.id', $ide)->value('enc.id_tipo_tratamento');
 
-        // Retorna todos os dados do encaminhamento, para o header com informaçoes para confirmação visual
+        // Retorna todos os dados do encaminhamento, para o header com informaçoes para confirmação visual e validação de Observação
         $result = DB::table('encaminhamento AS enc')
-            ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tse.descricao AS tsenc', 'enc.id_tipo_tratamento', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'pa.id AS pid', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat')
+            ->select(
+                'enc.id AS ide',
+                'p1.nome_completo AS nm_1',
+                'p2.nome_completo as nm_2',
+                'tt.descricao AS desctrat',
+                'p1.dt_nascimento',
+                'at.id_assistido'
+            )
             ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
             ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
             ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
@@ -186,6 +223,15 @@ class GerenciarEncaminhamentoController extends Controller
             ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
             ->where('enc.id', $ide)
             ->first();
+
+        // Usado para validação de observação PROAMO
+        $countTratamentos = DB::table('encaminhamento as enc')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
+            ->where('at.id_assistido', $result->id_assistido)
+            ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+            ->pluck('id_tipo_tratamento')->toArray();
+
 
         // Devolve todos os dados dos grupos que podem ser selecionados
         $trata = DB::table('cronograma AS reu')
@@ -212,8 +258,18 @@ class GerenciarEncaminhamentoController extends Controller
             ->orWhere('tr.status', null)
             ->where('tr.status', '<', 3)
             ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
-            ->orderBy('h_inicio')
-            ->get();
+            ->orderBy('h_inicio');
+
+        // Caso não seja menor de idade, exclua os grupos de criança
+        if (Carbon::today()->diffInYears($result->dt_nascimento) > 17) {
+            $trata = $trata->whereNot('reu.observacao', 8);
+        }
+        // Caso não esteja em um PROAMO, exclui os grupos específicos de PROAMO
+        if (!in_array(4, $countTratamentos)) {
+            $trata = $trata->whereNot('reu.observacao', 9);
+        }
+
+        $trata = $trata->get();
 
         // Validação de erro para dias sem grupo
         if (sizeof($trata) == 0) {
@@ -227,7 +283,7 @@ class GerenciarEncaminhamentoController extends Controller
     public function tratar(Request $request, $ide)
     {
         //try {
-        $reu = intval($request->reuniao); // Guarda nuuma varia
+        $reu = intval($request->reuniao); // Guarda numa variavel o ID_cronograma
         $data_atual = Carbon::now(); // Dia de hoje, com dia e horário
         $dia_atual = $data_atual->weekday(); // ID do dia de hoje (Ex.: 0 => Domingo, 3 => Quarta-Feira)
 
@@ -482,7 +538,7 @@ class GerenciarEncaminhamentoController extends Controller
     }
     public function inative(Request $request, $ide)
     {
-        try {
+      //  try {
 
             $today = Carbon::today()->format('Y-m-d');
 
@@ -533,8 +589,9 @@ class GerenciarEncaminhamentoController extends Controller
 
                 // Caso aquela entrevista tenha um PTD marcado, e ele seja infinito, e o motivo do cancelamento foi alta da avaliação, tire de infinito
                 $ptdAtivoInfinito = $ptdAtivo ? $ptdAtivo->dt_fim == null : false; //
-                $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
                 if ($ptdAtivoInfinito) {
+                    
+                    $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
 
                     // Inativa o PTD infinito
                     DB::table('tratamento')
@@ -578,10 +635,10 @@ class GerenciarEncaminhamentoController extends Controller
             app('flasher')->addSuccess('O encaminhamento foi inativado.');
 
             return redirect('/gerenciar-encaminhamentos');
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
+        // } catch (\Exception $e) {
+        //     $code = $e->getCode();
+        //     return view('tratamento-erro.erro-inesperado', compact('code'));
+        // }
     }
 
     // Metodo do botão Alterar Grupo na Index

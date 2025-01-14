@@ -174,7 +174,7 @@ class GerenciarTratamentosController extends Controller
     public function destroy(Request $request, string $id)
     {
 
-        //  try {
+          try {
         $hoje = Carbon::today();
         $tratamento = DB::table('tratamento')->where('id', $id)->first();
 
@@ -227,8 +227,8 @@ class GerenciarTratamentosController extends Controller
 
             // Caso aquela entrevista tenha um PTD marcado, e ele seja infinito, e o motivo do cancelamento foi alta da avaliação, tire de infinito
             $ptdAtivoInfinito = $ptdAtivo ? $ptdAtivo->dt_fim == null : false; //
-            $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
             if ($ptdAtivoInfinito) {
+                $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
 
                 // Inativa o PTD infinito
                 DB::table('tratamento')
@@ -263,77 +263,78 @@ class GerenciarTratamentosController extends Controller
                 'motivo' => $request->input('motivo')
             ]);
 
+        app('flasher')->addSuccess('O tratamento foi inativado.');
         return redirect()->back();
-        // } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-        //     $code = $e->getCode();
-        //     return view('tratamento-erro.erro-inesperado', compact('code'));
-        // }
+            $code = $e->getCode();
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+        }
     }
 
 
     public function presenca(Request $request, $idtr)
     {
-      //  try {
+        //  try {
 
-            $infoTrat = DB::table('tratamento')
-            ->select('tratamento.status','encaminhamento.id_tipo_tratamento', 'atendimentos.id_assistido')
+        $infoTrat = DB::table('tratamento')
+            ->select('tratamento.status', 'encaminhamento.id_tipo_tratamento', 'atendimentos.id_assistido')
             ->leftJoin('encaminhamento', 'tratamento.id_encaminhamento', 'encaminhamento.id')
-            ->leftJoin('atendimentos', 'encaminhamento.id_atendimento','atendimentos.id')
+            ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
             ->where('tratamento.id', $idtr)
             ->first();
 
-            $data_atual = Carbon::now();
-            $dia_atual = $data_atual->weekday();
+        $data_atual = Carbon::now();
+        $dia_atual = $data_atual->weekday();
 
-            $confere = DB::table('presenca_cronograma AS ds')
-                ->leftJoin('dias_cronograma as dc', 'ds.id_dias_cronograma', 'dc.id')
-                ->where('dc.data', $data_atual)
-                ->where('ds.id_tratamento', $idtr)
-                ->count();
+        $confere = DB::table('presenca_cronograma AS ds')
+            ->leftJoin('dias_cronograma as dc', 'ds.id_dias_cronograma', 'dc.id')
+            ->where('dc.data', $data_atual)
+            ->where('ds.id_tratamento', $idtr)
+            ->count();
 
-            $lista = DB::table('tratamento AS tr')
-                ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-                ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-                ->where('tr.id', $idtr)
-                ->first();
-
-
-
-            $dia_cronograma = DB::table('dias_cronograma')->where('id_cronograma', $lista->id_reuniao)->where('data', $data_atual)->first();
-            $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $data_atual)->first();
+        $lista = DB::table('tratamento AS tr')
+            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->where('tr.id', $idtr)
+            ->first();
 
 
-            if ($confere > 0) {
 
-                app('flasher')->addError('Já foi registrada a presença para este dia.');
+        $dia_cronograma = DB::table('dias_cronograma')->where('id_cronograma', $lista->id_reuniao)->where('data', $data_atual)->first();
+        $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $data_atual)->first();
 
-                return Redirect()->back();
-            } else if ($lista->dia_semana != $dia_atual) {
 
-                app('flasher')->addError('Este assistido não corresponde ao dia de hoje.');
+        if ($confere > 0) {
 
-                return Redirect()->back();
-            } else {
-                $presenca = isset($request->presenca) ? true : false;
+            app('flasher')->addError('Já foi registrada a presença para este dia.');
 
-                $acompanhantes = isset($acompanhantes->nr_acompanhantes)  ? $acompanhantes->nr_acompanhantes : 0;
-                $nrAcomp = $acompanhantes + $request->acompanhantes;
-                // Recupera o nome completo da pessoa associado ao id_usuario
-                $nomePessoa = DB::table('pessoas')
-                    ->where('id', session()->get('usuario.id_usuario'))
-                    ->value('nome_completo');
+            return Redirect()->back();
+        } else if ($lista->dia_semana != $dia_atual) {
 
-                // Caso seja a primeira presença de um PTI
-                if ($infoTrat->id_tipo_tratamento == 2 and $infoTrat->status == 1) {
-                    
-                    // Troca o Status para Em Tratamento
-                    DB::table('tratamento')->where('id', $idtr)->update([
-                        'status' => 2
-                    ]);
+            app('flasher')->addError('Este assistido não corresponde ao dia de hoje.');
 
-                    // Inativa os Encaminhamentos PTD ativos
-                    DB::table('encaminhamento')
+            return Redirect()->back();
+        } else {
+            $presenca = isset($request->presenca) ? true : false;
+
+            $acompanhantes = isset($acompanhantes->nr_acompanhantes)  ? $acompanhantes->nr_acompanhantes : 0;
+            $nrAcomp = $acompanhantes + $request->acompanhantes;
+            // Recupera o nome completo da pessoa associado ao id_usuario
+            $nomePessoa = DB::table('pessoas')
+                ->where('id', session()->get('usuario.id_usuario'))
+                ->value('nome_completo');
+
+            // Caso seja a primeira presença de um PTI
+            if ($infoTrat->id_tipo_tratamento == 2 and $infoTrat->status == 1) {
+
+                // Troca o Status para Em Tratamento
+                DB::table('tratamento')->where('id', $idtr)->update([
+                    'status' => 2
+                ]);
+
+                // Inativa os Encaminhamentos PTD ativos
+                DB::table('encaminhamento')
                     ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
                     ->where('atendimentos.id_assistido', $infoTrat->id_assistido)
                     ->where('encaminhamento.id_tipo_tratamento', 1) // PTD
@@ -342,8 +343,8 @@ class GerenciarTratamentosController extends Controller
                         'status_encaminhamento' => 3 // Finalziado
                     ]);
 
-                    // Inativa os Tratamentos PTD ativos
-                    DB::table('tratamento')
+                // Inativa os Tratamentos PTD ativos
+                DB::table('tratamento')
                     ->leftJoin('encaminhamento', 'tratamento.id_encaminhamento', 'encaminhamento.id')
                     ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
                     ->where('atendimentos.id_assistido', $infoTrat->id_assistido)
@@ -352,52 +353,50 @@ class GerenciarTratamentosController extends Controller
                     ->update([
                         'status_encaminhamento' => 4 // Finalizado
                     ]);
-
-
-                } else if ($infoTrat->status == 1) {
-                    DB::table('tratamento')->where('id', $idtr)->update([
-                        'status' => 2
-                    ]);
-                }
-
-
-                // Realiza a inserção na tabela 'historico_venus'
-                DB::table('historico_venus')->insert([
-                    'id_usuario' => session()->get('usuario.id_usuario'),
-                    'data' => $data_atual,
-                    'fato' => 25,
-                    'obs' => 'Presença em tratamento',
-                    'pessoa' => $nomePessoa,
+            } else if ($infoTrat->status == 1) {
+                DB::table('tratamento')->where('id', $idtr)->update([
+                    'status' => 2
                 ]);
-
-                // Atualiza o número de acompanhantes na tabela
-                DB::table('dias_cronograma')
-                    ->where('id_cronograma', $lista->id_reuniao)
-                    ->where('data', $data_atual)
-                    ->update([
-                        'nr_acompanhantes' => $nrAcomp
-                    ]);
-
-                // Insere a presença
-                DB::table('presenca_cronograma')
-                    ->insert([
-                        'id_tratamento' => $idtr,
-                        'presenca' => true,
-                        'id_dias_cronograma' => $dia_cronograma->id
-                    ]);
-
-
-
-
-
-                app('flasher')->addSuccess('Foi registrada a presença com sucesso.');
-
-                return Redirect()->back();
             }
 
-            app('flasher')->addError('Aconteceu um erro inesperado.');
+
+            // Realiza a inserção na tabela 'historico_venus'
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $data_atual,
+                'fato' => 25,
+                'obs' => 'Presença em tratamento',
+                'pessoa' => $nomePessoa,
+            ]);
+
+            // Atualiza o número de acompanhantes na tabela
+            DB::table('dias_cronograma')
+                ->where('id_cronograma', $lista->id_reuniao)
+                ->where('data', $data_atual)
+                ->update([
+                    'nr_acompanhantes' => $nrAcomp
+                ]);
+
+            // Insere a presença
+            DB::table('presenca_cronograma')
+                ->insert([
+                    'id_tratamento' => $idtr,
+                    'presenca' => true,
+                    'id_dias_cronograma' => $dia_cronograma->id
+                ]);
+
+
+
+
+
+            app('flasher')->addSuccess('Foi registrada a presença com sucesso.');
 
             return Redirect()->back();
+        }
+
+        app('flasher')->addError('Aconteceu um erro inesperado.');
+
+        return Redirect()->back();
         // } catch (\Exception $e) {
 
         //     $code = $e->getCode();

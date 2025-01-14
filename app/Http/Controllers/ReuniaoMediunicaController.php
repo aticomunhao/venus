@@ -201,9 +201,8 @@ class ReuniaoMediunicaController extends Controller
                 });
                 
             })
-            ->get();
-
-            dd($repeat, $h_inicio ,$h_fim);
+            ->count();
+            
         if ($repeat > 0) {
 
             app('flasher')->addError('Existe uma outra reunião nesse horário.');

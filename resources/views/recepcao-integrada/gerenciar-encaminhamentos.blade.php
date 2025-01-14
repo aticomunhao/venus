@@ -96,16 +96,14 @@
 
             </div>
         </div>
-    </div>
     <br />
-    </div>
     <hr />
     Total assistidos: {{ $contar }}
     <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
         <thead style="text-align: center;">
             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                 <th class="col">Nr</th>
-                <th class="col">HORÁRIO ENCAMINHAMENTO</th>
+                <th class="col">DATA</th>
                 <th class="col">PRIORIDADE</th>
                 <th class="col">ASSISTIDO</th>
                 <th class="col">REPRESENTANTE</th>
@@ -118,7 +116,7 @@
             @foreach ($lista as $listas)
                 <tr>
                     <td>{{ $listas->ide }}</td>
-                    <td>{{ date('d/m/Y ', strtotime($listas->dh_enc)) }}</td>
+                    <td>{{ date('d/m/Y', strtotime($listas->dh_fim)) }}</td>
                     <td>{{ $listas->prdesc }}</td>
                     <td>{{ $listas->nm_1 }}</td>
                     <td>{{ $listas->nm_2 }}</td>

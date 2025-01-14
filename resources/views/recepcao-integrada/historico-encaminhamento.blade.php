@@ -64,7 +64,7 @@
                     </table>
               
 
-                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Encaminhamento</legend>
+                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Tratamento</legend>
                     @foreach($result as $results)
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
@@ -84,7 +84,7 @@
                         <tbody>
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$results->ide}}</td>
-                                <td>{{date ('d-m-Y', strtotime($results->dt_inicio))}}</td>
+                                <td>{{ $results->dt_inicio != null ? date('d-m-Y', strtotime($results->dt_inicio)) : '-'}}</td>
                                 <td>{{ $results->final != null ? date('d/m/Y', strtotime($results->final)) : '-' }}</td>
                                 <td>{{$results->desctrat}}</td>
                                 <td>{{$results->nomeg}}</td>
