@@ -401,7 +401,8 @@ class GerenciarAtendimentoController extends Controller
 
             $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
-            if ($status != 2) {
+            // Permite que Master Admin cancele atendimentos com qualquer status, sem excessão!
+            if ($status != 2 and !in_array(36, session()->get('usuario.acesso'))) {
                 app('flasher')->addError('Somente é permitido "Cancelar" atendimentos no status "Aguardando atendimento".');
                 return redirect('/gerenciar-atendimentos');
             } else {
