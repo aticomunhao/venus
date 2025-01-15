@@ -152,6 +152,7 @@ class GerenciarIntegralController extends Controller
                 'enc.id AS ide',
                 'tr.dt_inicio',
                 'tr.dt_fim',
+                'tr.id_reuniao',
                 'tse.descricao AS tsenc',
                 'at.id AS ida',
                 'at.id_assistido',
@@ -170,6 +171,7 @@ class GerenciarIntegralController extends Controller
                 'sat.descricao AS statat',
                 'sl.numero as sala',
                 't.cod_tca'
+
             )
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
