@@ -34,7 +34,7 @@
                                 <span class="tooltiptext">Obrigatório</span>
                                 <span style="color:red">*</span>
                             </span>
-                            <input type="date" class="form-control" id="data" name="data">
+                            <input type="date" class="form-control" id="data" name="data" required>
                         </div>
 
                         <div class="col">
@@ -43,7 +43,7 @@
                                 <span class="tooltiptext">Obrigatório</span>
                                 <span style="color:red">*</span>
                             </span>
-                            <input type="time" class="form-control" id="hora" name="hora">
+                            <input type="time" class="form-control" id="hora" name="hora" required>
                         </div>
                     </div>
                     <br>
@@ -63,7 +63,7 @@
                             <span class="tooltiptext">Obrigatório</span>
                             <span style="color:red">*</span>
                         </span>
-                        <select class="form-select" id="id_sala" name="id_sala">
+                        <select class="form-select" id="id_sala" name="id_sala" required>
                             <option value=""></option>
                             @foreach ($salas as $sala)
                                 <option value="{{ $sala->id }}" data-nome="{{ $sala->nome }}"

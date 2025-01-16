@@ -260,7 +260,7 @@ Route::middleware('rotas:29')->group(function () {
 Route::middleware('rotas:15')->group(function () {
     Route::get('/gerenciar-mediunidades', [MediunidadePessoaController::class, 'index'])->name('names');
     Route::get('/editar-mediunidade/{id}', [MediunidadePessoaController::class, 'edit'])->name('');
-    Route::post('/atualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'update'])->name('atualizar-mediunidade');
+    Route::any('/atualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'update'])->name('atualizar-mediunidade');
     Route::get('/criar-mediunidade', [MediunidadePessoaController::class, 'create'])->name('');
     Route::post('/incluir-mediunidade', [MediunidadePessoaController::class, 'store'])->name('');
     Route::any('/deletar-mediunidade/{id}', [MediunidadePessoaController::class, 'destroy'])->name('');

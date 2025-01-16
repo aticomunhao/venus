@@ -175,7 +175,7 @@
 
                     <div class="row">
                         <div class="col">
-                            <a class="btn btn-danger" href="/gerenciar-integral" style="text-align:right;" role="button">Fechar</a>
+                            <a class="btn btn-danger" href="/gerenciar-integral?grupo={{current(current($result))->id_reuniao}}" style="text-align:right;" role="button">Fechar</a>
                         </div>
                     </div>
                 </div>

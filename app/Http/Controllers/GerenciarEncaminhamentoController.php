@@ -7,16 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 
 
-    if($a == null){
-        $a = '-';
-    }else{
-        $a;
-    }
-
-    $a == null ? $a = '-' : $a;
-
-    $a ?? '-';
-
 class GerenciarEncaminhamentoController extends Controller
 {
     public function index(Request $request)
