@@ -137,7 +137,7 @@
                 <!-- Botões -->
                 <div class="row mt-4 justify-content-center">
                     <div class="d-grid gap-2 col-4">
-                        <a class="btn btn-danger" href="/gerenciar-membro/{{ $membro->id_cronograma }}" role="button">Cancelar</a>
+                        <a class="btn btn-danger" href="/gerenciar-membro/{{ $membro->id_cronograma }}" role="button">Fechar</a>
                     </div>
                 </form>
             </div>
