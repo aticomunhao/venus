@@ -247,7 +247,7 @@ Route::middleware('rotas:13')->group(function () {
 // Gerenciar Membros
 Route::middleware('rotas:14')->group(function () {
     Route::get('/gerenciar-membro/{id}', [MembroController::class, 'index'])->name('lista');
-    Route::get('/visualizar-membro/{idcro}/{id}', [MembroController::class, 'show'])->name('');
+    Route::get('/visualizar-membro/{id}', [MembroController::class, 'show'])->name('');
     Route::get('/gerenciar-grupos-membro', [MembroController::class, 'grupos'])->name('');
 });
 

@@ -158,7 +158,7 @@ class GerenciarEncaminhamentoController extends Controller
 
         // Traz todos os dados de todos os dias de tratamento
         $dadosDias = DB::table('cronograma AS reu')
-            ->select(DB::raw('count(*) as numeroCronograma, sum(max_atend) as maximoVagas'), 'reu.dia_semana as dia', 'td.nome as dia_semana') // Numero de grupos, Numero total de vagas, e dia da semana 
+            ->select(DB::raw('count(*) as numeroCronograma, sum(max_atend) as maximoVagas'), 'reu.dia_semana as dia', 'td.nome as dia_semana') // Numero de grupos, Numero total de vagas, e dia da semana
             ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as td', 'reu.dia_semana', 'td.id')
             ->where(function ($query) use ($hoje) {
@@ -303,7 +303,7 @@ class GerenciarEncaminhamentoController extends Controller
             ->where('id', $reu)
             ->first();
 
-        // Traz todos os dados do encaminhamento atual    
+        // Traz todos os dados do encaminhamento atual
         $tratID = DB::table('encaminhamento')->where('encaminhamento.id', $ide)->leftJoin('atendimentos', 'id_atendimento', 'atendimentos.id')->first();
 
         // Retorna todos os IDs dos encaminhamentos de tratamento
@@ -481,7 +481,7 @@ class GerenciarEncaminhamentoController extends Controller
                     'at.dh_fim', // Datetime de fim do atendimento
                     'tsa.descricao AS tst', // Status do atendimento, em String
                     'gr.nome AS nomeg', // Nome do grupo, mostrado em Dados do Encaminhamento
-                    'rm.h_inicio AS rm_inicio', // Inicio do Cronograma do Tratamento Marcado 
+                    'rm.h_inicio AS rm_inicio', // Inicio do Cronograma do Tratamento Marcado
                     'tm.tipo AS tpmotivo', // Motivo de cancelamento do encaminhamento
                     'tr.dt_fim as final',
                 )
@@ -520,7 +520,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->where('tr.id_encaminhamento', $ide)
                 ->get();
 
-            // Conta a quantidade de faltas do encaminhamento atual   
+            // Conta a quantidade de faltas do encaminhamento atual
             $faul = DB::table('tratamento AS tr')
                 ->select('dt.presenca')
                 ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
@@ -590,7 +590,7 @@ class GerenciarEncaminhamentoController extends Controller
                 // Caso aquela entrevista tenha um PTD marcado, e ele seja infinito, e o motivo do cancelamento foi alta da avaliação, tire de infinito
                 $ptdAtivoInfinito = $ptdAtivo ? $ptdAtivo->dt_fim == null : false; //
                 if ($ptdAtivoInfinito) {
-                    
+
                     $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
 
                     // Inativa o PTD infinito
@@ -685,7 +685,7 @@ class GerenciarEncaminhamentoController extends Controller
 
             // Traz todos os dados de todos os dias de tratamento
             $dadosDias = DB::table('cronograma AS reu')
-                ->select(DB::raw('count(*) as numeroCronograma, sum(max_atend) as maximoVagas'), 'reu.dia_semana as dia', 'td.nome as dia_semana') // Numero de grupos, Numero total de vagas, e dia da semana 
+                ->select(DB::raw('count(*) as numeroCronograma, sum(max_atend) as maximoVagas'), 'reu.dia_semana as dia', 'td.nome as dia_semana') // Numero de grupos, Numero total de vagas, e dia da semana
                 ->leftJoin('grupo AS gr', 'reu.id_grupo', 'gr.id')
                 ->leftJoin('tipo_dia as td', 'reu.dia_semana', 'td.id')
                 ->where(function ($query) use ($hoje) {
@@ -818,7 +818,7 @@ class GerenciarEncaminhamentoController extends Controller
 
         $reu = intval($request->reuniao); // Guarda em uma variável o ID do cronograma escolhido
         $countVagas = DB::table('tratamento')->where('id_reuniao', "$reu")->where('status', '<', '3')->count(); // Conta a quantidade de tratamentos ativos nessa reunião
-        $maxAtend = DB::table('cronograma')->where('id', "$reu")->first(); // Usado para retornar o número máximo de assistidos da reunião 
+        $maxAtend = DB::table('cronograma')->where('id', "$reu")->first(); // Usado para retornar o número máximo de assistidos da reunião
         $tratID = DB::table('encaminhamento')->where('id',  $ide)->first(); // Retorna o tipo de tratamento, usado para validação do número de vagas
         $idt = DB::table('tratamento')->where('id_encaminhamento', $ide)->first(); // Pega os dados do tratamento, usados: DT_FIM e ID
         $data_ontem = Carbon::yesterday();
@@ -843,7 +843,7 @@ class GerenciarEncaminhamentoController extends Controller
                 app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
                 return redirect()->back();
 
-                // Caso a data fim seja em um domingo da semana passada (Não reconheço a utilidade, possívelmente inútil) 
+                // Caso a data fim seja em um domingo da semana passada (Não reconheço a utilidade, possívelmente inútil)
             } elseif ($data_hoje->weekOfYear == ($dia_fim->weekOfYear + 1) and $data_hoje->diffInDays($dia_fim, false) < 0 and $maxAtend->dia_semana == 0) {
                 app('flasher')->addError('Operação Impossível! Esta é a semana final do assistido');
                 return redirect()->back();

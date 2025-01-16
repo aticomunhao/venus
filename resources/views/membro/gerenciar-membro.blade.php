@@ -37,8 +37,7 @@
                     </div>
                     <div class="col-xxl-1 col-lg-4 mt-3">
                         <input class="btn btn-light col-12 btn-sm mt-2"
-                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;" type="submit"
-                            value="Pesquisar">
+                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;" type="submit" value="Pesquisar">
                     </div>
                     <div class="col-xxl-1 col-lg-4">
                         <a href="/gerenciar-membro/{{ $id }}" class="btn btn-light col-12 btn-sm mt-4"
@@ -47,23 +46,21 @@
                     </div>
                     <div class="col-xxl-1 col-lg-4">
                         <a href="/gerenciar-grupos-membro" class="btn btn-primary col-12 btn-sm mt-4"
-                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"
-                            type="button">Retornar</a>
+                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;" type="button">Retornar</a>
                     </div>
                     <!-- Botão para abrir o modal -->
                     @if (in_array(13, session()->get('usuario.acesso')))
-                    <div class="col-xxl-1 col-lg-4">
-                        <button type="button" class="btn btn-success col-12 btn-sm mt-4"
-                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"data-bs-toggle="modal"
-                            data-bs-target="#meuModal">
-                            OPÇÕES
-                        </button>
-                     @endif
-                    </div>
+                        <div class="col-xxl-1 col-lg-4">
+                            <button type="button" class="btn btn-success col-12 btn-sm mt-4"
+                                style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"data-bs-toggle="modal"
+                                data-bs-target="#meuModal">
+                                OPÇÕES
+                            </button>
+                    @endif
                 </div>
         </div>
-        </form>
     </div>
+    </form>
     <hr>
     Membros Ativos: {{ $contar }}
     <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
@@ -73,9 +70,7 @@
                 <th>NOME</th>
                 <th>FUNÇÃO</th>
                 <th>STATUS</th>
-                @if (in_array(13, session()->get('usuario.acesso')))
-                    <th>AÇÕES</th>
-                @endif
+                <th>AÇÕES</th>
             </tr>
         </thead>
         <tbody>
@@ -85,8 +80,12 @@
                     <td>{{ $membros->nome_completo }}</td>
                     <td>{{ $membros->nome_funcao }}</td>
                     <td>{{ $membros->status }}</td>
-                    @if (in_array(13, session()->get('usuario.acesso')))
-                        <td>
+                    <td>
+                        <a href="/visualizar-membro/{{ $membros->idm }}" class="btn btn-outline-primary btn-sm tooltips">
+                            <span class="tooltiptext">Visualizar</span>
+                            <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                        </a>
+                        @if (in_array(13, session()->get('usuario.acesso')))
                             <!-- Botão para editar -->
                             @if ($membros->status = 'Inativo' && in_array(13, session()->get('usuario.acesso')))
                                 <a href="/editar-membro/{{ $id }}/{{ $membros->idm }}" type="button"
@@ -122,8 +121,8 @@
                                     <span class="tooltiptext">Deletar</span>
                                     <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                        </td>
-                    @endif
+                            @endif
+                    </td>
                 </tr>
             @endif
 
@@ -195,35 +194,36 @@
         <data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header" style="background-color:rgb(39, 91, 189);color:white">
                     <h5 class="modal-title" id="meuModalLabel">Opções do Grupo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    @if (in_array(13, session()->get('usuario.acesso')))
-                        @if ($grupo->modificador == 4)
-                            <a href="/ferias-reuniao/{{ $id }}/2" class="btn btn-warning btn-sm w-100 mb-2">
-                                Retomar de Férias
-                            </a>
-                        @else
-                            <a href="/ferias-reuniao/{{ $id }}/1" class="btn btn-danger btn-sm w-100 mb-2">
-                                Declarar Férias
-                            </a>
-                        @endif
-                    @endif
+                    <center>
+                        <div class="row col-10">
+                            @if (in_array(13, session()->get('usuario.acesso')))
+                                <a href="/criar-membro-grupo/{{ $id }}" class="btn btn-success w-100 mb-2">
+                                    Novo membro +
+                                </a>
+                                <a href="/selecionar-membro/{{ $id }}" class="btn btn-warning w-100 mb-2">
+                                    Transferir Membros
+                                </a>
+                            @endif
+                            @if (in_array(13, session()->get('usuario.acesso')))
+                                @if ($grupo->modificador == 4)
+                                    <a href="/ferias-reuniao/{{ $id }}/2" class="btn btn-warning  w-100 mb-2">
+                                        Retomar de Férias
+                                    </a>
+                                @else
+                                    <a href="/ferias-reuniao/{{ $id }}/1" class="btn btn-danger w-100 mb-2">
+                                        Declarar Férias
+                                    </a>
+                                @endif
+                            @endif
+                        </div>
+                    </center>
+                </div>
 
-                    @if (in_array(13, session()->get('usuario.acesso')))
-                        <a href="/criar-membro-grupo/{{ $id }}" class="btn btn-success btn-sm w-100 mb-2">
-                            Novo membro +
-                        </a>
-                        <a href="/selecionar-membro/{{ $id }}" class="btn btn-warning btn-sm w-100 mb-2">
-                            Transferir Membros
-                        </a>
-                    @endif
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
-                </div>
             </div>
         </div>
     </div>
@@ -231,4 +231,4 @@
     </div>
 
     <style>
-@endsection
+    @endsection

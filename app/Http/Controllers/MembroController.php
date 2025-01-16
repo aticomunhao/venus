@@ -326,13 +326,13 @@ class MembroController extends Controller
             $membroQuery->where(DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END)"), '=', $status);
         }
 
-    // Paginação dos resultados
-    $membro = $membroQuery->orderBy('status', 'asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
+        // Paginação dos resultados
+        $membro = $membroQuery->orderBy('status', 'asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
 
-    // Contagem total de membros sem considerar dt_fim
-    $contar = $membroQuery->whereNull('m.dt_fim')->count(); // Co
+        // Contagem total de membros sem considerar dt_fim
+        $contar = $membroQuery->whereNull('m.dt_fim')->count(); // Co
         // Retorno da view com os dados
-        return view('membro.gerenciar-membro', compact('contar','membro', 'id', 'grupo', 'status', 'statu', 'grupos'));
+        return view('membro.gerenciar-membro', compact('contar', 'membro', 'id', 'grupo', 'status', 'statu', 'grupos'));
     }
 
     public function create()
@@ -468,24 +468,43 @@ class MembroController extends Controller
         }
     }
 
-    public function show(string $idcro, string $id)
+    public function show(String $id ,Request $request)
     {
-        try {
-            $grupo = DB::table('cronograma as cro')->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia')->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')->get();
 
-            $membro = DB::table('membro AS m')->leftJoin('associado', 'associado.id', '=', 'm.id_associado')->join('pessoas AS p', 'associado.id_pessoa', '=', 'p.id')->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')->leftJoin('grupo AS g', 'm.id_cronograma', '=', 'g.id')->select('p.nome_completo', 'm.id AS idm', 'm.id_associado', 'm.id_funcao', 'p.cpf', 'p.status', 'p.motivo_status', 'tf.nome as nome_funcao', 'm.id_cronograma', 'g.nome as nome_grupo')->where('m.id', $id)->first();
+        $membro = DB::table('membro AS m')
+            ->select(
+                'm.id',
+                'm.id_cronograma',
+                'p.nome_completo',
+                'a.nr_associado',
+                'p.dt_nascimento',
+                'p.ddd',
+                'p.celular',
+                'tf.nome as nome_funcao',
+                'd.descricao',
+                'm.dt_inicio',
+                'm.dt_fim',
+                'tp.tipo',
+            )
+            ->leftJoin('associado as a','m.id_associado' ,  'a.id')
+            ->join('pessoas AS p', 'a.id_pessoa', '=', 'p.id')
+            ->leftJoin('tipo_status_pessoa as tp','p.status','tp.id')
+            ->leftJoin('tp_ddd as d', 'p.ddd', '=', 'd.id')
+            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+            ->where('m.id', $id)
+            ->first();
 
-            $tipo_status_pessoa = DB::table('tipo_status_pessoa')->select('id', 'tipo as tipos')->get();
-            $tipo_motivo_status_pessoa = DB::table('tipo_motivo_status_pessoa')->select('id', 'motivo')->get();
-            $pessoas = DB::table('pessoas')->get();
-            $tipo_funcao = DB::table('tipo_funcao')->get();
-            $associado = DB::table('associado')->leftJoin('pessoas', 'pessoas.id', '=', 'associado.id_pessoa')->select('associado.id', 'pessoas.nome_completo', 'associado.nr_associado')->orderBy('pessoas.nome_completo', 'asc')->get();
+            $presencas = DB::table('presenca_membros as pm')
+            ->select('dc.data','pm.presenca','g.nome')
+            ->leftJoin('membro as m','pm.id_membro','m.id')
+            ->leftJoin('associado as a','m.id_associado','a.id')
+            ->leftJoin('dias_cronograma as dc','pm.id_dias_cronograma','dc.id')
+            ->leftJoin('cronograma as cro','dc.id_cronograma','cro.id')
+            ->leftJoin('grupo as g','cro.id_grupo','g.id')
+            ->where('m.id',$id)
+            ->get();
 
-            return view('membro.visualizar-membro', compact('associado', 'tipo_status_pessoa', 'tipo_motivo_status_pessoa', 'grupo', 'membro', 'pessoas', 'tipo_funcao', 'idcro'));
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('administrativo-erro.erro-inesperado', compact('code'));
-        }
+        return view('membro.visualizar-membro', compact('membro','presencas'));
     }
 
     public function destroy(string $idcro, string $id)
