@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
+use PhpParser\Node\Expr\Cast\String_;
+
 use function Laravel\Prompts\select;
 
 class MembroController extends Controller
@@ -468,7 +470,7 @@ class MembroController extends Controller
         }
     }
 
-    public function show(String $id ,Request $request)
+    public function show(String $id, Request $request)
     {
 
         $membro = DB::table('membro AS m')
@@ -486,25 +488,124 @@ class MembroController extends Controller
                 'm.dt_fim',
                 'tp.tipo',
             )
-            ->leftJoin('associado as a','m.id_associado' ,  'a.id')
+            ->leftJoin('associado as a', 'm.id_associado',  'a.id')
             ->join('pessoas AS p', 'a.id_pessoa', '=', 'p.id')
-            ->leftJoin('tipo_status_pessoa as tp','p.status','tp.id')
+            ->leftJoin('tipo_status_pessoa as tp', 'p.status', 'tp.id')
             ->leftJoin('tp_ddd as d', 'p.ddd', '=', 'd.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
             ->where('m.id', $id)
             ->first();
 
-            $presencas = DB::table('presenca_membros as pm')
-            ->select('dc.data','pm.presenca','g.nome')
-            ->leftJoin('membro as m','pm.id_membro','m.id')
-            ->leftJoin('associado as a','m.id_associado','a.id')
-            ->leftJoin('dias_cronograma as dc','pm.id_dias_cronograma','dc.id')
-            ->leftJoin('cronograma as cro','dc.id_cronograma','cro.id')
-            ->leftJoin('grupo as g','cro.id_grupo','g.id')
-            ->where('m.id',$id)
+        $presencas = DB::table('presenca_membros as pm')
+            ->select('dc.data', 'pm.presenca', 'g.nome')
+            ->leftJoin('membro as m', 'pm.id_membro', 'm.id')
+            ->leftJoin('associado as a', 'm.id_associado', 'a.id')
+            ->leftJoin('dias_cronograma as dc', 'pm.id_dias_cronograma', 'dc.id')
+            ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
+            ->leftJoin('grupo as g', 'cro.id_grupo', 'g.id')
+            ->where('m.id', $id)
+            ->orderBy('dc.data', 'desc')
             ->get();
 
-        return view('membro.visualizar-membro', compact('membro','presencas'));
+
+        $arrayPresencas = [];
+        foreach ($presencas as $presenca) {
+
+            $arrayPresencas[date('Y', strtotime($presenca->data))][] = $presenca;
+        }
+
+        $presencas = $arrayPresencas;
+
+
+        return view('membro.visualizar-membro', compact('membro', 'presencas'));
+    }
+
+    public function faltas(String $id, Request $request)
+    {
+
+        $membro = DB::table('membro AS m')
+            ->select(
+                'm.id',
+                'm.id_cronograma',
+                'p.nome_completo',
+                'a.nr_associado',
+                'p.dt_nascimento',
+                'p.ddd',
+                'p.celular',
+                'tf.nome as nome_funcao',
+                'd.descricao',
+                'm.dt_inicio',
+                'm.dt_fim',
+                'tp.tipo',
+            )
+            ->leftJoin('associado as a', 'm.id_associado',  'a.id')
+            ->join('pessoas AS p', 'a.id_pessoa', '=', 'p.id')
+            ->leftJoin('tipo_status_pessoa as tp', 'p.status', 'tp.id')
+            ->leftJoin('tp_ddd as d', 'p.ddd', '=', 'd.id')
+            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+            ->where('m.id', $id)
+            ->first();
+
+        $presencas = DB::table('presenca_membros as pm')
+            ->select('dc.data', 'pm.presenca', 'g.nome', 'pm.id')
+            ->leftJoin('membro as m', 'pm.id_membro', 'm.id')
+            ->leftJoin('associado as a', 'm.id_associado', 'a.id')
+            ->leftJoin('dias_cronograma as dc', 'pm.id_dias_cronograma', 'dc.id')
+            ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
+            ->leftJoin('grupo as g', 'cro.id_grupo', 'g.id')
+            ->where('m.id', $id)
+            ->orderBy('dc.data', 'desc')
+            ->get();
+
+        $arrayPresencas = [];
+        foreach ($presencas as $presenca) {
+
+            $arrayPresencas[date('Y', strtotime($presenca->data))][] = $presenca;
+        }
+
+        $presencas = $arrayPresencas;
+
+
+
+
+        return view('membro.reverter-faltas-membro', compact('membro', 'presencas'));
+    }
+
+    public function remarcar(Request $request, String $id)
+    {
+        $data_atual = Carbon::now();
+        if ($request->checkbox) {
+            foreach ($request->checkbox as $key => $presenca) {
+
+                $booleanPresenca = $presenca ?? false;
+
+                DB::table('presenca_membros')
+                    ->where('id', $key)
+                    ->update([
+                        'presenca' => !$booleanPresenca
+                    ]);
+
+                $nomePessoa = DB::table('pessoas')
+                    ->where('id', session()->get('usuario.id_pessoa'))
+                    ->value('nome_completo');
+
+                // Realiza a inserção na tabela 'historico_venus'
+                DB::table('historico_venus')->insert([
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'data' => $data_atual,
+                    'fato' => 26,
+                    'obs' => 'alterou a presença/falta do membro',
+                    'pessoa' => $nomePessoa,
+                    'id_ref' => $key,
+                ]);
+            }
+            app('flasher')->addSuccess('Presença alterada com sucesso.');
+        } else {
+            app('flasher')->addError('Nenhum item selecionada.');
+        }
+
+
+        return redirect("/gerenciar-membro/$id");
     }
 
     public function destroy(string $idcro, string $id)
@@ -540,6 +641,8 @@ class MembroController extends Controller
         DB::table('membro')->where('id', $id)->delete();
 
         app('flasher')->addSuccess('Membro deletado com sucesso.');
+
+
         return redirect("/gerenciar-membro/$idcro");
     }
 

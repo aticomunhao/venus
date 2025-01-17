@@ -178,10 +178,9 @@
                                 <span class="tooltiptext">Presença</span><i class="bi bi-exclamation-triangle"
                                     style="font-size: 1rem; color:#000;"></i></button>
                         @else
-                            <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
-                                {{-- botão de presença --}} data-tt="tooltip" data-placement="top" title="Presença"
-                                data-bs-target="#presenca{{ $listas->idtr }}" disabled><i
-                                    class="bi bi bi-exclamation-triangle"
+                            <button type="button" class="btn btn-outline-warning tooltips btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#presenca{{ $listas->idtr }}" disabled>
+                                <span class="tooltiptext">Presença</span><i class="bi bi-exclamation-triangle"
                                     style="font-size: 1rem; color:#000;"></i></button>
                         @endif
 
@@ -246,7 +245,8 @@
                                     <div class="modal-body">
                                         <label for="recipient-name" class="col-form-label" style="font-size:17px">Este é
                                             o {{ $listas->dt_fim == $now ? 'último' : null }}
-                                            {{ $listas->dt_fim == date('Y-m-d', strtotime($now . '-1 week')) ? 'penúltimo' : null }} dia de tratamento
+                                            {{ $listas->dt_fim == date('Y-m-d', strtotime($now . '-1 week')) ? 'penúltimo' : null }}
+                                            dia de tratamento
                                             de:<br /><span
                                                 style="color: rgb(39, 91, 189)">{{ $listas->nm_1 }}</span></label>
                                         <br />
@@ -263,6 +263,20 @@
                         </div>
                         </form>
 
+                        @if (in_array(42, session()->get('usuario.acesso')))
+                            @if ($listas->status < 3)
+                                <a href="/reverter-faltas-assistido/{{ $listas->idtr }}"
+                                    class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Reverter faltas</span>
+                                    <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                            @else
+                                <button class="btn btn-outline-warning btn-sm tooltips" disabled>
+                                    <span class="tooltiptext">Reverter faltas</span>
+                                    <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                </button>
+                            @endif
+                        @endif
                         <a href="/visualizar-tratamento/{{ $listas->idtr }}" type="button"{{-- botão de histórico --}}
                             class="btn btn-outline-primary btn-sm tooltips">
                             <span class="tooltiptext">Histórico</span>

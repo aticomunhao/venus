@@ -107,29 +107,48 @@
                         Presenças
                     </div>
                     <div class="card-body">
-                        <table>
-                            <table
-                                class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
-                                <thead>
-                                    <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                                        <th>DATA</th>
-                                        <th>GRUPO</th>
-                                        <th>PRESENÇA</th>
-                                    </tr>
-                                <tbody style="font-size: 14px; color:#000000; text-align:center;">
-                                    @foreach ($presencas as $presenca)
-                                        <tr>
-                                            <td>{{ date('d/m/Y', strtotime($presenca->data)) }}</td>
-                                            <td>{{ $presenca->nome }}</td>
-                                            @if ($presenca->presenca == 1)
-                                                <td style="background-color:#90EE90;">Presente</td>
-                                            @else
-                                                <td style="background-color:#FA8072;">Ausente</td>
-                                            @endif
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            <div class="accordion" id="accordionExample">
+                                @foreach ($presencas as $key => $presenca)
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button {{ $loop->first ? '' : 'collapsed'}}" type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#collapse{{ $key }}" aria-expanded="true"
+                                                aria-controls="collapse{{ $key }}">
+                                                {{ $key }}
+                                            </button>
+                                        </h2>
+                                        <div id="collapse{{ $key }}" class="accordion-collapse collapse  {{ $loop->first ? 'show' : ''}}"
+                                            data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                <table
+                                                    class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
+                                                    <thead>
+                                                        <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
+                                                            <th>DATA</th>
+                                                            <th>GRUPO</th>
+                                                            <th>PRESENÇA</th>
+                                                        </tr>
+                                                    <tbody style="font-size: 14px; color:#000000; text-align:center;">
+                                                        <div class="accordion" id="accordionExample">
+                                                            @foreach ($presenca as $itemPresenca)
+                                                                <tr>
+                                                                    <td>{{ date('d/m/Y', strtotime($itemPresenca->data)) }}
+                                                                    </td>
+                                                                    <td>{{ $itemPresenca->nome }}</td>
+                                                                    @if ($itemPresenca->presenca == 1)
+                                                                        <td style="background-color:#90EE90;">Presente</td>
+                                                                    @else
+                                                                        <td style="background-color:#FA8072;">Ausente</td>
+                                                                    @endif
+                                                                </tr>
+                                                            @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                     </div>
                 </div>
 

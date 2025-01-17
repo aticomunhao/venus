@@ -251,6 +251,12 @@ Route::middleware('rotas:14')->group(function () {
     Route::get('/gerenciar-grupos-membro', [MembroController::class, 'grupos'])->name('');
 });
 
+// Reverter Faltas de Membros
+Route::middleware('rotas:42')->group(function () {
+    Route::get('/reverter-faltas-membro/{id}', [MembroController::class, 'faltas'])->name('');
+    Route::post('/remarcar-faltas-membro/{id}', [MembroController::class, 'remarcar'])->name('');
+});
+
 // Incluir Membro Grupo
 Route::middleware('rotas:29')->group(function () {
     Route::get('/criar-membro-grupo/{id}', [MembroController::class, 'createGrupo'])->name('');
@@ -295,6 +301,8 @@ Route::middleware('rotas:18')->group(function () {
     Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
     Route::any('/incluir-avulso', [GerenciarTratamentosController::class, 'createAvulso']);
     Route::any('/armazenar-avulso', [GerenciarTratamentosController::class, 'storeAvulso']);
+    Route::get('/reverter-faltas-assistido/{id}', [GerenciarTratamentosController::class, 'faltas'])->name('');
+    Route::any('/remarcar-faltas-assistido', [GerenciarTratamentosController::class, 'remarcar'])->name('');
     Route::any('/inativar-tratamento/{id}', [GerenciarTratamentosController::class, 'destroy']);
 });
 
@@ -424,4 +432,3 @@ Route::middleware('rotas:35')->group(function () {
     Route::any('/gerenciar-relatorio-reuniao', [RelatoriosController::class, 'relatorioReuniao']);
     Route::any('/visualizar-relatorio-reuniao/{id}', [RelatoriosController::class, 'visualizarReuniao']);
 });
-
