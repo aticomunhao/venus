@@ -46,7 +46,7 @@ class GerenciarProamoController extends Controller
                 'cro.h_inicio',
                 'cro.h_fim',
                 'gr.nome',
-                'tr.dt_fim',
+                'tr.dt_inicio',
                 'tse.nome as status',
                 'tr.status as id_status',
                 'tr.maca',
@@ -93,11 +93,10 @@ class GerenciarProamoController extends Controller
 
             $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
 
-            if ($encaminhamento->dt_fim) {
-                $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_fim));
-            } else {
-                $encaminhamento->contagem = null;
-            }
+      
+                $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_inicio));
+    
+      
         }
 
         return view('proamo.gerenciar-proamo', compact('encaminhamentos', 'dirigentes', 'selected_grupo'));

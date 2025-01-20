@@ -139,7 +139,7 @@ class GerenciarEntrevistaController extends Controller
         }
 
 
-        $totalAssistidos = count($informacoes); // Guarda o total de itens ma variável
+        $totalAssistidos = count($informacoes); // Guarda o total de itens na variável
 
         // Traz as entrevistar para o Select de Pesquisa de Status
         $tipo_entrevista = DB::table('tipo_entrevista')

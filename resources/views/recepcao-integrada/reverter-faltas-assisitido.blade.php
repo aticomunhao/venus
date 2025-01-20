@@ -19,7 +19,7 @@
                     </div>
                     <div class="card-body">
                         <form class="form-horizontal mt-2" method="post"
-                            action="/remarcar-faltas-assistido/">
+                            action="/remarcar-faltas-assistido">
                             @csrf
                                 <div class="form-group row">
                                     <div class="col">

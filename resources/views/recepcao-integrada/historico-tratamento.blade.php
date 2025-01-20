@@ -99,7 +99,7 @@
                                         <td>{{ $results->nomedia }}</td>
                                         <td>{{ $results->rm_inicio }}</td>
                                         <td>{{ $results->sala }}</td>
-                                        <td>{{ $results->tsenc }}</td>
+                                        <td>{{ $results->status_tratamento}}</td>
                                         <td>{{ $results->tpmotivo }}</td>
                                     </tr>
                                 </tbody>

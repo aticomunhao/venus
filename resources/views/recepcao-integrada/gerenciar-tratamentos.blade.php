@@ -359,4 +359,15 @@
 
         });
     </script>
+     <script>
+        $(document).ready(function() {
+            if ({{ $situacao == null }}) { //Deixa o select de status para Todos quando se pesquisa
+                $(".teste1").prop("selectedIndex", 1);
+            }
+            $('.pesquisa').change(function() {
+                $(".teste1").prop("selectedIndex", 6);
+            })
+
+        });
+    </script>
 @endsection

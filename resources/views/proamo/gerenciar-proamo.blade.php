@@ -59,21 +59,17 @@
                         <th>AÇÕES</th>
                     </tr>
                 </thead>
+               
                 <tbody>
                     @foreach ($encaminhamentos as $encaminhamento)
-                        @if (!$encaminhamento->ptd)
-                            <tr class="table-danger">
-                            @elseif($encaminhamento->id_status == 2 and $encaminhamento->contagem < 31)
-                            <tr class="table-warning">
-                            @else
-                            <tr>
-                        @endif
+                        {{-- (!$encaminhamento->ptd) --}}
 
-                        <td>{{ $encaminhamento->nome_completo }}</td>
-                        <td>{{ $encaminhamento->nome }}</td>
-                        <td>{{ $encaminhamento->h_inicio }}</td>
-                        <td>{{ $encaminhamento->h_fim }}</td>
-                        <td>{{ $encaminhamento->status }}</td>
+                        <tr class="{{ $encaminhamento->id_status < 3 && $encaminhamento->contagem < 31 ?  'table-warning !important' :  'table-success'}}" >
+                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->nome_completo }}</td>
+                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->nome }}</td>
+                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->h_inicio }}</td>
+                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->h_fim }}</td>
+                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->status }}</td>
                         <td>
                             @if ($encaminhamento->id_status != 1)
                                 <button type="button" class="btn btn-outline-warning btn-sm tooltips"

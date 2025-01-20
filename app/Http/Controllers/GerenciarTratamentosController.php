@@ -316,7 +316,6 @@ class GerenciarTratamentosController extends Controller
 
             return Redirect()->back();
         } else {
-            $presenca = isset($request->presenca) ? true : false;
 
             $acompanhantes = isset($acompanhantes->nr_acompanhantes)  ? $acompanhantes->nr_acompanhantes : 0;
             $nrAcomp = $acompanhantes + $request->acompanhantes;
@@ -340,7 +339,7 @@ class GerenciarTratamentosController extends Controller
                     ->where('encaminhamento.id_tipo_tratamento', 1) // PTD
                     ->where('encaminhamento.status_encaminhamento', '<', 3) // Finalizado
                     ->update([
-                        'status_encaminhamento' => 3 // Finalziado
+                        'status_encaminhamento' => 3 // Finalizado
                     ]);
 
                 // Inativa os Tratamentos PTD ativos
@@ -421,6 +420,7 @@ class GerenciarTratamentosController extends Controller
             ->select(
                 'enc.id AS ide',
                 'tr.id AS idtr',
+                'tst.nome as status_tratamento',
                 'enc.id_tipo_encaminhamento',
                 'tr.dt_inicio',
                 'enc.id_atendimento',
@@ -465,6 +465,7 @@ class GerenciarTratamentosController extends Controller
             ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
             ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
             ->leftJoin('tipo_status_atendimento AS sat', 'at.status_atendimento', 'sat.id')
+            ->leftJoin('tipo_status_tratamento as tst', 'tr.status', 'tst.id')
             ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
             ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
             ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
@@ -485,15 +486,27 @@ class GerenciarTratamentosController extends Controller
 
 
         // dd($result, $pessoa);
-        $list = DB::table('tratamento AS tr')
-            ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.presenca', 'dc.data', 'gp.nome')
+        $list = DB::table('presenca_cronograma AS dt')
+            ->select(
+                'enc.id AS ide',
+                'enc.id_tipo_encaminhamento',
+                'enc.dh_enc',
+                'enc.status_encaminhamento AS tst',
+                'tr.id AS idtr',
+                'rm.h_inicio AS rm_inicio',
+                'dt.id AS idp',
+                'dt.presenca',
+                'dc.data',
+                'gp.nome'
+            )
+            ->leftJoin('tratamento AS tr','dt.id_tratamento' , 'tr.id')
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-            ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
             ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
             ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
             ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
             ->where('tr.id', $idtr)
+            ->orderBy('dc.data', 'ASC')
             ->get();
 
 
@@ -515,13 +528,13 @@ class GerenciarTratamentosController extends Controller
 
 
         $result = DB::table('tratamento as tr')
-        ->select('p.nome_completo as nm_1','p.dt_nascimento', 'ts.tipo')
-        ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-        ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-        ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
-        ->leftJoin('tp_sexo as ts', 'p.sexo', 'ts.id')
-        ->where('tr.id', $idtr)
-        ->get();
+            ->select('p.nome_completo as nm_1', 'p.dt_nascimento', 'ts.tipo')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+            ->leftJoin('tp_sexo as ts', 'p.sexo', 'ts.id')
+            ->where('tr.id', $idtr)
+            ->get();
 
 
         $list = DB::table('tratamento AS tr')
@@ -538,14 +551,13 @@ class GerenciarTratamentosController extends Controller
 
 
 
-            $arrayPresencas = [];
-            foreach($list as $presenca){
+        $arrayPresencas = [];
+        foreach ($list as $presenca) {
 
-                $arrayPresencas[date('Y', strtotime($presenca->data))][] = $presenca;
+            $arrayPresencas[date('Y', strtotime($presenca->data))][] = $presenca;
+        }
 
-            }
-
-           $list = $arrayPresencas;
+        $list = $arrayPresencas;
 
 
         return view('/recepcao-integrada/reverter-faltas-assisitido', compact('result', 'list'));
@@ -553,12 +565,13 @@ class GerenciarTratamentosController extends Controller
 
     public function remarcar(Request $request)
     {
+
         $data_atual = Carbon::now();
 
-        $booleanPresenca = $presenca ?? false;
 
-        if ($booleanPresenca) {
-                foreach ($request->checkbox as $key => $presenca) {
+        if ($request->checkbox) {
+            foreach ($request->checkbox as $key => $presenca) {
+                $booleanPresenca = $presenca ?? false;
 
                 DB::table('presenca_cronograma')
                     ->where('id', $key)
@@ -582,9 +595,9 @@ class GerenciarTratamentosController extends Controller
 
                 app('flasher')->addSuccess('Presença alterada com sucesso.');
             }
-            } else {
-                app('flasher')->addError('Nenhum item selecionado.');
-            }
+        } else {
+            app('flasher')->addError('Nenhum item selecionado.');
+        }
 
         return redirect('/gerenciar-tratamentos');
     }

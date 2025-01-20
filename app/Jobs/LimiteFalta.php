@@ -62,7 +62,7 @@ class LimiteFalta implements ShouldQueue
                 }
 
                 // Caso alcance a terceira falta consecutiva
-                if ($consecutivo > 3) {
+                if ($consecutivo > 2) {
 
                     // Descobre o id_encaminhamento do tratamento atual
                     $id_encaminhamento = DB::table('tratamento')->select('id_encaminhamento')->where('id', $key)->first();
