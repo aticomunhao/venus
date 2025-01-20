@@ -63,8 +63,8 @@
                                     </div>
                                     <div class="col mt-3">
                                         <label for="assist">Atendente</label>
-                                        <input class="form-control pesquisa" type="text" id="idatendente" name="atendente"
-                                            value="{{ $atendente }}">
+                                        <input class="form-control pesquisa" type="text" id="idatendente"
+                                            name="atendente" value="{{ $atendente }}">
                                     </div>
                                     <div class="col mt-3">
                                         <label for="assist">CPF</label>
@@ -110,7 +110,8 @@
                     <div class="modal-content">
                         <div class="modal-header" style="background-color:grey;color:white">
                             <h1 class="modal-title fs-5" id="exampleModalLabel">Colunas Visualizadas</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
 
@@ -261,7 +262,8 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "/tabela-atendimentos/" + assist + "/" + cpf + "/" + status + "/" + dt_ini + "/" + atendente,
+                    url: "/tabela-atendimentos/" + assist + "/" + cpf + "/" + status + "/" + dt_ini + "/" +
+                        atendente,
                     dataType: "json",
                     success: function(response) {
 
@@ -275,10 +277,8 @@
 
             function colunas() {
 
-                $('#numeroAtendimento').prop('checked') ? $('.numeroAtendimento').show() : $('.numeroAtendimento')
-                    .hide()
-                $('#atendentePreferido').prop('checked') ? $('.atendentePreferido').show() : $(
-                    '.atendentePreferido').hide()
+                $('#numeroAtendimento').prop('checked') ? $('.numeroAtendimento').show() : $('.numeroAtendimento').hide()
+                $('#atendentePreferido').prop('checked') ? $('.atendentePreferido').show() : $('.atendentePreferido').hide()
                 $('#tipoAtendente').prop('checked') ? $('.tipoAtendente').show() : $('.tipoAtendente').hide()
                 $('#horarioChegada').prop('checked') ? $('.horarioChegada').show() : $('.horarioChegada').hide()
                 $('#prioridade').prop('checked') ? $('.prioridade').show() : $('.prioridade').hide()
@@ -287,8 +287,7 @@
                 $('#atendente').prop('checked') ? $('.atendente').show() : $('.atendente').hide()
                 $('#sala').prop('checked') ? $('.sala').show() : $('.sala').hide()
                 $('#tipoAtendimento').prop('checked') ? $('.tipoAtendimento').show() : $('.tipoAtendimento').hide()
-                $('#statusAtendimento').prop('checked') ? $('.statusAtendimento').show() : $('.statusAtendimento')
-                    .hide()
+                $('#statusAtendimento').prop('checked') ? $('.statusAtendimento').show() : $('.statusAtendimento').hide()
 
             }
 
@@ -534,7 +533,7 @@
 
             })
 
-            function filaEspera(){
+            function filaEspera() {
                 $.ajax({
                     type: "GET",
                     url: "/pessoas-para-atender-atendimento",
@@ -579,5 +578,4 @@
 
         })
     </script>
-
 @endsection

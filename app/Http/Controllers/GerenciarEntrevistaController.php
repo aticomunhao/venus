@@ -128,7 +128,7 @@ class GerenciarEntrevistaController extends Controller
             foreach ($info as $check) {
 
                 // Caso o Status não seja Cancelado, retire do array
-                if ($check->status != 1 or $check->status_encaminhamento_id != 6) {
+                if ($check->status != 1 or $check->status_encaminhamento_id != 4) {
                     unset($info[$i]);
                 }
                 $i = $i + 1;
@@ -148,6 +148,7 @@ class GerenciarEntrevistaController extends Controller
             ->orderby('descricao', 'asc')
             ->get();
 
+            // dd($informacoes); // Debug the fetched data
 
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get(); // Traz os itens para pesquisa de Status
        $motivo = DB::table('tipo_motivo_entrevista')->orderBy('descricao')->get(); // Usado no Select de Motivo no Modal de Inativação
@@ -557,9 +558,7 @@ class GerenciarEntrevistaController extends Controller
     // Cancelar Entrevista
     public function inativar(Request $request, String $id)
     {
-        //try {
-
-
+    
         $data = date("Y-m-d");
 
         // Insere o fato de Cancelamento de Entrevista
@@ -613,7 +612,6 @@ class GerenciarEntrevistaController extends Controller
 
         } else {
 
-
             $ptdAtivo = DB::table('tratamento as t')
                 ->select('t.id', 'e.id as ide', 't.dt_fim', 'c.dia_semana')
                 ->leftJoin('encaminhamento as e', 't.id_encaminhamento', 'e.id')
@@ -626,8 +624,8 @@ class GerenciarEntrevistaController extends Controller
 
             // Caso aquela entrevista tenha um PTD marcado, e ele seja infinito, e o motivo do cancelamento foi alta da avaliação, tire de infinito
             $ptdAtivoInfinito = $ptdAtivo ? $ptdAtivo->dt_fim == null : false; //
-            $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
             if ($ptdAtivoInfinito and $motivo_entrevista == 11) {
+                $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
 
                 // Caso o tratamento seja num dia da semana anterior ou igual a hoje
                 if ($data < $dataFim or $data == $dataFim) {
@@ -644,6 +642,7 @@ class GerenciarEntrevistaController extends Controller
                         ]);
                 }
             } else if ($ptdAtivoInfinito) { // Caso não seja Alta, Cancela o PTD Infinito junto com a entrevista
+                $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
 
                 DB::table('tratamento')
                     ->where('id', $ptdAtivo->id)
@@ -684,10 +683,6 @@ class GerenciarEntrevistaController extends Controller
         ]);
 
         return redirect()->route('gerenciamento')->with('success', 'Entrevista Cancelada com Sucesso!');
-        // } catch (\Exception $e) {
-        //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
-        //     DB::rollBack();
-        //     return redirect()->back();
-        // }
+       
     }
 }

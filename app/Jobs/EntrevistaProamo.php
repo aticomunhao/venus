@@ -31,7 +31,7 @@ class EntrevistaProamo implements ShouldQueue
         // Retorna os ID_pessoa dos assistidos aguardando uma entrevista PROAMO
         $assistidos = DB::table('encaminhamento as enc')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-            ->where('status_encaminhamento', 7)
+            ->where('status_encaminhamento', 5)
             ->pluck('id_assistido', 'enc.id')
             ->toArray();
 

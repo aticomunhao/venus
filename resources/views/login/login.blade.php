@@ -89,7 +89,7 @@
                             </script>
                         {{-- <p>Don't have an account ? <a href="/register" class="text-primary"> Signup Now </a></p> --> --}}
                          {{-- <p>© {{  date('Y', strtotime('-2 year')) }} - {{  date('Y') }} Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p> --> --}}
-                        <p>© Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p>
+                        <p>© Comunhão Espírita de Brasília <i class="fa-solid fa-heart" style="color: #74C0FC;"></i></p>
                     </div>
                 </div>
             </div>

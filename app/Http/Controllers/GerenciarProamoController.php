@@ -93,11 +93,11 @@ class GerenciarProamoController extends Controller
 
             $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
 
-      
-                $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_inicio));
-    
+           
+                $encaminhamento->contagem = $hoje->diffInDays(Carbon::parse($encaminhamento->dt_inicio));
       
         }
+
 
         return view('proamo.gerenciar-proamo', compact('encaminhamentos', 'dirigentes', 'selected_grupo'));
     }

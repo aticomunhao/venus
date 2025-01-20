@@ -784,7 +784,7 @@ class AtendimentoFraternoController extends Controller
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
                 'id_tipo_entrevista' => 6,
-                'status_encaminhamento' =>  7
+                'status_encaminhamento' =>  5
             ]);
 
             app('flasher')->addSuccess('O encaminhamento para o Proamo foi criado com sucesso.');
@@ -794,7 +794,7 @@ class AtendimentoFraternoController extends Controller
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
                 'id_tipo_entrevista' => 6,
-                'status_encaminhamento' =>  7
+                'status_encaminhamento' =>  5
             ]);
 
             // Insere o encaminhamento PTD

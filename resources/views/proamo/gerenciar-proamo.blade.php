@@ -44,7 +44,7 @@
             <span class="text-danger" style="font-size: 20px;">&#9632;</span>
             <span style="font-size: 14px;">Assistidos sem PTD</span>
             <span class="text-warning" style="font-size: 20px;">&#9632;</span>
-            <span  style="font-size: 14px;">Assistidos em Análise</span>
+            <span  style="font-size: 14px;">Assistidos em Avaliação</span>
         </div>
         <div class="col">
             <table
@@ -59,12 +59,15 @@
                         <th>AÇÕES</th>
                     </tr>
                 </thead>
-               
+                
+
+            
+
                 <tbody>
                     @foreach ($encaminhamentos as $encaminhamento)
                         {{-- (!$encaminhamento->ptd) --}}
 
-                        <tr class="{{ $encaminhamento->id_status < 3 && $encaminhamento->contagem < 31 ?  'table-warning !important' :  'table-success'}}" >
+                        <tr class="{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ?  'table-warning' :  ''}}" >
                         <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->nome_completo }}</td>
                         <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->nome }}</td>
                         <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->h_inicio }}</td>
