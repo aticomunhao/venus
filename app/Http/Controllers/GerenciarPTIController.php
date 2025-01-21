@@ -50,7 +50,16 @@ class GerenciarPTIController extends Controller
 
             // Traz todos os encaminhamentos de todos os grupos selecionados // TODO otimitzar para trazer apenas os necessários, ao invés de todos
             $encaminhamentos = DB::table('tratamento as tr')
-                ->select('tr.id', 'p.nome_completo', 'cro.h_inicio', 'cro.h_fim', 'gr.nome', 'tse.nome as status', 'tr.status as id_status')
+                ->select(
+                    'tr.id',
+                    'p.nome_completo',
+                    'cro.h_inicio',
+                    'cro.h_fim',
+                    'gr.nome',
+                    'tse.nome as status',
+                    'tr.status as id_status',
+                    'tr.id_reuniao'
+                )
                 ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
                 ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
@@ -109,6 +118,7 @@ class GerenciarPTIController extends Controller
                     'enc.id AS ide',
                     'tr.dt_inicio',
                     'tr.dt_fim',
+                    'tr.id_reuniao',
                     'tse.descricao AS tsenc',
                     'at.id AS ida',
                     'p1.dt_nascimento',

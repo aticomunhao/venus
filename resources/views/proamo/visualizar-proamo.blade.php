@@ -121,8 +121,7 @@
                             @endforeach
                         </tbody>
                     </table>
-
-                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de Presenças PTD</legend>
+                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de Presenças @if($encaminhamento and $encaminhamento->id_tipo_tratamento == 1) PTD @elseif($encaminhamento and $encaminhamento->id_tipo_tratamento == 2) PTI @endif</legend>
                     Nr de faltas: {{$faul2}}
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
@@ -154,7 +153,7 @@
                     
                     <div class="row">
                         <div class="col">
-                            <a class="btn btn-danger" href="/gerenciar-proamo" style="text-align:right;" role="button">Fechar</a>
+                            <a class="btn btn-danger" href="/gerenciar-proamo?grupo={{$result->id_reuniao}}" style="text-align:right;" role="button">Fechar</a>
                         </div>
                     </div>
                 </div>

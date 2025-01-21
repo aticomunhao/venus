@@ -149,7 +149,7 @@
 
                     <div class="row">
                         <div class="col">
-                            <a class="btn btn-danger" href="/gerenciar-pti" style="text-align:right;" role="button">Fechar</a>
+                            <a class="btn btn-danger" href="/gerenciar-pti?grupo={{ current(current($result))->id_reuniao }}" style="text-align:right;" role="button">Fechar</a>
                         </div>
                     </div>
                 </div>

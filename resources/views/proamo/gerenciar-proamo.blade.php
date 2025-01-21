@@ -29,7 +29,7 @@
                         <div class="d-flex gap-2">
                             <button class="btn btn-light btn-sm" type="submit"
                                 style="box-shadow: 1px 2px 5px #000000;">Pesquisar</button>
-                            <a href="/gerenciar-proamo" class="btn btn-light btn-sm"
+                            <a href="/gerenciar-proamo?grupo={{ current($encaminhamentos)->id_reuniao }}" class="btn btn-light btn-sm"
                                 style="box-shadow: 1px 2px 5px #000000;">Limpar</a>
                             <a href="/gerenciar-membro/{{ $selected_grupo }}" class="btn btn-primary btn-sm"
                                 style="box-shadow: 1px 2px 5px #000000;">Gerenciar Grupo</a>
@@ -67,15 +67,15 @@
                     @foreach ($encaminhamentos as $encaminhamento)
                         {{-- (!$encaminhamento->ptd) --}}
 
-                        <tr class="{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ?  'table-warning' :  ''}}" >
-                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->nome_completo }}</td>
-                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->nome }}</td>
-                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->h_inicio }}</td>
-                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->h_fim }}</td>
-                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->status }}</td>
-                        <td>
+                        <tr class="" >
+                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ?  'background-color: #FFFF61' :  ''}}">{{ $encaminhamento->nome_completo }}</td>
+                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ?  'background-color: #FFFF61' :  ''}}">{{ $encaminhamento->nome }}</td>
+                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ?  'background-color: #FFFF61' :  ''}}">{{ $encaminhamento->h_inicio }}</td>
+                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ?  'background-color: #FFFF61' :  ''}}">{{ $encaminhamento->h_fim }}</td>
+                        <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ?  'background-color: #FFFF61' :  ''}}">{{ $encaminhamento->status }}</td>
+                        <td style="{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ?  'background-color: #FFFF61' :  ''}}">
 
-                            <button type="button" class="btn btn-outline-danger tooltips btn-sm"
+                            <button type="button" class="btn btn-outline-success tooltips btn-sm"
                             data-bs-toggle="modal" data-bs-target="#presenca{{ $encaminhamento->id }}">
                             <span class="tooltiptext">Presença</span><i class="bi bi-exclamation-triangle"
                                 style="font-size: 1rem; color:#000;"></i></button>
@@ -163,16 +163,16 @@
                         {{-- fim da modal de presença --}}
 
                             @if ($encaminhamento->id_status != 1)
-                                <button type="button" class="btn btn-outline-sucess btn-sm tooltips"
+                                <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
-                                    <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
+                                    <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
                                 </button>
                             @else
-                                <button type="button" disabled class="btn btn-outline-sucess btn-sm tooltips"
+                                <button type="button" disabled class="btn btn-outline-danger btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
-                                    <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
+                                    <i class="fa fa-person-walking fa-lg" style="font-size: 1rem; color:#000;"></i>
                                 </button>
                             @endif
 

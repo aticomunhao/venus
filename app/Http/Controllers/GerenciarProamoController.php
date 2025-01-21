@@ -46,6 +46,7 @@ class GerenciarProamoController extends Controller
             ->select(
                 'tr.id',
                 'tr.dt_fim',
+                'tr.id_reuniao',
                 'atd.id as ida',
                 'p.nome_completo',
                 'cro.h_inicio',
@@ -90,7 +91,7 @@ class GerenciarProamoController extends Controller
             $encaminhamentoPTD = DB::table('tratamento as tr')
                 ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
                 ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-                ->where('enc.id_atendimento', $encaminhamento->id_assistido)
+                ->where('at.id_assistido', $encaminhamento->id_assistido)
                 ->whereIn('enc.id_tipo_tratamento', [1, 2]) // PTD e PTI
                 ->where('status_encaminhamento', '<', 3) // Finalizado
                 ->select('tr.id')
@@ -129,6 +130,7 @@ class GerenciarProamoController extends Controller
                 'tr.dt_fim',
                 'tse.descricao AS tsenc',
                 'at.id AS ida',
+                'at.id_assistido',
                 'p1.dt_nascimento',
                 'p1.nome_completo AS nm_1',
                 'p2.nome_completo as nm_2',
@@ -142,7 +144,8 @@ class GerenciarProamoController extends Controller
                 'rm.h_inicio AS rm_inicio',
                 'tm.tipo AS tpmotivo',
                 'sat.descricao AS statat',
-                'sl.numero as sala'
+                'sl.numero as sala',
+                'tr.id_reuniao'
             )
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
@@ -165,9 +168,10 @@ class GerenciarProamoController extends Controller
         // Busca se existe um PTD para este assistido e retorna dados para faltas
         $encaminhamento = DB::table('tratamento as tr')
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-            ->where('enc.id_atendimento', $result->ida)
-            ->where('enc.id_tipo_tratamento', 1)
-            ->select('tr.id')
+            ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+            ->where('at.id_assistido', $result->id_assistido)
+            ->whereIn('enc.id_tipo_tratamento', [1,2])
+            ->select('tr.id', 'enc.id_tipo_tratamento')
             ->first();
 
         // Traz todas as presenças do assistido nesse Tratamento
