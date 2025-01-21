@@ -85,10 +85,12 @@
             </div>
         </div>
     </div>
-  
+
     <br>
     <br>
-    <div class="row mt-4 justify-content-center">
+    <center>
+    <div class="justify-content-center">
+    <div class= "col-11 row mt-1 ">
         <div class="d-grid gap-1 col-4 mx-auto">
             <a class="btn btn-danger" href="/gerenciar-entrevistas" role="button">Cancelar</a>
         </div>
@@ -96,6 +98,8 @@
             <button type="submit" class="btn btn-primary">Confirmar</button>
         </div>
     </div>
+    </div>
+    </center>
     </form>
 
     <script>
