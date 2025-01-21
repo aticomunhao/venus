@@ -74,6 +74,94 @@
                         <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->h_fim }}</td>
                         <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->status }}</td>
                         <td>
+
+                            <button type="button" class="btn btn-outline-warning tooltips btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#presenca{{ $encaminhamento->id }}">
+                            <span class="tooltiptext">Presença</span><i class="bi bi-exclamation-triangle"
+                                style="font-size: 1rem; color:#000;"></i></button>
+
+                        {{-- inicio da modal de presença --}}
+                        <div class="modal fade closes" id="presenca{{ $encaminhamento->id }}" tabindex="-1"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <form method="post" action="/presenca-tratatamento/{{ $encaminhamento->id }}">
+                                @csrf
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background-color:orange;color:white">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Registrar Presença
+                                            </h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="recipient-name" class="col-form-label"
+                                                    style="font-size:17px">Tem certeza que deseja registrar
+                                                    presença para<br /><span
+                                                        style="color:orange">{{ $encaminhamento->nome_completo }}</span>&#63;</label>
+                                            </div>
+                                            <center>
+                                                <div class="mb-2 col-10">
+                                                    <label class="col-form-label">Insira o número de acompanhantes,
+                                                        <span style="color:orange">se necessário:</span></label>
+                                                    <input type="number" class="form-control" name="acompanhantes"
+                                                        placeholder="0" min="0">
+                                                </div>
+                                            </center>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger"
+                                                data-bs-dismiss="modal">Cancelar</button>
+
+                                            @if ($encaminhamento->dt_fim == $now or $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '-1 week')))
+                                                <button type="button" class="btn btn-primary openModal"
+                                                    id="openModal" data-bs-toggle="modal" data-bs-dismiss="modal"
+                                                    data-bs-target="#staticBackdrop{{ $listas->idtr }}">
+                                                    Confirmar
+                                                </button>
+                                            @else
+                                                <button type="submit" class="btn btn-primary">Confirmar
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+
+                        <div class="modal fade" id="staticBackdrop{{ $encaminhamento->id }}"
+                            data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header"
+                                        style="background-color:rgb(39, 91, 189);color:white">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">ATENÇÃO!</h1>
+                                        <button data-bs-dismiss="modal" type="button" class="btn-close"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label for="recipient-name" class="col-form-label"
+                                            style="font-size:17px">Este é
+                                            o {{ $encaminhamento->dt_fim == $now ? 'último' : null }}
+                                            {{ $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '-1 week')) ? 'penúltimo' : null }}
+                                            dia de tratamento
+                                            de:<br /><span
+                                                style="color: rgb(39, 91, 189)">{{ $encaminhamento->nome_completo }}</span></label>
+                                        <br />
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button data-bs-dismiss="modal" type="button"
+                                            class="btn btn-danger">Cancelar</button>
+                                        <button type="type" class="btn btn-primary">Confirmar Presença</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+                        {{-- fim da modal de presença --}}
+
                             @if ($encaminhamento->id_status != 1)
                                 <button type="button" class="btn btn-outline-warning btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">

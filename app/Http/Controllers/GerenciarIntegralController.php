@@ -17,6 +17,9 @@ class GerenciarIntegralController extends Controller
 
        // try {
 
+            // Retorna o dia de hoje, para o modal de presença
+            $now = Carbon::today();
+
             // Retorna todos os cronogramas de tratamento Integral
             $dirigentes = DB::table('membro as mem')
                 ->select('ass.id_pessoa', 'gr.nome', 'cr.id', 'gr.status_grupo', 'd.nome as dia')
@@ -110,7 +113,7 @@ class GerenciarIntegralController extends Controller
             $macasDisponiveis = array_diff(range(1, current($vagas)), $ocupadas); // Gera os números das macas e retira as ocupadas
             $totalAssistidos = count($encaminhamentos);
 
-            return view('Integral.gerenciar-integral', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'macasDisponiveis', 'totalAssistidos'));
+            return view('Integral.gerenciar-integral', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'macasDisponiveis', 'totalAssistidos', 'now'));
         // } catch (\Exception $e) {
         //     app('flasher')->addError("Você não tem autorização para acessar esta página");
         //     return redirect('/login/valida');
@@ -153,6 +156,7 @@ class GerenciarIntegralController extends Controller
                 'tr.dt_inicio',
                 'tr.dt_fim',
                 'tr.id_reuniao',
+
                 'tse.descricao AS tsenc',
                 'at.id AS ida',
                 'at.id_assistido',
