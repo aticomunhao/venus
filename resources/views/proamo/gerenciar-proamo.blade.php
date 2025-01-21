@@ -48,7 +48,7 @@
         </div>
         <div class="col">
             <table
-                class="table table-sm table-striped table-bordered border-secondary table-hover text-center align-middle">
+                class="table table-sm table-bordered border-secondary table-hover text-center align-middle">
                 <thead style="background-color: #d6e3ff; font-size:14px; color:#000000">
                     <tr>
                         <th>NOME</th>
