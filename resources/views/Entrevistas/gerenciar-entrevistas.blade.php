@@ -71,7 +71,9 @@
                         <thead style="text-align: center;">
                             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                                 {{-- <th class="col">Nr</th> --}}
-                                <th class="col">ID</th>
+                                @if (in_array(26, session()->get('usuario.acesso')))
+                                <th>ID</th>
+                            @endif
                                 <th class="col">DATA E HORÁRIO</th>
                                 <th class="col">PRIORIDADE</th>
                                 <th class="col">NOME</th>
@@ -90,7 +92,7 @@
                                     <tr>
                                 @endif
                                 {{-- <td>{{ $informacao->ide }}</td>Traz o ID do encaminhamento --}}
-                                @if (in_array(36, session()->get('usuario.acesso')))
+                                @if (in_array(26, session()->get('usuario.acesso')))
                                     <td>{{ $informacao->ident ? 'ENT:' . $informacao->ident : 'ENC:' . $informacao->ide }}
                                     </td>
                                 @endif

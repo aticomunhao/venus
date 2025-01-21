@@ -61,8 +61,6 @@
                 </thead>
 
 
-
-
                 <tbody>
                     @foreach ($encaminhamentos as $encaminhamento)
                         {{-- (!$encaminhamento->ptd) --}}

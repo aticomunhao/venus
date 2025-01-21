@@ -59,38 +59,48 @@
         <span class="text-danger" style="font-size: 20px;">&#9632;</span>
         <span style="font-size: 14px;">Assistidos sem PTD</span>
         <div class="table">
-            <table
-                class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
-                <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                    <th>ID</th>
+            <table class="table table-sm table-bordered border-secondary table-hover text-center align-middle">
+                <thead style="background-color: #d6e3ff; font-size:14px; color:#000000">
+
+                    @if (in_array(36, session()->get('usuario.acesso')))
+                        <th>ID</th>
+                    @endif
                     <th>NOME</th>
-                    <th>NOME GRUPO</th>
-                    <th>SEMANA</th>
+                    <th>GRUPO</th>
+                    <th>SEMANAS REALIZADAS</th>
                     <th>STATUS</th>
                     <th>MACA</th>
                     <th>AÇÕES</th>
-                </tr>
+                    </tr>
 
                 <tbody>
                     @foreach ($encaminhamentos as $encaminhamento)
-                        <tr class="{{ $encaminhamento->ptd ? '' : 'table-danger' }}">
-                            <td>{{ $encaminhamento->id }}</td>
-                            <td>{{ $encaminhamento->nome_completo }}</td>
-                            <td>{{ $encaminhamento->nome }}</td>
-                            <td>{{ $encaminhamento->contagem ? $encaminhamento->contagem : 'PERMANENTE' }}</td>
-                            <td>{{ $encaminhamento->status }}</td>
-                            <td>{{ $encaminhamento->maca }}</td>
+                        <tr class="{{ $encaminhamento->ptd }}">
+
+                            @if (in_array(36, session()->get('usuario.acesso')))
+                                <td>{{ $encaminhamento->id }}
+                                </td>
+                            @endif
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
+                                {{ $encaminhamento->nome_completo }}</td>
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
+                                {{ $encaminhamento->nome }}</td>
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
+                                {{ $encaminhamento->contagem ? $encaminhamento->contagem : 'PERMANENTE' }}
+                            </td>
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
+                                {{ $encaminhamento->status }}</td>
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
+                                {{ $encaminhamento->maca }}</td>
+
                             <td>
 
 
 
-                                <button type="button" class="btn btn-outline-warning tooltips btn-sm"
+                                <button type="button" class="btn btn-outline-success tooltips btn-sm"
                                     data-bs-toggle="modal" data-bs-target="#presenca{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Presença</span><i class="bi bi-exclamation-triangle"
                                         style="font-size: 1rem; color:#000;"></i></button>
-
-
-
 
 
                                 {{-- inicio da modal de presença --}}
@@ -177,16 +187,16 @@
                                 {{-- fim da modal de presença --}}
 
                                 @if ($encaminhamento->dt_fim == null)
-                                    <button type="button" class="btn btn-outline-warning btn-sm tooltips"
+                                    <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                         data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
                                         <span class="tooltiptext">Declarar Alta</span>
-                                        <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
+                                        <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
                                     </button>
                                 @elseif($encaminhamento->id_status == 1)
-                                    <button type="button" disabled class="btn btn-outline-warning btn-sm tooltips"
+                                    <button type="button" disabled class="btn btn-outline-danger btn-sm tooltips"
                                         data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
                                         <span class="tooltiptext">Declarar Alta</span>
-                                        <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>
+                                        <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
                                     </button>
                                 @else
                                     <button type="button" class="btn btn-outline-warning btn-sm tooltips"
@@ -220,13 +230,6 @@
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
                                         data-bs-target="#pessoa"></i>
                                 </a>
-
-
-
-
-
-                                </a>
-
                                 <form action="/maca-integral/{{ $encaminhamento->id }}">
                                     <!-- Modal -->
                                     <div class="modal fade" id="maca{{ $encaminhamento->id }}" tabindex="-1"
