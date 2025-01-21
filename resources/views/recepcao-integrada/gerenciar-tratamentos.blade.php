@@ -53,13 +53,15 @@
                                                             id="2" name="cpf" value="{{ $cpf }}">
                                                     </div>
                                                     <div class="col-12 mt-3">Grupo
-                                                        <input class="form-control pesquisa" autocomplete="off" id="grupo" name="grupo"
-                                                            type="text" list="grupos" value="{{$cron}}">
-                                                            <datalist id="grupos">
-                                                                @foreach ($cronogramas as $cronograma)
-                                                                <option value="{{ $cronograma->id }} - {{ $cronograma->nome }} - {{ $cronograma->dia}} - {{ $cronograma->h_inicio}} - {{ $cronograma->setor }}">
+                                                        <input class="form-control pesquisa" autocomplete="off"
+                                                            id="grupo" name="grupo" type="text" list="grupos"
+                                                            value="{{ $cron }}">
+                                                        <datalist id="grupos">
+                                                            @foreach ($cronogramas as $cronograma)
+                                                                <option
+                                                                    value="{{ $cronograma->id }} - {{ $cronograma->nome }} - {{ $cronograma->dia }} - {{ $cronograma->h_inicio }} - {{ $cronograma->setor }}">
                                                             @endforeach
-                                                              </datalist>
+                                                        </datalist>
 
                                                     </div>
                                                     <div class="col-12 mt-3">Status
@@ -104,10 +106,10 @@
 
                                     <div class="col">
 
-                                        @if(in_array(38, session()->get('usuario.acesso')))
-                                        <a href="/incluir-avulso" class="btn btn-danger btn-sm"
-                                            style="box-shadow: 1px 2px 5px #000000; margin:5px;">Atendimento de
-                                            Emergência</a>
+                                        @if (in_array(38, session()->get('usuario.acesso')))
+                                            <a href="/incluir-avulso" class="btn btn-danger btn-sm"
+                                                style="box-shadow: 1px 2px 5px #000000; margin:5px;">Atendimento de
+                                                Emergência</a>
                                         @endif
                                         <a href="/gerenciar-encaminhamentos" class="btn btn-warning btn-sm"
                                             style="box-shadow: 1px 2px 5px #000000; margin:5px;">Encaminhamentos</a>
@@ -173,14 +175,12 @@
                             {{-- Botão de presença --}}
                             <button type="button" class="btn btn-outline-warning tooltips btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#presenca{{ $listas->idtr }}">
-                                <span class="tooltiptext">Presença</span><i
-                                    class="bi bi-exclamation-triangle"
+                                <span class="tooltiptext">Presença</span><i class="bi bi-exclamation-triangle"
                                     style="font-size: 1rem; color:#000;"></i></button>
                         @else
-                            <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
-                                {{-- botão de presença --}} data-tt="tooltip" data-placement="top" title="Presença"
-                                data-bs-target="#presenca{{ $listas->idtr }}" disabled><i
-                                    class="bi bi bi-exclamation-triangle"
+                            <button type="button" class="btn btn-outline-warning tooltips btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#presenca{{ $listas->idtr }}" disabled>
+                                <span class="tooltiptext">Presença</span><i class="bi bi-exclamation-triangle"
                                     style="font-size: 1rem; color:#000;"></i></button>
                         @endif
 
@@ -218,7 +218,7 @@
                                             <button type="button" class="btn btn-danger"
                                                 data-bs-dismiss="modal">Cancelar</button>
 
-                                            @if ($listas->dt_fim == $now)
+                                            @if ($listas->dt_fim == $now or $listas->dt_fim == date('Y-m-d', strtotime($now . '-1 week')))
                                                 <button type="button" class="btn btn-primary openModal" id="openModal"
                                                     data-bs-toggle="modal" data-bs-dismiss="modal"
                                                     data-bs-target="#staticBackdrop{{ $listas->idtr }}">
@@ -226,7 +226,7 @@
                                                 </button>
                                             @else
                                                 <button type="submit" class="btn btn-primary">Confirmar
-                                                    </button>
+                                                </button>
                                             @endif
                                         </div>
                                     </div>
@@ -244,7 +244,10 @@
                                     </div>
                                     <div class="modal-body">
                                         <label for="recipient-name" class="col-form-label" style="font-size:17px">Este é
-                                            o último dia de tratamento de:<br /><span
+                                            o {{ $listas->dt_fim == $now ? 'último' : null }}
+                                            {{ $listas->dt_fim == date('Y-m-d', strtotime($now . '-1 week')) ? 'penúltimo' : null }}
+                                            dia de tratamento
+                                            de:<br /><span
                                                 style="color: rgb(39, 91, 189)">{{ $listas->nm_1 }}</span></label>
                                         <br />
 
@@ -260,6 +263,20 @@
                         </div>
                         </form>
 
+                        @if (in_array(42, session()->get('usuario.acesso')))
+                            @if ($listas->status < 3)
+                                <a href="/reverter-faltas-assistido/{{ $listas->idtr }}"
+                                    class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Reverter faltas</span>
+                                    <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                            @else
+                                <button class="btn btn-outline-warning btn-sm tooltips" disabled>
+                                    <span class="tooltiptext">Reverter faltas</span>
+                                    <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                </button>
+                            @endif
+                        @endif
                         <a href="/visualizar-tratamento/{{ $listas->idtr }}" type="button"{{-- botão de histórico --}}
                             class="btn btn-outline-primary btn-sm tooltips">
                             <span class="tooltiptext">Histórico</span>
@@ -342,10 +359,9 @@
 
         });
     </script>
-
-    <script>
+     <script>
         $(document).ready(function() {
-            if ({{ $situacao == null }}) { //Deixa o select status como padrao vazio
+            if ({{ $situacao == null }}) { //Deixa o select de status para Todos quando se pesquisa
                 $(".teste1").prop("selectedIndex", 1);
             }
             $('.pesquisa').change(function() {
@@ -354,5 +370,4 @@
 
         });
     </script>
-
 @endsection

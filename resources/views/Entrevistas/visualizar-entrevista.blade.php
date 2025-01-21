@@ -11,34 +11,24 @@
         </div>
         <br>
         <div class="card-body">
-            <form class="form-horizontal mt-2" method="post" action="/visualizar-entrevista/{{ $encaminhamento->id }}">
+            <form class="form-horizontal mt-2" method="post" action="/visualizar-entrevista/{{ $id }}">
                 @csrf
                 <div class="row mb-5">
                     <div class="col">
                         <label for="id_encaminhamento_nome" class="form-label">Nome assistido</label>
-                        <select class="form-control" id="id_encaminhamento_nome" name="id_encaminhamento_nome" disabled>
-                            <option value="{{ $encaminhamento->id }}">{{ $entrevistas->nome_completo }}</option>
-                        </select>
+                        <input class="form-control" id="id_encaminhamento_nome" name="id_encaminhamento_nome" value="{{ $entrevistas->nome_completo }}" disabled>
                     </div>
                     <div class="col">
                         <label for="id_encaminhamento_telefone" class="form-label">Telefone</label>
-                        <select class="form-control" id="id_encaminhamento_telefone" name="id_encaminhamento_telefone" disabled>
-                            <option value="{{ $encaminhamento->id }}">{{ $entrevistas->ddd }} {{ $entrevistas->celular }}</option>
-                        </select>
+                        <input class="form-control" id="id_encaminhamento_telefone" name="id_encaminhamento_telefone" value="{{ $entrevistas->ddd ? '(' . $entrevistas->ddd . ')' : null}} {{ $entrevistas->celular }}" disabled>
+                            
                     </div>
                 </div>
                 
                 <div class="row mb-5">
                     <div class="col">
                         <label for="id_entrevistador" class="form-label">Entrevistador</label>
-                        <select class="form-control" id="id_entrevistador" name="id_entrevistador" disabled>
-                            @if (!is_null($membros))
-                                <option value="">{{ $membros->nome_entrevistador }}</option>
-                                <option value="{{ $membros->id }}">{{ $membros->nome_entrevistador }}</option>
-                            @else
-                                <option value=""></option>
-                            @endif
-                        </select>
+                        <input class="form-control" id="id_entrevistador" name="id_entrevistador" disabled value="{{ $entrevistas->entrevistador  ?? null }}">
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -51,6 +41,8 @@
                         <input type="time" class="form-control" id="hora" name="hora" value="{{ $entrevistas->hora }}" disabled>
                     </div>
                 </div>
+            </div>
+    </div>
                 <br>
                 <div class="form-group">
                     <div id="accordion">
