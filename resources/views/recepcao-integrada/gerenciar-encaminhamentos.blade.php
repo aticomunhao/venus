@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Gerenciar Atendimentos
+    Gerenciar Encaminhamentos
 @endsection
 
 @section('content')
@@ -58,6 +58,7 @@
 
                                                         <option value="1" {{ 1 == request('tratamento') ? 'selected' : '' }}>Passe Tratamento Desobsessivo</option>
                                                         <option value="2" {{ 2 == request('tratamento') ? 'selected' : '' }}>Passe Tratamento Intensivo</option>
+                                                        <option value="4" {{ 4 == request('tratamento') ? 'selected' : '' }}>Programa de Apoio a Portadores de Mediunidade Ostensiva</option>
                                                         <option value="6" {{ 6 == request('tratamento') ? 'selected' : '' }}>Tratamento Fluidoterápico Integral</option>
 
                                                     </select>
@@ -95,16 +96,14 @@
 
             </div>
         </div>
-    </div>
     <br />
-    </div>
     <hr />
     Total assistidos: {{ $contar }}
     <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
         <thead style="text-align: center;">
             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                 <th class="col">Nr</th>
-                <th class="col">HORÁRIO ENCAMINHAMENTO</th>
+                <th class="col">DATA</th>
                 <th class="col">PRIORIDADE</th>
                 <th class="col">ASSISTIDO</th>
                 <th class="col">REPRESENTANTE</th>
@@ -117,19 +116,19 @@
             @foreach ($lista as $listas)
                 <tr>
                     <td>{{ $listas->ide }}</td>
-                    <td>{{ date('d/m/Y ', strtotime($listas->dh_enc)) }}</td>
+                    <td>{{ date('d/m/Y', strtotime($listas->dh_fim)) }}</td>
                     <td>{{ $listas->prdesc }}</td>
                     <td>{{ $listas->nm_1 }}</td>
                     <td>{{ $listas->nm_2 }}</td>
                     <td>{{ $listas->desctrat }}</td>
                     <td>{{ $listas->tsenc }}</td>
                     <td>
-                        @if ($listas->status_encaminhamento < 3)
+                        @if ($listas->status_encaminhamento == 1)
                             <a href="/agendar/{{ $listas->ide }}/{{ $listas->idtt }}"><button type="button"
                                     class="btn btn-outline-success btn-sm tooltips"><span
                                         class="tooltiptext">Agendar</span><i class="bi bi-clipboard-check"
                                         style="font-size: 1rem; color:#000;"></i></button></a>
-                        @elseif($listas->status_encaminhamento < 5)
+                        @elseif($listas->status_encaminhamento < 3)
                             {{-- botao de alterar grupo --}}
                             <a href="/alterar-grupo-tratamento/{{ $listas->ide }}"type="button"
                                 class="btn btn-outline-success btn-sm tooltips"><span class="tooltiptext">Alterar

@@ -96,7 +96,7 @@
                             <th class="col-3">GRUPO</th>
                             <th class="col-auto">DIA</th>
                             <th class="col-auto">HORÁRIO</th>
-                            <th class="col-auto">TRATAMENTO</th>
+                            <th class="col-auto">TRABALHO</th>
                             <th class="col-auto">VAGAS</th>
                         </tr>
                     </thead>
