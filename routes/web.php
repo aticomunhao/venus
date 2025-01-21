@@ -297,13 +297,17 @@ Route::middleware('rotas:17')->group(function () {
 Route::middleware('rotas:18')->group(function () {
     Route::get('/gerenciar-tratamentos', [GerenciarTratamentosController::class, 'index'])->name('gtcdex');
     Route::get('/visualizar-tratamento/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
-    Route::any('/presenca-tratatamento/{idtr}', [GerenciarTratamentosController::class, 'presenca']);
     Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
     Route::any('/incluir-avulso', [GerenciarTratamentosController::class, 'createAvulso']);
     Route::any('/armazenar-avulso', [GerenciarTratamentosController::class, 'storeAvulso']);
     Route::get('/reverter-faltas-assistido/{id}', [GerenciarTratamentosController::class, 'faltas'])->name('');
     Route::any('/remarcar-faltas-assistido', [GerenciarTratamentosController::class, 'remarcar'])->name('');
     Route::any('/inativar-tratamento/{id}', [GerenciarTratamentosController::class, 'destroy']);
+});
+
+// Botão de Presença
+Route::middleware('rotas:42')->group(function () {
+    Route::any('/presenca-tratatamento/{idtr}', [GerenciarTratamentosController::class, 'presenca']);
 });
 
 // Gerenciar Reuniões
