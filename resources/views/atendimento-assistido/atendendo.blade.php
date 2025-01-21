@@ -189,7 +189,7 @@
                                                                                 Não esqueça de conferir se os seus
                                                                                 encaminhamentos foram registrados
                                                                                 corretamentes,
-                                                                                Utilizando para isso a ação de visualizar.
+                                                                                Utilizando para isso a ação de analisar.
                                                                             </div>
                                                                         </center>
                                                                         <div class="col-10">
@@ -250,7 +250,7 @@
                                                                                 style="color:rgb(255, 147, 7); font-weight: bold">*</span>
                                                                             Não esqueça de conferir se os seus
                                                                             encaminhamentos foram registrados corretamentes,
-                                                                            Utilizando para isso a ação de visualizar.
+                                                                            Utilizando para isso a ação de analis.
                                                                         </div>
                                                                     </center>
 
@@ -303,7 +303,7 @@
                                                                                 style="color:rgb(255, 147, 7); font-weight: bold">*</span>
                                                                             Não esqueça de conferir se suas temáticas foram
                                                                             registrados corretamentes,
-                                                                            Utilizando para isso a ação de visualizar.
+                                                                            Utilizando para isso a ação de analisar.
                                                                         </div>
                                                                     </center>
 

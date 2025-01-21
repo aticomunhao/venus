@@ -59,9 +59,9 @@
                         <th>AÇÕES</th>
                     </tr>
                 </thead>
-                
 
-            
+
+
 
                 <tbody>
                     @foreach ($encaminhamentos as $encaminhamento)
@@ -75,7 +75,7 @@
                         <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">{{ $encaminhamento->status }}</td>
                         <td>
 
-                            <button type="button" class="btn btn-outline-warning tooltips btn-sm"
+                            <button type="button" class="btn btn-outline-danger tooltips btn-sm"
                             data-bs-toggle="modal" data-bs-target="#presenca{{ $encaminhamento->id }}">
                             <span class="tooltiptext">Presença</span><i class="bi bi-exclamation-triangle"
                                 style="font-size: 1rem; color:#000;"></i></button>
@@ -163,13 +163,13 @@
                         {{-- fim da modal de presença --}}
 
                             @if ($encaminhamento->id_status != 1)
-                                <button type="button" class="btn btn-outline-warning btn-sm tooltips"
+                                <button type="button" class="btn btn-outline-sucess btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
                                     <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
                                 </button>
                             @else
-                                <button type="button" disabled class="btn btn-outline-warning btn-sm tooltips"
+                                <button type="button" disabled class="btn btn-outline-sucess btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
                                     <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
