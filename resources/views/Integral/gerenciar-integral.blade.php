@@ -140,7 +140,7 @@
                                                     @if ($encaminhamento->dt_fim == $now or $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '-1 week')))
                                                         <button type="button" class="btn btn-primary openModal"
                                                             id="openModal" data-bs-toggle="modal" data-bs-dismiss="modal"
-                                                            data-bs-target="#staticBackdrop{{ $listas->idtr }}">
+                                                            data-bs-target="#staticBackdrop{{ $encaminhamento->id }}">
                                                             Confirmar
                                                         </button>
                                                     @else
