@@ -47,7 +47,7 @@ class EntrevistaProamo implements ShouldQueue
                 ->where('status_encaminhamento', 2)
                 ->first();
 
-            $idTratamentos = $idTratamentos ? $idTratamentos->id : null;
+            $idTratamentos = $idTratamentos ? $idTratamentos->id : 0;
             
             // Conta a quantidade de presenças PTD ou PTI do assistido
             $presencas = DB::table('presenca_cronograma')
