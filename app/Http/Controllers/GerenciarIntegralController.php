@@ -112,12 +112,12 @@ class GerenciarIntegralController extends Controller
             $ocupadas = DB::table('tratamento')->whereNot('maca', null)->where('id_reuniao', $selected_grupo)->pluck('maca')->toArray(); // Retorna um array com todas as macas ocuopadas do grupo
             $macasDisponiveis = array_diff(range(1, current($vagas)), $ocupadas); // Gera os números das macas e retira as ocupadas
             $totalAssistidos = count($encaminhamentos);
-
             return view('Integral.gerenciar-integral', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'macasDisponiveis', 'totalAssistidos', 'now'));
         // } catch (\Exception $e) {
         //     app('flasher')->addError("Você não tem autorização para acessar esta página");
         //     return redirect('/login/valida');
         // }
+      
     }
 
     /**
