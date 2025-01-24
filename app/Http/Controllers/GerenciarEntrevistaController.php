@@ -25,7 +25,7 @@ class GerenciarEntrevistaController extends Controller
 
     public function index(Request $request)
     {
- // FIX existe um bug que ocorre quando um PROAMO tem seu PTD encerrado por faltas
+        // FIX existe um bug que ocorre quando um PROAMO tem seu PTD encerrado por faltas
         $setores = array(); // Inicializa um Array
         foreach (session()->get('acessoInterno') as $perfil) {
 
@@ -148,10 +148,10 @@ class GerenciarEntrevistaController extends Controller
             ->orderby('descricao', 'asc')
             ->get();
 
-            // dd($informacoes); // Debug the fetched data
+        // dd($informacoes); // Debug the fetched data
 
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get(); // Traz os itens para pesquisa de Status
-       $motivo = DB::table('tipo_motivo_entrevista')->orderBy('descricao')->get(); // Usado no Select de Motivo no Modal de Inativação
+        $motivo = DB::table('tipo_motivo_entrevista')->orderBy('descricao')->get(); // Usado no Select de Motivo no Modal de Inativação
 
         $informacoes = $this->paginate($informacoes, 50); // Pagina o Array
         $informacoes->withPath('')->appends(
@@ -320,7 +320,7 @@ class GerenciarEntrevistaController extends Controller
         }
     }
 
-
+ 
     public function show($id)
     {
         try {
@@ -329,17 +329,19 @@ class GerenciarEntrevistaController extends Controller
             $entrevistas = DB::table('entrevistas AS entre')
                 ->select(
                     'p.nome_completo',
-                    'ddd.descricao as ddd',
                     'p.celular',
+                    'p.id as id_assistido',
+                    'ddd.descricao as ddd',
                     's.nome',
                     's.numero',
                     'tpl.nome as local',
                     'enc.id',
+                    'enc.id_tipo_entrevista',
                     'entre.id',
                     'entre.id_entrevistador',
                     'entre.data',
                     'entre.hora',
-                    'pessoas.nome_completo as entrevistador',
+                    'pessoas.nome_completo as entrevistador'
                 )
                 ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
                 ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
@@ -353,7 +355,21 @@ class GerenciarEntrevistaController extends Controller
                 ->where('entre.id_encaminhamento', $id)
                 ->first();
 
-            return view('Entrevistas.visualizar-entrevista', compact('entrevistas', 'id'));
+
+            $presencas = DB::table('presenca_cronograma as pc')
+                    ->select('enc.id_tipo_tratamento', 'dc.data', 'pc.presenca')
+                ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
+                ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+                ->where('at.id_assistido', $entrevistas->id_assistido)
+                ->whereIn('enc.id_tipo_tratamento', [1, 2])
+                ->where('enc.status_encaminhamento', '<', 3)
+                ->orderBy('dc.data', 'DESC')
+                ->get();
+
+
+            return view('Entrevistas.visualizar-entrevista', compact('entrevistas', 'id', 'presencas'));
         } catch (\Exception $e) {
 
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
@@ -558,7 +574,7 @@ class GerenciarEntrevistaController extends Controller
     // Cancelar Entrevista
     public function inativar(Request $request, String $id)
     {
-    
+
         $data = date("Y-m-d");
 
         // Insere o fato de Cancelamento de Entrevista
@@ -683,6 +699,5 @@ class GerenciarEntrevistaController extends Controller
         ]);
 
         return redirect()->route('gerenciamento')->with('success', 'Entrevista Cancelada com Sucesso!');
-       
     }
 }
