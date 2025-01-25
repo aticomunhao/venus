@@ -29,7 +29,7 @@
                         <div class="d-flex gap-2">
                             <button class="btn btn-light btn-sm" type="submit"
                                 style="box-shadow: 1px 2px 5px #000000;">Pesquisar</button>
-                            <a href="/gerenciar-proamo?grupo={{ current($encaminhamentos)->id_reuniao }}" class="btn btn-light btn-sm"
+                            <a href="/gerenciar-proamo?grupo={{ $encaminhamentos ? current($encaminhamentos)->id_reuniao : ''}}" class="btn btn-light btn-sm"
                                 style="box-shadow: 1px 2px 5px #000000;">Limpar</a>
                             <a href="/gerenciar-membro/{{ $selected_grupo }}" class="btn btn-primary btn-sm"
                                 style="box-shadow: 1px 2px 5px #000000;">Gerenciar Grupo</a>

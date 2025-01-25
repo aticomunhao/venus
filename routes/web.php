@@ -306,7 +306,7 @@ Route::middleware('rotas:18')->group(function () {
 });
 
 // Botão de Presença
-Route::middleware('rotas:42')->group(function () {
+Route::middleware('rotas:43')->group(function () {
     Route::any('/presenca-tratatamento/{idtr}', [GerenciarTratamentosController::class, 'presenca']);
 });
 
