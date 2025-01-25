@@ -103,7 +103,6 @@ class GerenciarPerfil extends Controller
 
         $rotas = DB::table('tipo_rotas')->orderBy('nome', 'ASC')->get();
         $rotasSelecionadas = DB::table('rotas_perfil')->leftJoin('tipo_rotas', 'rotas_perfil.id_rotas', 'tipo_rotas.id')->where('id_perfil',$id)->orderBy('id_rotas', 'ASC')->pluck('id_rotas');
-
         return view('perfis.editar-perfil', compact('perfil', 'rotas', 'rotasSelecionadas'));
     }
     catch(\Exception $e){
