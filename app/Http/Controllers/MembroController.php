@@ -223,6 +223,7 @@ class MembroController extends Controller
         }
         $repetfuncao = DB::table('membro AS m')
             ->join('cronograma AS c', 'm.id_cronograma', '=', 'c.id')
+            ->whereNull('m.dt_')
             ->where('m.id_associado', $request->input('id_associado'))
             ->where('m.id_funcao', $request->input('id_funcao'))
             ->where('c.id', $id)
@@ -472,7 +473,7 @@ class MembroController extends Controller
 
     public function show(String $id, Request $request)
     {
-
+        // Obter o registro do membro com base no ID
         $membro = DB::table('membro AS m')
             ->select(
                 'm.id',
@@ -486,9 +487,9 @@ class MembroController extends Controller
                 'd.descricao',
                 'm.dt_inicio',
                 'm.dt_fim',
-                'tp.tipo',
+                'tp.tipo'
             )
-            ->leftJoin('associado as a', 'm.id_associado',  'a.id')
+            ->leftJoin('associado as a', 'm.id_associado', 'a.id')
             ->join('pessoas AS p', 'a.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_status_pessoa as tp', 'p.status', 'tp.id')
             ->leftJoin('tp_ddd as d', 'p.ddd', '=', 'd.id')
@@ -496,6 +497,7 @@ class MembroController extends Controller
             ->where('m.id', $id)
             ->first();
 
+        // Usar o id_associado para buscar todas as presenças e informações relacionadas
         $presencas = DB::table('presenca_membros as pm')
             ->select('dc.data', 'pm.presenca', 'g.nome')
             ->leftJoin('membro as m', 'pm.id_membro', 'm.id')
@@ -503,20 +505,19 @@ class MembroController extends Controller
             ->leftJoin('dias_cronograma as dc', 'pm.id_dias_cronograma', 'dc.id')
             ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
             ->leftJoin('grupo as g', 'cro.id_grupo', 'g.id')
-            ->where('m.id', $id)
+            ->where('a.nr_associado', $membro->nr_associado) // Filtro baseado no associado
             ->orderBy('dc.data', 'desc')
             ->get();
 
-
+        // Agrupar presenças por ano
         $arrayPresencas = [];
         foreach ($presencas as $presenca) {
-
             $arrayPresencas[date('Y', strtotime($presenca->data))][] = $presenca;
         }
 
         $presencas = $arrayPresencas;
 
-
+        // Retornar a view com os dados
         return view('membro.visualizar-membro', compact('membro', 'presencas'));
     }
 
