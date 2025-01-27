@@ -223,7 +223,7 @@ class MembroController extends Controller
         }
         $repetfuncao = DB::table('membro AS m')
             ->join('cronograma AS c', 'm.id_cronograma', '=', 'c.id')
-            ->whereNull('m.dt_')
+            ->whereNull('m.dt_fim')
             ->where('m.id_associado', $request->input('id_associado'))
             ->where('m.id_funcao', $request->input('id_funcao'))
             ->where('c.id', $id)
