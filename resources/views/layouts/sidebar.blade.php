@@ -77,7 +77,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Reuniões</a>
                                 </li>
                             @endif
-                            @if (in_array(23, $acesso))
+                            @if (in_array(44, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
                                         Vagas em Grupos</a>
                                 </li>
@@ -174,7 +174,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Reuniões</a>
                                 </li>
                             @endif
-                            @if (in_array(16, $acesso))
+                            @if (in_array(44, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
                                         Vagas em Grupos</a>
                                 </li>
@@ -245,7 +245,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
                                         Reuniões</a></li>
                             @endif
-                            @if (in_array(22, $acesso))
+                            @if (in_array(44, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de Vagas em
                                         Grupos</a></li>
                             @endif

@@ -288,6 +288,11 @@ Route::middleware("rotas:16-22-23")->group(function () {
     Route::any('/vagasGruposAjax/{id}', [RelatoriosController::class, 'vagasGruposAjax']);
 });
 
+//Relatório de vagas em Grupos
+Route::middleware("rotas:44")->group(function () {
+    Route::any('/relatorio-vagas-grupos', [RelatoriosController::class, 'vagasGrupos']);
+    Route::any('/vagasGruposAjax/{id}', [RelatoriosController::class, 'vagasGruposAjax']);
+});
 // Jobs de Tratamento
 Route::middleware('rotas:17')->group(function () {
     Route::any('/job', [GerenciarTratamentosController::class, 'job']);
