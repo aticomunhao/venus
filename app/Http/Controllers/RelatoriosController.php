@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\CarbonPeriod;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -1020,24 +1021,89 @@ class RelatoriosController extends Controller
             ->where('at.dh_chegada', '<', $dt_fim);
 
 
-        if ($request->status_atendimento == 1) {
-            $nomeStatus = DB::table('tipo_status_atendimento')->where('id', $request->status_atendimento)->first();
-            $dadosChart = [
-                'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->count(),
-                'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->count(),
-                'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
-            ];
-        } else if ($request->status_atendimento == 2) {
-            $dadosChart = [
-                'Homens' => (clone $atendimentos)->where('p.sexo', 1)->count(),
-                'Mulheres' => (clone $atendimentos)->where('p.sexo', 2)->count(),
-            ];
+        if ($request->tipo_visualizacao == 2) {
+            Carbon::setlocale(config('app.locale'));
+            $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
+            
+            foreach ($meses as $mes) {
+
+                if ($request->status_atendimento == 1) {
+                    $nomeStatus = DB::table('tipo_status_atendimento')->where('id', $request->status_atendimento)->first();
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                    ];
+                } else if ($request->status_atendimento == 2) {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Homens' => (clone $atendimentos)->where('p.sexo', 1)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Mulheres' => (clone $atendimentos)->where('p.sexo', 2)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                    ];
+                } else if ($request->status_atendimento == 3) {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Domingo' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 0')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Segunda' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 1')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Terça' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 2')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Quarta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 3')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Quinta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 4')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Sexta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 5')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Sábado' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 6')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+
+                    ];
+                } else if ($request->status_atendimento == 4) {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Manhã' => (clone $atendimentos)->whereTime('dh_chegada', '>', '08:30:00')->whereTime('dh_chegada', '<', '10:30:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Tarde' => (clone $atendimentos)->whereTime('dh_chegada', '>', '15:30:00')->whereTime('dh_chegada', '<', '17:30:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Noite' => (clone $atendimentos)->whereTime('dh_chegada', '>', '17:30:00')->whereTime('dh_chegada', '<', '21:00:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+
+                    ];
+                } else {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                    ];
+                }
+            }
         } else {
-            $dadosChart = [
-                'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->count(),
-                'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->count(),
-                'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
-            ];
+
+            if ($request->status_atendimento == 1) {
+                $nomeStatus = DB::table('tipo_status_atendimento')->where('id', $request->status_atendimento)->first();
+                $dadosChart = [
+                    'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->count(),
+                    'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->count(),
+                    'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
+                ];
+            } else if ($request->status_atendimento == 2) {
+                $dadosChart = [
+                    'Homens' => (clone $atendimentos)->where('p.sexo', 1)->count(),
+                    'Mulheres' => (clone $atendimentos)->where('p.sexo', 2)->count(),
+                ];
+            } else if ($request->status_atendimento == 3) {
+                $dadosChart = [
+                    'Domingo' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 0')->count(),
+                    'Segunda' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 1')->count(),
+                    'Terça' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 2')->count(),
+                    'Quarta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 3')->count(),
+                    'Quinta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 4')->count(),
+                    'Sexta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 5')->count(),
+                    'Sábado' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 6')->count(),
+
+                ];
+            } else if ($request->status_atendimento == 4) {
+                $dadosChart = [
+                    'Manhã' => (clone $atendimentos)->whereTime('dh_chegada', '>', '08:30:00')->whereTime('dh_chegada', '<', '10:30:00')->count(),
+                    'Tarde' => (clone $atendimentos)->whereTime('dh_chegada', '>', '15:30:00')->whereTime('dh_chegada', '<', '17:30:00')->count(),
+                    'Noite' => (clone $atendimentos)->whereTime('dh_chegada', '>', '17:30:00')->whereTime('dh_chegada', '<', '21:00:00')->count(),
+
+                ];
+            } else {
+                $dadosChart = [
+                    'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->count(),
+                    'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->count(),
+                    'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
+                ];
+            }
         }
       //  dd($dadosChart);
         return view('relatorios.gerenciar-relatorio-atendimento', compact('dt_inicio', 'dt_fim', 'dadosChart'));

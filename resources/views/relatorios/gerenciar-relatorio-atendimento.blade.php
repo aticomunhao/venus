@@ -28,11 +28,20 @@
                     <label for="dt_fim" class="form-label">Data de Fim</label>
                     <input type="date" class="form-control" id="dt_fim" name="dt_fim" value="{{ $dt_fim }}">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label for="status_atendimento" class="form-label">Tipo Relatorio</label>
                     <select class="form-select" id="status_atendimento" name="status_atendimento">
-                        <option value="1" @if (old('status_atendimento') == 1) selected @endif>Status</option>
-                        <option value="2" @if (old('status_atendimento') == 2) selected @endif>Sexo</option>
+                        <option value="1" @if (request('status_atendimento') == 1) selected @endif>Status</option>
+                        <option value="2" @if (request('status_atendimento') == 2) selected @endif>Sexo</option>
+                        <option value="3" @if (request('status_atendimento') == 3) selected @endif>Dia da Semana</option>
+                        <option value="4" @if (request('status_atendimento') == 4) selected @endif>Turnos</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="status_atendimento" class="form-label">Tipo Visualização</label>
+                    <select class="form-select" id="tipo_visualizacao" name="tipo_visualizacao">
+                        <option value="1" @if (request('tipo_visualizacao') == 1) selected @endif>Total</option>
+                        <option value="2" @if (request('tipo_visualizacao') == 2) selected @endif>Mensal</option>
                     </select>
                 </div>
                 <!-- Botões -->
@@ -55,20 +64,39 @@
             </div>
             <div class="card-body" id="printTable">
                 <canvas id="myChart"></canvas>
-
+                <?php $i = 0; ?>
                 <table class="table  table-striped table-bordered border-secondary table-hover align-middle mt-5">
                     <thead style="text-align: center;">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
+                            @if (request('tipo_visualizacao') == 2)
+                                <th>MÊS</th>
+                            @endif
                             <th>TIPO</th>
                             <th>TOTAL</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 14px; color:#000000; text-align: center;">
                         @foreach ($dadosChart as $key => $dado)
-                            <tr>
-                                <td> {{ $key }} </td>
-                                <td> {{ $dado }} </td>
-                            </tr>
+                            @if (request('tipo_visualizacao') == 2)
+                                <?php $i = 1; ?>
+                                @foreach ($dado as $innerKey => $info)
+                                    <tr>
+                                        @if ($i == 1)
+                                            <td rowspan="{{ count($dado) }}">
+                                                {{ $key }}
+                                            </td>
+                                        @endif
+                                        <td> {{ $innerKey }} </td>
+                                        <td> {{ $info }} </td>
+                                    </tr>
+                                    <?php $i = 0; ?>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td> {{ $key }} </td>
+                                    <td> {{ $dado }} </td>
+                                </tr>
+                            @endif
                         @endforeach
                     </tbody>
                 </table>
@@ -93,27 +121,54 @@
     <script>
         const ctx = document.getElementById('myChart');
 
-        let a = []
-        let i = 0
+        let dados = []
+        let lab = []
         let atendimentos = @JSON($dadosChart);
+        let i = 0
 
-        for (const [key, value] of Object.entries(atendimentos)) {
-            a[i] = {
-                label: `${key}`,
-                data: [`${value}`],
-                borderWidth: 2,
+
+        if ($('#tipo_visualizacao').val() == 2) {
+            for (const [key, value] of Object.entries(atendimentos)) {
+                lab.push(key)
+                for (const [innerKey, innerValue] of Object.entries(value)) {
+                    if (!dados[i]) {
+                        dados[i] = {
+                            label: `${innerKey}`,
+                            data: [`${innerValue}`],
+                            borderWidth: 2,
+                        }
+                    } else {
+                        dados[i] = {
+                            label: `${innerKey}`,
+                            data: dados[i].data.concat([`${innerValue}`]),
+                            borderWidth: 2,
+                        }
+                    }
+                    i++
+                }
+                i = 0;
             }
-            i++
+        } else {
+            lab = ['Atendimentos (' + @JSON(date('d/m/Y', strtotime($dt_inicio))) + ' - ' +
+                @JSON(date('d/m/Y', strtotime($dt_fim))) +
+                ')'
+            ];
+            for (const [key, value] of Object.entries(atendimentos)) {
+                dados[i] = {
+                    label: `${key}`,
+                    data: [`${value}`],
+                    borderWidth: 2,
+                }
+                i++
+            }
         }
+console.log(dados)
 
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Atendimentos (' + @JSON(date('d/m/Y', strtotime($dt_inicio))) + ' - ' +
-                    @JSON(date('d/m/Y', strtotime($dt_fim))) +
-                    ')'
-                ],
-                datasets: a
+                labels: lab,
+                datasets: dados
             },
             options: {
                 scales: {
