@@ -35,12 +35,12 @@ class RelatoriosController extends Controller
             ->distinct('p.nome_completo')
             ->orderBy('p.nome_completo')
             ->select('m.id_associado', 'p.nome_completo')
-            ->count();
+            ->get();
 
         foreach ($atendentes as $key => $atendente) {
             $diasAtendente = DB::table('atendente_dia')
                 ->where('id_associado', $atendente->id_associado)
-                ->count();
+                ->get();
             $dados = [];
             foreach ($diasAtendente as $mKey => $diaAtendente) {
                 foreach ($diasAtendente as $diaAtendenteCompare) {
@@ -70,7 +70,7 @@ class RelatoriosController extends Controller
                 ->where('dc.data', '<', $dt_fim)
                 ->whereIn('cro.id', $cronogramasParticipa)
                 ->select('cro.id', 'dc.data', 'gr.nome', 'cro.h_inicio', 'td.nome as dia')
-                ->orderBy('dc.data')->count();
+                ->orderBy('dc.data')->get();
 
             //Confere se a data de uma reunião está presente na lista de distinct criada acima, gerando um array completo, com o dado de presenca
             foreach ($cronogramaAFI as $datas) {
@@ -104,7 +104,7 @@ class RelatoriosController extends Controller
         // Faz um distinct caso o atendente venha duas vezes em um mesmo dia
         $diasAtendente = DB::table('atendente_dia')
             ->where('id_associado', $request->afi) // Colocar trava de data
-            ->count();
+            ->get();
         $dados = [];
         foreach ($diasAtendente as $mKey => $diaAtendente) {
             foreach ($diasAtendente as $diaAtendenteCompare) {
@@ -133,7 +133,7 @@ class RelatoriosController extends Controller
             ->where('dc.data', '<', $dt_fim)
             ->whereIn('cro.id', $cronogramasParticipa)
             ->select('cro.id', 'dc.data', 'gr.nome', 'cro.h_inicio', 'td.nome as dia')
-            ->orderBy('dc.data')->count();
+            ->orderBy('dc.data')->get();
 
         //Confere se a data de uma reunião está presente na lista de distinct criaada acima, gerando um array completo, com o dado de presenca
         foreach ($cronogramaAFI as $datas) {
@@ -166,7 +166,7 @@ class RelatoriosController extends Controller
             ->distinct('p.nome_completo')
             ->orderBy('p.nome_completo')
             ->select('m.id_associado', 'p.nome_completo')
-            ->count();
+            ->get();
 
         //Devolve dados como nome do atendente selecionado na pesquisa
         $afiSelecionado = DB::table('membro as m')
@@ -198,8 +198,8 @@ class RelatoriosController extends Controller
             ->where('at.dh_chegada', '>=', $dt_inicio)
             ->where('at.dh_chegada', '<', $dt_fim)
             ->groupBy('nm_tca')
-            ->select('nm_tca', DB::raw("count(*) as total"))
-            ->count();
+            ->select('nm_tca', DB::raw("get(*) as total"))
+            ->get();
 
         $tematicas = json_decode(json_encode($tematicas), true);
         $nomes_temas = DB::table('tipo_temas')->pluck('nm_tca');
@@ -226,16 +226,16 @@ class RelatoriosController extends Controller
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->select('cro.id', 'gr.nome', 'st.nome as setor', 'st.sigla', 'cro.h_inicio', 'cro.h_fim', 'cro.data_inicio', 'cro.data_fim', 'cro.dia_semana', 'td.nome as dia');
 
-        $salas = DB::table('salas')->count();
+        $salas = DB::table('salas')->get();
 
         $cronogramasPesquisa = DB::table('cronograma as cro')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
             ->select('gr.id', 'gr.nome')
             ->distinct('gr.nome')
             ->orderBy('gr.nome')
-            ->count();
+            ->get();
 
-        $setoresPesquisa = DB::table('setor')->count();
+        $setoresPesquisa = DB::table('setor')->get();
 
         $requestSala = $request->sala;
         if ($requestSala) {
@@ -249,8 +249,8 @@ class RelatoriosController extends Controller
         if ($request->setor) {
             $cronogramas = $cronogramas->where('gr.id_setor', $requestSetor);
         }
-        // dd($cronogramas->count());
-        $cronogramas = $cronogramas->count();
+        // dd($cronogramas->get());
+        $cronogramas = $cronogramas->get();
 
         $eventosCronogramas = [];
         $i = 0;
@@ -298,7 +298,7 @@ class RelatoriosController extends Controller
         // Definir o número de itens por página
         $itemsPerPage = 50;
         $setoresAutorizado = array();
-        foreach (session()->count('acessoInterno') as $perfil) {
+        foreach (session()->get('acessoInterno') as $perfil) {
 
             $setoresAutorizado = array_merge($setoresAutorizado, array_column($perfil, 'id_setor'));
         }
@@ -313,7 +313,7 @@ class RelatoriosController extends Controller
             ->where('p.status', 1)
             ->distinct()
             ->orderBy('p.nome_completo')
-            ->count();
+            ->get();
 
 
         $membrosQuery = DB::table('membro as m')
@@ -349,27 +349,27 @@ class RelatoriosController extends Controller
 
 
         // Paginar os resultados
-        $membros = $membrosQuery->count();
+        $membros = $membrosQuery->get();
 
         // Obter os grupos
         $grupo = DB::table('grupo')
             ->leftJoin('setor', 'grupo.id_setor', 'setor.id')
             ->select('grupo.id', 'grupo.nome as nome_grupo', 'setor.sigla')
             ->whereIn('id_setor', $setoresAutorizado)
-            ->count();
+            ->get();
 
         // Obter os setores
         $setor = DB::table('setor')
             ->select('id', 'nome', 'sigla')
             ->whereIn('id', $setoresAutorizado)
-            ->count();
+            ->get();
 
         // Obter os dias
         $dias = DB::table('tipo_dia')
             ->select('id', 'nome')
-            ->count();
+            ->get();
 
-        $funcao = DB::table('tipo_funcao')->count();
+        $funcao = DB::table('tipo_funcao')->get();
 
         $result = array();
         foreach ($membros as $element) {
@@ -396,7 +396,7 @@ class RelatoriosController extends Controller
         $itemsPerPage = 50;
         $itemsPerPage = 50;
         $setoresAutorizado = array();
-        foreach (session()->count('acessoInterno') as $perfil) {
+        foreach (session()->get('acessoInterno') as $perfil) {
 
             $setoresAutorizado = array_merge($setoresAutorizado, array_column($perfil, 'id_setor'));
         }
@@ -411,7 +411,7 @@ class RelatoriosController extends Controller
             ->where('p.status', 1)
             ->distinct()
             ->orderBy('p.nome_completo')
-            ->count();
+            ->get();
 
 
         $membrosQuery = DB::table('membro as m')
@@ -464,20 +464,20 @@ class RelatoriosController extends Controller
             ->leftJoin('setor', 'grupo.id_setor', 'setor.id')
             ->select('grupo.id', 'grupo.nome as nome_grupo', 'setor.sigla')
             ->whereIn('id_setor', $setoresAutorizado)
-            ->count();
+            ->get();
 
         // Obter os setores
         $setor = DB::table('setor')
             ->select('id', 'nome', 'sigla')
             ->whereIn('id', $setoresAutorizado)
-            ->count();
+            ->get();
 
         // Obter os dias
         $dias = DB::table('tipo_dia')
             ->select('id', 'nome')
-            ->count();
+            ->get();
 
-        $funcao = DB::table('tipo_funcao')->count();
+        $funcao = DB::table('tipo_funcao')->get();
 
 
 
@@ -509,7 +509,7 @@ class RelatoriosController extends Controller
         //Traz todas as reuniões onde a pessoa logada é Dirigente ou Sub-dirigente
         $cronogramasAutorizados = DB::table('membro as m')
             ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
-            ->where('ass.id_pessoa', session()->count('usuario.id_pessoa'))
+            ->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
             ->where('id_funcao', '<', 3)
             ->distinct('m.id_cronograma')
             ->pluck('m.id_cronograma');
@@ -562,73 +562,73 @@ class RelatoriosController extends Controller
             ->where('dc.data', '>=', $dt_inicio)
             ->where('dc.data', '<', $dt_fim)
             ->groupBy('presenca')
-            ->select('presenca', DB::raw("count(*) as total"));
+            ->select('presenca', DB::raw("get(*) as total"));
 
         $acompanhantes = DB::table('dias_cronograma as dc')->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')->whereNot('id_tipo_tratamento', 3);
 
-        $presencasCountMembros = DB::table('presenca_membros as pc')
+        $presencasgetMembros = DB::table('presenca_membros as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->where('dc.data', '>=', $dt_inicio)
             ->where('dc.data', '<', $dt_fim)
             ->groupBy('presenca')
-            ->select('presenca', DB::raw("count(*) as total"));
+            ->select('presenca', DB::raw("get(*) as total"));
 
-        if (!in_array(36, session()->count('usuario.acesso'))) {
+        if (!in_array(36, session()->get('usuario.acesso'))) {
             $reunioesDirigentes = $reunioesDirigentes->whereIn('mem.id_cronograma', $cronogramasAutorizados);
             $reunioesPesquisa = $reunioesPesquisa->whereIn('mem.id_cronograma', $cronogramasAutorizados);
-            $presencasCountAssistidos = $presencasCountAssistidos->whereIn('dc.id_cronograma', $cronogramasAutorizados);
+            $presencasgetAssistidos = $presencasgetAssistidos->whereIn('dc.id_cronograma', $cronogramasAutorizados);
             $acompanhantes = $acompanhantes->whereIn('id_cronograma', $cronogramasAutorizados);
-            $presencasCountMembros = $presencasCountMembros->whereIn('dc.id_cronograma', $cronogramasAutorizados);
+            $presencasgetMembros = $presencasgetMembros->whereIn('dc.id_cronograma', $cronogramasAutorizados);
         }
 
 
-        $reunioesDirigentes = $reunioesDirigentes->count();
+        $reunioesDirigentes = $reunioesDirigentes->get();
         $reunioesIds = json_decode(json_encode($reunioesDirigentes));
 
-        $reunioesPesquisa = $reunioesPesquisa->count();
+        $reunioesPesquisa = $reunioesPesquisa->get();
 
-        $presencasCountAssistidos = $presencasCountAssistidos->count();
-        $presencasCountAssistidos = json_decode(json_encode($presencasCountAssistidos));
+        $presencasgetAssistidos = $presencasgetAssistidos->get();
+        $presencasgetAssistidos = json_decode(json_encode($presencasgetAssistidos));
 
         $acompanhantes = $acompanhantes->sum('nr_acompanhantes');
 
 
-        $presencasCountMembros = $presencasCountMembros->count();
-        $presencasCountMembros = json_decode(json_encode($presencasCountMembros));
+        $presencasgetMembros = $presencasgetMembros->get();
+        $presencasgetMembros = json_decode(json_encode($presencasgetMembros));
 
 
 
-        if ($presencasCountAssistidos == []) {
-            $presencasCountAssistidos[0] = 0;
-            $presencasCountAssistidos[1] = 0;
-        } elseif (!in_array(false, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
-            $presencasCountAssistidos[1] = $presencasCountAssistidos[0]->total;
-            $presencasCountAssistidos[0] = 0;
-        } elseif (!in_array(true, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
-            $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
-            $presencasCountAssistidos[1] = 0;
+        if ($presencasgetAssistidos == []) {
+            $presencasgetAssistidos[0] = 0;
+            $presencasgetAssistidos[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasgetAssistidos, 'presenca')))) {
+            $presencasgetAssistidos[1] = $presencasgetAssistidos[0]->total;
+            $presencasgetAssistidos[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasgetAssistidos, 'presenca')))) {
+            $presencasgetAssistidos[0] = $presencasgetAssistidos[0]->total;
+            $presencasgetAssistidos[1] = 0;
         } else {
-            $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
-            $presencasCountAssistidos[1] = $presencasCountAssistidos[1]->total;
+            $presencasgetAssistidos[0] = $presencasgetAssistidos[0]->total;
+            $presencasgetAssistidos[1] = $presencasgetAssistidos[1]->total;
         }
-        $presencasCountAssistidos[2] =  $acompanhantes;
+        $presencasgetAssistidos[2] =  $acompanhantes;
 
-        if ($presencasCountMembros == []) {
-            $presencasCountMembros[0] = 0;
-            $presencasCountMembros[1] = 0;
-        } elseif (!in_array(false, array_values(array_column($presencasCountMembros, 'presenca')))) {
-            $presencasCountMembros[1] = $presencasCountMembros[0]->total;
-            $presencasCountMembros[0] = 0;
-        } elseif (!in_array(true, array_values(array_column($presencasCountMembros, 'presenca')))) {
-            $presencasCountMembros[0] = $presencasCountMembros[0]->total;
-            $presencasCountMembros[1] = 0;
+        if ($presencasgetMembros == []) {
+            $presencasgetMembros[0] = 0;
+            $presencasgetMembros[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasgetMembros, 'presenca')))) {
+            $presencasgetMembros[1] = $presencasgetMembros[0]->total;
+            $presencasgetMembros[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasgetMembros, 'presenca')))) {
+            $presencasgetMembros[0] = $presencasgetMembros[0]->total;
+            $presencasgetMembros[1] = 0;
         } else {
-            $presencasCountMembros[0] = $presencasCountMembros[0]->total;
-            $presencasCountMembros[1] = $presencasCountMembros[1]->total;
+            $presencasgetMembros[0] = $presencasgetMembros[0]->total;
+            $presencasgetMembros[1] = $presencasgetMembros[1]->total;
         }
-        $presencasCountMembros[2] = 0;
+        $presencasgetMembros[2] = 0;
 
-        return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasCountAssistidos', 'presencasCountMembros', 'reunioesPesquisa', 'dt_inicio', 'dt_fim', 'idCronogramaPesquisa'));
+        return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasgetAssistidos', 'presencasgetMembros', 'reunioesPesquisa', 'dt_inicio', 'dt_fim', 'idCronogramaPesquisa'));
     }
 
     /**
@@ -649,23 +649,23 @@ class RelatoriosController extends Controller
             ->where('cr.id', $id)
             ->first();
 
-        $presencasCountAssistidos = DB::table('presenca_cronograma as pc')
+        $presencasgetAssistidos = DB::table('presenca_cronograma as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->where('dc.data', '>=', $dt_inicio)
             ->where('dc.data', '<', $dt_fim)
             ->where('id_cronograma', $id)
             ->groupBy('presenca')
-            ->select('presenca', DB::raw("count(*) as total"));
+            ->select('presenca', DB::raw("get(*) as total"));
 
         $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $id);
 
-        $presencasCountMembros = DB::table('presenca_membros as pc')
+        $presencasgetMembros = DB::table('presenca_membros as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->where('dc.data', '>=', $dt_inicio)
             ->where('dc.data', '<', $dt_fim)
             ->where('id_cronograma', $id)
             ->groupBy('presenca')
-            ->select('presenca', DB::raw("count(*) as total"));
+            ->select('presenca', DB::raw("get(*) as total"));
 
 
 
@@ -684,7 +684,7 @@ class RelatoriosController extends Controller
             ->where('id_reuniao', $id)
             ->select('tr.id', 'p.nome_completo', 'tst.nome as status', 'dc.data', 'gr.nome as grupo', 'pc.presenca',)
             ->orderBy('p.nome_completo')
-            ->count();
+            ->get();
 
         $presencasMembros = DB::table('membro as m')
             ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
@@ -697,21 +697,21 @@ class RelatoriosController extends Controller
             })
             ->where('m.id_cronograma', $id)
             ->select('m.id', 'p.nome_completo', 'dc.data', 'pm.presenca')
-            ->count();
+            ->get();
 
         $presencasMembrosArray = array();
         foreach ($presencasMembros as $element) {
             $presencasMembrosArray["$element->nome_completo"][] = $element;
         }
 
-        $presencasCountAssistidos = $presencasCountAssistidos->count();
-        $presencasCountAssistidos = json_decode(json_encode($presencasCountAssistidos));
+        $presencasgetAssistidos = $presencasgetAssistidos->get();
+        $presencasgetAssistidos = json_decode(json_encode($presencasgetAssistidos));
 
         $acompanhantes = $acompanhantes->sum('nr_acompanhantes');
 
 
-        $presencasCountMembros = $presencasCountMembros->count();
-        $presencasCountMembros = json_decode(json_encode($presencasCountMembros));
+        $presencasgetMembros = $presencasgetMembros->get();
+        $presencasgetMembros = json_decode(json_encode($presencasgetMembros));
 
         $presencasAssistidosArray = array();
         foreach ($presencasAssistidos as $element) {
@@ -719,37 +719,37 @@ class RelatoriosController extends Controller
         }
 
 
-        if ($presencasCountAssistidos == []) {
-            $presencasCountAssistidos[0] = 0;
-            $presencasCountAssistidos[1] = 0;
-        } elseif (!in_array(false, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
-            $presencasCountAssistidos[1] = $presencasCountAssistidos[0]->total;
-            $presencasCountAssistidos[0] = 0;
-        } elseif (!in_array(true, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
-            $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
-            $presencasCountAssistidos[1] = 0;
+        if ($presencasgetAssistidos == []) {
+            $presencasgetAssistidos[0] = 0;
+            $presencasgetAssistidos[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasgetAssistidos, 'presenca')))) {
+            $presencasgetAssistidos[1] = $presencasgetAssistidos[0]->total;
+            $presencasgetAssistidos[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasgetAssistidos, 'presenca')))) {
+            $presencasgetAssistidos[0] = $presencasgetAssistidos[0]->total;
+            $presencasgetAssistidos[1] = 0;
         } else {
-            $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
-            $presencasCountAssistidos[1] = $presencasCountAssistidos[1]->total;
+            $presencasgetAssistidos[0] = $presencasgetAssistidos[0]->total;
+            $presencasgetAssistidos[1] = $presencasgetAssistidos[1]->total;
         }
-        $presencasCountAssistidos[2] =  $acompanhantes;
+        $presencasgetAssistidos[2] =  $acompanhantes;
 
-        if ($presencasCountMembros == []) {
-            $presencasCountMembros[0] = 0;
-            $presencasCountMembros[1] = 0;
-        } elseif (!in_array(false, array_values(array_column($presencasCountMembros, 'presenca')))) {
-            $presencasCountMembros[1] = $presencasCountMembros[0]->total;
-            $presencasCountMembros[0] = 0;
-        } elseif (!in_array(true, array_values(array_column($presencasCountMembros, 'presenca')))) {
-            $presencasCountMembros[0] = $presencasCountMembros[0]->total;
-            $presencasCountMembros[1] = 0;
+        if ($presencasgetMembros == []) {
+            $presencasgetMembros[0] = 0;
+            $presencasgetMembros[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasgetMembros, 'presenca')))) {
+            $presencasgetMembros[1] = $presencasgetMembros[0]->total;
+            $presencasgetMembros[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasgetMembros, 'presenca')))) {
+            $presencasgetMembros[0] = $presencasgetMembros[0]->total;
+            $presencasgetMembros[1] = 0;
         } else {
-            $presencasCountMembros[0] = $presencasCountMembros[0]->total;
-            $presencasCountMembros[1] = $presencasCountMembros[1]->total;
+            $presencasgetMembros[0] = $presencasgetMembros[0]->total;
+            $presencasgetMembros[1] = $presencasgetMembros[1]->total;
         }
-        $presencasCountMembros[2] = 0;
+        $presencasgetMembros[2] = 0;
 
-        return view('relatorios.visualizar-assistido-reuniao', compact('id', 'presencasAssistidosArray', 'presencasMembrosArray', 'presencasCountAssistidos', 'presencasCountMembros', 'dt_inicio', 'dt_fim', 'grupo'));
+        return view('relatorios.visualizar-assistido-reuniao', compact('id', 'presencasAssistidosArray', 'presencasMembrosArray', 'presencasgetAssistidos', 'presencasgetMembros', 'dt_inicio', 'dt_fim', 'grupo'));
     }
     public function vagasGrupos(Request $request)
     {
@@ -766,7 +766,7 @@ class RelatoriosController extends Controller
             })
             ->select(
                 DB::raw('
-                (select count(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 3) as trat'),
+                (select get(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 3) as trat'),
                 't.id',
                 't.descricao',
                 'cro.id',
@@ -799,7 +799,7 @@ class RelatoriosController extends Controller
 
 
         // Consultar tratamentos
-        $tratamento = DB::table('tipo_tratamento')->count();
+        $tratamento = DB::table('tipo_tratamento')->get();
 
         // Filtros
         if ($request->grupo != null) {
@@ -815,8 +815,8 @@ class RelatoriosController extends Controller
             $grupo2 = $grupo2->where('t.id', $request->tratamento);
             $setores->where('id', $grupos->pluck('id_setor')->toArray());
         }
-        $grupo2 = $grupo2->count();
-        $setores = $setores->count();
+        $grupo2 = $grupo2->get();
+        $setores = $setores->get();
         // Paginação dos grupos
         $grupos = $grupos->paginate(30)->appends([
             'grupo' => $request->grupo,
@@ -901,7 +901,7 @@ class RelatoriosController extends Controller
 
 
         // Consultar tratamentos
-        $tratamento = DB::table('tipo_tratamento')->whereIn('id', [1, 2, 3, 4, 6])->count();
+        $tratamento = DB::table('tipo_tratamento')->whereIn('id', [1, 2, 3, 4, 6])->get();
 
         // Filtros
         if ($request->setor) {
@@ -913,9 +913,9 @@ class RelatoriosController extends Controller
             $grupo2 = $grupo2->where('t.id', $request->tratamento);
             $setores->where('id', $grupos->pluck('id_setor')->toArray());
         }
-        $grupos = $grupos->count()->toArray();
-        $grupo2 = $grupo2->count();
-        $setores = $setores->count();
+        $grupos = $grupos->get()->toArray();
+        $grupo2 = $grupo2->get();
+        $setores = $setores->get();
 
         // Insere os atendimentos
         foreach ($grupos as $key => $grupo) {
@@ -943,7 +943,7 @@ class RelatoriosController extends Controller
                         $subQuery->orWhere('tra.dt_fim', NULL);
                     });
                 })
-                ->count();
+                ->get();
 
             $passes = DB::table('dias_cronograma')
                 ->where('id_cronograma', $grupo->id)
