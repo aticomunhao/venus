@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\CarbonPeriod;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -197,7 +198,7 @@ class RelatoriosController extends Controller
             ->where('at.dh_chegada', '>=', $dt_inicio)
             ->where('at.dh_chegada', '<', $dt_fim)
             ->groupBy('nm_tca')
-            ->select('nm_tca', DB::raw("count(*) as total"))
+            ->select('nm_tca', DB::raw("get(*) as total"))
             ->get();
 
         $tematicas = json_decode(json_encode($tematicas), true);
@@ -561,23 +562,23 @@ class RelatoriosController extends Controller
             ->where('dc.data', '>=', $dt_inicio)
             ->where('dc.data', '<', $dt_fim)
             ->groupBy('presenca')
-            ->select('presenca', DB::raw("count(*) as total"));
+            ->select('presenca', DB::raw("get(*) as total"));
 
         $acompanhantes = DB::table('dias_cronograma as dc')->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')->whereNot('id_tipo_tratamento', 3);
 
-        $presencasCountMembros = DB::table('presenca_membros as pc')
+        $presencasgetMembros = DB::table('presenca_membros as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->where('dc.data', '>=', $dt_inicio)
             ->where('dc.data', '<', $dt_fim)
             ->groupBy('presenca')
-            ->select('presenca', DB::raw("count(*) as total"));
+            ->select('presenca', DB::raw("get(*) as total"));
 
         if (!in_array(36, session()->get('usuario.acesso'))) {
             $reunioesDirigentes = $reunioesDirigentes->whereIn('mem.id_cronograma', $cronogramasAutorizados);
             $reunioesPesquisa = $reunioesPesquisa->whereIn('mem.id_cronograma', $cronogramasAutorizados);
-            $presencasCountAssistidos = $presencasCountAssistidos->whereIn('dc.id_cronograma', $cronogramasAutorizados);
+            $presencasgetAssistidos = $presencasgetAssistidos->whereIn('dc.id_cronograma', $cronogramasAutorizados);
             $acompanhantes = $acompanhantes->whereIn('id_cronograma', $cronogramasAutorizados);
-            $presencasCountMembros = $presencasCountMembros->whereIn('dc.id_cronograma', $cronogramasAutorizados);
+            $presencasgetMembros = $presencasgetMembros->whereIn('dc.id_cronograma', $cronogramasAutorizados);
         }
 
 
@@ -586,48 +587,48 @@ class RelatoriosController extends Controller
 
         $reunioesPesquisa = $reunioesPesquisa->get();
 
-        $presencasCountAssistidos = $presencasCountAssistidos->get();
-        $presencasCountAssistidos = json_decode(json_encode($presencasCountAssistidos));
+        $presencasgetAssistidos = $presencasgetAssistidos->get();
+        $presencasgetAssistidos = json_decode(json_encode($presencasgetAssistidos));
 
         $acompanhantes = $acompanhantes->sum('nr_acompanhantes');
 
 
-        $presencasCountMembros = $presencasCountMembros->get();
-        $presencasCountMembros = json_decode(json_encode($presencasCountMembros));
+        $presencasgetMembros = $presencasgetMembros->get();
+        $presencasgetMembros = json_decode(json_encode($presencasgetMembros));
 
 
 
-        if ($presencasCountAssistidos == []) {
-            $presencasCountAssistidos[0] = 0;
-            $presencasCountAssistidos[1] = 0;
-        } elseif (!in_array(false, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
-            $presencasCountAssistidos[1] = $presencasCountAssistidos[0]->total;
-            $presencasCountAssistidos[0] = 0;
-        } elseif (!in_array(true, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
-            $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
-            $presencasCountAssistidos[1] = 0;
+        if ($presencasgetAssistidos == []) {
+            $presencasgetAssistidos[0] = 0;
+            $presencasgetAssistidos[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasgetAssistidos, 'presenca')))) {
+            $presencasgetAssistidos[1] = $presencasgetAssistidos[0]->total;
+            $presencasgetAssistidos[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasgetAssistidos, 'presenca')))) {
+            $presencasgetAssistidos[0] = $presencasgetAssistidos[0]->total;
+            $presencasgetAssistidos[1] = 0;
         } else {
-            $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
-            $presencasCountAssistidos[1] = $presencasCountAssistidos[1]->total;
+            $presencasgetAssistidos[0] = $presencasgetAssistidos[0]->total;
+            $presencasgetAssistidos[1] = $presencasgetAssistidos[1]->total;
         }
-        $presencasCountAssistidos[2] =  $acompanhantes;
+        $presencasgetAssistidos[2] =  $acompanhantes;
 
-        if ($presencasCountMembros == []) {
-            $presencasCountMembros[0] = 0;
-            $presencasCountMembros[1] = 0;
-        } elseif (!in_array(false, array_values(array_column($presencasCountMembros, 'presenca')))) {
-            $presencasCountMembros[1] = $presencasCountMembros[0]->total;
-            $presencasCountMembros[0] = 0;
-        } elseif (!in_array(true, array_values(array_column($presencasCountMembros, 'presenca')))) {
-            $presencasCountMembros[0] = $presencasCountMembros[0]->total;
-            $presencasCountMembros[1] = 0;
+        if ($presencasgetMembros == []) {
+            $presencasgetMembros[0] = 0;
+            $presencasgetMembros[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasgetMembros, 'presenca')))) {
+            $presencasgetMembros[1] = $presencasgetMembros[0]->total;
+            $presencasgetMembros[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasgetMembros, 'presenca')))) {
+            $presencasgetMembros[0] = $presencasgetMembros[0]->total;
+            $presencasgetMembros[1] = 0;
         } else {
-            $presencasCountMembros[0] = $presencasCountMembros[0]->total;
-            $presencasCountMembros[1] = $presencasCountMembros[1]->total;
+            $presencasgetMembros[0] = $presencasgetMembros[0]->total;
+            $presencasgetMembros[1] = $presencasgetMembros[1]->total;
         }
-        $presencasCountMembros[2] = 0;
+        $presencasgetMembros[2] = 0;
 
-        return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasCountAssistidos', 'presencasCountMembros', 'reunioesPesquisa', 'dt_inicio', 'dt_fim', 'idCronogramaPesquisa'));
+        return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasgetAssistidos', 'presencasgetMembros', 'reunioesPesquisa', 'dt_inicio', 'dt_fim', 'idCronogramaPesquisa'));
     }
 
     /**
@@ -648,23 +649,23 @@ class RelatoriosController extends Controller
             ->where('cr.id', $id)
             ->first();
 
-        $presencasCountAssistidos = DB::table('presenca_cronograma as pc')
+        $presencasgetAssistidos = DB::table('presenca_cronograma as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->where('dc.data', '>=', $dt_inicio)
             ->where('dc.data', '<', $dt_fim)
             ->where('id_cronograma', $id)
             ->groupBy('presenca')
-            ->select('presenca', DB::raw("count(*) as total"));
+            ->select('presenca', DB::raw("get(*) as total"));
 
         $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $id);
 
-        $presencasCountMembros = DB::table('presenca_membros as pc')
+        $presencasgetMembros = DB::table('presenca_membros as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->where('dc.data', '>=', $dt_inicio)
             ->where('dc.data', '<', $dt_fim)
             ->where('id_cronograma', $id)
             ->groupBy('presenca')
-            ->select('presenca', DB::raw("count(*) as total"));
+            ->select('presenca', DB::raw("get(*) as total"));
 
 
 
@@ -703,14 +704,14 @@ class RelatoriosController extends Controller
             $presencasMembrosArray["$element->nome_completo"][] = $element;
         }
 
-        $presencasCountAssistidos = $presencasCountAssistidos->get();
-        $presencasCountAssistidos = json_decode(json_encode($presencasCountAssistidos));
+        $presencasgetAssistidos = $presencasgetAssistidos->get();
+        $presencasgetAssistidos = json_decode(json_encode($presencasgetAssistidos));
 
         $acompanhantes = $acompanhantes->sum('nr_acompanhantes');
 
 
-        $presencasCountMembros = $presencasCountMembros->get();
-        $presencasCountMembros = json_decode(json_encode($presencasCountMembros));
+        $presencasgetMembros = $presencasgetMembros->get();
+        $presencasgetMembros = json_decode(json_encode($presencasgetMembros));
 
         $presencasAssistidosArray = array();
         foreach ($presencasAssistidos as $element) {
@@ -718,37 +719,37 @@ class RelatoriosController extends Controller
         }
 
 
-        if ($presencasCountAssistidos == []) {
-            $presencasCountAssistidos[0] = 0;
-            $presencasCountAssistidos[1] = 0;
-        } elseif (!in_array(false, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
-            $presencasCountAssistidos[1] = $presencasCountAssistidos[0]->total;
-            $presencasCountAssistidos[0] = 0;
-        } elseif (!in_array(true, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
-            $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
-            $presencasCountAssistidos[1] = 0;
+        if ($presencasgetAssistidos == []) {
+            $presencasgetAssistidos[0] = 0;
+            $presencasgetAssistidos[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasgetAssistidos, 'presenca')))) {
+            $presencasgetAssistidos[1] = $presencasgetAssistidos[0]->total;
+            $presencasgetAssistidos[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasgetAssistidos, 'presenca')))) {
+            $presencasgetAssistidos[0] = $presencasgetAssistidos[0]->total;
+            $presencasgetAssistidos[1] = 0;
         } else {
-            $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
-            $presencasCountAssistidos[1] = $presencasCountAssistidos[1]->total;
+            $presencasgetAssistidos[0] = $presencasgetAssistidos[0]->total;
+            $presencasgetAssistidos[1] = $presencasgetAssistidos[1]->total;
         }
-        $presencasCountAssistidos[2] =  $acompanhantes;
+        $presencasgetAssistidos[2] =  $acompanhantes;
 
-        if ($presencasCountMembros == []) {
-            $presencasCountMembros[0] = 0;
-            $presencasCountMembros[1] = 0;
-        } elseif (!in_array(false, array_values(array_column($presencasCountMembros, 'presenca')))) {
-            $presencasCountMembros[1] = $presencasCountMembros[0]->total;
-            $presencasCountMembros[0] = 0;
-        } elseif (!in_array(true, array_values(array_column($presencasCountMembros, 'presenca')))) {
-            $presencasCountMembros[0] = $presencasCountMembros[0]->total;
-            $presencasCountMembros[1] = 0;
+        if ($presencasgetMembros == []) {
+            $presencasgetMembros[0] = 0;
+            $presencasgetMembros[1] = 0;
+        } elseif (!in_array(false, array_values(array_column($presencasgetMembros, 'presenca')))) {
+            $presencasgetMembros[1] = $presencasgetMembros[0]->total;
+            $presencasgetMembros[0] = 0;
+        } elseif (!in_array(true, array_values(array_column($presencasgetMembros, 'presenca')))) {
+            $presencasgetMembros[0] = $presencasgetMembros[0]->total;
+            $presencasgetMembros[1] = 0;
         } else {
-            $presencasCountMembros[0] = $presencasCountMembros[0]->total;
-            $presencasCountMembros[1] = $presencasCountMembros[1]->total;
+            $presencasgetMembros[0] = $presencasgetMembros[0]->total;
+            $presencasgetMembros[1] = $presencasgetMembros[1]->total;
         }
-        $presencasCountMembros[2] = 0;
+        $presencasgetMembros[2] = 0;
 
-        return view('relatorios.visualizar-assistido-reuniao', compact('id', 'presencasAssistidosArray', 'presencasMembrosArray', 'presencasCountAssistidos', 'presencasCountMembros', 'dt_inicio', 'dt_fim', 'grupo'));
+        return view('relatorios.visualizar-assistido-reuniao', compact('id', 'presencasAssistidosArray', 'presencasMembrosArray', 'presencasgetAssistidos', 'presencasgetMembros', 'dt_inicio', 'dt_fim', 'grupo'));
     }
     public function vagasGrupos(Request $request)
     {
@@ -765,7 +766,7 @@ class RelatoriosController extends Controller
             })
             ->select(
                 DB::raw('
-                (select count(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 3) as trat'),
+                (select get(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 3) as trat'),
                 't.id',
                 't.descricao',
                 'cro.id',
@@ -942,7 +943,7 @@ class RelatoriosController extends Controller
                         $subQuery->orWhere('tra.dt_fim', NULL);
                     });
                 })
-                ->count();
+                ->get();
 
             $passes = DB::table('dias_cronograma')
                 ->where('id_cronograma', $grupo->id)
@@ -1020,26 +1021,93 @@ class RelatoriosController extends Controller
             ->where('at.dh_chegada', '<', $dt_fim);
 
 
-        if ($request->status_atendimento == 1) {
-            $nomeStatus = DB::table('tipo_status_atendimento')->where('id', $request->status_atendimento)->first();
-            $dadosChart = [
-                'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->count(),
-                'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->count(),
-                'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
-            ];
-        } else if ($request->status_atendimento == 2) {
-            $dadosChart = [
-                'Homens' => (clone $atendimentos)->where('p.sexo', 1)->count(),
-                'Mulheres' => (clone $atendimentos)->where('p.sexo', 2)->count(),
-            ];
+        if ($request->tipo_visualizacao == 2) {
+            Carbon::setlocale(config('app.locale'));
+            $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
+
+            foreach ($meses as $mes) {
+
+                if ($request->status_atendimento == 1) {
+                    $nomeStatus = DB::table('tipo_status_atendimento')->where('id', $request->status_atendimento)->first();
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                    ];
+                } else if ($request->status_atendimento == 2) {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Homens' => (clone $atendimentos)->where('p.sexo', 1)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Mulheres' => (clone $atendimentos)->where('p.sexo', 2)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                    ];
+                } else if ($request->status_atendimento == 3) {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Domingo' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 0')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Segunda' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 1')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Terça' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 2')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Quarta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 3')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Quinta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 4')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Sexta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 5')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Sábado' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 6')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+
+                    ];
+                } else if ($request->status_atendimento == 4) {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Manhã' => (clone $atendimentos)->whereTime('dh_chegada', '>', '08:30:00')->whereTime('dh_chegada', '<', '10:30:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Tarde' => (clone $atendimentos)->whereTime('dh_chegada', '>', '15:30:00')->whereTime('dh_chegada', '<', '17:30:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Noite' => (clone $atendimentos)->whereTime('dh_chegada', '>', '17:30:00')->whereTime('dh_chegada', '<', '21:00:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+
+                    ];
+                } else {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                    ];
+                }
+            }
         } else {
-            $dadosChart = [
-                'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->count(),
-                'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->count(),
-                'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
-            ];
+
+            if ($request->status_atendimento == 1) {
+                $nomeStatus = DB::table('tipo_status_atendimento')->where('id', $request->status_atendimento)->first();
+                $dadosChart = [
+                    'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->count(),
+                    'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->count(),
+                    'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
+                ];
+            } else if ($request->status_atendimento == 2) {
+                $dadosChart = [
+                    'Homens' => (clone $atendimentos)->where('p.sexo', 1)->count(),
+                    'Mulheres' => (clone $atendimentos)->where('p.sexo', 2)->count(),
+                ];
+            } else if ($request->status_atendimento == 3) {
+                $dadosChart = [
+                    'Domingo' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 0')->count(),
+                    'Segunda' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 1')->count(),
+                    'Terça' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 2')->count(),
+                    'Quarta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 3')->count(),
+                    'Quinta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 4')->count(),
+                    'Sexta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 5')->count(),
+                    'Sábado' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 6')->count(),
+
+                ];
+            } else if ($request->status_atendimento == 4) {
+                $dadosChart = [
+                    'Manhã' => (clone $atendimentos)->whereTime('dh_chegada', '>', '08:30:00')->whereTime('dh_chegada', '<', '10:30:00')->count(),
+                    'Tarde' => (clone $atendimentos)->whereTime('dh_chegada', '>', '15:30:00')->whereTime('dh_chegada', '<', '17:30:00')->count(),
+                    'Noite' => (clone $atendimentos)->whereTime('dh_chegada', '>', '17:30:00')->whereTime('dh_chegada', '<', '21:00:00')->count(),
+
+                ];
+            } else {
+                $dadosChart = [
+                    'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->count(),
+                    'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->count(),
+                    'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
+                ];
+            }
         }
-      //  dd($dadosChart);
+
+
+        // dd($dadosChart);
         return view('relatorios.gerenciar-relatorio-atendimento', compact('dt_inicio', 'dt_fim', 'dadosChart'));
     }
 }
