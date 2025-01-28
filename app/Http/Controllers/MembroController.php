@@ -71,8 +71,6 @@ class MembroController extends Controller
             }
         }
 
-
-
         $cronogramas = $cronogramasLogin;
         //dd($cronogramas, session()->get('usuario.id_associado'));
 
@@ -244,6 +242,19 @@ class MembroController extends Controller
             'dt_inicio' => $data,
         ]);
 
+        $nomePessoa = DB::table('pessoas')
+            ->where('id', session()->get('usuario.id_pessoa'))
+            ->value('nome_completo');
+
+        DB::table('historico_venus')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'pessoa' => $nomePessoa,
+            'obs' => 'Incluiu Membro dentro do Grupo',
+            'id_ref' => $id,
+            'fato' => 30,
+        ]);
+
         app('flasher')->addSuccess('Cadastrado com Sucesso');
         return redirect("gerenciar-membro/$id");
     }
@@ -362,74 +373,74 @@ class MembroController extends Controller
 
     public function store(Request $request)
     {
-        try {
 
-            $now = Carbon::now()->format('Y-m-d');
-            $seletedCronograma = DB::table('cronograma as cro')->where('id', $request->input('id_reuniao'))->first();
 
-            $cronogramasPessoa = DB::table('membro')->where('id_associado', $request->input('id_associado'))->pluck('id_cronograma');
+        $now = Carbon::now()->format('Y-m-d');
+        $seletedCronograma = DB::table('cronograma as cro')->where('id', $request->input('id_reuniao'))->first();
 
-            $repeat = DB::table('cronograma AS rm')
-                ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
-                ->whereIn('rm.id', $cronogramasPessoa)
-                ->where('rm.dia_semana', $seletedCronograma->dia_semana)
-                ->whereNot('rm.id', $seletedCronograma->id)
-                ->where(function ($query) use ($now) {
-                    $query->where('rm.data_fim', '>', $now);
-                    $query->orWhere('rm.data_fim', null);
-                })
-                ->where(function ($query) use ($seletedCronograma) {
-                    $query->where(function ($hour) use ($seletedCronograma) {
-                        $hour->where('rm.h_inicio', '<', $seletedCronograma->h_inicio);
-                        $hour->where('rm.h_fim', '>', $seletedCronograma->h_inicio);
-                    });
-                    $query->orWhere(function ($hour) use ($seletedCronograma) {
-                        $hour->where('rm.h_inicio', '<', $seletedCronograma->h_fim);
-                        $hour->where('rm.h_fim', '>', $seletedCronograma->h_fim);
-                    });
-                })
-                ->first();
+        $cronogramasPessoa = DB::table('membro')->where('id_associado', $request->input('id_associado'))->pluck('id_cronograma');
 
-            if ($repeat != null) {
-                app('flasher')->addError("Este membro faz parte de $repeat->nome neste horário");
-                return redirect()->back()->withInput();
-            }
+        $repeat = DB::table('cronograma AS rm')
+            ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
+            ->whereIn('rm.id', $cronogramasPessoa)
+            ->where('rm.dia_semana', $seletedCronograma->dia_semana)
+            ->whereNot('rm.id', $seletedCronograma->id)
+            ->where(function ($query) use ($now) {
+                $query->where('rm.data_fim', '>', $now);
+                $query->orWhere('rm.data_fim', null);
+            })
+            ->where(function ($query) use ($seletedCronograma) {
+                $query->where(function ($hour) use ($seletedCronograma) {
+                    $hour->where('rm.h_inicio', '<', $seletedCronograma->h_inicio);
+                    $hour->where('rm.h_fim', '>', $seletedCronograma->h_inicio);
+                });
+                $query->orWhere(function ($hour) use ($seletedCronograma) {
+                    $hour->where('rm.h_inicio', '<', $seletedCronograma->h_fim);
+                    $hour->where('rm.h_fim', '>', $seletedCronograma->h_fim);
+                });
+            })
+            ->first();
 
-            $repetfuncao = DB::table('membro AS m')
-                ->join('cronograma AS c', 'm.id_cronograma', '=', 'c.id')
-                ->where('m.id_associado', $request->input('id_associado'))
-                ->where('m.id_funcao', $request->input('id_funcao'))
-                ->where('c.id', $request->input('id_reuniao'))
-                ->exists();
-
-            // Se o membro já estiver registrado na mesma função e grupo, bloquear o cadastro
-            if ($repetfuncao) {
-                app('flasher')->addError('Este membro já está cadastrado nesta função para o mesmo grupo.');
-                return redirect()->back()->withInput();
-            }
-
-            $data = date('Y-m-d H:i:s');
-            DB::table('membro')->insert([
-                'id_associado' => $request->input('id_associado'),
-                'id_funcao' => $request->input('id_funcao'),
-                'id_cronograma' => $request->input('id_reuniao'),
-                'dt_inicio' => $data,
-            ]);
-
-            DB::table('historico_venus')->insert([
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'data' => $data,
-                'pessoa' => 'Associado:' . $request->input('id_associado'),
-                'obs' => 'Reuniao:' . $request->input('id_reuniao'),
-                'fato' => 21, // Ajuste o valor conforme necessário
-            ]);
-
-            app('flasher')->addSuccess('Cadastrado com Sucesso');
-            return redirect('gerenciar-grupos-membro');
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('administrativo-erro.erro-inesperado', compact('code'));
+        if ($repeat != null) {
+            app('flasher')->addError("Este membro faz parte de $repeat->nome neste horário");
+            return redirect()->back()->withInput();
         }
+
+        $repetfuncao = DB::table('membro AS m')
+            ->join('cronograma AS c', 'm.id_cronograma', '=', 'c.id')
+            ->where('m.id_associado', $request->input('id_associado'))
+            ->where('m.id_funcao', $request->input('id_funcao'))
+            ->where('c.id', $request->input('id_reuniao'))
+            ->exists();
+
+        // Se o membro já estiver registrado na mesma função e grupo, bloquear o cadastro
+        if ($repetfuncao) {
+            app('flasher')->addError('Este membro já está cadastrado nesta função para o mesmo grupo.');
+            return redirect()->back()->withInput();
+        }
+
+        $data = date('Y-m-d H:i:s');
+        DB::table('membro')->insert([
+            'id_associado' => $request->input('id_associado'),
+            'id_funcao' => $request->input('id_funcao'),
+            'id_cronograma' => $request->input('id_reuniao'),
+            'dt_inicio' => $data,
+        ]);
+
+        $nomePessoa = DB::table('pessoas')
+            ->where('id', session()->get('usuario.id_pessoa'))
+            ->value('nome_completo');
+
+        DB::table('historico_venus')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $data,
+            'pessoa' => $nomePessoa,
+            'obs' => 'Incluiu Membro',
+            'id_ref' => $request->input('id_reuniao'),
+            'fato' => 21,
+        ]);
+        app('flasher')->addSuccess('Cadastrado com Sucesso');
+        return redirect('gerenciar-grupos-membro');
     }
 
     public function edit(string $idcro, string $id)
@@ -741,6 +752,20 @@ class MembroController extends Controller
                     }
                 }
             }
+
+            $nomePessoa = DB::table('pessoas')
+                ->where('id', session()->get('usuario.id_usuario'))
+                ->value('nome_completo');
+
+            // Realiza a inserção na tabela 'historico_venus'
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $now,
+                'fato' => 29,
+                'obs' => 'Declarou férias',
+                'pessoa' => $nomePessoa,
+                'id_ref' => $id,
+            ]);
             return redirect()->back();
         } catch (\Exception $e) {
             $code = $e->getCode();
@@ -789,6 +814,7 @@ class MembroController extends Controller
 
         foreach ($request->check as $membro) {
 
+            $data_atual = Carbon::now();
             $ontem = Carbon::yesterday();
             $hoje = Carbon::today();
 
@@ -800,7 +826,19 @@ class MembroController extends Controller
                 ->where('m.dt_fim', null)
                 ->where('m.id', $membro)
                 ->first();
+            $nomePessoa = DB::table('pessoas')
+                ->where('id', session()->get('usuario.id_usuario'))
+                ->value('nome_completo');
 
+            // Realiza a inserção na tabela 'historico_venus'
+            DB::table('historico_venus')->insert([
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'data' => $data_atual,
+                'fato' => 28,
+                'obs' => 'Transferiu Membro',
+                'pessoa' => $nomePessoa,
+                'id_ref' => $membro,
+            ]);
 
             DB::table('membro')
                 ->where('id', $membro)
@@ -815,6 +853,8 @@ class MembroController extends Controller
                 'dt_inicio' => $hoje
             ]);
         }
+
+
 
         return redirect("/gerenciar-membro/$id");
     }
