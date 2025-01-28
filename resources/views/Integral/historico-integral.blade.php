@@ -131,7 +131,7 @@
                             @foreach($list as $lists)
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$lists->idp}}</td>
-                                 <td>{{$lists->data}}</td>
+                                 <td>{{date ('d/m/Y', strtotime($lists->data))}}</td>
                                  <td>{{$lists->nome}}</td>
                                 @if ($lists->presenca == 1)
                                 <td style="background-color:#90EE90;">Sim</td>
@@ -159,7 +159,7 @@
                             @foreach($list2 as $lists1)
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$lists1->idp}}</td>
-                                 <td>{{$lists1->data}}</td>
+                                 <td>{{date ('d/m/Y', strtotime($lists1->data))}}</td>
                                  <td>{{$lists1->nome}}</td>
                                 @if ($lists1->presenca == 1)
                                 <td style="background-color:#90EE90;">Sim</td>
