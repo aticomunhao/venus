@@ -324,7 +324,6 @@ class GerenciarAtendimentoController extends Controller
         try {
 
 
-            $usuario = session()->get('usuario.id_pessoa');
 
             $now = Carbon::now();
 
@@ -345,9 +344,8 @@ class GerenciarAtendimentoController extends Controller
 
             //dd($menor);
 
-            DB::table('atendimentos AS atd')->insert([
+            $idAtendimento = DB::table('atendimentos AS atd')->insertGetId([
                 'dh_chegada' => $dt_hora->toDateTimeString() . PHP_EOL,
-                'id_usuario' => $usuario,
                 'id_assistido' => $request->input('assist'),
                 'id_representante' => $request->input('repres'),
                 'parentesco' => $request->input('parent'),
@@ -358,15 +356,15 @@ class GerenciarAtendimentoController extends Controller
                 'status_atendimento' => 2,
             ]);
 
-
-
-
-            DB::table('historico_venus')->insert([
-                'id_usuario' => $usuario,
-                'data' => $now,
-                'fato' => 5,
-                'id_ref' => $request->input('assist'),
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idAtendimento,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 2, // foi criado
+                'id_origem' => 1, // Atendimento
+                'data_hora' => $dt_hora
             ]);
+
 
             app('flasher')->addSuccess('O cadastro do atendimento foi realizado com sucesso.');
 
@@ -378,27 +376,12 @@ class GerenciarAtendimentoController extends Controller
         }
     }
 
-    ////INCLUI UMA NOVA PESSOA
-    public function SetPessoa(Request $request)
-    {
-        try {
-            DB::table('pessoas AS p')->insert([
-                'nome_completo' => $request->input('nomepes'),
-            ]);
 
-            app('flasher')->addSuccess('O cadastro de pessoa foi realizado com sucesso.');
-
-            return redirect('/gerenciar-atendimentos');
-        } catch (\Exception $e) {
-            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
-            DB::rollBack();
-            return redirect()->back();
-        }
-    }
     public function cancelar(Request $request, $ida)
     {
         try {
 
+            $dt_hora = Carbon::now();
             $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
             // Permite que Master Admin cancele atendimentos com qualquer status, sem excessão!
@@ -406,12 +389,24 @@ class GerenciarAtendimentoController extends Controller
                 app('flasher')->addError('Somente é permitido "Cancelar" atendimentos no status "Aguardando atendimento".');
                 return redirect('/gerenciar-atendimentos');
             } else {
+
+
                 DB::table('atendimentos AS a')
                     ->where('id', '=', $ida)
                     ->update([
                         'status_atendimento' => 7,
                         'motivo' => $request->motivo
                     ]);
+
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $ida,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 1, // mudou de Status para
+                    'id_observação' => 7, // Cancelado
+                    'id_origem' => 1, // Atendimento
+                    'data_hora' => $dt_hora
+                ]);
 
                 app('flasher')->addSuccess('O status do atendimento foi alterado para "Cancelado".');
                 return redirect('/gerenciar-atendimentos');
@@ -495,6 +490,7 @@ class GerenciarAtendimentoController extends Controller
     public function altera(Request $request, $ida)
     {
         try {
+            $dt_hora = Carbon::now();
             $afi = DB::table('associado')->where('id_pessoa', $request->input('afi_p'))->first();
 
             DB::table('atendimentos AS at')
@@ -507,6 +503,16 @@ class GerenciarAtendimentoController extends Controller
                     'pref_tipo_atendente' => $request->input('tipo_afi'),
                     'id_prioridade' => $request->input('priori'),
                 ]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $ida,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 3, // foi editado
+                'id_origem' => 1, // Atendimento
+                'data_hora' => $dt_hora
+            ]);
+
 
             app('flasher')->addSuccess('O cadastro de pessoa foi alterado com sucesso.');
 
