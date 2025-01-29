@@ -50,7 +50,7 @@
                         <br />
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                            <a href="/gerenciar-pti" type="button" class="btn btn-secondary pesq">Limpar</a>
+                            <a href="/gerenciar-pti?grupo={{ $encaminhamentos ? current(current($encaminhamentos))->id_reuniao : ''}}" type="button" class="btn btn-secondary pesq">Limpar</a>
                             <button class="btn btn-primary pesq" type="submit">Confirmar</button>
                         </div>
 
@@ -78,17 +78,17 @@
                         <td>{{ $encaminhamento->status }}</td>
                         <td>
                             @if ($encaminhamento->id_status == 1)
-                                <button disabled type="button" class="btn btn-outline-warning btn-sm tooltips"
+                                <button disabled type="button" class="btn btn-outline-danger btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
-                                    <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
+                                    <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
                                 </button>
 
                             @else
-                                <button type="button" class="btn btn-outline-warning btn-sm tooltips"
+                                <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
-                                    <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
+                                    <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
                                 </button>
 
                             @endif

@@ -31,24 +31,21 @@ class DiasCronogramaOntem implements ShouldQueue
         $dia_hoje = Carbon::yesterday();
         $dia_semana_hoje = $dia_hoje->weekday();
 
+        // Traz todos os crnogramas reunidos na data de hoje, usado para validação
+        $incluidos = DB::table('dias_cronograma')->where('data', $dia_hoje)->pluck('id_cronograma')->toArray();
 
-        $incluidos = DB::table('dias_cronograma')->where('data', $dia_hoje)->select('id_cronograma')->get();
-        $arrayIncluidos = [];
-        foreach($incluidos as $incluido){
-            $arrayIncluidos[] = $incluido->id_cronograma;
-        }
-
-        $reunioes_hoje = DB::table('cronograma')
-        ->where('dia_semana', $dia_semana_hoje)
-        ->whereNotIn('id', $arrayIncluidos)
-        ->where(function($query) use ($dia_hoje) {
-            $query->whereRaw("data_fim < ?", [$dia_hoje])
+        // Retorna todos os cronogramas de hoje, que não tenham sido incluidos ainda, e estejam ativos
+        $reunioes_hoje = DB::table('cronograma')->where('dia_semana', $dia_semana_hoje)
+        ->whereNotIn('id', $incluidos)
+        ->where(function($query) use ($dia_hoje) { // Cronogramas ativos
+            $query->whereRaw("data_fim > ?", [$dia_hoje]) 
                   ->orWhereNull('data_fim');
         })
         ->get();
+
+        // Insere todas as reuniões encontradas
         foreach($reunioes_hoje as $reuniao){
             DB::table('dias_cronograma')
-
             ->insert([
                 'data' => $dia_hoje,
                 'id_cronograma' => $reuniao->id,
