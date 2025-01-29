@@ -633,7 +633,6 @@ class AtendimentoFraternoController extends Controller
                 $query->orWhereNull('trat.dt_fim'); // Exclui da regra todos os que não tem DT_FIM
             })
             ->pluck('id_tipo_tratamento')->toArray();
-        dd($countEncaminhamentos);
         // Busca todos os encaminhamentos  de Grupo de Apoio ativos da pessoa que está sendo atendida
         $countGrupoApoio = DB::table('encaminhamento as enc')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
