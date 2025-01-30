@@ -897,7 +897,7 @@ class AtendimentoFraternoController extends Controller
                 'id_tipo_encaminhamento' => 2,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 1,
-                'status_encaminhamento' =>  2
+                'status_encaminhamento' =>  1
             ]);
 
             app('flasher')->addSuccess('O encaminhamento para o PTI e PTD foi criado com sucesso.');

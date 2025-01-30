@@ -33,7 +33,7 @@ class GerenciarEntrevistaController extends Controller
             $setores = array_merge($setores, array_column($perfil, 'id_setor'));
         }
 
-        // Tras todos os dados para as tebelas e validações IF e ELSE 
+        // Tras todos os dados para as tebelas e validações IF e ELSE
         $informacoes = DB::table('encaminhamento')
             ->select(
                 DB::raw("CASE WHEN entrevistas.status IS NULL THEN 1 ELSE entrevistas.status END as status"), // Caso não tenha nenhum Status, Status 1 (Aguardando Agendamento -> Encaminhamento)
@@ -47,12 +47,15 @@ class GerenciarEntrevistaController extends Controller
                 's.numero', // Traz o suposto número da sala (excessões PREP, CX, AL)
                 'encaminhamento.status_encaminhamento as status_encaminhamento_id', // Status do Encaminhamento, usado para validar se está ativa a entrevista
                 'atendimentos.dh_inicio as inicio', // DateTime do atendimento
-                'entrevistas.id as ident' // ID entrevista, usado na view na tabela
+                'entrevistas.id as ident', // ID entrevista, usado na view na tabela
+                'pessoa_pessoa.celular',
+                'ddd.descricao as ddd'
             )
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
             ->leftJoin('entrevistas', 'encaminhamento.id', 'entrevistas.id_encaminhamento')
             ->leftJoin('salas AS s', 'entrevistas.id_sala', 's.id')
             ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', 'pessoa_pessoa.id')
+            ->leftJoin('tp_ddd as ddd', 'pessoa_pessoa.ddd', 'ddd.id')
             ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', 'tipo_entrevista.id')
             ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', 'tipo_encaminhamento.id')
             ->leftJoin('membro', 'entrevistas.id_entrevistador', 'membro.id')
@@ -69,7 +72,7 @@ class GerenciarEntrevistaController extends Controller
         if ($request->nome_pesquisa) {
             $informacoes->whereRaw("UNACCENT(LOWER(pessoa_pessoa.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome_pesquisa}%"]);
         }
-        if ($request->tipo_entrevista) { // Ex.: DIAMO, NUTRES 
+        if ($request->tipo_entrevista) { // Ex.: DIAMO, NUTRES
             $informacoes->where('tipo_entrevista.id', $request->tipo_entrevista);
         }
 
@@ -320,7 +323,7 @@ class GerenciarEntrevistaController extends Controller
         }
     }
 
- 
+
     public function show($id)
     {
         try {
@@ -437,7 +440,7 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
                 ->select('membro.*', 'pessoas.nome_completo', 'gr.id_setor', 'pessoas.nome_completo as nome_entrevistador')
                 ->whereIn('associado.id_pessoa', $usuarios)
-                ->whereIn('membro.id_funcao', [1, 2]) // Dirigente ou Subdirigente 
+                ->whereIn('membro.id_funcao', [1, 2]) // Dirigente ou Subdirigente
                 ->distinct('membro.id_associado')
                 ->get();
 
@@ -488,7 +491,7 @@ class GerenciarEntrevistaController extends Controller
     {
         //  try {
 
-        $data = date("Y-m-d H:i:s"); // Usado para a tabela de Audit 
+        $data = date("Y-m-d H:i:s"); // Usado para a tabela de Audit
         $data_enc = Carbon::today();
         $id_usuario = session()->get('usuario.id_usuario');
         $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first(); // Usado em Validação de Tipo de Entrevista
@@ -624,7 +627,7 @@ class GerenciarEntrevistaController extends Controller
             // Inativa a entrevista caso encontre alguma
             DB::table('entrevistas')
                 ->where('id_encaminhamento', $id)
-                ->update(['status' => 6]); // Entrevista Cancelada 
+                ->update(['status' => 6]); // Entrevista Cancelada
 
         } else {
 
@@ -685,7 +688,7 @@ class GerenciarEntrevistaController extends Controller
             // Inativa a entrevista caso encontre alguma
             DB::table('entrevistas')
                 ->where('id_encaminhamento', $id)
-                ->update(['status' => 6]); // Entrevista Cancelada 
+                ->update(['status' => 6]); // Entrevista Cancelada
 
         }
 
