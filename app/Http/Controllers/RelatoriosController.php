@@ -1052,9 +1052,9 @@ class RelatoriosController extends Controller
                     ];
                 } else if ($request->status_atendimento == 4) {
                     $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
-                        'Manhã' => (clone $atendimentos)->whereTime('dh_chegada', '>', '08:30:00')->whereTime('dh_chegada', '<', '10:30:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
-                        'Tarde' => (clone $atendimentos)->whereTime('dh_chegada', '>', '15:30:00')->whereTime('dh_chegada', '<', '17:30:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
-                        'Noite' => (clone $atendimentos)->whereTime('dh_chegada', '>', '17:30:00')->whereTime('dh_chegada', '<', '21:00:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Manhã' => (clone $atendimentos)->whereTime('dh_chegada', '>=', '07:00:00')->whereTime('dh_chegada', '<', '12:30:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Tarde' => (clone $atendimentos)->whereTime('dh_chegada', '>=', '12:30:00')->whereTime('dh_chegada', '<', '17:30:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Noite' => (clone $atendimentos)->whereTime('dh_chegada', '>=', '17:30:00')->whereTime('dh_chegada', '<', '23:30:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
 
                     ];
                 } else {
@@ -1092,9 +1092,9 @@ class RelatoriosController extends Controller
                 ];
             } else if ($request->status_atendimento == 4) {
                 $dadosChart = [
-                    'Manhã' => (clone $atendimentos)->whereTime('dh_chegada', '>', '08:30:00')->whereTime('dh_chegada', '<', '10:30:00')->count(),
-                    'Tarde' => (clone $atendimentos)->whereTime('dh_chegada', '>', '15:30:00')->whereTime('dh_chegada', '<', '17:30:00')->count(),
-                    'Noite' => (clone $atendimentos)->whereTime('dh_chegada', '>', '17:30:00')->whereTime('dh_chegada', '<', '21:00:00')->count(),
+                    'Manhã' => (clone $atendimentos)->whereTime('dh_chegada', '>=', '07:00:00')->whereTime('dh_chegada', '<', '12:30:00')->count(),
+                    'Tarde' => (clone $atendimentos)->whereTime('dh_chegada', '>=', '12:30:00')->whereTime('dh_chegada', '<', '17:30:00')->count(),
+                    'Noite' => (clone $atendimentos)->whereTime('dh_chegada', '>=', '17:30:00')->whereTime('dh_chegada', '<', '23:30:00')->count(),
 
                 ];
             } else {
