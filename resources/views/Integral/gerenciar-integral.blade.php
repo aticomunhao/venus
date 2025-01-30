@@ -193,13 +193,13 @@
                                         <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
                                     </button>
                                 @elseif($encaminhamento->id_status == 2)
-                                    <button type="button" disabled class="btn btn-outline-danger btn-sm tooltips"
-                                        data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
-                                        <span class="tooltiptext">Declarar Alta</span>
-                                        <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
+                                    <button type="button" class="btn btn-outline-danger btn-sm tooltips"
+                                        data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
+                                        <span class="tooltiptext">Sem limite</span>
+                                        <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>
                                     </button>
                                 @else
-                                    <button type="button" class="btn btn-outline-danger btn-sm tooltips"
+                                    <button type="button" class="btn btn-outline-danger btn-sm tooltips"disabled
                                         data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
                                         <span class="tooltiptext">Sem limite</span>
                                         <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>
