@@ -19,7 +19,7 @@
                                     value="{{ request('nome_pesquisa') }}">
                             </div>
 
-                            <div class="col-3">
+                            <div class="col-2">
                                 Status
                                 <select class="form-select" id="status" name="status">
                                     {{-- Select de pesquisa de status --}}
@@ -33,7 +33,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-3">
+                            <div class="col-2">
                                 Tipo Entrevista
                                 <select class="form-select" id="tipo_entrevista" name="tipo_entrevista">
                                     {{-- Select de pesquisa de tipo entrevista --}}
@@ -61,9 +61,13 @@
                                     style="box-shadow: 1px 2px 5px #000000; margin:5px;">
                                     Imprimir
                                 </button>
+
                             </div>
+
+
                         </div>
                     </form>
+
                     <br />
                 </div>
                 <hr />
