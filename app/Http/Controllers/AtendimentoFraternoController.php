@@ -744,7 +744,13 @@ class AtendimentoFraternoController extends Controller
             ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
             ->where('at.id_assistido', $idas)
             ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
-            ->whereNot('trat.dt_fim', $hoje) // Tratamentos que acabam no dia do atendimento, podem ser renovados
+            ->where(function ($query) use ($hoje){
+                $query->where(function ($innerQuery) use ($hoje){
+                    $innerQuery->whereNotNull('trat.dt_fim'); // Regra apenas para tratamentos que tem DT_FIM
+                    $innerQuery->whereNot('trat.dt_fim', $hoje); // Tratamentos que acabam no dia do atendimento, podem ser renovados
+                });
+                $query->orWhereNull('trat.dt_fim'); // Exclui da regra todos os que não tem DT_FIM
+            })
             ->pluck('id_tipo_tratamento')->toArray();
 
         // Retorna todos os IDs dos encaminhamentos de entrevista
