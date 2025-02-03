@@ -448,6 +448,86 @@ class GerenciarTratamentosController extends Controller
     //    return view('tratamento-erro.erro-inesperado', compact('code'));
     //  }
     //   }
+
+    public function faltas($idtr)
+    {
+
+
+        $result = DB::table('tratamento as tr')
+            ->select('p.nome_completo as nm_1', 'p.dt_nascimento', 'ts.tipo')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+            ->leftJoin('tp_sexo as ts', 'p.sexo', 'ts.id')
+            ->where('tr.id', $idtr)
+            ->get();
+
+
+        $list = DB::table('tratamento AS tr')
+            ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.presenca', 'dc.data', 'gp.nome', 'dt.id')
+            ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
+            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+            ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
+            ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
+            ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
+            ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
+            ->where('tr.id', $idtr)
+            ->orderBy('dc.data', 'desc')
+            ->get();
+
+
+
+        $arrayPresencas = [];
+        foreach ($list as $presenca) {
+
+            $arrayPresencas[date('Y', strtotime($presenca->data))][] = $presenca;
+        }
+
+        $list = $arrayPresencas;
+
+
+        return view('/recepcao-integrada/reverter-faltas-assisitido', compact('result', 'list'));
+    }
+
+    public function remarcar(Request $request)
+    {
+
+        $data_atual = Carbon::now();
+
+
+        if ($request->checkbox) {
+            foreach ($request->checkbox as $key => $presenca) {
+                $booleanPresenca = $presenca ?? false;
+
+                DB::table('presenca_cronograma')
+                    ->where('id', $key)
+                    ->update([
+                        'presenca' => !$booleanPresenca
+                    ]);
+
+                $nomePessoa = DB::table('pessoas')
+                    ->where('id', session()->get('usuario.id_pessoa'))
+                    ->value('nome_completo');
+
+                // Realiza a inserção na tabela 'historico_venus'
+                DB::table('historico_venus')->insert([
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'data' => $data_atual,
+                    'fato' => 27,
+                    'obs' => 'alterou a presença/falta do assistido',
+                    'pessoa' => $nomePessoa,
+                    'id_ref' => $key,
+                ]);
+
+                app('flasher')->addSuccess('Presença alterada com sucesso.');
+            }
+        } else {
+            app('flasher')->addError('Nenhum item selecionado.');
+        }
+
+        return redirect('/gerenciar-tratamentos');
+    }
+    
     public function job()
     {
 
