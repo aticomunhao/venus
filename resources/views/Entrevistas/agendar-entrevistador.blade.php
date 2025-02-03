@@ -34,7 +34,7 @@
                                         {{ $entrevistas->nome_completo_pessoa_entrevistador }}</option>
                                 @endif
                                 @foreach ($membros as $membro)
-                                    <option value="{{ $membro->id }}">{{ $membro->nome_completo }}</option>
+                                    <option value="{{ $membro->id_associado }}">{{ $membro->nome_completo }}</option>
                                 @endforeach
                             </select>
                         </div>
