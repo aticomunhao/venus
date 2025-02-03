@@ -23,29 +23,30 @@ class PresencaDirigenteController extends Controller
         $hoje = Carbon::today();
 
         //Traz todas as reuniões onde a pessoa logada é Dirigente ou Sub-dirigente
-        $reunioesDirigentes = DB::table('membro as mem')
-            ->select('ass.id_pessoa', 'gr.nome', 'cr.id', 'gr.status_grupo', 'd.nome as dia')
-            ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
-            ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
+        $reunioesDirigentes = DB::table('cronograma as cr')
+            ->select('gr.nome', 'cr.id', 'cr.h_inicio', 'cr.h_fim', 'd.nome as dia', 'sl.numero', 's.sigla')
+            ->leftJoin('salas as sl', 'cr.id_sala', 'sl.id')
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
+            ->leftJoin('setor AS s', 'gr.id_setor', 's.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
-            ->orderBy('gr.nome')
-            ->distinct('gr.nome');
+            ->leftJoin('membro as m', 'cr.id', 'm.id_cronograma')
+            ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
+            ->whereNull('cr.data_fim')
+            ->groupBy('gr.nome', 'cr.h_inicio', 'cr.h_fim', 'd.nome', 's.sigla', 'sl.numero', 'cr.id')->orderBy('gr.nome', 'asc');
 
 
-            if(in_array(36,session()->get('usuario.acesso'))){
 
-            }elseif(in_array(37,session()->get('usuario.acesso'))){
-                $reunioesDirigentes = $reunioesDirigentes->whereIn('gr.id_setor', session()->get('usuario.setor'));
-            }else{
-                $reunioesDirigentes = $reunioesDirigentes->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
+        if (in_array(36, session()->get('usuario.acesso'))) {
+        } elseif (in_array(37, session()->get('usuario.acesso'))) {
+            $reunioesDirigentes = $reunioesDirigentes->whereIn('gr.id_setor', session()->get('usuario.setor'));
+        } else {
+            $reunioesDirigentes = $reunioesDirigentes->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
                 ->where('id_funcao', '<', 3);
-            }
-        
-            
+        }
+
+
         //Salva esse select completo em uma variável separada
         $reunioes = $reunioesDirigentes->get();
-
         //Caso nenhum, grupo seja pesquisado, traz o primeiro da lista como padrão, senão o pesquisado
         if ($request->grupo == null) {
 
@@ -56,14 +57,14 @@ class PresencaDirigenteController extends Controller
 
         //Traz todos os membros do grupo selecionado
         $query = DB::table('membro as m')
-        ->select('m.id', 'm.id_cronograma', 'p.nome_completo', 'tf.nome')
-        ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
-        ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
-        ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
-        ->where('m.dt_fim', null)
-        ->where('m.id_cronograma', $reunioesDirigentes[0])
-        ->whereNot('m.id_funcao',  6); // Exclui id_funcao 5 e 6
-        
+            ->select('m.id', 'm.id_cronograma', 'p.nome_completo', 'tf.nome')
+            ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
+            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
+            ->where('m.dt_fim', null)
+            ->where('m.id_cronograma', $reunioesDirigentes[0])
+            ->whereNot('m.id_funcao',  6) // Exclui id_funcao e 6
+            ->orderBy('m.id_funcao', 'ASC', 'p.nome_completo');
         // Filtra pelo nome do setor se estiver presente na requisição
         if ($request->nome_setor) {
             $query->where('m.id', $request->nome_setor);
@@ -129,6 +130,19 @@ class PresencaDirigenteController extends Controller
             'id_dias_cronograma' => $dias_cronograma_selecionada[0]
         ]);
 
+        $nomePessoa = DB::table('pessoas')
+            ->where('id', session()->get('usuario.id_pessoa'))
+            ->value('nome_completo');
+
+        DB::table('historico_venus')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $hoje,
+            'pessoa' => $nomePessoa,
+            'obs' => 'Marcou Presença',
+            'id_ref' => $id,
+            'fato' => 31,
+        ]);
+
         app('flasher')->addSuccess('Presença salva com sucesso!');
         return redirect()->back();
     }
@@ -142,8 +156,21 @@ class PresencaDirigenteController extends Controller
         //Encontra o cronograma daquele grupo na data de hoje
         $dias_cronograma_selecionada = DB::table('dias_cronograma')
             ->where('data', $hoje)
-            ->where('id_cronograma', $idg)
+            ->where('id_cronograma', $id)
             ->pluck('id');
+
+            $nomePessoa = DB::table('pessoas')
+            ->where('id', session()->get('usuario.id_pessoa'))
+            ->value('nome_completo');
+
+        DB::table('historico_venus')->insert([
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'data' => $hoje,
+            'pessoa' => $nomePessoa,
+            'obs' => 'Cancelou Presença',
+            'id_ref' => $idg,
+            'fato' => 32,
+        ]);
 
         //Deleta a presença do membro selecionado no dia de hoje para aquele grupo
         DB::table('presenca_membros')->where('id_membro', $id)->where('id_dias_cronograma', $dias_cronograma_selecionada[0])->delete();

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-    Relatório de Temáticas
+    Relatório de Vagas em Grupos
 @endsection
 @section('content')
     <div class="container-fluid">
@@ -96,7 +96,7 @@
                             <th class="col-3">GRUPO</th>
                             <th class="col-auto">DIA</th>
                             <th class="col-auto">HORÁRIO</th>
-                            <th class="col-auto">TRATAMENTO</th>
+                            <th class="col-auto">TRABALHO</th>
                             <th class="col-auto">VAGAS</th>
                         </tr>
                     </thead>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\CarbonPeriod;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -48,8 +49,6 @@ class RelatoriosController extends Controller
                     }
                 }
             }
-
-
 
 
             // Pega um array com todas as reuniões que o atendente participa
@@ -211,7 +210,7 @@ class RelatoriosController extends Controller
         }
 
 
-        return view('relatorios.tematicas', compact('tematicasArray', 'dt_inicio', 'dt_fim'));
+        return view('relatorios.tematicas', compact('tematicasArray', 'dt_inicio', 'dt_fim', 'tematicas'));
     }
 
     /**
@@ -325,6 +324,7 @@ class RelatoriosController extends Controller
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
+            ->where('m.dt_fim', null)
             ->orderBy('p.nome_completo')
             ->whereIn('gr.id_setor', $setoresAutorizado)
             ->select('m.id', 'p.nome_completo', 'gr.nome as grupo_nome', 'st.nome as setor_nome', 'st.sigla as setor_sigla', 'td.nome as dia_nome', 'cro.h_inicio', 'cro.h_fim', 'tf.nome as nome_funcao', 'st.nome as sala') // Selecionando o nome da função
@@ -524,17 +524,39 @@ class RelatoriosController extends Controller
             ->when($idCronogramaPesquisa, function ($query, $idCronogramaPesquisa) {
                 return $query->where('cr.id', $idCronogramaPesquisa);
             })
-            ->orderBy('gr.nome')
+
             ->distinct('gr.nome');
 
-        $reunioesPesquisa = DB::table('membro as mem')
-            ->select('cr.id', 'gr.nome', 'd.nome as dia', 'cr.h_inicio', 'cr.h_fim')
-            ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
-            ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
+        $reunioesPesquisa = DB::table('cronograma as cr')
+            ->select(
+                'cr.id',
+                'cr.h_fim',
+                'st.sigla',
+                't.sigla as SiglaTratamento',
+                'cr.modificador',
+                'ts.descricao',
+                'gr.nome',
+                'cr.dia_semana as dia',
+                'cr.h_inicio',
+                'cr.h_fim',
+                DB::raw("(CASE WHEN cr.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status") // Correção aqui
+            )
+            ->leftJoin('tipo_tratamento as t', 'cr.id_tipo_tratamento', 't.id')
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
+            ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
-            ->orderBy('gr.nome')
-            ->distinct('gr.nome');
+            ->leftJoin('tipo_status_grupo AS ts', 'gr.status_grupo', 'ts.id')
+            ->groupBy(
+                'cr.id',
+                'gr.nome',
+                'd.nome',
+                'cr.h_inicio',
+                'cr.h_fim',
+                'st.sigla',
+                't.sigla',
+                'ts.descricao'
+            )
+            ->orderBy('gr.nome', 'asc');
 
         $presencasCountAssistidos = DB::table('presenca_cronograma as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
@@ -543,7 +565,7 @@ class RelatoriosController extends Controller
             ->groupBy('presenca')
             ->select('presenca', DB::raw("count(*) as total"));
 
-        $acompanhantes = DB::table('dias_cronograma');
+        $acompanhantes = DB::table('dias_cronograma as dc')->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')->whereNot('id_tipo_tratamento', 3);
 
         $presencasCountMembros = DB::table('presenca_membros as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
@@ -650,8 +672,6 @@ class RelatoriosController extends Controller
 
 
 
-
-
         $presencasAssistidos = DB::table('tratamento as tr')
             ->leftJoin('tipo_status_tratamento as tst', 'tr.status', 'tst.id')
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
@@ -661,8 +681,7 @@ class RelatoriosController extends Controller
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
-            ->where('enc.dh_enc', '>=', $dt_inicio)
-            ->where('enc.dh_enc', '<', $dt_fim)
+            ->where('enc.dh_enc', '<=', $dt_fim)
             ->where('id_reuniao', $id)
             ->select('tr.id', 'p.nome_completo', 'tst.nome as status', 'dc.data', 'gr.nome as grupo', 'pc.presenca',)
             ->orderBy('p.nome_completo')
@@ -735,12 +754,17 @@ class RelatoriosController extends Controller
     }
     public function vagasGrupos(Request $request)
     {
+        $now = Carbon::now()->format('Y-m-d');
         // Iniciar a consulta
         $grupos = DB::table('cronograma as cro')
             ->leftJoin('tipo_tratamento as t', 'cro.id_tipo_tratamento', 't.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
+            ->where(function ($query) use ($now) {
+                $query->where('cro.data_fim', '>', $now);
+                $query->orWhere('cro.data_fim', null);
+            })
             ->select(
                 DB::raw('
                 (select count(*) from tratamento tr where tr.id_reuniao = cro.id and tr.status < 3) as trat'),
@@ -752,14 +776,14 @@ class RelatoriosController extends Controller
                 'cro.h_inicio',
                 'cro.h_fim',
                 'st.sigla as setor',
+                'st.id as id_setor',
                 'cro.max_atend'
             )
             ->orderBy('gr.nome');
         // Consultar setores para o filtro
         $setores = DB::table('setor')
-            ->where('nome', 'NOT LIKE', '%Assessoria de Estudos e Aplicações de Medicina Espiritual%')
-            ->orderBy('nome')
-            ->get();
+            ->orderBy('nome');
+
 
         // Consultar grupos
         $grupo2 = DB::table('cronograma as cro')
@@ -767,8 +791,12 @@ class RelatoriosController extends Controller
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
+            ->where(function ($query) use ($now) {
+                $query->where('cro.data_fim', '>', $now);
+                $query->orWhere('cro.data_fim', null);
+            })
             ->select('t.id', 't.descricao', 'cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'st.sigla as setor', 'td.nome as dia_semana');
-            
+
 
 
         // Consultar tratamentos
@@ -786,10 +814,10 @@ class RelatoriosController extends Controller
         if ($request->tratamento) {
             $grupos = $grupos->where('t.id', $request->tratamento);
             $grupo2 = $grupo2->where('t.id', $request->tratamento);
-            
+            $setores->where('id', $grupos->pluck('id_setor')->toArray());
         }
         $grupo2 = $grupo2->get();
-
+        $setores = $setores->get();
         // Paginação dos grupos
         $grupos = $grupos->paginate(30)->appends([
             'grupo' => $request->grupo,
@@ -811,14 +839,280 @@ class RelatoriosController extends Controller
 
 
         // Retornar a view com os dados
-        return view('relatorios.vagas-grupos', compact('setores', 'grupos', 'grupo2', 'tratamento', 'quantidade_vagas_tipo_tratamento','tipo_de_tratamento'));
+        return view('relatorios.vagas-grupos', compact('setores', 'grupos', 'grupo2', 'tratamento', 'quantidade_vagas_tipo_tratamento', 'tipo_de_tratamento'));
     }
 
-   
-
-    public function teste()
+    public function AtendimentosRel(Request $request)
     {
-        $pdf = \PDF::loadView('relatorios.teste');
-        return $pdf->download('invoice.pdf');
+
+        $now = Carbon::now()->format('Y-m-d');
+        $dt_inicio = $request->dt_inicio == null ? (Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d')) : $request->dt_inicio;
+        $dt_fim =  $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
+        // Iniciar a consulta
+        $grupos = DB::table('cronograma as cro')
+            ->leftJoin('tratamento as tr', 'cro.id', 'tr.id')
+            ->leftJoin('tipo_tratamento as t', 'cro.id_tipo_tratamento', 't.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
+            ->whereIn('t.id', [1, 2, 3, 4, 6])
+            ->whereIn('tr.status', [2, 3, 4])
+            ->select(
+                'cro.id',
+                'cro.h_inicio',
+                'cro.h_fim',
+                't.descricao',
+                't.id as id_tp_tratamento',
+                'tr.status',
+                'cro.max_atend',
+                'gr.nome as nome',
+                'td.nome as dia',
+                't.sigla',
+                'st.sigla as setor',
+                'st.id as id_setor',
+            )
+            ->orderBy('gr.nome');
+
+
+        // Consultar setores para o filtro
+        $setores = DB::table('setor')
+            ->whereIn('id', [48, 50, 46, 72])
+            ->orderBy('nome');
+
+        // Consultar grupos
+        $grupo2 =  DB::table('cronograma as cro')
+            ->leftJoin('tratamento as tr', 'cro.id', 'tr.id')
+            ->leftJoin('tipo_tratamento as t', 'cro.id_tipo_tratamento', 't.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
+            ->whereIn('t.id', [1, 2, 3, 4, 6])
+            ->whereIn('tr.status', [2, 3, 4])
+            ->select(
+                'cro.id',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'gr.nome as nome',
+                'td.nome as dia_semana',
+                't.sigla',
+                'st.sigla as setor',
+                'st.id as id_setor',
+            )
+            ->orderBy('gr.nome');
+
+
+        // Consultar tratamentos
+        $tratamento = DB::table('tipo_tratamento')->whereIn('id', [1, 2, 3, 4, 6])->get();
+
+        // Filtros
+        if ($request->setor) {
+            $grupos = $grupos->where('gr.id_setor', $request->setor);
+        }
+
+        if ($request->tratamento) {
+            $grupos = $grupos->where('t.id', $request->tratamento);
+            $grupo2 = $grupo2->where('t.id', $request->tratamento);
+            $setores->where('id', $grupos->pluck('id_setor')->toArray());
+        }
+        $grupos = $grupos->get()->toArray();
+        $grupo2 = $grupo2->get();
+        $setores = $setores->get();
+
+        // Insere os atendimentos
+        foreach ($grupos as $key => $grupo) {
+
+            $tratamentosAtivos = DB::table('tratamento as tra')
+                ->leftJoin('encaminhamento as enc', 'tra.id', 'enc.id')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->where('id_reuniao', $grupo->id)
+                ->where(function ($query) use ($dt_inicio, $dt_fim) {
+
+                    // Data Inicio Tratamento
+                    $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
+                        $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
+                            $innerQuery->where('tra.dt_inicio', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
+                        });
+                        $subQuery->orWhere('tra.dt_inicio', '<', $dt_inicio);
+                    });
+
+                    // Data Fim Tratamento
+                    $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
+                        $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
+                            $innerQuery->where('tra.dt_fim', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
+                        });
+                        $subQuery->orWhere('tra.dt_fim', '>', $dt_fim);
+                        $subQuery->orWhere('tra.dt_fim', NULL);
+                    });
+                })
+                ->count();
+
+            $passes = DB::table('dias_cronograma')
+                ->where('id_cronograma', $grupo->id)
+                ->where('data', '>=', $dt_inicio)
+                ->where('data', '<', $dt_fim)
+                ->sum('nr_acompanhantes');
+
+            if ($grupo->id_tp_tratamento == 3) { // Caso seja um grupo de PTH, conta os assistidos
+                $grupos[$key]->atendimentos =  $passes;
+            } else {
+                $grupos[$key]->atendimentos =  $tratamentosAtivos;
+                $grupos[$key]->acompanhantes =  $passes;
+            }
+        }
+
+
+
+        // Pesquisa de grupos
+        if ($request->grupo != null) {
+
+            $buffer = array();
+            foreach ($grupos as $grupo) {
+                if (in_array($grupo->id, $request->grupo)) {
+                    $buffer[$grupo->id]['descricao'] = $grupo->descricao;
+                    $buffer[$grupo->id]['nome'] = $grupo->nome;
+                    $buffer[$grupo->id]['sigla'] =  $grupo->sigla;
+                    $buffer[$grupo->id]['atendimentos'] = $grupo->atendimentos;
+                    $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
+                    $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
+                    $buffer[$grupo->id]['h_fim'] = $grupo->h_fim;
+                    $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento;
+
+                    isset($grupo->acompanhantes) ?  $buffer[$grupo->id]['acompanhantes'] = $grupo->acompanhantes : null;
+                }
+            }
+            $grupos = $buffer;
+        } else {
+
+            $buffer = array();
+            foreach ($grupos as $grupo) {
+                $buffer[$grupo->id_tp_tratamento]['descricao'] = $grupo->descricao;
+                $buffer[$grupo->id_tp_tratamento]['sigla'] =  $grupo->sigla;
+                $buffer[$grupo->id_tp_tratamento]['id'] =  $grupo->id;
+
+                array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
+                    $buffer[$grupo->id_tp_tratamento]['atendimentos'] += $grupo->atendimentos :
+                    $buffer[$grupo->id_tp_tratamento]['atendimentos'] = $grupo->atendimentos;
+
+                if (isset($grupo->acompanhantes)) {
+                    array_key_exists("acompanhantes", $buffer[$grupo->id_tp_tratamento]) ?
+                        $buffer[$grupo->id_tp_tratamento]['acompanhantes'] += $grupo->acompanhantes :
+                        $buffer[$grupo->id_tp_tratamento]['acompanhantes'] = $grupo->acompanhantes;
+                }
+
+
+                $grupos = $buffer;
+            }
+
+            // Retornar a view com os dados
+        }
+        return view('relatorios.gerenciar-relatorio-tratamento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
+    }
+
+    public function Atendimentos(Request $request)
+    {
+        $now = Carbon::now()->format('Y-m-d');
+        $dt_inicio = $request->dt_inicio == null ? Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d') : $request->dt_inicio;
+        $dt_fim = $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
+
+
+
+        $atendimentos = DB::table('atendimentos as at')
+            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+            ->where('at.dh_chegada', '>=', $dt_inicio)
+            ->where('at.dh_chegada', '<', $dt_fim);
+
+
+        if ($request->tipo_visualizacao == 2) {
+            Carbon::setlocale(config('app.locale'));
+            $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
+
+            foreach ($meses as $mes) {
+
+                if ($request->status_atendimento == 1) {
+                    $nomeStatus = DB::table('tipo_status_atendimento')->where('id', $request->status_atendimento)->first();
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                    ];
+                } else if ($request->status_atendimento == 2) {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Homens' => (clone $atendimentos)->where('p.sexo', 1)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Mulheres' => (clone $atendimentos)->where('p.sexo', 2)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                    ];
+                } else if ($request->status_atendimento == 3) {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Domingo' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 0')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Segunda' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 1')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Terça' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 2')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Quarta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 3')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Quinta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 4')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Sexta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 5')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Sábado' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 6')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+
+                    ];
+                } else if ($request->status_atendimento == 4) {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Manhã' => (clone $atendimentos)->whereTime('dh_chegada', '>=', '07:00:00')->whereTime('dh_chegada', '<', '12:30:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Tarde' => (clone $atendimentos)->whereTime('dh_chegada', '>=', '12:30:00')->whereTime('dh_chegada', '<', '17:30:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Noite' => (clone $atendimentos)->whereTime('dh_chegada', '>=', '17:30:00')->whereTime('dh_chegada', '<', '23:30:00')->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+
+                    ];
+                } else {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                        'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                        'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->whereMonth('dh_chegada', $mes->month)->whereYear('dh_chegada', $mes->year)->count(),
+                    ];
+                }
+            }
+        } else {
+
+            if ($request->status_atendimento == 1) {
+                $nomeStatus = DB::table('tipo_status_atendimento')->where('id', $request->status_atendimento)->first();
+                $dadosChart = [
+                    'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->count(),
+                    'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->count(),
+                    'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
+                ];
+            } else if ($request->status_atendimento == 2) {
+                $dadosChart = [
+                    'Homens' => (clone $atendimentos)->where('p.sexo', 1)->count(),
+                    'Mulheres' => (clone $atendimentos)->where('p.sexo', 2)->count(),
+                ];
+            } else if ($request->status_atendimento == 3) {
+                $dadosChart = [
+                    'Domingo' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 0')->count(),
+                    'Segunda' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 1')->count(),
+                    'Terça' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 2')->count(),
+                    'Quarta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 3')->count(),
+                    'Quinta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 4')->count(),
+                    'Sexta' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 5')->count(),
+                    'Sábado' => (clone $atendimentos)->whereRaw('EXTRACT(DOW FROM dh_chegada) = 6')->count(),
+
+                ];
+            } else if ($request->status_atendimento == 4) {
+                $dadosChart = [
+                    'Manhã' => (clone $atendimentos)->whereTime('dh_chegada', '>=', '07:00:00')->whereTime('dh_chegada', '<', '12:30:00')->count(),
+                    'Tarde' => (clone $atendimentos)->whereTime('dh_chegada', '>=', '12:30:00')->whereTime('dh_chegada', '<', '17:30:00')->count(),
+                    'Noite' => (clone $atendimentos)->whereTime('dh_chegada', '>=', '17:30:00')->whereTime('dh_chegada', '<', '23:30:00')->count(),
+
+                ];
+            } else {
+                $dadosChart = [
+                    'Finalizados' => (clone $atendimentos)->where('at.status_atendimento', 6)->count(),
+                    'Cancelados' => (clone $atendimentos)->where('at.status_atendimento', 7)->count(),
+                    'Menores 18' => (clone $atendimentos)->where('at.menor_auto', true)->count(),
+                ];
+            }
+        }
+      //  dd($dadosChart);
+        return view('relatorios.gerenciar-relatorio-atendimento', compact('dt_inicio', 'dt_fim', 'dadosChart'));
     }
 }
+
+    // public function teste()
+    // {
+    //     $pdf = \PDF::loadView('relatorios.teste');
+    //     return $pdf->download('invoice.pdf');
+    // }

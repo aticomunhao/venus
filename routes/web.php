@@ -234,33 +234,39 @@ Route::middleware('rotas:13')->group(function () {
     Route::get('/criar-membro', [MembroController::class, 'create'])->name('');
     Route::post('/incluir-membro', [MembroController::class, 'store'])->name('membro.store');
     Route::post('/transferir-membros-lote', [MembroController::class, 'transferirLote']);
+    Route::any('/incluir-membro-grupo/{id}', [MembroController::class, 'storeGrupo'])->name('');
+    Route::get('/selecionar-membro/{id}', [MembroController::class, 'selecionar']);
+    Route::any('/transferir-membro/{id}', [MembroController::class, 'transferir']);
+    Route::get('/editar-membro/{idcro}/{id}', [MembroController::class, 'edit'])->name('');
+    Route::any('/atualizar-membro/{idcro}/{id}', [MembroController::class, 'update'])->name('');
+    Route::post('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('membro.destroy');
+    Route::post('/inativar-membro/{idcro}/{id}', [MembroController::class, 'inactivate'])->name('membro.inactivate');
+    Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
 });
 
 // Gerenciar Membros
 Route::middleware('rotas:14')->group(function () {
     Route::get('/gerenciar-membro/{id}', [MembroController::class, 'index'])->name('lista');
-    Route::get('/editar-membro/{idcro}/{id}', [MembroController::class, 'edit'])->name('');
-    Route::any('/atualizar-membro/{idcro}/{id}', [MembroController::class, 'update'])->name('');
-    Route::post('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('membro.destroy');
-    Route::post('/inativar-membro/{idcro}/{id}', [MembroController::class, 'inactivate'])->name('membro.inactivate');
-    Route::get('/visualizar-membro/{idcro}/{id}', [MembroController::class, 'show'])->name('');
+    Route::get('/visualizar-membro/{id}', [MembroController::class, 'show'])->name('');
     Route::get('/gerenciar-grupos-membro', [MembroController::class, 'grupos'])->name('');
-    Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
+});
+
+// Reverter Faltas de Membros
+Route::middleware('rotas:42')->group(function () {
+    Route::get('/reverter-faltas-membro/{id}', [MembroController::class, 'faltas'])->name('');
+    Route::post('/remarcar-faltas-membro/{id}', [MembroController::class, 'remarcar'])->name('');
 });
 
 // Incluir Membro Grupo
 Route::middleware('rotas:29')->group(function () {
     Route::get('/criar-membro-grupo/{id}', [MembroController::class, 'createGrupo'])->name('');
-    Route::any('/incluir-membro-grupo/{id}', [MembroController::class, 'storeGrupo'])->name('');
-    Route::get('/selecionar-membro/{id}', [MembroController::class, 'selecionar']);
-    Route::any('/transferir-membro/{id}', [MembroController::class, 'transferir']);
 });
 
 // Gerenciar Mediunidades
 Route::middleware('rotas:15')->group(function () {
     Route::get('/gerenciar-mediunidades', [MediunidadePessoaController::class, 'index'])->name('names');
     Route::get('/editar-mediunidade/{id}', [MediunidadePessoaController::class, 'edit'])->name('');
-    Route::post('/atualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'update'])->name('atualizar-mediunidade');
+    Route::any('/atualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'update'])->name('atualizar-mediunidade');
     Route::get('/criar-mediunidade', [MediunidadePessoaController::class, 'create'])->name('');
     Route::post('/incluir-mediunidade', [MediunidadePessoaController::class, 'store'])->name('');
     Route::any('/deletar-mediunidade/{id}', [MediunidadePessoaController::class, 'destroy'])->name('');
@@ -282,6 +288,11 @@ Route::middleware("rotas:16-22-23")->group(function () {
     Route::any('/vagasGruposAjax/{id}', [RelatoriosController::class, 'vagasGruposAjax']);
 });
 
+//Relatório de vagas em Grupos
+Route::middleware("rotas:44")->group(function () {
+    Route::any('/relatorio-vagas-grupos', [RelatoriosController::class, 'vagasGrupos']);
+    Route::any('/vagasGruposAjax/{id}', [RelatoriosController::class, 'vagasGruposAjax']);
+});
 // Jobs de Tratamento
 Route::middleware('rotas:17')->group(function () {
     Route::any('/job', [GerenciarTratamentosController::class, 'job']);
@@ -291,11 +302,17 @@ Route::middleware('rotas:17')->group(function () {
 Route::middleware('rotas:18')->group(function () {
     Route::get('/gerenciar-tratamentos', [GerenciarTratamentosController::class, 'index'])->name('gtcdex');
     Route::get('/visualizar-tratamento/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
-    Route::any('/presenca-tratatamento/{idtr}', [GerenciarTratamentosController::class, 'presenca']);
     Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
     Route::any('/incluir-avulso', [GerenciarTratamentosController::class, 'createAvulso']);
     Route::any('/armazenar-avulso', [GerenciarTratamentosController::class, 'storeAvulso']);
+    Route::get('/reverter-faltas-assistido/{id}', [GerenciarTratamentosController::class, 'faltas'])->name('');
+    Route::any('/remarcar-faltas-assistido', [GerenciarTratamentosController::class, 'remarcar'])->name('');
     Route::any('/inativar-tratamento/{id}', [GerenciarTratamentosController::class, 'destroy']);
+});
+
+// Botão de Presença
+Route::middleware('rotas:43')->group(function () {
+    Route::any('/presenca-tratatamento/{idtr}', [GerenciarTratamentosController::class, 'presenca']);
 });
 
 // Gerenciar Reuniões
@@ -414,6 +431,11 @@ Route::middleware('rotas:34')->group(function () {
     Route::any('/gerenciar-relatorio-pessoas-grupo', [RelatoriosController::class, 'indexmembro']);
     Route::any('/gerenciar-relatorio-setor-pessoas', [RelatoriosController::class, 'indexSetor']);
 });
+
+//Relatório de Atendimentos
+Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
+Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
+
 //Relatório de Reuniões
 Route::middleware('rotas:35')->group(function () {
     Route::any('/gerenciar-relatorio-reuniao', [RelatoriosController::class, 'relatorioReuniao']);

@@ -17,6 +17,9 @@ class GerenciarIntegralController extends Controller
 
        // try {
 
+            // Retorna o dia de hoje, para o modal de presença
+            $now = Carbon::today();
+
             // Retorna todos os cronogramas de tratamento Integral
             $dirigentes = DB::table('membro as mem')
                 ->select('ass.id_pessoa', 'gr.nome', 'cr.id', 'gr.status_grupo', 'd.nome as dia')
@@ -91,30 +94,30 @@ class GerenciarIntegralController extends Controller
                 $encaminhamentoPTD = DB::table('tratamento as tr')
                     ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
                     ->leftJoin('atendimentos as at','enc.id_atendimento','at.id')
-                    ->where('enc.id_atendimento', $encaminhamento->id_assistido)
+                    ->where('at.id_assistido', $encaminhamento->id_assistido)
                     ->whereIn('enc.id_tipo_tratamento', [1, 2]) // PTD e PTI
-                    ->where('status_encaminhamento', '<', 3) // Finalizado
+                    ->where('enc.status_encaminhamento', '<', 3) // Finalizado
                     ->select('tr.id')
                     ->first();
-                    
-                $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
+
+                    $encaminhamento->ptd  = $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
                 if ($encaminhamento->dt_fim) {
-                    $encaminhamento->contagem = $hoje->diffInDays(Carbon::parse($encaminhamento->dt_inicio));
+                    $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_inicio));
                 } else {
                     $encaminhamento->contagem = null;
                 }
-            }
+            } 
             // Usado para Macas
             $vagas = DB::table('cronograma')->where('id', $selected_grupo)->pluck('max_atend')->toArray(); // Retorna o número máximo de assistidos de um cronograma
-            $ocupadas = DB::table('tratamento')->whereNot('maca', null)->where('id_reuniao', $selected_grupo)->pluck('maca')->toArray(); // Retorna um array com todas as macas ocuopadas do grupo
+            $ocupadas = DB::table('tratamento')->whereNot('maca', null)->where('id_reuniao', $selected_grupo)->where('status', '<', 3)->pluck('maca')->toArray(); // Retorna um array com todas as macas ocuopadas do grupo
             $macasDisponiveis = array_diff(range(1, current($vagas)), $ocupadas); // Gera os números das macas e retira as ocupadas
-
-
-            return view('Integral.gerenciar-integral', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'macasDisponiveis'));
+            $totalAssistidos = count($encaminhamentos);
+            return view('Integral.gerenciar-integral', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'macasDisponiveis', 'totalAssistidos', 'now'));
         // } catch (\Exception $e) {
         //     app('flasher')->addError("Você não tem autorização para acessar esta página");
         //     return redirect('/login/valida');
         // }
+      
     }
 
     /**
@@ -152,8 +155,11 @@ class GerenciarIntegralController extends Controller
                 'enc.id AS ide',
                 'tr.dt_inicio',
                 'tr.dt_fim',
+                'tr.id_reuniao',
+
                 'tse.descricao AS tsenc',
                 'at.id AS ida',
+                'at.id_assistido',
                 'p1.dt_nascimento',
                 'p1.nome_completo AS nm_1',
                 'p2.nome_completo as nm_2',
@@ -167,10 +173,14 @@ class GerenciarIntegralController extends Controller
                 'rm.h_inicio AS rm_inicio',
                 'tm.tipo AS tpmotivo',
                 'sat.descricao AS statat',
-                'sl.numero as sala'
+                'sl.numero as sala',
+                't.cod_tca'
+
             )
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('registro_tema AS rt', 'at.id', 'rt.id_atendimento')
+            ->leftJoin('tipo_temas AS t', 'rt.id_tematica', 't.id')
             ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
             ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
             ->leftjoin('associado as ass', 'at.id_atendente', 'ass.id')
@@ -185,16 +195,17 @@ class GerenciarIntegralController extends Controller
             ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
             ->leftJoin('salas as sl', 'rm.id_sala', 'sl.id')
             ->where('tr.id', $id)
-            ->first();
+            ->get();
 
-            // FIX Tem que buscar por assistido
-        // Busca se existe um PTD para este assistido e retorna dados para faltas
-        $encaminhamento = DB::table('tratamento as tr')
-            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-            ->where('enc.id_atendimento', $result->ida)
-            ->where('enc.id_tipo_tratamento', 1)
-            ->select('tr.id')
-            ->first();
+               // Busca se existe um PTD ou PTI para este assistido e retorna dados para faltas
+               $encaminhamento = DB::table('tratamento as tr')
+               ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+               ->leftJoin('atendimentos as at','enc.id_atendimento','at.id')
+               ->where('at.id_assistido', current(current($result))->id_assistido)
+               ->whereIn('enc.id_tipo_tratamento', [1, 2]) // PTD e PTI
+               ->where('enc.status_encaminhamento', '<', 3) // Finalizado
+               ->select('tr.id')
+               ->first();
 
         // Traz todas as presenças do assistido nesse Tratamento
         $list = DB::table('presenca_cronograma AS dt')
@@ -256,6 +267,7 @@ class GerenciarIntegralController extends Controller
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                 ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
                 ->where('dt.presenca', 0)
+                ->where('tr.id', $encaminhamento->id)
                 ->count();
         }
 
@@ -281,7 +293,6 @@ class GerenciarIntegralController extends Controller
     {
         try {
             $hoje = Carbon::today();
-
             $tratamento = DB::table('tratamento')->where('id', $id)->first();
 
             if ($tratamento->dt_fim != null) {

@@ -1,10 +1,8 @@
 @extends('layouts.app')
-
 @section('content')
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR PTI
         </h4>
-
         <div class="col-12 mt-3 row">
             <div class="col d-flex justify-content-start mb-3">
                 <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#filtros"
@@ -19,9 +17,6 @@
                 </a>
             </div>
         </div>
-
-
-
         {{-- Modal Filtros --}}
         <form action="/gerenciar-pti" class="form-horizontal" method="GET">
             <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -55,7 +50,7 @@
                         <br />
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                            <a href="/gerenciar-pti" type="button" class="btn btn-secondary pesq">Limpar</a>
+                            <a href="/gerenciar-pti?grupo={{ $encaminhamentos ? current(current($encaminhamentos))->id_reuniao : ''}}" type="button" class="btn btn-secondary pesq">Limpar</a>
                             <button class="btn btn-primary pesq" type="submit">Confirmar</button>
                         </div>
 
@@ -63,49 +58,37 @@
                 </div>
         </form>
         {{-- Fim modal filtros --}}
-
     </div>
-
-
-
     <hr>
-
     <div class="table">
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                <th>ID</th>
                 <th>NOME</th>
-                <th>NOME GRUPO</th>
-                <th>HORÁRIO INÍCIO</th>
-                <th>HORÁRIO FIM</th>
+                <th>GRUPO</th>
                 <th>STATUS</th>
                 <th>AÇÕES</th>
             </tr>
-
             <tbody>
                 @foreach ($encaminhamentos as $encaminhamento)
                     <tr>
-                        <td>{{ $encaminhamento->id }}</td>
                         <td>{{ $encaminhamento->nome_completo }}</td>
                         <td>{{ $encaminhamento->nome }}</td>
-                        <td>{{ $encaminhamento->h_inicio }}</td>
-                        <td>{{ $encaminhamento->h_fim }}</td>
+                        {{-- <td>{{ $encaminhamento->h_inicio }}</td>
+                        <td>{{ $encaminhamento->h_fim }}</td> --}}
                         <td>{{ $encaminhamento->status }}</td>
-
-
                         <td>
                             @if ($encaminhamento->id_status == 1)
-                                <button disabled type="button" class="btn btn-outline-warning btn-sm tooltips"
+                                <button disabled type="button" class="btn btn-outline-danger btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
-                                    <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
+                                    <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
                                 </button>
 
                             @else
-                                <button type="button" class="btn btn-outline-warning btn-sm tooltips"
+                                <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
-                                    <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
+                                    <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
                                 </button>
 
                             @endif

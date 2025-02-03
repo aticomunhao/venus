@@ -1,15 +1,16 @@
 @extends('layouts.app')
 @section('title', 'Agendar Dia')
 @section('content')
-<br>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            AGENDAR HORÁRIO - TRATAMENTO
+    <br>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col">
+                                AGENDAR HORÁRIO - TRATAMENTO
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -101,25 +102,25 @@
                     <br>
                 </div>
                 <div class="row">
-                        <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-encaminhamentos"  role="button">Cancelar</a>
-                        </div>
-                        <div class="d-grid gap-2 col-4 mx-auto" >
-                            <button type="submit" class="btn btn-primary" >Confirmar</button>
-                        </div>
-                        </form>
-
+                    <div class="d-grid gap-1 col-4 mx-auto">
+                        <a class="btn btn-danger" href="/gerenciar-encaminhamentos"  role="button">Cancelar</a>
                     </div>
-                    <br>
+                    <div class="d-grid gap-2 col-4 mx-auto" >
+                        <button type="submit" class="btn btn-primary" >Confirmar</button>
+                    </div>
+                    </form>
+
+                </div>
+                        <br>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-@endsection
+    @endsection
 
-@section('footerScript')
+    @section('footerScript')
 
 
 
-@endsection
+    @endsection

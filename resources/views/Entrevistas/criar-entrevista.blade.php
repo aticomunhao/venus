@@ -34,7 +34,7 @@
                                 <span class="tooltiptext">Obrigatório</span>
                                 <span style="color:red">*</span>
                             </span>
-                            <input type="date" class="form-control" id="data" name="data">
+                            <input type="date" class="form-control" id="data" name="data" required>
                         </div>
 
                         <div class="col">
@@ -43,7 +43,7 @@
                                 <span class="tooltiptext">Obrigatório</span>
                                 <span style="color:red">*</span>
                             </span>
-                            <input type="time" class="form-control" id="hora" name="hora">
+                            <input type="time" class="form-control" id="hora" name="hora" required>
                         </div>
                     </div>
                     <br>
@@ -63,7 +63,7 @@
                             <span class="tooltiptext">Obrigatório</span>
                             <span style="color:red">*</span>
                         </span>
-                        <select class="form-select" id="id_sala" name="id_sala">
+                        <select class="form-select" id="id_sala" name="id_sala" required>
                             <option value=""></option>
                             @foreach ($salas as $sala)
                                 <option value="{{ $sala->id }}" data-nome="{{ $sala->nome }}"
@@ -85,10 +85,12 @@
             </div>
         </div>
     </div>
-  
+
     <br>
     <br>
-    <div class="row mt-4 justify-content-center">
+    <center>
+    <div class="justify-content-center">
+    <div class= "col-11 row mt-1 ">
         <div class="d-grid gap-1 col-4 mx-auto">
             <a class="btn btn-danger" href="/gerenciar-entrevistas" role="button">Cancelar</a>
         </div>
@@ -96,6 +98,8 @@
             <button type="submit" class="btn btn-primary">Confirmar</button>
         </div>
     </div>
+    </div>
+    </center>
     </form>
 
     <script>

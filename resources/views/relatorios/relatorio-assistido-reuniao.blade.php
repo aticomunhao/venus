@@ -14,7 +14,7 @@
                     <select class="form-select select2 grupo" type="text" id="nome_grupo" name="nome_grupo"
                          value="{{ request('nome_grupo') }}">
                          @foreach($reunioesPesquisa as $reuniao)
-                         <option value="{{ $reuniao->id }}" {{request('nome_grupo') == $reuniao->id ? 'selected' : ''}}>{{ $reuniao->nome }} - {{ $reuniao->dia }}- {{ date('H:i', strtotime($reuniao->h_inicio)) }}/{{ date('H:i', strtotime($reuniao->h_fim ))}}</option>>
+                         <option value="{{ $reuniao->id }}" {{request('nome_grupo') == $reuniao->id ? 'selected' : ''}}>{{ $reuniao->nome }}-({{ $reuniao->sigla }})-{{ $reuniao->SiglaTratamento }}-{{ $reuniao->dia }}-{{ date('H:i', strtotime($reuniao->h_inicio)) }}/{{ date('H:i', strtotime($reuniao->h_fim ))}}  | {{ $reuniao->status == 'Inativo' ? 'Inativo' : $reuniao->descricao}}</option>>
                         @endforeach
                         </select>
                 </div>
@@ -36,7 +36,7 @@
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                             value="Limpar"></a>
 
-            
+
                 </div>
             </div>
 
@@ -72,13 +72,13 @@
                     </thead>
                     <tbody style="font-size: 14px; color:#000000; text-align: center;">
                        @foreach ($reunioesDirigentes as $reuniao)
-                      
+
                                 <tr>
                                     <td> {{$reuniao->nome}} </td>
                                     <td> {{$reuniao->dia}} </td>
                                     <td> {{$reuniao->h_inicio}} </td>
                                     <td> {{$reuniao->h_fim}} </td>
-                                    <td> 
+                                    <td>
                                         <a href="/visualizar-relatorio-reuniao/{{ $reuniao->id }}" type="button"
                                             class="btn btn-outline-primary btn-sm tooltips">
                                             <span class="tooltiptext">Gerenciar</span>
@@ -86,7 +86,7 @@
                                          </a>
                                     </td>
                                 </tr>
-                      
+
                        @endforeach
                     </tbody>
                 </table>
@@ -95,7 +95,7 @@
         <script>
             $(document).ready(function () {
                 let idCronogramaPesquisa = @JSON($idCronogramaPesquisa);
-                
+
                 if(idCronogramaPesquisa == null){
                     $('#nome_grupo').prop('selectedIndex',-1);
                 }
@@ -127,7 +127,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Presenças de Assistidos'
+                            text: ' Assistidos'
                         }
                     }
                 },
@@ -155,11 +155,10 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Presenças de Trabalhadores'
+                            text: 'Trabalhadores'
                         }
                     }
                 },
             });
         </script>
     @endsection
- 

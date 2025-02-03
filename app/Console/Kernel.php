@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Jobs\DiasCronograma;
+use App\Jobs\EntrevistaProamo;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\Faltas;
@@ -31,6 +32,8 @@ class Kernel extends ConsoleKernel
           $schedule->job( new LimiteFalta());
           $schedule->job( new FimSemanas());
           $schedule->job( new FilaEncaminhamentos());
+          $schedule->job( new EntrevistaProamo());
+          
     }
 
     /**

@@ -54,15 +54,15 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-integral">Tratamento
                                         Integral</a></li>
                             @endif
-                            @if (in_array(18, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos/Presença</a>
-                            </li>
-                        @endif
                             @if (in_array(30, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença
                                         Trabalhador</a></li>
                             @endif
-
+                            @if (in_array(35, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-tratamento">Relatório de
+                                        Tratamentos</a>
+                                </li>
+                            @endif
                             @if (in_array(34, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
                                         Membros</a>
@@ -73,11 +73,11 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Reuniões</a>
                                 </li>
                             @endif
-                            @if (in_array(23, $acesso))
-                            <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
-                                    Vagas em Grupos</a>
-                            </li>
-                        @endif
+                            @if (in_array(44, $acesso))
+                                <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
+                                        Vagas em Grupos</a>
+                                </li>
+                            @endif
                         </ul>
                     </li>
                 </ul>
@@ -141,6 +141,16 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos/Presença</a>
                                 </li>
                             @endif
+                            @if (in_array(35, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-atendimento">Relatório de
+                                        Atendimentos</a>
+                                </li>
+                            @endif
+                            @if (in_array(35, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-tratamento">Relatório de
+                                        Tratamentos</a>
+                                </li>
+                            @endif
                             @if (in_array(31, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-afi">Relatório de Presença
                                         AFI</a>
@@ -160,7 +170,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Reuniões</a>
                                 </li>
                             @endif
-                            @if (in_array(16, $acesso))
+                            @if (in_array(44, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
                                         Vagas em Grupos</a>
                                 </li>
@@ -173,7 +183,9 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                 <ul class="navbar-nav" id="DAE">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="2" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">Gerenciar DAE</a>
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Gerenciar DAE
+                        </a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                             @if (in_array(14, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
@@ -183,24 +195,20 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Encaminhamentos</a>
                                 </li>
                             @endif
-
                             @if (in_array(24, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-pti">Tratamento PTI</a></li>
                             @endif
                             @if (in_array(9, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-entrevistas">Entrevistas</a>
-                                </li>
+                                <li><a class="dropdown-item" href="/gerenciar-entrevistas">Entrevistas</a></li>
                             @endif
                             {{-- @if (in_array(10, $acesso))
-                                    <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
-                                @endif --}}
+                                <li><a class="dropdown-item" href="/gerenciar-grupos">Gerenciar Grupos</a></li>
+                            @endif --}}
                             @if (in_array(15, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-mediunidades">
-                                        Mediunidades</a></li>
+                                <li><a class="dropdown-item" href="/gerenciar-mediunidades">Mediunidades</a></li>
                             @endif
                             @if (in_array(39, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-passe">
-                                        Passes</a></li>
+                                <li><a class="dropdown-item" href="/gerenciar-passe">Passes</a></li>
                             @endif
                             @if (in_array(30, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença
@@ -210,33 +218,34 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-pessoas">Pessoas</a></li>
                             @endif
                             @if (in_array(21, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-atendentes-plantonistas">
-                                        Plantonistas</a></li>
+                                <li><a class="dropdown-item"
+                                        href="/gerenciar-atendentes-plantonistas">Plantonistas</a></li>
                             @endif
                             @if (in_array(41, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-proamo">
                                         Tratamento PROAMO</a></li>
                             @endif
                             {{-- @if (in_array(19, $acesso))
-                                    <li><a class="dropdown-item" href="/gerenciar-reunioes">Gerenciar Reuniões </a>
-                                    </li>
-                                @endif --}}
+                                <li><a class="dropdown-item" href="/gerenciar-reunioes">Gerenciar Reuniões </a></li>
+                            @endif --}}
+                            @if (in_array(35, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-tratamento">Relatório de
+                                        Tratamentos</a>
+                                </li>
+                            @endif
                             @if (in_array(34, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
-                                        Membros</a>
-                                </li>
+                                        Membros</a></li>
                             @endif
                             @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
-                                        Reuniões</a>
-                                </li>
+                                        Reuniões</a></li>
                             @endif
-                            @if (in_array(22, $acesso))
-                            <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
-                                Vagas em Grupos</a>
-                            </li>
+                            @if (in_array(44, $acesso))
+                                <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de Vagas em
+                                        Grupos</a></li>
+                            @endif
                         </ul>
-                    @endif
                     </li>
                 </ul>
             @endif

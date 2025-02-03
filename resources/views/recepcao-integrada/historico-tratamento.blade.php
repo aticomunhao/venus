@@ -91,7 +91,7 @@
                                 </thead>
                                 <tbody>
                                     <tr style="text-align:center;font-size:13px">
-                                        <td>{{ $results->ide }}</td>
+                                        <td>{{ $results->idtr }}</td>
                                         <td>{{ date('d/m/Y', strtotime($results->dt_inicio)) }}</td>
                                         <td>{{ $results->final != null ? date('d/m/Y', strtotime($results->final)) : '-' }}</td>
                                         <td>{{ $results->desctrat }}</td>
@@ -99,7 +99,7 @@
                                         <td>{{ $results->nomedia }}</td>
                                         <td>{{ $results->rm_inicio }}</td>
                                         <td>{{ $results->sala }}</td>
-                                        <td>{{ $results->tsenc }}</td>
+                                        <td>{{ $results->status_tratamento}}</td>
                                         <td>{{ $results->tpmotivo }}</td>
                                     </tr>
                                 </tbody>

@@ -25,7 +25,7 @@ class GerenciarEntrevistaController extends Controller
 
     public function index(Request $request)
     {
- // FIX existe um bug que ocorre quando um PROAMO tem seu PTD encerrado por faltas
+        // FIX existe um bug que ocorre quando um PROAMO tem seu PTD encerrado por faltas
         $setores = array(); // Inicializa um Array
         foreach (session()->get('acessoInterno') as $perfil) {
 
@@ -33,7 +33,7 @@ class GerenciarEntrevistaController extends Controller
             $setores = array_merge($setores, array_column($perfil, 'id_setor'));
         }
 
-        // Tras todos os dados para as tebelas e validações IF e ELSE 
+        // Tras todos os dados para as tebelas e validações IF e ELSE
         $informacoes = DB::table('encaminhamento')
             ->select(
                 DB::raw("CASE WHEN entrevistas.status IS NULL THEN 1 ELSE entrevistas.status END as status"), // Caso não tenha nenhum Status, Status 1 (Aguardando Agendamento -> Encaminhamento)
@@ -47,16 +47,18 @@ class GerenciarEntrevistaController extends Controller
                 's.numero', // Traz o suposto número da sala (excessões PREP, CX, AL)
                 'encaminhamento.status_encaminhamento as status_encaminhamento_id', // Status do Encaminhamento, usado para validar se está ativa a entrevista
                 'atendimentos.dh_inicio as inicio', // DateTime do atendimento
-                'entrevistas.id as ident' // ID entrevista, usado na view na tabela
+                'entrevistas.id as ident', // ID entrevista, usado na view na tabela
+                'pessoa_pessoa.celular',
+                'ddd.descricao as ddd'
             )
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
             ->leftJoin('entrevistas', 'encaminhamento.id', 'entrevistas.id_encaminhamento')
             ->leftJoin('salas AS s', 'entrevistas.id_sala', 's.id')
             ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', 'pessoa_pessoa.id')
+            ->leftJoin('tp_ddd as ddd', 'pessoa_pessoa.ddd', 'ddd.id')
             ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', 'tipo_entrevista.id')
             ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', 'tipo_encaminhamento.id')
-            ->leftJoin('membro', 'entrevistas.id_entrevistador', 'membro.id')
-            ->leftJoin('associado', 'membro.id_associado', 'associado.id')
+            ->leftJoin('associado', 'entrevistas.id_entrevistador', 'associado.id')
             ->leftJoin('pessoas as pessoa_entrevistador', 'associado.id_pessoa', 'pessoa_entrevistador.id')
             ->leftJoin('tipo_status_entrevista as tse', 'entrevistas.status', 'tse.id')
             ->where('encaminhamento.id_tipo_encaminhamento', 1) // Tipo Entrevista
@@ -69,7 +71,7 @@ class GerenciarEntrevistaController extends Controller
         if ($request->nome_pesquisa) {
             $informacoes->whereRaw("UNACCENT(LOWER(pessoa_pessoa.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome_pesquisa}%"]);
         }
-        if ($request->tipo_entrevista) { // Ex.: DIAMO, NUTRES 
+        if ($request->tipo_entrevista) { // Ex.: DIAMO, NUTRES
             $informacoes->where('tipo_entrevista.id', $request->tipo_entrevista);
         }
 
@@ -128,7 +130,7 @@ class GerenciarEntrevistaController extends Controller
             foreach ($info as $check) {
 
                 // Caso o Status não seja Cancelado, retire do array
-                if ($check->status != 1 or $check->status_encaminhamento_id != 6) {
+                if ($check->status != 1 or $check->status_encaminhamento_id != 4) {
                     unset($info[$i]);
                 }
                 $i = $i + 1;
@@ -139,7 +141,7 @@ class GerenciarEntrevistaController extends Controller
         }
 
 
-        $totalAssistidos = count($informacoes); // Guarda o total de itens ma variável
+        $totalAssistidos = count($informacoes); // Guarda o total de itens na variável
 
         // Traz as entrevistar para o Select de Pesquisa de Status
         $tipo_entrevista = DB::table('tipo_entrevista')
@@ -148,9 +150,10 @@ class GerenciarEntrevistaController extends Controller
             ->orderby('descricao', 'asc')
             ->get();
 
+        // dd($informacoes); // Debug the fetched data
 
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get(); // Traz os itens para pesquisa de Status
-       $motivo = DB::table('tipo_motivo_entrevista')->orderBy('descricao')->get(); // Usado no Select de Motivo no Modal de Inativação
+        $motivo = DB::table('tipo_motivo_entrevista')->orderBy('descricao')->get(); // Usado no Select de Motivo no Modal de Inativação
 
         $informacoes = $this->paginate($informacoes, 50); // Pagina o Array
         $informacoes->withPath('')->appends(
@@ -256,9 +259,12 @@ class GerenciarEntrevistaController extends Controller
 
 
             $usuarios = DB::table('usuario as u')
-                ->rightJoin('usuario_setor as us', 'u.id', 'us.id_usuario')
-                ->where('us.id_setor', $entrevistas->id_setor)
-                ->pluck('id_pessoa');
+                ->leftJoin('usuario_acesso as ua', 'u.id', 'ua.id_usuario')
+                ->where('id_acesso', 9)
+                ->where('id_setor', $entrevistas->id_setor)
+                ->pluck('u.id_pessoa')
+                ->toArray();
+
 
 
             $salas = DB::table('salas')->get();
@@ -272,6 +278,7 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('cronograma as cro', 'membro.id_cronograma', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
                 ->select('membro.*', 'pessoas.nome_completo', 'gr.id_setor')
+                ->where('gr.id_setor', $entrevistas->id_setor)
                 ->whereIn('associado.id_pessoa', $usuarios)
                 ->whereIn('membro.id_funcao', [1, 2])
                 ->distinct('membro.id_associado')
@@ -328,17 +335,19 @@ class GerenciarEntrevistaController extends Controller
             $entrevistas = DB::table('entrevistas AS entre')
                 ->select(
                     'p.nome_completo',
-                    'ddd.descricao as ddd',
                     'p.celular',
+                    'p.id as id_assistido',
+                    'ddd.descricao as ddd',
                     's.nome',
                     's.numero',
                     'tpl.nome as local',
                     'enc.id',
+                    'enc.id_tipo_entrevista',
                     'entre.id',
                     'entre.id_entrevistador',
                     'entre.data',
                     'entre.hora',
-                    'pessoas.nome_completo as entrevistador',
+                    'pessoas.nome_completo as entrevistador'
                 )
                 ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
                 ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
@@ -346,13 +355,26 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
                 ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
                 ->leftJoin('tp_ddd as ddd', 'p.ddd', 'ddd.id')
-                ->leftJoin('membro as m', 'entre.id_entrevistador', 'm.id')
-                ->leftJoin('associado', 'm.id_associado', 'associado.id')
+                ->leftJoin('associado', 'entre.id_entrevistador', 'associado.id')
                 ->leftJoin('pessoas', 'associado.id_pessoa', 'pessoas.id')
                 ->where('entre.id_encaminhamento', $id)
                 ->first();
 
-            return view('Entrevistas.visualizar-entrevista', compact('entrevistas', 'id'));
+
+            $presencas = DB::table('presenca_cronograma as pc')
+                ->select('enc.id_tipo_tratamento', 'dc.data', 'pc.presenca')
+                ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
+                ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+                ->where('at.id_assistido', $entrevistas->id_assistido)
+                ->whereIn('enc.id_tipo_tratamento', [1, 2])
+                ->where('enc.status_encaminhamento', '<', 3)
+                ->orderBy('dc.data', 'DESC')
+                ->get();
+
+
+            return view('Entrevistas.visualizar-entrevista', compact('entrevistas', 'id', 'presencas'));
         } catch (\Exception $e) {
 
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
@@ -407,10 +429,13 @@ class GerenciarEntrevistaController extends Controller
 
 
 
+           
             $usuarios = DB::table('usuario as u')
-                ->rightJoin('usuario_setor as us', 'u.id', 'us.id_usuario')
-                ->where('us.id_setor', $entrevistas->id_setor)
-                ->pluck('id_pessoa');
+                ->leftJoin('usuario_acesso as ua', 'u.id', 'ua.id_usuario')
+                ->where('id_acesso', 9)
+                ->where('id_setor', $entrevistas->id_setor)
+                ->pluck('u.id_pessoa')
+                ->toArray();
 
             // Caso padrão, traz todos os entrevistadores
             $membros = DB::table('membro')
@@ -419,8 +444,9 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('cronograma as cro', 'membro.id_cronograma', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
                 ->select('membro.*', 'pessoas.nome_completo', 'gr.id_setor', 'pessoas.nome_completo as nome_entrevistador')
+                ->where('gr.id_setor', $entrevistas->id_setor)
                 ->whereIn('associado.id_pessoa', $usuarios)
-                ->whereIn('membro.id_funcao', [1, 2]) // Dirigente ou Subdirigente 
+                ->whereIn('membro.id_funcao', [1, 2]) // Dirigente ou Subdirigente
                 ->distinct('membro.id_associado')
                 ->get();
 
@@ -471,7 +497,7 @@ class GerenciarEntrevistaController extends Controller
     {
         //  try {
 
-        $data = date("Y-m-d H:i:s"); // Usado para a tabela de Audit 
+        $data = date("Y-m-d H:i:s"); // Usado para a tabela de Audit
         $data_enc = Carbon::today();
         $id_usuario = session()->get('usuario.id_usuario');
         $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first(); // Usado em Validação de Tipo de Entrevista
@@ -557,8 +583,6 @@ class GerenciarEntrevistaController extends Controller
     // Cancelar Entrevista
     public function inativar(Request $request, String $id)
     {
-        //try {
-
 
         $data = date("Y-m-d");
 
@@ -609,10 +633,9 @@ class GerenciarEntrevistaController extends Controller
             // Inativa a entrevista caso encontre alguma
             DB::table('entrevistas')
                 ->where('id_encaminhamento', $id)
-                ->update(['status' => 6]); // Entrevista Cancelada 
+                ->update(['status' => 6]); // Entrevista Cancelada
 
         } else {
-
 
             $ptdAtivo = DB::table('tratamento as t')
                 ->select('t.id', 'e.id as ide', 't.dt_fim', 'c.dia_semana')
@@ -626,8 +649,8 @@ class GerenciarEntrevistaController extends Controller
 
             // Caso aquela entrevista tenha um PTD marcado, e ele seja infinito, e o motivo do cancelamento foi alta da avaliação, tire de infinito
             $ptdAtivoInfinito = $ptdAtivo ? $ptdAtivo->dt_fim == null : false; //
-            $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
             if ($ptdAtivoInfinito and $motivo_entrevista == 11) {
+                $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
 
                 // Caso o tratamento seja num dia da semana anterior ou igual a hoje
                 if ($data < $dataFim or $data == $dataFim) {
@@ -644,6 +667,7 @@ class GerenciarEntrevistaController extends Controller
                         ]);
                 }
             } else if ($ptdAtivoInfinito) { // Caso não seja Alta, Cancela o PTD Infinito junto com a entrevista
+                $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
 
                 DB::table('tratamento')
                     ->where('id', $ptdAtivo->id)
@@ -670,7 +694,7 @@ class GerenciarEntrevistaController extends Controller
             // Inativa a entrevista caso encontre alguma
             DB::table('entrevistas')
                 ->where('id_encaminhamento', $id)
-                ->update(['status' => 6]); // Entrevista Cancelada 
+                ->update(['status' => 6]); // Entrevista Cancelada
 
         }
 
@@ -684,10 +708,5 @@ class GerenciarEntrevistaController extends Controller
         ]);
 
         return redirect()->route('gerenciamento')->with('success', 'Entrevista Cancelada com Sucesso!');
-        // } catch (\Exception $e) {
-        //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
-        //     DB::rollBack();
-        //     return redirect()->back();
-        // }
     }
 }

@@ -91,7 +91,7 @@
                                                             <tr
                                                                 style="background-color: #d6e3ff; font-size:14px; color:#000000">
 
-                                                                <th>GRUPO</th>
+                                                                <th>DATA</th>
                                                                 <th>PRESENÇA</th>
                                                             </tr>
                                                         </thead>
@@ -100,7 +100,7 @@
                                                             @foreach ($presencaAssistido as $presenca)
                                                                 <tr>
 
-                                                                    <td> {{ $presenca->grupo }} </td>
+
                                                                     <td> {{ $presenca->data }} </td>
                                                                     @if ($presenca->presenca == 1)
                                                                         <td style="background-color:#90EE90;">Sim</td>
@@ -163,7 +163,7 @@
                                                             <tr
                                                                 style="background-color: #d6e3ff; font-size:14px; color:#000000">
 
-                                                                <th>GRUPO</th>
+                                                                <th>DATA</th>
                                                                 <th>PRESENÇA</th>
                                                             </tr>
                                                         </thead>
@@ -210,7 +210,7 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
-            
+
             $("#nome_membro").on("keyup", function() {
                 var value = $(this).val().toLowerCase();
                 console.log(value)

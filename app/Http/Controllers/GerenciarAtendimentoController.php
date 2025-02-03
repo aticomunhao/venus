@@ -18,7 +18,32 @@ class GerenciarAtendimentoController extends Controller
     {
 
 
-        $lista = DB::table('atendimentos AS at')->select('at.id as ida', 'p1.id as idas', 'p.nome_completo as nm_3', 'at.status_atendimento', 'at.id_prioridade', 'at.dh_chegada', 'tx.tipo', 'tp.descricao as prdesc', 'p1.nome_completo as nm_1', 'p2.nome_completo as nm_2', 'p3.nome_completo as nm_4', 'sl.numero as nr_sala', 'ts.descricao', DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe"))->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')->leftJoin('pessoas as p3', 'ass1.id_pessoa', 'p3.id')->leftJoin('tp_sexo as tx', 'at.pref_tipo_atendente', 'tx.id')->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')->leftJoin('salas as sl', 'at.id_sala', 'sl.id')->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
+        $lista = DB::table('atendimentos AS at')
+            ->select(
+                'at.id as ida',
+                'p1.id as idas',
+                'p.nome_completo as nm_3',
+                'at.status_atendimento',
+                'at.id_prioridade',
+                'at.dh_chegada',
+                'tx.tipo',
+                'tp.descricao as prdesc',
+                'p1.nome_completo as nm_1',
+                'p2.nome_completo as nm_2',
+                'p3.nome_completo as nm_4',
+                'sl.numero as nr_sala',
+                'ts.descricao',
+                DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe")
+            )->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')
+            ->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')
+            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->leftJoin('pessoas as p3', 'ass1.id_pessoa', 'p3.id')
+            ->leftJoin('tp_sexo as tx', 'at.pref_tipo_atendente', 'tx.id')
+            ->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')
+            ->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')
+            ->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')
+            ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')
+            ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
 
         // Filtra pela data de início, se fornecida, caso contrário, usa a data atual
 
@@ -31,6 +56,7 @@ class GerenciarAtendimentoController extends Controller
         }
 
         if ($assist != 'null') {
+
 
             $pesquisaAssist = array();
             $pesquisaAssist = explode(' ', $assist);
@@ -375,7 +401,8 @@ class GerenciarAtendimentoController extends Controller
 
             $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
-            if ($status != 2) {
+            // Permite que Master Admin cancele atendimentos com qualquer status, sem excessão!
+            if ($status != 2 and !in_array(36, session()->get('usuario.acesso'))) {
                 app('flasher')->addError('Somente é permitido "Cancelar" atendimentos no status "Aguardando atendimento".');
                 return redirect('/gerenciar-atendimentos');
             } else {

@@ -27,7 +27,8 @@
                                     <div class="form-group">
                                         <label for="username">CPF</label>
                                          <!--<input id="cpf" type="numeric" class="form-control @error('cpf') is-invalid @enderror" name="cpf" value="{{ old('cpf') }}" required autocomplete="cpf" autofocus placeholder="">-->
-                                         <input id="cpf" type="text" class="form-control mascara_cpf @error('cpf') is-invalid @enderror" name="cpf" placeholder="Ex.: 000.000.000-00"  value="{{ old('cpf') }}">
+                                         <input id="cpf" type="numeric" maxlength="11" class="form-control mascara_cpf @error('cpf') is-invalid @enderror" name="cpf" placeholder="Ex.: 00000000000"  value="{{ old('cpf') }}"  oninput="this.value = this.value.replace(/\D/g, '')"
+                                         required >
                                         @error('cpf')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -44,7 +45,7 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
-                                        <button class="btn btn-primary bi bi-eye" type="button" id="buttonEye"></button>
+                                        <button class="btn btn-primary" type="button" id="buttonEye"><i class="bi bi-eye"></i></button>
                                     </div>
                                     <br>
                                     <div class="form-group row mt-4">
@@ -69,12 +70,12 @@
                         </div>
                     </div>
                     <div class="mt-5 text-center">
-               
+
                         <script>
                             document.getElementById('buttonEye').addEventListener('click', function () {
                                 const passwordInput = document.getElementById('senha');
                                 const eyeIcon = this.querySelector('i');
-                            
+
                                 if (passwordInput.type === 'password') {
                                     passwordInput.type = 'text';
                                     eyeIcon.classList.remove('bi-eye');
@@ -88,7 +89,7 @@
                             </script>
                         {{-- <p>Don't have an account ? <a href="/register" class="text-primary"> Signup Now </a></p> --> --}}
                          {{-- <p>© {{  date('Y', strtotime('-2 year')) }} - {{  date('Y') }} Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p> --> --}}
-                        <p>© Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p>
+                        <p>© Comunhão Espírita de Brasília <i class="fa-solid fa-heart" style="color: #74C0FC;"></i></p>
                     </div>
                 </div>
             </div>

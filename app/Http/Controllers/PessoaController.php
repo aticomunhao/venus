@@ -165,6 +165,8 @@ class PessoaController extends Controller
                 'sexo' => $request->input('sex'),
                 'ddd' => $request->input('ddd'),
                 'celular' => intval($request->input('celular')),
+                'cel_estrangeiro' => $request->input('cel_estrangeiro'),
+                'tel_fixo' => $request->input('tel_fixo'),
                 'email' => $request->input('email'),
                 'status' => 1
 
@@ -215,6 +217,8 @@ class PessoaController extends Controller
                     'p.email',
                     'p.cpf',
                     'p.celular',
+                    'p.cel_estrangeiro',
+                    'p.tel_fixo',
                     'tps.id AS sexid',
                     'tps.tipo',
                     'd.id AS did',
@@ -314,6 +318,8 @@ class PessoaController extends Controller
                 'sexo' => $request->input('sex'),
                 'ddd' => $request->input('ddd'),
                 'celular' => $request->input('celular'),
+                'cel_estrangeiro' => $request->input('cel_estrangeiro'),
+                'tel_fixo' => $request->input('tel_fixo'),
                 'email' => $request->input('email'),
                 'status' => $request->input('status'),
                 'motivo_status' => $request->input('motivo')

@@ -22,15 +22,15 @@
                     <div class="form-group row">
                         <div class="col">
                             <label for="disabledTextInput" class="form-label">Assistido:</label>
-                            <input type="text" id="" value="{{$result[0]->nm_1}}" class="form-control" disabled>
+                            <input type="text" id="" value="{{current(current($result))->nm_1}}" class="form-control" disabled>
                         </div>
                         <div class="col-2">
                             <label for="disabledTextInput" class="form-label">Sexo:</label>
-                            <input type="text" id="" value="{{$result[0]->tipo}}" style="text-align:center;" class="form-control"  disabled>
+                            <input type="text" id="" value="{{current(current($result))->tipo}}" style="text-align:center;" class="form-control"  disabled>
                         </div>
                         <div class="col-3">
                             <label for="disabledTextInput" class="form-label">Dt nascimento:</label>
-                            <input type="date" class="form-control" id=""  name="date"  value="{{$result[0]->dt_nascimento}}"   class="form-control" disabled>
+                            <input type="date" class="form-control" id=""  name="date"  value="{{current(current($result))->dt_nascimento}}"   class="form-control" disabled>
                         </div>
                     </div>
                     </fieldset>
@@ -64,7 +64,7 @@
                     </table>
               
 
-                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Encaminhamento</legend>
+                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Tratamento</legend>
                     @foreach($result as $results)
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
@@ -84,7 +84,7 @@
                         <tbody>
                             <tr style="text-align:center;font-size:13px">
                                 <td>{{$results->ide}}</td>
-                                <td>{{date ('d-m-Y', strtotime($results->dt_inicio))}}</td>
+                                <td>{{ $results->dt_inicio != null ? date('d-m-Y', strtotime($results->dt_inicio)) : '-'}}</td>
                                 <td>{{ $results->final != null ? date('d/m/Y', strtotime($results->final)) : '-' }}</td>
                                 <td>{{$results->desctrat}}</td>
                                 <td>{{$results->nomeg}}</td>

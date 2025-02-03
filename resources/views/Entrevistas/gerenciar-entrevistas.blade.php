@@ -19,7 +19,7 @@
                                     value="{{ request('nome_pesquisa') }}">
                             </div>
 
-                            <div class="col-3">
+                            <div class="col-2">
                                 Status
                                 <select class="form-select" id="status" name="status">
                                     {{-- Select de pesquisa de status --}}
@@ -33,7 +33,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-3">
+                            <div class="col-2">
                                 Tipo Entrevista
                                 <select class="form-select" id="tipo_entrevista" name="tipo_entrevista">
                                     {{-- Select de pesquisa de tipo entrevista --}}
@@ -57,24 +57,40 @@
                                         style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar">
                                     {{-- Botão de limpar pesquisa --}}
                                 </a>
+                                <button onclick="imprimirTela()" class="btn btn-light btn-sm"
+                                    style="box-shadow: 1px 2px 5px #000000; margin:5px;">
+                                    Imprimir
+                                </button>
+
                             </div>
+
+
                         </div>
                     </form>
+
                     <br />
                 </div>
                 <hr />
+                <br>
                 <div class="table">Quantidade de assistidos: {{ $totalAssistidos }}
+                    <br>
+                    <span class="text-success" style="font-size: 20px;">&#9632;</span>
+                    <span style="font-size: 14px;">Prontas para marcação</span>
                     <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                         <thead style="text-align: center;">
                             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                                 {{-- <th class="col">Nr</th> --}}
-                                <th class="col">ID</th>
-                                <th class="col">DATA E HORÁRIO</th>
+                                @if (in_array(26, session()->get('usuario.acesso')))
+                                    <th>ID</th>
+                                @endif
+                                <th class="col">DATA</th>
+                                <th class="col">HORA</th>
                                 <th class="col">PRIORIDADE</th>
                                 <th class="col">NOME</th>
                                 <th class="col">ENTREVISTADOR</th>
-                                <th class="col">TIPO ENTREVISTA</th>
+                                <th class="col">ENTREVISTA</th>
                                 <th class="col">SALA</th>
+                                <th class="col">TELEFONE</th>
                                 <th class="col">STATUS</th>
                                 <th class="col">AÇÕES</th>
                             </tr>
@@ -87,20 +103,26 @@
                                     <tr>
                                 @endif
                                 {{-- <td>{{ $informacao->ide }}</td>Traz o ID do encaminhamento --}}
-                                @if (in_array(36, session()->get('usuario.acesso')))
+                                @if (in_array(26, session()->get('usuario.acesso')))
                                     <td>{{ $informacao->ident ? 'ENT:' . $informacao->ident : 'ENC:' . $informacao->ide }}
                                     </td>
                                 @endif
-                                <td>{{ date('d/m/Y  G:i', strtotime($informacao->inicio)) }}</td>{{-- Prioridade do atendimento --}}
+                                <td>{{ date('d/m/Y', strtotime($informacao->inicio)) }}</td> <!-- Exibe só a data -->
+                                <td>{{ date('G:i', strtotime($informacao->inicio)) }}</td> <!-- Exibe só a hora -->
                                 <td>{{ $informacao->emergencia }}</td>{{-- Prioridade do atendimento --}}
                                 <td>{{ $informacao->nome_pessoa }}</td>{{-- Traz o nome do encaminhado --}}
-                                <td>{{ $informacao->nome_entrevistador }}</td>{{-- Quando existente, traz o nome do entrevistador --}}
+                                <td>{{ $informacao->nome_entrevistador }}</td> {{-- Quando existente, traz o nome do entrevistador --}}
                                 <td>{{ $informacao->entrevista_sigla }}</td>
-                                <td>{{ $informacao->numero }}</td>{{-- Sala que foi agendada a entrevista --}}
+                                <td>{{ $informacao->numero }}</td> {{-- Sala que foi agendada a entrevista --}}
+                                <td>{{ $informacao->ddd }} {{ $informacao->celular }}</td>{{-- Ddd e telefone do assistido --}}
+
+
+
                                 <td>
-                                    @if ($informacao->status === 1 && $informacao->status_encaminhamento_id === 6)
+
+                                    @if ($informacao->status == 1 && $informacao->status_encaminhamento_id == 4)
                                         Inativado
-                                    @elseif ($informacao->status_encaminhamento_id == 7 and $informacao->id_tipo_entrevista == 6)
+                                    @elseif ($informacao->status_encaminhamento_id == 5 and $informacao->id_tipo_entrevista == 6)
                                         Aguardando Requisitos
                                     @elseif ($informacao->status === 1)
                                         Aguardando agendamento
@@ -123,7 +145,10 @@
                                         </a>
                                     @endif{{-- Fim botao editar --}}
 
-                                    @if ($informacao->status != 1 or $informacao->status_encaminhamento_id == 7 and $informacao->id_tipo_entrevista == 6)
+                                    @if (
+                                        $informacao->status != 1 or
+                                            $informacao->status_encaminhamento_id > 3 or
+                                            $informacao->status_encaminhamento_id == 5 and $informacao->id_tipo_entrevista == 6)
                                         {{-- Inicio botao Agendar --}}
                                         <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
                                             data-tt="tooltip" data-placement="top" title="Agendar" disabled>
@@ -137,7 +162,7 @@
                                             <i class="bi bi-clipboard-check" style="font-size: 1rem; color:#000;"></i>
                                         </a>
                                     @endif{{-- Fim botao agendar --}}
-                                    @if ($informacao->status !== 2)
+                                    @if ($informacao->status != 2)
                                         {{-- Inicio botao agendar entrevistador --}}
                                         <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
                                             data-tt="tooltip" data-placement="top" title="historico" disabled>
@@ -204,72 +229,67 @@
                                     </div>
 
                                     {{-- Inativar encaminhamento --}}
-                                    @if ($informacao->status_encaminhamento_id != 6)
-                                        <a href="#" data-bs-toggle="modal"
-                                            data-bs-target="#inativar{{ $informacao->ide }}" type="button"
-                                            class="btn btn-outline-danger btn-sm tooltips">
+                                    @if ($informacao->status_encaminhamento_id < 3 or $informacao->status_encaminhamento_id == 5)
+                                        <button data-bs-toggle="modal" data-bs-target="#inativar{{ $informacao->ide }}"
+                                            type="button" class="btn btn-outline-danger btn-sm tooltips">
                                             <span class="tooltiptext">Inativar</span>
                                             <i class="bi bi-slash-circle" style="font-size: 1rem; color:#000;"></i>
-                                        </a>
-
-                                        <form action="{{ route('cancelar', ['id' => $informacao->ide]) }}"
-                                            method="POST">
-                                            @csrf
-                                            <div class="modal fade" id="inativar{{ $informacao->ide }}"
-                                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="inativarLabel"
-                                                aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header"
-                                                            style="background-color:#DC4C64;color:white">
-                                                            <h1 class="modal-title fs-5" id="inativarLabel">Inativação
-                                                            </h1>
-                                                            <button data-bs-dismiss="modal" type="button"
-                                                                class="btn-close" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <center>
-                                                                <label for="recipient-name" class="col-form-label"
-                                                                    style="font-size:17px">
-                                                                    Tem certeza que deseja inativar:<br />
-                                                                    <span
-                                                                        style="color:#DC4C64; font-weight: bold;">{{ $informacao->nome_pessoa }}</span>?
-                                                                </label>
-                                                                <br />
-                                                            </center>
-                                                            <center>
-                                                                <div class="mb-2 col-10">
-                                                                    <label class="col-form-label">Insira o motivo da
-                                                                        <span
-                                                                            style="color:#DC4C64">inativação:</span></label>
-                                                                    <select class="form-select teste1"
-                                                                        name="motivo_entrevista" required>
-                                                                        @foreach ($motivo as $motivos)
-                                                                            <option value="{{ $motivos->id }}">
-                                                                                {{ $motivos->descricao }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </center>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" data-bs-dismiss="modal"
-                                                                class="btn btn-danger">Cancelar</button>
-                                                            <button type="submit"
-                                                                class="btn btn-primary">Confirmar</button>
-                                                        </div>
+                                        </button>
+                                    @else
+                                        <button data-bs-toggle="modal" data-bs-target="#inativar{{ $informacao->ide }}"
+                                            type="button" class="btn btn-outline-danger btn-sm tooltips" disabled>
+                                            <span class="tooltiptext">Inativar</span>
+                                            <i class="bi bi-slash-circle" style="font-size: 1rem; color:#000;"></i>
+                                        </button>
+                                    @endif
+                                    <form action="{{ route('cancelar', ['id' => $informacao->ide]) }}" method="POST">
+                                        @csrf
+                                        <div class="modal fade" id="inativar{{ $informacao->ide }}"
+                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="inativarLabel"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header"
+                                                        style="background-color:#DC4C64;color:white">
+                                                        <h1 class="modal-title fs-5" id="inativarLabel">Inativação
+                                                        </h1>
+                                                        <button data-bs-dismiss="modal" type="button" class="btn-close"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <center>
+                                                            <label for="recipient-name" class="col-form-label"
+                                                                style="font-size:17px">
+                                                                Tem certeza que deseja inativar:<br />
+                                                                <span
+                                                                    style="color:#DC4C64; font-weight: bold;">{{ $informacao->nome_pessoa }}</span>?
+                                                            </label>
+                                                            <br />
+                                                        </center>
+                                                        <center>
+                                                            <div class="mb-2 col-10">
+                                                                <label class="col-form-label">Insira o motivo da
+                                                                    <span style="color:#DC4C64">inativação:</span></label>
+                                                                <select class="form-select teste1"
+                                                                    name="motivo_entrevista" required>
+                                                                    @foreach ($motivo as $motivos)
+                                                                        <option value="{{ $motivos->id }}">
+                                                                            {{ $motivos->descricao }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </center>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" data-bs-dismiss="modal"
+                                                            class="btn btn-danger">Cancelar</button>
+                                                        <button type="submit" class="btn btn-primary">Confirmar</button>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </form>
-                                    @else
-                                        <a href="#" data-bs-toggle="modal"
-                                            data-bs-target="#inativar{{ $informacao->ide }}" type="button"
-                                            class="btn btn-outline-danger btn-sm tooltips disabled">
-                                            <span class="tooltiptext">Inativar</span>
-                                            <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
-                                        </a>
-                                    @endif
+                                        </div>
+                                    </form>
+
 
                                     {{-- fim modal de inativação --}}
 
@@ -326,6 +346,11 @@
                 $(".teste").prop("selectedIndex", -1);
             }
         })
+    </script>
+    <script>
+        function imprimirTela() {
+            window.print(); // Isso abrirá a caixa de diálogo para imprimir a página
+        }
     </script>
 @endsection
 

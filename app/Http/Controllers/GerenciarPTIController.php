@@ -50,7 +50,16 @@ class GerenciarPTIController extends Controller
 
             // Traz todos os encaminhamentos de todos os grupos selecionados // TODO otimitzar para trazer apenas os necessários, ao invés de todos
             $encaminhamentos = DB::table('tratamento as tr')
-                ->select('tr.id', 'p.nome_completo', 'cro.h_inicio', 'cro.h_fim', 'gr.nome', 'tse.nome as status', 'tr.status as id_status')
+                ->select(
+                    'tr.id',
+                    'p.nome_completo',
+                    'cro.h_inicio',
+                    'cro.h_fim',
+                    'gr.nome',
+                    'tse.nome as status',
+                    'tr.status as id_status',
+                    'tr.id_reuniao'
+                )
                 ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
                 ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
@@ -108,6 +117,8 @@ class GerenciarPTIController extends Controller
                 ->select(
                     'enc.id AS ide',
                     'tr.dt_inicio',
+                    'tr.dt_fim',
+                    'tr.id_reuniao',
                     'tse.descricao AS tsenc',
                     'at.id AS ida',
                     'p1.dt_nascimento',
@@ -123,10 +134,13 @@ class GerenciarPTIController extends Controller
                     'rm.h_inicio AS rm_inicio',
                     'tm.tipo AS tpmotivo',
                     'sat.descricao AS statat',
-                    'sl.numero as sala'
+                    'sl.numero as sala',
+                    't.cod_tca'
                 )
                 ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
                 ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+                ->leftJoin('registro_tema AS rt', 'at.id', 'rt.id_atendimento')
+                ->leftJoin('tipo_temas AS t', 'rt.id_tematica', 't.id')
                 ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                 ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
                 ->leftjoin('associado as ass', 'at.id_atendente', 'ass.id')

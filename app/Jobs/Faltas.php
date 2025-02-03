@@ -61,12 +61,6 @@ class Faltas implements ShouldQueue
             ->whereNotIn('tr.id', $idsTrocaDeGrupo) // Que trocaram de grupo hoje
             ->get();
 
-
-
-
-
-
-
         foreach ($lista as $item) {
 
             // Descobre o cronograma que se reune hoje correspondente
