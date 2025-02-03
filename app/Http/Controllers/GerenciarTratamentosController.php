@@ -143,6 +143,11 @@ class GerenciarTratamentosController extends Controller
                 ->appends([
                     'assist' => $assistido,
                     'cpf' => $cpf,
+                    'dt_enc' => $data_enc,
+                    'dia' => $diaP,
+                    'status' => $situacao,
+                    'grupo' => $cron,
+                    'tratamento' => $request->tratamento
                 ]);
 
 
