@@ -65,10 +65,10 @@
 
                                                     </div>
                                                     <div class="col-12 mt-3">Tratamento
-                                                        <select class="form-select" id="4" name="tratamento"
+                                                        <select class="form-select pesquisa" id="4" name="tratamento"
                                                             type="number">
+                                                            
                                                             <option value=""></option>
-
                                                             <option value="1" {{ 1 == request('tratamento') ? 'selected' : '' }}>Passe Tratamento Desobsessivo</option>
                                                             <option value="2" {{ 2 == request('tratamento') ? 'selected' : '' }}>Passe Tratamento Intensivo</option>
                                                             <option value="4" {{ 4 == request('tratamento') ? 'selected' : '' }}>Programa de Apoio a Portadores de Mediunidade Ostensiva</option>
