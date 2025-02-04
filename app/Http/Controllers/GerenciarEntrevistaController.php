@@ -261,7 +261,7 @@ class GerenciarEntrevistaController extends Controller
             $usuarios = DB::table('usuario as u')
                 ->leftJoin('usuario_acesso as ua', 'u.id', 'ua.id_usuario')
                 ->where('id_acesso', 9)
-                // ->where('id_setor', $entrevistas->id_setor)
+                ->where('id_setor', $entrevistas->id_setor)
                 ->pluck('u.id_pessoa')
                 ->toArray();
 
@@ -278,7 +278,7 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('cronograma as cro', 'membro.id_cronograma', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
                 ->select('membro.*', 'pessoas.nome_completo', 'gr.id_setor')
-                // ->where('gr.id_setor', $entrevistas->id_setor)
+                ->where('gr.id_setor', $entrevistas->id_setor)
                 ->whereIn('associado.id_pessoa', $usuarios)
                 ->whereIn('membro.id_funcao', [1, 2])
                 ->distinct('membro.id_associado')
@@ -427,9 +427,7 @@ class GerenciarEntrevistaController extends Controller
             }
             $salas = $salas->get();
 
-
-
-           
+            
             $usuarios = DB::table('usuario as u')
                 ->leftJoin('usuario_acesso as ua', 'u.id', 'ua.id_usuario')
                 ->where('id_acesso', 9)
