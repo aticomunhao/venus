@@ -15,7 +15,7 @@ class GerenciarPTIController extends Controller
     {
 
 
-        try {
+       try {
 
             $hoje = Carbon::today();
 
@@ -251,7 +251,7 @@ class GerenciarPTIController extends Controller
             DB::table('encaminhamento')->insert([
                 'dh_enc' => $hoje,
                 'id_usuario' => session()->get('usuario.id_pessoa'),
-                'status_encaminhamento' => 1, // Aguardando Agendamento
+                'status_encaminhamento' => 6, // Aguardando Manutenção
                 'id_tipo_encaminhamento' => 1, // Entrevista
                 'id_atendimento' => $todosIDs->ida,
                 'id_tipo_entrevista' => 4 // NUTRES
