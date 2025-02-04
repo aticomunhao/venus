@@ -222,6 +222,7 @@ class GerenciarProamoController extends Controller
         ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
         ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
         ->where('id_pessoa', $result->id_assistido)
+        ->where('dc.data', '>=', $result->dt_inicio)
         ->whereNull('id_tratamento')
         ->get()
         ->toArray();
