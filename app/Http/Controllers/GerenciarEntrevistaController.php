@@ -76,7 +76,7 @@ class GerenciarEntrevistaController extends Controller
         }
 
         // Caso não seja Aguardando Atendimento, ou Inativado, faz uma pesquisa comum
-        if ($request->status != 1 and $request->status != 7 and $pesquisaValue != 'limpo') {
+        if ($request->status != 1 and $request->status < 7  and $pesquisaValue != 'limpo') {
             $informacoes->where('entrevistas.status', $pesquisaValue);
         }
         // Caso nenhuma pesquisa seja feita, traz apenas os status ativos
@@ -138,6 +138,42 @@ class GerenciarEntrevistaController extends Controller
 
             $informacoes = $info; // Repopula a Variavel inicial com o array "pesquisado"
             $pesquisaValue = 7; // Envia para a view qual item foi selecionado anteriormente
+        }
+        // Caso seja pesquisado Aguardando Requisitos
+        if ($request->status == 8) {
+            $info = [];
+            foreach ($informacoes as $dia) {
+                $info[] = $dia;
+            }
+            foreach ($info as $check) {
+
+                // Caso o Status não seja Cancelado, retire do array
+                if ($check->status != 1 or $check->status_encaminhamento_id != 5) {
+                    unset($info[$i]);
+                }
+                $i = $i + 1;
+            }
+
+            $informacoes = $info; // Repopula a Variavel inicial com o array "pesquisado"
+            $pesquisaValue = 8; // Envia para a view qual item foi selecionado anteriormente
+        }
+        // Caso seja pesquisado Aguardando Manutenção
+        if ($request->status == 9) {
+            $info = [];
+            foreach ($informacoes as $dia) {
+                $info[] = $dia;
+            }
+            foreach ($info as $check) {
+
+                // Caso o Status não seja Cancelado, retire do array
+                if ($check->status != 1 or $check->status_encaminhamento_id != 6) {
+                    unset($info[$i]);
+                }
+                $i = $i + 1;
+            }
+
+            $informacoes = $info; // Repopula a Variavel inicial com o array "pesquisado"
+            $pesquisaValue = 8; // Envia para a view qual item foi selecionado anteriormente
         }
 
 
@@ -427,7 +463,7 @@ class GerenciarEntrevistaController extends Controller
             }
             $salas = $salas->get();
 
-            
+
             $usuarios = DB::table('usuario as u')
                 ->leftJoin('usuario_acesso as ua', 'u.id', 'ua.id_usuario')
                 ->where('id_acesso', 9)
