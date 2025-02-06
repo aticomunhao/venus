@@ -274,12 +274,6 @@ class RelatoriosController extends Controller
 
             $i++;
         }
-
-
-
-
-
-
         json_encode($eventosCronogramas);
 
         //   dd($cronogramas, $eventosCronogramas);
@@ -294,6 +288,7 @@ class RelatoriosController extends Controller
         $diaId = $request->input('dia');
         $nomeId = $request->input('nome');
         $funcaoId = $request->input('funcao');
+        $status = $request->input('status');
 
         // Definir o número de itens por página
         $itemsPerPage = 50;
@@ -316,7 +311,7 @@ class RelatoriosController extends Controller
             ->get();
 
 
-        $membrosQuery = DB::table('membro as m')
+            $membrosQuery = DB::table('membro as m')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
@@ -324,66 +319,93 @@ class RelatoriosController extends Controller
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
-            ->where('m.dt_fim', null)
             ->orderBy('p.nome_completo')
             ->whereIn('gr.id_setor', $setoresAutorizado)
-            ->select('m.id', 'p.nome_completo', 'gr.nome as grupo_nome', 'st.nome as setor_nome', 'st.sigla as setor_sigla', 'td.nome as dia_nome', 'cro.h_inicio', 'cro.h_fim', 'tf.nome as nome_funcao', 'st.nome as sala') // Selecionando o nome da função
+            ->select(
+                'm.id',
+                'p.nome_completo',
+                'gr.nome as grupo_nome',
+                'st.nome as setor_nome',
+                'st.sigla as setor_sigla',
+                'td.nome as dia_nome',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'tf.nome as nome_funcao',
+                'st.nome as sala',
+                DB::raw("CASE WHEN m.dt_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END AS status")
+            )
+            // Aplicação dos filtros opcionais
             ->when($setorId, function ($query, $setorId) {
                 return $query->where('st.id', $setorId);
             })
             ->when($grupoId, function ($query, $grupoId) {
-
                 return $query->where('gr.id', $grupoId);
             })
-            ->when($diaId, function ($query, $diaId) {
+            ->when($diaId !== null, function ($query) use ($diaId) {
+                if ($diaId == 0) {
+                    return $query->where('cro.dia_semana', 0);
+                }
                 return $query->where('cro.dia_semana', $diaId);
             })
             ->when($funcaoId, function ($query, $funcaoId) {
                 return $query->where('m.id_funcao', $funcaoId);
             })
-            ->when($diaId == 0 && $diaId != null, function ($query) {
-                return $query->where('cro.dia_semana', 0);
-            })
             ->when($nomeId, function ($query, $nomeId) {
                 return $query->where('m.id_associado', $nomeId);
             });
 
+        // Filtro de status
+        if ($status && $status != 'Todos') {
+            if ($status == 'Ativo') {
+                $membrosQuery->whereNull('m.dt_fim')->orWhere('m.dt_fim', '<=', '1969-06-12');
+            } elseif ($status == 'Inativo') {
+                $membrosQuery->where('m.dt_fim', '>', '1969-06-12');
+            }
+        }
 
-        // Paginar os resultados
+        // Definição dos status disponíveis
+        $statu = [
+            (object) ['nome' => 'Ativo'],
+            (object) ['nome' => 'Inativo'],
+            (object) ['nome' => 'Todos']
+        ];
+
+        // Paginação e organização dos resultados
         $membros = $membrosQuery->get();
+        $result = [];
 
-        // Obter os grupos
+        foreach ($membros as $element) {
+            $result[$element->nome_completo][$element->id] = $element;
+        }
+
+        $result = $this->paginate($result, 50);
+        $result->withPath('');
+
+        // Obter dados para os selects do filtro
         $grupo = DB::table('grupo')
             ->leftJoin('setor', 'grupo.id_setor', 'setor.id')
             ->select('grupo.id', 'grupo.nome as nome_grupo', 'setor.sigla')
             ->whereIn('id_setor', $setoresAutorizado)
             ->get();
 
-        // Obter os setores
         $setor = DB::table('setor')
             ->select('id', 'nome', 'sigla')
             ->whereIn('id', $setoresAutorizado)
             ->get();
 
-        // Obter os dias
         $dias = DB::table('tipo_dia')
             ->select('id', 'nome')
             ->get();
 
         $funcao = DB::table('tipo_funcao')->get();
 
-        $result = array();
-        foreach ($membros as $element) {
-            $result[$element->nome_completo][$element->id] = $element;
-        }
+        // Retorno para a view
+        return view('relatorios.gerenciar-relatorio-pessoas-grupo', compact(
+            'membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect', 'result', 'funcao', 'statu'
+        ));
 
-        //      dd($membros, $result);
 
-        $result = $this->paginate($result, 50);
-        $result->withPath('');
-        return view('relatorios.gerenciar-relatorio-pessoas-grupo', compact('membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect', 'result', 'funcao'));
-    }
-
+}
     public function indexSetor(Request $request)
     {
         // Obter os parâmetros de busca
