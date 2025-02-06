@@ -462,6 +462,7 @@ class GerenciarEncaminhamentoController extends Controller
                     'p1.nome_completo AS nm_1', // Nome do Assistido usado em header
                     'p2.nome_completo as nm_2', // Nome do representante, usado em Dados do Atendimento Fraterno
                     'p4.nome_completo AS nm_4', // Nome do Atendente, usado em Dados do Atendimento Fraterno
+                    'p4.id as id_pessoa',
                     'pa.nome', // Parentesco do representante com o Assistido (Ex.: Pai, Irmão)
                     'rm.h_inicio AS rm_inicio', // Inicio do Cronograma do Tratamento Marcado
                     'td.nome as nomedia', // Utilizado em Dados Encaminhamento para o Dia do Grupo
@@ -492,6 +493,26 @@ class GerenciarEncaminhamentoController extends Controller
                 ->Where('enc.id', $ide)
                 ->first();
 
+
+            $emergencia = DB::table('presenca_cronograma as dt')
+                ->select(
+                    'dt.id AS idp',
+                    'dt.presenca',
+                    'dc.data',
+                    'gp.nome',
+                )
+                ->leftJoin('tratamento as tr', 'dt.id_tratamento', 'tr.id')
+                ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
+                ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+                ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
+                ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
+                ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
+                ->where('id_pessoa', $result->id_pessoa)
+                // ->where('dc.data', '>=', $result->dt_inicio)
+                ->whereNull('id_tratamento')
+                ->get()
+                ->toArray();
+
             $encaminhamentosAlternativos = DB::table('encaminhamento as enc')
                 ->select(
                     'enc.id as ide',
@@ -518,6 +539,25 @@ class GerenciarEncaminhamentoController extends Controller
                 ->whereNot('enc.id', $ide)
                 ->get();
 
+                $emergencia = DB::table('presenca_cronograma as dt')
+                ->select(
+                    'dt.id AS idp',
+                    'dt.presenca',
+                    'dc.data',
+                    'gp.nome'
+                )
+                ->leftJoin('tratamento as tr', 'dt.id_tratamento', 'tr.id')
+                ->leftJoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
+                ->leftJoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+                ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
+                ->leftJoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
+                ->leftJoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
+                ->where('dt.id_pessoa', '=', $result->id_pessoa)
+                ->whereNull('dt.id_tratamento')
+                ->get()
+                ->toArray();
+
+
             // Retorna todos os dados de presença do encaminhamento atual
             $list = DB::table('presenca_cronograma as pc')
                 ->select('pc.id as idp', 'dc.data', 'pc.presenca', 'gr.nome')
@@ -538,7 +578,8 @@ class GerenciarEncaminhamentoController extends Controller
                 ->where('dt.presenca', 0)
                 ->count();
 
-            return view('recepcao-integrada.historico-encaminhamento', compact('result', 'list', 'faul', 'encaminhamentosAlternativos'));
+
+            return view('recepcao-integrada.historico-encaminhamento', compact('emergencia','result', 'list', 'faul', 'encaminhamentosAlternativos'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('tratamento-erro.erro-inesperado', compact('code'));
