@@ -1106,8 +1106,212 @@ class RelatoriosController extends Controller
                 ];
             }
         }
-      //  dd($dadosChart);
+        //  dd($dadosChart);
         return view('relatorios.gerenciar-relatorio-atendimento', compact('dt_inicio', 'dt_fim', 'dadosChart'));
+    }
+    public function BalancoVoluntarios(Request $request)
+    {
+        $now = Carbon::now()->format('Y-m-d');
+        $dt_inicio = $request->dt_inicio == null ? Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d') : $request->dt_inicio;
+        $dt_fim = $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
+
+
+
+        $membros = DB::table('membro as m');
+        $cronogramas = DB::table('cronograma as c');
+        $dadosMembro = array();
+        $dadosCronograma = array();
+        $dadosChart = array();
+
+        $grupos = DB::table('cronograma as cro')
+            ->leftJoin('grupo AS g', 'cro.id_grupo', '=', 'g.id')
+            ->leftJoin('setor AS s', 'g.id_setor', 's.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+            ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
+            ->select(
+                'cro.id AS idc',
+                'g.nome AS nomeg',
+                's.sigla',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'sl.numero as sala',
+                'td.nome as dia_semana',
+                'ts.descricao AS descricao_status',
+                DB::raw("(CASE WHEN cro.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status")
+            )
+            ->orderBy('g.nome', 'asc')
+            ->get();
+
+        if ($request->cronograma) {
+            $membros = $membros->where('id_cronograma', $request->cronograma);
+        }
+
+
+        if ($request->tipo_visualizacao == 2) {
+            Carbon::setlocale(config('app.locale'));
+            $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->toArray();
+
+            foreach ($meses as $mes) {
+
+                $mes = (clone $mes)->month == Carbon::parse($dt_inicio)->month ? Carbon::parse($dt_inicio) : (clone $mes)->firstOfMonth();
+                $mesNext = (clone $mes)->addMonth(1)->month == Carbon::parse($dt_fim)->month ? Carbon::parse($dt_fim) : (clone $mes)->firstOfMonth()->addMonth(1);
+
+                $dadosMembro = [
+                    'Membros Ativos' => (clone $membros)
+                    ->where(function($where) use ($mes, $mesNext){
+                        $where->where(function ($query) use ($mes, $mesNext) {
+                            $query->where('m.dt_inicio', '<=', $mes);
+                            $query->where('m.dt_fim', '<=', $mesNext);
+                            $query->where('m.dt_fim', '>=', $mes);
+                        });
+                        $where->orWhere(function ($query) use ($mesNext) {
+                            $query->where('m.dt_inicio', '<=', $mesNext);
+                            $query->where(function ($innerQuery) use ($mesNext) {
+                                $innerQuery->where('m.dt_fim', '>=', $mesNext);
+                                $innerQuery->orWhereNull('m.dt_fim');
+                            });
+                        });
+                        $where->orWhere(function ($query) use ($mes, $mesNext) {
+                            $query->where('m.dt_inicio', '>=', $mes);
+                            $query->where('m.dt_fim', '<=', $mesNext);
+                        });
+                        
+                    })->count(),
+
+                    'Membros Criados' => (clone $membros)
+                        ->where('m.dt_inicio', '>=', $dt_inicio)
+                        ->where('m.dt_inicio', '<=', $dt_fim)
+                        ->whereMonth('dt_inicio', $mes->month)
+                        ->whereYear('dt_inicio', $mes->year)
+                        ->count(),
+
+                    'Membros Inativados' => (clone $membros)
+                        ->where('m.dt_fim', '>=', $dt_inicio)
+                        ->where('m.dt_fim', '<=', $dt_fim)
+                        ->whereMonth('dt_fim', $mes->month)
+                        ->whereYear('dt_fim', $mes->year)
+                        ->count()
+                ];
+
+                $dadosCronograma = [
+                    'Cronogramas Ativos' => (clone $cronogramas)
+                        ->where(function ($query) use ($mes, $mesNext) {
+                            $query->where('c.data_inicio', '<=', $mes);
+                            $query->where('c.data_fim', '<=', $mesNext);
+                            $query->where('c.data_fim', '>=', $mes);
+                        })
+                        ->orWhere(function ($query) use ($mesNext) {
+                            $query->where('c.data_inicio', '<=', $mesNext);
+                            $query->where(function ($innerQuery) use ($mesNext) {
+                                $innerQuery->where('c.data_fim', '>=', $mesNext);
+                                $innerQuery->orWhereNull('c.data_fim');
+                            });
+                        })
+                        ->orWhere(function ($query) use ($mes, $mesNext) {
+                            $query->where('c.data_inicio', '>=', $mes);
+                            $query->where('c.data_fim', '<=', $mesNext);
+                        })
+                        ->count(),
+
+                    'Conogramas Criados' => (clone $cronogramas)
+                        ->where('c.data_inicio', '>=', $dt_inicio)
+                        ->where('c.data_inicio', '<=', $dt_fim)
+                        ->whereMonth('data_inicio', $mes->month)
+                        ->whereYear('data_inicio', $mes->year)
+                        ->count(),
+
+                    'Cronogramas Inativados' => (clone $cronogramas)
+                        ->where('c.data_fim', '>=', $dt_inicio)
+                        ->where('c.data_fim', '<=', $dt_fim)
+                        ->whereMonth('data_fim', $mes->month)
+                        ->whereYear('data_fim', $mes->year)
+                        ->count()
+                ];
+
+
+                if ($request->tipo_relatorio == 3  or $request->cronograma) {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = $dadosMembro;
+                } elseif ($request->tipo_relatorio == 2) {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = $dadosCronograma;
+                } elseif ($request->tipo_relatorio == 1 or $request->tipo_relatorio == null) {
+                    $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = array_merge($dadosCronograma, $dadosMembro);
+                }
+            }
+        } else {
+            $dadosMembro = [
+                'Membros Ativos' => (clone $membros)
+                    ->where(function ($where) use ($dt_inicio, $dt_fim) {
+                        $where->where(function ($query) use ($dt_inicio, $dt_fim) {
+                            $query->where('m.dt_inicio', '<', $dt_inicio);
+                            $query->where('m.dt_fim', '<', $dt_fim);
+                            $query->where('m.dt_fim', '>', $dt_inicio);
+                        });
+                        $where->orWhere(function ($query) use ($dt_fim) {
+                            $query->where('m.dt_inicio', '<', $dt_fim);
+                            $query->where(function ($innerQuery) use ($dt_fim) {
+                                $innerQuery->where('m.dt_fim', '>', $dt_fim);
+                                $innerQuery->orWhereNull('m.dt_fim');
+                            });
+                        });
+                        $where->orWhere(function ($query) use ($dt_inicio, $dt_fim) {
+                            $query->where('m.dt_inicio', '>', $dt_inicio);
+                            $query->where('m.dt_fim', '<', $dt_fim);
+                        });
+                    })
+                    ->count(),
+
+                'Membros Criados' => (clone $membros)
+                    ->where('m.dt_inicio', '>', $dt_inicio)
+                    ->where('m.dt_inicio', '<', $dt_fim)
+                    ->count(),
+
+                'Membros Inativados' => (clone $membros)
+                    ->where('m.dt_fim', '>', $dt_inicio)
+                    ->where('m.dt_fim', '<', $dt_fim)
+                    ->count()
+            ];
+            $dadosCronograma = [
+                'Cronogramas Ativos' => (clone $cronogramas)
+                    ->where(function ($query) use ($dt_inicio, $dt_fim) {
+                        $query->where('c.data_inicio', '<', $dt_inicio);
+                        $query->where('c.data_fim', '<', $dt_fim);
+                        $query->where('c.data_fim', '>', $dt_inicio);
+                    })
+                    ->orWhere(function ($query) use ($dt_fim) {
+                        $query->where('c.data_inicio', '<', $dt_fim);
+                        $query->where(function ($innerQuery) use ($dt_fim) {
+                            $innerQuery->where('c.data_fim', '>', $dt_fim);
+                            $innerQuery->orWhereNull('c.data_fim');
+                        });
+                    })
+                    ->orWhere(function ($query) use ($dt_inicio, $dt_fim) {
+                        $query->where('c.data_inicio', '>', $dt_inicio);
+                        $query->where('c.data_fim', '<', $dt_fim);
+                    })
+                    ->count(),
+
+                'Conogramas Criados' => (clone $cronogramas)
+                    ->where('c.data_inicio', '>', $dt_inicio)
+                    ->where('c.data_inicio', '<', $dt_fim)
+                    ->count(),
+
+                'Cronogramas Inativados' => (clone $cronogramas)
+                    ->where('c.data_fim', '>', $dt_inicio)
+                    ->where('c.data_fim', '<', $dt_fim)
+                    ->count()
+            ];
+
+            if ($request->tipo_relatorio == 3 or $request->cronograma) {
+                $dadosChart = $dadosMembro;
+            } elseif ($request->tipo_relatorio == 2) {
+                $dadosChart = $dadosCronograma;
+            } elseif ($request->tipo_relatorio == 1 or $request->tipo_relatorio == null) {
+                $dadosChart = array_merge($dadosCronograma, $dadosMembro);
+            }
+        }
+
+        return view('relatorios.gerenciar-balanco-voluntarios', compact('dt_inicio', 'dt_fim', 'dadosChart', 'grupos'));
     }
 }
 
