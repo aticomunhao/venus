@@ -156,7 +156,7 @@ class PresencaDirigenteController extends Controller
         //Encontra o cronograma daquele grupo na data de hoje
         $dias_cronograma_selecionada = DB::table('dias_cronograma')
             ->where('data', $hoje)
-            ->where('id_cronograma', $id)
+            ->where('id_cronograma', $idg)
             ->pluck('id');
 
             $nomePessoa = DB::table('pessoas')
