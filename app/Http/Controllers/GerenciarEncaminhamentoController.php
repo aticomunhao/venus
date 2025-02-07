@@ -462,7 +462,7 @@ class GerenciarEncaminhamentoController extends Controller
                     'p1.nome_completo AS nm_1', // Nome do Assistido usado em header
                     'p2.nome_completo as nm_2', // Nome do representante, usado em Dados do Atendimento Fraterno
                     'p4.nome_completo AS nm_4', // Nome do Atendente, usado em Dados do Atendimento Fraterno
-                    'p4.id as id_pessoa',
+                    'p1.id as id_pessoa',
                     'pa.nome', // Parentesco do representante com o Assistido (Ex.: Pai, Irmão)
                     'rm.h_inicio AS rm_inicio', // Inicio do Cronograma do Tratamento Marcado
                     'td.nome as nomedia', // Utilizado em Dados Encaminhamento para o Dia do Grupo
