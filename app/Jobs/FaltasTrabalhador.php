@@ -44,6 +44,10 @@ class FaltasTrabalhador implements ShouldQueue
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
             ->where('cro.dia_semana', $dia_atual)
             ->where('dt_fim', null) // Apenas membros ativos
+            ->where(function($query) use ($data_atual) { // Cronogramas ativos
+                $query->whereRaw("data_fim > ?", [$data_atual]) 
+                      ->orWhereNull('data_fim');
+            })
             ->whereNotIn('m.id', $inseridos)
             ->select('m.id', 'm.id_cronograma')
             ->get();

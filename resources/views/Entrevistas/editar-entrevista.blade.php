@@ -22,8 +22,6 @@
                             </select>
                         </div>
                     </div>
-
-
                     <div class="row mb-5">
                         <div class="col">
                             <label for="id_entrevistador" class="form-label">Entrevistador</label>
@@ -33,7 +31,7 @@
                             </span>
                             <select class="form-select select2 teste" id="id_entrevistador" name="entrevistador" {{ $entrevistas->id_entrevistador == null ? 'disabled' : '' }}>
                                  @foreach ($membros as $membro )
-                                 <option value="{{ $membro->id }}" {{$membro->id == $entrevistas->id_entrevistador ? 'selected' : '' }}>{{ $membro->nome_entrevistador }}</option>
+                                 <option value="{{ $membro->id_associado }}" {{$membro->id_associado == $entrevistas->id_entrevistador ? 'selected' : '' }}>{{ $membro->nome_entrevistador }}</option>
                                  @endforeach
                             </select>
                         </div>
