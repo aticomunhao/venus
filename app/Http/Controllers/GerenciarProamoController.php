@@ -117,7 +117,6 @@ class GerenciarProamoController extends Controller
     public function store(Request $request, String $id) {}
 
 
-
     public function show(string $id)
     {
 
@@ -171,6 +170,7 @@ class GerenciarProamoController extends Controller
             ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
             ->where('at.id_assistido', $result->id_assistido)
             ->whereIn('enc.id_tipo_tratamento', [1,2])
+            ->where('status_encaminhamento', '<', 3) // Finalizado
             ->select('tr.id', 'enc.id_tipo_tratamento')
             ->first();
 
@@ -207,6 +207,28 @@ class GerenciarProamoController extends Controller
         $list2 = [];
         $faul2 = '';
 
+
+        $emergencia = DB::table('presenca_cronograma as dt')
+        ->select(
+            'dt.id AS idp',
+            'dt.presenca',
+            'dc.data',
+            'gp.nome',
+        )
+        ->leftJoin('tratamento as tr', 'dt.id_tratamento', 'tr.id')
+        ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
+        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+        ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
+        ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
+        ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
+        ->where('id_pessoa', $result->id_assistido)
+        ->where('dc.data', '>=', $result->dt_inicio)
+        ->whereNull('id_tratamento')
+        ->get()
+        ->toArray();
+
+
+
         if ($encaminhamento) { // Caso tenha um encaminhamento PTD
             // Retorna as faltas do PTD
             $list2 = DB::table('presenca_cronograma AS dt')
@@ -223,7 +245,8 @@ class GerenciarProamoController extends Controller
                 ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
                 ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
                 ->where('tr.id', $encaminhamento->id)
-                ->get();
+                ->get()
+                ->toArray();
 
             // Conta a quantidade de Faltas no PTD
             $faul2 = DB::table('tratamento AS tr')
@@ -233,14 +256,18 @@ class GerenciarProamoController extends Controller
                 ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                 ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
+                ->where('tr.id', $id)
                 ->where('dt.presenca', 0)
                 ->count();
         }
 
+        $list2 = array_merge($emergencia, $list2);
+        array_multisort(array_column($list2, 'data'), SORT_DESC ,$list2);
+
         return view('proamo.visualizar-proamo', compact('result', 'list', 'faul', 'list2', 'faul2', 'encaminhamento'));
     }
 
-    public function edit(string $id) {}
+
 
 
     public function update(Request $request, string $id)

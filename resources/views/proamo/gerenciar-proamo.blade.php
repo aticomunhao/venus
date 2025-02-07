@@ -192,10 +192,12 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body">
-                                        Tem certeza que deseja declarar alta para <span
-                                            class="text-danger">{{ $encaminhamento->nome_completo }}</span>?
-                                    </div>
+                                    <center>
+                                        <div class="modal-body">
+                                            Tem certeza que deseja declarar alta para <br /><span
+                                                style="color:rgb(196, 27, 27);">{{ $encaminhamento->nome_completo }}</span>&#63;
+                                        </div>
+                                    </center>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">Cancelar</button>
