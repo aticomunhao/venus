@@ -436,6 +436,9 @@ Route::middleware('rotas:34')->group(function () {
 Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
 Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
 
+//Relatório de Balanço de Voluntários
+Route::any('/gerenciar-balanco-voluntarios', [RelatoriosController::class, 'BalancoVoluntarios']);
+
 //Relatório de Reuniões
 Route::middleware('rotas:35')->group(function () {
     Route::any('/gerenciar-relatorio-reuniao', [RelatoriosController::class, 'relatorioReuniao']);
