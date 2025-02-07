@@ -155,48 +155,53 @@
 
                     </div>
                 </div>
+                 {{-- Fim card Tratamento/Encaminhamento --}}
+                 
                 <br>
-                <div class="accordion" id="accordionExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                               TRATAMENTO DE EMERGÊNCIA
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                <table class="table table-sm table-bordered table-striped">
-                                    <thead style="text-align:center; background: #daffe0;">
-                                        <tr style="text-align:center; font-weight: bold; font-size:12px">
-                                            <td class="col">NR</td>
-                                            <td class="col">DATA</td>
-                                            <td class="col">GRUPO</td>
-                                            <td class="col">PRESENÇA</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($emergencia as $lists1)
-                                            <tr style="text-align:center; font-size:13px">
-                                                <td>{{ $lists1->idp }}</td>
-                                                <td>{{ $lists1->data }}</td>
-                                                <td>{{ $lists1->nome }}</td>
-                                                @if ($lists1->presenca == 1)
-                                                    <td style="background-color:#90EE90;">Sim</td>
-                                                @elseif ($lists1->presenca == 0)
-                                                    <td style="background-color:#FA8072;">Não</td>
-                                                @endif
+
+                {{-- Inicio accordion do presença de emergência --}}
+                @if (count($emergencia) > 0)
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    TRATAMENTO DE EMERGÊNCIA
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                                data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <table class="table table-sm table-bordered table-striped">
+                                        <thead style="text-align:center; background: #daffe0;">
+                                            <tr style="text-align:center; font-weight: bold; font-size:12px">
+                                                <td class="col">NR</td>
+                                                <td class="col">DATA</td>
+                                                <td class="col">GRUPO</td>
+                                                <td class="col">PRESENÇA</td>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($emergencia as $lists1)
+                                                <tr style="text-align:center; font-size:13px">
+                                                    <td>{{ $lists1->idp }}</td>
+                                                    <td>{{ $lists1->data }}</td>
+                                                    <td>{{ $lists1->nome }}</td>
+                                                    @if ($lists1->presenca == 1)
+                                                        <td style="background-color:#90EE90;">Sim</td>
+                                                    @elseif ($lists1->presenca == 0)
+                                                        <td style="background-color:#FA8072;">Não</td>
+                                                    @endif
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {{-- Fim card Tratamento/Encaminhamento --}}
+                @endif
+                {{-- Fim accordion do presença de emergência --}}
 
                 <br>
 
