@@ -86,7 +86,13 @@
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
                                 {{ $encaminhamento->nome }}</td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
-                                {{ $encaminhamento->contagem ? $encaminhamento->contagem : 'Permanente' }}
+                                @if($encaminhamento->contagem == null and $encaminhamento->contagem !== 0)
+                                Permanente
+                                @elseif ( $encaminhamento->contagem == 0 )
+                                -
+                                @else
+                                {{ $encaminhamento->contagem }}
+                                @endif
                             </td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
                                 {{ $encaminhamento->status }}</td>
