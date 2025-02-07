@@ -274,7 +274,7 @@ Route::middleware('rotas:15')->group(function () {
 });
 
 // Gerenciar Encaminhamentos
-Route::middleware("rotas:16-22-23")->group(function () {
+Route::middleware("rotas:16-22-23-40")->group(function () {
     Route::get('/gerenciar-encaminhamentos', [GerenciarEncaminhamentoController::class, 'index'])->name('gecdex');
     Route::get('/agendar/{ide}/{idtt}', [GerenciarEncaminhamentoController::class, 'agenda'])->name('gecage');
     Route::get('/agendar-tratamento/{ide}', [GerenciarEncaminhamentoController::class, 'tratamento'])->name('gtctra');
