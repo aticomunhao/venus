@@ -85,6 +85,10 @@
                             <span class="tooltiptext">Visualizar</span>
                             <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
                         </a>
+                        <a href="/curriculo-medium/{{ $membros->idm }}" class="btn btn-outline-primary btn-sm tooltips">
+                            <span class="tooltiptext">Currículo</span>
+                            <i class="bi bi-newspaper" style="font-size: 1rem; color:#000;"></i>
+                        </a>
                         @if (in_array(13, session()->get('usuario.acesso')))
                             <!-- Botão para editar -->
 

@@ -311,7 +311,7 @@ class RelatoriosController extends Controller
             ->get();
 
 
-            $membrosQuery = DB::table('membro as m')
+        $membrosQuery = DB::table('membro as m')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
@@ -401,11 +401,16 @@ class RelatoriosController extends Controller
 
         // Retorno para a view
         return view('relatorios.gerenciar-relatorio-pessoas-grupo', compact(
-            'membros', 'grupo', 'setor', 'dias', 'atendentesParaSelect', 'result', 'funcao', 'statu'
+            'membros',
+            'grupo',
+            'setor',
+            'dias',
+            'atendentesParaSelect',
+            'result',
+            'funcao',
+            'statu'
         ));
-
-
-}
+    }
     public function indexSetor(Request $request)
     {
         // Obter os parâmetros de busca
@@ -1181,25 +1186,24 @@ class RelatoriosController extends Controller
 
                 $dadosMembro = [
                     'Membros Ativos' => (clone $membros)
-                    ->where(function($where) use ($mes, $mesNext){
-                        $where->where(function ($query) use ($mes, $mesNext) {
-                            $query->where('m.dt_inicio', '<=', $mes);
-                            $query->where('m.dt_fim', '<=', $mesNext);
-                            $query->where('m.dt_fim', '>=', $mes);
-                        });
-                        $where->orWhere(function ($query) use ($mesNext) {
-                            $query->where('m.dt_inicio', '<=', $mesNext);
-                            $query->where(function ($innerQuery) use ($mesNext) {
-                                $innerQuery->where('m.dt_fim', '>=', $mesNext);
-                                $innerQuery->orWhereNull('m.dt_fim');
+                        ->where(function ($where) use ($mes, $mesNext) {
+                            $where->where(function ($query) use ($mes, $mesNext) {
+                                $query->where('m.dt_inicio', '<=', $mes);
+                                $query->where('m.dt_fim', '<=', $mesNext);
+                                $query->where('m.dt_fim', '>=', $mes);
                             });
-                        });
-                        $where->orWhere(function ($query) use ($mes, $mesNext) {
-                            $query->where('m.dt_inicio', '>=', $mes);
-                            $query->where('m.dt_fim', '<=', $mesNext);
-                        });
-                        
-                    })->count(),
+                            $where->orWhere(function ($query) use ($mesNext) {
+                                $query->where('m.dt_inicio', '<=', $mesNext);
+                                $query->where(function ($innerQuery) use ($mesNext) {
+                                    $innerQuery->where('m.dt_fim', '>=', $mesNext);
+                                    $innerQuery->orWhereNull('m.dt_fim');
+                                });
+                            });
+                            $where->orWhere(function ($query) use ($mes, $mesNext) {
+                                $query->where('m.dt_inicio', '>=', $mes);
+                                $query->where('m.dt_fim', '<=', $mesNext);
+                            });
+                        })->count(),
 
                     'Membros Criados' => (clone $membros)
                         ->where('m.dt_inicio', '>=', $dt_inicio)
@@ -1336,7 +1340,8 @@ class RelatoriosController extends Controller
         return view('relatorios.gerenciar-balanco-voluntarios', compact('dt_inicio', 'dt_fim', 'dadosChart', 'grupos'));
     }
 
-    public function trabalhadores(Request $request){
+    public function trabalhadores(Request $request)
+    {
 
 
         //RELATÓRIO DE TRABALHADORES COM BASE NO SETOR
@@ -1348,121 +1353,172 @@ class RelatoriosController extends Controller
         }
 
         $trabalho = DB::table('grupo as g')
-        ->leftJoin('cronograma as c', 'g.id', 'c.id_grupo')
-        ->leftJoin('membro as m', 'c.id', 'm.id_cronograma')
-        ->leftJoin('associado as a', 'm.id_associado', 'a.id')
-        ->leftJoin('pessoas as p', 'a.id_pessoa', 'p.id')
-        ->leftJoin('setor as s', 'g.id_setor', 's.id')
-        ->leftJoin('setor as s1',  's.setor_pai', 's1.id')
-        ->leftJoin('tp_nivel_setor as tn', 's.id_nivel', 'tn.id')
-        ->leftJoin('tipo_dia as t', 'c.dia_semana', 't.id')
-        ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
-        ->leftJoin('tipo_tratamento as tt', 'c.id_tipo_tratamento', 'tt.id')
-        ->whereNull('m.dt_fim')
-        ->whereNull('c.data_fim')        
-        ->whereIn('g.id_setor', $setoresAutorizado)
-        ->select('c.id as cid', 'm.id', 'm.id_funcao', 'tn.id', 'tn.nome as n_nome', 'p.id as pid', 'p.nome_completo', 'g.nome as g_nome', 's.nome as setor_nome', 's.setor_pai', 's.sigla as setor_sigla', 't.nome as dia_nome', 'c.h_inicio', 'c.h_fim', 'tf.nome as nome_funcao', 's.nome as sala', 'tt.sigla as t_sigla', DB::raw('count(m.id) as vlr_final'))
-        ->groupBy('c.id', 'm.id', 't.id', 'm.id_funcao', 'tn.id', 'tn.nome', 'p.id', 'p.nome_completo', 'g.nome', 's.nome', 's.setor_pai', 's.sigla', 't.nome', 'tf.id', 'tf.nome', 's.nome', 'tt.sigla',);
+            ->leftJoin('cronograma as c', 'g.id', 'c.id_grupo')
+            ->leftJoin('membro as m', 'c.id', 'm.id_cronograma')
+            ->leftJoin('associado as a', 'm.id_associado', 'a.id')
+            ->leftJoin('pessoas as p', 'a.id_pessoa', 'p.id')
+            ->leftJoin('setor as s', 'g.id_setor', 's.id')
+            ->leftJoin('setor as s1',  's.setor_pai', 's1.id')
+            ->leftJoin('tp_nivel_setor as tn', 's.id_nivel', 'tn.id')
+            ->leftJoin('tipo_dia as t', 'c.dia_semana', 't.id')
+            ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
+            ->leftJoin('tipo_tratamento as tt', 'c.id_tipo_tratamento', 'tt.id')
+            ->whereNull('m.dt_fim')
+            ->whereNull('c.data_fim')
+            ->whereIn('g.id_setor', $setoresAutorizado)
+            ->select('c.id as cid', 'm.id', 'm.id_funcao', 'tn.id', 'tn.nome as n_nome', 'p.id as pid', 'p.nome_completo', 'g.nome as g_nome', 's.nome as setor_nome', 's.setor_pai', 's.sigla as setor_sigla', 't.nome as dia_nome', 'c.h_inicio', 'c.h_fim', 'tf.nome as nome_funcao', 's.nome as sala', 'tt.sigla as t_sigla', DB::raw('count(m.id) as vlr_final'))
+            ->groupBy('c.id', 'm.id', 't.id', 'm.id_funcao', 'tn.id', 'tn.nome', 'p.id', 'p.nome_completo', 'g.nome', 's.nome', 's.setor_pai', 's.sigla', 't.nome', 'tf.id', 'tf.nome', 's.nome', 'tt.sigla',);
 
-         // Obter os parâmetros de busca
-         $nivelId = $request->nivel;
-         $setorId = $request->setor;
-         $reuniaoId = $request->reuniao;
-         $funcaoId = $request->funcao;
-         $membroId = $request->membro;
-         $reuniaoId = $request->reuniao;
-         
-       //dd($reuniaoId);
+        // Obter os parâmetros de busca
+        $nivelId = $request->nivel;
+        $setorId = $request->setor;
+        $reuniaoId = $request->reuniao;
+        $funcaoId = $request->funcao;
+        $membroId = $request->membro;
+        $reuniaoId = $request->reuniao;
 
-        if ($nivelId == 1 && $setorId === null){
+        //dd($reuniaoId);
+
+        if ($nivelId == 1 && $setorId === null) {
             $trabalho->where('s.id', '>', 0);
-
-        }elseif($nivelId == 1 && $setorId <> null){
+        } elseif ($nivelId == 1 && $setorId <> null) {
 
             $trabalho->where('s.id', $request->setor);
-        
-        }elseif($nivelId > 1 && $setorId === null){
-            
+        } elseif ($nivelId > 1 && $setorId === null) {
+
             app('flasher')->addError('Selecione um setor');
             return redirect()->back();
-
-        }elseif($nivelId > 2 && $setorId > 0){
+        } elseif ($nivelId > 2 && $setorId > 0) {
 
             $trabalho->where(function ($query) use ($setorId) {
                 $query->where('s.id', $setorId)
-                      ->orWhere('s.setor_pai', $setorId);
+                    ->orWhere('s.setor_pai', $setorId);
             });
         }
 
-        if ($reuniaoId === null){
-            $trabalho->where('c.id','<>', 0);
-        
-        }else{
+        if ($reuniaoId === null) {
+            $trabalho->where('c.id', '<>', 0);
+        } else {
 
             $trabalho->whereIn('c.id', $reuniaoId);
-            
         }
 
 
-        if ($request->funcao){
+        if ($request->funcao) {
             $trabalho->where('m.id_funcao', $request->funcao);
         }
 
-        if ($request->membro){
+        if ($request->membro) {
             $trabalho->where('p.id', $request->membro);
         }
 
-    $totmem = $trabalho->get()->sum('vlr_final');
-    
-
-    // Paginar os resultados
-    $trabalho = $trabalho->orderBy('g.nome','asc')->orderBy('c.id','asc')->orderBy('t.id', 'asc')->orderBy('tf.id', 'asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
-
-  
-
-    // Obter os níveis
-    $nivel = DB::table('tp_nivel_setor as tn')
-        ->leftJoin('setor as s', 'tn.id', 's.id_nivel')
-        ->select('tn.id', 'tn.nome as s_nome')
-        ->whereIn('s.id', $setoresAutorizado)
-        ->groupBy('tn.id')
-        ->orderBy('tn.id', 'asc')
-        ->get();
+        $totmem = $trabalho->get()->sum('vlr_final');
 
 
-    // Obter os setores
-    $setor = DB::table('setor as s')
-        ->select('s.id as sid', 's.nome', 's.sigla')
-        ->whereIn('id', $setoresAutorizado)
-        ->orderBy('nome', 'asc')
-        ->get();
+        // Paginar os resultados
+        $trabalho = $trabalho->orderBy('g.nome', 'asc')->orderBy('c.id', 'asc')->orderBy('t.id', 'asc')->orderBy('tf.id', 'asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
 
 
-    // Obter os grupos
-    $grupo = DB::table('grupo as g')
-    ->leftJoin('cronograma as c', 'g.id', 'c.id_grupo')
-    ->leftJoin('setor as s', 'g.id_setor', 's.id')
-    ->leftJoin('tipo_dia as t', 'c.dia_semana', 't.id')
-    ->leftJoin('tipo_tratamento as tt', 'c.id_tipo_tratamento', 'tt.id')
-    ->select('g.nome as g_nome', 'c.h_inicio', 'c.id as cid','t.sigla as d_sigla', 's.sigla as s_sigla', 'tt.sigla as t_sigla')
-    ->whereNull('c.data_fim')
-    ->whereIn('s.id', $setoresAutorizado)
-    ->get();        
 
-    $funcao = DB::table('tipo_funcao')->orderBy('nome')->get();
-
-    $membro = DB::table('membro as m')
-    ->leftJoin('associado as a', 'm.id_associado', 'a.id')
-    ->leftJoin('pessoas as p', 'a.id_pessoa', 'p.id')
-    ->select('m.id', 'p.id as pid', 'p.nome_completo')
-    ->distinct('p.nome_completo')
-    ->orderBy('p.nome_completo', 'asc')
-    ->get();
+        // Obter os níveis
+        $nivel = DB::table('tp_nivel_setor as tn')
+            ->leftJoin('setor as s', 'tn.id', 's.id_nivel')
+            ->select('tn.id', 'tn.nome as s_nome')
+            ->whereIn('s.id', $setoresAutorizado)
+            ->groupBy('tn.id')
+            ->orderBy('tn.id', 'asc')
+            ->get();
 
 
-    return view('relatorios.setores-trabalhadores', compact('trabalho', 'nivel', 'setor', 'grupo', 'funcao', 'membro', 'totmem'));
+        // Obter os setores
+        $setor = DB::table('setor as s')
+            ->select('s.id as sid', 's.nome', 's.sigla')
+            ->whereIn('id', $setoresAutorizado)
+            ->orderBy('nome', 'asc')
+            ->get();
 
 
+        // Obter os grupos
+        $grupo = DB::table('grupo as g')
+            ->leftJoin('cronograma as c', 'g.id', 'c.id_grupo')
+            ->leftJoin('setor as s', 'g.id_setor', 's.id')
+            ->leftJoin('tipo_dia as t', 'c.dia_semana', 't.id')
+            ->leftJoin('tipo_tratamento as tt', 'c.id_tipo_tratamento', 'tt.id')
+            ->select('g.nome as g_nome', 'c.h_inicio', 'c.id as cid', 't.sigla as d_sigla', 's.sigla as s_sigla', 'tt.sigla as t_sigla')
+            ->whereNull('c.data_fim')
+            ->whereIn('s.id', $setoresAutorizado)
+            ->get();
+
+        $funcao = DB::table('tipo_funcao')->orderBy('nome')->get();
+
+        $membro = DB::table('membro as m')
+            ->leftJoin('associado as a', 'm.id_associado', 'a.id')
+            ->leftJoin('pessoas as p', 'a.id_pessoa', 'p.id')
+            ->select('m.id', 'p.id as pid', 'p.nome_completo')
+            ->distinct('p.nome_completo')
+            ->orderBy('p.nome_completo', 'asc')
+            ->get();
+
+
+        return view('relatorios.setores-trabalhadores', compact('trabalho', 'nivel', 'setor', 'grupo', 'funcao', 'membro', 'totmem'));
     }
+    public function curriculo(String $id)
+    {
+        $now = Carbon::today();
 
+        // Retorna a view com os dados
+        $dadosP = DB::table('pessoas as p')
+            ->select(
+                'p.nome_completo',
+                'p.celular',
+                'd.descricao',
+                'p.dt_nascimento',
+                'a.nr_associado',
+                'a.id'
+
+            )
+            ->leftJoin('associado as a', 'p.id', 'a.id_pessoa')
+            ->leftJoin('membro as m', 'a.id', 'm.id_associado')
+            ->leftJoin('tp_ddd as d', 'p.ddd', '=', 'd.id')
+            ->where('m.id', $id)
+            ->first();
+
+        // Obtém o membro e suas informações relacionadas
+        $membros = DB::table('membro as m')
+            ->select(
+                'gr.nome as nome_grupo',
+                'td.nome as dia',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'sl.numero as sala',
+                's.nome as nome_setor',
+                's.sigla',
+                'tf.nome as nome_funcao',
+                'm.dt_inicio',
+                'm.dt_fim',
+                DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END) as status_membro"),
+                DB::raw("(CASE WHEN cro.modificador = 3 THEN 'Experimental' WHEN cro.modificador = 4 THEN 'Em Férias' WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status"),
+
+            )
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+            ->leftJoin('tipo_status_grupo as tpg', 'cro.modificador', 'tpg.id')
+            ->leftJoin('associado as a', 'm.id_associado', 'a.id')
+            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+            ->where('a.id', $dadosP->id)
+            ->get()
+            ->toArray();
+
+        $bufferMembros = array();
+        foreach ($membros as $membro) {
+            $bufferMembros["$membro->nome_grupo($membro->sigla)-$membro->dia | $membro->h_inicio/$membro->h_fim | Sala $membro->sala | $membro->status"][] = $membro;
+        }
+        $membros = $bufferMembros;
+
+        return view('relatorios.curriculo-membro', compact('membros', 'dadosP'));
+    }
+    
 }

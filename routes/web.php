@@ -40,6 +40,7 @@ use App\Http\Controllers\GerenciarVersoesControllerController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\GerenciarPassesController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -430,6 +431,7 @@ Route::middleware('rotas:33')->group(function () {
 Route::middleware('rotas:34')->group(function () {
     Route::any('/gerenciar-relatorio-pessoas-grupo', [RelatoriosController::class, 'indexmembro']);
     Route::any('/gerenciar-relatorio-setor-pessoas', [RelatoriosController::class, 'indexSetor']);
+    Route::get('/curriculo-medium/{id}', [RelatoriosController::class, 'curriculo']);
 });
 
 //Relatório Setores trabalhadores
