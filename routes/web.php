@@ -432,6 +432,9 @@ Route::middleware('rotas:34')->group(function () {
     Route::any('/gerenciar-relatorio-setor-pessoas', [RelatoriosController::class, 'indexSetor']);
 });
 
+//Relatório Setores trabalhadores
+Route::get('/relatorio-setor-trabalhador', [RelatoriosController::class, 'trabalhadores'])->name('form.trab');
+
 //Relatório de Atendimentos
 Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
 Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
