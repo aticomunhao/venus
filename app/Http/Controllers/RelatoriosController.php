@@ -1335,10 +1335,134 @@ class RelatoriosController extends Controller
 
         return view('relatorios.gerenciar-balanco-voluntarios', compact('dt_inicio', 'dt_fim', 'dadosChart', 'grupos'));
     }
-}
 
-    // public function teste()
-    // {
-    //     $pdf = \PDF::loadView('relatorios.teste');
-    //     return $pdf->download('invoice.pdf');
-    // }
+    public function trabalhadores(Request $request){
+
+
+        //RELATÓRIO DE TRABALHADORES COM BASE NO SETOR
+
+        $setoresAutorizado = array();
+        foreach (session()->get('acessoInterno') as $perfil) {
+
+            $setoresAutorizado = array_merge($setoresAutorizado, array_column($perfil, 'id_setor'));
+        }
+
+        $trabalho = DB::table('grupo as g')
+        ->leftJoin('cronograma as c', 'g.id', 'c.id_grupo')
+        ->leftJoin('membro as m', 'c.id', 'm.id_cronograma')
+        ->leftJoin('associado as a', 'm.id_associado', 'a.id')
+        ->leftJoin('pessoas as p', 'a.id_pessoa', 'p.id')
+        ->leftJoin('setor as s', 'g.id_setor', 's.id')
+        ->leftJoin('setor as s1',  's.setor_pai', 's1.id')
+        ->leftJoin('tp_nivel_setor as tn', 's.id_nivel', 'tn.id')
+        ->leftJoin('tipo_dia as t', 'c.dia_semana', 't.id')
+        ->leftJoin('tipo_funcao as tf', 'm.id_funcao', 'tf.id')
+        ->leftJoin('tipo_tratamento as tt', 'c.id_tipo_tratamento', 'tt.id')
+        ->whereNull('m.dt_fim')
+        ->whereNull('c.data_fim')        
+        ->whereIn('g.id_setor', $setoresAutorizado)
+        ->select('c.id as cid', 'm.id', 'm.id_funcao', 'tn.id', 'tn.nome as n_nome', 'p.id as pid', 'p.nome_completo', 'g.nome as g_nome', 's.nome as setor_nome', 's.setor_pai', 's.sigla as setor_sigla', 't.nome as dia_nome', 'c.h_inicio', 'c.h_fim', 'tf.nome as nome_funcao', 's.nome as sala', 'tt.sigla as t_sigla', DB::raw('count(m.id) as vlr_final'))
+        ->groupBy('c.id', 'm.id', 't.id', 'm.id_funcao', 'tn.id', 'tn.nome', 'p.id', 'p.nome_completo', 'g.nome', 's.nome', 's.setor_pai', 's.sigla', 't.nome', 'tf.id', 'tf.nome', 's.nome', 'tt.sigla',);
+
+         // Obter os parâmetros de busca
+         $nivelId = $request->nivel;
+         $setorId = $request->setor;
+         $reuniaoId = $request->reuniao;
+         $funcaoId = $request->funcao;
+         $membroId = $request->membro;
+         $reuniaoId = $request->reuniao;
+         
+       //dd($reuniaoId);
+
+        if ($nivelId == 1 && $setorId === null){
+            $trabalho->where('s.id', '>', 0);
+
+        }elseif($nivelId == 1 && $setorId <> null){
+
+            $trabalho->where('s.id', $request->setor);
+        
+        }elseif($nivelId > 1 && $setorId === null){
+            
+            app('flasher')->addError('Selecione um setor');
+            return redirect()->back();
+
+        }elseif($nivelId > 2 && $setorId > 0){
+
+            $trabalho->where(function ($query) use ($setorId) {
+                $query->where('s.id', $setorId)
+                      ->orWhere('s.setor_pai', $setorId);
+            });
+        }
+
+        if ($reuniaoId === null){
+            $trabalho->where('c.id','<>', 0);
+        
+        }else{
+
+            $trabalho->whereIn('c.id', $reuniaoId);
+            
+        }
+
+
+        if ($request->funcao){
+            $trabalho->where('m.id_funcao', $request->funcao);
+        }
+
+        if ($request->membro){
+            $trabalho->where('p.id', $request->membro);
+        }
+
+    $totmem = $trabalho->get()->sum('vlr_final');
+    
+
+    // Paginar os resultados
+    $trabalho = $trabalho->orderBy('g.nome','asc')->orderBy('c.id','asc')->orderBy('t.id', 'asc')->orderBy('tf.id', 'asc')->orderBy('p.nome_completo', 'asc')->paginate(50);
+
+  
+
+    // Obter os níveis
+    $nivel = DB::table('tp_nivel_setor as tn')
+        ->leftJoin('setor as s', 'tn.id', 's.id_nivel')
+        ->select('tn.id', 'tn.nome as s_nome')
+        ->whereIn('s.id', $setoresAutorizado)
+        ->groupBy('tn.id')
+        ->orderBy('tn.id', 'asc')
+        ->get();
+
+
+    // Obter os setores
+    $setor = DB::table('setor as s')
+        ->select('s.id as sid', 's.nome', 's.sigla')
+        ->whereIn('id', $setoresAutorizado)
+        ->orderBy('nome', 'asc')
+        ->get();
+
+
+    // Obter os grupos
+    $grupo = DB::table('grupo as g')
+    ->leftJoin('cronograma as c', 'g.id', 'c.id_grupo')
+    ->leftJoin('setor as s', 'g.id_setor', 's.id')
+    ->leftJoin('tipo_dia as t', 'c.dia_semana', 't.id')
+    ->leftJoin('tipo_tratamento as tt', 'c.id_tipo_tratamento', 'tt.id')
+    ->select('g.nome as g_nome', 'c.h_inicio', 'c.id as cid','t.sigla as d_sigla', 's.sigla as s_sigla', 'tt.sigla as t_sigla')
+    ->whereNull('c.data_fim')
+    ->whereIn('s.id', $setoresAutorizado)
+    ->get();        
+
+    $funcao = DB::table('tipo_funcao')->orderBy('nome')->get();
+
+    $membro = DB::table('membro as m')
+    ->leftJoin('associado as a', 'm.id_associado', 'a.id')
+    ->leftJoin('pessoas as p', 'a.id_pessoa', 'p.id')
+    ->select('m.id', 'p.id as pid', 'p.nome_completo')
+    ->distinct('p.nome_completo')
+    ->orderBy('p.nome_completo', 'asc')
+    ->get();
+
+
+    return view('relatorios.setores-trabalhadores', compact('trabalho', 'nivel', 'setor', 'grupo', 'funcao', 'membro', 'totmem'));
+
+
+    }
+
+}
