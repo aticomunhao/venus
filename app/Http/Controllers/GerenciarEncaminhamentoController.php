@@ -416,7 +416,7 @@ class GerenciarEncaminhamentoController extends Controller
                     'id_encaminhamento' => $ide,
                     'status' => 1,
                     'dt_inicio' => $data_antes,
-                    'dt_fim' => $data_antes->copy()->addWeek(6) // Adiciona 6 semanas, pois o Integral tem 6 semanas de duração
+                    'dt_fim' => $data_antes->copy()->addWeek(5) // Adiciona 6 semanas, pois o Integral tem 6 semanas de duração
                 ]);
             } else {
                 app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
