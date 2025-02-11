@@ -276,5 +276,7 @@ class GerenciarProamoController extends Controller
         $id_encaminhamento = DB::table('tratamento')->where('id', $id)->first();
         DB::table('tratamento')->where('id', $id)->update(['status' => 4, 'dt_fim' => $hoje]);
         DB::table('encaminhamento')->where('id', $id_encaminhamento->id_encaminhamento)->update(['status_encaminhamento' => 3]);
+        return redirect()->back();
     }
 }
+
