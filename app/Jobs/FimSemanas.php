@@ -50,7 +50,7 @@ class FimSemanas implements ShouldQueue
         DB::table('encaminhamento')
             ->whereIn('id', $semanas)
             ->update([
-                'status_encaminhamento' => 4 // Finalizado
+                'status_encaminhamento' => 3 // Finalizado
             ]);
     }
 }
