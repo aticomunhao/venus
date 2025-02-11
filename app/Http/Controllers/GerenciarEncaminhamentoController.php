@@ -668,7 +668,7 @@ class GerenciarEncaminhamentoController extends Controller
 
         // Caso esse encaminhamento tenha um tratamento
         DB::table('tratamento')
-            ->where('id', $ide)
+            ->where('id_encaminhamento', $ide)
             ->update([
                 'dt_fim' => $today,
                 'status' => 6, // Inativado

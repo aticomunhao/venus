@@ -185,7 +185,7 @@ class GerenciarTratamentosController extends Controller
 
 
             DB::table('tratamento')->where('id', $id)->update(['status' => 6, 'motivo' => $request->motivo, 'dt_fim' => $hoje]);
-            DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 5]);
+            DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 4]);
 
 
             // Recupera o nome completo da pessoa associado ao id_usuario
@@ -236,6 +236,7 @@ class GerenciarTratamentosController extends Controller
             $lista = DB::table('tratamento AS tr')
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                 ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+                ->leftJoin('atendimentos as at','enc.id_atendimento','at.id')
                 ->where('tr.id', $idtr)
                 ->first();
 
@@ -259,22 +260,26 @@ class GerenciarTratamentosController extends Controller
             } else {
 
 
-                $encaminhamentosPTD = DB::table('encaminhamento')->where('id_atendimento', $lista->id_atendimento)->where('id_tipo_tratamento', 1)->where('status_encaminhamento', 4)->first();
+                $encaminhamentosPTD = DB::table('encaminhamento as enc')
+                ->select('at.id')
+                ->leftJoin('atendimentos as at','enc.id_atendimento','at.id')
+                ->where('id_assistido', $lista->id_assistido)
+                ->where('id_tipo_tratamento', 1)
+                ->where('status_encaminhamento', 4)
+                ->first();
 
                 if ($infoTrat->status == 1) {
                     DB::table('tratamento')->where('id', $idtr)->update([
                         'status' => 2
                     ]);
 
-                    if ($infoTrat->id_tipo_tratamento == 2) {
+                    if ($infoTrat->id_tipo_tratamento == 2 and $encaminhamentosPTD) {
                         DB::table('encaminhamento')->where('id', $encaminhamentosPTD->id)->update([
-                            'status_encaminhamento' => 5
+                            'status_encaminhamento' => 3
                         ]);
                     }
                 }
 
-
-                $presenca = isset($request->presenca) ? true : false;
 
                 $acompanhantes = isset($acompanhantes->nr_acompanhantes)  ? $acompanhantes->nr_acompanhantes : 0;
                 $nrAcomp = $acompanhantes + $request->acompanhantes;

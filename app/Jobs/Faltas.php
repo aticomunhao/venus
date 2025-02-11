@@ -52,6 +52,7 @@ class Faltas implements ShouldQueue
             ->select('tr.id', 'tr.id_reuniao')
             ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
             ->where('tr.dt_inicio', '<=', $data_atual) // Iniciados
+            ->where('tr.status','<', 3)//Apenas ativos
             ->where('rm.dia_semana', $dia_atual)
             ->where(function ($query) {
                 $query->where('rm.modificador', NULL); // Sem modificador algum

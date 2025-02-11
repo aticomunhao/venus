@@ -864,15 +864,14 @@ class AtendimentoFraternoController extends Controller
                 ->where('enc.id_tipo_tratamento', 1)
                 ->where('tr.status', '<', 3);
 
-            $idPTDDIAMO = $updatePTDDIAMO->select('tr.id')->first();
-
-            $updatePTDDIAMO->update([
-                'tr.dt_fim' => null
-            ]);
+                $idPTDDIAMO = $updatePTDDIAMO->select('tr.id')->first();
+                $updatePTDDIAMO->update([
+                    'tr.dt_fim' => null
+                ]);
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idPTDDIAMO,
+                'id_referencia' => $idPTDDIAMO->id,
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'id_acao' => 4, // se tornou Permanente
                 'id_origem' => 2, // Encaminhamento
@@ -956,7 +955,7 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idPTDDIAMO,
+                'id_referencia' => $idPTDPTI->id,
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'id_acao' => 4, // se tornou Permanente
                 'id_origem' => 2, // Encaminhamento
