@@ -30,7 +30,7 @@
                         <div class="col-2">
                             <label for="celular" class="form-label">Telefone</label>
                             <input type="text" class="form-control" name="celular"
-                                value="{{ $dadosP->descricao ? '(' . $dadosPo->descricao . ')' : '' }} {{ $dadosP->celular }}"
+                                value="{{ $dadosP->descricao ? '(' . $dadosP->descricao . ')' : '' }} {{ $dadosP->celular }}"
                                 disabled>
                         </div>
                         <div class="col-2">
