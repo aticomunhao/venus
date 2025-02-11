@@ -50,7 +50,7 @@
                         <br />
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                            <a href="/gerenciar-pti?grupo={{ $encaminhamentos ? current(current($encaminhamentos))->id_reuniao : ''}}" type="button" class="btn btn-secondary pesq">Limpar</a>
+                            <a href="/gerenciar-pti?grupo={{ count($encaminhamentos) > 0 ? current(current($encaminhamentos))->id_reuniao : ''}}" type="button" class="btn btn-secondary pesq">Limpar</a>
                             <button class="btn btn-primary pesq" type="submit">Confirmar</button>
                         </div>
 
@@ -121,7 +121,7 @@
                                         <div class="modal-footer mt-2">
                                             <button type="button" class="btn btn-danger"
                                                 data-bs-dismiss="modal">Cancelar</button>
-                                            <a type="button" class="btn btn-primary"
+                                            <a type="button" class="btn btn-primary"""
                                                 href="/alta-pti/{{ $encaminhamento->id }}">Confirmar
                                                 </a>
                                         </div>
