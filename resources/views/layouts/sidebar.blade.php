@@ -68,6 +68,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Membros</a>
                                 </li>
                             @endif
+                            @if (in_array(34, $acesso))
+                            <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros por Setor</a>
+                            </li>
+                            @endif
                             @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
                                         Reuniões</a>
@@ -165,6 +169,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Membros</a>
                                 </li>
                             @endif
+                            @if (in_array(34, $acesso))
+                            <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros por Setor</a>
+                            </li>
+                            @endif
                             @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
                                         Reuniões</a>
@@ -237,6 +245,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
                                         Membros</a></li>
                             @endif
+                            @if (in_array(34, $acesso))
+                            <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros por Setor</a>
+                            </li>
+                            @endif
                             @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
                                         Reuniões</a></li>
@@ -245,8 +257,6 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de Vagas em
                                         Grupos</a></li>
                             @endif
-                            <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros por Setor</a>
-                            </li>
                         </ul>
                     </li>
                 </ul>
