@@ -191,7 +191,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
                                 </li>
                             @endif
-                            @if (in_array(22, $acesso))
+                            @if (in_array(22, $acesso) or in_array(40, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Encaminhamentos</a>
                                 </li>
                             @endif
@@ -245,6 +245,8 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de Vagas em
                                         Grupos</a></li>
                             @endif
+                            <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros por Setor</a>
+                            </li>
                         </ul>
                     </li>
                 </ul>

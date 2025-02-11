@@ -275,7 +275,7 @@
                         </div>
                         </form>
 
-                        @if (in_array(42, session()->get('usuario.acesso')))
+                        @if (in_array(45, session()->get('usuario.acesso')))
                             @if ($listas->status < 3)
                                 <a href="/reverter-faltas-assistido/{{ $listas->idtr }}"
                                     class="btn btn-outline-warning btn-sm tooltips">
