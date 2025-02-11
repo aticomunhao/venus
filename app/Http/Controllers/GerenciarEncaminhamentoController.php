@@ -334,51 +334,99 @@ class GerenciarEncaminhamentoController extends Controller
                 //Caso ele tenha uma entrevista ou tratamento PTI ou PROAMO, é criado um tratamento permanente
                 if ((in_array(2, $countTratamentos) or in_array(4, $countTratamentos)) or (in_array(4, $countEntrevistas) or (in_array(6, $countEntrevistas))) or $tfiInfinito) {
 
-                    DB::table('tratamento AS tr')->insert([
+                    $idPTI = DB::table('tratamento AS tr')->insertGetId([
                         'id_reuniao' => $reu,
                         'id_encaminhamento' => $ide,
                         'status' => 1,
                         'dt_inicio' => $data_depois,
                     ]);
+
+                    // Insere no histórico a criação do atendimento
+                    DB::table('log_atendimentos')->insert([
+                        'id_referencia' => $idPTI,
+                        'id_usuario' => session()->get('usuario.id_usuario'),
+                        'id_acao' => 2, // foi criado
+                        'id_origem' => 3, // Tratamento
+                        'data_hora' => $data_atual
+                    ]);
                 } else { // Caso seja um PTD normal, ou PTD criado por Integral
-                    DB::table('tratamento AS tr')->insert([
+
+                    $idPTI = DB::table('tratamento AS tr')->insertGetId([
                         'id_reuniao' => $reu,
                         'id_encaminhamento' => $ide,
                         'status' => 1,
                         'dt_inicio' => $data_depois,
                         'dt_fim' => $data_depois->copy()->addWeek(7) // Adiciona 7 semanas, pois o PTD tem 8 semanas de duração,
                     ]);
+
+                    // Insere no histórico a criação do atendimento
+                    DB::table('log_atendimentos')->insert([
+                        'id_referencia' => $idPTI,
+                        'id_usuario' => session()->get('usuario.id_usuario'),
+                        'id_acao' => 2, // foi criado
+                        'id_origem' => 2, // Tratamento
+                        'data_hora' => $data_atual
+                    ]);
                 }
             } elseif ($tratID->id_tipo_tratamento == 2 or $tratID->id_tipo_tratamento == 4) { // PTI ou PROAMO
 
                 // Insere um tratamento infinito
-                DB::table('tratamento AS tr')->insert([
+                $idPROAMO = DB::table('tratamento AS tr')->insertGetId([
                     'id_reuniao' => $reu,
                     'id_encaminhamento' => $ide,
                     'status' => 1,
                     'dt_inicio' => $data_depois,
                 ]);
+
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $idPROAMO,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 2, // foi criado
+                    'id_origem' => 3, // Tratamento
+                    'data_hora' => $data_atual
+                ]);
             } elseif ($tratID->id_tipo_tratamento == 6) { // Tratamento Integral
 
                 // Insere um tratamento com data para ser finalizado
-                DB::table('tratamento AS tr')->insert([
+                $idLimite =  DB::table('tratamento AS tr')->insertGetId([
                     'id_reuniao' => $reu,
                     'id_encaminhamento' => $ide,
                     'status' => 1,
                     'dt_inicio' => $data_depois,
                     'dt_fim' => $data_depois->copy()->addWeek(5) // Adiciona 5 semanas, pois o Integral tem 6 semanas de duração
                 ]);
+
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $idLimite,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 2, // foi criado
+                    'id_origem' => 3, // Tratamento
+                    'data_hora' => $data_atual
+                ]);
             } else {
                 app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
                 return redirect('/gerenciar-encaminhamentos');
             }
+
             // Atualiza o encaminhamento para agendado
             DB::table('encaminhamento AS enc')
                 ->where('enc.id', $ide)
                 ->update([
                     'status_encaminhamento' => 2,
                 ]);
-        } elseif ($dia_atual > $dia_semana or $dia_atual == $dia_semana) { // Caso o dia seja superior ao dia de hoje
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $ide,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_observacao' => 2, // Agendado
+                'id_origem' => 2, // Encaminhamento
+                'data_hora' => $data_atual
+            ]);
+        } elseif ($dia_atual > $dia_semana or $dia_atual == $dia_semana) { // Caso o dia seja superior ao dia de hoje //XXX
             // Caso seja um tratamento PTD
             if ($tratID->id_tipo_tratamento == 1) {
                 //Caso ele tenha uma entrevista ou tratamento PTI ou PROAMO, é criado um tratamento permanente
@@ -539,7 +587,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->whereNot('enc.id', $ide)
                 ->get();
 
-                $emergencia = DB::table('presenca_cronograma as dt')
+            $emergencia = DB::table('presenca_cronograma as dt')
                 ->select(
                     'dt.id AS idp',
                     'dt.presenca',
@@ -579,7 +627,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->count();
 
 
-            return view('recepcao-integrada.historico-encaminhamento', compact('emergencia','result', 'list', 'faul', 'encaminhamentosAlternativos'));
+            return view('recepcao-integrada.historico-encaminhamento', compact('emergencia', 'result', 'list', 'faul', 'encaminhamentosAlternativos'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('tratamento-erro.erro-inesperado', compact('code'));
