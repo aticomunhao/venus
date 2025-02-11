@@ -250,6 +250,7 @@ Route::middleware('rotas:14')->group(function () {
     Route::get('/gerenciar-membro/{id}', [MembroController::class, 'index'])->name('lista');
     Route::get('/visualizar-membro/{id}', [MembroController::class, 'show'])->name('');
     Route::get('/gerenciar-grupos-membro', [MembroController::class, 'grupos'])->name('');
+    Route::get('/curriculo-medium/{id}', [RelatoriosController::class, 'curriculo']);
 });
 
 // Reverter Faltas de Membros
@@ -435,7 +436,6 @@ Route::middleware('rotas:33')->group(function () {
 Route::middleware('rotas:34')->group(function () {
     Route::any('/gerenciar-relatorio-pessoas-grupo', [RelatoriosController::class, 'indexmembro']);
     Route::any('/gerenciar-relatorio-setor-pessoas', [RelatoriosController::class, 'indexSetor']);
-    Route::get('/curriculo-medium/{id}', [RelatoriosController::class, 'curriculo']);
 });
 
 //Relatório Setores trabalhadores
