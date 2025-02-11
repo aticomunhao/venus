@@ -257,6 +257,12 @@ Route::middleware('rotas:42')->group(function () {
     Route::post('/remarcar-faltas-membro/{id}', [MembroController::class, 'remarcar'])->name('');
 });
 
+// Reverter Faltas de Assistidos
+Route::middleware('rotas:45')->group(function () {
+    Route::get('/reverter-faltas-assistido/{id}', [GerenciarTratamentosController::class, 'faltas'])->name('');
+    Route::any('/remarcar-faltas-assistido', [GerenciarTratamentosController::class, 'remarcar'])->name('');
+});
+
 // Incluir Membro Grupo
 Route::middleware('rotas:29')->group(function () {
     Route::get('/criar-membro-grupo/{id}', [MembroController::class, 'createGrupo'])->name('');
@@ -274,7 +280,7 @@ Route::middleware('rotas:15')->group(function () {
 });
 
 // Gerenciar Encaminhamentos
-Route::middleware("rotas:16-22-23")->group(function () {
+Route::middleware("rotas:16-22-23-40")->group(function () {
     Route::get('/gerenciar-encaminhamentos', [GerenciarEncaminhamentoController::class, 'index'])->name('gecdex');
     Route::get('/agendar/{ide}/{idtt}', [GerenciarEncaminhamentoController::class, 'agenda'])->name('gecage');
     Route::get('/agendar-tratamento/{ide}', [GerenciarEncaminhamentoController::class, 'tratamento'])->name('gtctra');
@@ -305,8 +311,6 @@ Route::middleware('rotas:18')->group(function () {
     Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
     Route::any('/incluir-avulso', [GerenciarTratamentosController::class, 'createAvulso']);
     Route::any('/armazenar-avulso', [GerenciarTratamentosController::class, 'storeAvulso']);
-    Route::get('/reverter-faltas-assistido/{id}', [GerenciarTratamentosController::class, 'faltas'])->name('');
-    Route::any('/remarcar-faltas-assistido', [GerenciarTratamentosController::class, 'remarcar'])->name('');
     Route::any('/inativar-tratamento/{id}', [GerenciarTratamentosController::class, 'destroy']);
 });
 
@@ -432,9 +436,17 @@ Route::middleware('rotas:34')->group(function () {
     Route::any('/gerenciar-relatorio-setor-pessoas', [RelatoriosController::class, 'indexSetor']);
 });
 
+//Relatório Setores trabalhadores
+Route::middleware('rotas:34')->group(function () {
+Route::get('/relatorio-setor-trabalhador', [RelatoriosController::class, 'trabalhadores'])->name('form.trab');
+});
+
 //Relatório de Atendimentos
 Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
 Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
+
+//Relatório de Balanço de Voluntários
+Route::any('/gerenciar-balanco-voluntarios', [RelatoriosController::class, 'BalancoVoluntarios']);
 
 //Relatório de Reuniões
 Route::middleware('rotas:35')->group(function () {

@@ -192,7 +192,7 @@ class MembroController extends Controller
 
         $now = Carbon::now()->format('Y-m-d');
         $seletedCronograma = DB::table('cronograma as cro')->where('id', $id)->first();
-        $cronogramasPessoa = DB::table('membro')->where('id_associado', $request->input('id_associado'))->pluck('id_cronograma');
+        $cronogramasPessoa = DB::table('membro')->whereNull('dt_fim')->where('id_associado', $request->input('id_associado'))->pluck('id_cronograma');
 
         $repeat = DB::table('cronograma AS rm')
             ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
@@ -378,7 +378,10 @@ class MembroController extends Controller
         $now = Carbon::now()->format('Y-m-d');
         $seletedCronograma = DB::table('cronograma as cro')->where('id', $request->input('id_reuniao'))->first();
 
-        $cronogramasPessoa = DB::table('membro')->where('id_associado', $request->input('id_associado'))->pluck('id_cronograma');
+        $cronogramasPessoa = DB::table('membro')
+            ->where('id_associado', $request->input('id_associado'))
+            ->whereNull('dt_fim')
+            ->pluck('id_cronograma');
 
         $repeat = DB::table('cronograma AS rm')
             ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')

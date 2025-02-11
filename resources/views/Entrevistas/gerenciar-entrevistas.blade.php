@@ -52,10 +52,9 @@
                                 <input class="btn btn-light btn-sm me-md-2"
                                     style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
                                 {{-- Botão de pesquisar --}}
-                                <a href="/gerenciar-entrevistas">
-                                    <input class="btn btn-light btn-sm me-md-2"
-                                        style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar">
-                                    {{-- Botão de limpar pesquisa --}}
+                                <a href="/gerenciar-entrevistas" class="btn btn-light btn-sm me-md-2"
+                                        style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button">
+                                    {{-- Botão de limpar pesquisa --}}Limpar
                                 </a>
                                 <button onclick="imprimirTela()" class="btn btn-light btn-sm"
                                     style="box-shadow: 1px 2px 5px #000000; margin:5px;">
@@ -63,7 +62,6 @@
                                 </button>
 
                             </div>
-
 
                         </div>
                     </form>
@@ -124,8 +122,10 @@
                                         Inativado
                                     @elseif ($informacao->status_encaminhamento_id == 5 and $informacao->id_tipo_entrevista == 6)
                                         Aguardando Requisitos
+                                    @elseif ($informacao->status_encaminhamento_id == 6)
+                                        Aguardando Manutenção
                                     @elseif ($informacao->status === 1)
-                                        Aguardando agendamento
+                                        Aguardando Agendamento
                                     @else
                                         {{ $informacao->d1 }}
                                     @endif
@@ -147,7 +147,8 @@
 
                                     @if (
                                         $informacao->status != 1 or
-                                            $informacao->status_encaminhamento_id > 3 or
+                                            ($informacao->status_encaminhamento_id != 6 and
+                                            $informacao->status_encaminhamento_id > 3) or
                                             $informacao->status_encaminhamento_id == 5 and $informacao->id_tipo_entrevista == 6)
                                         {{-- Inicio botao Agendar --}}
                                         <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
@@ -229,7 +230,7 @@
                                     </div>
 
                                     {{-- Inativar encaminhamento --}}
-                                    @if ($informacao->status_encaminhamento_id < 3 or $informacao->status_encaminhamento_id == 5)
+                                    @if ($informacao->status_encaminhamento_id < 3 or $informacao->status_encaminhamento_id == 5 or $informacao->status_encaminhamento_id == 6)
                                         <button data-bs-toggle="modal" data-bs-target="#inativar{{ $informacao->ide }}"
                                             type="button" class="btn btn-outline-danger btn-sm tooltips">
                                             <span class="tooltiptext">Inativar</span>
@@ -324,8 +325,6 @@
                                         </div>
                                     </div>
                                     {{-- Fim Modal AFE --}}
-
-
 
                                 </td>
                                 </tr>

@@ -610,6 +610,7 @@ class AtendimentoFraternoController extends Controller
     public function enc_trat(Request $request, $idat, $idas)
     {
         $now = Carbon::today(); // datetime de agora
+        $dt_hora = Carbon::now(); // datetime de agora
 
         // Transforma o "on" do toggle em boolean
         $harmonia = isset($request->pph) ? 1 : 0;
@@ -662,7 +663,7 @@ class AtendimentoFraternoController extends Controller
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'id_acao' => 2, // foi criado
                 'id_origem' => 2, // Encaminhamento
-                'data_hora' => $now
+                'data_hora' => $dt_hora
             ]);
 
 
@@ -686,7 +687,7 @@ class AtendimentoFraternoController extends Controller
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'id_acao' => 2, // foi criado
                 'id_origem' => 2, // Encaminhamento
-                'data_hora' => $now
+                'data_hora' => $dt_hora
             ]);
 
             app('flasher')->addSuccess('O encaminhamento para Grupo de Harmonização foi criado com sucesso.');
@@ -712,7 +713,7 @@ class AtendimentoFraternoController extends Controller
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'id_acao' => 2, // foi criado
                 'id_origem' => 2, // Encaminhamento
-                'data_hora' => $now
+                'data_hora' => $dt_hora
             ]);
 
 
@@ -739,7 +740,7 @@ class AtendimentoFraternoController extends Controller
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'id_acao' => 2, // foi criado
                 'id_origem' => 2, // Encaminhamento
-                'data_hora' => $now
+                'data_hora' => $dt_hora
             ]);
 
             app('flasher')->addSuccess('O encaminhamento para Grupo de Dependência Química foi criado com sucesso.');
@@ -763,7 +764,7 @@ class AtendimentoFraternoController extends Controller
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'id_acao' => 2, // foi criado
                 'id_origem' => 2, // Encaminhamento
-                'data_hora' => $now
+                'data_hora' => $dt_hora
             ]);
 
 
