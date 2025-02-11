@@ -131,20 +131,20 @@
                                 </button>
                             @endif
 
-                            @if ($membros->status == 'Ativo')
+                            {{-- @if ($membros->status == 'Ativo') --}}
                                 <!-- Botão para deletar -->
                                 <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
                                     data-bs-target="#confirmDelete{{ $membros->idm }}">
                                     <span class="tooltiptext">Deletar</span>
                                     <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                                @else
-                                <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                {{-- @else
+                                 <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
                                     data-bs-target="#confirmDelete{{ $membros->idm }}" disabled>
                                     <span class="tooltiptext">Deletar</span>
                                     <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                            @endif
+                            @endif --}}
                     </td>
                 </tr>
             @endif

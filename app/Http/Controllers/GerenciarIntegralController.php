@@ -18,7 +18,7 @@ class GerenciarIntegralController extends Controller
        // try {
 
             // Retorna o dia de hoje, para o modal de presença
-            $now = Carbon::today();
+            $now = Carbon::today()->format('Y-m-d');
 
             // Retorna todos os cronogramas de tratamento Integral
             $dirigentes = DB::table('membro as mem')
@@ -106,7 +106,7 @@ class GerenciarIntegralController extends Controller
                 } else {
                     $encaminhamento->contagem = null;
                 }
-            } 
+            }
             // Usado para Macas
             $vagas = DB::table('cronograma')->where('id', $selected_grupo)->pluck('max_atend')->toArray(); // Retorna o número máximo de assistidos de um cronograma
             $ocupadas = DB::table('tratamento')->whereNot('maca', null)->where('id_reuniao', $selected_grupo)->where('status', '<', 3)->pluck('maca')->toArray(); // Retorna um array com todas as macas ocuopadas do grupo
@@ -117,7 +117,7 @@ class GerenciarIntegralController extends Controller
         //     app('flasher')->addError("Você não tem autorização para acessar esta página");
         //     return redirect('/login/valida');
         // }
-      
+
     }
 
     /**

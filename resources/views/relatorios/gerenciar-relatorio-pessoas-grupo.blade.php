@@ -17,7 +17,7 @@
                         <div class="row">
                             <div class="col">
                                 Setor
-                                <select class="form-select select2" id="setor" name="setor">
+                                <select class="form-select select2" id="setor" name="setor"data-width="100%">
                                     <option value="">Todos</option>
                                     @foreach ($setor as $setores)
                                         <option value="{{ $setores->id }}" {{ request('setor') == $setores->id ? 'selected' : '' }}>
@@ -28,7 +28,7 @@
                             </div>
                             <div class="col">
                                 Grupo
-                                <select class="form-select select2" id="grupo" name="grupo">
+                                <select class="form-select select2" id="grupo" name="grupo"data-width="100%">
                                     <option value="">Todos</option>
                                     @foreach ($grupo as $grupos)
                                         <option value="{{ $grupos->id }}" {{ request('grupo') == $grupos->id ? 'selected' : '' }}>
@@ -37,9 +37,9 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-2">
+                            <div class="col">
                                 Dia
-                                <select class="form-select select2" id="dia" name="dia">
+                                <select class="form-select select2" id="dia" name="dia"data-width="100%">
                                     <option value="">Todos</option>
                                     @foreach ($dias as $dia)
                                         <option value="{{ $dia->id }}" {{ request('dia') == $dia->id ? 'selected' : '' }}>
@@ -48,9 +48,12 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-2">
+                        </div>
+                        <br>
+                            <div class="row">
+                            <div class="col">
                                 Função
-                                <select class="form-select select2" id="funcao" name="funcao">
+                                <select class="form-select select2" id="funcao" name="funcao"data-width="100%">
                                     <option value="">Todos</option>
                                     @foreach ($funcao as $item)
                                         <option value="{{ $item->id }}" {{ request('funcao') == $item->id ? 'selected' : '' }}>
@@ -60,8 +63,20 @@
                                 </select>
                             </div>
                             <div class="col">
-                                Nome do Membro
-                                <select class="form-select select2" id="nome" name="nome">
+                                <label for="status">Status</label>
+                                <select class="form-select select2" id="status" name="status" data-width="100%">
+                                    <option value="">Todos</option>
+                                    @foreach ($statu as $status)
+                                        <option value="{{ $status->nome }}"
+                                            {{ request('status') == $status->nome ? 'selected' : '' }}>
+                                            {{ $status->nome }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col">
+                                Membro
+                                <select class="form-select select2" id="nome" name="nome"data-width="100%">
                                     <option value="">Todos</option>
                                     @foreach ($atendentesParaSelect as $atendente)
                                         <option value="{{ $atendente->ida }}" {{ request('nome') == $atendente->ida ? 'selected' : '' }}>
@@ -81,26 +96,26 @@
             </div>
         </div>
 
-
         <div class="card">
             <div class="card-body">
                 <div div class="accordion" id="accordionExample">
-               
-                
+
                 @foreach ($result as $key => $membro)
-                
+
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{reset($membro)->id}}" aria-expanded="false" aria-controls="collapseOne">
                         {{$key}}
                       </button>
                     </h2>
+                    {{-- Membros Ativos: {{ $result}} --}}
                     <div id="collapse{{reset($membro)->id}}" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
                       <div class="accordion-body">
                         <table class="table table-striped table-bordered border-secondary table-hover align-middle">
                             <thead style="text-align: center;">
                                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                                     <th>GRUPO</th>
+                                    <th>STATUS</th>
                                     <th>FUNÇÃO</th>
                                     <th>DIA</th>
                                     <th>HORA INÍCIO</th>
@@ -111,8 +126,9 @@
                             <tbody style="font-size: 14px; color:#000000; text-align: center;">
                                 @foreach ($membro as $dado)
                                     <tr>
-                                        
+
                                         <td>{{ $dado->grupo_nome }}</td>
+                                        <td>{{ $dado->status }}</td>
                                         <td>{{ $dado->nome_funcao }}</td>
                                         <td>{{ $dado->dia_nome }}</td>
                                         <td>{{ $dado->h_inicio }}</td>
@@ -125,20 +141,20 @@
                       </div>
                     </div>
                   </div>
-        
-               
-                        
-                  
-               
+
+
+
+
+
             @endforeach
             </div>
             </div>
           </div>
-       
+
             <br />
           {{ $result->appends(request()->query())->links('pagination::bootstrap-5') }}
     </div class="d-flex justify-content-center">
-           
+
         </div>
     </div>
     <script>
@@ -146,8 +162,8 @@
             if({{request('dia') === null }}){
                 $('#dia').prop('selectedIndex', 0);
             }
-            
+
         });
-        
+
     </script>
 @endsection

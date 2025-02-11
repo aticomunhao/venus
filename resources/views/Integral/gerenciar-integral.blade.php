@@ -86,7 +86,13 @@
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
                                 {{ $encaminhamento->nome }}</td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
-                                {{ $encaminhamento->contagem ? $encaminhamento->contagem : 'Permanente' }}
+                                @if($encaminhamento->contagem == null and $encaminhamento->contagem !== 0)
+                                Permanente
+                                @elseif ( $encaminhamento->contagem == 0 )
+                                -
+                                @else
+                                {{ $encaminhamento->contagem }}
+                                @endif
                             </td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
                                 {{ $encaminhamento->status }}</td>
@@ -136,8 +142,7 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-danger"
                                                         data-bs-dismiss="modal">Cancelar</button>
-
-                                                    @if ($encaminhamento->dt_fim == $now or $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '-1 week')))
+                                                    @if ($encaminhamento->dt_fim == $now or $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '+1 week')))
                                                         <button type="button" class="btn btn-primary openModal"
                                                             id="openModal" data-bs-toggle="modal" data-bs-dismiss="modal"
                                                             data-bs-target="#staticBackdrop{{ $encaminhamento->id }}">
@@ -168,7 +173,7 @@
                                                 <label for="recipient-name" class="col-form-label"
                                                     style="font-size:17px">Este é
                                                     o {{ $encaminhamento->dt_fim == $now ? 'último' : null }}
-                                                    {{ $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '-1 week')) ? 'penúltimo' : null }}
+                                                    {{ $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '+1 week')) ? 'penúltimo' : null }}
                                                     dia de tratamento
                                                     de:<br /><span
                                                         style="color: rgb(39, 91, 189)">{{ $encaminhamento->nome_completo }}</span></label>
