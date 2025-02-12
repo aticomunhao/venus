@@ -610,6 +610,7 @@ class AtendimentoFraternoController extends Controller
     public function enc_trat(Request $request, $idat, $idas)
     {
         $now = Carbon::today(); // datetime de agora
+        $dt_hora = Carbon::now(); // datetime de agora
 
         // Transforma o "on" do toggle em boolean
         $harmonia = isset($request->pph) ? 1 : 0;
@@ -649,12 +650,22 @@ class AtendimentoFraternoController extends Controller
         } else if (in_array(2, $countEncaminhamentos) and $desobsessivo) { // Confere se já tem PTI
             app('flasher')->addWarning('Existe um encaminhamento PTI ativo para esta pessoa!');
         } else if ($desobsessivo) {
-            DB::table('encaminhamento AS enc')->insert([
+            $idPTD = DB::table('encaminhamento AS enc')->insertGetId([
                 'id_tipo_encaminhamento' => 2,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 1,
                 'status_encaminhamento' =>  1
             ]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idPTD,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 2, // foi criado
+                'id_origem' => 2, // Encaminhamento
+                'data_hora' => $dt_hora
+            ]);
+
 
             app('flasher')->addSuccess('O encaminhamento para PTD foi criado com sucesso.');
         }
@@ -663,11 +674,20 @@ class AtendimentoFraternoController extends Controller
         if (in_array(3, $countEncaminhamentos) and $harmonia) {
             app('flasher')->addWarning('Já existe um encaminhamento para o PTH ativo para esta pessoa!');
         } else if ($harmonia) {
-            DB::table('encaminhamento AS enc')->insert([
+            $idPTH = DB::table('encaminhamento AS enc')->insertGetId([
                 'id_tipo_encaminhamento' => 2,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 3,
                 'status_encaminhamento' =>  1
+            ]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idPTH,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 2, // foi criado
+                'id_origem' => 2, // Encaminhamento
+                'data_hora' => $dt_hora
             ]);
 
             app('flasher')->addSuccess('O encaminhamento para Grupo de Harmonização foi criado com sucesso.');
@@ -680,12 +700,22 @@ class AtendimentoFraternoController extends Controller
         //     app('flasher')->addWarning('Já existe um encaminhamento para o Grupo Acolher ativo para esta pessoa!');
         // }
         if ($acolher) {
-            DB::table('encaminhamento AS enc')->insert([
+            $idAcolher = DB::table('encaminhamento AS enc')->insertGetId([
                 'id_tipo_encaminhamento' => 3,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 7,
                 'status_encaminhamento' =>  1
             ]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idAcolher,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 2, // foi criado
+                'id_origem' => 2, // Encaminhamento
+                'data_hora' => $dt_hora
+            ]);
+
 
             app('flasher')->addSuccess('O encaminhamento para Grupo Acolher foi criado com sucesso.');
         }
@@ -696,11 +726,21 @@ class AtendimentoFraternoController extends Controller
         //     app('flasher')->addWarning('Já existe um encaminhamento para o Grupo de Dependência Química ativo para esta pessoa!');
         // }
         if ($quimica) {
-            DB::table('encaminhamento AS enc')->insert([
+            $idQuimica = DB::table('encaminhamento AS enc')->insertGetId([
                 'id_tipo_encaminhamento' => 3,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 9,
                 'status_encaminhamento' =>  1
+            ]);
+
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idQuimica,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 2, // foi criado
+                'id_origem' => 2, // Encaminhamento
+                'data_hora' => $dt_hora
             ]);
 
             app('flasher')->addSuccess('O encaminhamento para Grupo de Dependência Química foi criado com sucesso.');
@@ -711,12 +751,22 @@ class AtendimentoFraternoController extends Controller
         //     app('flasher')->addWarning('Já existe um encaminhamento para o Grupo Viver ativo para esta pessoa!');
         // }
         if ($viver) {
-            DB::table('encaminhamento AS enc')->insert([
+            $idViver =  DB::table('encaminhamento AS enc')->insertGetId([
                 'id_tipo_encaminhamento' => 3,
                 'id_atendimento' => $idat,
                 'id_tipo_tratamento' => 10,
                 'status_encaminhamento' =>  1
             ]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idViver,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 2, // foi criado
+                'id_origem' => 2, // Encaminhamento
+                'data_hora' => $dt_hora
+            ]);
+
 
             app('flasher')->addSuccess('O encaminhamento para Grupo Viver foi criado com sucesso.');
         }
