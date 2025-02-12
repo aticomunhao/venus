@@ -236,7 +236,7 @@ class GerenciarTratamentosController extends Controller
             $lista = DB::table('tratamento AS tr')
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                 ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-                ->leftJoin('atendimentos as at','enc.id_atendimento','at.id')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
                 ->where('tr.id', $idtr)
                 ->first();
 
@@ -261,12 +261,12 @@ class GerenciarTratamentosController extends Controller
 
 
                 $encaminhamentosPTD = DB::table('encaminhamento as enc')
-                ->select('at.id')
-                ->leftJoin('atendimentos as at','enc.id_atendimento','at.id')
-                ->where('id_assistido', $lista->id_assistido)
-                ->where('id_tipo_tratamento', 1)
-                ->where('status_encaminhamento', 4)
-                ->first();
+                    ->select('at.id')
+                    ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                    ->where('id_assistido', $lista->id_assistido)
+                    ->where('id_tipo_tratamento', 1)
+                    ->where('status_encaminhamento', 4)
+                    ->first();
 
                 if ($infoTrat->status == 1) {
                     DB::table('tratamento')->where('id', $idtr)->update([
@@ -416,7 +416,7 @@ class GerenciarTratamentosController extends Controller
 
 
         // dd($result, $pessoa);
-        $list = DB::table('tratamento AS tr')
+        $list = DB::table('presenca_cronograma AS dt')
             ->select(
                 'enc.id AS ide',
                 'enc.id_tipo_encaminhamento',
@@ -430,9 +430,9 @@ class GerenciarTratamentosController extends Controller
                 'gp.nome',
                 'tr.dt_inicio as dt_inicio_tr'
             )
+            ->leftJoin('tratamento AS tr', 'dt.id_tratamento', 'tr.id')
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-            ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
             ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
             ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
             ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
@@ -473,11 +473,23 @@ class GerenciarTratamentosController extends Controller
             ->get();
 
 
-        $list = DB::table('tratamento AS tr')
-            ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp', 'dt.presenca', 'dc.data', 'gp.nome', 'dt.id')
+        $list = DB::table('presenca_cronograma AS dt')
+            ->select(
+                'enc.id AS ide',
+                'enc.id_tipo_encaminhamento',
+                'enc.dh_enc',
+                'enc.status_encaminhamento AS tst',
+                'tr.id AS idtr',
+                'rm.h_inicio AS rm_inicio',
+                'dt.id AS idp',
+                'dt.presenca',
+                'dc.data',
+                'gp.nome',
+                'dt.id'
+            )
+            ->leftJoin('tratamento AS tr', 'dt.id_tratamento', 'tr.id')
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-            ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
             ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
             ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
             ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
@@ -537,7 +549,7 @@ class GerenciarTratamentosController extends Controller
 
         return redirect('/gerenciar-tratamentos');
     }
-    
+
     public function job()
     {
 
