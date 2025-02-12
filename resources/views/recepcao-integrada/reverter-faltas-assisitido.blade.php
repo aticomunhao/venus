@@ -41,11 +41,19 @@
                                     </div>
                                 </div>
                             <legend>
-                                <br>
-
+                                
                                 <!-- Dados de Presenças -->
+                                @if($list)
+                                <br>
                                 <legend style="font-size:14px; font-weight:bold;">Dados de Presenças</legend>
-
+                                @else
+                                <br />
+                                <br />
+                                <center>
+                                    <legend style="font-size:14px; font-weight:bold;">Nenhuma Presença/Falta Registrada</legend>
+                                </center>
+                                <br />
+                                @endif
 
                                 <div class="accordion" id="accordionExample">
                                     @foreach ($list as $key => $presenca)
