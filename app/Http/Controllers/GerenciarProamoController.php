@@ -15,7 +15,7 @@ class GerenciarProamoController extends Controller
     {
 
         // Retorna o dia de hoje, para o modal de presença
-        $now = Carbon::today();
+        $now = Carbon::today()->format('Y-m-d');
 
         // Retorna todos os cronogramas de tratamento Integral
         $dirigentes = DB::table('membro as mem')
@@ -97,8 +97,14 @@ class GerenciarProamoController extends Controller
                 ->select('tr.id')
                 ->first();
 
-            $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
+                $data = DB::table('presenca_cronograma as pc')
+                ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+                ->where('id_tratamento', $encaminhamento->id)
+                ->orderBy('dc.data', 'DESC')
+                ->first();
 
+            $encaminhamento->ptd  = $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
+            $encaminhamento->data = $data ? $data->data : null;
 
             $encaminhamento->contagem = $hoje->diffInDays(Carbon::parse($encaminhamento->dt_inicio));
         }
