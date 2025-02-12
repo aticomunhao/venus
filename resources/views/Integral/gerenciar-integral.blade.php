@@ -101,13 +101,16 @@
 
                             <td>
 
-
-
-                                <button type="button" class="btn btn-outline-success tooltips btn-sm"
-                                    data-bs-toggle="modal" data-bs-target="#presenca{{ $encaminhamento->id }}">
-                                    <span class="tooltiptext">Presença</span><i class="bi bi-exclamation-triangle"
-                                        style="font-size: 1rem; color:#000;"></i></button>
-
+                            @if ($encaminhamento->data == $now)
+                            <button type="button" class="btn btn-success tooltips btn-sm"
+                            ><span class="tooltiptext">Presente</span><i class="bi bi-check2-circle"
+                                style="font-size: 1rem; color:#FFF;"></i></button>
+                            @else
+                            <button type="button" class="btn btn-outline-danger tooltips btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#presenca{{ $encaminhamento->id }}">
+                            <span class="tooltiptext">Ausente</span><i class="bi bi-exclamation-triangle"
+                                style="font-size: 1rem; color:#000;"></i></button>
+                            @endif
 
                                 {{-- inicio da modal de presença --}}
                                 <div class="modal fade closes" id="presenca{{ $encaminhamento->id }}" tabindex="-1"
