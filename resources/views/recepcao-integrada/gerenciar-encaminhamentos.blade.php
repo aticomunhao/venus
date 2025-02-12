@@ -81,10 +81,6 @@
                         <a href="/gerenciar-tratamentos" class="btn btn-warning btn-sm"
                             style="box-shadow: 1px 2px 5px #000000; margin:5px;">Tratamentos</a>
                     </div>
-                    <div class="col-2">
-                        <a href="/relatorio-vagas-grupos" class="btn btn-primary btn-sm"
-                            style="box-shadow: 1px 2px 5px #000000; margin:5px;">Vagas Disponíveis</a>
-                    </div>
                     <div class="col d-flex justify-content-end">
                         <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#filtros"
                             style="box-shadow: 3px 5px 6px #000000; margin:5px;">
@@ -92,8 +88,6 @@
                         </button>
                     </div>
                 </div>
-
-
             </div>
         </div>
     <br />
