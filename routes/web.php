@@ -251,6 +251,7 @@ Route::middleware('rotas:14')->group(function () {
     Route::get('/visualizar-membro/{id}', [MembroController::class, 'show'])->name('');
     Route::get('/gerenciar-grupos-membro', [MembroController::class, 'grupos'])->name('');
     Route::get('/curriculo-medium/{id}', [RelatoriosController::class, 'curriculo']);
+    Route::get('/pdf-curriculo-medium/{id}', [RelatoriosController::class, 'pdfCurriculo']);
 });
 
 // Reverter Faltas de Membros
@@ -419,7 +420,7 @@ Route::middleware('rotas:30')->group(function () {
 Route::middleware('rotas:31')->group(function () {
     Route::any('/visualizar-presenca-afi', [RelatoriosController::class, 'visualizarAFI']);
     Route::any('/gerenciar-relatorio-afi', [RelatoriosController::class, 'indexAFI']);
-    Route::any('/teste', [RelatoriosController::class, 'teste']);
+    Route::any('/teste/{id}', [RelatoriosController::class, 'teste']);
 });
 
 //Relatório de Temáticas
