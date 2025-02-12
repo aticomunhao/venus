@@ -250,7 +250,6 @@ Route::middleware('rotas:14')->group(function () {
     Route::get('/gerenciar-membro/{id}', [MembroController::class, 'index'])->name('lista');
     Route::get('/visualizar-membro/{id}', [MembroController::class, 'show'])->name('');
     Route::get('/gerenciar-grupos-membro', [MembroController::class, 'grupos'])->name('');
-    Route::get('/curriculo-medium/{id}', [RelatoriosController::class, 'curriculo']);
 });
 
 // Reverter Faltas de Membros
@@ -419,7 +418,7 @@ Route::middleware('rotas:30')->group(function () {
 Route::middleware('rotas:31')->group(function () {
     Route::any('/visualizar-presenca-afi', [RelatoriosController::class, 'visualizarAFI']);
     Route::any('/gerenciar-relatorio-afi', [RelatoriosController::class, 'indexAFI']);
-    Route::any('/teste', [RelatoriosController::class, 'teste']);
+    Route::any('/teste/{id}', [RelatoriosController::class, 'teste']);
 });
 
 //Relatório de Temáticas
@@ -443,15 +442,25 @@ Route::middleware('rotas:34')->group(function () {
 Route::get('/relatorio-setor-trabalhador', [RelatoriosController::class, 'trabalhadores'])->name('form.trab');
 });
 
-//Relatório de Atendimentos
-Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
-Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
-
-//Relatório de Balanço de Voluntários
-Route::any('/gerenciar-balanco-voluntarios', [RelatoriosController::class, 'BalancoVoluntarios']);
-
 //Relatório de Reuniões
 Route::middleware('rotas:35')->group(function () {
     Route::any('/gerenciar-relatorio-reuniao', [RelatoriosController::class, 'relatorioReuniao']);
     Route::any('/visualizar-relatorio-reuniao/{id}', [RelatoriosController::class, 'visualizarReuniao']);
+});
+
+//Relatório de Atendimentos
+Route::middleware('rotas:46')->group(function () {
+    Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
+    Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
+});
+
+//Relatório de Balanço de Voluntários
+Route::middleware('rotas:47')->group(function () {
+    Route::any('/gerenciar-balanco-voluntarios', [RelatoriosController::class, 'BalancoVoluntarios']);
+});
+
+//Relatório de Curriculo de Membros
+Route::middleware('rotas:48')->group(function () {
+    Route::get('/curriculo-medium/{id}', [RelatoriosController::class, 'curriculo']);
+    Route::get('/pdf-curriculo-medium/{id}', [RelatoriosController::class, 'pdfCurriculo']);
 });

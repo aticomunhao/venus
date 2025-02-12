@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\DiasCronograma;
 use App\Jobs\DiasCronogramaOntem;
+use App\Jobs\EntrevistaProamo;
 use App\Jobs\Faltas;
 use App\Jobs\FaltasTrabalhador;
 use App\Jobs\FimSemanas;
@@ -558,6 +559,7 @@ class GerenciarTratamentosController extends Controller
         LimiteFalta::dispatch();
         FimSemanas::dispatch();
         Faltas::dispatch();
+        EntrevistaProamo::dispatch();
         FaltasTrabalhador::dispatch();
 
         return redirect()->back();
