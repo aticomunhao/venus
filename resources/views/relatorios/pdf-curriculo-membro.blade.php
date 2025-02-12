@@ -39,9 +39,10 @@ function customUcwords($string, $ignoreWords = ['de', 's']) {
     <thead>
         <tr>
             <th style="border: 1px solid black; padding: 5px;">GRUPO</th>
+            <th style="border: 1px solid black; padding: 5px;">TRABALHO</th>
             <th style="border: 1px solid black; padding: 5px;">DIA</th>
-            <th style="border: 1px solid black; padding: 5px;">HORA INÍCIO</th>
-            <th style="border: 1px solid black; padding: 5px;">HORA FIM</th>
+            <th style="border: 1px solid black; padding: 5px;">INÍCIO</th>
+            <th style="border: 1px solid black; padding: 5px;">FIM</th>
             <th style="border: 1px solid black; padding: 5px;">SALA</th>
             <th style="border: 1px solid black; padding: 5px;">SETOR</th>
             <th style="border: 1px solid black; padding: 5px;">FUNÇÃO</th>
@@ -53,10 +54,11 @@ function customUcwords($string, $ignoreWords = ['de', 's']) {
     <tbody style="text-align: center">
         @foreach($membros as $membro)
             <tr>
-                <td style="border: 1px solid black; padding: 5px; width: 150px">{{ $membro->nome_grupo }}</td>
-                <td style="border: 1px solid black; padding: 5px; width: 30px">{{ $membro->dia }}</td>
-                <td style="border: 1px solid black; padding: 5px; width: 10px">{{ date('H:i', strtotime($membro->h_inicio)) }}</td>
-                <td style="border: 1px solid black; padding: 5px; width: 10px">{{ date('H:i', strtotime($membro->h_fim)) }}</td>
+                <td style="border: 1px solid black; padding: 5px;">{{ $membro->nome_grupo }}</td>
+                <td style="border: 1px solid black; padding: 5px;">{{ $membro->trabalho }}</td>
+                <td style="border: 1px solid black; padding: 5px;">{{ $membro->dia }}</td>
+                <td style="border: 1px solid black; padding: 5px;">{{ date('H:i', strtotime($membro->h_inicio)) }}</td>
+                <td style="border: 1px solid black; padding: 5px;">{{ date('H:i', strtotime($membro->h_fim)) }}</td>
                 <td style="border: 1px solid black; padding: 5px;">{{ $membro->sala }}</td>
                 <td style="border: 1px solid black; padding: 5px;">{{ $membro->sigla }}</td>
                 <td style="border: 1px solid black; padding: 5px;">{{ $membro->nome_funcao }}</td>

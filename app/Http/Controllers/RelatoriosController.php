@@ -1497,6 +1497,7 @@ class RelatoriosController extends Controller
                 'tf.nome as nome_funcao',
                 'm.dt_inicio',
                 'm.dt_fim',
+                'tt.descricao as trabalho',
                 DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END) as status_membro"),
                 DB::raw("(CASE WHEN cro.modificador = 3 THEN 'Experimental' WHEN cro.modificador = 4 THEN 'Em Férias' WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status"),
 
@@ -1509,6 +1510,7 @@ class RelatoriosController extends Controller
             ->leftJoin('tipo_status_grupo as tpg', 'cro.modificador', 'tpg.id')
             ->leftJoin('associado as a', 'm.id_associado', 'a.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+            ->leftJoin('tipo_tratamento as tt', 'cro.id_tipo_tratamento', 'tt.id')
             ->where('a.id', $dadosP->id)
             ->get()
             ->toArray();
@@ -1519,7 +1521,7 @@ class RelatoriosController extends Controller
         }
         $membros = $bufferMembros;
 
-        return view('relatorios.curriculo-membro', compact('membros', 'dadosP'));
+        return view('relatorios.curriculo-membro', compact('membros', 'dadosP', 'id'));
     }
 
     function pdfCurriculo(String $id)
@@ -1557,6 +1559,7 @@ class RelatoriosController extends Controller
                 'tf.nome as nome_funcao',
                 'm.dt_inicio',
                 'm.dt_fim',
+                'tt.descricao as trabalho',
                 DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END) as status_membro"),
                 DB::raw("(CASE WHEN cro.modificador = 3 THEN 'Experimental' WHEN cro.modificador = 4 THEN 'Em Férias' WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status"),
 
@@ -1569,6 +1572,7 @@ class RelatoriosController extends Controller
             ->leftJoin('tipo_status_grupo as tpg', 'cro.modificador', 'tpg.id')
             ->leftJoin('associado as a', 'm.id_associado', 'a.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+            ->leftJoin('tipo_tratamento as tt', 'cro.id_tipo_tratamento', 'tt.id')
             ->where('a.id', $dadosP->id)
             ->get()
             ->toArray();
@@ -1576,8 +1580,8 @@ class RelatoriosController extends Controller
          //   dd($membros, $dadosP);
 
 
-        $pdf = Pdf::loadView('relatorios.pdf-curriculo-membro', compact('membros', 'dadosP'));
-        return $pdf->stream( $dadosP->nome_completo .'.pdf');
+        $pdf = Pdf::loadView('relatorios.pdf-curriculo-membro', compact('membros', 'dadosP'))->setPaper('a4', 'landscape');
+        return $pdf->download( $dadosP->nome_completo .'.pdf');
 
     }
 }
