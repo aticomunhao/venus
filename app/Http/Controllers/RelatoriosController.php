@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RelatoriosController extends Controller
 {
@@ -1496,6 +1497,7 @@ class RelatoriosController extends Controller
                 'tf.nome as nome_funcao',
                 'm.dt_inicio',
                 'm.dt_fim',
+                'tt.descricao as trabalho',
                 DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END) as status_membro"),
                 DB::raw("(CASE WHEN cro.modificador = 3 THEN 'Experimental' WHEN cro.modificador = 4 THEN 'Em Férias' WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status"),
 
@@ -1508,6 +1510,7 @@ class RelatoriosController extends Controller
             ->leftJoin('tipo_status_grupo as tpg', 'cro.modificador', 'tpg.id')
             ->leftJoin('associado as a', 'm.id_associado', 'a.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+            ->leftJoin('tipo_tratamento as tt', 'cro.id_tipo_tratamento', 'tt.id')
             ->where('a.id', $dadosP->id)
             ->get()
             ->toArray();
@@ -1518,7 +1521,67 @@ class RelatoriosController extends Controller
         }
         $membros = $bufferMembros;
 
-        return view('relatorios.curriculo-membro', compact('membros', 'dadosP'));
+        return view('relatorios.curriculo-membro', compact('membros', 'dadosP', 'id'));
     }
-    
+
+    function pdfCurriculo(String $id)
+    {
+
+        $now = Carbon::today();
+
+        // Retorna a view com os dados
+        $dadosP = DB::table('pessoas as p')
+            ->select(
+                'p.nome_completo',
+                'p.celular',
+                'd.descricao',
+                'p.dt_nascimento',
+                'a.nr_associado',
+                'a.id'
+
+            )
+            ->leftJoin('associado as a', 'p.id', 'a.id_pessoa')
+            ->leftJoin('membro as m', 'a.id', 'm.id_associado')
+            ->leftJoin('tp_ddd as d', 'p.ddd', '=', 'd.id')
+            ->where('m.id', $id)
+            ->first();
+
+        // Obtém o membro e suas informações relacionadas
+        $membros = DB::table('membro as m')
+            ->select(
+                'gr.nome as nome_grupo',
+                'td.nome as dia',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'sl.numero as sala',
+                's.nome as nome_setor',
+                's.sigla',
+                'tf.nome as nome_funcao',
+                'm.dt_inicio',
+                'm.dt_fim',
+                'tt.descricao as trabalho',
+                DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END) as status_membro"),
+                DB::raw("(CASE WHEN cro.modificador = 3 THEN 'Experimental' WHEN cro.modificador = 4 THEN 'Em Férias' WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status"),
+
+            )
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+            ->leftJoin('tipo_status_grupo as tpg', 'cro.modificador', 'tpg.id')
+            ->leftJoin('associado as a', 'm.id_associado', 'a.id')
+            ->leftJoin('tipo_funcao AS tf', 'm.id_funcao', '=', 'tf.id')
+            ->leftJoin('tipo_tratamento as tt', 'cro.id_tipo_tratamento', 'tt.id')
+            ->where('a.id', $dadosP->id)
+            ->get()
+            ->toArray();
+
+         //   dd($membros, $dadosP);
+
+
+        $pdf = Pdf::loadView('relatorios.pdf-curriculo-membro', compact('membros', 'dadosP'))->setPaper('a4', 'landscape');
+        return $pdf->download( $dadosP->nome_completo .'.pdf');
+
+    }
 }
