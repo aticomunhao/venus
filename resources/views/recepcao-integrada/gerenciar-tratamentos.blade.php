@@ -64,6 +64,18 @@
                                                         </datalist>
 
                                                     </div>
+                                                    <div class="col-12 mt-3">Tratamento
+                                                        <select class="form-select pesquisa" id="4" name="tratamento"
+                                                            type="number">
+                                                            
+                                                            <option value=""></option>
+                                                            <option value="1" {{ 1 == request('tratamento') ? 'selected' : '' }}>Passe Tratamento Desobsessivo</option>
+                                                            <option value="2" {{ 2 == request('tratamento') ? 'selected' : '' }}>Passe Tratamento Intensivo</option>
+                                                            <option value="4" {{ 4 == request('tratamento') ? 'selected' : '' }}>Programa de Apoio a Portadores de Mediunidade Ostensiva</option>
+                                                            <option value="6" {{ 6 == request('tratamento') ? 'selected' : '' }}>Tratamento Fluidoterápico Integral</option>
+
+                                                        </select>
+                                                    </div>
                                                     <div class="col-12 mt-3">Status
                                                         <select class="form-select teste1" id="4" name="status"
                                                             type="number">
@@ -263,7 +275,7 @@
                         </div>
                         </form>
 
-                        @if (in_array(42, session()->get('usuario.acesso')))
+                        @if (in_array(45, session()->get('usuario.acesso')))
                             @if ($listas->status < 3)
                                 <a href="/reverter-faltas-assistido/{{ $listas->idtr }}"
                                     class="btn btn-outline-warning btn-sm tooltips">

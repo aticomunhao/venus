@@ -33,7 +33,7 @@ class GerenciarEntrevistaController extends Controller
             $setores = array_merge($setores, array_column($perfil, 'id_setor'));
         }
 
-        // Tras todos os dados para as tebelas e validações IF e ELSE 
+        // Tras todos os dados para as tebelas e validações IF e ELSE
         $informacoes = DB::table('encaminhamento')
             ->select(
                 DB::raw("CASE WHEN entrevistas.status IS NULL THEN 1 ELSE entrevistas.status END as status"), // Caso não tenha nenhum Status, Status 1 (Aguardando Agendamento -> Encaminhamento)
@@ -47,16 +47,18 @@ class GerenciarEntrevistaController extends Controller
                 's.numero', // Traz o suposto número da sala (excessões PREP, CX, AL)
                 'encaminhamento.status_encaminhamento as status_encaminhamento_id', // Status do Encaminhamento, usado para validar se está ativa a entrevista
                 'atendimentos.dh_inicio as inicio', // DateTime do atendimento
-                'entrevistas.id as ident' // ID entrevista, usado na view na tabela
+                'entrevistas.id as ident', // ID entrevista, usado na view na tabela
+                'pessoa_pessoa.celular',
+                'ddd.descricao as ddd'
             )
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
             ->leftJoin('entrevistas', 'encaminhamento.id', 'entrevistas.id_encaminhamento')
             ->leftJoin('salas AS s', 'entrevistas.id_sala', 's.id')
             ->leftJoin('pessoas as pessoa_pessoa', 'atendimentos.id_assistido', 'pessoa_pessoa.id')
+            ->leftJoin('tp_ddd as ddd', 'pessoa_pessoa.ddd', 'ddd.id')
             ->leftJoin('tipo_entrevista', 'encaminhamento.id_tipo_entrevista', 'tipo_entrevista.id')
             ->leftJoin('tipo_encaminhamento', 'encaminhamento.id_tipo_encaminhamento', 'tipo_encaminhamento.id')
-            ->leftJoin('membro', 'entrevistas.id_entrevistador', 'membro.id')
-            ->leftJoin('associado', 'membro.id_associado', 'associado.id')
+            ->leftJoin('associado', 'entrevistas.id_entrevistador', 'associado.id')
             ->leftJoin('pessoas as pessoa_entrevistador', 'associado.id_pessoa', 'pessoa_entrevistador.id')
             ->leftJoin('tipo_status_entrevista as tse', 'entrevistas.status', 'tse.id')
             ->where('encaminhamento.id_tipo_encaminhamento', 1) // Tipo Entrevista
@@ -69,12 +71,12 @@ class GerenciarEntrevistaController extends Controller
         if ($request->nome_pesquisa) {
             $informacoes->whereRaw("UNACCENT(LOWER(pessoa_pessoa.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome_pesquisa}%"]);
         }
-        if ($request->tipo_entrevista) { // Ex.: DIAMO, NUTRES 
+        if ($request->tipo_entrevista) { // Ex.: DIAMO, NUTRES
             $informacoes->where('tipo_entrevista.id', $request->tipo_entrevista);
         }
 
         // Caso não seja Aguardando Atendimento, ou Inativado, faz uma pesquisa comum
-        if ($request->status != 1 and $request->status != 7 and $pesquisaValue != 'limpo') {
+        if ($request->status != 1 and $request->status < 7  and $pesquisaValue != 'limpo') {
             $informacoes->where('entrevistas.status', $pesquisaValue);
         }
         // Caso nenhuma pesquisa seja feita, traz apenas os status ativos
@@ -136,6 +138,42 @@ class GerenciarEntrevistaController extends Controller
 
             $informacoes = $info; // Repopula a Variavel inicial com o array "pesquisado"
             $pesquisaValue = 7; // Envia para a view qual item foi selecionado anteriormente
+        }
+        // Caso seja pesquisado Aguardando Requisitos
+        if ($request->status == 8) {
+            $info = [];
+            foreach ($informacoes as $dia) {
+                $info[] = $dia;
+            }
+            foreach ($info as $check) {
+
+                // Caso o Status não seja Cancelado, retire do array
+                if ($check->status != 1 or $check->status_encaminhamento_id != 5) {
+                    unset($info[$i]);
+                }
+                $i = $i + 1;
+            }
+
+            $informacoes = $info; // Repopula a Variavel inicial com o array "pesquisado"
+            $pesquisaValue = 8; // Envia para a view qual item foi selecionado anteriormente
+        }
+        // Caso seja pesquisado Aguardando Manutenção
+        if ($request->status == 9) {
+            $info = [];
+            foreach ($informacoes as $dia) {
+                $info[] = $dia;
+            }
+            foreach ($info as $check) {
+
+                // Caso o Status não seja Cancelado, retire do array
+                if ($check->status != 1 or $check->status_encaminhamento_id != 6) {
+                    unset($info[$i]);
+                }
+                $i = $i + 1;
+            }
+
+            $informacoes = $info; // Repopula a Variavel inicial com o array "pesquisado"
+            $pesquisaValue = 8; // Envia para a view qual item foi selecionado anteriormente
         }
 
 
@@ -257,9 +295,12 @@ class GerenciarEntrevistaController extends Controller
 
 
             $usuarios = DB::table('usuario as u')
-                ->rightJoin('usuario_setor as us', 'u.id', 'us.id_usuario')
-                ->where('us.id_setor', $entrevistas->id_setor)
-                ->pluck('id_pessoa');
+                ->leftJoin('usuario_acesso as ua', 'u.id', 'ua.id_usuario')
+                ->where('id_acesso', 9)
+                ->where('id_setor', $entrevistas->id_setor)
+                ->pluck('u.id_pessoa')
+                ->toArray();
+
 
 
             $salas = DB::table('salas')->get();
@@ -273,6 +314,7 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('cronograma as cro', 'membro.id_cronograma', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
                 ->select('membro.*', 'pessoas.nome_completo', 'gr.id_setor')
+                ->where('gr.id_setor', $entrevistas->id_setor)
                 ->whereIn('associado.id_pessoa', $usuarios)
                 ->whereIn('membro.id_funcao', [1, 2])
                 ->distinct('membro.id_associado')
@@ -320,7 +362,7 @@ class GerenciarEntrevistaController extends Controller
         }
     }
 
- 
+
     public function show($id)
     {
         try {
@@ -349,15 +391,14 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
                 ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
                 ->leftJoin('tp_ddd as ddd', 'p.ddd', 'ddd.id')
-                ->leftJoin('membro as m', 'entre.id_entrevistador', 'm.id')
-                ->leftJoin('associado', 'm.id_associado', 'associado.id')
+                ->leftJoin('associado', 'entre.id_entrevistador', 'associado.id')
                 ->leftJoin('pessoas', 'associado.id_pessoa', 'pessoas.id')
                 ->where('entre.id_encaminhamento', $id)
                 ->first();
 
 
             $presencas = DB::table('presenca_cronograma as pc')
-                    ->select('enc.id_tipo_tratamento', 'dc.data', 'pc.presenca')
+                ->select('enc.id_tipo_tratamento', 'dc.data', 'pc.presenca')
                 ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
                 ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
                 ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
@@ -423,11 +464,12 @@ class GerenciarEntrevistaController extends Controller
             $salas = $salas->get();
 
 
-
             $usuarios = DB::table('usuario as u')
-                ->rightJoin('usuario_setor as us', 'u.id', 'us.id_usuario')
-                ->where('us.id_setor', $entrevistas->id_setor)
-                ->pluck('id_pessoa');
+                ->leftJoin('usuario_acesso as ua', 'u.id', 'ua.id_usuario')
+                ->where('id_acesso', 9)
+                ->where('id_setor', $entrevistas->id_setor)
+                ->pluck('u.id_pessoa')
+                ->toArray();
 
             // Caso padrão, traz todos os entrevistadores
             $membros = DB::table('membro')
@@ -436,8 +478,9 @@ class GerenciarEntrevistaController extends Controller
                 ->leftJoin('cronograma as cro', 'membro.id_cronograma', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
                 ->select('membro.*', 'pessoas.nome_completo', 'gr.id_setor', 'pessoas.nome_completo as nome_entrevistador')
+                ->where('gr.id_setor', $entrevistas->id_setor)
                 ->whereIn('associado.id_pessoa', $usuarios)
-                ->whereIn('membro.id_funcao', [1, 2]) // Dirigente ou Subdirigente 
+                ->whereIn('membro.id_funcao', [1, 2]) // Dirigente ou Subdirigente
                 ->distinct('membro.id_associado')
                 ->get();
 
@@ -488,7 +531,7 @@ class GerenciarEntrevistaController extends Controller
     {
         //  try {
 
-        $data = date("Y-m-d H:i:s"); // Usado para a tabela de Audit 
+        $data = date("Y-m-d H:i:s"); // Usado para a tabela de Audit
         $data_enc = Carbon::today();
         $id_usuario = session()->get('usuario.id_usuario');
         $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first(); // Usado em Validação de Tipo de Entrevista
@@ -624,7 +667,7 @@ class GerenciarEntrevistaController extends Controller
             // Inativa a entrevista caso encontre alguma
             DB::table('entrevistas')
                 ->where('id_encaminhamento', $id)
-                ->update(['status' => 6]); // Entrevista Cancelada 
+                ->update(['status' => 6]); // Entrevista Cancelada
 
         } else {
 
@@ -685,7 +728,7 @@ class GerenciarEntrevistaController extends Controller
             // Inativa a entrevista caso encontre alguma
             DB::table('entrevistas')
                 ->where('id_encaminhamento', $id)
-                ->update(['status' => 6]); // Entrevista Cancelada 
+                ->update(['status' => 6]); // Entrevista Cancelada
 
         }
 

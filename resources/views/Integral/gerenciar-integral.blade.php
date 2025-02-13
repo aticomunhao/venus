@@ -86,7 +86,13 @@
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
                                 {{ $encaminhamento->nome }}</td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
-                                {{ $encaminhamento->contagem ? $encaminhamento->contagem : 'PERMANENTE' }}
+                                @if($encaminhamento->contagem == null and $encaminhamento->contagem !== 0)
+                                Permanente
+                                @elseif ( $encaminhamento->contagem == 0 )
+                                -
+                                @else
+                                {{ $encaminhamento->contagem }}
+                                @endif
                             </td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
                                 {{ $encaminhamento->status }}</td>
@@ -95,13 +101,16 @@
 
                             <td>
 
-
-
-                                <button type="button" class="btn btn-outline-success tooltips btn-sm"
-                                    data-bs-toggle="modal" data-bs-target="#presenca{{ $encaminhamento->id }}">
-                                    <span class="tooltiptext">Presença</span><i class="bi bi-exclamation-triangle"
-                                        style="font-size: 1rem; color:#000;"></i></button>
-
+                            @if ($encaminhamento->data == $now)
+                            <button type="button" class="btn btn-success tooltips btn-sm"
+                            ><span class="tooltiptext">Presente</span><i class="bi bi-check2-circle"
+                                style="font-size: 1rem; color:#FFF;"></i></button>
+                            @else
+                            <button type="button" class="btn btn-outline-danger tooltips btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#presenca{{ $encaminhamento->id }}">
+                            <span class="tooltiptext">Ausente</span><i class="bi bi-exclamation-triangle"
+                                style="font-size: 1rem; color:#000;"></i></button>
+                            @endif
 
                                 {{-- inicio da modal de presença --}}
                                 <div class="modal fade closes" id="presenca{{ $encaminhamento->id }}" tabindex="-1"
@@ -136,8 +145,7 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-danger"
                                                         data-bs-dismiss="modal">Cancelar</button>
-
-                                                    @if ($encaminhamento->dt_fim == $now or $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '-1 week')))
+                                                    @if ($encaminhamento->dt_fim == $now or $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '+1 week')))
                                                         <button type="button" class="btn btn-primary openModal"
                                                             id="openModal" data-bs-toggle="modal" data-bs-dismiss="modal"
                                                             data-bs-target="#staticBackdrop{{ $encaminhamento->id }}">
@@ -168,7 +176,7 @@
                                                 <label for="recipient-name" class="col-form-label"
                                                     style="font-size:17px">Este é
                                                     o {{ $encaminhamento->dt_fim == $now ? 'último' : null }}
-                                                    {{ $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '-1 week')) ? 'penúltimo' : null }}
+                                                    {{ $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '+1 week')) ? 'penúltimo' : null }}
                                                     dia de tratamento
                                                     de:<br /><span
                                                         style="color: rgb(39, 91, 189)">{{ $encaminhamento->nome_completo }}</span></label>
@@ -192,14 +200,14 @@
                                         <span class="tooltiptext">Declarar Alta</span>
                                         <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
                                     </button>
-                                @elseif($encaminhamento->id_status == 1)
-                                    <button type="button" disabled class="btn btn-outline-danger btn-sm tooltips"
-                                        data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
-                                        <span class="tooltiptext">Declarar Alta</span>
-                                        <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
+                                @elseif($encaminhamento->id_status == 2)
+                                    <button type="button" class="btn btn-outline-danger btn-sm tooltips"
+                                        data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
+                                        <span class="tooltiptext">Sem limite</span>
+                                        <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>
                                     </button>
                                 @else
-                                    <button type="button" class="btn btn-outline-warning btn-sm tooltips"
+                                    <button type="button" class="btn btn-outline-danger btn-sm tooltips"disabled
                                         data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
                                         <span class="tooltiptext">Sem limite</span>
                                         <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>

@@ -19,7 +19,7 @@
                                     value="{{ request('nome_pesquisa') }}">
                             </div>
 
-                            <div class="col-3">
+                            <div class="col-2">
                                 Status
                                 <select class="form-select" id="status" name="status">
                                     {{-- Select de pesquisa de status --}}
@@ -33,7 +33,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-3">
+                            <div class="col-2">
                                 Tipo Entrevista
                                 <select class="form-select" id="tipo_entrevista" name="tipo_entrevista">
                                     {{-- Select de pesquisa de tipo entrevista --}}
@@ -52,17 +52,24 @@
                                 <input class="btn btn-light btn-sm me-md-2"
                                     style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
                                 {{-- Botão de pesquisar --}}
-                                <a href="/gerenciar-entrevistas">
-                                    <input class="btn btn-light btn-sm me-md-2"
-                                        style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" value="Limpar">
-                                    {{-- Botão de limpar pesquisa --}}
+                                <a href="/gerenciar-entrevistas" class="btn btn-light btn-sm me-md-2"
+                                        style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button">
+                                    {{-- Botão de limpar pesquisa --}}Limpar
                                 </a>
+                                <button onclick="imprimirTela()" class="btn btn-light btn-sm"
+                                    style="box-shadow: 1px 2px 5px #000000; margin:5px;">
+                                    Imprimir
+                                </button>
+
                             </div>
+
                         </div>
                     </form>
+
                     <br />
                 </div>
                 <hr />
+                <br>
                 <div class="table">Quantidade de assistidos: {{ $totalAssistidos }}
                     <br>
                     <span class="text-success" style="font-size: 20px;">&#9632;</span>
@@ -72,14 +79,16 @@
                             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                                 {{-- <th class="col">Nr</th> --}}
                                 @if (in_array(26, session()->get('usuario.acesso')))
-                                <th>ID</th>
-                            @endif
-                                <th class="col">DATA E HORÁRIO</th>
+                                    <th>ID</th>
+                                @endif
+                                <th class="col">DATA</th>
+                                <th class="col">HORA</th>
                                 <th class="col">PRIORIDADE</th>
                                 <th class="col">NOME</th>
                                 <th class="col">ENTREVISTADOR</th>
-                                <th class="col">TIPO ENTREVISTA</th>
+                                <th class="col">ENTREVISTA</th>
                                 <th class="col">SALA</th>
+                                <th class="col">TELEFONE</th>
                                 <th class="col">STATUS</th>
                                 <th class="col">AÇÕES</th>
                             </tr>
@@ -96,19 +105,27 @@
                                     <td>{{ $informacao->ident ? 'ENT:' . $informacao->ident : 'ENC:' . $informacao->ide }}
                                     </td>
                                 @endif
-                                <td>{{ date('d/m/Y  G:i', strtotime($informacao->inicio)) }}</td>{{-- Prioridade do atendimento --}}
+                                <td>{{ date('d/m/Y', strtotime($informacao->inicio)) }}</td> <!-- Exibe só a data -->
+                                <td>{{ date('G:i', strtotime($informacao->inicio)) }}</td> <!-- Exibe só a hora -->
                                 <td>{{ $informacao->emergencia }}</td>{{-- Prioridade do atendimento --}}
                                 <td>{{ $informacao->nome_pessoa }}</td>{{-- Traz o nome do encaminhado --}}
-                                <td>{{ $informacao->nome_entrevistador }}</td>{{-- Quando existente, traz o nome do entrevistador --}}
+                                <td>{{ $informacao->nome_entrevistador }}</td> {{-- Quando existente, traz o nome do entrevistador --}}
                                 <td>{{ $informacao->entrevista_sigla }}</td>
-                                <td>{{ $informacao->numero }}</td>{{-- Sala que foi agendada a entrevista --}}
+                                <td>{{ $informacao->numero }}</td> {{-- Sala que foi agendada a entrevista --}}
+                                <td>{{ $informacao->ddd }} {{ $informacao->celular }}</td>{{-- Ddd e telefone do assistido --}}
+
+
+
                                 <td>
+
                                     @if ($informacao->status == 1 && $informacao->status_encaminhamento_id == 4)
                                         Inativado
                                     @elseif ($informacao->status_encaminhamento_id == 5 and $informacao->id_tipo_entrevista == 6)
                                         Aguardando Requisitos
+                                    @elseif ($informacao->status_encaminhamento_id == 6)
+                                        Aguardando Manutenção
                                     @elseif ($informacao->status === 1)
-                                        Aguardando agendamento
+                                        Aguardando Agendamento
                                     @else
                                         {{ $informacao->d1 }}
                                     @endif
@@ -128,7 +145,11 @@
                                         </a>
                                     @endif{{-- Fim botao editar --}}
 
-                                    @if (($informacao->status != 1 or $informacao->status_encaminhamento_id > 3 ) or ($informacao->status_encaminhamento_id == 5 and $informacao->id_tipo_entrevista == 6))
+                                    @if (
+                                        $informacao->status != 1 or
+                                            ($informacao->status_encaminhamento_id != 6 and
+                                            $informacao->status_encaminhamento_id > 3) or
+                                            $informacao->status_encaminhamento_id == 5 and $informacao->id_tipo_entrevista == 6)
                                         {{-- Inicio botao Agendar --}}
                                         <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
                                             data-tt="tooltip" data-placement="top" title="Agendar" disabled>
@@ -209,17 +230,15 @@
                                     </div>
 
                                     {{-- Inativar encaminhamento --}}
-                                    @if ($informacao->status_encaminhamento_id < 3 or $informacao->status_encaminhamento_id == 5)
-                                        <button data-bs-toggle="modal"
-                                            data-bs-target="#inativar{{ $informacao->ide }}" type="button"
-                                            class="btn btn-outline-danger btn-sm tooltips">
+                                    @if ($informacao->status_encaminhamento_id < 3 or $informacao->status_encaminhamento_id == 5 or $informacao->status_encaminhamento_id == 6)
+                                        <button data-bs-toggle="modal" data-bs-target="#inativar{{ $informacao->ide }}"
+                                            type="button" class="btn btn-outline-danger btn-sm tooltips">
                                             <span class="tooltiptext">Inativar</span>
                                             <i class="bi bi-slash-circle" style="font-size: 1rem; color:#000;"></i>
                                         </button>
                                     @else
-                                        <button data-bs-toggle="modal"
-                                            data-bs-target="#inativar{{ $informacao->ide }}" type="button"
-                                            class="btn btn-outline-danger btn-sm tooltips" disabled>
+                                        <button data-bs-toggle="modal" data-bs-target="#inativar{{ $informacao->ide }}"
+                                            type="button" class="btn btn-outline-danger btn-sm tooltips" disabled>
                                             <span class="tooltiptext">Inativar</span>
                                             <i class="bi bi-slash-circle" style="font-size: 1rem; color:#000;"></i>
                                         </button>
@@ -307,8 +326,6 @@
                                     </div>
                                     {{-- Fim Modal AFE --}}
 
-
-
                                 </td>
                                 </tr>
                             @endforeach
@@ -328,6 +345,11 @@
                 $(".teste").prop("selectedIndex", -1);
             }
         })
+    </script>
+    <script>
+        function imprimirTela() {
+            window.print(); // Isso abrirá a caixa de diálogo para imprimir a página
+        }
     </script>
 @endsection
 

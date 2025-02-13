@@ -85,6 +85,10 @@
                             <span class="tooltiptext">Visualizar</span>
                             <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
                         </a>
+                        <a href="/curriculo-medium/{{ $membros->idm }}" class="btn btn-outline-primary btn-sm tooltips">
+                            <span class="tooltiptext">Currículo</span>
+                            <i class="bi bi-newspaper" style="font-size: 1rem; color:#000;"></i>
+                        </a>
                         @if (in_array(13, session()->get('usuario.acesso')))
                             <!-- Botão para editar -->
 
@@ -131,20 +135,20 @@
                                 </button>
                             @endif
 
-                            @if ($membros->status == 'Ativo')
+                            {{-- @if ($membros->status == 'Ativo') --}}
                                 <!-- Botão para deletar -->
                                 <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
                                     data-bs-target="#confirmDelete{{ $membros->idm }}">
                                     <span class="tooltiptext">Deletar</span>
                                     <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                                @else
-                                <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                {{-- @else
+                                 <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
                                     data-bs-target="#confirmDelete{{ $membros->idm }}" disabled>
                                     <span class="tooltiptext">Deletar</span>
                                     <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                            @endif
+                            @endif --}}
                     </td>
                 </tr>
             @endif
