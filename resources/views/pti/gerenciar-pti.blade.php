@@ -61,6 +61,7 @@
         {{-- Fim modal filtros --}}
     </div>
     <hr>
+    Total de assistidos: {{ $totalAssistidos }}
     <div class="table">
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
