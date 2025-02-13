@@ -40,6 +40,7 @@
         </div>
 
         <hr>
+        Total de assistidos: {{ $totalAssistidos }}
         <div class="col">
             <span class="text-danger" style="font-size: 20px;">&#9632;</span>
             <span style="font-size: 14px;">Assistidos sem PTD</span>
@@ -52,8 +53,7 @@
                     <tr>
                         <th>NOME</th>
                         <th>GRUPO</th>
-                        <th>INICIO</th>
-                        <th>FIM</th>
+                        {{-- <th>SEMANAS</th> --}}
                         <th>STATUS</th>
                         <th>AÇÕES</th>
                     </tr>
@@ -66,33 +66,34 @@
 
                         <tr class="">
                             <td
-                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ? 'background-color: #FFFF61' : '' }}">
+                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
                                 {{ $encaminhamento->nome_completo }}</td>
                             <td
-                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ? 'background-color: #FFFF61' : '' }}">
+                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
                                 {{ $encaminhamento->nome }}</td>
+                            {{-- <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
+                                @if ($encaminhamento->contagem == 0)
+                                    - {{ $encaminhamento->contagem }}
+                                @else
+                                    {{ $encaminhamento->contagem }}
+                                @endif
+                            </td> --}}
                             <td
-                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ? 'background-color: #FFFF61' : '' }}">
-                                {{ $encaminhamento->h_inicio }}</td>
-                            <td
-                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ? 'background-color: #FFFF61' : '' }}">
-                                {{ $encaminhamento->h_fim }}</td>
-                            <td
-                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ? 'background-color: #FFFF61' : '' }}">
+                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
                                 {{ $encaminhamento->status }}</td>
                             <td
-                                style="{{ ($encaminhamento->id_status < 3 and $encaminhamento->contagem < 91) ? 'background-color: #FFFF61' : '' }}">
+                                style="{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
 
-                            @if ($encaminhamento->data == $now)
-                            <button type="button" class="btn btn-success tooltips btn-sm"
-                            ><span class="tooltiptext">Presente</span><i class="bi bi-check2-circle"
-                                style="font-size: 1rem; color:#FFF;"></i></button>
-                            @else
-                            <button type="button" class="btn btn-outline-danger tooltips btn-sm"
-                            data-bs-toggle="modal" data-bs-target="#presenca{{ $encaminhamento->id }}">
-                            <span class="tooltiptext">Ausente</span><i class="bi bi-exclamation-triangle"
-                                style="font-size: 1rem; color:#000;"></i></button>
-                            @endif
+                                @if ($encaminhamento->data == $now)
+                                    <button type="button" class="btn btn-success tooltips btn-sm"><span
+                                            class="tooltiptext">Presente</span><i class="bi bi-check2-circle"
+                                            style="font-size: 1rem; color:#FFF;"></i></button>
+                                @else
+                                    <button type="button" class="btn btn-outline-danger tooltips btn-sm"
+                                        data-bs-toggle="modal" data-bs-target="#presenca{{ $encaminhamento->id }}">
+                                        <span class="tooltiptext">Ausente</span><i class="bi bi-exclamation-triangle"
+                                            style="font-size: 1rem; color:#000;"></i></button>
+                                @endif
 
                                 {{-- inicio da modal de presença --}}
                                 <div class="modal fade closes" id="presenca{{ $encaminhamento->id }}" tabindex="-1"
@@ -175,8 +176,21 @@
                                 </div>
                                 </form>
                                 {{-- fim da modal de presença --}}
-
-                                @if ($encaminhamento->id_status != 1)
+                                @if (in_array(45, session()->get('usuario.acesso')))
+                                    @if ($encaminhamento->id_status < 3)
+                                        <a href="/reverter-faltas-assistido/{{ $encaminhamento->id }}"
+                                            class="btn btn-outline-warning btn-sm tooltips">
+                                            <span class="tooltiptext">Reverter faltas</span>
+                                            <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                        </a>
+                                    @else
+                                        <button class="btn btn-outline-warning btn-sm tooltips" disabled>
+                                            <span class="tooltiptext">Reverter faltas</span>
+                                            <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                        </button>
+                                    @endif
+                                @endif
+                                @if ($encaminhamento->id_status != 1 and in_array(49, session()->get('usuario.acesso')))
                                     <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                         data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
                                         <span class="tooltiptext">Declarar Alta</span>
@@ -218,7 +232,7 @@
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-danger"
                                             data-bs-dismiss="modal">Cancelar</button>
-                                            <a type="button" class="btn btn-primary"
+                                        <a type="button" class="btn btn-primary"
                                             href="/alta-proamo/{{ $encaminhamento->id }}">Confirmar
                                         </a>
                                     </div>
