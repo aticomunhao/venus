@@ -66,11 +66,6 @@
 
                         <div class="col d-flex justify-content-end mt-3">
 
-                            <a href="/gerenciar-encaminhamentos">
-                                <input class="btn btn-warning btn-sm me-md-2 col-12"
-                                    style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
-                                    value="Encaminhamentos">
-                            </a>
                         </div>
 
                     </div>
