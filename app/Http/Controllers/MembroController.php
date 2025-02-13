@@ -519,7 +519,7 @@ class MembroController extends Controller
             ->leftJoin('dias_cronograma as dc', 'pm.id_dias_cronograma', 'dc.id')
             ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
             ->leftJoin('grupo as g', 'cro.id_grupo', 'g.id')
-            ->where('a.nr_associado', $membro->nr_associado) // Filtro baseado no associado
+            ->where('m.id', $membro->id) // Filtro baseado no associado
             ->orderBy('dc.data', 'desc')
             ->get();
 
