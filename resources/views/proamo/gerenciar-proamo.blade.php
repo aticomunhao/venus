@@ -213,36 +213,54 @@
                             </td>
                         </tr>
 
+                        @csrf
                         <!-- Modal Declarar Alta -->
                         <div class="modal fade" id="modalA{{ $encaminhamento->id }}" tabindex="-1"
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-danger text-white">
-                                        <h5 class="modal-title">Declarar Alta</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <center>
-                                        <div class="modal-body">
-                                            Tem certeza que deseja declarar alta para <br /><span
-                                                style="color:rgb(196, 27, 27);">{{ $encaminhamento->nome_completo }}</span>&#63;
+                            <form action="/alta-proamo/{{ $encaminhamento->id }}" class="form-horizontal mt-4">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title">Declarar Alta</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                         </div>
-                                    </center>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-danger"
-                                            data-bs-dismiss="modal">Cancelar</button>
-                                        <a type="button" class="btn btn-primary"
-                                            href="/alta-proamo/{{ $encaminhamento->id }}">Confirmar
-                                        </a>
+                                        <center>
+                                            <div class="modal-body mb-2">
+                                                Tem certeza que deseja declarar alta para <br /><span
+                                                    style="color:rgb(196, 27, 27);">{{ $encaminhamento->nome_completo }}</span>&#63;
+                                            </div>
+                                            <div class="mb-2 col-10">
+                                                <label class="col-form-label">Insira o motivo da
+                                                    <span style="color:rgb(196, 27, 27);">Alta:</span></label>
+                                                <select class="form-select motivo" id="motivo" name="motivo"
+                                                    required>
+                                                    @foreach ($motivosAlta as $motivoAlta)
+                                                        <option value="{{ $motivoAlta->id }}">
+                                                            {{ $motivoAlta->tipo }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </center>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger"
+                                                data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-primary">Confirmar
+                                            </button>
+                                        </div>
                                     </div>
+                                </form>
                                 </div>
                             </div>
-                        </div>
                     @endforeach
                 </tbody>
             </table>
         </div>
     </div>
     </div>
+
+    <script>
+     $('.motivo').prop('selectedIndex', -1)
+    </script>
 @endsection
