@@ -50,7 +50,8 @@
                         <br />
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                            <a href="/gerenciar-pti?grupo={{ count($encaminhamentos) > 0 ? current(current($encaminhamentos))->id_reuniao : ''}}" type="button" class="btn btn-secondary pesq">Limpar</a>
+                            <a href="/gerenciar-pti?grupo={{ count($encaminhamentos) > 0 ? current(current($encaminhamentos))->id_reuniao : '' }}"
+                                type="button" class="btn btn-secondary pesq">Limpar</a>
                             <button class="btn btn-primary pesq" type="submit">Confirmar</button>
                         </div>
 
@@ -77,27 +78,38 @@
                         <td>{{ $encaminhamento->h_fim }}</td> --}}
                         <td>{{ $encaminhamento->status }}</td>
                         <td>
+                            @if (in_array(45, session()->get('usuario.acesso')))
+                                @if ($encaminhamento->id_status < 3)
+                                    <a href="/reverter-faltas-assistido/{{ $encaminhamento->id }}"
+                                        class="btn btn-outline-warning btn-sm tooltips">
+                                        <span class="tooltiptext">Reverter faltas</span>
+                                        <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                    </a>
+                                @else
+                                    <button class="btn btn-outline-warning btn-sm tooltips" disabled>
+                                        <span class="tooltiptext">Reverter faltas</span>
+                                        <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                    </button>
+                                @endif
+                            @endif
                             @if ($encaminhamento->id_status == 1)
                                 <button disabled type="button" class="btn btn-outline-danger btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
                                     <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-
                             @else
-                                <button type="button" class="btn btn-outline-danger btn-sm tooltips"
-                                    data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
+                                <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                    data-bs-target="#modal{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
                                     <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-
                             @endif
 
                             <a href="/visualizar-pti/{{ $encaminhamento->id }}" type="button"
                                 class="btn btn-outline-primary btn-sm tooltips">
                                 <span class="tooltiptext">Visualizar</span>
-                                <i class="bi bi-search" style="font-size: 1rem; color:#000;"
-                                    data-bs-target="#pessoa"></i>
+                                <i class="bi bi-search" style="font-size: 1rem; color:#000;" data-bs-target="#pessoa"></i>
                             </a>
 
 
@@ -123,7 +135,7 @@
                                                 data-bs-dismiss="modal">Cancelar</button>
                                             <a type="button" class="btn btn-primary"""
                                                 href="/alta-pti/{{ $encaminhamento->id }}">Confirmar
-                                                </a>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
