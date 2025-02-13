@@ -914,19 +914,21 @@ class AtendimentoFraternoController extends Controller
                 ->where('enc.id_tipo_tratamento', 1)
                 ->where('tr.status', '<', 3);
 
-                $idPTDDIAMO = $updatePTDDIAMO->select('tr.id')->first();
+            $idPTDDIAMO = $updatePTDDIAMO->select('tr.id')->first();
+            if ($idPTDDIAMO) {
                 $updatePTDDIAMO->update([
                     'tr.dt_fim' => null
                 ]);
 
-            // Insere no histórico a criação do atendimento
-            DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idPTDDIAMO->id,
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 4, // se tornou Permanente
-                'id_origem' => 2, // Encaminhamento
-                'data_hora' => $dt_hora
-            ]);
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $idPTDDIAMO->id,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 4, // se tornou Permanente
+                    'id_origem' => 2, // Encaminhamento
+                    'data_hora' => $dt_hora
+                ]);
+            }
 
             //Inserir estrevista DiAMO na tabela
             $idDIAMO = DB::table('encaminhamento AS enc')->insertGetId([
@@ -999,18 +1001,21 @@ class AtendimentoFraternoController extends Controller
 
             $idPTDPTI = $updatePTDPTI->select('tr.id')->first();
 
-            $updatePTDPTI->update([
-                'tr.dt_fim' => null
-            ]);
+            if ($idPTDPTI) {
+                $updatePTDPTI->update([
+                    'tr.dt_fim' => null
+                ]);
 
-            // Insere no histórico a criação do atendimento
-            DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idPTDPTI->id,
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 4, // se tornou Permanente
-                'id_origem' => 2, // Encaminhamento
-                'data_hora' => $dt_hora
-            ]);
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $idPTDPTI->id,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 4, // se tornou Permanente
+                    'id_origem' => 2, // Encaminhamento
+                    'data_hora' => $dt_hora
+                ]);
+            }
+
 
             // Insere a entrevista PTI
             $idPTI = DB::table('encaminhamento AS enc')->insertGetId([
