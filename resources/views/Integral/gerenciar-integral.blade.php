@@ -86,12 +86,12 @@
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
                                 {{ $encaminhamento->nome }}</td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
-                                @if($encaminhamento->contagem == null and $encaminhamento->contagem !== 0)
-                                Permanente
-                                @elseif ( $encaminhamento->contagem == 0 )
-                                -
+                                @if ($encaminhamento->contagem == null and $encaminhamento->contagem !== 0)
+                                    Permanente
+                                @elseif ($encaminhamento->contagem == 0)
+                                    -
                                 @else
-                                {{ $encaminhamento->contagem }}
+                                    {{ $encaminhamento->contagem }}
                                 @endif
                             </td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
@@ -193,7 +193,6 @@
                                 </div>
                                 </form>
                                 {{-- fim da modal de presença --}}
-
                                 @if ($encaminhamento->dt_fim == null)
                                     <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                         data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
@@ -212,6 +211,21 @@
                                         <span class="tooltiptext">Sem limite</span>
                                         <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>
                                     </button>
+                                @endif
+
+                                @if (in_array(45, session()->get('usuario.acesso')))
+                                    @if ($encaminhamento->id_status < 3)
+                                        <a href="/reverter-faltas-assistido/{{ $encaminhamento->id }}"
+                                            class="btn btn-outline-warning btn-sm tooltips">
+                                            <span class="tooltiptext">Reverter faltas</span>
+                                            <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                        </a>
+                                    @else
+                                        <button class="btn btn-outline-warning btn-sm tooltips" disabled>
+                                            <span class="tooltiptext">Reverter faltas</span>
+                                            <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                        </button>
+                                    @endif
                                 @endif
                                 @if ($encaminhamento->id_status == 1)
                                     <!-- Button trigger modal (Desabilitado) -->

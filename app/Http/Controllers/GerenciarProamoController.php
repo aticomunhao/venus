@@ -27,6 +27,7 @@ class GerenciarProamoController extends Controller
             ->where('cr.id_tipo_tratamento', 4)
             ->distinct('gr.id');
 
+
         // Caso o usuário não seja Master Admin, retorna apenas os cronogramas no qual ele é dirigente ou subdirigente
         if (!in_array(36, session()->get('usuario.acesso'))) {
             $dirigentes =  $dirigentes->where('ass.id_pessoa', session()->get('usuario.id_pessoa'))
@@ -69,6 +70,8 @@ class GerenciarProamoController extends Controller
             ->whereIn('tr.id_reuniao', $grupos_autorizados);
 
 
+        $motivosAlta = DB::table('tipo_motivo')->where('vinculado', 2)->orderBy('tipo')->get();
+
         // Caso seja pesquisado um nome
         if ($request->nome_pesquisa) {
             $encaminhamentos = $encaminhamentos->where('p.nome_completo', 'ilike', "%$request->nome_pesquisa%");
@@ -97,7 +100,7 @@ class GerenciarProamoController extends Controller
                 ->select('tr.id')
                 ->first();
 
-                $data = DB::table('presenca_cronograma as pc')
+            $data = DB::table('presenca_cronograma as pc')
                 ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
                 ->where('id_tratamento', $encaminhamento->id)
                 ->orderBy('dc.data', 'DESC')
@@ -105,12 +108,12 @@ class GerenciarProamoController extends Controller
 
             $encaminhamento->ptd  = $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
             $encaminhamento->data = $data ? $data->data : null;
-
-            $encaminhamento->contagem = $hoje->diffInDays(Carbon::parse($encaminhamento->dt_inicio));
+            $encaminhamento->avaliacao = $hoje->diffInDays(Carbon::parse($encaminhamento->dt_inicio));
+            // $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_inicio));
         }
 
-
-        return view('proamo.gerenciar-proamo', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'now'));
+        $totalAssistidos = count($encaminhamentos);
+        return view('proamo.gerenciar-proamo', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'now', 'totalAssistidos', 'motivosAlta'));
     }
 
 
@@ -175,7 +178,7 @@ class GerenciarProamoController extends Controller
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
             ->where('at.id_assistido', $result->id_assistido)
-            ->whereIn('enc.id_tipo_tratamento', [1,2])
+            ->whereIn('enc.id_tipo_tratamento', [1, 2])
             ->where('status_encaminhamento', '<', 3) // Finalizado
             ->select('tr.id', 'enc.id_tipo_tratamento')
             ->first();
@@ -215,23 +218,23 @@ class GerenciarProamoController extends Controller
 
 
         $emergencia = DB::table('presenca_cronograma as dt')
-        ->select(
-            'dt.id AS idp',
-            'dt.presenca',
-            'dc.data',
-            'gp.nome',
-        )
-        ->leftJoin('tratamento as tr', 'dt.id_tratamento', 'tr.id')
-        ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
-        ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-        ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
-        ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
-        ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
-        ->where('id_pessoa', $result->id_assistido)
-        ->where('dc.data', '>=', $result->dt_inicio)
-        ->whereNull('id_tratamento')
-        ->get()
-        ->toArray();
+            ->select(
+                'dt.id AS idp',
+                'dt.presenca',
+                'dc.data',
+                'gp.nome',
+            )
+            ->leftJoin('tratamento as tr', 'dt.id_tratamento', 'tr.id')
+            ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
+            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+            ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
+            ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
+            ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
+            ->where('id_pessoa', $result->id_assistido)
+            ->where('dc.data', '>=', $result->dt_inicio)
+            ->whereNull('id_tratamento')
+            ->get()
+            ->toArray();
 
 
 
@@ -268,7 +271,7 @@ class GerenciarProamoController extends Controller
         }
 
         $list2 = array_merge($emergencia, $list2);
-        array_multisort(array_column($list2, 'data'), SORT_DESC ,$list2);
+        array_multisort(array_column($list2, 'data'), SORT_DESC, $list2);
 
         return view('proamo.visualizar-proamo', compact('result', 'list', 'faul', 'list2', 'faul2', 'encaminhamento'));
     }
@@ -280,9 +283,8 @@ class GerenciarProamoController extends Controller
     {
         $hoje = Carbon::today();
         $id_encaminhamento = DB::table('tratamento')->where('id', $id)->first();
-        DB::table('tratamento')->where('id', $id)->update(['status' => 4, 'dt_fim' => $hoje]);
+        DB::table('tratamento')->where('id', $id)->update(['status' => 4, 'motivo' => $request->motivo ,'dt_fim' => $hoje]);
         DB::table('encaminhamento')->where('id', $id_encaminhamento->id_encaminhamento)->update(['status_encaminhamento' => 3]);
         return redirect()->back();
     }
 }
-
