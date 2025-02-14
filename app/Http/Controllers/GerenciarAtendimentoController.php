@@ -235,7 +235,6 @@ class GerenciarAtendimentoController extends Controller
 
             $motivo = DB::table('tipo_motivo_atendimento')->get();
 
-
             return view('/recepcao-AFI/gerenciar-atendimentos', compact('cpf', 'lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'atendente', 'situacao', 'now', 'motivo'));
         } catch (\Exception $e) {
             $code = $e->getCode();
@@ -321,7 +320,7 @@ class GerenciarAtendimentoController extends Controller
 
     public function store(Request $request)
     {
-        try {
+       // try {
 
 
 
@@ -332,7 +331,8 @@ class GerenciarAtendimentoController extends Controller
             $assistido = $request->assist;
 
             $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 6)->where('id_assistido', $assistido)->count();
-
+            $dadosAssistido = DB::table('pessoas')->where('id', $request->input('assist'))->first();
+  
             //dd($resultado);
             if ($resultado > 0) {
                 app('flasher')->addError('Não é permitido duplicar o cadastro do assistido.');
@@ -365,15 +365,23 @@ class GerenciarAtendimentoController extends Controller
                 'data_hora' => $dt_hora
             ]);
 
+            if($dadosAssistido->cpf == null or $dadosAssistido->sexo == null or $dadosAssistido->ddd == null or $dadosAssistido->celular == null){
+
+                session()->put('usuario.acesso', array_merge(session()->get('usuario.acesso'), ['temp' => 2]));
+                app('flasher')->addWarning('É necessário atualizar os dados para prosseguir.');
+                return redirect('/editar-pessoa/' . $request->assist);
+            }
+
+
 
             app('flasher')->addSuccess('O cadastro do atendimento foi realizado com sucesso.');
 
             return redirect('/gerenciar-atendimentos');
-        } catch (\Exception $e) {
-            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
-            DB::rollBack();
-            return redirect()->back();
-        }
+        // } catch (\Exception $e) {
+        //     app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
+        //     DB::rollBack();
+        //     return redirect()->back();
+        // }
     }
 
 
