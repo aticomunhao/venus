@@ -31,12 +31,20 @@
                         <input class="btn btn-light btn-sm me-md-2"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
                             value="Pesquisar">
-                        <a href="/gerenciar-integral"><input class="btn btn-light btn-sm me-md-2"
-                                style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
-                                value="Limpar"></a>
+                        @if (request('grupo'))
+                            <a href="/gerenciar-integral?grupo={{ request('grupo') }}"><input
+                                    class="btn btn-light btn-sm me-md-2"
+                                    style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
+                                    value="Limpar"></a>
+                        @else
+                            <a href="/gerenciar-integral"><input class="btn btn-light btn-sm me-md-2"
+                                    style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
+                                    value="Limpar"></a>
+                        @endif
                         <a href="/gerenciar-membro/{{ $selected_grupo }}"><input class="btn btn-primary btn-sm me-md-2"
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                 value="Gerenciar Grupo"></a>
+
 
                     </div>
                 </div>
@@ -46,47 +54,178 @@
         </div>
 
         <hr>
+        Total de assistidos: {{ $totalAssistidos }}
+        <br>
+        <span class="text-danger" style="font-size: 20px;">&#9632;</span>
+        <span style="font-size: 14px;">Assistidos sem PTD</span>
+        <div class="table">
+            <table class="table table-sm table-bordered border-secondary table-hover text-center align-middle">
+                <thead style="background-color: #d6e3ff; font-size:14px; color:#000000">
 
-        <div class="table">Total de assistidos: {{ $totalAssistidos }}
-            <table
-                class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
-                <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
+                    @if (in_array(36, session()->get('usuario.acesso')))
+                        <th>ID</th>
+                    @endif
                     <th>NOME</th>
                     <th>GRUPO</th>
+                    <th>SEMANAS REALIZADAS</th>
                     <th>STATUS</th>
                     <th>MACA</th>
                     <th>AÇÕES</th>
-                </tr>
+                    </tr>
 
                 <tbody>
                     @foreach ($encaminhamentos as $encaminhamento)
-                        <tr>
-                            <td>{{ $encaminhamento->nome_completo }}</td>
-                            <td>{{ $encaminhamento->nome }}</td>
-                            <td>{{ $encaminhamento->status }}</td>
-                            <td>{{ $encaminhamento->maca }}</td>
+                        <tr class="{{ $encaminhamento->ptd }}">
 
+                            @if (in_array(36, session()->get('usuario.acesso')))
+                                <td>{{ $encaminhamento->id }}
+                                </td>
+                            @endif
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
+                                {{ $encaminhamento->nome_completo }}</td>
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
+                                {{ $encaminhamento->nome }}</td>
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
+                                @if ($encaminhamento->contagem == null and $encaminhamento->contagem !== 0)
+                                    Permanente
+                                @elseif ($encaminhamento->contagem == 0)
+                                    -
+                                @else
+                                    {{ $encaminhamento->contagem }}
+                                @endif
+                            </td>
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
+                                {{ $encaminhamento->status }}</td>
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
+                                {{ $encaminhamento->maca }}</td>
 
                             <td>
 
+                            @if ($encaminhamento->data == $now)
+                            <button type="button" class="btn btn-success tooltips btn-sm"
+                            ><span class="tooltiptext">Presente</span><i class="bi bi-check2-circle"
+                                style="font-size: 1rem; color:#FFF;"></i></button>
+                            @else
+                            <button type="button" class="btn btn-outline-danger tooltips btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#presenca{{ $encaminhamento->id }}">
+                            <span class="tooltiptext">Ausente</span><i class="bi bi-exclamation-triangle"
+                                style="font-size: 1rem; color:#000;"></i></button>
+                            @endif
+
+                                {{-- inicio da modal de presença --}}
+                                <div class="modal fade closes" id="presenca{{ $encaminhamento->id }}" tabindex="-1"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <form method="post" action="/presenca-tratatamento/{{ $encaminhamento->id }}">
+                                        @csrf
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header" style="background-color:orange;color:white">
+                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Registrar Presença
+                                                    </h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="recipient-name" class="col-form-label"
+                                                            style="font-size:17px">Tem certeza que deseja registrar
+                                                            presença para<br /><span
+                                                                style="color:orange">{{ $encaminhamento->nome_completo }}</span>&#63;</label>
+                                                    </div>
+                                                    <center>
+                                                        <div class="mb-2 col-10">
+                                                            <label class="col-form-label">Insira o número de acompanhantes,
+                                                                <span style="color:orange">se necessário:</span></label>
+                                                            <input type="number" class="form-control" name="acompanhantes"
+                                                                placeholder="0" min="0">
+                                                        </div>
+                                                    </center>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-danger"
+                                                        data-bs-dismiss="modal">Cancelar</button>
+                                                    @if ($encaminhamento->dt_fim == $now or $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '+1 week')))
+                                                        <button type="button" class="btn btn-primary openModal"
+                                                            id="openModal" data-bs-toggle="modal" data-bs-dismiss="modal"
+                                                            data-bs-target="#staticBackdrop{{ $encaminhamento->id }}">
+                                                            Confirmar
+                                                        </button>
+                                                    @else
+                                                        <button type="submit" class="btn btn-primary">Confirmar
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+
+
+                                <div class="modal fade" id="staticBackdrop{{ $encaminhamento->id }}"
+                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header"
+                                                style="background-color:rgb(39, 91, 189);color:white">
+                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">ATENÇÃO!</h1>
+                                                <button data-bs-dismiss="modal" type="button" class="btn-close"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <label for="recipient-name" class="col-form-label"
+                                                    style="font-size:17px">Este é
+                                                    o {{ $encaminhamento->dt_fim == $now ? 'último' : null }}
+                                                    {{ $encaminhamento->dt_fim == date('Y-m-d', strtotime($now . '+1 week')) ? 'penúltimo' : null }}
+                                                    dia de tratamento
+                                                    de:<br /><span
+                                                        style="color: rgb(39, 91, 189)">{{ $encaminhamento->nome_completo }}</span></label>
+                                                <br />
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button data-bs-dismiss="modal" type="button"
+                                                    class="btn btn-danger">Cancelar</button>
+                                                <button type="type" class="btn btn-primary">Confirmar Presença</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </form>
+                                {{-- fim da modal de presença --}}
                                 @if ($encaminhamento->dt_fim == null)
-                                    <button type="button" class="btn btn-outline-warning btn-sm tooltips"
+                                    <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                         data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
                                         <span class="tooltiptext">Declarar Alta</span>
-                                        <i class="bi bi-clipboard-plus" style="font-size: 1rem; color:#000;"></i>
+                                        <i class="fa fa-person-walking" style="font-size: 1rem; color:#000;"></i>
                                     </button>
-                                @elseif($encaminhamento->id_status == 1)
-                                    <button type="button" disabled class="btn btn-outline-warning btn-sm tooltips"
-                                        data-bs-toggle="modal" data-bs-target="#modalA{{ $encaminhamento->id }}">
-                                        <span class="tooltiptext">Declarar Alta</span>
-                                        <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>
-                                    </button>
-                                @else
-                                    <button type="button" class="btn btn-outline-warning btn-sm tooltips"
+                                @elseif($encaminhamento->id_status == 2)
+                                    <button type="button" class="btn btn-outline-danger btn-sm tooltips"
                                         data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
                                         <span class="tooltiptext">Sem limite</span>
                                         <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>
                                     </button>
+                                @else
+                                    <button type="button" class="btn btn-outline-danger btn-sm tooltips"disabled
+                                        data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
+                                        <span class="tooltiptext">Sem limite</span>
+                                        <i class="bi bi-infinity" style="font-size: 1rem; color:#000;"></i>
+                                    </button>
+                                @endif
+
+                                @if (in_array(45, session()->get('usuario.acesso')))
+                                    @if ($encaminhamento->id_status < 3)
+                                        <a href="/reverter-faltas-assistido/{{ $encaminhamento->id }}"
+                                            class="btn btn-outline-warning btn-sm tooltips">
+                                            <span class="tooltiptext">Reverter faltas</span>
+                                            <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                        </a>
+                                    @else
+                                        <button class="btn btn-outline-warning btn-sm tooltips" disabled>
+                                            <span class="tooltiptext">Reverter faltas</span>
+                                            <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                        </button>
+                                    @endif
                                 @endif
                                 @if ($encaminhamento->id_status == 1)
                                     <!-- Button trigger modal (Desabilitado) -->
@@ -94,7 +233,7 @@
                                         class="btn btn-outline-warning btn-sm tooltips" data-bs-toggle="modal"
                                         data-bs-target="#maca{{ $encaminhamento->id }}" disabled>
                                         <span class="tooltiptext">Maca</span>
-                                        <i class="fas fa-bed" style="font-size: 1rem; color:#000;"></i>
+                                        <i class="fa fa-bed" style="font-size: 1rem; color:#000;"></i>
                                     </button>
                                 @else
                                     <!-- Button trigger modal (Ativo) -->
@@ -102,16 +241,16 @@
                                         class="btn btn-outline-warning btn-sm tooltips" data-bs-toggle="modal"
                                         data-bs-target="#maca{{ $encaminhamento->id }}">
                                         <span class="tooltiptext">Maca</span>
-                                        <i class="fas fa-bed" style="font-size: 1rem; color:#000;"></i>
+                                        <i class="fa fa-bed" style="font-size: 1rem; color:#000;"></i>
                                     </button>
                                 @endif
+
 
                                 <a href="/visualizar-integral/{{ $encaminhamento->id }}" type="button"
                                     class="btn btn-outline-primary btn-sm tooltips">
                                     <span class="tooltiptext">Visualizar</span>
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
                                         data-bs-target="#pessoa"></i>
-                                </a>
                                 </a>
                                 <form action="/maca-integral/{{ $encaminhamento->id }}">
                                     <!-- Modal -->
@@ -227,13 +366,8 @@
                     @endforeach
                 </tbody>
             </table>
-        </div class="d-flex justify-content-center">
-        {{ $encaminhamentos->links('pagination::bootstrap-5') }}
+        </div>
     </div>
-    </div>
-    </div>
-
-    <!-- Incluindo FontAwesome -->
 
 
 @endsection

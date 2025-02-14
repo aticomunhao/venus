@@ -73,7 +73,8 @@ class GerenciarAtendimentoController extends Controller
         if ($atendente != 'null') {
 
             $pesquisaAtendente = array();
-            $pesquisaAtendente = explode(' ', $atendente);
+            $pesquisaAtendente = explode(' ', $assist);
+
             foreach ($pesquisaAtendente as $itemPesquisaAtendente) {
                 $lista =  $lista->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAtendente%"]);
             }
@@ -400,7 +401,8 @@ class GerenciarAtendimentoController extends Controller
 
             $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
-            if ($status != 2) {
+            // Permite que Master Admin cancele atendimentos com qualquer status, sem excessão!
+            if ($status != 2 and !in_array(36, session()->get('usuario.acesso'))) {
                 app('flasher')->addError('Somente é permitido "Cancelar" atendimentos no status "Aguardando atendimento".');
                 return redirect('/gerenciar-atendimentos');
             } else {
@@ -521,7 +523,32 @@ class GerenciarAtendimentoController extends Controller
         try {
             $result = DB::table('atendimentos AS at')
                 ->where('p1.id', $idas)
-                ->select('at.id AS ida', 'at.pref_tipo_atendente', 'p1.dt_nascimento', 'at.dh_chegada', 'at.dh_fim', 'at.dh_inicio', 'at.id_assistido', 'at.id_representante', 'at.id_atendente_pref', 'at.id_atendente', 'at.parentesco', 'tdd.descricao AS ddd', 'p1.celular', 'p1.id AS idas', 'p1.nome_completo AS nm_1', 'p2.nome_completo as nm_2', 'p3.id AS idp', 'p3.nome_completo as nm_3', 'p4.nome_completo as nm_4', 'ts.descricao', 'tp.nome', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo')
+                ->select(
+                    'at.id AS ida',
+                    'at.pref_tipo_atendente',
+                    'p1.dt_nascimento',
+                    'at.dh_chegada',
+                    'at.dh_fim',
+                    'at.dh_inicio',
+                    'at.id_assistido',
+                    'at.id_representante',
+                    'at.id_atendente_pref',
+                    'at.id_atendente',
+                    'at.parentesco',
+                    'tdd.descricao AS ddd',
+                    'p1.celular',
+                    'p1.id AS idas',
+                    'p1.nome_completo AS nm_1',
+                    'p2.nome_completo as nm_2',
+                    'p3.id AS idp',
+                    'p3.nome_completo as nm_3',
+                    'p4.nome_completo as nm_4',
+                    'ts.descricao',
+                    'tp.nome',
+                    'tp.id AS idp',
+                    'tpsx.id AS idsx',
+                    'tpsx.tipo'
+                )
                 ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                 ->leftJoin('membro AS m', 'at.id_atendente', 'm.id')
                 ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')

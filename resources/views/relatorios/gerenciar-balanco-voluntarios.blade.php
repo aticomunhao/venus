@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-    Relatório de Atendimentos
+    Balanço de Voluntários
 @endsection
 @section('content')
     <br />
@@ -16,25 +16,40 @@
     <div class="container">
 
         <!-- Filtro por datas e botões -->
-        <form method="GET" action="{{ url('/gerenciar-relatorio-atendimento') }}">
+        <form method="GET" action="{{ url('/gerenciar-balanco-voluntarios') }}">
             <div class="row align-items-center mb-4">
                 <!-- Data de Início -->
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label for="dt_inicio" class="form-label">Data de Início</label>
                     <input type="date" class="form-control" id="dt_inicio" name="dt_inicio" value="{{ $dt_inicio }}">
                 </div>
                 <!-- Data de Fim -->
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label for="dt_fim" class="form-label">Data de Fim</label>
                     <input type="date" class="form-control" id="dt_fim" name="dt_fim" value="{{ $dt_fim }}">
                 </div>
+
+                <div class="col-md-2">
+                    <label for="status_atendimento" class="form-label">Cronograma</label>
+                    <select class="form-select select2" id="cronograma" name="cronograma">
+                        <option></option>
+                        @foreach ($grupos as $gr)
+                            <option value="{{ $gr->idc }}" {{ request('cronograma') == $gr->idc ? 'selected' : '' }}>
+                                {{ $gr->nomeg }} ({{ $gr->sigla }})-{{ $gr->dia_semana }}
+                                | {{ date('H:i', strtotime($gr->h_inicio)) }}/{{ date('H:i', strtotime($gr->h_fim)) }}
+                                | Sala {{ $gr->sala }}
+                                | {{ $gr->status == 'Inativo' ? 'Inativo' : $gr->descricao_status }}
+                            </option>
+                            @endforeach
+                        </select>
+                </div>
+
                 <div class="col-md-2">
                     <label for="status_atendimento" class="form-label">Tipo Relatorio</label>
-                    <select class="form-select" id="status_atendimento" name="status_atendimento">
-                        <option value="1" @if (request('status_atendimento') == 1) selected @endif>Status</option>
-                        <option value="2" @if (request('status_atendimento') == 2) selected @endif>Sexo</option>
-                        <option value="3" @if (request('status_atendimento') == 3) selected @endif>Dia da Semana</option>
-                        <option value="4" @if (request('status_atendimento') == 4) selected @endif>Turnos</option>
+                    <select class="form-select" id="status_atendimento" name="tipo_relatorio">
+                        <option value="1" @if (request('tipo_relatorio') == 1) selected @endif>Total</option>
+                        <option value="2" @if (request('tipo_relatorio') == 2) selected @endif>Cronogramas</option>
+                        <option value="3" @if (request('tipo_relatorio') == 3) selected @endif>Membros</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -50,7 +65,7 @@
                         style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;">
                         Pesquisar
                     </button>
-                    <a href="{{ url('/gerenciar-relatorio-atendimento') }}" class="btn btn-light w-100"
+                    <a href="{{ url('/gerenciar-balanco-voluntarios') }}" class="btn btn-light w-100"
                         style="font-size: 0.9rem; box-shadow: 1px 2px 5px  #000000; margin-top: 27px;">
                         Limpar
                     </a>
@@ -60,7 +75,7 @@
         <br />
         <div class="card">
             <div class="card-header">
-                Relatório de Atendimentos
+                Balanço de Voluntários
             </div>
             <div class="card-body" id="printTable">
                 <canvas id="myChart"></canvas>
@@ -162,7 +177,7 @@
                 i++
             }
         }
-console.log(dados)
+        console.log(dados)
 
         new Chart(ctx, {
             type: 'bar',

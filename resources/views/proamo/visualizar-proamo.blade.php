@@ -13,7 +13,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            HISTÓRICO DO TRATAMENTO
+                            HISTÓRICO DO TRATAMENTO @if(!$encaminhamento) - <span style="color:red">Este assistido não está em um Tratamento PTD!</span> @endif
                         </div>
                     </div>
                 </div>
@@ -22,21 +22,21 @@
                     <div class="form-group row">
                         <div class="col">
                             <label for="disabledTextInput" class="form-label">Assistido:</label>
-                            <input type="text" id="" value="{{current(current($result))->nm_1}}" class="form-control" placeholder="Disabled input" disabled>
+                            <input type="text" id="" value="{{$result->nm_1}}" class="form-control" placeholder="Disabled input" disabled>
                         </div>
                         <div class="col-2">
                             <label for="disabledTextInput" class="form-label">Sexo:</label>
-                            <input type="text" id="" value="{{ current(current($result))->tipo}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
+                            <input type="text" id="" value="{{$result->tipo}}" style="text-align:center;" class="form-control" placeholder="Disabled input" disabled>
                         </div>
                         <div class="col-3">
                             <label for="disabledTextInput" class="form-label">Dt nascimento:</label>
-                            <input type="date" class="form-control" id=""  name="date"  value="{{ current(current($result))->dt_nascimento}}"   class="form-control" placeholder="Disabled input" disabled>
+                            <input type="date" class="form-control" id=""  name="date"  value="{{$result->dt_nascimento}}"   class="form-control" placeholder="Disabled input" disabled>
                         </div>
                     </div>
                     </fieldset>
                     <br>
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Atendimento Fraterno</legend>
-
+                
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
@@ -51,19 +51,19 @@
                         </thead>
                         <tbody>
                             <tr style="text-align:center;font-size:13px">
-                                <td>{{ current(current($result))->ida}}</td>
-                                <td>{{ current(current($result))->nm_2}}</td>
-                                <td>{{ current(current($result))->nome}}</td>
-                                <td>{{ current(current($result))->nm_4}}</td>
-                                <td>{{ current(current($result))->dh_inicio}}</td>
-                                <td>{{ current(current($result))->dh_fim}}</td>
-                                <td>{{ current(current($result))->statat}}</td>
+                                <td>{{$result->ida}}</td>
+                                <td>{{$result->nm_2}}</td>
+                                <td>{{$result->nome}}</td>
+                                <td>{{$result->nm_4}}</td>
+                                <td>{{$result->dh_inicio}}</td>
+                                <td>{{$result->dh_fim}}</td>
+                                <td>{{$result->statat}}</td>
                             </tr>
                         </tbody>
                     </table>
-
+      
                     <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados do Tratamento</legend>
-
+     
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
                             <tr style="text-align:center; font-weight: bold; font-size:12px">
@@ -79,43 +79,22 @@
                             </tr>
 
                         </thead>
-
                         <tbody>
                             <tr style="text-align:center;font-size:13px">
-                                <td>{{current(current($result))->ide}}</td>
-                                <td>{{date ('d-m-Y', strtotime(current(current($result))->dt_inicio))}}</td>
-                                <td>{{current(current($result))->dt_fim ? date('d-m-Y', strtotime(current(current($result))->dt_fim)) : '-'}}</td>
-                                <td>{{current(current($result))->desctrat}}</td>
-                                <td>{{current(current($result))->nomeg}}</td>
-                                <td>{{current(current($result))->rm_inicio}}</td>
-                                <td>{{current(current($result))->sala}}</td>
-                                <td>{{current(current($result))->tsenc}}</td>
-                                <td>{{current(current($result))->tpmotivo}}</td>
+                                <td>{{$result->ide}}</td>
+                                <td>{{date ('d-m-Y', strtotime($result->dt_inicio))}}</td>
+                                <td>{{$result->dt_fim ? date('d-m-Y', strtotime($result->dt_fim)) : '-'}}</td>
+                                <td>{{$result->desctrat}}</td>
+                                <td>{{$result->nomeg}}</td>
+                                <td>{{$result->rm_inicio}}</td>
+                                <td>{{$result->sala}}</td>
+                                <td>{{$result->tsenc}}</td>
+                                <td>{{$result->tpmotivo}}</td>
                             </tr>
                         </tbody>
                     </table>
-                    <legend
-                            style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">
-                            Dados de Temáticas</legend>
-                            <table class="table table-sm table-bordered table-striped">
-                                <thead style="text-align:center; background: #daffe0;">
-                                    <tr style="text-align:center; font-weight: bold; font-size:12px">
-                                        <td class="col" colspan="{{ count($result) }}">Codigo Temática</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr style="text-align:center;font-size:13px">
-
-                                        @foreach ($result as $results)
-                                        <td>
-                                            {{ $results->cod_tca  }}
-                                        </td>
-                                        @endforeach
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de Presenças PTI</legend>
+      
+                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de Presenças Proamo</legend>
                     Nr de faltas: {{$faul}}
                     <table class="table table-sm table-bordered table-striped">
                         <thead style="text-align:center; background: #daffe0;">
@@ -125,7 +104,7 @@
                                 <td class="col">GRUPO</td>
                                 <td class="col">PRESENÇA</td>
                             </tr>
-
+                            
                         </thead>
                         <tbody>
                             @foreach($list as $lists)
@@ -142,14 +121,39 @@
                             @endforeach
                         </tbody>
                     </table>
-
-
-
+                    <legend style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">Dados de Presenças @if($encaminhamento and $encaminhamento->id_tipo_tratamento == 1) PTD @elseif($encaminhamento and $encaminhamento->id_tipo_tratamento == 2) PTI @endif</legend>
+                    Nr de faltas: {{$faul2}}
+                    <table class="table table-sm table-bordered table-striped">
+                        <thead style="text-align:center; background: #daffe0;">
+                            <tr style="text-align:center; font-weight: bold; font-size:12px">
+                                <td class="col">NR</td>
+                                <td class="col">DATA</td>
+                                <td class="col">GRUPO</td>
+                                <td class="col">PRESENÇA</td>
+                            </tr>
+                            
+                        </thead>
+                        <tbody>
+                            @foreach($list2 as $lists1)
+                            <tr style="text-align:center;font-size:13px">
+                                <td>{{$lists1->idp}}</td>
+                                 <td>{{$lists1->data}}</td>
+                                 <td>{{$lists1->nome}}</td>
+                                @if ($lists1->presenca == 1)
+                                <td style="background-color:#90EE90;">Sim</td>
+                                @elseif ($lists1->presenca == 0)
+                                <td style="background-color:#FA8072;">Não</td>
+                                @endif
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+              
                     <br/>
-
+                    
                     <div class="row">
                         <div class="col">
-                            <a class="btn btn-danger" href="/gerenciar-pti?grupo={{ current(current($result))->id_reuniao }}" style="text-align:right;" role="button">Fechar</a>
+                            <a class="btn btn-danger" href="/gerenciar-proamo?grupo={{$result->id_reuniao}}" style="text-align:right;" role="button">Fechar</a>
                         </div>
                     </div>
                 </div>

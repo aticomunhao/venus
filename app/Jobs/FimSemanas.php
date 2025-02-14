@@ -30,47 +30,27 @@ class FimSemanas implements ShouldQueue
     {
         $ontem = Carbon::yesterday();
 
-
-
-
-
-         DB::table('tratamento as tr')
-        ->select('tr.id_encaminhamento')
-        ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-        ->where('tr.dt_fim', '<>', null)
-        ->where('tr.dt_fim', $ontem)
-        ->whereNot('enc.status_encaminhamento', 4)
-        ->update([
-            'tr.status' => 4
-        ]);
-
+        // Busca os dados dos tratamentos finalizados
         $semanas = DB::table('tratamento as tr')
-        ->select('id_encaminhamento')
-        ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-        ->where('dt_fim', '<>', null)
-        ->where('dt_fim', $ontem)
-        ->whereNot('enc.status_encaminhamento', 4)
-        ->get();
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->whereNot('tr.dt_fim', null) // Retira os infinitos
+            ->where('tr.dt_fim', '<=', $ontem) // Tempo finalizado
+            ->where('enc.status_encaminhamento', 2) // Apenas agendados
+            ->pluck('tr.id_encaminhamento')
+            ->toArray();
 
+        // Finaliza os tratamentos com as datas finalizadas
+        DB::table('tratamento as tr')
+            ->whereIn('id_encaminhamento', $semanas)
+            ->update([
+                'tr.status' => 4 // Finalizado
+            ]);
 
-        $semanasId = [];
-        foreach($semanas as $semana){
-            $semanasId[] = $semana->id_encaminhamento;
-        }
-
-
+        // Finaliza os encaminhamentos dos tratamentos finalizados
         DB::table('encaminhamento')
-        ->whereIn('id', $semanasId)
-        ->update([
-            'status_encaminhamento' => 5
-        ]);
-
-
-//172 e 190
-
-
-
-
-
+            ->whereIn('id', $semanas)
+            ->update([
+                'status_encaminhamento' => 3 // Finalizado
+            ]);
     }
 }

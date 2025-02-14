@@ -12,7 +12,7 @@
         </div>
 
         <div class="card-body">
-            <form class="form-horizontal mt-2" method="post" action="/atualizar-mediunidade/{{ $mediunidade->id_pessoa}}/">
+            <form class="form-horizontal mt-2" method="post" action="/atualizar-mediunidade/{{ $mediunidade->id_pessoa}}">
                 @csrf
 
 

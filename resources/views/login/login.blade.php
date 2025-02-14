@@ -45,7 +45,7 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
-                                        <button class="btn btn-primary bi bi-eye" type="button" id="buttonEye"></button>
+                                        <button class="btn btn-primary" type="button" id="buttonEye"><i class="bi bi-eye"></i></button>
                                     </div>
                                     <br>
                                     <div class="form-group row mt-4">
@@ -89,7 +89,7 @@
                             </script>
                         {{-- <p>Don't have an account ? <a href="/register" class="text-primary"> Signup Now </a></p> --> --}}
                          {{-- <p>© {{  date('Y', strtotime('-2 year')) }} - {{  date('Y') }} Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p> --> --}}
-                        <p>© Comunhão Espírita de Brasília <i class="mdi mdi-heart text-danger"></i></p>
+                        <p>© Comunhão Espírita de Brasília <i class="fa-solid fa-heart" style="color: #74C0FC;"></i></p>
                     </div>
                 </div>
             </div>

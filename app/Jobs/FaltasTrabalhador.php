@@ -21,10 +21,7 @@ class FaltasTrabalhador implements ShouldQueue
      * Create a new job instance.
      */
 
-    public function __construct()
-    {
-
-    }
+    public function __construct() {}
 
     /**
      * Execute the job.
@@ -32,40 +29,48 @@ class FaltasTrabalhador implements ShouldQueue
     public function handle(): void
     {
 
-        // Tratamentos, integral, pti ou ptd, cujas reunioes não estejam de férias
-
         $data_atual = Carbon::yesterday();
-
         $dia_atual = $data_atual->weekday();
 
+        // Retorna todas as presencas de membros já incluidas
         $inseridos = DB::table('presenca_membros as pm')
-        ->leftJoin('dias_cronograma as dc', 'pm.id_dias_cronograma', 'dc.id')
-        ->where('dc.data', '=', $data_atual)
-        ->select('id_membro')
-        ->get();
+            ->leftJoin('dias_cronograma as dc', 'pm.id_dias_cronograma', 'dc.id')
+            ->where('dc.data', $data_atual)
+            ->pluck('id_membro')
+            ->toArray();
 
-        $inseridos = json_decode(json_encode($inseridos), true);
-
+        // Retorna todos os membros que não foram incluidos de um cronograma do dia de hoje
         $lista = DB::table('membro as m')
-        ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
-        ->where('cro.dia_semana', $dia_atual)
-        ->where('dt_fim', null)
-        ->whereNotIn('m.id', $inseridos)
-        ->select('m.id', 'm.id_cronograma')
-        ->get();
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+            ->where('cro.dia_semana', $dia_atual)
+            ->where('dt_fim', null) // Apenas membros ativos
+            ->where(function($query) use ($data_atual) { // Cronogramas ativos
+                $query->whereRaw("data_fim > ?", [$data_atual]) 
+                      ->orWhereNull('data_fim');
+            })
+            ->whereNotIn('m.id', $inseridos)
+            ->select('m.id', 'm.id_cronograma')
+            ->get();
 
 
-        foreach ($lista as $item){
-        $id_dia_cronograma =  DB::table('dias_cronograma')->where('data', $data_atual)->select('id')->where('id_cronograma', $item->id_cronograma)->first();
+        foreach ($lista as $item) {
 
-        DB::table('presenca_membros')
-        ->insert([
-            'id_dias_cronograma' => $id_dia_cronograma->id,
-            'id_membro' => $item->id,
-            'presenca' => false
-        ]);}
+            // Descobre o cronograma que se reune hoje correspondente
+            $id_dia_cronograma =  DB::table('dias_cronograma')
+                ->select('id')
+                ->where('data', $data_atual)
+                ->where('id_cronograma', $item->id_cronograma)
+                ->first();
+
+            // Insere a falta de acordo com os dados
+            DB::table('presenca_membros')
+                ->insert([
+                    'id_dias_cronograma' => $id_dia_cronograma->id,
+                    'id_membro' => $item->id,
+                    'presenca' => false
+                ]);
+        }
 
         return;
-
-}
+    }
 }

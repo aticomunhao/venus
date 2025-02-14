@@ -11,19 +11,17 @@
             </div>
             <br>
             <div class="card-body">
-                <form class="form-horizontal mt-2" method="post" action="/atualizar-entrevista/{{ $encaminhamento->id }}">
+                <form class="form-horizontal mt-2" method="post" action="/atualizar-entrevista/{{ $id }}">
                     @csrf
 
                     <div class="row mb-5">
                         <div class="col">
                             <label for="id_encaminhamento" class="form-label">Nome do assistido</label>
                             <select class="form-select" id="id_encaminhamento" name="id_encaminhamento"disabled>
-                                <option value="{{ $encaminhamento->id }}">{{ $entrevistas->nome_completo }}</option>
+                                <option value="{{ $id }}">{{ $entrevistas->nome_completo }}</option>
                             </select>
                         </div>
                     </div>
-
-
                     <div class="row mb-5">
                         <div class="col">
                             <label for="id_entrevistador" class="form-label">Entrevistador</label>
@@ -33,7 +31,7 @@
                             </span>
                             <select class="form-select select2 teste" id="id_entrevistador" name="entrevistador" {{ $entrevistas->id_entrevistador == null ? 'disabled' : '' }}>
                                  @foreach ($membros as $membro )
-                                 <option value="{{ $membro->id }}" {{$membro->id == $entrevistas->id_entrevistador ? 'selected' : '' }}>{{ $membro->nome_entrevistador }}</option>
+                                 <option value="{{ $membro->id_associado }}" {{$membro->id_associado == $entrevistas->id_entrevistador ? 'selected' : '' }}>{{ $membro->nome_entrevistador }}</option>
                                  @endforeach
                             </select>
                         </div>
@@ -59,6 +57,8 @@
                                     value="{{ $entrevistas->hora }}">
                             </div>
                         </div>
+                    </div>
+                </div>
 
                         <br>
                         <div class="form-group row">
