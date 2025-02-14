@@ -146,7 +146,6 @@ class GerenciarAtendimentoController extends Controller
     {
         try {
             $now = Carbon::now()->format('Y-m-d');
-
             DB::table('atendimentos')
                 ->where('status_atendimento', '<', 6)
                 ->where('dh_chegada', '<', $now)
@@ -320,63 +319,62 @@ class GerenciarAtendimentoController extends Controller
 
     public function store(Request $request)
     {
-       // try {
+        // try {
 
 
 
-            $now = Carbon::now();
 
-            $dt_hora = Carbon::now();
+        $dt_hora = Carbon::now();
 
-            $assistido = $request->assist;
+        $assistido = $request->assist;
 
-            $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 6)->where('id_assistido', $assistido)->count();
-            $dadosAssistido = DB::table('pessoas')->where('id', $request->input('assist'))->first();
-  
-            //dd($resultado);
-            if ($resultado > 0) {
-                app('flasher')->addError('Não é permitido duplicar o cadastro do assistido.');
+        $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 6)->where('id_assistido', $assistido)->count();
+        $dadosAssistido = DB::table('pessoas')->where('id', $request->input('assist'))->first();
 
-                return redirect('/gerenciar-atendimentos');
-            }
-
-            $menor = isset($request->menor) ? 1 : 0;
-
-            //dd($menor);
-
-            $idAtendimento = DB::table('atendimentos AS atd')->insertGetId([
-                'dh_chegada' => $dt_hora->toDateTimeString() . PHP_EOL,
-                'id_assistido' => $request->input('assist'),
-                'id_representante' => $request->input('repres'),
-                'parentesco' => $request->input('parent'),
-                'id_atendente_pref' => $request->input('afi_p'),
-                'pref_tipo_atendente' => $request->input('tipo_afi'),
-                'id_prioridade' => $request->input('priori'),
-                'menor_auto' => $menor,
-                'status_atendimento' => 2,
-            ]);
-
-            // Insere no histórico a criação do atendimento
-            DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idAtendimento,
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 1, // Atendimento
-                'data_hora' => $dt_hora
-            ]);
-
-            if($dadosAssistido->cpf == null or $dadosAssistido->sexo == null or $dadosAssistido->ddd == null or $dadosAssistido->celular == null){
-
-                session()->put('usuario.acesso', array_merge(session()->get('usuario.acesso'), ['temp' => 2]));
-                app('flasher')->addWarning('É necessário atualizar os dados para prosseguir.');
-                return redirect('/editar-pessoa/' . $request->assist);
-            }
-
-
-
-            app('flasher')->addSuccess('O cadastro do atendimento foi realizado com sucesso.');
+        //dd($resultado);
+        if ($resultado > 0) {
+            app('flasher')->addError('Não é permitido duplicar o cadastro do assistido.');
 
             return redirect('/gerenciar-atendimentos');
+        }
+
+        $menor = isset($request->menor) ? 1 : 0;
+
+        //dd($menor);
+
+        $idAtendimento = DB::table('atendimentos AS atd')->insertGetId([
+            'dh_chegada' => $dt_hora->toDateTimeString() . PHP_EOL,
+            'id_assistido' => $request->input('assist'),
+            'id_representante' => $request->input('repres'),
+            'parentesco' => $request->input('parent'),
+            'id_atendente_pref' => $request->input('afi_p'),
+            'pref_tipo_atendente' => $request->input('tipo_afi'),
+            'id_prioridade' => $request->input('priori'),
+            'menor_auto' => $menor,
+            'status_atendimento' => 2,
+        ]);
+
+        // Insere no histórico a criação do atendimento
+        DB::table('log_atendimentos')->insert([
+            'id_referencia' => $idAtendimento,
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'id_acao' => 2, // foi criado
+            'id_origem' => 1, // Atendimento
+            'data_hora' => $dt_hora
+        ]);
+
+        if ($dadosAssistido->cpf == null or $dadosAssistido->sexo == null or $dadosAssistido->ddd == null or $dadosAssistido->celular == null) {
+
+            session()->flash('usuario.acesso.temp', 2); // Concede um acesso temporário para a tela de editar
+            app('flasher')->addWarning('É necessário atualizar os dados para prosseguir.');
+            return redirect('/editar-pessoa/' . $request->assist);
+        }
+
+
+
+        app('flasher')->addSuccess('O cadastro do atendimento foi realizado com sucesso.');
+
+        return redirect('/gerenciar-atendimentos');
         // } catch (\Exception $e) {
         //     app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
         //     DB::rollBack();
