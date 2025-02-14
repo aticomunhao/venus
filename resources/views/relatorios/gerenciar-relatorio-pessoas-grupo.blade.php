@@ -120,7 +120,6 @@
                             <tbody style="font-size: 14px; color:#000000; text-align: center;">
                                 @foreach ($membro as $dado)
                                     <tr>
-
                                         <td>{{ $dado->grupo_nome }}</td>
                                         <td>{{ $dado->status }}</td>
                                         <td>{{ $dado->nome_funcao }}</td>
@@ -135,16 +134,10 @@
                       </div>
                     </div>
                   </div>
-
-
-
-
-
             @endforeach
             </div>
             </div>
           </div>
-
             <br />
           {{ $result->appends(request()->query())->links('pagination::bootstrap-5') }}
     </div class="d-flex justify-content-center">

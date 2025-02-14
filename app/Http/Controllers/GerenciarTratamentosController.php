@@ -462,7 +462,7 @@ class GerenciarTratamentosController extends Controller
 
     public function faltas($idtr)
     {
-
+        $urlAnterior = str_replace(url('/'), '', url()->previous());
 
         $result = DB::table('tratamento as tr')
             ->select('p.nome_completo as nm_1', 'p.dt_nascimento', 'ts.tipo')
@@ -509,12 +509,11 @@ class GerenciarTratamentosController extends Controller
         $list = $arrayPresencas;
 
 
-        return view('/recepcao-integrada/reverter-faltas-assisitido', compact('result', 'list'));
+        return view('/recepcao-integrada/reverter-faltas-assisitido', compact('result', 'list', 'urlAnterior'));
     }
 
     public function remarcar(Request $request)
     {
-
         $data_atual = Carbon::now();
 
 
@@ -548,7 +547,7 @@ class GerenciarTratamentosController extends Controller
             app('flasher')->addError('Nenhum item selecionado.');
         }
 
-        return redirect('/gerenciar-tratamentos');
+        return redirect($request->url);
     }
 
     public function job()

@@ -58,6 +58,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença
                                         Trabalhador</a></li>
                             @endif
+                            @if (in_array(47, $acesso))
+                            <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de Voluntários</a>
+                            </li>
+                        @endif
                             @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-tratamento">Relatório de
                                         Tratamentos</a>
@@ -77,7 +81,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Reuniões</a>
                                 </li>
                             @endif
-                            @if (in_array(44, $acesso))
+                            @if (in_array(48, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
                                         Vagas em Grupos</a>
                                 </li>
@@ -145,7 +149,11 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-tratamentos">Tratamentos/Presença</a>
                                 </li>
                             @endif
-                            @if (in_array(35, $acesso))
+                            @if (in_array(47, $acesso))
+                            <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de Voluntários</a>
+                            </li>
+                        @endif
+                            @if (in_array(46, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-atendimento">Relatório de
                                         Atendimentos</a>
                                 </li>
@@ -178,7 +186,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Reuniões</a>
                                 </li>
                             @endif
-                            @if (in_array(44, $acesso))
+                            @if (in_array(48, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
                                         Vagas em Grupos</a>
                                 </li>
@@ -236,6 +244,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             {{-- @if (in_array(19, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-reunioes">Gerenciar Reuniões </a></li>
                             @endif --}}
+                            @if (in_array(47, $acesso))
+                            <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de Voluntários</a>
+                            </li>
+                        @endif
                             @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-tratamento">Relatório de
                                         Tratamentos</a>
@@ -253,7 +265,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
                                         Reuniões</a></li>
                             @endif
-                            @if (in_array(44, $acesso))
+                            @if (in_array(48, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de Vagas em
                                         Grupos</a></li>
                             @endif
