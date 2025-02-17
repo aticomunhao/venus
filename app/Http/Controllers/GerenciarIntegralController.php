@@ -213,6 +213,26 @@ class GerenciarIntegralController extends Controller
             ->select('tr.id')
             ->first();
 
+
+        $emergencia = DB::table('presenca_cronograma as dt')
+            ->select(
+                'dt.id AS idp',
+                'dt.presenca',
+                'dc.data',
+                'gp.nome',
+            )
+            ->leftJoin('tratamento as tr', 'dt.id_tratamento', 'tr.id')
+            ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
+            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+            ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
+            ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
+            ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
+            ->where('id_pessoa', current(current($result))->id_assistido)
+             ->where('dc.data', '>=', current(current($result))->dt_inicio)
+            ->whereNull('id_tratamento')
+            ->get()
+            ->toArray();
+
         // Traz todas as presenças do assistido nesse Tratamento
         $list = DB::table('presenca_cronograma AS dt')
             ->select(
@@ -277,7 +297,7 @@ class GerenciarIntegralController extends Controller
                 ->count();
         }
 
-        return view('Integral.historico-integral', compact('result', 'list', 'faul', 'list2', 'faul2', 'encaminhamento'));
+        return view('Integral.historico-integral', compact('result', 'list', 'faul', 'list2', 'faul2', 'encaminhamento', 'emergencia'));
         // } catch (\Exception $e) {
 
         //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
