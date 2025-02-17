@@ -87,10 +87,25 @@
                         </a>
 
                         @if (in_array(48, session()->get('usuario.acesso')))
-                        <a href="/curriculo-medium/{{ $membros->idm }}" class="btn btn-outline-primary btn-sm tooltips">
-                            <span class="tooltiptext">Currículo</span>
-                            <i class="bi bi-newspaper" style="font-size: 1rem; color:#000;"></i>
-                        </a>
+                            <a href="/curriculo-medium/{{ $membros->idm }}"
+                                class="btn btn-outline-primary btn-sm tooltips">
+                                <span class="tooltiptext">Currículo</span>
+                                <i class="bi bi-newspaper" style="font-size: 1rem; color:#000;"></i>
+                            </a>
+                        @endif
+                        @if (in_array(42, session()->get('usuario.acesso')))
+                            @if ($membros->status == 'Ativo')
+                                <a href="/reverter-faltas-membro/{{ $membros->idm }}"
+                                    class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Reverter faltas</span>
+                                    <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                            @else
+                                <button class="btn btn-outline-warning btn-sm tooltips" disabled>
+                                    <span class="tooltiptext">Reverter faltas</span>
+                                    <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
+                                </button>
+                            @endif
                         @endif
                         @if (in_array(13, session()->get('usuario.acesso')))
                             <!-- Botão para editar -->
@@ -106,21 +121,6 @@
                                     <span class="tooltiptext">Editar</span>
                                     <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
                                 </button>
-                            @endif
-
-                            @if (in_array(42, session()->get('usuario.acesso')))
-                                @if ($membros->status == 'Ativo')
-                                    <a href="/reverter-faltas-membro/{{ $membros->idm }}"
-                                        class="btn btn-outline-warning btn-sm tooltips">
-                                        <span class="tooltiptext">Reverter faltas</span>
-                                        <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
-                                    </a>
-                                @else
-                                    <button class="btn btn-outline-warning btn-sm tooltips" disabled>
-                                        <span class="tooltiptext">Reverter faltas</span>
-                                        <i class="bi bi-file-diff" style="font-size: 1rem; color:#000;"></i>
-                                    </button>
-                                @endif
                             @endif
 
                             <!-- Botão para inativar -->
@@ -139,13 +139,13 @@
                             @endif
 
                             {{-- @if ($membros->status == 'Ativo') --}}
-                                <!-- Botão para deletar -->
-                                <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
-                                    data-bs-target="#confirmDelete{{ $membros->idm }}">
-                                    <span class="tooltiptext">Deletar</span>
-                                    <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
-                                </button>
-                                {{-- @else
+                            <!-- Botão para deletar -->
+                            <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                data-bs-target="#confirmDelete{{ $membros->idm }}">
+                                <span class="tooltiptext">Deletar</span>
+                                <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
+                            </button>
+                            {{-- @else
                                  <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
                                     data-bs-target="#confirmDelete{{ $membros->idm }}" disabled>
                                     <span class="tooltiptext">Deletar</span>
