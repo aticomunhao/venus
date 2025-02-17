@@ -110,7 +110,7 @@ class PessoaController extends Controller
     {
         try {
 
-
+           
             $ddd = DB::select('select id, descricao from tp_ddd');
 
             $sexo = DB::select('select id, tipo from tp_sexo');
@@ -132,7 +132,7 @@ class PessoaController extends Controller
 
         $vercpf = DB::table('pessoas')->where('cpf', $cpf)->count();
 
-        //dd($vercpf);
+    
 
         try {
             $validated = $request->validate([
@@ -196,10 +196,14 @@ class PessoaController extends Controller
     public function edit($idp)
     {
         try {
+            session()->flash('usuario.url', str_replace(url('/'), '', url()->previous())); // Salva o caminho de entrada desta view
+            session()->reflash(); // Permite um acesso temporário para inclusão
+
             $ddd = DB::select('select id, descricao from tp_ddd');
             $sexo = DB::select('select id, tipo from tp_sexo');
             $status_p = DB::select('select id, tipo from tipo_status_pessoa');
             $motivo = DB::select('select id, motivo from tipo_motivo_status_pessoa order by id');
+            
 
             // Buscando uma única pessoa pelo ID, mas retornando uma coleção
             $lista = DB::table('pessoas as p')
@@ -246,6 +250,8 @@ class PessoaController extends Controller
     public function show($idp)
     {
         try {
+
+         
             $ddd = DB::select('select id, descricao from tp_ddd');
 
             $sexo = DB::select('select id, tipo from tp_sexo');
@@ -266,6 +272,7 @@ class PessoaController extends Controller
 
 
 
+
             return view('/pessoal/visualizar-pessoa', compact('lista', 'sexo', 'ddd', 'status_p', 'motivo'));
         } catch (\Exception $e) {
 
@@ -276,7 +283,7 @@ class PessoaController extends Controller
 
     public function update(Request $request, $idp)
     {
-
+        $urlEntrada = session()->get('usuario.url');
         $usuario = session()->get('usuario.id_usuario');
 
         //dd($usuario);
@@ -333,9 +340,11 @@ class PessoaController extends Controller
                 'pessoa' => $idp
             ]);
 
-
+            if($urlEntrada == '/criar-atendimento'){
+                app('flasher')->addSuccess('O cadastro da pessoa foi alterado e o Atendimento gerado com sucesso');
+                return redirect('/gerenciar-atendimentos');
+            }
             app('flasher')->addSuccess('O cadastro da pessoa foi alterado com sucesso');
-
             return redirect('/gerenciar-pessoas');
         }
     }
