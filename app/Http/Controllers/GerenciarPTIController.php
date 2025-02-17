@@ -15,7 +15,7 @@ class GerenciarPTIController extends Controller
     {
 
 
-       try {
+        try {
 
             $hoje = Carbon::today();
 
@@ -84,7 +84,8 @@ class GerenciarPTIController extends Controller
             }
 
             $encaminhamentos = $encaminhamentos->get();
-            return view('pti.gerenciar-pti', compact('encaminhamentos', 'dirigentes', 'selected_grupo'));
+            $totalAssistidos = count($encaminhamentos);
+            return view('pti.gerenciar-pti', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'totalAssistidos'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('tratamento-erro.erro-inesperado', compact('code'));

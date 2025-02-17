@@ -19,7 +19,7 @@
                     </div>
                     <div class="card-body">
                         <form class="form-horizontal mt-2" method="post"
-                            action="/remarcar-faltas-assistido">
+                            action="/remarcar-faltas-assistido?url={{$urlAnterior}}">
                             @csrf
                                 <div class="form-group row">
                                     <div class="col">
@@ -41,7 +41,7 @@
                                     </div>
                                 </div>
                             <legend>
-                                
+
                                 <!-- Dados de Presenças -->
                                 @if($list)
                                 <br>
@@ -111,7 +111,7 @@
                                 <br />
                                 <div class="row mt-1 justify-content-center">
                                     <div class="d-grid gap-1 col-4 mx-auto">
-                                        <a class="btn btn-danger" href="/gerenciar-tratamentos/" role="button">Cancelar</a>
+                                        <a class="btn btn-danger" href="{{ $urlAnterior }}" role="button">Cancelar</a>
                                     </div>
                                     <div class="d-grid gap-2 col-4 mx-auto">
                                         <button type="submit" class="btn btn-primary">Confirmar</button>
