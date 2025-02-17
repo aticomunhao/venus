@@ -270,10 +270,7 @@ class GerenciarProamoController extends Controller
                 ->count();
         }
 
-        $list2 = array_merge($emergencia, $list2);
-        array_multisort(array_column($list2, 'data'), SORT_DESC, $list2);
-
-        return view('proamo.visualizar-proamo', compact('result', 'list', 'faul', 'list2', 'faul2', 'encaminhamento'));
+        return view('proamo.visualizar-proamo', compact('result', 'list', 'faul', 'list2', 'faul2', 'encaminhamento', 'emergencia'));
     }
 
 
