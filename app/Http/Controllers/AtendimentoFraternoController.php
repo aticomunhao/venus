@@ -607,6 +607,29 @@ class AtendimentoFraternoController extends Controller
         return view('atendimento-assistido.tematicas', compact('assistido'));
     }
 
+    public function verificaTratamento($idas)
+    {
+        $hoje = Carbon::today(); // datetime de agora
+        // Retorna todos os IDs dos encaminhamentos de tratamento
+        $countTratamentos = DB::table('encaminhamento as enc')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('tratamento as trat', 'enc.id', 'trat.id_encaminhamento')
+            ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
+            ->where('at.id_assistido', $idas)
+            ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+            ->where(function ($query) use ($hoje) {
+                $query->where(function ($innerQuery) use ($hoje) {
+                    $innerQuery->whereNotNull('trat.dt_fim'); // Regra apenas para tratamentos que tem DT_FIM
+                    $innerQuery->whereNot('trat.dt_fim', $hoje); // Tratamentos que acabam no dia do atendimento, podem ser renovados
+                });
+                $query->orWhereNull('trat.dt_fim'); // Exclui da regra todos os que não tem DT_FIM
+            })
+            ->pluck('id_tipo_tratamento')->toArray();
+
+            return $countTratamentos;
+    }
+
+
     public function enc_trat(Request $request, $idat, $idas)
     {
         $now = Carbon::today(); // datetime de agora
@@ -620,20 +643,8 @@ class AtendimentoFraternoController extends Controller
         $quimica = isset($request->gdq) ? 1 : 0;
 
         // Busca todos os encaminhamentos de Tratamento ativos da pessoa que está sendo atendida
-        $countEncaminhamentos = DB::table('encaminhamento as enc')
-            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-            ->leftJoin('tratamento as trat', 'enc.id', 'trat.id_encaminhamento')
-            ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento tipo "Tratamento"
-            ->where('at.id_assistido', $idas) // Do Assistido
-            ->where('enc.status_encaminhamento', '<', 3) // Para agendar, Agendado, ou seja, apenas ativos
-            ->where(function ($query) use ($now) {
-                $query->where(function ($innerQuery) use ($now) {
-                    $innerQuery->whereNotNull('trat.dt_fim'); // Regra apenas para tratamentos que tem DT_FIM
-                    $innerQuery->whereNot('trat.dt_fim', $now); // Tratamentos que acabam no dia do atendimento, podem ser renovados
-                });
-                $query->orWhereNull('trat.dt_fim'); // Exclui da regra todos os que não tem DT_FIM
-            })
-            ->pluck('id_tipo_tratamento')->toArray();
+        $countEncaminhamentos = $this->verificaTratamento($idas);
+
         // Busca todos os encaminhamentos  de Grupo de Apoio ativos da pessoa que está sendo atendida
         $countGrupoApoio = DB::table('encaminhamento as enc')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
@@ -641,7 +652,6 @@ class AtendimentoFraternoController extends Controller
             ->where('at.id_assistido', $idas) // Do Assistido
             ->where('enc.status_encaminhamento', '<', 3) // Para agendar, Agendado, ou seja, apenas ativos
             ->pluck('id_tipo_tratamento')->toArray();
-
 
 
         // PTD -> Passe de Tratamento Desobsessivo
@@ -659,10 +669,11 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idPTD,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 5, // gerou o Encaminhamento
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idPTD,
                 'data_hora' => $dt_hora
             ]);
 
@@ -683,13 +694,13 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idPTH,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 5, // gerou o Encaminhamento
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idPTH,
                 'data_hora' => $dt_hora
             ]);
-
             app('flasher')->addSuccess('O encaminhamento para Grupo de Harmonização foi criado com sucesso.');
         }
 
@@ -706,16 +717,15 @@ class AtendimentoFraternoController extends Controller
                 'id_tipo_tratamento' => 7,
                 'status_encaminhamento' =>  1
             ]);
-
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idAcolher,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 5, // gerou o Encaminhamento
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idAcolher,
                 'data_hora' => $dt_hora
             ]);
-
 
             app('flasher')->addSuccess('O encaminhamento para Grupo Acolher foi criado com sucesso.');
         }
@@ -733,13 +743,13 @@ class AtendimentoFraternoController extends Controller
                 'status_encaminhamento' =>  1
             ]);
 
-
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idQuimica,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 5, // gerou o Encaminhamento
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idQuimica,
                 'data_hora' => $dt_hora
             ]);
 
@@ -760,19 +770,21 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idViver,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 5, // gerou o Encaminhamento
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idViver,
                 'data_hora' => $dt_hora
             ]);
-
 
             app('flasher')->addSuccess('O encaminhamento para Grupo Viver foi criado com sucesso.');
         }
 
         return Redirect('/atendendo');
     }
+
+   
 
     public function enc_entre(Request $request, $idat, String $idas)
     {
@@ -788,21 +800,7 @@ class AtendimentoFraternoController extends Controller
         $nutres = isset($request->nutres) ? 1 : 0;
         $evangelho = isset($request->gel) ? 1 : 0;
 
-        // Retorna todos os IDs dos encaminhamentos de tratamento
-        $countTratamentos = DB::table('encaminhamento as enc')
-            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-            ->leftJoin('tratamento as trat', 'enc.id', 'trat.id_encaminhamento')
-            ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
-            ->where('at.id_assistido', $idas)
-            ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
-            ->where(function ($query) use ($hoje) {
-                $query->where(function ($innerQuery) use ($hoje) {
-                    $innerQuery->whereNotNull('trat.dt_fim'); // Regra apenas para tratamentos que tem DT_FIM
-                    $innerQuery->whereNot('trat.dt_fim', $hoje); // Tratamentos que acabam no dia do atendimento, podem ser renovados
-                });
-                $query->orWhereNull('trat.dt_fim'); // Exclui da regra todos os que não tem DT_FIM
-            })
-            ->pluck('id_tipo_tratamento')->toArray();
+
 
         // Retorna todos os IDs dos encaminhamentos de entrevista
         $countEntrevistas = DB::table('encaminhamento as enc')
@@ -832,15 +830,19 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idAFE,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 6, // gerou a Entrevista
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idAFE,
                 'data_hora' => $dt_hora
             ]);
 
             app('flasher')->addSuccess('O encaminhamento para o AFE foi criado com sucesso.');
         }
+
+        // Busca todos os encaminhamentos de Tratamento ativos da pessoa que está sendo atendida
+        $countTratamentos = $this->verificaTratamento($idas);
 
         // AME => Tratamento Fluidoterápico Integral (TFI)
         if ((in_array(5, $countEntrevistas) or in_array(6, $countTratamentos)) and $ame) {
@@ -856,10 +858,11 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idAME,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 6, // gerou a Entrevista
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idAME,
                 'data_hora' => $dt_hora
             ]);
 
@@ -875,10 +878,11 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idAME,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 6, // gerou a Entrevista
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idAME,
                 'data_hora' => $dt_hora
             ]);
 
@@ -892,15 +896,20 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idPTDAME,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 5, // gerou o Encaminhamento
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idPTDAME,
                 'data_hora' => $dt_hora
             ]);
 
             app('flasher')->addSuccess('Os encaminhamentos para AME e PTD  foi criado com sucesso.');
         }
+
+        // Busca todos os encaminhamentos de Tratamento ativos da pessoa que está sendo atendida
+        $countTratamentos = $this->verificaTratamento($idas);
+
         // DIAMO => Programa de Apoio a Portadores de Mediunidade Ostensiva (PROAMO)
         if ((in_array(6, $countEntrevistas) or in_array(4, $countTratamentos)) and $diamo) {
             app('flasher')->addWarning('Já existe um encaminhamento para o Proamo ativo para esta pessoa!');
@@ -940,10 +949,11 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idDIAMO,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 6, // gerou a Entrevista
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idDIAMO,
                 'data_hora' => $dt_hora
             ]);
 
@@ -959,10 +969,11 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idDIAMO,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 6, // gerou a Entrevista
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idDIAMO,
                 'data_hora' => $dt_hora
             ]);
 
@@ -976,15 +987,19 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idPTDDIAMO,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 5, // gerou o Encaminhamento
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idPTDDIAMO,
                 'data_hora' => $dt_hora
             ]);
 
             app('flasher')->addSuccess('Os encaminhamentos para o Proamo e PTD foram criados com sucesso.');
         }
+
+        // Busca todos os encaminhamentos de Tratamento ativos da pessoa que está sendo atendida
+        $countTratamentos = $this->verificaTratamento($idas);
 
         // NUTRES => Passe Tratamento Intensivo (PTI)
         if ((in_array(4, $countEntrevistas) or in_array(2, $countTratamentos)) and $nutres) {
@@ -1027,10 +1042,11 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idPTI,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 6, // gerou a Entrevista
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idPTI,
                 'data_hora' => $dt_hora
             ]);
 
@@ -1046,14 +1062,15 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idPTI,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 6, // gerou a Entrevista
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idPTI,
                 'data_hora' => $dt_hora
             ]);
 
-            // Insere um novo Encaminhamento PTD
+            // Insere um novo Encaminhamento PTD 
             $idPTDPTI = DB::table('encaminhamento AS enc')->insertGetId([
                 'id_tipo_encaminhamento' => 2,
                 'id_atendimento' => $idat,
@@ -1063,10 +1080,11 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idPTDPTI,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 5, // gerou o Encaminhamento
+                'id_origem' => 1, // Encaminhamento
+                'id_observacao' => $idPTDPTI,
                 'data_hora' => $dt_hora
             ]);
 
@@ -1087,10 +1105,11 @@ class AtendimentoFraternoController extends Controller
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idEnvagelho,
+                'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 2, // foi criado
-                'id_origem' => 2, // Encaminhamento
+                'id_acao' => 6, // gerou a Entrevista
+                'id_origem' => 1, // Atendimento
+                'id_observacao' => $idEnvagelho,
                 'data_hora' => $dt_hora
             ]);
 
@@ -1221,18 +1240,40 @@ class AtendimentoFraternoController extends Controller
     }
     public function tematica(Request $request, $idat)
     {
+        $dt_hora = Carbon::now();
+        dd($request->input('nota'));
+        if ($request->input('nota')) {
+            // Atualiza a anotação criada pelo atendente na tabela de Atendimentos
+            DB::table('atendimentos AS at')->where('id', $idat)->update([
+                'observacao' => $request->input('nota')
+            ]);
 
-        // Atualiza a anotação criada pelo atendente na tabela de Atendimentos
-        DB::table('atendimentos AS at')->where('id', $idat)->update([
-            'observacao' => $request->input('nota')
-        ]);
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idat,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 3, // foi editado
+                'id_origem' => 1, // Encaminhamento
+                'data_hora' => $dt_hora
+            ]);
+        }
 
         // Inclui todas as temáticas marcadas
         if ($request->tematicas) { // IF necessário pois não é necessário que alguem marque os botões, e isso gera um bug
             foreach ($request->tematicas as $tematica) {
-                DB::table('registro_tema AS rt')->insert([
+                $idTema = DB::table('registro_tema AS rt')->insertGetId([
                     'id_atendimento' => $idat,
                     'id_tematica' => $tematica,
+                ]);
+
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $idat,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 7, // gerou a Temática
+                    'id_origem' => 1, // Atendimento
+                    'id_observacao' => $idTema,
+                    'data_hora' => $dt_hora
                 ]);
             }
         }
@@ -1249,10 +1290,20 @@ class AtendimentoFraternoController extends Controller
     {
         try {
 
+            $dt_hora = Carbon::now();
             DB::table('encaminhamento')->where('id_atendimento', $idat)->delete(); // Apaga todos os Tratamentos gerados
             DB::table('registro_tema')->where('id_atendimento', $idat)->delete(); //  Apaga todas as Entrevistas geradas
             DB::table('atendimentos')->where('id', $idat)->update([ // Limpa o campo de anotação do atendimento
                 'observacao' => null
+            ]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idat,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 8, // foi Resetado
+                'id_origem' => 1, // Atendimento
+                'data_hora' => $dt_hora
             ]);
 
             app('flasher')->addSuccess('Todos os dados foram apagados com sucesso!');
