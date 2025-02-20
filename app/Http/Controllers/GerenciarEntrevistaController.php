@@ -365,10 +365,10 @@ class GerenciarEntrevistaController extends Controller
 
     public function show($id)
     {
-        try {
+      //  try {
 
             // Traz todos os dados da VIEW
-            $entrevistas = DB::table('entrevistas AS entre')
+            $entrevistas = DB::table('encaminhamento AS enc')
                 ->select(
                     'p.nome_completo',
                     'p.celular',
@@ -385,24 +385,26 @@ class GerenciarEntrevistaController extends Controller
                     'entre.hora',
                     'pessoas.nome_completo as entrevistador'
                 )
+                ->leftJoin('entrevistas AS entre', 'enc.id', 'entre.id_encaminhamento')
                 ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
                 ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-                ->leftJoin('encaminhamento AS enc', 'entre.id_encaminhamento', 'enc.id')
                 ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
                 ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
                 ->leftJoin('tp_ddd as ddd', 'p.ddd', 'ddd.id')
                 ->leftJoin('associado', 'entre.id_entrevistador', 'associado.id')
                 ->leftJoin('pessoas', 'associado.id_pessoa', 'pessoas.id')
-                ->where('entre.id_encaminhamento', $id)
+                ->where('enc.id', $id)
                 ->first();
 
 
             $presencas = DB::table('presenca_cronograma as pc')
-                ->select('enc.id_tipo_tratamento', 'dc.data', 'pc.presenca')
+                ->select('enc.id_tipo_tratamento', 'dc.data', 'pc.presenca', 'gr.nome')
                 ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
                 ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
                 ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
                 ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+                ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
+                ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
                 ->where('at.id_assistido', $entrevistas->id_assistido)
                 ->whereIn('enc.id_tipo_tratamento', [1, 2])
                 ->where('enc.status_encaminhamento', '<', 3)
@@ -411,11 +413,11 @@ class GerenciarEntrevistaController extends Controller
 
 
             return view('Entrevistas.visualizar-entrevista', compact('entrevistas', 'id', 'presencas'));
-        } catch (\Exception $e) {
+        // } catch (\Exception $e) {
 
-            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
-            return redirect()->back();
-        }
+        //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+        //     return redirect()->back();
+        // }
     }
 
 
