@@ -784,7 +784,7 @@ class AtendimentoFraternoController extends Controller
         return Redirect('/atendendo');
     }
 
-   
+
 
     public function enc_entre(Request $request, $idat, String $idas)
     {
@@ -1070,7 +1070,7 @@ class AtendimentoFraternoController extends Controller
                 'data_hora' => $dt_hora
             ]);
 
-            // Insere um novo Encaminhamento PTD 
+            // Insere um novo Encaminhamento PTD
             $idPTDPTI = DB::table('encaminhamento AS enc')->insertGetId([
                 'id_tipo_encaminhamento' => 2,
                 'id_atendimento' => $idat,
@@ -1241,7 +1241,6 @@ class AtendimentoFraternoController extends Controller
     public function tematica(Request $request, $idat)
     {
         $dt_hora = Carbon::now();
-        dd($request->input('nota'));
         if ($request->input('nota')) {
             // Atualiza a anotação criada pelo atendente na tabela de Atendimentos
             DB::table('atendimentos AS at')->where('id', $idat)->update([
