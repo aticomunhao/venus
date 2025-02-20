@@ -176,19 +176,13 @@
                                             <i class="bi bi-person-add" style="font-size: 1rem; color:#000;"></i>
                                         </a>
                                     @endif{{-- Fim aguardando entrevistador --}}
-                                    @if ($informacao->status == 1)
-                                        {{-- Inicio visualizar --}}
-                                        <a href="#" type="button" class="btn btn-outline-primary btn-sm disabled"
-                                            data-tt="tooltip" data-placement="top" title="historico" disabled>
-                                            <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
-                                        </a>
-                                    @else
+                   
                                         <a href="/visualizar-entrevista/{{ $informacao->ide }}" type="button"
                                             class="btn btn-outline-primary btn-sm tooltips">
                                             <span class="tooltiptext">Histórico</span>
                                             <i class="bi bi bi-search" style="font-size: 1rem; color:#000;"></i>
                                         </a>
-                                    @endif{{-- Fim visualizar --}}
+
                                     @if ($informacao->status !== 3)
                                         {{-- Inicio Confirmar --}}
                                         <a href="#" type="button" class="btn btn-outline-success btn-sm disabled"
