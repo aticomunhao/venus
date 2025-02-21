@@ -432,12 +432,12 @@ class GerenciarEncaminhamentoController extends Controller
                 //Caso ele tenha uma entrevista ou tratamento PTI ou PROAMO, é criado um tratamento permanente
                 if ((in_array(2, $countTratamentos) or in_array(4, $countTratamentos)) or (in_array(4, $countEntrevistas) or (in_array(6, $countEntrevistas))) or $tfiInfinito) {
 
-                    $idPermanente = DB::table('tratamento AS tr')->inserGetId([
+                    $idPermanente = DB::table('tratamento AS tr')->insertGetId([
                         'id_reuniao' => $reu,
                         'id_encaminhamento' => $ide,
                         'status' => 1,
                         'dt_inicio' => $data_antes,
-                    ]);
+                    ]);                    
 
                     // Insere no histórico a criação do atendimento
                     DB::table('log_atendimentos')->insert([
