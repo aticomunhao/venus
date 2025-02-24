@@ -66,8 +66,9 @@
                         <th>ID</th>
                     @endif
                     <th>NOME</th>
-                    <th>GRUPO</th>
                     <th>SEMANAS REALIZADAS</th>
+                    <th>PRESENÇAS</th>
+                    <th>FALTAS CONSECUTIVAS</th>
                     <th>STATUS</th>
                     <th>MACA</th>
                     <th>AÇÕES</th>
@@ -76,15 +77,12 @@
                 <tbody>
                     @foreach ($encaminhamentos as $encaminhamento)
                         <tr class="{{ $encaminhamento->ptd }}">
-
                             @if (in_array(36, session()->get('usuario.acesso')))
                                 <td>{{ $encaminhamento->id }}
                                 </td>
                             @endif
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
                                 {{ $encaminhamento->nome_completo }}</td>
-                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
-                                {{ $encaminhamento->nome }}</td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
                                 @if ($encaminhamento->contagem == null and $encaminhamento->contagem !== 0)
                                     Permanente
@@ -94,6 +92,8 @@
                                     {{ $encaminhamento->contagem }}
                                 @endif
                             </td>
+                            <td> {{ $encaminhamento->presenca }} </td>
+                            <td> {{ $encaminhamento->faltas }} </td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
                                 {{ $encaminhamento->status }}</td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
