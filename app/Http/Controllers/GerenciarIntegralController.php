@@ -52,7 +52,6 @@ class GerenciarIntegralController extends Controller
                 'p.nome_completo',
                 'cro.h_inicio',
                 'cro.h_fim',
-                'gr.nome',
                 'tr.dt_fim',
                 'tr.dt_inicio',
                 'tse.nome as status',
@@ -62,13 +61,13 @@ class GerenciarIntegralController extends Controller
             )
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
-            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
             ->leftJoin('pessoas as p', 'atd.id_assistido', 'p.id')
             ->leftJoin('tipo_status_tratamento as tse', 'tr.status', 'tse.id')
             ->where('enc.id_tipo_tratamento', 6)
             ->whereIn('tr.status', [1, 2])
-            ->whereIn('tr.id_reuniao', $grupos_autorizados);
+            ->whereIn('tr.id_reuniao', $grupos_autorizados)
+            ->orderBy('p.nome_completo');
 
 
         // Caso seja pesquisado um nome
@@ -105,8 +104,44 @@ class GerenciarIntegralController extends Controller
                 ->orderBy('dc.data', 'DESC')
                 ->first();
 
+            $presencas = DB::table('presenca_cronograma as pc')
+                ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+                ->where('id_tratamento', $encaminhamento->id)
+                ->orderBy('dc.data', 'DESC')
+                ->where('pc.presenca', true)
+                ->count();
+
+
+            $tratamentos_faltas = DB::table('presenca_cronograma as pc')
+                ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+                ->where('id_tratamento', $encaminhamento->id)
+                ->where('pc.presenca', false)
+                ->get();
+
+            // Organiza os dados por ID tratamento, para facilitar o foreach
+            $arrayTratamentoFaltas = array();
+            foreach ($tratamentos_faltas as $element) {
+                $arrayTratamentoFaltas[$element->id_tratamento][] = $element->data;
+            }
+            // Para cada ID tratamento
+            $consecutivo = 1; // Contagem de faltas consecutivas
+            foreach ($arrayTratamentoFaltas as  $faltas) {
+
+                foreach ($faltas as $falta) { // Para cada falta
+                    foreach ($faltas as $faltaCross) { // Para cada falta
+
+                        // Confere se as faltas são consecutivas com as ultimas, aumentando a contagem
+                        if (Carbon::parse($falta)->addWeek($consecutivo) == Carbon::parse($faltaCross)) {
+                            $consecutivo += 1;
+                        }
+                    }
+                }
+            }
+
             $encaminhamento->ptd  = $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
             $encaminhamento->data = $data ? $data->data : null;
+            $encaminhamento->presenca = $presencas;
+            $encaminhamento->faltas = $consecutivo - 1;
             if ($encaminhamento->dt_fim) {
                 $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_inicio));
             } else {
@@ -228,7 +263,7 @@ class GerenciarIntegralController extends Controller
             ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
             ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
             ->where('id_pessoa', current(current($result))->id_assistido)
-             ->where('dc.data', '>=', current(current($result))->dt_inicio)
+            ->where('dc.data', '>=', current(current($result))->dt_inicio)
             ->whereNull('id_tratamento')
             ->get()
             ->toArray();
