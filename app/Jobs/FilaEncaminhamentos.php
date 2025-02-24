@@ -40,7 +40,8 @@ class FilaEncaminhamentos implements ShouldQueue
           //  $query->orWhere('ent.id_tipo_encaminhamento', 1); // Todos os tipos de Entrevista // Inativado devido ao bug acima
         })
         ->update([
-            'status_encaminhamento' => 4 // Inativado
+            'status_encaminhamento' => 4, // Inativado
+            'motivo' => 10
         ]);
 
     }
