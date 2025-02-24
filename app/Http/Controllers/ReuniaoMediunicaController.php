@@ -252,7 +252,6 @@ class ReuniaoMediunicaController extends Controller
         $grupo = DB::table('grupo AS gr')
             ->leftJoin('setor as s', 'gr.id_setor', 's.id')
             ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
-            ->where('id_tipo_grupo', 1)
             ->orderBy('gr.nome')
             ->get();
 
@@ -266,7 +265,6 @@ class ReuniaoMediunicaController extends Controller
 
         $salas = DB::table('salas')
             ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
-            ->where('id_finalidade', 6)
             ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
             ->orderBy('numero', 'asc')
             ->get();
@@ -306,7 +304,6 @@ class ReuniaoMediunicaController extends Controller
             $grupo = DB::table('grupo AS gr')
                 ->leftJoin('setor as s', 'gr.id_setor', 's.id')
                 ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
-                ->where('id_tipo_grupo', 1)
                 ->orderBy('gr.nome');
 
 
@@ -329,7 +326,6 @@ class ReuniaoMediunicaController extends Controller
             $salas = DB::table('salas')
                 ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
                 ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
-                ->where('id_finalidade', 6)
                 ->orderBy('numero', 'asc')
                 ->get();
 
