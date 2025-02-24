@@ -437,7 +437,7 @@ class GerenciarEncaminhamentoController extends Controller
                         'id_encaminhamento' => $ide,
                         'status' => 1,
                         'dt_inicio' => $data_antes,
-                    ]);                    
+                    ]);
 
                     // Insere no histórico a criação do atendimento
                     DB::table('log_atendimentos')->insert([
@@ -506,12 +506,22 @@ class GerenciarEncaminhamentoController extends Controller
                 app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
                 return redirect('/gerenciar-encaminhamentos');
             }
+
             // Atualiza o encaminhamento para agendado
             DB::table('encaminhamento AS enc')
                 ->where('enc.id', $ide)
                 ->update([
                     'status_encaminhamento' => 2,
                 ]);
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $ide,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_observacao' => 2, // Agendado
+                'id_origem' => 2, // Encaminhamento
+                'data_hora' => $data_atual
+            ]);
         } else {
             app('flasher')->addDanger('Ocorreu um erro inesperado!');
         }
@@ -996,6 +1006,7 @@ class GerenciarEncaminhamentoController extends Controller
         $idt = DB::table('tratamento')->where('id_encaminhamento', $ide)->first(); // Pega os dados do tratamento, usados: DT_FIM e ID
         $data_ontem = Carbon::yesterday();
         $data_hoje = Carbon::today();
+        $dt_hora = Carbon::now();
 
         // Se o tratamento não for permanente
         if ($idt->dt_fim) {
@@ -1044,19 +1055,47 @@ class GerenciarEncaminhamentoController extends Controller
 
         // Atualiza a reunião do tratamento para a nova
         if ($idt->dt_fim) {
-            DB::table('tratamento') 
-                ->where('id_encaminhamento', $ide)
-                ->update([
+            $editDtFim = DB::table('tratamento')
+                ->where('id_encaminhamento', $ide);
+
+            if ($editDtFim) {
+
+                $idEditDtFim = $editDtFim->first()->id;
+                $editDtFim->update([
                     'id_reuniao' => $reu,
                     'dt_fim' => $dia_fim // Remarca a data fim
                 ]);
+
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $idEditDtFim,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 9, // mudou de Cronograma
+                    'id_origem' => 3, // Tratamento
+                    'data_hora' => $dt_hora
+                ]);
+            }
         } else {
-            DB::table('tratamento')
-                ->where('id_encaminhamento', $ide)
-                ->update([
-                    'id_reuniao' => $reu
+            $editDtFim = DB::table('tratamento')
+                ->where('id_encaminhamento', $ide);
+
+            if ($editDtFim) {
+
+                $idEditDtFim = $editDtFim->first()->id;
+                $editDtFim->update([
+                    'id_reuniao' => $reu,
+                ]);
+
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $idEditDtFim,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 9, // mudou de Cronograma
+                    'id_origem' => 3, // Tratamento
+                    'data_hora' => $dt_hora
                 ]);
         }
+    }
 
         app('flasher')->addSuccess('Troca efetuada com sucesso!');
         return redirect('/gerenciar-encaminhamentos');
