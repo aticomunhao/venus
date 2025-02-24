@@ -184,9 +184,9 @@ class ReuniaoMediunicaController extends Controller
             ->where(function ($query) use ($now) { // Apenas cronogramas Ativos
                 $query->where('rm.data_fim', '>=', $now);
                 $query->orWhere('rm.data_fim', null);
-            }) 
+            })
             ->where(function ($query) use ($h_inicio, $h_fim) { // Função de reconhecimento de horários
-                
+
                 $query->where(function ($hour) use ($h_inicio, $h_fim) {  // A reunião criada inicia antes que outra, mas termina durante ou depois (  <----|---->  |  ou <----|-----|----> )
                     $hour->where('rm.h_inicio', '>=', $h_inicio);
                     $hour->where('rm.h_inicio', '<=', $h_fim);
@@ -199,10 +199,10 @@ class ReuniaoMediunicaController extends Controller
                    $hour->where('rm.h_inicio', '<=', $h_inicio);
                     $hour->where('rm.h_fim', '>=', $h_fim);
                 });
-                
+
             })
             ->count();
-            
+
         if ($repeat > 0) {
 
             app('flasher')->addError('Existe uma outra reunião nesse horário.');
@@ -429,33 +429,40 @@ class ReuniaoMediunicaController extends Controller
      */
     public function destroy(string $id)
     {
-        // Obtém a data atual formatada
-        $now = Carbon::now()->format('Y-m-d');
+        // Verifica se o cronograma existe antes de deletar
+        $cronograma = DB::table('cronograma')->where('id', $id)->first();
 
-        // Atualiza a tabela 'cronograma' com a data de término
-        if (DB::table('cronograma as cro')->where('cro.id', $id)->whereNull('data_fim')->count() == true) {
-            DB::table('cronograma as cro')
-                ->where('cro.id', $id)
-                ->update([
-                    'cro.data_fim' => $now
-                ]);
-
-            app('flasher')->addSuccess('A reunião foi inativada com sucesso.');
-        } else {
-
+        if (!$cronograma) {
+            app('flasher')->addError('A reunião não existe.');
             return redirect()->back();
-
-            app('flasher')->addError('A reunião já está inativa.');
         }
+
+        // Obtém todos os IDs de dias_cronograma relacionados a esse cronograma
+        $diasCronogramaIds = DB::table('dias_cronograma')
+            ->where('id_cronograma', $id)
+            ->pluck('id'); // Obtém todos os IDs relacionados
+
+        if ($diasCronogramaIds->isNotEmpty()) {
+            // Deleta os registros relacionados na tabela 'presenca_membros' primeiro
+            DB::table('presenca_membros')->whereIn('id_dias_cronograma', $diasCronogramaIds)->delete();
+
+            // Agora pode deletar os registros da tabela 'dias_cronograma'
+            DB::table('dias_cronograma')->whereIn('id', $diasCronogramaIds)->delete();
+        }
+
+        // Deleta os registros na tabela 'membro' que referenciam esse cronograma (ou pode atualizar o campo)
+        DB::table('membro')->where('id_cronograma', $id)->delete(); // Se quiser apenas desvincular, use `update(['id_cronograma' => null])`
+
+        // Finalmente, deleta o cronograma
+        DB::table('cronograma')->where('id', $id)->delete();
 
         // Verifica se há algum registro com o fato específico na tabela 'historico_venus'
         $verifica = DB::table('historico_venus')
             ->where('fato', $id)
-            ->count('fato');
+            ->count();
 
         // Se não houver nenhum registro, insere um novo registro
         if ($verifica == 0) {
-            // Obtém a data atual para inserção na tabela 'historico_venus'
             $data = Carbon::now()->format('Y-m-d');
 
             DB::table('historico_venus')->insert([
@@ -465,7 +472,10 @@ class ReuniaoMediunicaController extends Controller
             ]);
         }
 
+        app('flasher')->addSuccess('A reunião foi deletada com sucesso.');
+
         // Redireciona para a página de gerenciamento de reuniões
         return redirect('/gerenciar-reunioes');
     }
+
 }
