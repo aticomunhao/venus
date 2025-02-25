@@ -67,7 +67,7 @@
                                                     <div class="col-12 mt-3">Tratamento
                                                         <select class="form-select pesquisa" id="4" name="tratamento"
                                                             type="number">
-                                                            
+
                                                             <option value=""></option>
                                                             <option value="1" {{ 1 == request('tratamento') ? 'selected' : '' }}>Passe Tratamento Desobsessivo</option>
                                                             <option value="2" {{ 2 == request('tratamento') ? 'selected' : '' }}>Passe Tratamento Intensivo</option>
@@ -294,6 +294,7 @@
                             <span class="tooltiptext">Histórico</span>
                             <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></a>
 
+                            @if (in_array(50, session()->get('usuario.acesso')))
                         @if ($listas->status == 1 or $listas->status == 2)
                             {{-- botao de inativar --}}
                             <a type="button" class="btn btn-outline-danger btn-sm tooltips"
@@ -305,6 +306,7 @@
                                 data-placement="top" data-bs-target="#inativa{{ $listas->idtr }}" data-bs-toggle="modal"
                                 title="Inativar" disabled><i class="bi bi-x-circle"
                                     style="font-size: 1rem; color:#000;"></i></button>
+                        @endif
                         @endif
                         {{-- modal de inativação --}}
                         <form action="/inativar-tratamento/{{ $listas->idtr }}">
