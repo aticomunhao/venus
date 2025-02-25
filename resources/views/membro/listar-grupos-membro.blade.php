@@ -8,7 +8,7 @@
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">ADMINISTRAR GRUPOS
         </h4>
         <div class="col-12">
-            <form action="/gerenciar-grupos-membro" class="form-horizontal mt-4" method="GET">
+            <form action="/gerenciar-grupos-membro" class="form-horizontal mt-4" method="GET" id="formPesquisa">
                 <div class="row" style="margin-top: 10px">
                     <div class="col-xxl-4 col-lg-12">
                         <label for="nome_grupo">Grupo</label>
@@ -66,20 +66,28 @@
                 class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
                 <thead>
                     <tr style="background-color: #d6e3ff; font-size: 14px; color: #000000">
-                        <th style="width: 35%;">GRUPO</th>
-                        <th style="width: 10%;">SETOR</th>
-                        <th style="width: 10%;">STATUS</th>
-                        <th style="width: 07%;">CRONOGRAMA</th>
-                        <th style="width: 10%;">AÇÕES</th>
+                        <th id="thGrupo">GRUPO</th>
+                        <th id="thSetor">SETOR</th>
+                        <th id="thInicio">INICIO</th>
+                        <th id="thFim">FIM</th>
+                        <th id="thDia">DIA</th>
+                        <th id="thSala">SALA</th>
+                        <th id="thStatus">STATUS</th>
+                        <th id="thPop" style="width: 5%;">CRONOGRAMA</th>
+                        <th id="thAcoes">AÇÕES</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($membro_cronograma as $membros)
                         <tr>
-                            <td>{{ $membros->nome_grupo }}</td>
-                            <td>{{ $membros->sigla }}</td>
-                            <td>{{ $membros->status }}</td>
-                            <td>
+                            <td class="tdGrupo">{{ $membros->nome_grupo }}</td>
+                            <td class="tdSetor">{{ $membros->sigla }}</td>
+                            <td class="tdInicio">{{ date('H:i', strtotime($membros->h_inicio)) }}</td>
+                            <td class="tdFim">{{ date('H:i', strtotime($membros->h_fim)) }}</td>
+                            <td class="tdDia">{{ $membros->dia }}</td>
+                            <td class="tdSala">{{ $membros->sala }}</td>
+                            <td class="tdStatus">{{ $membros->status }}</td>
+                            <td class="tdPop">
                                 <button type="button" class="btn btn-link p-0 text-decoration-none tooltips"
                                     data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true"
                                     data-bs-title="Detalhes da reunião"
@@ -95,7 +103,7 @@
                                     </a>
                                 </button>
                             </td>
-                            <td>
+                            <td class="tdAcoes">
                                 <!-- Botão de Gerenciar -->
                                 <a href="/gerenciar-membro/{{ $membros->id }}" type="button"
                                     class="btn btn-outline-warning btn-sm tooltips">
@@ -112,6 +120,7 @@
     </div class="d-flex justify-content-center">
     {{ $membro_cronograma->links('pagination::bootstrap-5') }}
     </div>
+
 
     <!-- Script para iniciar e fechar popovers -->
     <script>
@@ -172,5 +181,78 @@
             window.location.href = '/deletar-membro/' + id;
         }
     </script>
+    <script>
+        $(document).ready(function() {
 
+            function grid() {
+              if ($(window).width() < 992) { // md
+
+                    // Controle de Header
+                    $('#thGrupo').prop('hidden', false)
+                    $('#thSetor').prop('hidden', false)
+                    $('#thInicio').prop('hidden', true)
+                    $('#thFim').prop('hidden', true)
+                    $('#thDia').prop('hidden', true)
+                    $('#thSala').prop('hidden', true)
+                    $('#thStatus').prop('hidden', false)
+                    $('#thPop').prop('hidden', false)
+                    $('#thAcoes').prop('hidden', false)
+
+                    // Controle de linhas
+                    $('.tdGrupo').prop('hidden', false)
+                    $('.tdSetor').prop('hidden', false)
+                    $('.tdInicio').prop('hidden', true)
+                    $('.tdFim').prop('hidden', true)
+                    $('.tdDia').prop('hidden', true)
+                    $('.tdSala').prop('hidden', true)
+                    $('.tdStatus').prop('hidden', false)
+                    $('.tdPop').prop('hidden', false)
+                    $('.tdAcoes').prop('hidden', false)
+
+                } else if ($(window).width() >= 992) { // xxl
+                    // Controle de Header
+                    $('#thGrupo').prop('hidden', false)
+                    $('#thSetor').prop('hidden', false)
+                    $('#thInicio').prop('hidden', false)
+                    $('#thFim').prop('hidden', false)
+                    $('#thDia').prop('hidden', false)
+                    $('#thSala').prop('hidden', false)
+                    $('#thStatus').prop('hidden', false)
+                    $('#thPop').prop('hidden', true)
+                    $('#thAcoes').prop('hidden', false)
+
+                    // Controle de linhas
+                    $('.tdGrupo').prop('hidden', false)
+                    $('.tdSetor').prop('hidden', false)
+                    $('.tdInicio').prop('hidden', false)
+                    $('.tdFim').prop('hidden', false)
+                    $('.tdDia').prop('hidden', false)
+                    $('.tdSala').prop('hidden', false)
+                    $('.tdStatus').prop('hidden', false)
+                    $('.tdPop').prop('hidden', true)
+                    $('.tdAcoes').prop('hidden', false)
+
+                }
+            }
+
+            grid();
+            $(window).resize(function() {
+                grid();
+            });
+
+            $('#nome_grupo').change(function() {
+                if ($(window).width() < 992) {
+                    $('#formPesquisa').submit()
+                }
+            })
+
+            $('#nome_membro').change(function() {
+                if ($(window).width() < 992) {
+                    $('#formPesquisa').submit()
+                }
+            })
+        });
+    </script>
+
+    <script></script>
 @endsection
