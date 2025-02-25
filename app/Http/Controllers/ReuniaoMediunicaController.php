@@ -184,9 +184,9 @@ class ReuniaoMediunicaController extends Controller
             ->where(function ($query) use ($now) { // Apenas cronogramas Ativos
                 $query->where('rm.data_fim', '>=', $now);
                 $query->orWhere('rm.data_fim', null);
-            }) 
+            })
             ->where(function ($query) use ($h_inicio, $h_fim) { // Função de reconhecimento de horários
-                
+
                 $query->where(function ($hour) use ($h_inicio, $h_fim) {  // A reunião criada inicia antes que outra, mas termina durante ou depois (  <----|---->  |  ou <----|-----|----> )
                     $hour->where('rm.h_inicio', '>=', $h_inicio);
                     $hour->where('rm.h_inicio', '<=', $h_fim);
@@ -199,10 +199,10 @@ class ReuniaoMediunicaController extends Controller
                    $hour->where('rm.h_inicio', '<=', $h_inicio);
                     $hour->where('rm.h_fim', '>=', $h_fim);
                 });
-                
+
             })
             ->count();
-            
+
         if ($repeat > 0) {
 
             app('flasher')->addError('Existe uma outra reunião nesse horário.');
