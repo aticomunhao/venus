@@ -85,6 +85,7 @@
                         <th class="col">SALA</th>
                         <th class="col-2">SETOR</th>
                         <th class="col-2">TIPO DE TRABALHO</th>
+                        <th class="col-1">OBSERVAÇÃO</th>
                         <th class="col">HORÁRIO INÍCIO</th>
                         <th class="col">HORÁRIO FIM</th>
                         <th class="col">MAX ATENDIDOS</th>
@@ -101,6 +102,7 @@
                             <td>{{ $reuni->numero }}</td>
                             <td>{{ $reuni->nsigla }}</td>
                             <td>{{ $reuni->tstd }}</td>
+                            <td>{{ $reuni->descricao}}</td>
                             <td>{{ date('H:i:s', strtotime($reuni->h_inicio)) }}</td>
                             <td>{{ date('H:i:s', strtotime($reuni->h_fim)) }}</td>
                             <td>{{ $reuni->max_atend }}</td>
