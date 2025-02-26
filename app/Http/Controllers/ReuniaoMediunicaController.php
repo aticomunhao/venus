@@ -34,9 +34,11 @@ class ReuniaoMediunicaController extends Controller
                 'tst.descricao AS tstd',
                 's.sigla as nsigla',
                 'sa.numero',
+                't.descricao',
                 DB::raw("(CASE WHEN cro.data_fim is not null THEN 'Inativo' ELSE 'Ativo' END) as status")
             )
             ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
+            ->leftJoin('tipo_observacao_reuniao AS t', 'cro.observacao', 't.id')
             ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('setor as s', 'gr.id_setor', 's.id')
             ->leftJoin('membro AS me', 'gr.id', 'me.id_cronograma')
@@ -92,7 +94,7 @@ class ReuniaoMediunicaController extends Controller
             ->orderBy('status', 'ASC')
             ->orderBy('cro.id_tipo_tratamento', 'ASC')
             ->orderBy('nomeg', 'ASC')
-            ->groupBy('idr', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero')
+            ->groupBy('idr', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero','t.descricao')
             ->paginate(50)
             ->appends([
                 'status' => $status,
