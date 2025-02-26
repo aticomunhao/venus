@@ -248,12 +248,23 @@ class GerenciarEntrevistaController extends Controller
     {
         try {
 
-            DB::table('entrevistas')->insert([
+            $dt_hora = Carbon::now();
+
+            $entrevista = DB::table('entrevistas')->insertGetId([
                 'id_encaminhamento' => $id,
                 'id_sala' => $request->id_sala,
                 'data' => $request->data,
                 'hora' => $request->hora,
                 'status' => 2, // Confirmar Atendente
+            ]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $entrevista,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 2, // foi criado
+                'id_origem' => 4, // Entrevista
+                'data_hora' => $dt_hora
             ]);
 
             return redirect()->route('gerenciamento')->with('success', 'Entrevista criada com sucesso!');
@@ -348,10 +359,24 @@ class GerenciarEntrevistaController extends Controller
     {
         try {
 
+            $dt_hora = Carbon::now();
+
             // Atualiza os dados da tebela de entrevista com o Entrevistador
-            DB::table('entrevistas')->where('id_encaminhamento', $id)->update([
+            $entrevista = DB::table('entrevistas')->where('id_encaminhamento', $id);
+            $idEntrevista = $entrevista->get()->id;
+            $entrevista->update([
                 'id_entrevistador' => $request->input('id_entrevistador'),
                 'status' => 3, // Aguardando Atendimento
+            ]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idEntrevista,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_origem' => 4, // Entrevista
+                'id_observacao' => 3, // // Aguardando Atendimento
+                'data_hora' => $dt_hora
             ]);
 
             return redirect()->route('gerenciamento')->with('success', 'O cadastro foi realizado com sucesso!');
@@ -365,54 +390,54 @@ class GerenciarEntrevistaController extends Controller
 
     public function show($id)
     {
-      //  try {
+        //  try {
 
-            // Traz todos os dados da VIEW
-            $entrevistas = DB::table('encaminhamento AS enc')
-                ->select(
-                    'p.nome_completo',
-                    'p.celular',
-                    'p.id as id_assistido',
-                    'ddd.descricao as ddd',
-                    's.nome',
-                    's.numero',
-                    'tpl.nome as local',
-                    'enc.id',
-                    'enc.id_tipo_entrevista',
-                    'entre.id',
-                    'entre.id_entrevistador',
-                    'entre.data',
-                    'entre.hora',
-                    'pessoas.nome_completo as entrevistador'
-                )
-                ->leftJoin('entrevistas AS entre', 'enc.id', 'entre.id_encaminhamento')
-                ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
-                ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
-                ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
-                ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
-                ->leftJoin('tp_ddd as ddd', 'p.ddd', 'ddd.id')
-                ->leftJoin('associado', 'entre.id_entrevistador', 'associado.id')
-                ->leftJoin('pessoas', 'associado.id_pessoa', 'pessoas.id')
-                ->where('enc.id', $id)
-                ->first();
-
-
-            $presencas = DB::table('presenca_cronograma as pc')
-                ->select('enc.id_tipo_tratamento', 'dc.data', 'pc.presenca', 'gr.nome')
-                ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
-                ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-                ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
-                ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
-                ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
-                ->where('at.id_assistido', $entrevistas->id_assistido)
-                ->whereIn('enc.id_tipo_tratamento', [1, 2])
-                ->where('enc.status_encaminhamento', '<', 3)
-                ->orderBy('dc.data', 'DESC')
-                ->get();
+        // Traz todos os dados da VIEW
+        $entrevistas = DB::table('encaminhamento AS enc')
+            ->select(
+                'p.nome_completo',
+                'p.celular',
+                'p.id as id_assistido',
+                'ddd.descricao as ddd',
+                's.nome',
+                's.numero',
+                'tpl.nome as local',
+                'enc.id',
+                'enc.id_tipo_entrevista',
+                'entre.id',
+                'entre.id_entrevistador',
+                'entre.data',
+                'entre.hora',
+                'pessoas.nome_completo as entrevistador'
+            )
+            ->leftJoin('entrevistas AS entre', 'enc.id', 'entre.id_encaminhamento')
+            ->leftJoin('salas AS s', 'entre.id_sala', 's.id')
+            ->leftJoin('tipo_localizacao as tpl', 's.id_localizacao', 'tpl.id')
+            ->leftJoin('atendimentos as atd', 'enc.id_atendimento', 'atd.id')
+            ->leftJoin('pessoas AS p', 'atd.id_assistido', 'p.id')
+            ->leftJoin('tp_ddd as ddd', 'p.ddd', 'ddd.id')
+            ->leftJoin('associado', 'entre.id_entrevistador', 'associado.id')
+            ->leftJoin('pessoas', 'associado.id_pessoa', 'pessoas.id')
+            ->where('enc.id', $id)
+            ->first();
 
 
-            return view('Entrevistas.visualizar-entrevista', compact('entrevistas', 'id', 'presencas'));
+        $presencas = DB::table('presenca_cronograma as pc')
+            ->select('enc.id_tipo_tratamento', 'dc.data', 'pc.presenca', 'gr.nome')
+            ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->where('at.id_assistido', $entrevistas->id_assistido)
+            ->whereIn('enc.id_tipo_tratamento', [1, 2])
+            ->where('enc.status_encaminhamento', '<', 3)
+            ->orderBy('dc.data', 'DESC')
+            ->get();
+
+
+        return view('Entrevistas.visualizar-entrevista', compact('entrevistas', 'id', 'presencas'));
         // } catch (\Exception $e) {
 
         //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
@@ -511,14 +536,27 @@ class GerenciarEntrevistaController extends Controller
     {
         try {
 
-            DB::table('entrevistas')
-                ->where('id_encaminhamento', $id)
-                ->update([
-                    'id_entrevistador' => $request->input('entrevistador'),
-                    'data' => $request->input('data'),
-                    'hora' => $request->input('hora'),
-                    'id_sala' => $request->input('numero_sala'),
-                ]);
+            $dt_hora = Carbon::now();
+
+            $entrevista = DB::table('entrevistas')
+                ->where('id_encaminhamento', $id);
+
+            $idEntrevista = $entrevista->get()->id;
+            $entrevista->update([
+                'id_entrevistador' => $request->input('entrevistador'),
+                'data' => $request->input('data'),
+                'hora' => $request->input('hora'),
+                'id_sala' => $request->input('numero_sala'),
+            ]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idEntrevista,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 3, // foi editado
+                'id_origem' => 4, // Entrevista
+                'data_hora' => $dt_hora
+            ]);
 
             app('flasher')->addSuccess("Entrevista atualizada com sucesso");
             return redirect('gerenciar-entrevistas');
@@ -533,7 +571,7 @@ class GerenciarEntrevistaController extends Controller
     {
         //  try {
 
-        $data = date("Y-m-d H:i:s"); // Usado para a tabela de Audit
+        $data = Carbon::now(); // Usado para a tabela de Audit
         $data_enc = Carbon::today();
         $id_usuario = session()->get('usuario.id_usuario');
         $encaminhamento = DB::table('encaminhamento')->where('id', $id)->first(); // Usado em Validação de Tipo de Entrevista
@@ -554,6 +592,7 @@ class GerenciarEntrevistaController extends Controller
         // Caso seja uma entrevista do tipo AFE
         if ($encaminhamento->id_tipo_entrevista == 3) {
 
+            // FIX Essa parte de AFE está totalmente depreciada e precisa de uma atualização completa
 
             // Cria um Atendimento do tipo AFE
             DB::table('atendimentos')->insert([
@@ -568,6 +607,7 @@ class GerenciarEntrevistaController extends Controller
 
             // Atualiza a entrevista
             DB::table('entrevistas')->where('id_encaminhamento', $id)->update(['status' => 4]); // Agendado
+
 
         } else {
 
@@ -589,24 +629,35 @@ class GerenciarEntrevistaController extends Controller
                 DB::table('encaminhamento')->where('id', $nova)->update(['id_tipo_tratamento' => 4,]); //  Programa de Apoio a Portadores de Mediunidade Ostensiva (PROAMO)
             }
 
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $nova,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 2, // foi criado
+                'id_origem' => 3, // Encaminhamento
+                'data_hora' => $data
+            ]);
+
 
             // Atualizar o status da entrevista para 'Entrevistado'
-            DB::table('entrevistas')
-                ->where('id_encaminhamento', $id)
-                ->update(['status' => 5,]);
+            $entrevista = DB::table('entrevistas')
+                ->where('id_encaminhamento', $id);
+            $idEntrevista = $entrevista->get()->id;
+            $entrevista->update(['status' => 5,]);
 
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idEntrevista,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_origem' => 4, // Entrevista
+                'id_observacao' => 5, // Entrevista Finalizada
+                'data_hora' => $data
+            ]);
             // Atualiza o status do Encaminhamento para Finalizado
             DB::table('encaminhamento')->where('id', $id)->update(['status_encaminhamento' => 3]);
         }
 
-        // Insere os dados na tabela de audit
-        DB::table('historico_venus')->insert([
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $data,
-            'fato' => 15, // Finalizou marcação de entrevista
-            'obs' => $id
-
-        ]);
         return redirect()->route('gerenciamento')->with('success', 'Entrevista finalizada com sucesso!');
         // } catch (\Exception $e) {
 
@@ -621,6 +672,7 @@ class GerenciarEntrevistaController extends Controller
     {
 
         $data = date("Y-m-d");
+        $dt_hora = Carbon::now();
 
         // Insere o fato de Cancelamento de Entrevista
 
@@ -659,18 +711,39 @@ class GerenciarEntrevistaController extends Controller
         if (in_array(2, array_column($countTratamentos, 'id_tipo_tratamento')) or in_array(4, $countEntrevistas) or in_array(4, array_column($countTratamentos, 'id_tipo_tratamento')) or in_array(6, $countEntrevistas) or $tfiInfinito) {
 
             // Cancela o encaminhamento da entrevista selecionada
-            DB::table('encaminhamento')
-                ->where('id', $id)
-                ->update([
-                    'status_encaminhamento' => 4, // Inativado
-                    'motivo' => $motivo_entrevista
-                ]);
+            $encaminhamento = DB::table('encaminhamento')
+                ->where('id', $id);
+            $id_encaminhamento = $encaminhamento->get()->id;
+            $encaminhamento->update([
+                'status_encaminhamento' => 4, // Inativado
+                'motivo' => $motivo_entrevista
+            ]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $id_encaminhamento,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_origem' => 4, // Entrevista
+                'id_observacao' => 5, // Entrevista Finalizada
+                'data_hora' => $dt_hora
+            ]);
 
             // Inativa a entrevista caso encontre alguma
-            DB::table('entrevistas')
-                ->where('id_encaminhamento', $id)
-                ->update(['status' => 6]); // Entrevista Cancelada
+            $entrevista = DB::table('entrevistas')
+                ->where('id_encaminhamento', $id);
+                $idEntrevista = $entrevista->get()->id;
+                $entrevista->update(['status' => 6]); // Entrevista Cancelada
 
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idEntrevista,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_origem' => 4, // Entrevista
+                'id_observacao' => 6, // Entrevista Finalizada
+                'data_hora' => $dt_hora
+            ]);
         } else {
 
             $ptdAtivo = DB::table('tratamento as t')
