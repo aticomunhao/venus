@@ -363,7 +363,7 @@ class GerenciarEntrevistaController extends Controller
 
             // Atualiza os dados da tebela de entrevista com o Entrevistador
             $entrevista = DB::table('entrevistas')->where('id_encaminhamento', $id);
-            $idEntrevista = $entrevista->get()->id;
+            $idEntrevista = $entrevista->first()->id;
             $entrevista->update([
                 'id_entrevistador' => $request->input('id_entrevistador'),
                 'status' => 3, // Aguardando Atendimento
@@ -541,7 +541,7 @@ class GerenciarEntrevistaController extends Controller
             $entrevista = DB::table('entrevistas')
                 ->where('id_encaminhamento', $id);
 
-            $idEntrevista = $entrevista->get()->id;
+            $idEntrevista = $entrevista->first()->id;
             $entrevista->update([
                 'id_entrevistador' => $request->input('entrevistador'),
                 'data' => $request->input('data'),
@@ -642,7 +642,7 @@ class GerenciarEntrevistaController extends Controller
             // Atualizar o status da entrevista para 'Entrevistado'
             $entrevista = DB::table('entrevistas')
                 ->where('id_encaminhamento', $id);
-            $idEntrevista = $entrevista->get()->id;
+            $idEntrevista = $entrevista->first()->id;
             $entrevista->update(['status' => 5,]);
 
             // Insere no histórico a criação do atendimento
@@ -713,7 +713,7 @@ class GerenciarEntrevistaController extends Controller
             // Cancela o encaminhamento da entrevista selecionada
             $encaminhamento = DB::table('encaminhamento')
                 ->where('id', $id);
-            $id_encaminhamento = $encaminhamento->get()->id;
+            $id_encaminhamento = $encaminhamento->first()->id;
             $encaminhamento->update([
                 'status_encaminhamento' => 4, // Inativado
                 'motivo' => $motivo_entrevista
@@ -732,8 +732,8 @@ class GerenciarEntrevistaController extends Controller
             // Inativa a entrevista caso encontre alguma
             $entrevista = DB::table('entrevistas')
                 ->where('id_encaminhamento', $id);
-                $idEntrevista = $entrevista->get()->id;
-                $entrevista->update(['status' => 6]); // Entrevista Cancelada
+            $idEntrevista = $entrevista->first()->id;
+            $entrevista->update(['status' => 6]); // Entrevista Cancelada
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
@@ -763,58 +763,113 @@ class GerenciarEntrevistaController extends Controller
 
                 // Caso o tratamento seja num dia da semana anterior ou igual a hoje
                 if ($data < $dataFim or $data == $dataFim) {
-                    DB::table('tratamento')
-                        ->where('id', $ptdAtivo->id)
-                        ->update([
-                            'dt_fim' => $dataFim->addWeek(8)
-                        ]);
+                    $PTDInfinito = DB::table('tratamento')
+                        ->where('id', $ptdAtivo->id);
+                    $idPTDInfinito = $PTDInfinito->first()->id;
+                    $PTDInfinito->update([
+                        'dt_fim' => $dataFim->addWeek(8)
+                    ]);
+
+                    DB::table('log_atendimentos')->insert([
+                        'id_referencia' => $idPTDInfinito,
+                        'id_usuario' => session()->get('usuario.id_usuario'),
+                        'id_acao' => 10, // deixou de ser Permanente
+                        'id_origem' => 3, // Tratamento
+                        'data_hora' => $dt_hora
+                    ]);
                 } else { // Caso seja num dia da semana superior a hoje
-                    DB::table('tratamento')
-                        ->where('id', $ptdAtivo->id)
-                        ->update([
-                            'dt_fim' => $dataFim->addWeek(7)
-                        ]);
+                    $PTDInfinito = DB::table('tratamento')
+                        ->where('id', $ptdAtivo->id);
+                    $idPTDInfinito = $PTDInfinito->first()->id;
+                    $PTDInfinito->update([
+                        'dt_fim' => $dataFim->addWeek(7)
+                    ]);
+
+                    DB::table('log_atendimentos')->insert([
+                        'id_referencia' => $idPTDInfinito,
+                        'id_usuario' => session()->get('usuario.id_usuario'),
+                        'id_acao' => 10, // deixou de ser Permanente
+                        'id_origem' => 3, // Tratamento
+                        'data_hora' => $dt_hora
+                    ]);
                 }
             } else if ($ptdAtivoInfinito) { // Caso não seja Alta, Cancela o PTD Infinito junto com a entrevista
                 $dataFim = Carbon::today()->weekday($ptdAtivo->dia_semana);
 
-                DB::table('tratamento')
-                    ->where('id', $ptdAtivo->id)
-                    ->update([
-                        'dt_fim' => $dataFim,
-                        'status' => 6, // Inativado
-                    ]);
+                $inativPTD = DB::table('tratamento')
+                    ->where('id', $ptdAtivo->id);
+                $idInativPTD = $inativPTD->first()->id;
+                $inativPTD->update([
+                    'dt_fim' => $dataFim,
+                    'status' => 6, // Inativado
+                ]);
 
-                DB::table('encaminhamento')
-                    ->where('id', $ptdAtivo->ide)
-                    ->update([
-                        'status_encaminhamento' => 4 // Inativado
-                    ]);
+
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $idInativPTD,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 1, // mudou de Status para
+                    'id_origem' => 3, // Tratamento
+                    'id_observacao' => 6, // Inativado
+                    'data_hora' => $dt_hora
+                ]);
+
+                $inativEncPTD = DB::table('encaminhamento')
+                    ->where('id', $ptdAtivo->ide);
+                $idInativEncPTD = $inativEncPTD->first()->id;
+                $inativEncPTD->update([
+                    'status_encaminhamento' => 4 // Inativado
+                ]);
+
+
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $idInativEncPTD,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 1, // mudou de Status para
+                    'id_origem' => 2, // Encaminhamento
+                    'id_observacao' => 4, // Inativado
+                    'data_hora' => $dt_hora
+                ]);
             } // Caso não seja alta da avaliação, finaliza o tratamento ptd
 
             // Cancela o encaminhamento da entrevista selecionada
-            DB::table('encaminhamento')
-                ->where('id', $id)
-                ->update([
-                    'status_encaminhamento' => 4, // Inativado
-                    'motivo' => $motivo_entrevista
-                ]);
+            $encEntrevista = DB::table('encaminhamento')
+                ->where('id', $id);
+            $idEncEntrevista = $encEntrevista->first()->id;
+            $encEntrevista->update([
+                'status_encaminhamento' => 4, // Inativado
+                'motivo' => $motivo_entrevista
+            ]);
+
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idEncEntrevista,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_origem' => 2, // Encaminhamento
+                'id_observacao' => 4, // Inativado
+                'data_hora' => $dt_hora
+            ]);
 
             // Inativa a entrevista caso encontre alguma
-            DB::table('entrevistas')
-                ->where('id_encaminhamento', $id)
-                ->update(['status' => 6]); // Entrevista Cancelada
+            $inativEntrevista = DB::table('entrevistas')
+                ->where('id_encaminhamento', $id);
+            $idInativEntrevista = $inativEntrevista->first()->id;
+            $inativEntrevista->update(['status' => 6]); // Entrevista Cancelada
 
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idInativEntrevista,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_origem' => 4, // Entrevista
+                'id_observacao' => 6, // Entrevista Cancelada
+                'data_hora' => $dt_hora
+            ]);
         }
-
-        DB::table('historico_venus')->insert([
-
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'data' => $data,
-            'fato' => 14, // Inativou a Entrevista
-            'obs' => $id
-
-        ]);
 
         return redirect()->route('gerenciamento')->with('success', 'Entrevista Cancelada com Sucesso!');
     }
