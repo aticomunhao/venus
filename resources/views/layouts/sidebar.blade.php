@@ -236,7 +236,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(51, $acesso))
-                            <li><a class="dropdown-item" href="/visualizarRI-tratamento">Visualizar Proamo</a>
+                            <li><a class="dropdown-item" href="/visualizarRI-tratamento">Visualizar Tratamentos</a>
                             </li>
                         @endif
                             @if (in_array(48, $acesso))
