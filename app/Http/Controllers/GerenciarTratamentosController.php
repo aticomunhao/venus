@@ -639,4 +639,153 @@ class GerenciarTratamentosController extends Controller
 
         return redirect('/gerenciar-tratamentos');
     }
+    public function visualizarRI(Request $request)
+    {
+
+            $now =  Carbon::now()->format('Y-m-d');
+
+            $selectGrupo = explode(' ', $request->grupo);
+            $lista = DB::table('tratamento AS tr')
+                ->select('tr.id AS idtr', 'tr.status', 'enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tst.nome AS tst', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'p1.cpf AS cpf_assistido', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla', 'tr.id AS idtr', 'gr.nome AS nomeg', 'td.nome AS nomed', 'rm.h_inicio', 'tr.dt_fim')
+                ->leftJoin('encaminhamento AS enc',  'tr.id_encaminhamento', 'enc.id')
+                ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+                ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+                ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+                ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+                ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
+                ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+                ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+                ->leftJoin('tipo_status_tratamento AS tst', 'tr.status', 'tst.id')
+                ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+                ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+                ->leftjoin('tipo_dia AS td', 'rm.dia_semana', 'td.id')
+                ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
+                ->where('enc.id_tipo_encaminhamento', 2)
+                ->where('enc.id_tipo_tratamento', '<>', 3);
+
+            $cronogramas = DB::table('cronograma as cro')
+                ->select('cro.id', 'gr.nome', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 's.sigla as setor')
+                ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
+                ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+                ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
+                ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
+                ->get();
+
+            $cronogramasDirigente = DB::table('membro')->where('id_associado', session()->get('usuario.id_associado'))->whereIn('id_funcao', [1, 2])->pluck('id_cronograma');
+
+
+
+            $data_enc = $request->dt_enc;
+
+            $diaP = $request->dia;
+
+            $assistido = $request->assist;
+
+            $situacao = $request->status;
+            $cron = $request->grupo;
+
+
+            $cpf = $request->cpf;
+
+            $acesso = DB::table('usuario_acesso')->where('id_usuario', session()->get('usuario.id_usuario'))->where('id_acesso', session()->get('acessoAtual'))->where('id_setor', '51')->first();
+
+            if (!$acesso and !in_array(36, session()->get('usuario.acesso'))) {
+                $lista = $lista->whereIn('tr.id_reuniao', $cronogramasDirigente);
+                $request->status ?? $situacao = 'all';
+            }
+
+            if ($request->dia != null) {
+                $lista->where('rm.dia_semana', '=', $request->dia);
+            }
+
+            if ($request->dt_enc) {
+                $lista->where('enc.dh_enc', '>=', $request->dt_enc);
+            }
+
+            if ($request->tratamento) {
+                $lista->where('enc.id_tipo_tratamento', $request->tratamento);
+            }
+
+            if (current($selectGrupo) != '') {
+
+                if (intval(current($selectGrupo)) != 0) {
+                    $lista->where('rm.id', current($selectGrupo));
+                } else {
+
+                    $pesquisaNome = array();
+                    $pesquisaNome = explode(' ', current($selectGrupo));
+
+                    foreach ($pesquisaNome as $itemPesquisa) {
+                        $lista->whereRaw("UNACCENT(LOWER(gr.nome)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+                    }
+                }
+
+                if ($situacao == 'all') {
+                    $lista->whereIn('tr.status', [1, 2]);
+                }
+            }
+
+            if ($request->assist) {
+                $pesquisaNome = array();
+                $pesquisaNome = explode(' ', $request->assist);
+
+                foreach ($pesquisaNome as $itemPesquisa) {
+                    $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+                }
+            }
+
+
+            if ($request->cpf) {
+                $lista->whereRaw("LOWER(p1.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
+            } else {
+
+                if ($request->status && $situacao != 'all') {
+                    $lista->where('tr.status', $request->status);
+                } elseif ($situacao == 'all') {
+                } elseif (current($selectGrupo) == '') {
+                    $lista->where('tr.status', 2);
+                }
+            }
+
+            $contar = $lista->count('enc.id');
+            $lista = $lista->orderby('tr.status', 'ASC')
+                ->orderby('nm_1', 'ASC')
+                ->orderby('at.id_prioridade', 'ASC')
+                ->paginate(50)
+                ->appends([
+                    'assist' => $assistido,
+                    'cpf' => $cpf,
+                    'dt_enc' => $data_enc,
+                    'dia' => $diaP,
+                    'status' => $situacao,
+                    'grupo' => $cron,
+                    'tratamento' => $request->tratamento
+                ]);
+
+
+            $stat = DB::select("select
+        ts.id,
+        ts.nome
+        from tipo_status_tratamento ts
+        ");
+
+            $dia = DB::select("select
+        id,
+        nome
+        from tipo_dia
+        ");
+
+            $motivo = DB::table('tipo_mot_inat_at_enc')->get();
+
+
+
+            return view('recepcao-integrada.visualizarRI', compact(
+                'cron', 'cronogramas', 'cpf', 'lista', 'stat',
+                'contar', 'data_enc', 'assistido', 'situacao',
+                'now', 'dia', 'diaP', 'motivo'
+            ));
+
+
+
+    }
 }
