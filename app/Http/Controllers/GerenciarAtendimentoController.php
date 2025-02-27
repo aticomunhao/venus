@@ -385,7 +385,7 @@ class GerenciarAtendimentoController extends Controller
 
     public function cancelar(Request $request, $ida)
     {
-        try {
+
 
             $dt_hora = Carbon::now();
             $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
@@ -409,7 +409,7 @@ class GerenciarAtendimentoController extends Controller
                     'id_referencia' => $ida,
                     'id_usuario' => session()->get('usuario.id_usuario'),
                     'id_acao' => 1, // mudou de Status para
-                    'id_observação' => 7, // Cancelado
+                    'id_observacao' => 7, // Cancelado
                     'id_origem' => 1, // Atendimento
                     'data_hora' => $dt_hora
                 ]);
@@ -417,11 +417,7 @@ class GerenciarAtendimentoController extends Controller
                 app('flasher')->addSuccess('O status do atendimento foi alterado para "Cancelado".');
                 return redirect('/gerenciar-atendimentos');
             }
-        } catch (\Exception $e) {
-            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
-            DB::rollBack();
-            return redirect()->back();
-        }
+
     }
     ////PREPARA PARA EDITAR
     public function edit($ida)
