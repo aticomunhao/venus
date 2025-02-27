@@ -857,18 +857,20 @@ class GerenciarEntrevistaController extends Controller
             // Inativa a entrevista caso encontre alguma
             $inativEntrevista = DB::table('entrevistas')
                 ->where('id_encaminhamento', $id);
-            $idInativEntrevista = $inativEntrevista->first()->id;
-            $inativEntrevista->update(['status' => 6]); // Entrevista Cancelada
+                if ($inativEntrevista->first()) {
+                    $idInativEntrevista = $inativEntrevista->first()->id;
+                    $inativEntrevista->update(['status' => 6]); // Entrevista Cancelada
+                    // Insere no histórico a criação do atendimento
+                    DB::table('log_atendimentos')->insert([
+                        'id_referencia' => $idInativEntrevista,
+                        'id_usuario' => session()->get('usuario.id_usuario'),
+                        'id_acao' => 1, // mudou de Status para
+                        'id_origem' => 4, // Entrevista
+                        'id_observacao' => 6, // Entrevista Cancelada
+                        'data_hora' => $dt_hora
+                    ]);
+                }
 
-            // Insere no histórico a criação do atendimento
-            DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idInativEntrevista,
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 1, // mudou de Status para
-                'id_origem' => 4, // Entrevista
-                'id_observacao' => 6, // Entrevista Cancelada
-                'data_hora' => $dt_hora
-            ]);
         }
 
         return redirect()->route('gerenciamento')->with('success', 'Entrevista Cancelada com Sucesso!');
