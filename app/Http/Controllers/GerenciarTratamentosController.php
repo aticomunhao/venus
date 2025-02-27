@@ -660,7 +660,6 @@ class GerenciarTratamentosController extends Controller
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                 ->leftjoin('tipo_dia AS td', 'rm.dia_semana', 'td.id')
                 ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
-                ->where('tt.id', 4)
                 ->where('enc.id_tipo_encaminhamento', 2)
                 ->where('enc.id_tipo_tratamento', '<>', 3);
 
@@ -670,8 +669,6 @@ class GerenciarTratamentosController extends Controller
                 ->leftJoin('setor as s', 'gr.id_setor', 's.id')
                 ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
                 ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
-                ->where('s.id', 50)
-                ->orderBy('gr.nome')
                 ->get();
 
             $cronogramasDirigente = DB::table('membro')->where('id_associado', session()->get('usuario.id_associado'))->whereIn('id_funcao', [1, 2])->pluck('id_cronograma');
