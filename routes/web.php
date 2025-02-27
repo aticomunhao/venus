@@ -315,6 +315,10 @@ Route::middleware('rotas:18')->group(function () {
     Route::any('/inativar-tratamento/{id}', [GerenciarTratamentosController::class, 'destroy']);
 });
 
+// Visualizar Proamo(Recepção Integrada)
+Route::middleware('rotas:51')->group(function () {
+Route::get('/visualizarRI-tratamento', [GerenciarTratamentosController::class, 'visualizarRI'])->name('RI');
+});
 // Botão de Presença
 Route::middleware('rotas:43')->group(function () {
     Route::any('/presenca-tratatamento/{idtr}', [GerenciarTratamentosController::class, 'presenca']);
