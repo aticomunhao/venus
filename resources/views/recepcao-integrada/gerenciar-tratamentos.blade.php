@@ -115,32 +115,29 @@
                             <div class="col">
                                 <br />
                                 <div class="row">
-
-                                    <div class="col">
-
+                                    <div class="col d-flex align-items-center flex-wrap">
                                         @if (in_array(38, session()->get('usuario.acesso')))
                                             <a href="/incluir-avulso" class="btn btn-danger btn-sm"
-                                                style="box-shadow: 1px 2px 5px #000000; margin:5px;">Atendimento de
-                                                Emergência</a>
+                                                style="box-shadow: 1px 2px 5px #000000; margin:5px;">Atendimento de Emergência</a>
                                         @endif
+
                                         <a href="/gerenciar-encaminhamentos" class="btn btn-warning btn-sm"
                                             style="box-shadow: 1px 2px 5px #000000; margin:5px;">Encaminhamentos</a>
 
                                         @if (in_array(17, session()->get('usuario.acesso')))
-                                            <a href="/job"><input class="btn btn-info-emphasis btn-sm me-md-2"
+                                            <a href="/job">
+                                                <input class="btn btn-info-emphasis btn-sm me-md-2"
                                                     style="box-shadow: 1px 1px 3px #000000; margin:5px;" type="button"
-                                                    value="Job"></a>
+                                                    value="Job">
+                                            </a>
                                         @endif
 
-                                    </div>
-                                    <div class="col d-flex justify-content-end">
-                                        <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal"
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                             data-bs-target="#filtros" style="box-shadow: 3px 5px 6px #000000; margin:5px;">
-                                            Filtrar <i class="bi bi-funnel"></i>
+                                            Pesquisar <i class="bi bi-funnel"></i>
                                         </button>
                                     </div>
                                 </div>
-                            </div>
                     </form>
                 </div>
             </div>
