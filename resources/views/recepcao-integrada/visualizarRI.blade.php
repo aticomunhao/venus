@@ -101,10 +101,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col d-flex justify-content-end">
-                                <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal"
+                            <div class="d-flex-left">
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#filtros" style="box-shadow: 3px 5px 6px #000000; margin:5px;">
-                                    Filtrar <i class="bi bi-funnel"></i>
+                                    Pesquisar <i class="bi bi-funnel"></i>
                                 </button>
                             </div>
                         </div>
