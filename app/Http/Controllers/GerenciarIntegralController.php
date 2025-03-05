@@ -84,25 +84,31 @@ class GerenciarIntegralController extends Controller
             $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', current($grupos_autorizados));
         }
 
-        $encaminhamentos = $encaminhamentos->get()->toArray();
         $hoje = Carbon::today();
-        foreach ($encaminhamentos as $key => $encaminhamento) {
+        $encaminhamentos = $encaminhamentos->get()->toArray();
 
-            // Busca se existe um PTD ou PTI para este assistido e retorna dados para faltas
-            $encaminhamentoPTD = DB::table('tratamento as tr')
-                ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
-                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-                ->where('at.id_assistido', $encaminhamento->id_assistido)
-                ->whereIn('enc.id_tipo_tratamento', [1, 2]) // PTD e PTI
-                ->where('enc.status_encaminhamento', '<', 3) // Finalizado
-                ->select('tr.id')
-                ->first();
+        // Busca se existe um PTD ou PTI para este assistido e retorna dados para faltas
+        $encaminhamentoPTD = DB::table('tratamento as tr')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->whereIn('at.id_assistido', array_column($encaminhamentos, 'id_assistido'))
+            ->whereIn('enc.id_tipo_tratamento', [1, 2]) // PTD e PTI
+            ->where('enc.status_encaminhamento', '<', 3) // Finalizado
+            ->pluck('at.id_assistido')
+            ->toArray();
 
             $data = DB::table('presenca_cronograma as pc')
-                ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
-                ->where('id_tratamento', $encaminhamento->id)
-                ->orderBy('dc.data', 'DESC')
-                ->first();
+            ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->whereIn('id_tratamento', array_column($encaminhamentos, 'id'))
+            ->orderBy('dc.data', 'DESC')
+            ->select('dc.data', 'pc.id_tratamento')
+            ->get()
+            ->toArray();
+        
+
+        foreach ($encaminhamentos as $key => $encaminhamento) {
+
+
 
             $presencas = DB::table('presenca_cronograma as pc')
                 ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
@@ -138,8 +144,9 @@ class GerenciarIntegralController extends Controller
                 }
             }
 
-            $encaminhamento->ptd  = $encaminhamentoPTD ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
-            $encaminhamento->data = $data ? $data->data : null;
+            $ptdRegular = array_search($encaminhamento->id_assistido, $encaminhamentoPTD) ? $encaminhamentoPTD[array_search($encaminhamento->id, $encaminhamentoPTD)] : null;
+            $encaminhamento->ptd  = $ptdRegular ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
+            $encaminhamento->data = current(array_filter($data, function($item) use ($encaminhamento) {return $item->id_tratamento == $encaminhamento->id; })) ? current(array_filter($data, function($item) use ($encaminhamento) {return $item->id_tratamento == $encaminhamento->id; })) : null;
             $encaminhamento->presenca = $presencas;
             $encaminhamento->faltas = $consecutivo - 1;
             if ($encaminhamento->dt_fim) {
@@ -148,6 +155,7 @@ class GerenciarIntegralController extends Controller
                 $encaminhamento->contagem = null;
             }
         }
+        //  dd($array, $encaminhamentoPTD);
         // Usado para Macas
         $vagas = DB::table('cronograma')->where('id', $selected_grupo)->pluck('max_atend')->toArray(); // Retorna o número máximo de assistidos de um cronograma
         $ocupadas = DB::table('tratamento')->whereNot('maca', null)->where('id_reuniao', $selected_grupo)->where('status', '<', 3)->pluck('maca')->toArray(); // Retorna um array com todas as macas ocuopadas do grupo
