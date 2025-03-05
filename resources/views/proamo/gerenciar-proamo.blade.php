@@ -54,6 +54,7 @@
                         <th>NOME</th>
                         <th>GRUPO</th>
                         {{-- <th>SEMANAS</th> --}}
+                        <th>FALTAS CONSECUTIVAS</th>
                         <th>STATUS</th>
                         <th>AÇÕES</th>
                     </tr>
@@ -78,6 +79,9 @@
                                     {{ $encaminhamento->contagem }}
                                 @endif
                             </td> --}}
+                            <td
+                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
+                                {{ $encaminhamento->faltas }} </td>
                             <td
                                 style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
                                 {{ $encaminhamento->status }}</td>
@@ -250,17 +254,17 @@
                                             </button>
                                         </div>
                                     </div>
-                                </form>
-                                </div>
-                            </div>
-                    @endforeach
-                </tbody>
-            </table>
+                            </form>
+                        </div>
         </div>
+        @endforeach
+        </tbody>
+        </table>
+    </div>
     </div>
     </div>
 
     <script>
-     $('.motivo').prop('selectedIndex', -1)
+        $('.motivo').prop('selectedIndex', -1)
     </script>
 @endsection
