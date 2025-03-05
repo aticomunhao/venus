@@ -168,7 +168,7 @@
                     <div class="card-body">
                         <legend
                             style="color:#62829d; font-size:12px; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">
-                            Dados de Presenças Integral</legend>
+                            Dados de Presenças Proamo</legend>
                         Nr de faltas: {{ $faul }}
                         <table class="table table-sm table-bordered table-striped">
                             <thead style="text-align:center; background: #daffe0;">
