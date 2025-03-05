@@ -148,7 +148,7 @@ class GerenciarIntegralController extends Controller
                 }
             }
 
-            $ptdRegular = array_search($encaminhamento->id_ass0i000s0tido, $encaminhamentoPTD) ? $encaminhamentoPTD[array_search($encaminhamento->id, $encaminhamentoPTD)] : null;
+            $ptdRegular = array_search($encaminhamento->id_assistido, $encaminhamentoPTD) ? $encaminhamentoPTD[array_search($encaminhamento->id, $encaminhamentoPTD)] : null;
             $encaminhamento->ptd  = $ptdRegular ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
 
             $encaminhamento->data = current(array_filter($data, function ($item) use ($encaminhamento) {
