@@ -49,7 +49,11 @@ class GerenciarEntrevistaController extends Controller
                 'atendimentos.dh_inicio as inicio', // DateTime do atendimento
                 'entrevistas.id as ident', // ID entrevista, usado na view na tabela
                 'pessoa_pessoa.celular',
-                'ddd.descricao as ddd'
+                'pessoa_pessoa.id as id_pessoa',
+                'ddd.descricao as ddd',
+                'encaminhamento.id_tipo_entrevista',
+                'encaminhamento.status_encaminhamento'
+
             )
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
             ->leftJoin('entrevistas', 'encaminhamento.id', 'entrevistas.id_encaminhamento')
@@ -95,6 +99,22 @@ class GerenciarEntrevistaController extends Controller
             ->orderBy('atendimentos.emergencia', 'DESC')
             ->orderBy('atendimentos.dh_inicio')
             ->get()->toArray();
+
+
+        // Confere se a pessoa tem um tratamento PTD ativo
+        $ptdAtivos = DB::table('tratamento as tr')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->whereIn('at.id_assistido', array_column($informacoes, 'id_pessoa'))
+            ->where('enc.id_tipo_tratamento', 1) // PTD
+            ->where('tr.status', '<', 3) // Ativo
+            ->pluck('id_assistido')->toArray();
+
+
+
+        foreach ($ptdAtivos as $ptd) {
+            $informacoes[array_search($ptd, array_column($informacoes, 'id_pessoa'))]->ptd = true;
+        }
 
 
         // Caso seja pesquisado Aguardando Agendamento
@@ -857,20 +877,19 @@ class GerenciarEntrevistaController extends Controller
             // Inativa a entrevista caso encontre alguma
             $inativEntrevista = DB::table('entrevistas')
                 ->where('id_encaminhamento', $id);
-                if ($inativEntrevista->first()) {
-                    $idInativEntrevista = $inativEntrevista->first()->id;
-                    $inativEntrevista->update(['status' => 6]); // Entrevista Cancelada
-                    // Insere no histórico a criação do atendimento
-                    DB::table('log_atendimentos')->insert([
-                        'id_referencia' => $idInativEntrevista,
-                        'id_usuario' => session()->get('usuario.id_usuario'),
-                        'id_acao' => 1, // mudou de Status para
-                        'id_origem' => 4, // Entrevista
-                        'id_observacao' => 6, // Entrevista Cancelada
-                        'data_hora' => $dt_hora
-                    ]);
-                }
-
+            if ($inativEntrevista->first()) {
+                $idInativEntrevista = $inativEntrevista->first()->id;
+                $inativEntrevista->update(['status' => 6]); // Entrevista Cancelada
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $idInativEntrevista,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 1, // mudou de Status para
+                    'id_origem' => 4, // Entrevista
+                    'id_observacao' => 6, // Entrevista Cancelada
+                    'data_hora' => $dt_hora
+                ]);
+            }
         }
 
         return redirect()->route('gerenciamento')->with('success', 'Entrevista Cancelada com Sucesso!');

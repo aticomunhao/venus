@@ -7,6 +7,7 @@ use App\Jobs\DiasCronogramaOntem;
 use App\Jobs\EntrevistaProamo;
 use App\Jobs\Faltas;
 use App\Jobs\FaltasTrabalhador;
+use App\Jobs\FilaEncaminhamentos;
 use App\Jobs\FimSemanas;
 use App\Jobs\LimiteFalta;
 use Illuminate\Database\Query\JoinClause;
@@ -560,6 +561,7 @@ class GerenciarTratamentosController extends Controller
         Faltas::dispatch();
         EntrevistaProamo::dispatch();
         FaltasTrabalhador::dispatch();
+        FilaEncaminhamentos::dispatch();
 
         return redirect()->back();
     }

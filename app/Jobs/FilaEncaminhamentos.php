@@ -87,18 +87,21 @@ class FilaEncaminhamentos implements ShouldQueue
             // Inativa a entrevista caso encontre alguma
             $entrevista = DB::table('entrevistas')
                 ->where('id_encaminhamento', $id);
-            $idEntrevista = $entrevista->first()->id;
-            $entrevista->update(['status' => 6]); // Entrevista Cancelada
 
-            // Insere no histórico a criação do atendimento
-            DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idEntrevista,
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 1, // mudou de Status para
-                'id_origem' => 4, // Entrevista
-                'id_observacao' => 6, // Entrevista Finalizada
-                'data_hora' => $dt_hora
-            ]);
+            if((clone $entrevista)->first()){
+                $idEntrevista = (clone $entrevista)->first()->id;
+                $entrevista->update(['status' => 6]); // Entrevista Cancelada
+    
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $idEntrevista,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 1, // mudou de Status para
+                    'id_origem' => 4, // Entrevista
+                    'id_observacao' => 6, // Entrevista Finalizada
+                    'data_hora' => $dt_hora
+                ]);
+            }
         } else {
 
             $ptdAtivo = DB::table('tratamento as t')
@@ -212,8 +215,8 @@ class FilaEncaminhamentos implements ShouldQueue
             // Inativa a entrevista caso encontre alguma
             $inativEntrevista = DB::table('entrevistas')
                 ->where('id_encaminhamento', $id);
-            if ($inativEntrevista->first()) {
-                $idInativEntrevista = $inativEntrevista->first()->id;
+            if ((clone $inativEntrevista)->first()) {
+                $idInativEntrevista = (clone $inativEntrevista)->first()->id;
                 $inativEntrevista->update(['status' => 6]); // Entrevista Cancelada
                 // Insere no histórico a criação do atendimento
                 DB::table('log_atendimentos')->insert([
@@ -345,8 +348,7 @@ class FilaEncaminhamentos implements ShouldQueue
             ->where('id_encaminhamento', $ide);
 
 
-        if ($tratamento) {
-
+        if ((clone $tratamento)->first()) {
             $idTratamento = (clone $tratamento)->first()->id;
 
             $tratamento->update([
@@ -365,7 +367,7 @@ class FilaEncaminhamentos implements ShouldQueue
             ]);
         }
 
-        app('flasher')->addSuccess('O encaminhamento foi inativado.');
+     //   app('flasher')->addSuccess('O encaminhamento foi inativado.');
 
         return redirect('/gerenciar-encaminhamentos');
     }
@@ -426,11 +428,10 @@ class FilaEncaminhamentos implements ShouldQueue
         }
 
         foreach ($encaminhamentoEntrevista as $entrevista) {
-            $this->inativar($ptd->id);
+            $this->inativar($entrevista->id);
         }
 
         foreach ($proamoRequisitos as $proamo) {
-
             $dh_chegada = Carbon::parse($proamo->dh_chegada)->format('Y-m-d');
 
             // Caso o assistido não tenha um tratamento
