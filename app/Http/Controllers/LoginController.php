@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Session;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Validator;
+
+ 
+use function Laravel\Prompts\error;
 
 class LoginController extends Controller
 {
@@ -31,12 +35,24 @@ class LoginController extends Controller
             return view('login/login erro.erro-inesperado', compact('code'));
         }
     }
-
+    
     public function valida(Request $request)
     {
-
+       
         $cpf = $request->input('cpf');
         $senha = $request->input('senha');
+
+        try {
+            $request->validate([
+                'cpf' => 'required|cpf',
+            ]);
+        } catch (\Exception $e) {
+            app('flasher')->addError('Seu CPF não é valido!');
+            return redirect('/')->withErrors('cpf');
+        }
+
+
+
 
         // Busca se o usuário está na base de dados e traz as informações básicas
         $result = DB::table('usuario as u')
@@ -56,8 +72,7 @@ class LoginController extends Controller
             ->where('p.cpf', $cpf)
             ->first();
 
-        //dd($result);
-
+     
         // Garante que um usuário foi encontrado ativado e não bloqueado
         if ($result) {
 
@@ -102,10 +117,10 @@ class LoginController extends Controller
             }
 
             app('flasher')->addError('Credenciais inválidas');
-            return view('login/login');
+            return redirect('/')->withErrors('psswd');
         }
         app('flasher')->addError('Usuário Não Encontrado!');
-        return view('login/login');
+        return redirect('/')->withErrors('user');
     }
     public function validaUserLogado()
     {
