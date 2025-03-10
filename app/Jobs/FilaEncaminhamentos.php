@@ -88,10 +88,10 @@ class FilaEncaminhamentos implements ShouldQueue
             $entrevista = DB::table('entrevistas')
                 ->where('id_encaminhamento', $id);
 
-            if((clone $entrevista)->first()){
+            if ((clone $entrevista)->first()) {
                 $idEntrevista = (clone $entrevista)->first()->id;
                 $entrevista->update(['status' => 6]); // Entrevista Cancelada
-    
+
                 // Insere no histórico a criação do atendimento
                 DB::table('log_atendimentos')->insert([
                     'id_referencia' => $idEntrevista,
@@ -367,7 +367,7 @@ class FilaEncaminhamentos implements ShouldQueue
             ]);
         }
 
-     //   app('flasher')->addSuccess('O encaminhamento foi inativado.');
+        //   app('flasher')->addSuccess('O encaminhamento foi inativado.');
 
         return redirect('/gerenciar-encaminhamentos');
     }
@@ -411,16 +411,18 @@ class FilaEncaminhamentos implements ShouldQueue
             ->get()
             ->toArray();
 
-                    // Encontra todas as entrevistas exceto PROAMO
+        // Encontra todas as entrevistas exceto PROAMO,PTI E INTEGRAL
         $encaminhamentoEntrevista = DB::table('encaminhamento as enc')
-        ->select('at.dh_chegada', 'at.id_assistido', 'enc.id')
-        ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-        ->where('id_tipo_encaminhamento', 1)
-        ->whereNot('enc.id_tipo_entrevista', 6)
-        ->where('enc.status_encaminhamento', 1)
-        ->where('at.dh_chegada', '<', $data)
-        ->get()
-        ->toArray();
+            ->select('at.dh_chegada', 'at.id_assistido', 'enc.id', 'enc.id_tipo_tratamento')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->where('id_tipo_encaminhamento', 1)
+            ->whereNotIn('enc.id_tipo_entrevista', [6, 4, 5])
+            ->where('enc.status_encaminhamento', 1)
+            ->where('at.dh_chegada', '<', $data)
+            ->whereNotIn('enc.id_tipo_tratamento', [2, 6]) // Evita PTI e TFI
+            ->get()
+            ->toArray();
+
 
 
         foreach ($encaminhamentoPTD as $ptd) {
