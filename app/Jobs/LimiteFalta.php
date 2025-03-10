@@ -50,9 +50,9 @@ class LimiteFalta implements ShouldQueue
 
         // Para cada ID tratamento
         foreach ($arrayTratamentoFaltas as $key => $faltas) {
-            $consecutivo = 1; // Contagem de faltas consecutivas
-
+            
             foreach ($faltas as $falta) { // Para cada falta
+                $consecutivo = 1; // Contagem de faltas consecutivas
                 foreach ($faltas as $faltaCross) { // Para cada falta
 
                     // Confere se as faltas são consecutivas com as ultimas, aumentando a contagem
