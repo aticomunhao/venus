@@ -37,7 +37,10 @@ class LimiteFalta implements ShouldQueue
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->whereNot('pc.id_tratamento', null) // Apenas tratamentos, sem Avulsos
-            ->where('enc.status_encaminhamento', 2)
+            ->where(function ($query) {
+                $query->where('enc.status_encaminhamento', 2);
+                $query->orWhere('tr.status', '<', 3);
+            })
             ->orderBy('dc.data', 'DESC')
             ->get()->toArray();
 
@@ -82,9 +85,6 @@ class LimiteFalta implements ShouldQueue
                     }
                 }
             }
-
-
-
         }
     }
 }
