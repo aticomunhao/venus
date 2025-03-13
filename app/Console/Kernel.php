@@ -11,6 +11,7 @@ use App\Jobs\FaltasTrabalhador;
 use App\Jobs\FilaEncaminhamentos;
 use App\Jobs\FimSemanas;
 use App\Jobs\LimiteFalta;
+use App\Jobs\LimiteValidacao;
 use Illuminate\Support\Facades\DB;
 
 
@@ -33,6 +34,7 @@ class Kernel extends ConsoleKernel
           $schedule->job( new FimSemanas());
           $schedule->job( new FilaEncaminhamentos());
           $schedule->job( new EntrevistaProamo());
+          $schedule->job( new LimiteValidacao());
           
     }
 
