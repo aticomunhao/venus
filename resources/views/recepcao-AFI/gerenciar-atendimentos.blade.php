@@ -319,9 +319,8 @@
                         let afe = atendimento.afe == null ? '' : atendimento.afe
                         let descricao = atendimento.descricao == null ? '' : atendimento.descricao
 
-                
                 $('#tabelaPrincipal').append(
-                    atendimento.status_atendimento == 1 ? '<tr class="table-danger">' : '<tr>' +
+                    (atendimento.status_atendimento == 1 ? '<tr class="table-danger">' : '<tr>') +
                     
                     //Colunas com informações
                     '<td class="numeroAtendimento">' + ida + '</td>' +
