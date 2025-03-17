@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Carbon;
 
 class RegrasRotasMiddleware
 {
@@ -22,7 +23,7 @@ class RegrasRotasMiddleware
         $nome = gethostbyaddr($_SERVER['REMOTE_ADDR']);
         $metodo = $_SERVER['HTTP_USER_AGENT'];
         $rota = str_replace(url('/'), '', url()->full());
-        $timestamp = date('Y-m-d H:i:s');
+        $timestamp = Carbon::now();
         $usuario = session()->get('usuario.id_usuario');
 
         if (preg_match('/(android|iphone|ipad|ipod|blackberry|windows phone|opera mini|mobile)/i', $_SERVER['HTTP_USER_AGENT'])) {
