@@ -21,7 +21,7 @@
 
                         <div class="accordion" id="accordionExample">
                             @foreach ($dias_cronograma as $index => $cronograma_dia)
-                                @if ($cronograma_dia->nr_acompanhantes > 0)
+                                {{-- @if ($cronograma_dia->nr_acompanhantes > 0) --}}
                                     <!-- Filtrando datas com acompanhantes -->
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" id="heading{{ $index }}">
@@ -113,7 +113,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                @endif
+                                {{-- @endif --}}
                             @endforeach
                         </div>
 
