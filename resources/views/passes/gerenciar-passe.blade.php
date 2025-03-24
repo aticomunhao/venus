@@ -109,11 +109,11 @@
                                             </div>
                                         </form>
                                     </div>
-                                    {{-- <a href="/editar-passe/{{ $reuni->idr }}"
+                                    <a href="/editar-passe/{{ $reuni->idr }}"
                                             class="btn btn-outline-warning btn-sm tooltips">
                                             <span class="tooltiptext" style="z-index:10000">Editar</span>
                                             <i class="bi bi-pencil" style="font-size: 1rem; color:#000;"></i>
-                                        </a> --}}
+                                        </a>
                                     <a href="/visualizar-passe/{{ $reuni->idr }}"
                                         class="btn btn-outline-primary btn-sm tooltips">
                                         <span class="tooltiptext" style="z-index:10000">Visualizar</span>
