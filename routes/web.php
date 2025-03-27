@@ -300,6 +300,12 @@ Route::middleware("rotas:44")->group(function () {
     Route::any('/relatorio-vagas-grupos', [RelatoriosController::class, 'vagasGrupos']);
     Route::any('/vagasGruposAjax/{id}', [RelatoriosController::class, 'vagasGruposAjax']);
 });
+//Relatório de passes PTD, PTI e PPH
+Route::middleware("rotas:45")->group(function () {
+    Route::get('/relatorio-passes', [RelatoriosController::class, 'passes']);
+    Route::any('/passesAjax/{id}', [RelatoriosController::class, 'passesAjax']);
+});
+
 // Jobs de Tratamento
 Route::middleware('rotas:17')->group(function () {
     Route::any('/job', [GerenciarTratamentosController::class, 'job']);
