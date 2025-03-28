@@ -45,7 +45,7 @@
                 </div>
                 <div class="row">
 
-                    <form class="form-horizontal mt-3" method="post" action="/novo-atendimento">
+                    <form class="form-horizontal mt-3" method="post" action="/novo-atendimento" id="formIncluir">
                         @csrf
 
                         <div class="input-group row">
@@ -195,7 +195,7 @@
                 </div>
 
                 <div class="d-grid gap-2 col mx-auto">
-                    <button type="submit" class="btn btn-primary" style="color:#fff;">Confirmar</button>
+                    <button type="submit" class="btn btn-primary" id="confirmar" style="color:#fff;">Confirmar</button>
                 </div>
                 </form>
 
@@ -284,24 +284,54 @@
                 }
             }
 
+            // Clicar no Botão Buscar
             $('#bCpfAssistido').click(function() {
                 ajaxAssistido();
             });
 
+            // Modificar o campo
+            $('#cpfAssistido').change(function() {
+                ajaxAssistido();
+            });
+
+            // Clicar no Botão Buscar
             $('#bCpfResponsavel').click(function() {
                 ajaxResponsavel();
             });
 
+            // Modificar o campo
+            $('#cpfResponsavel').change(function() {
+                ajaxResponsavel();
+            });
+
+            // Apertar enter ao digitar no input de representante, previne o submit do formulário
+            $("#cpfResponsavel").keydown(function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault(); // Prevent form submission
+                    ajaxResponsavel();
+                }
+            });
+
+
             $('.checkboxes').change(function() {
                 if ($('#representante').prop('checked')) {
                     $('#represent').prop('hidden', false);
+                    $('#cpfResponsavel').prop('required', true)
+                    $('#parent').prop('required', true)
                 } else {
                     $('#represent').prop('hidden', true);
+                    $('#cpfResponsavel').prop('required', false)
+                    $('#parent').prop('required', false)
                 }
                 if ($('#pEspecial').prop('checked')) {
                     $('#pedidoEspecial').prop('hidden', false);
+                    $('#tipo_afi').prop('required', true)
+                    $('#afi_p').prop('required', true)
+                    
                 } else {
                     $('#pedidoEspecial').prop('hidden', true);
+                    $('#tipo_afi').prop('required', false)
+                    $('#afi_p').prop('required', false)
                 }
             });
 

@@ -15,11 +15,10 @@
                         <div class="row">
                             <div class="col-2">Dia
                                 <select class="form-select semana" id="4" name="semana" type="number">
-                                    <option value="" {{ $tpdia == $semana ? 'selected' : '' }}>
-                                        Todos</option>
+                                    <option value="">Todos</option>
                                     @foreach ($tpdia as $dias)
-                                        <option value="{{ $dias->idtd }}" {{ $dias->idtd == $semana ? 'selected' : '' }}>
-                                            {{ $dias->nomed }}</option>
+                                        <option value="{{ $dias->idtd }}" {{ request('semana') == $dias->idtd ? 'selected' : '' }}>
+                                   {{ $dias->nomed }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -42,6 +41,16 @@
                                         <option value="{{ $setoress->id }}"
                                             {{ request('setor') == $setoress->id ? 'selected' : '' }}>
                                             {{ $setoress->sigla }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-2">Modalidade
+                                <select class="form-select status" id="" name="modalidade" type="number">
+                                    <option value="" {{ $tmodalidade[0]->id == $modalidade ? 'selected' : '' }}>
+                                        Todos</option>
+                                    @foreach ($tmodalidade as $modal)
+                                        <option value="{{ $modal->id }}" {{ $modal->id == $modalidade ? 'selected' : '' }}>
+                                            {{ $modal->nome }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -82,12 +91,16 @@
                         <th class="col">Nr</th>
                         <th class="col-2">GRUPO</th>
                         <th class="col">DIA</th>
+                        <th class="col">SEMANAS</th>
                         <th class="col">SALA</th>
-                        <th class="col-2">SETOR</th>
+                        <th class="col">SETOR</th>
                         <th class="col-2">TIPO DE TRABALHO</th>
+                        <th class="col-1">OBSERVAÇÃO</th>
                         <th class="col">HORÁRIO INÍCIO</th>
                         <th class="col">HORÁRIO FIM</th>
-                        <th class="col">MAX ATENDIDOS</th>
+                        <th class="col">MAX A</th>
+                        <th class="col">MAX T</th>
+                        <th class="col">MODALIDADE</th>
                         <th class="col">STATUS</th>
                         <th class="col">AÇÕES</th>
                     </tr>
@@ -98,12 +111,16 @@
                             <td>{{ $reuni->idr }}</td>
                             <td>{{ $reuni->nomeg }}</td>
                             <td>{{ $reuni->nomed }}</td>
+                            <td>{{ $reuni->nsemana }}</td>
                             <td>{{ $reuni->numero }}</td>
                             <td>{{ $reuni->nsigla }}</td>
                             <td>{{ $reuni->tstd }}</td>
+                            <td>{{ $reuni->descricao}}</td>
                             <td>{{ date('H:i:s', strtotime($reuni->h_inicio)) }}</td>
                             <td>{{ date('H:i:s', strtotime($reuni->h_fim)) }}</td>
                             <td>{{ $reuni->max_atend }}</td>
+                            <td>{{ $reuni->max_trab }}</td>
+                            <td>{{ $reuni->nmodal }}</td>
                             <td>{{ $reuni->status }}</td>
                             <td>
                                 <a href="/editar-reuniao/{{ $reuni->idr }}"><button type="button"

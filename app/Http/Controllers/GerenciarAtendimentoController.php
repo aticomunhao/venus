@@ -146,7 +146,6 @@ class GerenciarAtendimentoController extends Controller
     {
         try {
             $now = Carbon::now()->format('Y-m-d');
-
             DB::table('atendimentos')
                 ->where('status_atendimento', '<', 6)
                 ->where('dh_chegada', '<', $now)
@@ -235,7 +234,6 @@ class GerenciarAtendimentoController extends Controller
 
             $motivo = DB::table('tipo_motivo_atendimento')->get();
 
-
             return view('/recepcao-AFI/gerenciar-atendimentos', compact('cpf', 'lista', 'st_atend', 'contar', 'atende', 'data_inicio', 'assistido', 'atendente', 'situacao', 'now', 'motivo'));
         } catch (\Exception $e) {
             $code = $e->getCode();
@@ -321,84 +319,75 @@ class GerenciarAtendimentoController extends Controller
 
     public function store(Request $request)
     {
-        try {
-
-
-            $usuario = session()->get('usuario.id_pessoa');
-
-            $now = Carbon::now();
-
-            $dt_hora = Carbon::now();
-
-            $assistido = $request->assist;
-
-            $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 6)->where('id_assistido', $assistido)->count();
-
-            //dd($resultado);
-            if ($resultado > 0) {
-                app('flasher')->addError('Não é permitido duplicar o cadastro do assistido.');
-
-                return redirect('/gerenciar-atendimentos');
-            }
-
-            $menor = isset($request->menor) ? 1 : 0;
-
-            //dd($menor);
-
-            DB::table('atendimentos AS atd')->insert([
-                'dh_chegada' => $dt_hora->toDateTimeString() . PHP_EOL,
-                'id_usuario' => $usuario,
-                'id_assistido' => $request->input('assist'),
-                'id_representante' => $request->input('repres'),
-                'parentesco' => $request->input('parent'),
-                'id_atendente_pref' => $request->input('afi_p'),
-                'pref_tipo_atendente' => $request->input('tipo_afi'),
-                'id_prioridade' => $request->input('priori'),
-                'menor_auto' => $menor,
-                'status_atendimento' => 2,
-            ]);
+        // try {
 
 
 
 
-            DB::table('historico_venus')->insert([
-                'id_usuario' => $usuario,
-                'data' => $now,
-                'fato' => 5,
-                'id_ref' => $request->input('assist'),
-            ]);
+        $dt_hora = Carbon::now();
 
-            app('flasher')->addSuccess('O cadastro do atendimento foi realizado com sucesso.');
+        $assistido = $request->assist;
+
+        $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 6)->where('id_assistido', $assistido)->count();
+        $dadosAssistido = DB::table('pessoas')->where('id', $request->input('assist'))->first();
+
+        //dd($resultado);
+        if ($resultado > 0) {
+            app('flasher')->addError('Não é permitido duplicar o cadastro do assistido.');
 
             return redirect('/gerenciar-atendimentos');
-        } catch (\Exception $e) {
-            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
-            DB::rollBack();
-            return redirect()->back();
         }
+
+        $menor = isset($request->menor) ? 1 : 0;
+
+        //dd($menor);
+
+        $idAtendimento = DB::table('atendimentos AS atd')->insertGetId([
+            'dh_chegada' => $dt_hora->toDateTimeString() . PHP_EOL,
+            'id_assistido' => $request->input('assist'),
+            'id_representante' => $request->input('repres'),
+            'parentesco' => $request->input('parent'),
+            'id_atendente_pref' => $request->input('afi_p'),
+            'pref_tipo_atendente' => $request->input('tipo_afi'),
+            'id_prioridade' => $request->input('priori'),
+            'menor_auto' => $menor,
+            'status_atendimento' => 2,
+        ]);
+
+        // Insere no histórico a criação do atendimento
+        DB::table('log_atendimentos')->insert([
+            'id_referencia' => $idAtendimento,
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'id_acao' => 2, // foi criado
+            'id_origem' => 1, // Atendimento
+            'data_hora' => $dt_hora
+        ]);
+
+        if ($dadosAssistido->cpf == null or $dadosAssistido->sexo == null or $dadosAssistido->ddd == null or $dadosAssistido->celular == null) {
+
+            session()->flash('usuario.acesso.temp', 2); // Concede um acesso temporário para a tela de editar
+            app('flasher')->addWarning('É necessário atualizar os dados para prosseguir.');
+            return redirect('/editar-pessoa/' . $request->assist);
+        }
+
+
+
+        app('flasher')->addSuccess('O cadastro do atendimento foi realizado com sucesso.');
+
+        return redirect('/gerenciar-atendimentos');
+        // } catch (\Exception $e) {
+        //     app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
+        //     DB::rollBack();
+        //     return redirect()->back();
+        // }
     }
 
-    ////INCLUI UMA NOVA PESSOA
-    public function SetPessoa(Request $request)
-    {
-        try {
-            DB::table('pessoas AS p')->insert([
-                'nome_completo' => $request->input('nomepes'),
-            ]);
 
-            app('flasher')->addSuccess('O cadastro de pessoa foi realizado com sucesso.');
-
-            return redirect('/gerenciar-atendimentos');
-        } catch (\Exception $e) {
-            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
-            DB::rollBack();
-            return redirect()->back();
-        }
-    }
     public function cancelar(Request $request, $ida)
     {
-        try {
 
+
+            $dt_hora = Carbon::now();
             $status = DB::table('atendimentos AS a')->select('status_atendimento')->where('id', '=', $ida)->value('status_atendimento');
 
             // Permite que Master Admin cancele atendimentos com qualquer status, sem excessão!
@@ -406,6 +395,8 @@ class GerenciarAtendimentoController extends Controller
                 app('flasher')->addError('Somente é permitido "Cancelar" atendimentos no status "Aguardando atendimento".');
                 return redirect('/gerenciar-atendimentos');
             } else {
+
+
                 DB::table('atendimentos AS a')
                     ->where('id', '=', $ida)
                     ->update([
@@ -413,14 +404,20 @@ class GerenciarAtendimentoController extends Controller
                         'motivo' => $request->motivo
                     ]);
 
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $ida,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 1, // mudou de Status para
+                    'id_observacao' => 7, // Cancelado
+                    'id_origem' => 1, // Atendimento
+                    'data_hora' => $dt_hora
+                ]);
+
                 app('flasher')->addSuccess('O status do atendimento foi alterado para "Cancelado".');
                 return redirect('/gerenciar-atendimentos');
             }
-        } catch (\Exception $e) {
-            app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
-            DB::rollBack();
-            return redirect()->back();
-        }
+
     }
     ////PREPARA PARA EDITAR
     public function edit($ida)
@@ -495,6 +492,7 @@ class GerenciarAtendimentoController extends Controller
     public function altera(Request $request, $ida)
     {
         try {
+            $dt_hora = Carbon::now();
             $afi = DB::table('associado')->where('id_pessoa', $request->input('afi_p'))->first();
 
             DB::table('atendimentos AS at')
@@ -507,6 +505,16 @@ class GerenciarAtendimentoController extends Controller
                     'pref_tipo_atendente' => $request->input('tipo_afi'),
                     'id_prioridade' => $request->input('priori'),
                 ]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $ida,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 3, // foi editado
+                'id_origem' => 1, // Atendimento
+                'data_hora' => $dt_hora
+            ]);
+
 
             app('flasher')->addSuccess('O cadastro de pessoa foi alterado com sucesso.');
 

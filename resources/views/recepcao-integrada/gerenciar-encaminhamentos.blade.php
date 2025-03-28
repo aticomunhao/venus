@@ -76,24 +76,17 @@
                             </div>
                         </div>
                     </form>
-
-                    <div class="col-1">
+                    <div class="d-flex align-items-center">
                         <a href="/gerenciar-tratamentos" class="btn btn-warning btn-sm"
                             style="box-shadow: 1px 2px 5px #000000; margin:5px;">Tratamentos</a>
-                    </div>
-                    <div class="col-2">
-                        <a href="/relatorio-vagas-grupos" class="btn btn-primary btn-sm"
-                            style="box-shadow: 1px 2px 5px #000000; margin:5px;">Vagas Disponíveis</a>
-                    </div>
-                    <div class="col d-flex justify-content-end">
-                        <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#filtros"
+
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#filtros"
                             style="box-shadow: 3px 5px 6px #000000; margin:5px;">
-                            Filtrar <i class="bi bi-funnel"></i>
+                            Pesquisar <i class="bi bi-funnel"></i>
                         </button>
                     </div>
+
                 </div>
-
-
             </div>
         </div>
     <br />
@@ -145,17 +138,21 @@
                                     style="font-size: 1rem; color:#000;"></i></button></a>
 
 
-                        @if ($listas->status_encaminhamento < 3)
-                            <button class="btn btn-outline-danger btn-sm tooltips" type="button" id=""
-                                data-bs-toggle="modal" data-bs-target="#inativar{{ $listas->ide }}"><span
-                                    class="tooltiptext">Inativar</span><i class="bi bi-x-circle"
-                                    style="font-size: 1rem; color:#000;"></i></button>
-                        @else
-                            <button class="btn btn-outline-danger btn-sm" type="button" id=""
-                                data-bs-toggle="modal" data-bs-target="#inativar{{ $listas->ide }}" data-tt="tooltip"
-                                data-placement="top" title="Inativar" disabled><i class="bi bi-x-circle"
-                                    style="font-size: 1rem; color:#000;"></i></button>
-                        @endif
+                                    @if (in_array(50, session()->get('usuario.acesso')))
+                                    @if ($listas->status_encaminhamento < 3)
+                                        <button class="btn btn-outline-danger btn-sm tooltips" type="button" id=""
+                                            data-bs-toggle="modal" data-bs-target="#inativar{{ $listas->ide }}"><span
+                                                class="tooltiptext">Inativar</span><i class="bi bi-x-circle"
+                                                style="font-size: 1rem; color:#000;"></i></button>
+                                    @else
+                                        <button class="btn btn-outline-danger btn-sm" type="button" id=""
+                                            data-bs-toggle="modal" data-bs-target="#inativar{{ $listas->ide }}"
+                                            data-tt="tooltip" data-placement="top" title="Inativar" disabled><i
+                                                class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>
+                                    @endif
+                                    @endif
+                            </td>
+
                     </td>
 
                     <form action="/inativar/{{ $listas->ide }}">

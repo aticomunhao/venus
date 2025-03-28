@@ -29,7 +29,9 @@
                                     </span>
                                     <select class="form-select select2" id="grupo" name="grupo" required>
                                         @foreach ($grupo as $grupos)
-                                            <option value="{{ $grupos->idg }}" {{$grupos->idg == $info->id_grupo ? 'selected' : ''}}>{{ $grupos->nome }} - {{ $grupos->nsigla }}</option>
+                                            <option value="{{ $grupos->idg }}"
+                                                {{ $grupos->idg == $info->id_grupo ? 'selected' : '' }}>{{ $grupos->nome }}
+                                                - {{ $grupos->nsigla }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -41,7 +43,9 @@
                                     </span>
                                     <select class="form-select slct" id="tratamento" name="tratamento" required>
                                         @foreach ($tratamento as $tratamentos)
-                                            <option value="{{ $tratamentos->idt }}" {{$tratamentos->descricao == $info->descricao ? 'selected' : ''}}>{{ $tratamentos->descricao }}</option>
+                                            <option value="{{ $tratamentos->idt }}"
+                                                {{ $tratamentos->descricao == $info->descricao ? 'selected' : '' }}>
+                                                {{ $tratamentos->descricao }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -58,7 +62,9 @@
                                     </span>
                                     <select class="form-select slct" id="dia" name="dia" required>
                                         @foreach ($dia as $dias)
-                                            <option value="{{ $dias->idd }}" {{$dias->nome == $info->dia ? 'selected' : ''}} >{{ $dias->nome }}</option>
+                                            <option value="{{ $dias->idd }}"
+                                                {{ $dias->nome == $info->dia ? 'selected' : '' }}>{{ $dias->nome }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -68,7 +74,8 @@
                                         <span class="tooltiptext">Obrigatório</span>
                                         <span style="color:red">*</span>
                                     </span>
-                                    <input class="form-control" type="time" id="h_inicio" name="h_inicio" required value="{{ $info->h_inicio }}">
+                                    <input class="form-control" type="time" id="h_inicio" name="h_inicio" required
+                                        value="{{ $info->h_inicio }}">
                                 </div>
                                 <div class="col-2">
                                     <label for="h_fim" class="form-label">Hora de fim</label>
@@ -76,14 +83,17 @@
                                         <span class="tooltiptext">Obrigatório</span>
                                         <span style="color:red">*</span>
                                     </span>
-                                    <input class="form-control" type="time" id="h_fim" name="h_fim" required value="{{ $info->h_fim }}">
+                                    <input class="form-control" type="time" id="h_fim" name="h_fim" required
+                                        value="{{ $info->h_fim }}">
                                 </div>
                                 <div class="col-4">
                                     <label for="h_fim" class="form-label">Observação</label>
                                     <select class="form-select slct" id="observacao" name="observacao">
                                         <option></option>
                                         @foreach ($observacao as $obs)
-                                            <option value="{{ $obs->id }}" {{$obs->id  == $info->obs ? 'selected' : ''}}>{{ $obs->descricao }}</option>
+                                            <option value="{{ $obs->id }}"
+                                                {{ $obs->id == $info->obs ? 'selected' : '' }}>{{ $obs->descricao }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -101,7 +111,8 @@
                                 </div>
                                 <div class="col">
                                     <label class="form-label">Data Inicio</label>
-                                    <input type="date" class="form-control" id="dt_inicio" name="dt_inicio" value="{{ $info->data_inicio }}">
+                                    <input type="date" class="form-control" id="dt_inicio" name="dt_inicio"
+                                        value="{{ $info->data_inicio }}">
                                 </div>
                                 <div class="col">
                                     <label class="form-label">Data Fim</label>
@@ -130,7 +141,8 @@
                                     @foreach ($salas as $sala)
                                         <option value="{{ $sala->id }}" data-nome="{{ $sala->nome }}"
                                             data-numero="{{ $sala->numero }}"
-                                            data-localizacao="{{ $sala->nome_localizacao }}" {{ $sala->id == $info->id_sala ? 'selected' : '' }}>
+                                            data-localizacao="{{ $sala->nome_localizacao }}"
+                                            {{ $sala->id == $info->id_sala ? 'selected' : '' }}>
                                             {{ $sala->numero }}
                                         </option>
                                     @endforeach
@@ -164,10 +176,11 @@
 
 
     <script>
-        $(document).ready(function(){
+        $(document).ready(function() {
             $('#max_atend').prop("disabled", false)
             $('#tratamento').prop("disabled", false)
-            $('#grupo').change(function() {
+
+            function salas() {
                 let grupo = $('#grupo').prop('selectedIndex');
 
                 let array = @json($grupo);
@@ -190,32 +203,36 @@
                     $('#tratamento').prop("selectedIndex", -1)
                     $('.sumir').prop('hidden', true)
                 }
+            }
 
+            salas()
+            $('#grupo').change(function() {
+                salas();
             })
         })
-
     </script>
 
     <script>
-        $( document ).ready(function() {
+        $(document).ready(function() {
 
-                var selectedOption = document.getElementById('id_sala')
-        selectedOption = selectedOption.options[selectedOption.selectedIndex];
-        document.getElementById('nome').value = selectedOption.getAttribute('data-nome');
-        document.getElementById('localizacao').value = selectedOption.getAttribute('data-localizacao');
-
-
-        document.getElementById('id_sala').addEventListener('change', function() {
-            var selectedOption = this.options[this.selectedIndex];
+            var selectedOption = document.getElementById('id_sala')
+            selectedOption = selectedOption.options[selectedOption.selectedIndex];
             document.getElementById('nome').value = selectedOption.getAttribute('data-nome');
             document.getElementById('localizacao').value = selectedOption.getAttribute('data-localizacao');
-        });
 
 
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
+            document.getElementById('id_sala').addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex];
+                document.getElementById('nome').value = selectedOption.getAttribute('data-nome');
+                document.getElementById('localizacao').value = selectedOption.getAttribute(
+                    'data-localizacao');
+            });
+
+
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tt="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
         })
     </script>
 @endsection

@@ -5,8 +5,8 @@
 @endsection
 
 @section('content')
-    <br>
-    <div class="container">
+    
+    <div class="container mt-3">
         <div class="row justify-content-center">
             <div class="col-12">
                 <div class="card">
@@ -18,8 +18,14 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form class="form-horizontal mt-4" method="post" action="/nova-reuniao">
+                        <form class="form-horizontal" method="post" action="/nova-reuniao">
                             @csrf
+                            <div class="row">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="repete" name="repete">
+                                <label class="form-check-label" for="repete">Manter campos</label>
+                            </div>
+                            </div>
                             <div class="row mt-3">
                                 <div class="col">
                                     <label for="grupo" class="form-label">Grupo</label>
@@ -29,35 +35,22 @@
                                     </span>
                                     <select class="form-select select2" id="grupo" name="grupo" required>
                                         @foreach ($grupo as $grupos)
-                                            <option value="{{ $grupos->idg }}">{{ $grupos->nome }} - {{ $grupos->nsigla }}</option>
+                                            <option value="{{ $grupos->idg }}" {{old('grupo', request('grupo')) == $grupos->idg ? 'selected' : '' }}>
+                                            {{ $grupos->nome}} - {{$grupos->nsigla}}
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col">
-                                    <label for="tratamento" class="form-label">Tipo de Trabalho</label>
-                                    <span class="tooltips">
-                                        <span class="tooltiptext">Obrigatório</span>
-                                        <span style="color:red">*</span>
-                                    </span>
-                                    <select class="form-select slct" id="tratamento" name="tratamento" required>
-                                        @foreach ($tratamento as $tratamentos)
-                                            <option value="{{ $tratamentos->idt }}">{{ $tratamentos->descricao }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-
-
-                            <div class="row mt-3">
-                                <div class="col">
+                                <div class="col-2">
                                     <label for="dia" class="form-label">Dia da semana <span class="tooltips">
                                             <span class="tooltiptext">Obrigatório</span>
                                             <span style="color:red">*</span>
                                         </span></label>
-                                    <select class="form-select slct" id="dia" name="dia" required>
+                                    <select class="form-select slct" id="dia" name="dia" value="{{old('dia')}}" required>
+                                        <option></option>
                                         @foreach ($dia as $dias)
-                                            <option value="{{ $dias->idd }}">{{ $dias->nome }}</option>
+                                        <option value="{{ $dias->idd }}" {{ request('dia') == $dias->idd ? 'selected' : '' }}>
+                                        {{ $dias->nome}}
                                         @endforeach
                                     </select>
                                 </div>
@@ -67,7 +60,7 @@
                                         <span class="tooltiptext">Obrigatório</span>
                                         <span style="color:red">*</span>
                                     </span>
-                                    <input class="form-control" type="time" id="h_inicio" name="h_inicio" required>
+                                    <input class="form-control" type="time" id="h_inicio" name="h_inicio" value="{{old('h_inicio')}}" required>
                                 </div>
                                 <div class="col-2">
                                     <label for="h_fim" class="form-label">Hora de fim</label>
@@ -75,45 +68,126 @@
                                         <span class="tooltiptext">Obrigatório</span>
                                         <span style="color:red">*</span>
                                     </span>
-                                    <input class="form-control" type="time" id="h_fim" name="h_fim" required>
+                                    <input class="form-control" type="time" id="h_fim" name="h_fim" value="{{old('h_fim')}}" required>
                                 </div>
-                                <div class="col-4">
+                                
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <label for="tratamento" class="form-label">Tipo de Trabalho</label>
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
+                                    <select class="form-select slct" id="tratamento" value="" name="tratamento" required>
+                                        <option></option>
+                                        @foreach ($tratamento as $tratamentos)
+                                        <option value="{{ $tratamentos->idt}}" 
+                                        {{old('tratamento', request('tratamento')) == $tratamentos->idt ? 'selected' : '' }}>
+                                        {{ $tratamentos->descricao}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-2">
+                                    <label for="tratamento" class="form-label">Semestre</label>
+                                    <select class="form-select slct" id="semestre" value="" name="semestre">
+                                            <option></option>
+                                        @foreach ($semestre as $semestres)
+                                        <option value="{{ $semestres->id }}" 
+                                            {{ old('semestre', request('semestre')) == $semestres->id ? 'selected' : '' }}>
+                                            {{ $semestres->nome }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-2">
                                     <label for="h_fim" class="form-label">Observação</label>
                                     <select class="form-select slct" id="observacao" name="observacao">
                                         <option></option>
                                         @foreach ($observacao as $obs)
-                                            <option value="{{ $obs->id }}">{{ $obs->descricao }}</option>
+                                        <option value="{{ $obs->id }}" {{old('observacao', request('observacao')) == $obs->id ? 'selected' : '' }}>
+                                        {{ $obs->descricao}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-2">
+                                    <label for="h_fim" class="form-label">Modalidade</label>
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
+                                    <select class="form-select slct" id="modalidade" name="modalidade">
+                                        @foreach ($modalidade as $modal)
+                                        <option value="{{ $modal->id }}" {{ request('modalidade') == $modal->id ? 'selected' : '' }}>
+                                        {{ $modal->nome}}</option>
                                         @endforeach
                                     </select>
                                 </div>
 
                             </div>
-                            <div class="row mt-3">
-                                <div class="col">
+                            <div class="row mt-3">                               
+                                <div class="col-2">
+                                    <label class="form-label">Data Inicio</label>
+
+                                    <input type="date" class="form-control" id="dt_inicio" name="dt_inicio" 
+           value="{{ old('dt_inicio', \Carbon\Carbon::now()->format('Y-m-d')) }}">
+                                </div>
+                                <div class="col-2">
+                                    <label class="form-label">Data Fim</label>
+                                    <input type="date" class="form-control" id="dt_fim" min="1" max="800"
+                                        name="dt_fim" value="{{old('dt_fim')}}">
+                                </div>
+                                <div class="col-2">
                                     <label for="max_atend" class="form-label">Max atendimentos</label>
                                     <span class="tooltips">
                                         <span class="tooltiptext">Obrigatório</span>
                                         <span style="color:red">*</span>
                                     </span>
                                     <input type="number" class="form-control" id="max_atend" min="1" max="800"
-                                        name="max_atend" required>
+                                        name="max_atend" value="{{old('max_atend')}}" required>
+                                </div>
+                                <div class="col-2">
+                                    <label for="max_atend" class="form-label">Max trabalhadores</label>
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
+                                    <input type="number" class="form-control" id="max_trab" min="1" max="50"
+                                        name="max_trab" value="{{old('max_trab')}}" required>
                                 </div>
                                 <div class="col">
-                                    <label class="form-label">Data Inicio</label>
-
-                                    <input type="date" class="form-control" id="dt_inicio" name="dt_inicio">
-                                </div>
-                                <div class="col">
-                                    <label class="form-label">Data Fim</label>
-                                    <input type="date" class="form-control" id="dt_fim" min="1" max="800"
-                                        name="dt_fim">
+                                    <label for="tp_semana" class="form-label">Semana de trabalho</label>
+                                    <span class="tooltips">
+                                            <span class="tooltiptext">Obrigatório</span>
+                                            <span style="color:red">*</span>
+                                    </span>
+                                    <div class="row">
+                                    <div class="col">
+                                            <input type="checkbox" class="btn-check" id="btn-check-td" name="tipo_semana[]" value="0" {{ in_array("0", old('tipo_semana', [])) ? 'checked' : '' }} checked autocomplete="off">
+                                            <label class="btn btn-outline-primary" for="btn-check-td">Td</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="checkbox" class="btn-check option-check" id="btn-check-1" name="tipo_semana[]" value="1" {{ in_array("1", old('tipo_semana', [])) ? 'checked' : '' }} autocomplete="off">
+                                            <label class="btn btn-outline-primary" for="btn-check-1">1ª</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="checkbox" class="btn-check option-check" id="btn-check-2" name="tipo_semana[]" value="2" {{ in_array("2", old('tipo_semana', [])) ? 'checked' : '' }} autocomplete="off">
+                                            <label class="btn btn-outline-primary" for="btn-check-2">2ª</label>      
+                                        </div>
+                                        <div class="col">
+                                            <input type="checkbox" class="btn-check option-check" id="btn-check-3" name="tipo_semana[]" value="3" {{ in_array("3", old('tipo_semana', [])) ? 'checked' : '' }} autocomplete="off">
+                                            <label class="btn btn-outline-primary" for="btn-check-3">3ª</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="checkbox" class="btn-check option-check" id="btn-check-4" name="tipo_semana[]" value="4" {{ in_array("4", old('tipo_semana', [])) ? 'checked' : '' }} autocomplete="off">
+                                            <label class="btn btn-outline-primary" for="btn-check-4">4ª</label>      
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <br />
                     </div>
                 </div>
-                <br />
-                <div class="card">
+                <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="mb-0">Sala</h5>
                     </div>
@@ -128,11 +202,13 @@
                                 <select class="form-select" id="id_sala" name="id_sala">
                                     <option value=""></option>
                                     @foreach ($salas as $sala)
-                                        <option value="{{ $sala->id }}" data-nome="{{ $sala->nome }}"
-                                            data-numero="{{ $sala->numero }}"
-                                            data-localizacao="{{ $sala->nome_localizacao }}">
-                                            {{ $sala->numero }}
-                                        </option>
+                                    <option value="{{ $sala->id }}" 
+                                        {{ old('id_sala', request('id_sala')) == $sala->id ? 'selected' : '' }}
+                                        data-nome="{{ $sala->nome }}"
+                                        data-numero="{{ $sala->numero }}"
+                                        data-localizacao="{{ $sala->nome_localizacao }}">
+                                        {{ $sala->numero }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -207,6 +283,61 @@
 
  
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const tdCheckbox = document.getElementById("btn-check-td");
+            const optionCheckboxes = document.querySelectorAll(".option-check");
+
+            tdCheckbox.addEventListener("change", function() {
+                if (tdCheckbox.checked) {
+                    optionCheckboxes.forEach(cb => cb.checked = false);
+                }
+            });
+
+            optionCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener("change", function() {
+                    if (this.checked) {
+                        tdCheckbox.checked = false;
+
+                        // Conta quantos checkboxes estão marcados
+                        const checkedCount = [...optionCheckboxes].filter(cb => cb.checked).length;
+                        
+                        // Se mais de 3 checkboxes forem marcados, desmarca o atual
+                        if (checkedCount > 3) {
+                            this.checked = false;
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modalidadeSelect = document.getElementById("modalidade");
+        const salaSelect = document.getElementById("id_sala");
+
+        function toggleSala() {
+            // Verifica se a opção selecionada é "1"
+            if (modalidadeSelect.value === "1") {
+                salaSelect.removeAttribute("disabled");
+            } else {
+                salaSelect.setAttribute("disabled", "disabled");
+            }
+        }
+
+        // Executa a função ao carregar a página
+        toggleSala();
+
+        // Adiciona um evento para alterar o estado do select de id_sala
+        modalidadeSelect.addEventListener("change", toggleSala);
+    });
+</script>
+
+
+
+
 @endsection
 
 @section('footerScript')

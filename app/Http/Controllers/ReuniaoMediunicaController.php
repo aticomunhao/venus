@@ -30,18 +30,29 @@ class ReuniaoMediunicaController extends Controller
                 'td.nome AS nomed',
                 'cro.h_fim',
                 'cro.max_atend',
+                'cro.max_trab',
                 'gr.status_grupo AS idst',
                 'tst.descricao AS tstd',
                 's.sigla as nsigla',
                 'sa.numero',
+<<<<<<< Updated upstream
+                't.descricao',
+=======
+                'tm.nome as nmodal',
+                'ts.nome as nsemana',
+>>>>>>> Stashed changes
                 DB::raw("(CASE WHEN cro.data_fim is not null THEN 'Inativo' ELSE 'Ativo' END) as status")
             )
             ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
+            ->leftJoin('tipo_observacao_reuniao AS t', 'cro.observacao', 't.id')
             ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('setor as s', 'gr.id_setor', 's.id')
             ->leftJoin('membro AS me', 'gr.id', 'me.id_cronograma')
             ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
-            ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id');
+            ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('tipo_modalidade AS tm', 'cro.id_tipo_modalidade', 'tm.id')
+            ->leftJoin('tipo_semana AS ts', 'cro.id_tipo_semana', 'ts.id');
+
 
 
         // Obtém os valores de pesquisa da requisição
@@ -49,11 +60,14 @@ class ReuniaoMediunicaController extends Controller
         $grupo = $request->input('grupo', null);
         $setor = $request->input('setor', null);
         $status = $request->input('status', null);
+        $modalidade = $request->input('modalidade', null);
 
         // Aplica filtro por semana
-        if ($semana && $semana !== 'todos') {
+        if ($semana != null) {
             $reuniao->where('cro.dia_semana', '=', $semana);
-        }
+             }else{
+             $reuniao->where('cro.dia_semana', '<>', null);
+             }
 
         // Aplica filtro por nome de grupo com insensibilidade a maiúsculas/minúsculas e acentos
         if ($grupo) {
@@ -84,6 +98,11 @@ class ReuniaoMediunicaController extends Controller
             }
         }
 
+         // Aplica filtro por setor
+         if ($modalidade) {
+            $reuniao->where('tm.id', $modalidade);
+        }
+
         // Conta o número de registros
         $contar = $reuniao->distinct()->count('cro.id');
 
@@ -92,7 +111,11 @@ class ReuniaoMediunicaController extends Controller
             ->orderBy('status', 'ASC')
             ->orderBy('cro.id_tipo_tratamento', 'ASC')
             ->orderBy('nomeg', 'ASC')
-            ->groupBy('idr', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero')
+<<<<<<< Updated upstream
+            ->groupBy('idr', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero','t.descricao')
+=======
+            ->groupBy('idr', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero', 'tm.nome', 'ts.nome')
+>>>>>>> Stashed changes
             ->paginate(50)
             ->appends([
                 'status' => $status,
@@ -105,6 +128,8 @@ class ReuniaoMediunicaController extends Controller
         $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
 
         $tipo_motivo = DB::table('tipo_mot_inat_gr_reu')->get();
+
+        $tmodalidade = DB::table('tipo_modalidade')->get();
 
         $tpdia = DB::table('tipo_dia')
             ->select('id AS idtd', 'nome AS nomed')
@@ -119,7 +144,7 @@ class ReuniaoMediunicaController extends Controller
 
 
         // Retorna a view com os dados
-        return view('/reuniao-mediunica/gerenciar-reunioes', compact('tipo_motivo', 'reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores'));
+        return view('/reuniao-mediunica/gerenciar-reunioes', compact('tipo_motivo', 'reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores', 'tmodalidade', 'modalidade'));
     }
 
 
@@ -132,7 +157,11 @@ class ReuniaoMediunicaController extends Controller
             ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
             ->orderBy('gr.nome');
 
+        $modalidade = DB::table('tipo_modalidade')->get();
 
+        $semestre = DB::table('tipo_semestre')->get();
+
+        $tp_semana = DB::table('tipo_semana')->orderBy('id')->get();
 
         $grupo = $grupo->get();
 
@@ -158,7 +187,7 @@ class ReuniaoMediunicaController extends Controller
 
         $observacao = DB::table('tipo_observacao_reuniao')->get();
 
-        return view('/reuniao-mediunica/criar-reuniao', compact('grupo', 'tipo',  'tratamento',  'dia', 'salas', 'observacao'));
+        return view('/reuniao-mediunica/criar-reuniao', compact('grupo', 'tipo', 'modalidade', 'semestre',  'tratamento',  'dia', 'salas', 'observacao', 'tp_semana'));
     }
 
     public function store(Request $request)
@@ -166,6 +195,7 @@ class ReuniaoMediunicaController extends Controller
         //  try {
 
         $usuario = session()->get('usuario.id_pessoa');
+<<<<<<< Updated upstream
         $now =  Carbon::now()->format('Y-m-d');
         $data_inicio = $request->dt_inicio ? $request->dt_inicio : $now;
 
@@ -184,9 +214,9 @@ class ReuniaoMediunicaController extends Controller
             ->where(function ($query) use ($now) { // Apenas cronogramas Ativos
                 $query->where('rm.data_fim', '>=', $now);
                 $query->orWhere('rm.data_fim', null);
-            }) 
+            })
             ->where(function ($query) use ($h_inicio, $h_fim) { // Função de reconhecimento de horários
-                
+
                 $query->where(function ($hour) use ($h_inicio, $h_fim) {  // A reunião criada inicia antes que outra, mas termina durante ou depois (  <----|---->  |  ou <----|-----|----> )
                     $hour->where('rm.h_inicio', '>=', $h_inicio);
                     $hour->where('rm.h_inicio', '<=', $h_fim);
@@ -199,10 +229,10 @@ class ReuniaoMediunicaController extends Controller
                    $hour->where('rm.h_inicio', '<=', $h_inicio);
                     $hour->where('rm.h_fim', '>=', $h_fim);
                 });
-                
+
             })
             ->count();
-            
+
         if ($repeat > 0) {
 
             app('flasher')->addError('Existe uma outra reunião nesse horário.');
@@ -238,6 +268,148 @@ class ReuniaoMediunicaController extends Controller
         app('flasher')->addSuccess('A reunião foi cadastrada com sucesso.');
 
         return redirect('/gerenciar-reunioes');
+=======
+            $now = Carbon::now()->format('Y-m-d');
+            
+            $modalidade = intval($request->modalidade);
+            $observacao = $request->observacao;
+            $tratamento = intval($request->tratamento);
+            $sala = intval($request->id_sala);
+            $grupo = intval($request->grupo);
+            $numero = intval($request->id_sala);
+            $h_inicio = Carbon::createFromFormat('G:i', $request->h_inicio)->subMinutes(30);
+            $h_fim = Carbon::createFromFormat('G:i', $request->h_fim)->addMinutes(30);
+            $dia = intval($request->dia);
+            $semestre = intval($request->semestre);
+            $repete = isset($request->repete) ? 1 : 0;
+            $tipo_semanas = $request->tipo_semana ?? [0]; // Se não houver seleção, assume 0
+            
+            // Validação de sala para modalidade presencial
+            if ($modalidade == 1 && $sala === null) {
+                app('flasher')->addError('Preencha um número na sala.');
+                return redirect()->back()->withInput();
+            }
+            
+            foreach ($tipo_semanas as $tipo_semana) {
+                $query = DB::table('cronograma AS c')
+                    ->where(function ($query) use ($now) {
+                        $query->where('c.data_fim', '>=', $now)
+                              ->orWhereNull('c.data_fim'); // Apenas cronogramas ativos
+                    });
+            
+                if ($modalidade == 1) { // Modalidade Presencial
+                    $query->where('c.id_sala', $numero)
+                          ->where('c.dia_semana', $dia)
+                          ->where(function ($q) use ($h_inicio, $h_fim) {
+                              $q->whereBetween('c.h_inicio', [$h_inicio, $h_fim])
+                                ->orWhereBetween('c.h_fim', [$h_inicio, $h_fim])
+                                ->orWhere(function ($sub) use ($h_inicio, $h_fim) {
+                                    $sub->where('c.h_inicio', '<=', $h_inicio)
+                                        ->where('c.h_fim', '>=', $h_fim);
+                                });
+                          });
+            
+                    // Impede tipo_semana 0 se já houver tipo_semana 1, 2, 3 ou 4
+                    $tipo_semana_conflito = DB::table('cronograma')
+                        ->where('id_sala', $numero)
+                        ->where('dia_semana', $dia)
+                        ->whereIn('id_tipo_semana', [1, 2, 3, 4])
+                        ->where(function ($q) use ($h_inicio, $h_fim) {
+                            $q->whereBetween('h_inicio', [$h_inicio, $h_fim])
+                              ->orWhereBetween('h_fim', [$h_inicio, $h_fim])
+                              ->orWhere(function ($sub) use ($h_inicio, $h_fim) {
+                                  $sub->where('h_inicio', '<=', $h_inicio)
+                                      ->where('h_fim', '>=', $h_fim);
+                              });
+                        })
+                        ->exists();
+            
+                    if ($tipo_semana == 0 && $tipo_semana_conflito) {
+                        app('flasher')->addError('Não é permitido adicionar um cronograma com tipo de semana 0 quando já existem cronogramas com tipo de semana 1, 2, 3 ou 4.');
+                        return redirect()->back()->withInput();
+                    }
+            
+                    // Aplicação da regra do tipo_semana
+                    if ($tipo_semana == 0) {
+                        $query->where('c.id_tipo_semana', 0);
+                    } else {
+                        $query->where('c.id_tipo_semana', $tipo_semana);
+                    }
+                } elseif ($modalidade > 1) { // Modalidade Remota (ou outra maior que 1)
+                    // Verifica se já existe um cronograma com todos os dados iguais
+                    $existe_conflito = DB::table('cronograma')
+                        ->where('id_grupo', $grupo)
+                        ->where('id_tipo_tratamento', $tratamento)
+                        ->where('dia_semana', $dia)
+                        ->where('h_inicio', $request->h_inicio) // Comparação exata
+                        ->where('h_fim', $request->h_fim) // Comparação exata
+                        ->where('id_tipo_semana', $tipo_semana)
+                        ->where('id_tipo_semestre', $semestre)
+                        ->where('id_tipo_modalidade', $modalidade)
+                        ->where('observacao', $observacao)
+                        ->exists();
+            
+                    if ($existe_conflito) {
+                        app('flasher')->addError('Já existe um cronograma para esta modalidade com os mesmos parâmetros.');
+                        return redirect()->back()->withInput();
+                    }
+            
+                    $query->where('c.id_grupo', $grupo)
+                          ->where('c.id_tipo_tratamento', $tratamento)
+                          ->where('c.dia_semana', $dia)
+                          ->where('c.h_inicio', $h_inicio)
+                          ->where('c.h_fim', $h_fim)
+                          ->where('c.id_tipo_semana', $tipo_semana)
+                          ->where('c.id_tipo_semestre', $semestre)
+                          ->where('c.id_tipo_modalidade', $modalidade)
+                          ->where('c.observacao', $observacao);
+                }
+            
+                // Verifica duplicação
+                $repeat = $query->count();
+            
+                if ($repeat > 0) {
+                    app('flasher')->addError('Já existe um cronograma para este horário.');
+                    return redirect()->back()->withInput();
+                }
+            
+                // Inserção no banco de dados se não houver duplicação
+                DB::table('cronograma')->insert([
+                    'id_grupo' => $grupo,
+                    'id_sala' => $numero,
+                    'h_inicio' => $request->h_inicio,
+                    'h_fim' => $request->h_fim,
+                    'max_atend' => $request->max_atend,
+                    'max_trab' => $request->max_trab,
+                    'dia_semana' => $dia,
+                    'id_tipo_modalidade' => $modalidade,
+                    'id_tipo_semana' => $tipo_semana,
+                    'id_tipo_semestre' => $semestre,
+                    'id_tipo_tratamento' => $tratamento,
+                    'data_inicio' => $request->dt_inicio,
+                    'data_fim' => $request->dt_fim,
+                    'observacao' => $observacao
+                ]);
+            }
+            
+            // Registra o histórico da ação do usuário
+            $result = DB::table('cronograma')->max('id');
+            DB::table('historico_venus')->insert([
+                'id_usuario' => $usuario,
+                'data' => $now,
+                'fato' => 16,
+                'id_ref' => $result
+            ]);
+            
+            app('flasher')->addSuccess('A reunião foi cadastrada com sucesso.');
+            
+            // Recuperar os valores preenchidos se "repete" for selecionado
+            if ($repete) {
+                return redirect()->back()->withInput();
+            }
+            
+            return redirect('/gerenciar-reunioes');
+>>>>>>> Stashed changes
         // } catch (\Exception $e) {
 
         //     $code = $e->getCode();
@@ -252,7 +424,6 @@ class ReuniaoMediunicaController extends Controller
         $grupo = DB::table('grupo AS gr')
             ->leftJoin('setor as s', 'gr.id_setor', 's.id')
             ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
-            ->where('id_tipo_grupo', 1)
             ->orderBy('gr.nome')
             ->get();
 
@@ -266,7 +437,6 @@ class ReuniaoMediunicaController extends Controller
 
         $salas = DB::table('salas')
             ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
-            ->where('id_finalidade', 6)
             ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
             ->orderBy('numero', 'asc')
             ->get();
@@ -306,7 +476,6 @@ class ReuniaoMediunicaController extends Controller
             $grupo = DB::table('grupo AS gr')
                 ->leftJoin('setor as s', 'gr.id_setor', 's.id')
                 ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
-                ->where('id_tipo_grupo', 1)
                 ->orderBy('gr.nome');
 
 
@@ -329,7 +498,6 @@ class ReuniaoMediunicaController extends Controller
             $salas = DB::table('salas')
                 ->join('tipo_localizacao', 'salas.id_localizacao', '=', 'tipo_localizacao.id')
                 ->select('salas.*', 'tipo_localizacao.nome AS nome_localizacao')
-                ->where('id_finalidade', 6)
                 ->orderBy('numero', 'asc')
                 ->get();
 

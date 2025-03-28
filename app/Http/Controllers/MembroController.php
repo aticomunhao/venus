@@ -189,7 +189,6 @@ class MembroController extends Controller
     {
 
 
-
         $now = Carbon::now()->format('Y-m-d');
         $seletedCronograma = DB::table('cronograma as cro')->where('id', $id)->first();
         $cronogramasPessoa = DB::table('membro')->whereNull('dt_fim')->where('id_associado', $request->input('id_associado'))->pluck('id_cronograma');
@@ -297,7 +296,8 @@ class MembroController extends Controller
             )
             ->orderBy('status')
             ->orderBy('id_funcao')
-            ->orderBy('p.nome_completo', 'ASC');
+            ->orderBy('p.nome_completo', 'ASC')
+            ->whereNull('m.dt_fim');
 
 
         // Filtros
@@ -519,7 +519,7 @@ class MembroController extends Controller
             ->leftJoin('dias_cronograma as dc', 'pm.id_dias_cronograma', 'dc.id')
             ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
             ->leftJoin('grupo as g', 'cro.id_grupo', 'g.id')
-            ->where('a.nr_associado', $membro->nr_associado) // Filtro baseado no associado
+            ->where('m.id', $membro->id) // Filtro baseado no associado
             ->orderBy('dc.data', 'desc')
             ->get();
 
