@@ -54,6 +54,10 @@ class Faltas implements ShouldQueue
             ->where('tr.dt_inicio', '<=', $data_atual) // Iniciados
             ->where('tr.status','<', 3)//Apenas ativos
             ->where('rm.dia_semana', $dia_atual)
+            ->where(function($query) use ($data_atual) { // Cronogramas ativos
+                $query->whereRaw("data_fim > ?", [$data_atual]) 
+                      ->orWhereNull('data_fim');
+            })
             ->where(function ($query) {
                 $query->where('rm.modificador', NULL); // Sem modificador algum
                 $query->orWhere('rm.modificador', '<>', 4); // Em férias

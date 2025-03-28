@@ -109,7 +109,7 @@
             @foreach ($lista as $listas)
                 <tr>
                     <td>{{ $listas->ide }}</td>
-                    <td>{{ date('d/m/Y', strtotime($listas->dh_fim)) }}</td>
+                    <td>{{ date('d/m/Y', strtotime($listas->dh_chegada)) }}</td>
                     <td>{{ $listas->prdesc }}</td>
                     <td>{{ $listas->nm_1 }}</td>
                     <td>{{ $listas->nm_2 }}</td>

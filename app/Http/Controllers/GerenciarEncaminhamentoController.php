@@ -14,25 +14,26 @@ class GerenciarEncaminhamentoController extends Controller
         // Lista de Dados que aparece na view
         $lista = DB::table('encaminhamento AS enc')
             ->select(
-                'enc.id AS ide',
-                'enc.id_tipo_encaminhamento',
-                'enc.id_atendimento',
-                'enc.status_encaminhamento',
-                'tse.descricao AS tsenc',
-                'enc.id_tipo_tratamento AS idtt',
-                'id_tipo_entrevista',
                 'at.id AS ida',
                 'at.id_assistido',
                 'at.dh_fim',
-                'p1.nome_completo AS nm_1',
+                'at.dh_chegada',
                 'at.id_representante as idr',
-                'p2.nome_completo as nm_2',
+                'enc.id AS ide',
+                'enc.id_atendimento',
+                'enc.id_tipo_encaminhamento',
+                'enc.id_tipo_tratamento AS idtt',
+                'enc.status_encaminhamento',
+                'id_tipo_entrevista',
+                'p1.nome_completo AS nm_1',
                 'p1.cpf AS cpf_assistido',
+                'p2.nome_completo as nm_2',
                 'pr.id AS prid',
-                DB::raw("(CASE WHEN at.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as prdesc"),
                 'pr.sigla AS prsigla',
+                'tse.descricao AS tsenc',
                 'tt.descricao AS desctrat',
-                'tt.sigla'
+                'tt.sigla',
+                DB::raw("(CASE WHEN at.emergencia = true THEN 'Emergência' ELSE 'Normal' END) as prdesc"),
             )
             ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
             ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
@@ -59,7 +60,7 @@ class GerenciarEncaminhamentoController extends Controller
         $situacao = $request->status; // ArX3E-JZJ-VN3Bmazena a pesquisa por Status (Select)
 
         if ($request->dt_enc) {
-            $lista->where('enc.dh_enc', '>=', $request->dt_enc); // Pesquisa qualquer data que seja maior ou igual a pesquisada
+            $lista->where('at.dh_chegada', '>=', $request->dt_enc); // Pesquisa qualquer data que seja maior ou igual a pesquisada
         }
         if ($request->assist) {
 
