@@ -301,7 +301,7 @@ Route::middleware("rotas:44")->group(function () {
     Route::any('/vagasGruposAjax/{id}', [RelatoriosController::class, 'vagasGruposAjax']);
 });
 //Relatório de passes PTD, PTI e PPH
-Route::middleware("rotas:50")->group(function () {
+Route::middleware("rotas:52")->group(function () {
     Route::get('/relatorio-passes', [RelatoriosController::class, 'passes']);
     Route::any('/passesAjax/{id}', [RelatoriosController::class, 'passesAjax']);
 });
