@@ -1616,7 +1616,7 @@ class RelatoriosController extends Controller
         }
 
         if ($tratamento === null){
-            $passe->whereIn('t.id', [1,2,3]);
+            $passe->whereIn('t.id', [1,2,3,6]);
         }else{
             $passe->where('t.id', $tratamento);
         }
