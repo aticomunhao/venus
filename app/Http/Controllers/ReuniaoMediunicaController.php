@@ -32,15 +32,13 @@ class ReuniaoMediunicaController extends Controller
                 'cro.max_atend',
                 'cro.max_trab',
                 'gr.status_grupo AS idst',
-                'tst.descricao AS tstd',
-                's.sigla as nsigla',
+                'tst.descricao AS trsigla',
+                's.sigla as stsigla',
+                'tse.sigla as sesigla',
                 'sa.numero',
-<<<<<<< Updated upstream
                 't.descricao',
-=======
                 'tm.nome as nmodal',
                 'ts.nome as nsemana',
->>>>>>> Stashed changes
                 DB::raw("(CASE WHEN cro.data_fim is not null THEN 'Inativo' ELSE 'Ativo' END) as status")
             )
             ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
@@ -51,7 +49,8 @@ class ReuniaoMediunicaController extends Controller
             ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
             ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
             ->leftJoin('tipo_modalidade AS tm', 'cro.id_tipo_modalidade', 'tm.id')
-            ->leftJoin('tipo_semana AS ts', 'cro.id_tipo_semana', 'ts.id');
+            ->leftJoin('tipo_semana AS ts', 'cro.id_tipo_semana', 'ts.id')
+            ->leftJoin('tipo_semestre as tse', 'cro.id_tipo_semestre', 'tse.id');
 
 
 
@@ -111,11 +110,7 @@ class ReuniaoMediunicaController extends Controller
             ->orderBy('status', 'ASC')
             ->orderBy('cro.id_tipo_tratamento', 'ASC')
             ->orderBy('nomeg', 'ASC')
-<<<<<<< Updated upstream
-            ->groupBy('idr', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero','t.descricao')
-=======
-            ->groupBy('idr', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero', 'tm.nome', 'ts.nome')
->>>>>>> Stashed changes
+            ->groupBy('idr', 'gr.nome', 'td.nome', 'tse.sigla', 't.descricao', 'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero', 'tm.nome', 'ts.nome')
             ->paginate(50)
             ->appends([
                 'status' => $status,
@@ -195,80 +190,6 @@ class ReuniaoMediunicaController extends Controller
         //  try {
 
         $usuario = session()->get('usuario.id_pessoa');
-<<<<<<< Updated upstream
-        $now =  Carbon::now()->format('Y-m-d');
-        $data_inicio = $request->dt_inicio ? $request->dt_inicio : $now;
-
-        $grupo = intval($request->grupo);
-        $numero = intval($request->id_sala);
-        $h_inicio = Carbon::createFromFormat('G:i', $request->h_inicio)->subMinutes(30);
-        $h_fim = Carbon::createFromFormat('G:i', $request->h_fim)->addMinutes(30);
-        $dia = intval($request->dia);
-
-        // Conta cronogramas que ocupam a mesma sala no mesmo horário, no mesmo dia da semana
-        $repeat = DB::table('cronograma AS rm')
-            ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
-            ->leftJoin('salas AS s', 'rm.id_sala', 's.id')
-            ->where('rm.dia_semana', $dia) // Mesmo dia da semana
-            ->where('rm.id_sala', $numero) // Mesmo ID_sala
-            ->where(function ($query) use ($now) { // Apenas cronogramas Ativos
-                $query->where('rm.data_fim', '>=', $now);
-                $query->orWhere('rm.data_fim', null);
-            })
-            ->where(function ($query) use ($h_inicio, $h_fim) { // Função de reconhecimento de horários
-
-                $query->where(function ($hour) use ($h_inicio, $h_fim) {  // A reunião criada inicia antes que outra, mas termina durante ou depois (  <----|---->  |  ou <----|-----|----> )
-                    $hour->where('rm.h_inicio', '>=', $h_inicio);
-                    $hour->where('rm.h_inicio', '<=', $h_fim);
-                });
-                $query->orWhere(function ($hour) use ($h_inicio, $h_fim) { // A reunião foi criada com a H_inicio interna de outra reunião (  | <-----|----> ou <----|------|---->  )
-                   $hour->where('rm.h_fim', '>=', $h_inicio);
-                    $hour->where('rm.h_fim', '<=', $h_fim);
-                });
-                $query->orWhere(function ($hour) use ($h_fim, $h_inicio) { // A reunião está completamente interna a outra (  | <---------> |  )
-                   $hour->where('rm.h_inicio', '<=', $h_inicio);
-                    $hour->where('rm.h_fim', '>=', $h_fim);
-                });
-
-            })
-            ->count();
-
-        if ($repeat > 0) {
-
-            app('flasher')->addError('Existe uma outra reunião nesse horário.');
-
-            return redirect()->back();
-        } else {
-        }
-
-
-        DB::table('cronograma AS rm')->insert([
-            'id_grupo' => $request->input('grupo'),
-            'id_sala' => $request->input('id_sala'),
-            'h_inicio' => $request->input('h_inicio'),
-            'h_fim' => $request->input('h_fim'),
-            'max_atend' => $request->input('max_atend'),
-            'dia_semana' => $request->input('dia'),
-            'id_tipo_tratamento' => $request->input('tratamento'),
-            'data_inicio' => $data_inicio,
-            'data_fim' => $request->dt_fim,
-            'observacao' => $request->observacao
-        ]);
-
-        $result = DB::table('cronograma')->max('id');
-
-        DB::table('historico_venus')->insert([
-            'id_usuario' => $usuario,
-            'data' => $now,
-            'fato' => 16,
-            'id_ref' => $result
-        ]);
-
-
-        app('flasher')->addSuccess('A reunião foi cadastrada com sucesso.');
-
-        return redirect('/gerenciar-reunioes');
-=======
             $now = Carbon::now()->format('Y-m-d');
             
             $modalidade = intval($request->modalidade);
@@ -409,7 +330,6 @@ class ReuniaoMediunicaController extends Controller
             }
             
             return redirect('/gerenciar-reunioes');
->>>>>>> Stashed changes
         // } catch (\Exception $e) {
 
         //     $code = $e->getCode();

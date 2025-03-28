@@ -1584,8 +1584,6 @@ class RelatoriosController extends Controller
         return $pdf->download( $dadosP->nome_completo .'.pdf');
 
     }
-<<<<<<< Updated upstream
-=======
 
     public function passes(Request $request)
     {
@@ -1634,5 +1632,4 @@ class RelatoriosController extends Controller
         return view('relatorios.passes', compact('dt_inicio', 'dt_fim', 'trata', 'passe', 'qtd_acomp', 'qtd_ass'));
     }
     
->>>>>>> Stashed changes
 }

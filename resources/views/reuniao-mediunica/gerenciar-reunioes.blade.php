@@ -95,7 +95,8 @@
                         <th class="col">SALA</th>
                         <th class="col">SETOR</th>
                         <th class="col-2">TIPO DE TRABALHO</th>
-                        <th class="col-1">OBSERVAÇÃO</th>
+                        <th class="col">SEMESTRE</th>
+                        <th class="col">OBSERVAÇÃO</th>
                         <th class="col">HORÁRIO INÍCIO</th>
                         <th class="col">HORÁRIO FIM</th>
                         <th class="col">MAX A</th>
@@ -113,8 +114,9 @@
                             <td>{{ $reuni->nomed }}</td>
                             <td>{{ $reuni->nsemana }}</td>
                             <td>{{ $reuni->numero }}</td>
-                            <td>{{ $reuni->nsigla }}</td>
-                            <td>{{ $reuni->tstd }}</td>
+                            <td>{{ $reuni->stsigla }}</td>
+                            <td>{{ $reuni->trsigla }}</td>
+                            <td>{{ $reuni->sesigla }}</td>
                             <td>{{ $reuni->descricao}}</td>
                             <td>{{ date('H:i:s', strtotime($reuni->h_inicio)) }}</td>
                             <td>{{ date('H:i:s', strtotime($reuni->h_fim)) }}</td>
@@ -158,7 +160,7 @@
                                                         style="font-size:17px">
                                                         Tem certeza que deseja inativar:<br />
                                                         <span
-                                                            style="color:#DC4C64; font-weight: bold;">{{ $reuni->nomeg }} - {{ $reuni->nsigla }}</span>&#63;
+                                                            style="color:#DC4C64; font-weight: bold;">{{ $reuni->nomeg }} - {{ $reuni->stsigla }}</span>&#63;
                                                     </label>
                                                     <br />
 
