@@ -372,20 +372,29 @@ class GerenciarIntegralController extends Controller
      */
     public function update(Request $request, string $id)
     {
+       try {
+
+            DB::table('tratamento')->where('id', $id)->update(['dt_fim' => null]);
+            app('flasher')->addSuccess('Limite de semanas removido com Sucesso!');
+
+            return redirect()->back();
+        } catch (\Exception $e) {
+
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+            DB::rollBack();
+            return redirect()->back();
+        }
+    }
+
+    public function alta(Request $request, string $id)
+    {
         try {
             $hoje = Carbon::today();
-            $tratamento = DB::table('tratamento')->where('id', $id)->first();
+            $id_encaminhamento = DB::table('tratamento')->where('id', $id)->first();
+            DB::table('tratamento')->where('id', $id)->update(['status' => 4, 'dt_fim' => $hoje]);
+            DB::table('encaminhamento')->where('id', $id_encaminhamento->id_encaminhamento)->update(['status_encaminhamento' => 3]);
 
-            if ($tratamento->dt_fim != null) {
-                DB::table('tratamento')->where('id', $id)->update(['dt_fim' => null]);
-            } elseif ($tratamento->dt_fim == null) {
-
-                $id_encaminhamento = DB::table('tratamento')->where('id', $id)->first();
-                DB::table('tratamento')->where('id', $id)->update(['status' => 4, 'dt_fim' => $hoje]);
-                DB::table('encaminhamento')->where('id', $id_encaminhamento->id_encaminhamento)->update(['status_encaminhamento' => 3]);
-            } else {
-                app('flasher')->addError('Houve um erro inesperado');
-            }
+            app('flasher')->addSuccess('Alta declarada com Sucesso!');
 
             return redirect()->back();
         } catch (\Exception $e) {
