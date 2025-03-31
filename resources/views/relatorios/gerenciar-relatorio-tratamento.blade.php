@@ -93,6 +93,7 @@
                             @endif
                             <th class="col-3">TRATAMENTO</th>
                             <th class="col-1">ASSISTIDOS</th>
+                            <th class="col-1">PASSES</th>
                             <th class="col-1">ACOMPANHANTES</th>
                         </tr>
                     </thead>
@@ -107,8 +108,9 @@
 
                                 @endif
                                 <td>{{ $trat['descricao'] }} ({{ $trat['sigla'] }})</td>
-                                <td>{{ $trat['atendimentos'] }}</td>
-                                <td>{{ isset($trat['acompanhantes']) ?  $trat['acompanhantes'] : null }}</td>
+                                <td>{{ isset($trat['atendimentos']) ?  $trat['atendimentos'] : '-'}}</td>
+                                <td>{{ isset($trat['passes']) ?  $trat['passes'] : '-' }}</td>
+                                <td>{{ isset($trat['acompanhantes']) ?  $trat['acompanhantes'] : '-' }}</td>
                             </tr>
                         @endforeach
                     </tbody>

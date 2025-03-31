@@ -946,49 +946,78 @@ class RelatoriosController extends Controller
         $grupo2 = $grupo2->get();
         $setores = $setores->get();
 
+        // Retorna todos os tratamentos ativos, por grupo
+        $tratamentosAtivos = DB::table('tratamento as tra')
+            ->select('tra.id_reuniao', DB::raw("COUNT('tra.id')"))
+            ->leftJoin('encaminhamento as enc', 'tra.id', 'enc.id')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->groupBy('tra.id_reuniao')
+            ->where(function ($query) use ($dt_inicio, $dt_fim) {
+
+                // Data Inicio Tratamento
+                $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
+                    $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
+                        $innerQuery->where('tra.dt_inicio', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
+                    });
+                    $subQuery->orWhere('tra.dt_inicio', '<', $dt_inicio);
+                });
+
+                // Data Fim Tratamento
+                $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
+                    $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
+                        $innerQuery->where('tra.dt_fim', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
+                    });
+                    $subQuery->orWhere('tra.dt_fim', '>', $dt_fim);
+                    $subQuery->orWhere('tra.dt_fim', NULL);
+                });
+            })
+            ->get()
+            ->toArray();
+
+        // Retorna os números de acompanhantes, por grupo
+        $acomp = DB::table('dias_cronograma as dc')
+            //->leftJoin('presenca_cronograma as pc', 'dc.id', 'pc.id_dias_cronograma')
+            ->where('data', '>=', $dt_inicio)
+            ->where('data', '<', $dt_fim)
+            ->groupBy('id_cronograma')
+            ->select(
+                'id_cronograma',
+                DB::raw('SUM(dc.nr_acompanhantes) as acomp'),
+              //  DB::raw('SUM(CASE WHEN pc.presenca = TRUE THEN 1 ELSE 0 END) as assist')
+            )->get()
+            ->toArray();
+
+        // Retorna os números de passes reais, por grupo
+        $passes = DB::table('dias_cronograma as dc')
+            ->leftJoin('presenca_cronograma as pc', 'dc.id', 'pc.id_dias_cronograma')
+            ->where('data', '>=', $dt_inicio)
+            ->where('data', '<', $dt_fim)
+            ->groupBy('id_cronograma')
+            ->select(
+                'id_cronograma',
+                DB::raw('SUM(CASE WHEN pc.presenca = TRUE THEN 1 ELSE 0 END) as assist')
+            )->get()
+            ->toArray();
+
+        
+
         // Insere os atendimentos
         foreach ($grupos as $key => $grupo) {
 
-            $tratamentosAtivos = DB::table('tratamento as tra')
-                ->leftJoin('encaminhamento as enc', 'tra.id', 'enc.id')
-                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-                ->where('id_reuniao', $grupo->id)
-                ->where(function ($query) use ($dt_inicio, $dt_fim) {
 
-                    // Data Inicio Tratamento
-                    $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
-                        $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
-                            $innerQuery->where('tra.dt_inicio', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
-                        });
-                        $subQuery->orWhere('tra.dt_inicio', '<', $dt_inicio);
-                    });
-
-                    // Data Fim Tratamento
-                    $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
-                        $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
-                            $innerQuery->where('tra.dt_fim', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
-                        });
-                        $subQuery->orWhere('tra.dt_fim', '>', $dt_fim);
-                        $subQuery->orWhere('tra.dt_fim', NULL);
-                    });
-                })
-                ->count();
-
-            $passes = DB::table('dias_cronograma')
-                ->where('id_cronograma', $grupo->id)
-                ->where('data', '>=', $dt_inicio)
-                ->where('data', '<', $dt_fim)
-                ->sum('nr_acompanhantes');
+            $tratamentosAtivosForeach = (clone $tratamentosAtivos[array_search($grupo->id, array_column($tratamentosAtivos, 'id_reuniao'))])->count;
+            $acompForeach = (clone $acomp[array_search($grupo->id, array_column($acomp, 'id_cronograma'))])->acomp;
+            $passesForeach = (clone $passes[array_search($grupo->id, array_column($passes, 'id_cronograma'))])->assist;
 
             if ($grupo->id_tp_tratamento == 3) { // Caso seja um grupo de PTH, conta os assistidos
-                $grupos[$key]->atendimentos =  $passes;
+                $grupos[$key]->passes =  $acompForeach;
+                // $grupos[$key]->acompanhantes =  '-';
             } else {
-                $grupos[$key]->atendimentos =  $tratamentosAtivos;
-                $grupos[$key]->acompanhantes =  $passes;
+                $grupos[$key]->atendimentos =  $tratamentosAtivosForeach;
+                $grupos[$key]->acompanhantes =  $acompForeach;
+                $grupos[$key]->passes =  $passesForeach;
             }
         }
-
-
 
         // Pesquisa de grupos
         if ($request->grupo != null) {
@@ -1010,16 +1039,24 @@ class RelatoriosController extends Controller
             }
             $grupos = $buffer;
         } else {
-
             $buffer = array();
             foreach ($grupos as $grupo) {
                 $buffer[$grupo->id_tp_tratamento]['descricao'] = $grupo->descricao;
                 $buffer[$grupo->id_tp_tratamento]['sigla'] =  $grupo->sigla;
                 $buffer[$grupo->id_tp_tratamento]['id'] =  $grupo->id;
 
-                array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
+                if (isset($grupo->atendimentos)) {
+                    array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
                     $buffer[$grupo->id_tp_tratamento]['atendimentos'] += $grupo->atendimentos :
                     $buffer[$grupo->id_tp_tratamento]['atendimentos'] = $grupo->atendimentos;
+                }
+
+                if (isset($grupo->passes)) {
+                    array_key_exists("passes", $buffer[$grupo->id_tp_tratamento]) ?
+                    $buffer[$grupo->id_tp_tratamento]['passes'] += $grupo->passes :
+                    $buffer[$grupo->id_tp_tratamento]['passes'] = $grupo->passes;
+                }
+        
 
                 if (isset($grupo->acompanhantes)) {
                     array_key_exists("acompanhantes", $buffer[$grupo->id_tp_tratamento]) ?
@@ -1577,47 +1614,49 @@ class RelatoriosController extends Controller
             ->get()
             ->toArray();
 
-         //   dd($membros, $dadosP);
+        //   dd($membros, $dadosP);
 
 
         $pdf = Pdf::loadView('relatorios.pdf-curriculo-membro', compact('membros', 'dadosP'))->setPaper('a4', 'landscape');
-        return $pdf->download( $dadosP->nome_completo .'.pdf');
-
+        return $pdf->download($dadosP->nome_completo . '.pdf');
     }
 
     public function passes(Request $request)
     {
         $now = Carbon::now()->format('Y-m-d');
 
-        $trata = DB::table('tipo_tratamento')->whereIn('id',[1,2,3])->get();
+        $trata = DB::table('tipo_tratamento')->whereIn('id', [1, 2, 3])->get();
 
 
         $passe = DB::table('dias_cronograma as dc')
             ->leftJoin('presenca_cronograma as pc', 'dc.id', 'pc.id_dias_cronograma')
             ->leftJoin('cronograma as c', 'dc.id_cronograma', 'c.id')
             ->leftJoin('tipo_tratamento as t', 'c.id_tipo_tratamento', 't.id')
-            ->select('t.sigla as tsigla', 't.descricao as tnome',
-             DB::raw('SUM(dc.nr_acompanhantes) as acomp'),
-             DB::raw('SUM(CASE WHEN pc.presenca = TRUE THEN 1 ELSE 0 END) as assist'));
+            ->select(
+                't.sigla as tsigla',
+                't.descricao as tnome',
+                DB::raw('SUM(dc.nr_acompanhantes) as acomp'),
+                DB::raw('SUM(CASE WHEN pc.presenca = TRUE THEN 1 ELSE 0 END) as assist')
+            );
 
-           
+
 
         $dt_inicio = $request->dt_inicio;
         $dt_fim = $request->dt_fim;
         $tratamento = $request->tratamento;
 
-       // dd($dt_inicio);
+        // dd($dt_inicio);
 
         if ($request->dt_inicio) {
-        $passe->whereDate('dc.data', '>=', $dt_inicio);    
+            $passe->whereDate('dc.data', '>=', $dt_inicio);
         }
         if ($request->dt_fim) {
-            $passe->whereDate('dc.data', '<=', $dt_fim);    
+            $passe->whereDate('dc.data', '<=', $dt_fim);
         }
 
-        if ($tratamento === null){
-            $passe->whereIn('t.id', [1,2,3,6]);
-        }else{
+        if ($tratamento === null) {
+            $passe->whereIn('t.id', [1, 2, 3, 6]);
+        } else {
             $passe->where('t.id', $tratamento);
         }
 
@@ -1627,9 +1666,8 @@ class RelatoriosController extends Controller
 
         $qtd_acomp = $passe->sum('dc.nr_acompanhantes');
 
-          //dd($passe, $qtd_ass, $qtd_acomp);
-        
+        //dd($passe, $qtd_ass, $qtd_acomp);
+
         return view('relatorios.passes', compact('dt_inicio', 'dt_fim', 'trata', 'passe', 'qtd_acomp', 'qtd_ass'));
     }
-    
 }

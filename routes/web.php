@@ -464,7 +464,6 @@ Route::middleware('rotas:35')->group(function () {
 
 //Relatório de Atendimentos
 Route::middleware('rotas:46')->group(function () {
-    Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
     Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
 });
 
@@ -477,4 +476,9 @@ Route::middleware('rotas:47')->group(function () {
 Route::middleware('rotas:48')->group(function () {
     Route::get('/curriculo-medium/{id}', [RelatoriosController::class, 'curriculo']);
     Route::get('/pdf-curriculo-medium/{id}', [RelatoriosController::class, 'pdfCurriculo']);
+});
+
+//Relatório de Tratamentos
+Route::middleware('rotas:53-36')->group(function () {
+    Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
 });
