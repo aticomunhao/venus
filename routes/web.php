@@ -300,6 +300,12 @@ Route::middleware("rotas:44")->group(function () {
     Route::any('/relatorio-vagas-grupos', [RelatoriosController::class, 'vagasGrupos']);
     Route::any('/vagasGruposAjax/{id}', [RelatoriosController::class, 'vagasGruposAjax']);
 });
+//Relatório de passes PTD, PTI e PPH
+Route::middleware("rotas:52")->group(function () {
+    Route::get('/relatorio-passes', [RelatoriosController::class, 'passes']);
+    Route::any('/passesAjax/{id}', [RelatoriosController::class, 'passesAjax']);
+});
+
 // Jobs de Tratamento
 Route::middleware('rotas:17')->group(function () {
     Route::any('/job', [GerenciarTratamentosController::class, 'job']);
@@ -365,7 +371,8 @@ Route::middleware('rotas:24')->group(function () {
 // Gerenciar Assistido Integral
 Route::middleware('rotas:25')->group(function () {
     Route::get('/gerenciar-integral', [GerenciarIntegralController::class, 'index']);
-    Route::get('/alta-integral/{id}', [GerenciarIntegralController::class, 'update']);
+    Route::get('/infinito-integral/{id}', [GerenciarIntegralController::class, 'update']);
+    Route::get('/alta-integral/{id}', [GerenciarIntegralController::class, 'alta']);
     Route::get('/visualizar-integral/{id}', [GerenciarIntegralController::class, 'show']);
     Route::any('/maca-integral/{id}', [GerenciarIntegralController::class, 'store']);
 });

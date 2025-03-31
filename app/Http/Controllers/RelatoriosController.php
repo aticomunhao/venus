@@ -1584,4 +1584,52 @@ class RelatoriosController extends Controller
         return $pdf->download( $dadosP->nome_completo .'.pdf');
 
     }
+
+    public function passes(Request $request)
+    {
+        $now = Carbon::now()->format('Y-m-d');
+
+        $trata = DB::table('tipo_tratamento')->whereIn('id',[1,2,3])->get();
+
+
+        $passe = DB::table('dias_cronograma as dc')
+            ->leftJoin('presenca_cronograma as pc', 'dc.id', 'pc.id_dias_cronograma')
+            ->leftJoin('cronograma as c', 'dc.id_cronograma', 'c.id')
+            ->leftJoin('tipo_tratamento as t', 'c.id_tipo_tratamento', 't.id')
+            ->select('t.sigla as tsigla', 't.descricao as tnome',
+             DB::raw('SUM(dc.nr_acompanhantes) as acomp'),
+             DB::raw('SUM(CASE WHEN pc.presenca = TRUE THEN 1 ELSE 0 END) as assist'));
+
+           
+
+        $dt_inicio = $request->dt_inicio;
+        $dt_fim = $request->dt_fim;
+        $tratamento = $request->tratamento;
+
+       // dd($dt_inicio);
+
+        if ($request->dt_inicio) {
+        $passe->whereDate('dc.data', '>=', $dt_inicio);    
+        }
+        if ($request->dt_fim) {
+            $passe->whereDate('dc.data', '<=', $dt_fim);    
+        }
+
+        if ($tratamento === null){
+            $passe->whereIn('t.id', [1,2,3,6]);
+        }else{
+            $passe->where('t.id', $tratamento);
+        }
+
+        $passe = $passe->groupBy('t.sigla', 't.descricao')->get();
+
+        $qtd_ass = $passe->count('pc.presenca', true);
+
+        $qtd_acomp = $passe->sum('dc.nr_acompanhantes');
+
+          //dd($passe, $qtd_ass, $qtd_acomp);
+        
+        return view('relatorios.passes', compact('dt_inicio', 'dt_fim', 'trata', 'passe', 'qtd_acomp', 'qtd_ass'));
+    }
+    
 }

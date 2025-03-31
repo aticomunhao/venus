@@ -322,6 +322,11 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de Vagas em
                                         Grupos</a></li>
                             @endif
+                            @if (in_array(52, $acesso))
+                                <li><a class="dropdown-item" href='/relatorio-passes'>Relatório Quantidade Passes PTD-PTI-PPH </a></li>
+                            @endif
+                            <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros por Setor</a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
