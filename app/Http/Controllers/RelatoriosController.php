@@ -946,6 +946,8 @@ class RelatoriosController extends Controller
         $grupo2 = $grupo2->get();
         $setores = $setores->get();
 
+
+
         // Retorna todos os tratamentos ativos, por grupo
         $tratamentosAtivos = DB::table('tratamento as tra')
             ->select('tra.id_reuniao', DB::raw("COUNT('tra.id')"))
@@ -983,7 +985,7 @@ class RelatoriosController extends Controller
             ->select(
                 'id_cronograma',
                 DB::raw('SUM(dc.nr_acompanhantes) as acomp'),
-              //  DB::raw('SUM(CASE WHEN pc.presenca = TRUE THEN 1 ELSE 0 END) as assist')
+                //  DB::raw('SUM(CASE WHEN pc.presenca = TRUE THEN 1 ELSE 0 END) as assist')
             )->get()
             ->toArray();
 
@@ -999,77 +1001,93 @@ class RelatoriosController extends Controller
             )->get()
             ->toArray();
 
-        
-
-        // Insere os atendimentos
-        foreach ($grupos as $key => $grupo) {
 
 
-            $tratamentosAtivosForeach = (clone $tratamentosAtivos[array_search($grupo->id, array_column($tratamentosAtivos, 'id_reuniao'))])->count;
-            $acompForeach = (clone $acomp[array_search($grupo->id, array_column($acomp, 'id_cronograma'))])->acomp;
-            $passesForeach = (clone $passes[array_search($grupo->id, array_column($passes, 'id_cronograma'))])->assist;
 
-            if ($grupo->id_tp_tratamento == 3) { // Caso seja um grupo de PTH, conta os assistidos
-                $grupos[$key]->passes =  $acompForeach;
-                // $grupos[$key]->acompanhantes =  '-';
-            } else {
-                $grupos[$key]->atendimentos =  $tratamentosAtivosForeach;
-                $grupos[$key]->acompanhantes =  $acompForeach;
-                $grupos[$key]->passes =  $passesForeach;
+        if ($request->tipo_visualizacao == 2) {
+            Carbon::setlocale(config('app.locale'));
+            $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
+
+            foreach ($meses as $mes) {
+
+                $tratamentosAtivos
+                $acomp
+                $passes
             }
-        }
-
-        // Pesquisa de grupos
-        if ($request->grupo != null) {
-
-            $buffer = array();
-            foreach ($grupos as $grupo) {
-                if (in_array($grupo->id, $request->grupo)) {
-                    $buffer[$grupo->id]['descricao'] = $grupo->descricao;
-                    $buffer[$grupo->id]['nome'] = $grupo->nome;
-                    $buffer[$grupo->id]['sigla'] =  $grupo->sigla;
-                    $buffer[$grupo->id]['atendimentos'] = $grupo->atendimentos;
-                    $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
-                    $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
-                    $buffer[$grupo->id]['h_fim'] = $grupo->h_fim;
-                    $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento;
-
-                    isset($grupo->acompanhantes) ?  $buffer[$grupo->id]['acompanhantes'] = $grupo->acompanhantes : null;
-                }
-            }
-            $grupos = $buffer;
         } else {
-            $buffer = array();
-            foreach ($grupos as $grupo) {
-                $buffer[$grupo->id_tp_tratamento]['descricao'] = $grupo->descricao;
-                $buffer[$grupo->id_tp_tratamento]['sigla'] =  $grupo->sigla;
-                $buffer[$grupo->id_tp_tratamento]['id'] =  $grupo->id;
 
-                if (isset($grupo->atendimentos)) {
-                    array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
-                    $buffer[$grupo->id_tp_tratamento]['atendimentos'] += $grupo->atendimentos :
-                    $buffer[$grupo->id_tp_tratamento]['atendimentos'] = $grupo->atendimentos;
+            // Insere os atendimentos
+            foreach ($grupos as $key => $grupo) {
+
+
+                $tratamentosAtivosForeach = (clone $tratamentosAtivos[array_search($grupo->id, array_column($tratamentosAtivos, 'id_reuniao'))])->count;
+                $acompForeach = array_search($grupo->id, array_column($acomp, 'id_cronograma')) ? (clone $acomp[array_search($grupo->id, array_column($acomp, 'id_cronograma'))])->acomp : null;
+                $passesForeach = array_search($grupo->id, array_column($passes, 'id_cronograma')) ? (clone $passes[array_search($grupo->id, array_column($passes, 'id_cronograma'))])->assist : null;
+
+                if ($grupo->id_tp_tratamento == 3) { // Caso seja um grupo de PTH, conta os assistidos
+                    $grupos[$key]->passes =  $acompForeach;
+                    // $grupos[$key]->acompanhantes =  '-';
+                } else {
+                    $grupos[$key]->atendimentos =  $tratamentosAtivosForeach;
+                    $grupos[$key]->acompanhantes =  $acompForeach;
+                    $grupos[$key]->passes =  $passesForeach;
                 }
-
-                if (isset($grupo->passes)) {
-                    array_key_exists("passes", $buffer[$grupo->id_tp_tratamento]) ?
-                    $buffer[$grupo->id_tp_tratamento]['passes'] += $grupo->passes :
-                    $buffer[$grupo->id_tp_tratamento]['passes'] = $grupo->passes;
-                }
-        
-
-                if (isset($grupo->acompanhantes)) {
-                    array_key_exists("acompanhantes", $buffer[$grupo->id_tp_tratamento]) ?
-                        $buffer[$grupo->id_tp_tratamento]['acompanhantes'] += $grupo->acompanhantes :
-                        $buffer[$grupo->id_tp_tratamento]['acompanhantes'] = $grupo->acompanhantes;
-                }
-
-
-                $grupos = $buffer;
             }
 
-            // Retornar a view com os dados
+            // Pesquisa de grupos
+            if ($request->grupo != null) {
+
+                $buffer = array();
+                foreach ($grupos as $grupo) {
+                    if (in_array($grupo->id, $request->grupo)) {
+                        $buffer[$grupo->id]['descricao'] = $grupo->descricao;
+                        $buffer[$grupo->id]['nome'] = $grupo->nome;
+                        $buffer[$grupo->id]['sigla'] =  $grupo->sigla;
+                        $buffer[$grupo->id]['atendimentos'] = $grupo->atendimentos;
+                        $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
+                        $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
+                        $buffer[$grupo->id]['h_fim'] = $grupo->h_fim;
+                        $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento;
+
+                        isset($grupo->acompanhantes) ? $buffer[$grupo->id]['acompanhantes'] = $grupo->acompanhantes : null;
+                    }
+                }
+                $grupos = $buffer;
+            } else {
+                $buffer = array();
+                foreach ($grupos as $grupo) {
+                    $buffer[$grupo->id_tp_tratamento]['descricao'] = $grupo->descricao;
+                    $buffer[$grupo->id_tp_tratamento]['sigla'] =  $grupo->sigla;
+                    $buffer[$grupo->id_tp_tratamento]['id'] =  $grupo->id;
+
+                    if (isset($grupo->atendimentos)) {
+                        array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
+                            $buffer[$grupo->id_tp_tratamento]['atendimentos'] += $grupo->atendimentos :
+                            $buffer[$grupo->id_tp_tratamento]['atendimentos'] = $grupo->atendimentos;
+                    }
+
+                    if (isset($grupo->passes)) {
+                        array_key_exists("passes", $buffer[$grupo->id_tp_tratamento]) ?
+                            $buffer[$grupo->id_tp_tratamento]['passes'] += $grupo->passes :
+                            $buffer[$grupo->id_tp_tratamento]['passes'] = $grupo->passes;
+                    }
+
+                    if (isset($grupo->acompanhantes)) {
+                        array_key_exists("acompanhantes", $buffer[$grupo->id_tp_tratamento]) ?
+                            $buffer[$grupo->id_tp_tratamento]['acompanhantes'] += $grupo->acompanhantes :
+                            $buffer[$grupo->id_tp_tratamento]['acompanhantes'] = $grupo->acompanhantes;
+                    }
+
+                    $grupos = $buffer;
+                }
+
+                // Retornar a view com os dados
+            }
         }
+
+
+
+
         return view('relatorios.gerenciar-relatorio-tratamento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
     }
 
