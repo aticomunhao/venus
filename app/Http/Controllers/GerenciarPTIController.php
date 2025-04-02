@@ -48,7 +48,7 @@ class GerenciarPTIController extends Controller
             }
 
 
-            // Traz todos os encaminhamentos de todos os grupos selecionados // TODO otimitzar para trazer apenas os necessários, ao invés de todos
+            // Traz todos os encaminhamentos de todos os grupos selecionados
             $encaminhamentos = DB::table('tratamento as tr')
                 ->select(
                     'tr.id',
@@ -83,9 +83,19 @@ class GerenciarPTIController extends Controller
                 $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', current($grupos_autorizados));
             }
 
-            $encaminhamentos = $encaminhamentos->get();
+            $encaminhamentos = $encaminhamentos->get()->toArray();
             $totalAssistidos = count($encaminhamentos);
-            return view('pti.gerenciar-pti', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'totalAssistidos'));
+
+            // Recolhe todos os IDs dos presentes do grupo selecionado
+            $presencaHoje = DB::table('presenca_cronograma as pc')
+                ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+                ->whereIn('id_tratamento', array_column($encaminhamentos, 'id'))
+                ->where('dc.data', $hoje)
+                ->pluck('id_tratamento')
+                ->toArray();
+
+
+            return view('pti.gerenciar-pti', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'totalAssistidos', 'presencaHoje'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('tratamento-erro.erro-inesperado', compact('code'));

@@ -50,7 +50,7 @@
                         <br />
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                            <a href="/gerenciar-pti?grupo={{ count($encaminhamentos) > 0 ? current(current($encaminhamentos))->id_reuniao : '' }}"
+                            <a href="/gerenciar-pti?grupo={{ count($encaminhamentos) > 0 ? current($encaminhamentos)->id_reuniao : '' }}"
                                 type="button" class="btn btn-secondary pesq">Limpar</a>
                             <button class="btn btn-primary pesq" type="submit">Confirmar</button>
                         </div>
@@ -62,6 +62,9 @@
     </div>
     <hr>
     Total de assistidos: {{ $totalAssistidos }}
+    <br />
+    <span class="text-success" style="font-size: 20px;">&#9632;</span>
+    <span style="font-size: 14px;">Presença Declarada</span>
     <div class="table">
         <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle text-center">
             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
@@ -72,7 +75,7 @@
             </tr>
             <tbody>
                 @foreach ($encaminhamentos as $encaminhamento)
-                    <tr>
+                    <tr class="{{ in_array($encaminhamento->id, $presencaHoje) ? 'table-success' : '' }}">
                         <td>{{ $encaminhamento->nome_completo }}</td>
                         <td>{{ $encaminhamento->nome }}</td>
                         {{-- <td>{{ $encaminhamento->h_inicio }}</td>
