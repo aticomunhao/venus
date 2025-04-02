@@ -86,7 +86,7 @@ class GerenciarPTIController extends Controller
             $encaminhamentos = $encaminhamentos->get()->toArray();
             $totalAssistidos = count($encaminhamentos);
 
-
+            // Recolhe todos os IDs dos presentes do grupo selecionado
             $presencaHoje = DB::table('presenca_cronograma as pc')
                 ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
                 ->whereIn('id_tratamento', array_column($encaminhamentos, 'id'))
