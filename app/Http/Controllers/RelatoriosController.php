@@ -531,9 +531,8 @@ class RelatoriosController extends Controller
 
     public function relatorioReuniao(Request $request)
     {
-        $dt_inicio = $request->dt_inicio == null ? (Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d')) : $request->dt_inicio;
+        $dt_inicio = $request->dt_inicio == null ? (Carbon::now()->subMonth()->format('Y-m-d')) : $request->dt_inicio;
         $dt_fim =  $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
-        $idCronogramaPesquisa = $request->nome_grupo;
 
         //Traz todas as reuniões onde a pessoa logada é Dirigente ou Sub-dirigente
         $cronogramasAutorizados = DB::table('membro as m')
@@ -543,18 +542,14 @@ class RelatoriosController extends Controller
             ->distinct('m.id_cronograma')
             ->pluck('m.id_cronograma');
 
-        $reunioesDirigentes = DB::table('membro as mem')
+        // Retorna a lista de grupos para a tabela
+        $reunioesDirigentes = DB::table('cronograma as cr')
             ->select('cr.id', 'gr.nome', 'cr.id', 'gr.status_grupo', 'd.nome as dia', 'cr.h_inicio', 'cr.h_fim')
-            ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
-            ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
-            ->when($idCronogramaPesquisa, function ($query, $idCronogramaPesquisa) {
-                return $query->where('cr.id', $idCronogramaPesquisa);
-            })
+            ->orderBy('gr.nome');
 
-            ->distinct('gr.nome');
-
+        // Retorna os nomes dos grupo para o campo de pesquisa, com todos os dados
         $reunioesPesquisa = DB::table('cronograma as cr')
             ->select(
                 'cr.id',
@@ -564,7 +559,7 @@ class RelatoriosController extends Controller
                 'cr.modificador',
                 'ts.descricao',
                 'gr.nome',
-                'cr.dia_semana as dia',
+                'd.nome as dia',
                 'cr.h_inicio',
                 'cr.h_fim',
                 DB::raw("(CASE WHEN cr.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status") // Correção aqui
@@ -574,90 +569,119 @@ class RelatoriosController extends Controller
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
             ->leftJoin('tipo_status_grupo AS ts', 'gr.status_grupo', 'ts.id')
-            ->groupBy(
-                'cr.id',
-                'gr.nome',
-                'd.nome',
-                'cr.h_inicio',
-                'cr.h_fim',
-                'st.sigla',
-                't.sigla',
-                'ts.descricao'
-            )
             ->orderBy('gr.nome', 'asc');
 
+        // Conta todas as presenças nas datas especificadas
         $presencasCountAssistidos = DB::table('presenca_cronograma as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->where('dc.data', '>=', $dt_inicio)
-            ->where('dc.data', '<', $dt_fim)
+            ->where('dc.data', '<=', $dt_fim)
             ->groupBy('presenca')
             ->select('presenca', DB::raw("count(*) as total"));
 
-        $acompanhantes = DB::table('dias_cronograma as dc')->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')->whereNot('id_tipo_tratamento', 3);
+        // Conta todos os acompanhantes, exclui PTH por incosistencia
+        $acompanhantes = DB::table('dias_cronograma as dc')
+            ->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<=', $dt_fim)
+            ->whereNot('id_tipo_tratamento', 3);
 
+        // Conta os assistidos PTH
+        $presencasCountPTH = DB::table('dias_cronograma as dc')
+            ->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<=', $dt_fim)
+            ->where('id_tipo_tratamento', 3);
+
+        // Conta todas as presenças de membros no periodo especificado
         $presencasCountMembros = DB::table('presenca_membros as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->where('dc.data', '>=', $dt_inicio)
-            ->where('dc.data', '<', $dt_fim)
+            ->where('dc.data', '<=', $dt_fim)
             ->groupBy('presenca')
             ->select('presenca', DB::raw("count(*) as total"));
 
+        // Caso o usuário não seja Master Admin, aplique as regras
         if (!in_array(36, session()->get('usuario.acesso'))) {
-            $reunioesDirigentes = $reunioesDirigentes->whereIn('mem.id_cronograma', $cronogramasAutorizados);
+            $reunioesDirigentes = $reunioesDirigentes->whereIn('cr.id', $cronogramasAutorizados);
             $reunioesPesquisa = $reunioesPesquisa->whereIn('mem.id_cronograma', $cronogramasAutorizados);
             $presencasCountAssistidos = $presencasCountAssistidos->whereIn('dc.id_cronograma', $cronogramasAutorizados);
             $acompanhantes = $acompanhantes->whereIn('id_cronograma', $cronogramasAutorizados);
+            $presencasCountPTH = $presencasCountPTH->whereIn('id_cronograma', $cronogramasAutorizados);
             $presencasCountMembros = $presencasCountMembros->whereIn('dc.id_cronograma', $cronogramasAutorizados);
         }
 
+        // Caso algum grupo seja pesquisado
+        if ($request->nome_grupo) {
+            $reunioesDirigentes = $reunioesDirigentes->where('cr.id', $request->nome_grupo);
+            $presencasCountAssistidos = $presencasCountAssistidos->where('dc.id_cronograma', $request->nome_grupo);
+            $acompanhantes = $acompanhantes->where('dc.id_cronograma', $request->nome_grupo);
+            $presencasCountPTH = $presencasCountPTH->where('dc.id_cronograma', $request->nome_grupo);
+            $presencasCountMembros = $presencasCountMembros->where('dc.id_cronograma', $request->nome_grupo);
+        }
 
-        $reunioesDirigentes = $reunioesDirigentes->get();
-        $reunioesIds = json_decode(json_encode($reunioesDirigentes));
 
+        $reunioesDirigentes = $reunioesDirigentes->get()->toArray();
         $reunioesPesquisa = $reunioesPesquisa->get();
-
-        $presencasCountAssistidos = $presencasCountAssistidos->get();
-        $presencasCountAssistidos = json_decode(json_encode($presencasCountAssistidos));
-
+        $presencasCountAssistidos = $presencasCountAssistidos->get()->toArray();
+        $presencasCountMembros = $presencasCountMembros->get()->toArray();
         $acompanhantes = $acompanhantes->sum('nr_acompanhantes');
+        $presencasCountPTH = $presencasCountPTH->sum('nr_acompanhantes');
 
+        // Caso exista presença na varíavel, adiciona os PTH a contagem, caso não exista, gera uma com PTH
+        if (array_search(true, array_column($presencasCountAssistidos, 'presenca'))) {
+            $presencasCountAssistidos[array_search(true, array_column($presencasCountAssistidos, 'presenca'))]->total += $presencasCountPTH;
+        } else {
+            $presencasCountAssistidos[] = (object) ['presenca' => true, 'total' => $presencasCountPTH];
+        }
 
-        $presencasCountMembros = $presencasCountMembros->get();
-        $presencasCountMembros = json_decode(json_encode($presencasCountMembros));
-
-
-
+        // Caso a varíavel saia 100% nula, plota o grafico vazio
         if ($presencasCountAssistidos == []) {
             $presencasCountAssistidos[0] = 0;
             $presencasCountAssistidos[1] = 0;
+
+            // Caso tenha apenas falta, desloca a presença para a segunda posição, e deixa a primeira vazia
         } elseif (!in_array(false, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
             $presencasCountAssistidos[1] = $presencasCountAssistidos[0]->total;
             $presencasCountAssistidos[0] = 0;
+
+            // Caso não tenha presenca, cria um espaço falso na segunda posição para plotar o gráfico
         } elseif (!in_array(true, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
             $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
             $presencasCountAssistidos[1] = 0;
+
+            // Caso todo os dados estejam de acordo, plota o gráfico com os dados exatamente como pensado
         } else {
             $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
             $presencasCountAssistidos[1] = $presencasCountAssistidos[1]->total;
         }
         $presencasCountAssistidos[2] =  $acompanhantes;
 
+        // Caso a varíavel saia 100% nula, plota o grafico vazio
         if ($presencasCountMembros == []) {
             $presencasCountMembros[0] = 0;
             $presencasCountMembros[1] = 0;
+
+            // Caso tenha apenas falta, desloca a presença para a segunda posição, e deixa a primeira vazia
         } elseif (!in_array(false, array_values(array_column($presencasCountMembros, 'presenca')))) {
             $presencasCountMembros[1] = $presencasCountMembros[0]->total;
             $presencasCountMembros[0] = 0;
+
+            // Caso não tenha presenca, cria um espaço falso na segunda posição para plotar o gráfico
         } elseif (!in_array(true, array_values(array_column($presencasCountMembros, 'presenca')))) {
             $presencasCountMembros[0] = $presencasCountMembros[0]->total;
             $presencasCountMembros[1] = 0;
+
+            // Caso todo os dados estejam de acordo, plota o gráfico com os dados exatamente como pensado
         } else {
             $presencasCountMembros[0] = $presencasCountMembros[0]->total;
             $presencasCountMembros[1] = $presencasCountMembros[1]->total;
         }
+
+        // 
         $presencasCountMembros[2] = 0;
 
-        return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasCountAssistidos', 'presencasCountMembros', 'reunioesPesquisa', 'dt_inicio', 'dt_fim', 'idCronogramaPesquisa'));
+        return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasCountAssistidos', 'presencasCountMembros', 'reunioesPesquisa', 'dt_inicio', 'dt_fim'));
     }
 
     /**
@@ -728,10 +752,7 @@ class RelatoriosController extends Controller
             ->select('m.id', 'p.nome_completo', 'dc.data', 'pm.presenca')
             ->get();
 
-        $presencasMembrosArray = array();
-        foreach ($presencasMembros as $element) {
-            $presencasMembrosArray["$element->nome_completo"][] = $element;
-        }
+        
 
         $presencasCountAssistidos = $presencasCountAssistidos->get();
         $presencasCountAssistidos = json_decode(json_encode($presencasCountAssistidos));
@@ -741,6 +762,11 @@ class RelatoriosController extends Controller
 
         $presencasCountMembros = $presencasCountMembros->get();
         $presencasCountMembros = json_decode(json_encode($presencasCountMembros));
+
+        $presencasMembrosArray = array();
+        foreach ($presencasMembros as $element) {
+            $presencasMembrosArray["$element->nome_completo"][] = $element;
+        }
 
         $presencasAssistidosArray = array();
         foreach ($presencasAssistidos as $element) {
@@ -959,17 +985,17 @@ class RelatoriosController extends Controller
                 // Data Inicio Tratamento
                 $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
                     $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
-                        $innerQuery->where('tra.dt_inicio', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
+                        $innerQuery->where('tra.dt_inicio', '>=', $dt_inicio)->where('tra.dt_inicio', '<=', $dt_fim);
                     });
-                    $subQuery->orWhere('tra.dt_inicio', '<', $dt_inicio);
+                    $subQuery->orWhere('tra.dt_inicio', '<=', $dt_inicio);
                 });
 
                 // Data Fim Tratamento
                 $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
                     $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
-                        $innerQuery->where('tra.dt_fim', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
+                        $innerQuery->where('tra.dt_fim', '>=', $dt_inicio)->where('tra.dt_inicio', '<=', $dt_fim);
                     });
-                    $subQuery->orWhere('tra.dt_fim', '>', $dt_fim);
+                    $subQuery->orWhere('tra.dt_fim', '>=', $dt_fim);
                     $subQuery->orWhere('tra.dt_fim', NULL);
                 });
             })
@@ -980,7 +1006,7 @@ class RelatoriosController extends Controller
         $acomp = DB::table('dias_cronograma as dc')
             //->leftJoin('presenca_cronograma as pc', 'dc.id', 'pc.id_dias_cronograma')
             ->where('data', '>=', $dt_inicio)
-            ->where('data', '<', $dt_fim)
+            ->where('data', '<=', $dt_fim)
             ->groupBy('id_cronograma')
             ->select(
                 'id_cronograma',
@@ -993,7 +1019,7 @@ class RelatoriosController extends Controller
         $passes = DB::table('dias_cronograma as dc')
             ->leftJoin('presenca_cronograma as pc', 'dc.id', 'pc.id_dias_cronograma')
             ->where('data', '>=', $dt_inicio)
-            ->where('data', '<', $dt_fim)
+            ->where('data', '<=', $dt_fim)
             ->groupBy('id_cronograma')
             ->select(
                 'id_cronograma',
@@ -1003,87 +1029,88 @@ class RelatoriosController extends Controller
 
 
 
+        // if ($request->tipo_visualizacao == 2) {
+        //     Carbon::setlocale(config('app.locale'));
+        //     $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
 
-        if ($request->tipo_visualizacao == 2) {
-            Carbon::setlocale(config('app.locale'));
-            $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
+        //     foreach ($meses as $mes) {
 
-            foreach ($meses as $mes) {
+        //         $tratamentosAtivos
+        //         $acomp
+        //         $passes
+        //     }
+        // } else {
 
-                $tratamentosAtivos
-                $acomp
-                $passes
-            }
-        } else {
-
-            // Insere os atendimentos
-            foreach ($grupos as $key => $grupo) {
+        // Insere os atendimentos
+        foreach ($grupos as $key => $grupo) {
 
 
-                $tratamentosAtivosForeach = (clone $tratamentosAtivos[array_search($grupo->id, array_column($tratamentosAtivos, 'id_reuniao'))])->count;
-                $acompForeach = array_search($grupo->id, array_column($acomp, 'id_cronograma')) ? (clone $acomp[array_search($grupo->id, array_column($acomp, 'id_cronograma'))])->acomp : null;
-                $passesForeach = array_search($grupo->id, array_column($passes, 'id_cronograma')) ? (clone $passes[array_search($grupo->id, array_column($passes, 'id_cronograma'))])->assist : null;
+            $tratamentosAtivosForeach = (clone $tratamentosAtivos[array_search($grupo->id, array_column($tratamentosAtivos, 'id_reuniao'))])->count;
+            $acompForeach = array_search($grupo->id, array_column($acomp, 'id_cronograma')) ? (clone $acomp[array_search($grupo->id, array_column($acomp, 'id_cronograma'))])->acomp : null;
+            $passesForeach = array_search($grupo->id, array_column($passes, 'id_cronograma')) ? (clone $passes[array_search($grupo->id, array_column($passes, 'id_cronograma'))])->assist : null;
 
-                if ($grupo->id_tp_tratamento == 3) { // Caso seja um grupo de PTH, conta os assistidos
-                    $grupos[$key]->passes =  $acompForeach;
-                    // $grupos[$key]->acompanhantes =  '-';
-                } else {
-                    $grupos[$key]->atendimentos =  $tratamentosAtivosForeach;
-                    $grupos[$key]->acompanhantes =  $acompForeach;
-                    $grupos[$key]->passes =  $passesForeach;
-                }
-            }
-
-            // Pesquisa de grupos
-            if ($request->grupo != null) {
-
-                $buffer = array();
-                foreach ($grupos as $grupo) {
-                    if (in_array($grupo->id, $request->grupo)) {
-                        $buffer[$grupo->id]['descricao'] = $grupo->descricao;
-                        $buffer[$grupo->id]['nome'] = $grupo->nome;
-                        $buffer[$grupo->id]['sigla'] =  $grupo->sigla;
-                        $buffer[$grupo->id]['atendimentos'] = $grupo->atendimentos;
-                        $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
-                        $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
-                        $buffer[$grupo->id]['h_fim'] = $grupo->h_fim;
-                        $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento;
-
-                        isset($grupo->acompanhantes) ? $buffer[$grupo->id]['acompanhantes'] = $grupo->acompanhantes : null;
-                    }
-                }
-                $grupos = $buffer;
+            if ($grupo->id_tp_tratamento == 3) { // Caso seja um grupo de PTH, conta os assistidos
+                $grupos[$key]->passes =  $acompForeach;
+                // $grupos[$key]->acompanhantes =  '-';
             } else {
-                $buffer = array();
-                foreach ($grupos as $grupo) {
-                    $buffer[$grupo->id_tp_tratamento]['descricao'] = $grupo->descricao;
-                    $buffer[$grupo->id_tp_tratamento]['sigla'] =  $grupo->sigla;
-                    $buffer[$grupo->id_tp_tratamento]['id'] =  $grupo->id;
-
-                    if (isset($grupo->atendimentos)) {
-                        array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
-                            $buffer[$grupo->id_tp_tratamento]['atendimentos'] += $grupo->atendimentos :
-                            $buffer[$grupo->id_tp_tratamento]['atendimentos'] = $grupo->atendimentos;
-                    }
-
-                    if (isset($grupo->passes)) {
-                        array_key_exists("passes", $buffer[$grupo->id_tp_tratamento]) ?
-                            $buffer[$grupo->id_tp_tratamento]['passes'] += $grupo->passes :
-                            $buffer[$grupo->id_tp_tratamento]['passes'] = $grupo->passes;
-                    }
-
-                    if (isset($grupo->acompanhantes)) {
-                        array_key_exists("acompanhantes", $buffer[$grupo->id_tp_tratamento]) ?
-                            $buffer[$grupo->id_tp_tratamento]['acompanhantes'] += $grupo->acompanhantes :
-                            $buffer[$grupo->id_tp_tratamento]['acompanhantes'] = $grupo->acompanhantes;
-                    }
-
-                    $grupos = $buffer;
-                }
-
-                // Retornar a view com os dados
+                $grupos[$key]->atendimentos =  $tratamentosAtivosForeach;
+                $grupos[$key]->acompanhantes =  $acompForeach;
+                $grupos[$key]->passes =  $passesForeach;
             }
         }
+
+
+        // Pesquisa de grupos
+        if ($request->grupo != null) {
+
+            $buffer = array();
+            foreach ($grupos as $grupo) {
+                if (in_array($grupo->id, $request->grupo)) {
+                    $buffer[$grupo->id]['descricao'] = $grupo->descricao;
+                    $buffer[$grupo->id]['nome'] = $grupo->nome;
+                    $buffer[$grupo->id]['sigla'] =  $grupo->sigla;
+                    $buffer[$grupo->id]['atendimentos'] = $grupo->atendimentos;
+                    $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
+                    $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
+                    $buffer[$grupo->id]['h_fim'] = $grupo->h_fim;
+                    $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento;
+
+                    isset($grupo->acompanhantes) ? $buffer[$grupo->id]['acompanhantes'] = $grupo->acompanhantes : null;
+                    isset($grupo->passes) ? $buffer[$grupo->id]['passes'] = $grupo->passes : null;
+                }
+            }
+            $grupos = $buffer;
+        } else {
+            $buffer = array();
+            foreach ($grupos as $grupo) {
+                $buffer[$grupo->id_tp_tratamento]['descricao'] = $grupo->descricao;
+                $buffer[$grupo->id_tp_tratamento]['sigla'] =  $grupo->sigla;
+                $buffer[$grupo->id_tp_tratamento]['id'] =  $grupo->id;
+
+                if (isset($grupo->atendimentos)) {
+                    array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
+                        $buffer[$grupo->id_tp_tratamento]['atendimentos'] += $grupo->atendimentos :
+                        $buffer[$grupo->id_tp_tratamento]['atendimentos'] = $grupo->atendimentos;
+                }
+
+                if (isset($grupo->passes)) {
+                    array_key_exists("passes", $buffer[$grupo->id_tp_tratamento]) ?
+                        $buffer[$grupo->id_tp_tratamento]['passes'] += $grupo->passes :
+                        $buffer[$grupo->id_tp_tratamento]['passes'] = $grupo->passes;
+                }
+
+                if (isset($grupo->acompanhantes)) {
+                    array_key_exists("acompanhantes", $buffer[$grupo->id_tp_tratamento]) ?
+                        $buffer[$grupo->id_tp_tratamento]['acompanhantes'] += $grupo->acompanhantes :
+                        $buffer[$grupo->id_tp_tratamento]['acompanhantes'] = $grupo->acompanhantes;
+                }
+
+                $grupos = $buffer;
+            }
+
+            // Retornar a view com os dados
+        }
+        //  }
 
 
 
