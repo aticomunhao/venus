@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', 'Editar Mediunidades')
+@section('title', 'Editar Habilidades')
 @section('content')
 <div class="container mt-4">
     <div class="card">
         <div class="card-header">
             <div class="row">
                 <div class="col">
-               EDITAR MEDIUNIDADE
+               EDITAR HABILIDADE
                 </div>
             </div>
         </div>
@@ -175,7 +175,7 @@
     $(document).ready(function() {
       function updateMotivoStatus() {
         let status = $('.status').val();
-  
+
         if(status == 1) {
           // Desabilitar e limpar seleção do campo motivo
           $('.motivo').prop('disabled', true).val('');
@@ -184,13 +184,35 @@
           $('.motivo').prop('disabled', false).val('{{ $mediunidade->motivo_status }}');
         }
       }
-  
+
       // Chame a função de atualização quando o status mudar
       $('.status').change(updateMotivoStatus);
-  
+
       // Chame a função de atualização ao carregar a página para garantir que o estado inicial esteja correto
       updateMotivoStatus();
     });
+
+    $(document).ready(function() {
+     $('.data_manifestou')
+         .hide()
+         .find('input[type=date]');
+
+
+     $('[name^=id_tp_mediunidade]').change(function() {
+         $('.data_manifestou')
+             .hide()
+             .find('input[type=date]');
+
+
+         $('[name^=id_tp_mediunidade]:checked').each(function() {
+             var tipoId = $(this).val();
+             $('#data_inicio_' + tipoId)
+                 .show()
+                 .find('input[type=date]');
+
+         });
+     });
+     $('[name^=id_tp_mediunidade]').change();
+    });
   </script>
-  
-@endsection
+  @endsection
