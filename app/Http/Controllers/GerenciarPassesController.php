@@ -41,21 +41,20 @@ class GerenciarPassesController extends Controller
             ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
             ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
             ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
-            ->where('s.id', '=', 48)
-            ->where('me.id_associado', session()->get('usuario.id_associado'))
-            ->whereIn('me.id_funcao', [1, 2]);
+            ->where('s.id', '=', 48);
 
 
-
-
+        // Caso o usuário não seja Master Admin, retorna apenas os cronogramas no qual ele é dirigente ou subdirigente
+        if (!in_array(36, session()->get('usuario.acesso'))) {
+            $reuniao =  $reuniao->where('me.id_associado', session()->get('usuario.id_associado'))
+                ->whereIn('me.id_funcao', [1, 2]); // 1 => Dirigente, 2 => Sub-Dirigente
+        }
 
         // Obtém os valores de pesquisa da requisição
         $semana = $request->input('semana', null);
         $grupo = $request->input('grupo', null);
         $setor = $request->input('setor', null);
         $status = $request->input('status', null);
-
-
 
 
         // Aplica filtro por semana
@@ -95,7 +94,7 @@ class GerenciarPassesController extends Controller
         $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
 
         $tipo_motivo = DB::table('tipo_mot_inat_gr_reu')->get();
-        $dias_cronograma=DB::table('dias_cronograma')->get();
+        $dias_cronograma = DB::table('dias_cronograma')->get();
 
         $tpdia = DB::table('tipo_dia')
             ->select('id AS idtd', 'nome AS nomed')
@@ -107,31 +106,37 @@ class GerenciarPassesController extends Controller
 
         // Carregar a lista de grupos para o Select2
         $grupos = DB::table('grupo AS g')
-        ->leftJoin('setor AS s', 'g.id_setor', '=', 's.id')
-        ->leftJoin('cronograma AS cro', 'g.id', '=', 'cro.id_grupo')
-        ->leftJoin('tipo_dia AS td', 'cro.dia_semana', '=', 'td.id')
-        ->leftJoin('salas AS sl', 'cro.id_sala', '=', 'sl.id')
-        ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', '=', 'ts.id')
-        ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
-        ->where('me.id_associado', session()->get('usuario.id_associado'))
-        ->whereIn('me.id_funcao', [1, 2])
-        ->select(
-            'g.id AS idg',
-            'g.nome AS nomeg',
-            's.sigla',
-            'cro.h_inicio',
-            'cro.h_fim',
-            'sl.numero AS sala',
-            'td.nome AS dia_semana'
-        )
-        ->where('s.id', '=', 48)
-        ->orderBy('g.nome', 'asc')
-        ->get();
-    
+            ->leftJoin('setor AS s', 'g.id_setor', '=', 's.id')
+            ->leftJoin('cronograma AS cro', 'g.id', '=', 'cro.id_grupo')
+            ->leftJoin('tipo_dia AS td', 'cro.dia_semana', '=', 'td.id')
+            ->leftJoin('salas AS sl', 'cro.id_sala', '=', 'sl.id')
+            ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', '=', 'ts.id')
+            ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
+
+            ->select(
+                'g.id AS idg',
+                'g.nome AS nomeg',
+                's.sigla',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'sl.numero AS sala',
+                'td.nome AS dia_semana'
+            )
+            ->where('s.id', '=', 48)
+            ->orderBy('g.nome', 'asc');
+
+
+        // Caso o usuário não seja Master Admin, retorna apenas os cronogramas no qual ele é dirigente ou subdirigente
+        if (!in_array(36, session()->get('usuario.acesso'))) {
+            $grupos =  $grupos->where('me.id_associado', session()->get('usuario.id_associado'))
+                ->whereIn('me.id_funcao', [1, 2]); // 1 => Dirigente, 2 => Sub-Dirigente
+        }
+
+        $grupos = $grupos->get();
 
 
         // Retorna a view com os dados
-        return view('passes.gerenciar-passe', compact('dias_cronograma','tipo_motivo', 'reuniao', 'tpdia', 'situacao', 'status', 'semana', 'grupos', 'setores'));
+        return view('passes.gerenciar-passe', compact('dias_cronograma', 'tipo_motivo', 'reuniao', 'tpdia', 'situacao', 'status', 'semana', 'grupos', 'setores'));
     }
 
 
@@ -166,20 +171,20 @@ class GerenciarPassesController extends Controller
     }
 
     public function store(Request $request, $id)
-{
-    // Obtém a data de hoje
-    $hoje = Carbon::today();
+    {
+        // Obtém a data de hoje
+        $hoje = Carbon::today();
 
-    // Validação dos dados de entrada
-    $request->validate([
-        'acompanhantes' => 'required|integer|min:0', // Validação para garantir que acompanhantes é um número inteiro não negativo
-    ]);
+        // Validação dos dados de entrada
+        $request->validate([
+            'acompanhantes' => 'required|integer|min:0', // Validação para garantir que acompanhantes é um número inteiro não negativo
+        ]);
 
-    // Verifica se existe um registro correspondente
-    $registro = DB::table('dias_cronograma')
-        ->where('id_cronograma', $id)
-        ->where('data', $hoje)
-        ->first();
+        // Verifica se existe um registro correspondente
+        $registro = DB::table('dias_cronograma')
+            ->where('id_cronograma', $id)
+            ->where('data', $hoje)
+            ->first();
         if ($registro) {
             // Atualiza o número de acompanhantes
             DB::table('dias_cronograma')
@@ -198,11 +203,11 @@ class GerenciarPassesController extends Controller
                 'fato' => 22,
             ]);
 
-        return redirect('/gerenciar-passe')->with('success', 'Quantidade de passes registrada com sucesso!');
-    } else {
-        return redirect('/gerenciar-passe')->with('error', 'Registro não encontrado para a data de hoje.');
+            return redirect('/gerenciar-passe')->with('success', 'Quantidade de passes registrada com sucesso!');
+        } else {
+            return redirect('/gerenciar-passe')->with('error', 'Registro não encontrado para a data de hoje.');
+        }
     }
-}
 
 
 
@@ -214,12 +219,12 @@ class GerenciarPassesController extends Controller
 
         // Obtém todos os grupos
         $cronograma = DB::table('cronograma')
-        ->leftJoin('grupo','grupo.id','=', 'cronograma.id_grupo')
-        ->leftJoin('tipo_dia as td', 'cronograma.dia_semana', 'td.id')
-        ->leftJoin('setor as st', 'grupo.id_setor', 'st.id')
-        ->where('cronograma.id', '=', $id)
-        ->select('cronograma.id', 'grupo.nome', 'cronograma.h_inicio', 'cronograma.h_fim', 'td.nome as dia', 'st.sigla as setor')
-        ->first();
+            ->leftJoin('grupo', 'grupo.id', '=', 'cronograma.id_grupo')
+            ->leftJoin('tipo_dia as td', 'cronograma.dia_semana', 'td.id')
+            ->leftJoin('setor as st', 'grupo.id_setor', 'st.id')
+            ->where('cronograma.id', '=', $id)
+            ->select('cronograma.id', 'grupo.nome', 'cronograma.h_inicio', 'cronograma.h_fim', 'td.nome as dia', 'st.sigla as setor')
+            ->first();
         // dd($cronograma);
 
 
@@ -229,7 +234,7 @@ class GerenciarPassesController extends Controller
 
 
 
-        return view('passes.visualizar-passe', compact('dias_cronograma','hoje','cronograma'));
+        return view('passes.visualizar-passe', compact('dias_cronograma', 'hoje', 'cronograma'));
     }
     public function edit(string $id)
     {
@@ -237,12 +242,12 @@ class GerenciarPassesController extends Controller
 
         // Obtém todos os grupos
         $cronograma = DB::table('cronograma')
-        ->leftJoin('grupo','grupo.id','=', 'cronograma.id_grupo')
-        ->leftJoin('tipo_dia as td', 'cronograma.dia_semana', 'td.id')
-        ->leftJoin('setor as st', 'grupo.id_setor', 'st.id')
-        ->where('cronograma.id', '=', $id)
-        ->select('cronograma.id', 'grupo.nome', 'cronograma.h_inicio', 'cronograma.h_fim', 'td.nome as dia', 'st.sigla as setor')
-        ->first();
+            ->leftJoin('grupo', 'grupo.id', '=', 'cronograma.id_grupo')
+            ->leftJoin('tipo_dia as td', 'cronograma.dia_semana', 'td.id')
+            ->leftJoin('setor as st', 'grupo.id_setor', 'st.id')
+            ->where('cronograma.id', '=', $id)
+            ->select('cronograma.id', 'grupo.nome', 'cronograma.h_inicio', 'cronograma.h_fim', 'td.nome as dia', 'st.sigla as setor')
+            ->first();
         // dd($cronograma);
 
 
@@ -260,14 +265,14 @@ class GerenciarPassesController extends Controller
     {
 
         $hoje = $request->data;
-        
+
 
         DB::table('dias_cronograma')
-        ->where('id_cronograma',$id)
-        ->where('data',$hoje)
-        ->update([
-        'nr_acompanhantes' => $request->nr_acompanhantes,
-        ]);
+            ->where('id_cronograma', $id)
+            ->where('data', $hoje)
+            ->update([
+                'nr_acompanhantes' => $request->nr_acompanhantes,
+            ]);
 
         DB::table('historico_venus')->insert([
             'id_usuario' => session()->get('usuario.id_usuario'),
@@ -282,7 +287,5 @@ class GerenciarPassesController extends Controller
 
 
 
-    public function destroy(string $id)
-    {
-    }
+    public function destroy(string $id) {}
 }
