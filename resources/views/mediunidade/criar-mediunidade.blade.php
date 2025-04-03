@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Cadastrar Mediunidades')
+@section('title', 'Cadastrar Habilidades')
 @section('content')
 
 
@@ -8,11 +8,10 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col">
-                        CADASTRAR MEDIUNIDADE
+                        CADASTRAR HABILIDADES
                     </div>
                 </div>
             </div>
-
             <div class="card-body">
                 <form class="form-horizontal mt-2" method="post" action="/incluir-mediunidade">
                     @csrf
@@ -31,7 +30,6 @@
                             @endforeach
                         </select>
                         </div>
-
                         <div class="col">
                         Status
                             <select class="form-control" aria-label=".form-select-lg example"
@@ -41,7 +39,6 @@
                                 @endforeach
                             </select>
                         </div>
-
                     <div class="row mt-3">
                         <div class="col">
                             <label for="id_mediunidade" class="form-label"></label>
@@ -73,12 +70,11 @@
                                                                 @foreach (old("data_inicio.$tipo->id") as $oldDate)
                                                                     <input type="date" class="form-control form-control-sm"
                                                                         name="data_inicio[{{ $tipo->id }}][]"
-                                                                        value="{{ $oldDate }}" required="required">
+                                                                        value="{{ $oldDate }}">
                                                                 @endforeach
                                                             @else
                                                                 <input type="date" class="form-control form-control-sm"
-                                                                    name="data_inicio[{{ $tipo->id }}][]" value=""
-                                                                    required="required">
+                                                                    name="data_inicio[{{ $tipo->id }}][]">
                                                             @endif
                                                         </div>
                                                     </td>
@@ -99,11 +95,7 @@
                             cursor: pointer; /* Adiciona o cursor de ponteiro ao passar sobre o checkbox */
                             border: 2px solid #000; /* Adiciona borda preta ao checkbox */
                         }
-
-
-
                     </style>
-
                     <div class="row mt-1 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
                             <a class="btn btn-danger" href="/gerenciar-mediunidades" role="button">Cancelar</a>
@@ -117,36 +109,25 @@
         </div>
     </div>
     <!-- Adicione antes do fechamento da tag </body> -->
-
-
-
-
-
-    <script>
-        $(document).ready(function() {
-            $('.select2').select2({ theme: 'bootstrap-5'});
-        });
-    </script>
-
-    <script>
+     <script>
         $(document).ready(function() {
             $('.data_manifestou')
                 .hide()
-                .find('input[type=date]')
-                .prop('required', false);
+                .find('input[type=date]');
+
 
             $('[name^=id_tp_mediunidade]').change(function() {
                 $('.data_manifestou')
                     .hide()
-                    .find('input[type=date]')
-                    .prop('required', false);
+                    .find('input[type=date]');
+
 
                 $('[name^=id_tp_mediunidade]:checked').each(function() {
                     var tipoId = $(this).val();
                     $('#data_inicio_' + tipoId)
                         .show()
-                        .find('input[type=date]')
-                        .prop('required', true);
+                        .find('input[type=date]');
+
                 });
             });
         });

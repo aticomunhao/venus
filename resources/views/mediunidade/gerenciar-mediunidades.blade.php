@@ -1,10 +1,10 @@
 @extends('layouts.app')
-@section('title', 'Gerenciar Mediunidades')
+@section('title', 'Gerenciar Habilidades')
 @section('content')
 
     <div class="container-fluid">
         <h4 class="card-title" style="font-size: 20px; text-align: left; color: gray; font-family: calibri;">
-            GERENCIAR MEDIUNIDADE
+            GERENCIAR HABILIDADES
         </h4>
 
         <div class="col-12">
@@ -22,7 +22,7 @@
                         <br>
                         <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit" value="Pesquisar">
                         <a href="/gerenciar-mediunidades" class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;">Limpar</a>
-                        <a href="criar-mediunidade" class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;">Nova mediunidade +</a>
+                        <a href="criar-mediunidade" class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;">Nova habilidade +</a>
                     </div>
                 </div>
             </form>

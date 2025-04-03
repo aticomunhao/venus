@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', 'Visualizar Mediunidades')
+@section('title', 'Visualizar Habilidades')
 @section('content')
 <div class="container mt-4">
     <div class="card">
         <div class="card-header">
             <div class="row">
                 <div class="col">
-                    VISUALIZAR MEDIUNIDADE
+                    VISUALIZAR HABLIDADES
                 </div>
             </div>
         </div>
@@ -119,7 +119,7 @@
                     <div class="d-grid gap-1 col-4 mx-auto">
                         <a class="btn btn-danger" href="/gerenciar-mediunidades" role="button">Fechar</a>
                     </div>
-                
+
                 </div>
             </form>
         </div>
