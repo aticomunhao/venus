@@ -13,17 +13,17 @@
         <form action="/gerenciar-relatorio-tratamento" method="GET">
             <div class="row align-items-center">
                 <!-- Data de Início -->
-                <div class="col-md-1 mb-2">
+                <div class="col">
                     <label for="dt_inicio" class="form-label">Data de Início</label>
                     <input type="date" class="form-control" id="dt_inicio" name="dt_inicio"  value="{{ $dt_inicio }}">
                 </div>
                 <!-- Data de Fim -->
-                <div class="col-md-1 mb-2">
+                <div class="col">
                     <label for="dt_fim" class="form-label">Data de Fim</label>
                     <input type="date" class="form-control" id="dt_fim" name="dt_fim" value="{{ $dt_fim }}">
                 </div>
                 <!-- Grupos -->
-                <div class="col-md-3 mb-2">
+                <div class="col">
                     <label for="grupo" class="form-label">Grupos</label>
                     <select class="form-select select2" id="grupo" name="grupo[]" multiple  data-width="100%">
                         @foreach ($grupo2 as $gruposs)
@@ -35,7 +35,7 @@
                     </select>
                 </div>
                 <!-- Setor -->
-                <div class="col-md-2 mb-2">
+                <div class="col">
                     <label for="setor" class="form-label">Setor</label>
                     <select class="form-select select2" id="setor" name="setor" data-width="100%">
                         <option value="0">Todos</option>
@@ -47,7 +47,7 @@
                     </select>
                 </div>
                 <!-- Tratamento -->
-                <div class="col-md-2 mb-2">
+                <div class="col">
                     <label for="tratamento" class="form-label">Tratamento</label>
                     <select class="form-select select2" id="tratamento" name="tratamento" data-width="100%">
                         <option value="0">Todos</option>
@@ -59,14 +59,14 @@
                     </select>
                 </div>
                 <!-- Botão Pesquisar -->
-                <div class="col-md-1 mb-2">
+                <div class="col">
                     <button type="submit" class="btn btn-light w-100"
                         style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin-top: 27px;">
                         Pesquisar
                     </button>
                 </div>
                 <!-- Botão Limpar -->
-                <div class="col-md-1 mb-2">
+                <div class="col">
                     <a href="/gerenciar-relatorio-tratamento">
                         <button type="button" class="btn btn-light w-100"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin-top: 27px;">
@@ -101,8 +101,8 @@
                         @foreach ($grupos as $trat)
                             <tr>
                                 @if (count(current($grupos)) > 5)
-                                    <td>{{ $trat['nome'] }}</td>
-                                    <td>{{ $trat['dia_semana'] }}</td>
+                                    <td>{{ $trat['nome']}}</td>
+                                    <td>{{ $trat['nomes'] }}</td>
                                     <td>{{ $trat['h_inicio'] }}</td>
                                     <td>{{ $trat['h_fim'] }}</td>
 
