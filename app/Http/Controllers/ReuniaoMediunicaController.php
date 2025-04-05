@@ -70,15 +70,15 @@ class ReuniaoMediunicaController extends Controller
         $grupo = $request->input('grupo', null);
         $tipo_tratamento = $request->input('tipo_tratamento', null);
         $setor = $request->input('setor', null);
-        $status = $request->input('status', null);
+        $status = $request->input('status','');
         $modalidade = $request->input('modalidade', null);
 
         // Aplica filtro por semana
-        if ($semana != null) {
+        if ($semana != '') {
+            // Se o valor de semana não for vazio, aplica o filtro
             $reuniao->where('cro.dia_semana', '=', $semana);
-        } else {
-            $reuniao->where('cro.dia_semana', '<>', null);
         }
+
 
         // Aplica filtro por nome de grupo com insensibilidade a maiúsculas/minúsculas e acentos
         if ($grupo) {

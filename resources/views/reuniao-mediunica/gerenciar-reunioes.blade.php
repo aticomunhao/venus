@@ -13,12 +13,15 @@
                 <div>
                     <form action="{{ route('remdex') }}" class="form-horizontal mt-4" method="GET">
                         <div class="row">
-                            <div class="col-1">Dia
+                            <div class="col-2">Dia
                                 <select class="form-select semana" id="4" name="semana" type="number">
-                                    <option value="">Todos</option>
+                                    <option value="" {{ request('semana') == '' ? 'selected' : '' }}>Todos
+                                    </option>
                                     @foreach ($tpdia as $dias)
-                                        <option value="{{ $dias->idtd }}" {{ request('semana') == $dias->idtd ? 'selected' : '' }}>
-                                   {{ $dias->nomed }}</option>
+                                        <option value="{{ $dias->idtd }}"
+                                            {{ request('semana') == $dias->idtd && request('semana') != '' ? 'selected' : '' }}>
+                                            {{ $dias->nomed }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
