@@ -13,7 +13,7 @@
                 <div>
                     <form action="{{ route('remdex') }}" class="form-horizontal mt-4" method="GET">
                         <div class="row">
-                            <div class="col-2">Dia
+                            <div class="col-1">Dia
                                 <select class="form-select semana" id="4" name="semana" type="number">
                                     <option value="">Todos</option>
                                     @foreach ($tpdia as $dias)
@@ -30,6 +30,16 @@
                                         <option value="{{ $gruposs->idg }}"
                                             {{ request('grupo') == $gruposs->idg ? 'selected' : '' }}>
                                             {{ $gruposs->nomeg }} - {{ $gruposs->sigla }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col">Trabalho
+                                <select class="form-select select2" id="tipo_tratamento" name="tipo_tratamento">
+                                    <option value="">Selecione</option>
+                                    @foreach ($tipo_tratamento as $tipos)
+                                        <option value="{{ $tipos->idt }}" {{ request('tipo_tratamento') == $tipos->idt ? 'selected' : '' }}>
+                                            {{ $tipos->tipo }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -54,7 +64,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-2">Status
+                            <div class="col-1">Status
                                 <select class="form-select status" id="4" name="status" type="number">
                                     <option value="" {{ $situacao[0]->ids == $status ? 'selected' : '' }}>
                                         Todos</option>
