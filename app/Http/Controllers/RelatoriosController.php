@@ -1028,20 +1028,6 @@ class RelatoriosController extends Controller
             )->get()
             ->toArray();
 
-
-
-        // if ($request->tipo_visualizacao == 2) {
-        //     Carbon::setlocale(config('app.locale'));
-        //     $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
-
-        //     foreach ($meses as $mes) {
-
-        //         $tratamentosAtivos
-        //         $acomp
-        //         $passes
-        //     }
-        // } else {
-
         // Insere os atendimentos
         foreach ($grupos as $key => $grupo) {
 
@@ -1074,8 +1060,6 @@ class RelatoriosController extends Controller
                     $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio ?? '';
                     $buffer[$grupo->id]['h_fim'] = $grupo->h_fim ?? '';
                     $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento ?? null;
-
-
                     isset($grupo->acompanhantes) ? $buffer[$grupo->id]['acompanhantes'] = $grupo->acompanhantes : null;
                     isset($grupo->passes) ? $buffer[$grupo->id]['passes'] = $grupo->passes : null;
                 }
@@ -1090,7 +1074,7 @@ class RelatoriosController extends Controller
                 $buffer[$grupo->id_tp_tratamento]['nome'] =  $grupo->nome ?? '';
                 $buffer[$grupo->id_tp_tratamento]['nomes'] =  $grupo->nomes ?? '';
                 $buffer[$grupo->id_tp_tratamento]['h_inicio'] =  $grupo->h_inicio ?? '';
-                $buffer[$grupo->id_tp_tratamento]['h_fim'] =  $grupo->h_inicio ?? '';
+                $buffer[$grupo->id_tp_tratamento]['h_fim'] =  $grupo->h_fim ?? '';
 
                 if (isset($grupo->atendimentos)) {
                     array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
@@ -1116,10 +1100,6 @@ class RelatoriosController extends Controller
             // Retornar a view com os dados
         }
         //  }
-
-
-
-
         return view('relatorios.gerenciar-relatorio-tratamento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
     }
 
