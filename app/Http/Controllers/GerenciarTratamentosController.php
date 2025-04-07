@@ -10,6 +10,7 @@ use App\Jobs\FaltasTrabalhador;
 use App\Jobs\FilaEncaminhamentos;
 use App\Jobs\FimSemanas;
 use App\Jobs\LimiteFalta;
+use App\Jobs\LimiteValidacao;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -562,6 +563,7 @@ class GerenciarTratamentosController extends Controller
         EntrevistaProamo::dispatch();
         FaltasTrabalhador::dispatch();
         FilaEncaminhamentos::dispatch();
+        LimiteValidacao::dispatch();
 
         return redirect()->back();
     }
