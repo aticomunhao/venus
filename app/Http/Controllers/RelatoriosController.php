@@ -678,7 +678,7 @@ class RelatoriosController extends Controller
             $presencasCountMembros[1] = $presencasCountMembros[1]->total;
         }
 
-        //
+        // 
         $presencasCountMembros[2] = 0;
 
         return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasCountAssistidos', 'presencasCountMembros', 'reunioesPesquisa', 'dt_inicio', 'dt_fim'));
@@ -752,7 +752,7 @@ class RelatoriosController extends Controller
             ->select('m.id', 'p.nome_completo', 'dc.data', 'pm.presenca')
             ->get();
 
-
+        
 
         $presencasCountAssistidos = $presencasCountAssistidos->get();
         $presencasCountAssistidos = json_decode(json_encode($presencasCountAssistidos));
@@ -915,7 +915,6 @@ class RelatoriosController extends Controller
                 'cro.id',
                 'cro.h_inicio',
                 'cro.h_fim',
-                'cro.dia_semana',
                 't.descricao',
                 't.id as id_tp_tratamento',
                 'tr.status',
@@ -923,12 +922,10 @@ class RelatoriosController extends Controller
                 'gr.nome as nome',
                 'td.nome as dia',
                 't.sigla',
-                'td.nome as nomes',
                 'st.sigla as setor',
                 'st.id as id_setor',
             )
             ->orderBy('gr.nome');
-
 
         // Consultar setores para o filtro
         $setores = DB::table('setor')
@@ -973,6 +970,7 @@ class RelatoriosController extends Controller
         $grupos = $grupos->get()->toArray();
         $grupo2 = $grupo2->get();
         $setores = $setores->get();
+
 
 
         // Retorna todos os tratamentos ativos, por grupo
@@ -1028,6 +1026,20 @@ class RelatoriosController extends Controller
             )->get()
             ->toArray();
 
+
+
+        // if ($request->tipo_visualizacao == 2) {
+        //     Carbon::setlocale(config('app.locale'));
+        //     $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
+
+        //     foreach ($meses as $mes) {
+
+        //         $tratamentosAtivos
+        //         $acomp
+        //         $passes
+        //     }
+        // } else {
+
         // Insere os atendimentos
         foreach ($grupos as $key => $grupo) {
 
@@ -1053,13 +1065,15 @@ class RelatoriosController extends Controller
             $buffer = array();
             foreach ($grupos as $grupo) {
                 if (in_array($grupo->id, $request->grupo)) {
-                    $buffer[$grupo->id]['descricao'] = $grupo->descricao ?? '';
-                    $buffer[$grupo->id]['nome'] = $grupo->nome ?? '';
-                    $buffer[$grupo->id]['sigla'] = $grupo->sigla ?? '';
-                    $buffer[$grupo->id]['nomes'] = $grupo->dia ?? '';
-                    $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio ?? '';
-                    $buffer[$grupo->id]['h_fim'] = $grupo->h_fim ?? '';
-                    $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento ?? null;
+                    $buffer[$grupo->id]['descricao'] = $grupo->descricao;
+                    $buffer[$grupo->id]['nome'] = $grupo->nome;
+                    $buffer[$grupo->id]['sigla'] =  $grupo->sigla;
+                    $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
+                    $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
+                    $buffer[$grupo->id]['h_fim'] = $grupo->h_fim;
+                    $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento;
+
+                    isset($grupo->atendimentos) ? $buffer[$grupo->id]['atendimentos'] = $grupo->atendimentos : null;
                     isset($grupo->acompanhantes) ? $buffer[$grupo->id]['acompanhantes'] = $grupo->acompanhantes : null;
                     isset($grupo->passes) ? $buffer[$grupo->id]['passes'] = $grupo->passes : null;
                 }
@@ -1071,10 +1085,6 @@ class RelatoriosController extends Controller
                 $buffer[$grupo->id_tp_tratamento]['descricao'] = $grupo->descricao;
                 $buffer[$grupo->id_tp_tratamento]['sigla'] =  $grupo->sigla;
                 $buffer[$grupo->id_tp_tratamento]['id'] =  $grupo->id;
-                $buffer[$grupo->id_tp_tratamento]['nome'] =  $grupo->nome ?? '';
-                $buffer[$grupo->id_tp_tratamento]['nomes'] =  $grupo->nomes ?? '';
-                $buffer[$grupo->id_tp_tratamento]['h_inicio'] =  $grupo->h_inicio ?? '';
-                $buffer[$grupo->id_tp_tratamento]['h_fim'] =  $grupo->h_fim ?? '';
 
                 if (isset($grupo->atendimentos)) {
                     array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
@@ -1100,6 +1110,10 @@ class RelatoriosController extends Controller
             // Retornar a view com os dados
         }
         //  }
+
+
+
+
         return view('relatorios.gerenciar-relatorio-tratamento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
     }
 

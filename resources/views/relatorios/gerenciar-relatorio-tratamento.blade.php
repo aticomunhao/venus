@@ -84,7 +84,7 @@
                     <thead style="text-align: center; background-color: #d6e3ff; font-size: 14px; color: #000000;">
                         <tr>
 
-                            @if (count(current($grupos)) > 5)
+                            @if (count(current($grupos)) > 6)
                                 <th class="col-3">GRUPO</th>
                                 <th class="col">DIA</th>
                                 <th class="col">INICIO</th>
@@ -100,9 +100,9 @@
                     <tbody style="font-size: 14px; color: #000000; text-align: center;">
                         @foreach ($grupos as $trat)
                             <tr>
-                                @if (count(current($grupos)) > 5)
+                                @if (count(current($grupos)) > 6)
                                     <td>{{ $trat['nome']}}</td>
-                                    <td>{{ $trat['nomes'] }}</td>
+                                    <td>{{ $trat['dia_semana'] }}</td>
                                     <td>{{ $trat['h_inicio'] }}</td>
                                     <td>{{ $trat['h_fim'] }}</td>
 
