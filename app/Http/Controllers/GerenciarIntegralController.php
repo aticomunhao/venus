@@ -129,27 +129,40 @@ class GerenciarIntegralController extends Controller
             $arrayTratamentosFaltas[$element->id_tratamento][] = $element->data;
         }
 
-        $array = array();
         foreach ($encaminhamentos as $key => $encaminhamento) {
-
             // Para cada ID tratamento
-            $faltasEncaminhamento =  isset($arrayTratamentosFaltas[$encaminhamento->id]) ? $arrayTratamentosFaltas[$encaminhamento->id] : [];
-            $consecutivo = 1; // Contagem de faltas consecutivas
+            $faltasEncaminhamento = isset($arrayTratamentosFaltas[$encaminhamento->id]) ? $arrayTratamentosFaltas[$encaminhamento->id] : [];
 
-            $array[] = $faltasEncaminhamento;
+            // Ordena as datas de faltas em ordem crescente
+            usort($faltasEncaminhamento, function ($a, $b) {
+                return strtotime($a) - strtotime($b);
+            });
 
-            foreach ($faltasEncaminhamento as $falta) { // Para cada falta
-                foreach ($faltasEncaminhamento as $faltaCross) { // Para cada falta
+            $maxConsecutivo = 0;
+            $consecutivo = 1;
 
-                    // Confere se as faltas são consecutivas com as ultimas, aumentando a contagem
-                    if (Carbon::parse($falta)->addWeek($consecutivo) == Carbon::parse($faltaCross)) {
-                        $consecutivo += 1;
-                    }
+            for ($i = 1; $i < count($faltasEncaminhamento); $i++) {
+                $anterior = Carbon::parse($faltasEncaminhamento[$i - 1]);
+                $atual = Carbon::parse($faltasEncaminhamento[$i]);
+
+                // Verifica se a data atual é exatamente uma semana depois da anterior
+                if ($anterior->addWeek()->isSameDay($atual)) {
+                    $consecutivo++;
+                } else {
+                    $consecutivo = 1;
+                }
+
+                // Guarda o maior número de faltas consecutivas encontradas
+                if ($consecutivo > $maxConsecutivo) {
+                    $maxConsecutivo = $consecutivo;
                 }
             }
 
+            $encaminhamento->faltas = $maxConsecutivo;
+
+            // Resto do código (ptd, data, presenca, contagem...)
             $ptdRegular = array_search($encaminhamento->id_assistido, $encaminhamentoPTD) ? $encaminhamentoPTD[array_search($encaminhamento->id, $encaminhamentoPTD)] : null;
-            $encaminhamento->ptd  = $ptdRegular ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
+            $encaminhamento->ptd = $ptdRegular ? true : false;
 
             $encaminhamento->data = current(array_filter($data, function ($item) use ($encaminhamento) {
                 return $item->id_tratamento == $encaminhamento->id;
@@ -159,14 +172,15 @@ class GerenciarIntegralController extends Controller
 
             $encaminhamento->presenca = array_search($encaminhamento->id, array_column($presencas, 'id_tratamento')) ? $presencas[array_search($encaminhamento->id, array_column($presencas, 'id_tratamento'))]->conta : null;
 
-            $encaminhamento->faltas = $consecutivo - 1;
-
             if ($encaminhamento->dt_fim) {
                 $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_inicio));
             } else {
                 $encaminhamento->contagem = null;
             }
         }
+
+
+
 
         // Usado para Macas
         $vagas = DB::table('cronograma')->where('id', $selected_grupo)->pluck('max_atend')->toArray(); // Retorna o número máximo de assistidos de um cronograma
