@@ -132,38 +132,34 @@ class GerenciarProamoController extends Controller
         }
 
         $array = array();
-        foreach ($encaminhamentos as $key => $encaminhamento) {
+        foreach ($encaminhamentos as $encaminhamento) {
+            $frequencias = DB::table('presenca_cronograma as pc')
+                ->join('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+                ->where('pc.id_tratamento', $encaminhamento->id)
+                ->orderBy('dc.data')
+                ->select('dc.data', 'pc.presenca')
+                ->get();
 
-            // Para cada ID tratamento
-            $faltasEncaminhamento =  isset($arrayTratamentosFaltas[$encaminhamento->id]) ? $arrayTratamentosFaltas[$encaminhamento->id] : [];
-            $consecutivo = 1; // Contagem de faltas consecutivas
+            $faltasConsecutivas = 0;
 
-            $array[] = $faltasEncaminhamento;
-
-            foreach ($faltasEncaminhamento as $falta) { // Para cada falta
-                foreach ($faltasEncaminhamento as $faltaCross) { // Para cada falta
-
-                    // Confere se as faltas são consecutivas com as ultimas, aumentando a contagem
-                    if (Carbon::parse($falta)->addWeek($consecutivo) == Carbon::parse($faltaCross)) {
-                        $consecutivo += 1;
-                    }
+            foreach ($frequencias as $freq) {
+                if ($freq->presenca) {
+                    $faltasConsecutivas = 0; // presença: zera contagem
+                } else {
+                    $faltasConsecutivas++; // falta: aumenta contagem
                 }
             }
 
-            $ptdRegular = array_search($encaminhamento->id_assistido, $encaminhamentoPTD) ? $encaminhamentoPTD[array_search($encaminhamento->id, $encaminhamentoPTD)] : null;
-            $encaminhamento->ptd  = $ptdRegular ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
+            $encaminhamento->faltas = $faltasConsecutivas;
+            $encaminhamento->ptd = in_array($encaminhamento->id_assistido, $encaminhamentoPTD);
             $encaminhamento->avaliacao = $hoje->diffInDays(Carbon::parse($encaminhamento->dt_inicio));
-            $encaminhamento->data = current(array_filter($data, function ($item) use ($encaminhamento) {
-                return $item->id_tratamento == $encaminhamento->id;
-            })) ? current(array_filter($data, function ($item) use ($encaminhamento) {
-                return $item->id_tratamento == $encaminhamento->id;
-            }))->data : null;
-
-        
-
-            $encaminhamento->faltas = $consecutivo - 1;
- 
+            $encaminhamento->data = collect($data)->firstWhere('id_tratamento', $encaminhamento->id)->data ?? null;
         }
+
+     
+
+
+
         $totalAssistidos = count($encaminhamentos);
         return view('proamo.gerenciar-proamo', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'now', 'totalAssistidos', 'motivosAlta'));
     }
