@@ -130,35 +130,26 @@ class GerenciarIntegralController extends Controller
         }
 
         foreach ($encaminhamentos as $key => $encaminhamento) {
-            // Para cada ID tratamento
-            $faltasEncaminhamento = isset($arrayTratamentosFaltas[$encaminhamento->id]) ? $arrayTratamentosFaltas[$encaminhamento->id] : [];
+            $presencasFaltas = DB::table('presenca_cronograma as pc')
+                ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+                ->where('pc.id_tratamento', $encaminhamento->id)
+                ->orderBy('dc.data', 'asc')
+                ->select('pc.presenca', 'dc.data')
+                ->get()
+                ->toArray();
 
-            // Ordena as datas de faltas em ordem crescente
-            usort($faltasEncaminhamento, function ($a, $b) {
-                return strtotime($a) - strtotime($b);
-            });
+            $consecutivas = 0;
 
-            $maxConsecutivo = 0;
-            $consecutivo = 1;
-
-            for ($i = 1; $i < count($faltasEncaminhamento); $i++) {
-                $anterior = Carbon::parse($faltasEncaminhamento[$i - 1]);
-                $atual = Carbon::parse($faltasEncaminhamento[$i]);
-
-                // Verifica se a data atual é exatamente uma semana depois da anterior
-                if ($anterior->addWeek()->isSameDay($atual)) {
-                    $consecutivo++;
+            foreach ($presencasFaltas as $presenca) {
+                if ($presenca->presenca == false) {
+                    $consecutivas++;
                 } else {
-                    $consecutivo = 1;
-                }
-
-                // Guarda o maior número de faltas consecutivas encontradas
-                if ($consecutivo > $maxConsecutivo) {
-                    $maxConsecutivo = $consecutivo;
+                    $consecutivas = 0; // Zera a contagem se teve uma presença
                 }
             }
 
-            $encaminhamento->faltas = $maxConsecutivo;
+            $encaminhamento->faltas = $consecutivas;
+
 
             // Resto do código (ptd, data, presenca, contagem...)
             $ptdRegular = array_search($encaminhamento->id_assistido, $encaminhamentoPTD) ? $encaminhamentoPTD[array_search($encaminhamento->id, $encaminhamentoPTD)] : null;
