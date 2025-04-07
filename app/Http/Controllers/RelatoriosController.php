@@ -910,7 +910,6 @@ class RelatoriosController extends Controller
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->whereIn('t.id', [1, 2, 3, 4, 6])
-            ->whereIn('tr.status', [2, 3, 4])
             ->select(
                 'cro.id',
                 'cro.h_inicio',
