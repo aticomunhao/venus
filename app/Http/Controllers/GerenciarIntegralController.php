@@ -129,27 +129,31 @@ class GerenciarIntegralController extends Controller
             $arrayTratamentosFaltas[$element->id_tratamento][] = $element->data;
         }
 
-        $array = array();
         foreach ($encaminhamentos as $key => $encaminhamento) {
+            $presencasFaltas = DB::table('presenca_cronograma as pc')
+                ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+                ->where('pc.id_tratamento', $encaminhamento->id)
+                ->orderBy('dc.data', 'asc')
+                ->select('pc.presenca', 'dc.data')
+                ->get()
+                ->toArray();
 
-            // Para cada ID tratamento
-            $faltasEncaminhamento =  isset($arrayTratamentosFaltas[$encaminhamento->id]) ? $arrayTratamentosFaltas[$encaminhamento->id] : [];
-            $consecutivo = 1; // Contagem de faltas consecutivas
+            $consecutivas = 0;
 
-            $array[] = $faltasEncaminhamento;
-
-            foreach ($faltasEncaminhamento as $falta) { // Para cada falta
-                foreach ($faltasEncaminhamento as $faltaCross) { // Para cada falta
-
-                    // Confere se as faltas são consecutivas com as ultimas, aumentando a contagem
-                    if (Carbon::parse($falta)->addWeek($consecutivo) == Carbon::parse($faltaCross)) {
-                        $consecutivo += 1;
-                    }
+            foreach ($presencasFaltas as $presenca) {
+                if ($presenca->presenca == false) {
+                    $consecutivas++;
+                } else {
+                    $consecutivas = 0; // Zera a contagem se teve uma presença
                 }
             }
 
+            $encaminhamento->faltas = $consecutivas;
+
+
+            // Resto do código (ptd, data, presenca, contagem...)
             $ptdRegular = array_search($encaminhamento->id_assistido, $encaminhamentoPTD) ? $encaminhamentoPTD[array_search($encaminhamento->id, $encaminhamentoPTD)] : null;
-            $encaminhamento->ptd  = $ptdRegular ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
+            $encaminhamento->ptd = $ptdRegular ? true : false;
 
             $encaminhamento->data = current(array_filter($data, function ($item) use ($encaminhamento) {
                 return $item->id_tratamento == $encaminhamento->id;
@@ -159,14 +163,15 @@ class GerenciarIntegralController extends Controller
 
             $encaminhamento->presenca = array_search($encaminhamento->id, array_column($presencas, 'id_tratamento')) ? $presencas[array_search($encaminhamento->id, array_column($presencas, 'id_tratamento'))]->conta : null;
 
-            $encaminhamento->faltas = $consecutivo - 1;
-
             if ($encaminhamento->dt_fim) {
                 $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_inicio));
             } else {
                 $encaminhamento->contagem = null;
             }
         }
+
+
+
 
         // Usado para Macas
         $vagas = DB::table('cronograma')->where('id', $selected_grupo)->pluck('max_atend')->toArray(); // Retorna o número máximo de assistidos de um cronograma
