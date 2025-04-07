@@ -27,7 +27,7 @@ class LimiteValidacao implements ShouldQueue
      */
     public function handle(): void
     {
-        $data = Carbon::today()->subDays(30);
+        $data = Carbon::today()->subDays(15);
         DB::table('log_caminho_usuario')
         ->where('data_hora', '<', $data)
         ->delete();

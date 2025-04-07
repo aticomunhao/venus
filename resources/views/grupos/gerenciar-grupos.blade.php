@@ -6,7 +6,8 @@
 
 @section('content')
     <div class="container-fluid">
-        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR GRUPOS
+        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
+            GERENCIAR GRUPOS
         </h4>
         <form action="{{ route('nomes') }}" class="form-horizontal mt-4" method="GET">
             <div class="row justify-content-center">
@@ -15,8 +16,8 @@
                         <option value="">Selecione o Grupo</option>
                         @foreach ($grupo as $grupos)
                             <option value="{{ $grupos->idg }}"
-                                {{ request('nome_grupo') == $grupos->idg ? 'selected' : '' }}>{{ $grupos->nomeg }} -
-                                {{ $grupos->sigla }}
+                                {{ request('nome_grupo') == $grupos->idg ? 'selected' : '' }}>
+                                {{ $grupos->nomeg }} - {{ $grupos->sigla }}
                             </option>
                         @endforeach
                     </select>
@@ -43,7 +44,7 @@
                         @endforeach
                     </select>
                 </div>
-                
+
                 <div class="col"><br />
                     <input class="btn btn-light btn-sm me-md-2"
                         style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
@@ -61,15 +62,16 @@
         <hr>
         Quantidade de grupos: {{ $contar }}
     </div>
+
     <div class="row" style="text-align:center;">
         <div class="col">
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                 <thead style="text-align: center;">
                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                        <th class="col ">Nr</th>
-                        <th class="col-3 ">NOME</th>
-                        <th class="col"> DATA INÍCIO</th>
-                        <th class="col"> DATA FIM</th>
+                        <th class="col">Nr</th>
+                        <th class="col-3">NOME</th>
+                        <th class="col">DATA INÍCIO</th>
+                        <th class="col">DATA FIM</th>
                         <th class="col">TIPO GRUPO</th>
                         <th class="col">SETOR</th>
                         <th class="col">STATUS GRUPO</th>
@@ -98,10 +100,10 @@
                                     <i class="bi bi-search" style="font-size: 1rem; color:#000;"
                                         data-bs-target="#pessoa"></i>
                                 </a>
+
                                 <!-- Botão que aciona o modal -->
                                 <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
                                     data-bs-target="#inativa{{ $listas->id }}">
-                                    <!-- Altere o data-bs-target para o ID correto -->
                                     <span class="tooltiptext">Inativar</span>
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </button>
@@ -123,8 +125,8 @@
                                                     <label for="recipient-name" class="col-form-label"
                                                         style="font-size:17px">
                                                         Tem certeza que deseja inativar:<br />
-                                                        <span
-                                                            style="color:#DC4C64; font-weight: bold;">{{ $listas->nome }} - {{ $listas->sigset }}</span>&#63;
+                                                        <span style="color:#DC4C64; font-weight: bold;">{{ $listas->nome }}
+                                                            - {{ $listas->sigset }}</span>&#63;
                                                     </label>
                                                     <br />
 
@@ -153,13 +155,15 @@
                                         </div>
                                     </div>
                                 </form>
-                        <tr>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-    </div class="d-flex justify-content-center">
-    {{ $lista->links('pagination::bootstrap-5') }}
+    </div>
+
+    <div class="d-flex justify-content-center">
+        {{ $lista->links('pagination::bootstrap-5') }}
     </div>
 @endsection

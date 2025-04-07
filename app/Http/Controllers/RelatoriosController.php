@@ -1669,27 +1669,28 @@ class RelatoriosController extends Controller
     {
         $now = Carbon::now()->format('Y-m-d');
 
-        $trata = DB::table('tipo_tratamento')->whereIn('id', [1, 2, 3])->get();
+        $trata = DB::table('tipo_tratamento')->whereIn('id', [1,2,3, 6])->orderBy('descricao')->get();
 
+        $dt_inicio = $request->dt_inicio;
+        $dt_fim = $request->dt_fim;
+        $tratamento = $request->tratamento;
+
+        // Verifica se as variáveis têm valor, senão define um valor padrão
+        $dt_inicio = $dt_inicio ? $dt_inicio : Carbon::now()->startOfMonth()->format('Y-m-d');
+        $dt_fim = $dt_fim ? $dt_fim : Carbon::now()->endOfMonth()->format('Y-m-d');
 
         $passe = DB::table('dias_cronograma as dc')
             ->leftJoin('presenca_cronograma as pc', 'dc.id', 'pc.id_dias_cronograma')
             ->leftJoin('cronograma as c', 'dc.id_cronograma', 'c.id')
             ->leftJoin('tipo_tratamento as t', 'c.id_tipo_tratamento', 't.id')
             ->select(
+                't.id as t_id',
                 't.sigla as tsigla',
                 't.descricao as tnome',
+                DB::raw("(DATE_TRUNC('MONTH', dc.data) + INTERVAL '1 MONTH' - INTERVAL '1 DAY') as ultimo_dia_mes"),
                 DB::raw('SUM(dc.nr_acompanhantes) as acomp'),
                 DB::raw('SUM(CASE WHEN pc.presenca = TRUE THEN 1 ELSE 0 END) as assist')
             );
-
-
-
-        $dt_inicio = $request->dt_inicio;
-        $dt_fim = $request->dt_fim;
-        $tratamento = $request->tratamento;
-
-        // dd($dt_inicio);
 
         if ($request->dt_inicio) {
             $passe->whereDate('dc.data', '>=', $dt_inicio);
@@ -1699,19 +1700,52 @@ class RelatoriosController extends Controller
         }
 
         if ($tratamento === null) {
-            $passe->whereIn('t.id', [1, 2, 3, 6]);
+            $passe->whereIn('t.id', [1,2,3,6]);
         } else {
             $passe->where('t.id', $tratamento);
         }
 
-        $passe = $passe->groupBy('t.sigla', 't.descricao')->get();
+        $passe = $passe->groupBy('t.id', 't.sigla', 't.descricao', DB::raw("(DATE_TRUNC('MONTH', dc.data) + INTERVAL '1 MONTH' - INTERVAL '1 DAY')"))
+            ->orderBy('t.descricao')
+            ->orderBy(DB::raw("(DATE_TRUNC('MONTH', dc.data) + INTERVAL '1 MONTH' - INTERVAL '1 DAY')"))
+            ->get();
 
-        $qtd_ass = $passe->count('pc.presenca', true);
+        // Para exibição, podemos organizar os dados para que a soma apareça antes de iniciar a próxima lista de t.id
+        $resultadoAgrupado = [];
+        foreach ($passe as $item) {
+            $t_id = $item->t_id;
 
-        $qtd_acomp = $passe->sum('dc.nr_acompanhantes');
+            if (!isset($resultadoAgrupado[$t_id])) {
+                $resultadoAgrupado[$t_id] = [
+                    'tsigla' => $item->tsigla,
+                    'tnome' => $item->tnome,
+                    'dados' => [],
+                    'total_assist' => 0,
+                    'total_acomp' => 0, // Adicionando o total de acompanhantes
+                ];
+            }
 
-        //dd($passe, $qtd_ass, $qtd_acomp);
-
-        return view('relatorios.passes', compact('dt_inicio', 'dt_fim', 'trata', 'passe', 'qtd_acomp', 'qtd_ass'));
+            $resultadoAgrupado[$t_id]['dados'][] = [
+                'acomp' => $item->acomp, 
+                'assist' => $item->assist,
+                'ultimo_dia_mes' => $item->ultimo_dia_mes, // Adicionando a chave
+            ];
+            
+            $resultadoAgrupado[$t_id]['total_assist'] += $item->assist;
+            $resultadoAgrupado[$t_id]['total_acomp'] += $item->acomp; // Somando acompanhantes
+        }
+        
+        $totalGeralAssistidos = array_sum(array_column($resultadoAgrupado, 'total_assist')) 
+                        + array_sum(array_column($resultadoAgrupado, 'total_acomp'));
+        //dd($resultadoAgrupado);
+                
+        return view('relatorios.passes', [
+            'passe' => json_decode(json_encode($resultadoAgrupado), true),
+            'dt_inicio' => $dt_inicio,
+            'dt_fim' => $dt_fim,
+            'tratamento' => $tratamento,
+            'trata' => $trata,
+            'totalGeralAssistidos' => $totalGeralAssistidos, // Adicionando o total geral
+        ]);
     }
 }

@@ -16,7 +16,7 @@ class MediunidadePessoaController extends Controller
     public function index(Request $request)
     {
 
-        
+
         $tipos = DB::table('mediunidade_pessoa')
             ->select('id_pessoa')->groupBy('id_pessoa')->get();
 
@@ -31,7 +31,7 @@ class MediunidadePessoaController extends Controller
         $contar = $mediunidade->distinct()->count('p.id');
         $nome = $request->nome_pesquisa;
         $cpf = $request->cpf_pesquisa;
-   
+
 
         if($nome){
             $mediunidade = $mediunidade->where('nome_completo', 'ilike', "%$nome%");
@@ -43,7 +43,7 @@ class MediunidadePessoaController extends Controller
         $contarQuery = clone $mediunidade;
         $contar = $contarQuery->distinct('p.id')->count('p.id');
 
-      
+
         $mediunidade = $mediunidade->paginate(50);
 
 
@@ -52,17 +52,17 @@ class MediunidadePessoaController extends Controller
     }
 
 
-  
-        
+
+
 
     public function create()
     {
-        try{
+
         $id_mediunidade = 1;
         $grupo = DB::select('select id, nome from grupo');
         $mediunidade = DB::select('select * from mediunidade_pessoa');
         $tipo_mediunidade = DB::select('select id, tipo from tipo_mediunidade');
-        $pessoas = DB::select('select id as idp, nome_completo, motivo_status, status from pessoas');
+        $pessoas = DB::select('SELECT id AS idp, nome_completo, motivo_status, status FROM pessoas ORDER BY nome_completo ASC');
         $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao');
         $mediunidade_pessoa = DB::select('select id as idme, data_inicio from mediunidade_pessoa');
         $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
@@ -70,12 +70,8 @@ class MediunidadePessoaController extends Controller
 
         return view('mediunidade.criar-mediunidade', compact('tipo_status_pessoa', 'grupo', 'id_mediunidade', 'mediunidade', 'tipo_mediunidade', 'pessoas', 'tipo_funcao', 'mediunidade_pessoa'));
     }
-    catch(\Exception $e){
 
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
+
 
 
     public function store(Request $request)
@@ -147,23 +143,23 @@ class MediunidadePessoaController extends Controller
         public function update(Request $request, string $id)
         {
             try {
-            
+
                 // Inicia a transação
                 DB::beginTransaction();
                 // Excluir registros anteriores na tabela 'mediunidade_pessoa' para o mesmo id_pessoa
                 DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->delete();
-                
+
                 // Obter os dados do formulário
                 $id_pessoa = $request->input('id_pessoa');
                 $tipo_ids = $request->input('id_tp_mediunidade');
-               
+
                 //dd($request->all());
                 // Certifique-se de que tipo_ids é um array
                 if (is_array($tipo_ids)) {
                     // Inserir dados na tabela 'mediunidade_pessoa'
                     foreach ($tipo_ids as $tipo_id) {
                         $datas_inicio = $request->input("data_inicio.{$tipo_id}");
-               
+
                         // Certifique-se de que datas_inicio é um array
                         if (is_array($datas_inicio)) {
                             foreach ($datas_inicio as $data_inicio) {
@@ -176,12 +172,12 @@ class MediunidadePessoaController extends Controller
                         }
                     }
                 }
-                
+
                 // Atualizar o status e motivo na tabela 'pessoas'
                 $status = $request->input('tipo_status_pessoa');
                 $motivo = $request->input('motivo_status');
                 DB::table('pessoas')->where('id', $id)->update(['status' => $status, 'motivo_status' => $motivo]);
-                
+
                 // Gravar no histórico
                 $ida = session()->get('usuario.id_pessoa');
                 $data = Carbon::today();
@@ -191,21 +187,21 @@ class MediunidadePessoaController extends Controller
                     'fato' => 18,
                     'pessoa' => $id,
                 ]);
-                
+
                 // Commit da transação
                 DB::commit();
-        
+
                 return redirect('gerenciar-mediunidades');
             } catch (\Exception $e) {
                 // Rollback em caso de erro
                 DB::rollBack();
-        
+
                 $code = $e->getCode();
                 $message = $e->getMessage();
                 return view('administrativo-erro.erro-inesperado', compact('code', 'message'));
             }
         }
-        
+
 
 
     public function show($id)
@@ -225,7 +221,7 @@ class MediunidadePessoaController extends Controller
         $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
 
         $mediunidadesIds = DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->get();
-     
+
 
         $arrayChecked = [];
 
@@ -242,12 +238,12 @@ class MediunidadePessoaController extends Controller
             }
         }
 
-        
+
     public function destroy(string $id)
     {
-      
+
         $data = date("Y-m-d H:i:s");
-        
+
         DB::table('historico_venus')->insert([
 
             'id_usuario' => session()->get('usuario.id_pessoa'),
@@ -271,6 +267,6 @@ class MediunidadePessoaController extends Controller
         app('flasher')->addError('Excluído com sucesso.');
         return redirect('/gerenciar-mediunidades');
     }
-    
-        
+
+
 }
