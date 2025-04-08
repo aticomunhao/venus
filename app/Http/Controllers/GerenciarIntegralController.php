@@ -172,7 +172,6 @@ class GerenciarIntegralController extends Controller
 
 
 
-
         // Usado para Macas
         $vagas = DB::table('cronograma')->where('id', $selected_grupo)->pluck('max_atend')->toArray(); // Retorna o número máximo de assistidos de um cronograma
         $ocupadas = DB::table('tratamento')->whereNot('maca', null)->where('id_reuniao', $selected_grupo)->where('status', '<', 3)->pluck('maca')->toArray(); // Retorna um array com todas as macas ocuopadas do grupo
