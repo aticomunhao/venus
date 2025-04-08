@@ -121,6 +121,17 @@ class ReuniaoMediunicaController extends Controller
         // Conta o número de registros
         $contar = $reuniao->distinct()->count('cro.id');
 
+          // Carregar a lista de grupos para o Select2
+        $grupos = DB::table('cronograma as c')
+        ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
+        ->leftJoin('setor AS s', 'g.id_setor', 's.id')
+        ->select(
+            'g.id AS idg',
+            'g.nome AS nomeg',
+            's.sigla'
+        )
+        ->orderBy('g.nome', 'asc')
+        ->get();
         // Aplica a paginação e mantém os parâmetros de busca na URL
         $reuniao = $reuniao
             ->orderBy('status', 'ASC')
@@ -154,19 +165,8 @@ class ReuniaoMediunicaController extends Controller
         // Carregar a lista de setores para o Select2
         $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
 
-        // Carregar a lista de grupos para o Select2
 
-        $grupos = DB::table('cronograma as c')
-            ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
-            ->leftJoin('setor AS s', 'g.id_setor', 's.id')
-            ->select(
-                'g.id AS idg',
-                'g.nome AS nomeg',
-                's.sigla'
-            )
-            ->distinct('g.nome')
-            ->orderBy('g.nome', 'asc')
-            ->get();
+
             // Retorna a view com os dados
         return view('/reuniao-mediunica/gerenciar-reunioes', compact('tipo_motivo', 'reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores', 'tmodalidade', 'modalidade', 'tipo_tratamento'));
     }
