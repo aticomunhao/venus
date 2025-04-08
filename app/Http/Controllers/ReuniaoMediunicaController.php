@@ -121,6 +121,22 @@ class ReuniaoMediunicaController extends Controller
         // Conta o número de registros
         $contar = $reuniao->distinct()->count('cro.id');
 
+          // Carregar a lista de grupos para o Select2
+          $grupos = DB::table('cronograma as c')
+          ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
+          ->leftJoin('setor AS s', 'g.id_setor', 's.id')
+          ->select(
+              'g.id AS idg',
+              'g.nome AS nomeg',
+              's.sigla'
+          )
+          ->orderBy('g.nome', 'asc')
+          ->get()
+          ->unique('idg') // aqui garantimos que o ID do grupo seja único
+          ->values();     // reindexa os itens do array
+
+
+
         // Aplica a paginação e mantém os parâmetros de busca na URL
         $reuniao = $reuniao
             ->orderBy('status', 'ASC')
@@ -154,19 +170,8 @@ class ReuniaoMediunicaController extends Controller
         // Carregar a lista de setores para o Select2
         $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
 
-        // Carregar a lista de grupos para o Select2
 
-        $grupos = DB::table('cronograma as c')
-            ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
-            ->leftJoin('setor AS s', 'g.id_setor', 's.id')
-            ->select(
-                'g.id AS idg',
-                'g.nome AS nomeg',
-                's.sigla'
-            )
-            ->distinct('g.nome')
-            ->orderBy('g.nome', 'asc')
-            ->get();
+
             // Retorna a view com os dados
         return view('/reuniao-mediunica/gerenciar-reunioes', compact('tipo_motivo', 'reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores', 'tmodalidade', 'modalidade', 'tipo_tratamento'));
     }
@@ -243,7 +248,7 @@ class ReuniaoMediunicaController extends Controller
         foreach ($tipo_semanas as $tipo_semana) {
             $query = DB::table('cronograma AS c')
                 ->where(function ($query) use ($now) {
-                    $query->where('c.data_fim', '>=', $now)
+                    $query->where('c.data_fim', '>', $now)
                         ->orWhereNull('c.data_fim'); // Apenas cronogramas ativos
                 });
 
@@ -259,32 +264,44 @@ class ReuniaoMediunicaController extends Controller
                             });
                     });
 
-                // Impede tipo_semana 0 se já houver tipo_semana 1, 2, 3 ou 4
-                $tipo_semana_conflito = DB::table('cronograma')
-                    ->where('id_sala', $numero)
-                    ->where('dia_semana', $dia)
-                    ->whereIn('id_tipo_semana', [1, 2, 3, 4])
-                    ->where(function ($q) use ($h_inicio, $h_fim) {
-                        $q->whereBetween('h_inicio', [$h_inicio, $h_fim])
-                            ->orWhereBetween('h_fim', [$h_inicio, $h_fim])
-                            ->orWhere(function ($sub) use ($h_inicio, $h_fim) {
-                                $sub->where('h_inicio', '<=', $h_inicio)
-                                    ->where('h_fim', '>=', $h_fim);
-                            });
-                    })
-                    ->exists();
+               // Buscar todos os tipos de semana existentes para mesma sala, dia e horário
+                $tipos_existentes = DB::table('cronograma')
+                ->where('id_sala', $numero)
+                ->where('dia_semana', $dia)
+                ->where(function ($q) use ($h_inicio, $h_fim) {
+                    $q->whereBetween('h_inicio', [$h_inicio, $h_fim])
+                        ->orWhereBetween('h_fim', [$h_inicio, $h_fim])
+                        ->orWhere(function ($sub) use ($h_inicio, $h_fim) {
+                            $sub->where('h_inicio', '<=', $h_inicio)
+                                ->where('h_fim', '>=', $h_fim);
+                        });
+                })
+                ->pluck('id_tipo_semana')
+                ->unique()
+                ->toArray();
 
-                if ($tipo_semana == 0 && $tipo_semana_conflito) {
-                    app('flasher')->addError('Não é permitido adicionar um cronograma com tipo de semana 0 quando já existem cronogramas com tipo de semana 1, 2, 3 ou 4.');
-                    return redirect()->back()->withInput();
+                // Regra 1 e 2: Exclusividade entre 0 e 1–4
+                if ($tipo_semana == 0 && collect($tipos_existentes)->intersect([1, 2, 3, 4])->isNotEmpty()) {
+                app('flasher')->addError('Não é permitido adicionar tipo de semana 0 quando já existem tipos 1, 2, 3 ou 4.');
+                return redirect()->back()->withInput();
                 }
 
-                // Aplicação da regra do tipo_semana
-                if ($tipo_semana == 0) {
-                    $query->where('c.id_tipo_semana', 0);
-                } else {
-                    $query->where('c.id_tipo_semana', $tipo_semana);
+                if (in_array(0, $tipos_existentes) && in_array($tipo_semana, [1, 2, 3, 4])) {
+                app('flasher')->addError('Não é permitido adicionar tipos 1, 2, 3 ou 4 quando já existe tipo de semana 0.');
+                return redirect()->back()->withInput();
                 }
+
+                // Regra 3: Máximo de 3 tipos de semana distintos (entre 1–4)
+                $tipos_1a4 = collect($tipos_existentes)->intersect([1, 2, 3, 4]);
+
+                if (!in_array($tipo_semana, $tipos_1a4->toArray()) && $tipos_1a4->count() >= 3 && in_array($tipo_semana, [1, 2, 3, 4])) {
+                app('flasher')->addError('Não é permitido adicionar mais de 3 tipos de semana entre os tipos 1, 2, 3 e 4.');
+                return redirect()->back()->withInput();
+                }
+
+                // Aplicação da regra na query principal
+                $query->where('c.id_tipo_semana', $tipo_semana);
+
             } elseif ($modalidade > 1) { // Modalidade Remota (ou outra maior que 1)
                 // Verifica se já existe um cronograma com todos os dados iguais
                 $existe_conflito = DB::table('cronograma')
