@@ -92,8 +92,8 @@
                                     {{ $encaminhamento->contagem }}
                                 @endif
                             </td>
-                            <td> {{ $encaminhamento->presenca }} </td>
-                            <td> {{ $encaminhamento->faltas }} </td>
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}"> {{ $encaminhamento->presenca }} </td>
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}"> {{ $encaminhamento->faltas }} </td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
                                 {{ $encaminhamento->status }}</td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
