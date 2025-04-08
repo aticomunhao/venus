@@ -71,8 +71,8 @@
                                     <tr>
                                         <td> {{ $dadoMembro->trabalho }} </td>
                                         <td> {{ $dadoMembro->nome_funcao }} </td>
-                                        <td> {{ $dadoMembro->dt_inicio }} </td>
-                                        <td> {{ $dadoMembro->dt_fim }} </td>
+                                        <td> {{ $dadoMembro->dt_inicio ? date('d/m/Y', strtotime($dadoMembro->dt_inicio)) : '-' }} </td>
+                                        <td> {{ $dadoMembro->dt_fim ? date('d/m/Y',strtotime($dadoMembro->dt_fim)) : '-' }} </td>
                                         <td> {{ $dadoMembro->status_membro }} </td>
                                     </tr>
                                 @endforeach
