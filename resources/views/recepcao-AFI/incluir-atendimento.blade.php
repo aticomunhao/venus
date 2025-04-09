@@ -161,11 +161,18 @@
                 <div class="row">
 
 
-                    <div class="col">Tipo AFI
+                    <div class="col-3">Tipo AFI
                         <select class="form-select pedido" id="tipo_afi" name="tipo_afi">
                             <option></option>
                             @foreach ($sexo as $sexos)
                                 <option value="{{ $sexos->id }}">{{ $sexos->tipo }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-3">Tipo Atendimento
+                        <select class="form-select pedido" id="tipo_atendimento" name="tipo_atendimento">
+                            @foreach ($tipoAtendimento as $tipo)
+                                <option value="{{ $tipo->id }}">{{ $tipo->sigla }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -323,10 +330,10 @@
                     $('#cpfResponsavel').prop('required', false)
                     $('#parent').prop('required', false)
                 }
-                if ($('#pEspecial').prop('checked')) {
+                if ($('#pEspecial').prop('checked')) { 
                     $('#pedidoEspecial').prop('hidden', false);
-                    $('#tipo_afi').prop('required', true)
-                    $('#afi_p').prop('required', true)
+                    //$('#tipo_afi').prop('required', true)
+                    //$('#afi_p').prop('required', true)
                     
                 } else {
                     $('#pedidoEspecial').prop('hidden', true);
