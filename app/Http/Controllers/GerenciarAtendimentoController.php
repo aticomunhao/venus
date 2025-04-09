@@ -766,10 +766,9 @@ class GerenciarAtendimentoController extends Controller
             // Crie a consulta para a listagem paginada
             $atendeQuery = DB::table('membro AS m')
                 ->distinct('m.id_associado')
-                ->select('m.id AS idat', 'm.id_associado AS ida', 'p.nome_completo AS nm_4', 'p.id AS pid', 'tsp.tipo')
+                ->select('m.id AS idat', 'm.id_associado AS ida', 'p.nome_completo AS nm_4', 'p.id AS pid')
                 ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
                 ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
-                ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
                 ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
                 ->where('gr.id_tipo_grupo', 3)
@@ -846,7 +845,11 @@ class GerenciarAtendimentoController extends Controller
                 ->orderBy('numero')
                 ->get();
 
-            return view('/recepcao-AFI/incluir-atendente-dia', compact('contar', 'atende', 'st_atend', 'situacao', 'grupo', 'sala', 'atendentesParaSelect'));
+            $tipoAtendimento = DB::table('tipo_atendimento')
+            ->whereNot('id', 2)
+            ->get();
+
+            return view('/recepcao-AFI/incluir-atendente-dia', compact('contar', 'atende', 'st_atend', 'situacao', 'grupo', 'sala', 'atendentesParaSelect', 'tipoAtendimento'));
         } catch (\Exception $e) {
             app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
             DB::rollBack();
@@ -862,7 +865,7 @@ class GerenciarAtendimentoController extends Controller
     public function salva_afi(Request $request, $ida)
     {
         try {
-            $sala = $request->sala;
+
             $now = Carbon::now();
             $today = Carbon::today();
             //$atendente = DB::table('atendentes AS a')->select('a.id AS ida')->where('id_pessoa', $idat)->get();
@@ -875,6 +878,7 @@ class GerenciarAtendimentoController extends Controller
                     'id_grupo' => $request->input('grupo'),
                     'id_associado' => $ida,
                     'dh_inicio' => $now,
+                    'id_tipo_atendimento' => $request->atendimento
                 ]);
 
                 app('flasher')->addSuccess('O atendente foi incluido e a sala vinculada.');
