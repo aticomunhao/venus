@@ -98,7 +98,6 @@ class AtendimentoFraternoController extends Controller
             ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
             ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
             ->whereIn('at.status_atendimento', [1, 4, 5]) // Apenas aguardando assistido, analisando, ou Em Atendimento
-            ->where('at.afe',  null) // Exclui os atendimentos para Atendente Fraterno Específico
             ->where('at.id_atendente', $atendente) // Garante que seja o seu atendimento
             ->get();
 
