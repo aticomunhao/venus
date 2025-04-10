@@ -440,7 +440,7 @@ class GerenciarAtendimentoController extends Controller
                 $hoje = Carbon::today();
                 $result = DB::table('atendimentos AS at')
                     ->where('at.id', $ida)
-                    ->select('at.id AS ida', 'p1.id as idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente as idaf', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tp.nome', 'at.parentesco', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo', 'at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.menor_auto as menor')
+                    ->select('at.id AS ida', 'p1.id as idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente as idaf', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tp.nome', 'at.parentesco', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo', 'at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.menor_auto as menor', 'at.id_tipo_atendimento as tpat')
                     ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftJoin('membro AS m', 'at.id_atendente', 'm.id_associado')
                     ->leftJoin('pessoas AS p', 'm.id_associado', 'p.id')
@@ -487,9 +487,11 @@ class GerenciarAtendimentoController extends Controller
                     order by id DESC
                     ");
 
+                    $tipoAtendimento = DB::table('tipo_atendimento')
+                    ->whereNot('id', 2)
+                    ->get();
 
-
-                return view('/recepcao-AFI/editar-atendimento', compact('result', 'priori', 'sexo', 'pare', 'afi', 'lista', 'afiSelecionado'));
+                return view('/recepcao-AFI/editar-atendimento', compact('result', 'priori', 'sexo', 'pare', 'afi', 'lista', 'afiSelecionado', 'tipoAtendimento'));
             }
         } catch (\Exception $e) {
             $code = $e->getCode();
@@ -502,6 +504,8 @@ class GerenciarAtendimentoController extends Controller
         try {
             $dt_hora = Carbon::now();
             $afi = DB::table('associado')->where('id_pessoa', $request->input('afi_p'))->first();
+            $tipo_atendimento = isset($request->tipo_atendimento) ? $request->tipo_atendimento : 1;
+
 
             DB::table('atendimentos AS at')
                 ->where('at.id', $ida)
@@ -512,6 +516,7 @@ class GerenciarAtendimentoController extends Controller
                     'id_atendente_pref' => $afi ? $afi->id : $request->input('afi_p'),
                     'pref_tipo_atendente' => $request->input('tipo_afi'),
                     'id_prioridade' => $request->input('priori'),
+                    'id_tipo_atendimento' => $tipo_atendimento
                 ]);
 
             // Insere no histórico a criação do atendimento
