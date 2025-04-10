@@ -247,6 +247,7 @@ class AtendimentoFraternoController extends Controller
             // Atualiza os atendimentos para o Atendente
             $atendimentoSelecionado = DB::table('atendimentos')
                 ->where('status_atendimento', 2) // Status tem que ser Aguardando Atendimento
+                ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
                 ->where(function ($query) {
                     $query->whereNull('afe')  // AFE tem que ser null
                         ->orWhere('afe', false); // Caso alguma funcionalidade inclua AFE como false, Fallback
