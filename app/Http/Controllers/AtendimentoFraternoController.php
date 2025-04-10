@@ -112,6 +112,13 @@ class AtendimentoFraternoController extends Controller
         $id_associado = session()->get('usuario.id_associado'); // ID associado do usuário logado
         $sexo = session()->get('usuario.sexo'); // // Dados se a pessoa é [ 1 => 'Masculino', 2 => 'Feminino', 3 => 'Outros']
 
+            // retorna o tipo de atendimento
+            $sala = DB::table('atendente_dia AS atd')
+            ->whereDate('dh_inicio', Carbon::today()->toDateString()) // Se o item de sala dele é do dia de hoje
+            ->whereNull('dh_fim') // Não pode ter sido finalizado
+            ->where('id_associado', $id_associado) // Apenas para o usuário logado
+            ->value('id_tipo_atendimento');
+
 
         // Count de atendimentos que seguem as regras de preferidos (Atendente e Sexo)
         $numero_de_assistidos_para_atender = DB::table('atendimentos AS at')
@@ -142,6 +149,7 @@ class AtendimentoFraternoController extends Controller
             ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
             ->whereDate('dh_chegada', Carbon::today()->toDateString()) // Cofere se as datas do DateTime e do Carbon batem
             ->where('at.status_atendimento', 2) // Status Aguardando Atendimento
+            ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
             ->where(function ($query) use ($id_associado) {
                 $query->where('at.id_atendente_pref', $id_associado) // Atendente prefrido é o usuário logado
                     ->orWhereNull('at.id_atendente_pref'); // Inclui registros onde não há atendente preferencial
@@ -166,6 +174,12 @@ class AtendimentoFraternoController extends Controller
         $atendente = session()->get('usuario.id_associado'); // Id associado de quem está logado
         $pref_m = session()->get('usuario.sexo'); // Dados se a pessoa é [ 1 => 'Masculino', 2 => 'Feminino', 3 => 'Outros']
 
+        // Usado para validar se o atendente está em uma sala, e retorna o tipo de atendimento
+        $sala = DB::table('atendente_dia AS atd')
+            ->whereDate('dh_inicio', Carbon::today()->toDateString()) // Se o item de sala dele é do dia de hoje
+            ->whereNull('dh_fim') // Não pode ter sido finalizado
+            ->where('id_associado', $atendente) // Apenas para o usuário logado
+            ->value('id_tipo_atendimento');
 
         //Conta todos os atendimentos  ativos do atendente
         $atendendo = DB::table('atendimentos AS at')
@@ -184,6 +198,7 @@ class AtendimentoFraternoController extends Controller
             ->whereNull('afe')
             ->whereNull('id_atendente_pref') // Atendente preferido null
             ->whereNull('pref_tipo_atendente') // Sexo de atendimento preferido null
+            ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
             ->pluck('id')
             ->toArray();
 
@@ -191,6 +206,7 @@ class AtendimentoFraternoController extends Controller
         $atende1 = DB::table('atendimentos')->where('status_atendimento', 2)
             ->whereNull('afe')
             ->where('id_atendente_pref', $atendente) // O atendente preferido é o usuário logado
+            ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
             ->pluck('id')
             ->toArray();
 
@@ -201,20 +217,12 @@ class AtendimentoFraternoController extends Controller
         $atende2 = DB::table('atendimentos')->where('status_atendimento', 2)
             ->whereNull('afe')
             ->where('pref_tipo_atendente', $pref_m) // O Sexo de preferência é o mesmo do Atendente
+            ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
             ->pluck('id')
             ->toArray();
 
         $atendeFinal = array_merge($atende, $atende1, $atende2); // Une os ids em uma única variável
         $assistido = count($atendeFinal); // Conta a quaantidade de IDs retornados
-
-
-        // Usado para validar se o atendente está em uma sala
-        $sala = DB::table('atendente_dia AS atd')
-            ->whereDate('dh_inicio', Carbon::today()->toDateString()) // Se o item de sala dele é do dia de hoje
-            ->whereNull('dh_fim') // Não pode ter sido finalizado
-            ->where('id_associado', $atendente) // Apenas para o usuário logado
-            ->value('id_sala');
-
 
         if ($atendendo > 0) { // Valida se outra pessoa já está em atendimento
 
@@ -239,6 +247,7 @@ class AtendimentoFraternoController extends Controller
             // Atualiza os atendimentos para o Atendente
             $atendimentoSelecionado = DB::table('atendimentos')
                 ->where('status_atendimento', 2) // Status tem que ser Aguardando Atendimento
+                ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
                 ->where(function ($query) {
                     $query->whereNull('afe')  // AFE tem que ser null
                         ->orWhere('afe', false); // Caso alguma funcionalidade inclua AFE como false, Fallback
