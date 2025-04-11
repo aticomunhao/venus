@@ -686,7 +686,7 @@ class GerenciarAtendimentoController extends Controller
             $now = Carbon::today();
             $no = Carbon::today()->addDay(1);
 
-            $atende = DB::table('atendente_dia as atd')->select('atd.id AS nr', 'atd.id_associado', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'p.nome_completo AS nm_4', 'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')->leftJoin('salas AS s', 'atd.id_sala', 's.id')->leftJoin('cronograma as cro', 'atd.id_grupo', 'cro.id')->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')->where('atd.id', $idatd)->first();
+            $atende = DB::table('atendente_dia as atd')->select('atd.id AS nr', 'atd.id_associado', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim','atd.id_tipo_atendimento', 'p.nome_completo AS nm_4', 'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')->leftJoin('salas AS s', 'atd.id_sala', 's.id')->leftJoin('cronograma as cro', 'atd.id_grupo', 'cro.id')->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')->where('atd.id', $idatd)->first();
             $st_atend = DB::select("select
         tsp.id,
         tsp.tipo
@@ -694,6 +694,8 @@ class GerenciarAtendimentoController extends Controller
         ");
 
             $situacao = DB::table('tipo_status_pessoa')->select('id', 'tipo')->get();
+
+            $tipo_atendimento = DB::table('tipo_atendimento')->whereNot('id',2)->get();
 
             $grupos = DB::table('membro as m')->where('id_associado', $atende->id_associado)->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')->leftJoin('grupo as g', 'cro.id_grupo', 'g.id')->whereIn('id_funcao', [5, 6])->orderBy('g.nome')->get();
 
@@ -703,9 +705,9 @@ class GerenciarAtendimentoController extends Controller
 
             $sala = DB::table('salas AS s')->select('s.id', 's.numero')->where('s.id_finalidade', 2)->where('s.status_sala', 1)->whereNotIn('id', $salaAtendendo)->whereNotIn('id', $salaAFE)->orderBy('numero')->get();
 
-            // dd($sala);
+            //  dd($atende);
 
-            return view('/recepcao-AFI/editar-atendente-dia', compact('atende', 'st_atend', 'grupos', 'sala'));
+            return view('/recepcao-AFI/editar-atendente-dia', compact('atende', 'st_atend', 'grupos', 'sala','tipo_atendimento'));
         } catch (\Exception $e) {
             app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
             DB::rollBack();
@@ -728,24 +730,34 @@ class GerenciarAtendimentoController extends Controller
                 ->where('atd.dh_inicio', $now)
                 ->count('atd.id');
 
-            if ($sala_dia == 0) {
-                DB::table('atendente_dia AS atd')
-                    ->where('id', $idatd)
-                    ->update([
-                        'id_grupo' => $request->grupo,
-                        'id_sala' => $request->input('sala'),
-                    ]);
+                
+            
+            
 
-                app('flasher')->addSuccess('A sala foi alterada com sucesso.');
+                $atendente = DB::table('atendente_dia')->where('id', $idatd)->first();
 
-                return redirect('/gerenciar-atendente-dia');
-            } else {
-                app('flasher')->addError('A sala está ocupada.');
-
-                return redirect('/gerenciar-atendente-dia');
-            }
-
-            app('flasher')->addError('Saiu aqui deu erro.');
+                if ($sala_dia == 0) {
+                    DB::table('atendente_dia')
+                        ->where('id', $idatd)
+                        ->update([
+                            'id_grupo' => $request->grupo,
+                            'id_tipo_atendimento' => $request->tipo_atendimento,
+                            'id_sala' => $request->input('sala'),
+                        ]);
+                
+                    if ($atendente->id_tipo_atendimento != $request->tipo_atendimento) {
+                        app('flasher')->addSuccess('Tipo de atendimento alterado com sucesso.');
+                    } elseif ($atendente->id_sala != $request->sala) {
+                        app('flasher')->addSuccess('Sala alterada com sucesso.');
+                    } elseif ($atendente->id_grupo != $request->grupo) {
+                        app('flasher')->addSuccess('Grupo alterado com sucesso.');
+                    } else {
+                        app('flasher')->addInfo('Nenhuma alteração foi detectada.');
+                    }
+                
+                    return redirect('/gerenciar-atendente-dia');
+                }
+                
 
             return redirect('/gerenciar-atendente-dia');
         } catch (\Exception $e) {
