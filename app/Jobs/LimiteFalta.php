@@ -70,7 +70,7 @@ class LimiteFalta implements ShouldQueue
 
 
                     // Descobre o id_encaminhamento do tratamento atual
-                    $id_encaminhamento = DB::table('tratamento')->select('id_encaminhamento')->where('id', $key)->first();
+                    $id_encaminhamento = DB::table('tratamento')->select('id_encaminhamento')->where('id', explode(',',$key)[0])->first();
     
                     // Inativa o tratamento por faltas
                     DB::table('tratamento')
