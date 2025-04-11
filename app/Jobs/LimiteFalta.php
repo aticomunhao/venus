@@ -74,7 +74,7 @@ class LimiteFalta implements ShouldQueue
     
                     // Inativa o tratamento por faltas
                     DB::table('tratamento')
-                        ->where('id', $key)
+                        ->where('id', explode(',',$key)[0])
                         ->update([
                             'status' => 5 // Finalizado por faltas
                         ]);
