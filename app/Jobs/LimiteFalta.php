@@ -29,9 +29,10 @@ class LimiteFalta implements ShouldQueue
     public function handle(): void
     {
 
+
         // Retorna todas as faltas de todos os tratamentos ativos
         $tratamentos_faltas = DB::table('presenca_cronograma as pc')
-            ->select('pc.id_tratamento', 'pc.presenca')
+            ->select('pc.id_tratamento', 'pc.presenca', 'enc.id_tipo_tratamento')
             ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
@@ -41,48 +42,50 @@ class LimiteFalta implements ShouldQueue
                 $query->where('enc.status_encaminhamento', 2);
                 $query->orWhere('tr.status', '<', 3);
             })
-            ->orderBy('dc.data', 'DESC')
+            ->orderBy('dc.data', 'ASC')
             ->get()->toArray();
 
         // Organiza os dados por ID tratamento, para facilitar o foreach
         $arrayTratamentoFaltas = array();
         foreach ($tratamentos_faltas as $element) {
-            $arrayTratamentoFaltas[$element->id_tratamento][] = $element->presenca;
+            $arrayTratamentoFaltas[$element->id_tratamento . ',' . $element->id_tipo_tratamento][] = $element->presenca;
         }
 
 
         // Para cada ID tratamento
         foreach ($arrayTratamentoFaltas as $key => $faltas) {
 
+            // Variável de contagem, usada para contar a quantidade de faltas consecutivas
+            $current = 0;
+
+            // Para cada marcação do tratamento
             foreach ($faltas as $item) {
 
-                // Faz com que o foreach pare no ultimo item do array, caso contrario, ele criaria 2 itens fantasma
-                if (!(key($faltas) >= (array_key_last($faltas) - 1))) {
-
-                    $current = (current($faltas) == false); // Pega o Item atual do array do foreach
-                    $next = (next($faltas) == false); // Passa para o próximo item do array e retorna ele
-                    $foward = (next($faltas) == false); // Passa para o próximo item do array e retorna ele
-                    prev($faltas); // Volta o array em um item, para que seja uma passagem linear, apenas uma vez por foreach
+                // Caso seja uma falta, incrementa o contador, caso não seja, reseta a contagem
+                !$item ? $current++ : $current = 0;
 
 
-                    if ($current and $next and $foward) {
-                        // Descobre o id_encaminhamento do tratamento atual
-                        $id_encaminhamento = DB::table('tratamento')->select('id_encaminhamento')->where('id', $key)->first();
+                //  Caso seja um tratamento não PROAMO, com 3 consecutivas | Caso seja um PROAMO com 5 faltas consecutivas
+                if(   (explode(',',$key)[1] != 4 and $current > 2) or (explode(',',$key)[1] == 4 and $current > 4)  ){
 
-                        // Inativa o tratamento por faltas
-                        DB::table('tratamento')
-                            ->where('id', $key)
-                            ->update([
-                                'status' => 5 // Finalizado por faltas
-                            ]);
 
-                        // Inativa o encaminhamento
-                        DB::table('encaminhamento')
-                            ->where('id', $id_encaminhamento->id_encaminhamento)
-                            ->update([
-                                'status_encaminhamento' => 4 // Inativado
-                            ]);
-                    }
+                    // Descobre o id_encaminhamento do tratamento atual
+                    $id_encaminhamento = DB::table('tratamento')->select('id_encaminhamento')->where('id', $key)->first();
+    
+                    // Inativa o tratamento por faltas
+                    DB::table('tratamento')
+                        ->where('id', $key)
+                        ->update([
+                            'status' => 5 // Finalizado por faltas
+                        ]);
+    
+                    // Inativa o encaminhamento
+                    DB::table('encaminhamento')
+                        ->where('id', $id_encaminhamento->id_encaminhamento)
+                        ->update([
+                            'status_encaminhamento' => 4 // Inativado
+                        ]);
+
                 }
             }
         }
