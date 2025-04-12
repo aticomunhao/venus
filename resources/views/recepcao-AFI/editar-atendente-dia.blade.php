@@ -33,7 +33,7 @@
                                     @foreach ($grupos as $grupo)
                                         <option value="{{$grupo->id_cronograma}}" {{ $atende->nomeg == $grupo->nome ? 'selected' : ''}}>{{$grupo->nome}}</option>
                                     @endforeach
-                                   
+
                                 </select>
                             </div>
 
@@ -41,7 +41,7 @@
                         </div>
 
                         <div>
-                           
+
                                 <div class="row">
                                     <div class="col-6">
                                         <label for="disabledTextInput" class="form-label">Nome AFI:</label>
@@ -64,6 +64,7 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                
                                     <div class="col"></div>
                                 </div>
                                 <br />

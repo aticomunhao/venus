@@ -33,7 +33,7 @@ class GerenciarAtendimentoController extends Controller
                 'p3.nome_completo as nm_4',
                 'sl.numero as nr_sala',
                 'ts.descricao',
-                DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe")
+                'ta.sigla'
             )->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')
             ->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')
             ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
@@ -43,7 +43,8 @@ class GerenciarAtendimentoController extends Controller
             ->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')
             ->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')
             ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')
-            ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
+            ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
+            ->leftJoin('tipo_atendimento as ta', 'at.id_tipo_atendimento', 'ta.id');
 
         // Filtra pela data de início, se fornecida, caso contrário, usa a data atual
 
@@ -118,7 +119,6 @@ class GerenciarAtendimentoController extends Controller
                 'p3.nome_completo as nm_4',
                 'sl.numero as nr_sala',
                 'ts.descricao',
-                DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe")
             )
             ->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')
             ->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')
@@ -176,7 +176,7 @@ class GerenciarAtendimentoController extends Controller
                     'p3.nome_completo as nm_4',
                     'sl.numero as nr_sala',
                     'ts.descricao',
-                    DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe")
+                    'ta.sigla'
                 )->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')
                 ->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')
                 ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
@@ -185,7 +185,10 @@ class GerenciarAtendimentoController extends Controller
                 ->leftJoin('tipo_prioridade as tp', 'at.id_prioridade', 'tp.id')
                 ->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')
                 ->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')
-                ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id');
+                ->leftJoin('salas as sl', 'at.id_sala', 'sl.id')
+                ->leftjoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
+                ->leftJoin('tipo_atendimento as ta', 'at.id_tipo_atendimento', 'ta.id');
+
 
             $data_inicio = $request->input('dt_ini', Carbon::today()->toDateString());
 
@@ -266,7 +269,7 @@ class GerenciarAtendimentoController extends Controller
 
 
 
-        try {
+       // try {
             $hoje = Carbon::today();
             $lista = DB::select("select
         p.id as pid,
@@ -310,17 +313,21 @@ class GerenciarAtendimentoController extends Controller
         order by nome
         ");
 
-            return view('/recepcao-AFI/incluir-atendimento', compact('afi', 'priori', 'sexo', 'parentes', 'lista'));
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
+
+        $tipoAtendimento = DB::table('tipo_atendimento')
+        ->whereNot('id', 2)
+        ->get();
+
+            return view('/recepcao-AFI/incluir-atendimento', compact('afi', 'priori', 'sexo', 'parentes', 'lista', 'tipoAtendimento'));
+        // } catch (\Exception $e) {
+        //     $code = $e->getCode();
+        //     return view('tratamento-erro.erro-inesperado', compact('code'));
+        // }
     }
 
     public function store(Request $request)
     {
         // try {
-
 
 
 
@@ -339,7 +346,7 @@ class GerenciarAtendimentoController extends Controller
         }
 
         $menor = isset($request->menor) ? 1 : 0;
-
+        $tipo_atendimento = isset($request->tipo_atendimento) ? $request->tipo_atendimento : 1;
         //dd($menor);
 
         $idAtendimento = DB::table('atendimentos AS atd')->insertGetId([
@@ -352,6 +359,7 @@ class GerenciarAtendimentoController extends Controller
             'id_prioridade' => $request->input('priori'),
             'menor_auto' => $menor,
             'status_atendimento' => 2,
+            'id_tipo_atendimento' => $tipo_atendimento
         ]);
 
         // Insere no histórico a criação do atendimento
@@ -432,7 +440,7 @@ class GerenciarAtendimentoController extends Controller
                 $hoje = Carbon::today();
                 $result = DB::table('atendimentos AS at')
                     ->where('at.id', $ida)
-                    ->select('at.id AS ida', 'p1.id as idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente as idaf', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tp.nome', 'at.parentesco', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo', 'at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.menor_auto as menor')
+                    ->select('at.id AS ida', 'p1.id as idas', 'p1.ddd', 'p1.celular', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'at.id_atendente_pref AS iap', 'p3.nome_completo as nm_3', 'at.id_atendente as idaf', 'p4.nome_completo as nm_4', 'at.pref_tipo_atendente AS pta', 'ts.descricao', 'tp.nome', 'at.parentesco', 'tp.id AS idp', 'tpsx.id AS idsx', 'tpsx.tipo', 'at.id_prioridade', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'at.menor_auto as menor', 'at.id_tipo_atendimento as tpat')
                     ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                     ->leftJoin('membro AS m', 'at.id_atendente', 'm.id_associado')
                     ->leftJoin('pessoas AS p', 'm.id_associado', 'p.id')
@@ -479,9 +487,11 @@ class GerenciarAtendimentoController extends Controller
                     order by id DESC
                     ");
 
+                    $tipoAtendimento = DB::table('tipo_atendimento')
+                    ->whereNot('id', 2)
+                    ->get();
 
-
-                return view('/recepcao-AFI/editar-atendimento', compact('result', 'priori', 'sexo', 'pare', 'afi', 'lista', 'afiSelecionado'));
+                return view('/recepcao-AFI/editar-atendimento', compact('result', 'priori', 'sexo', 'pare', 'afi', 'lista', 'afiSelecionado', 'tipoAtendimento'));
             }
         } catch (\Exception $e) {
             $code = $e->getCode();
@@ -494,6 +504,8 @@ class GerenciarAtendimentoController extends Controller
         try {
             $dt_hora = Carbon::now();
             $afi = DB::table('associado')->where('id_pessoa', $request->input('afi_p'))->first();
+            $tipo_atendimento = isset($request->tipo_atendimento) ? $request->tipo_atendimento : 1;
+
 
             DB::table('atendimentos AS at')
                 ->where('at.id', $ida)
@@ -504,6 +516,7 @@ class GerenciarAtendimentoController extends Controller
                     'id_atendente_pref' => $afi ? $afi->id : $request->input('afi_p'),
                     'pref_tipo_atendente' => $request->input('tipo_afi'),
                     'id_prioridade' => $request->input('priori'),
+                    'id_tipo_atendimento' => $tipo_atendimento
                 ]);
 
             // Insere no histórico a criação do atendimento
@@ -766,10 +779,9 @@ class GerenciarAtendimentoController extends Controller
             // Crie a consulta para a listagem paginada
             $atendeQuery = DB::table('membro AS m')
                 ->distinct('m.id_associado')
-                ->select('m.id AS idat', 'm.id_associado AS ida', 'p.nome_completo AS nm_4', 'p.id AS pid', 'tsp.tipo')
+                ->select('m.id AS idat', 'm.id_associado AS ida', 'p.nome_completo AS nm_4', 'p.id AS pid')
                 ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
                 ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
-                ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
                 ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
                 ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
                 ->where('gr.id_tipo_grupo', 3)
@@ -846,7 +858,11 @@ class GerenciarAtendimentoController extends Controller
                 ->orderBy('numero')
                 ->get();
 
-            return view('/recepcao-AFI/incluir-atendente-dia', compact('contar', 'atende', 'st_atend', 'situacao', 'grupo', 'sala', 'atendentesParaSelect'));
+            $tipoAtendimento = DB::table('tipo_atendimento')
+            ->whereNot('id', 2)
+            ->get();
+
+            return view('/recepcao-AFI/incluir-atendente-dia', compact('contar', 'atende', 'st_atend', 'situacao', 'grupo', 'sala', 'atendentesParaSelect', 'tipoAtendimento'));
         } catch (\Exception $e) {
             app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
             DB::rollBack();
@@ -862,7 +878,7 @@ class GerenciarAtendimentoController extends Controller
     public function salva_afi(Request $request, $ida)
     {
         try {
-            $sala = $request->sala;
+
             $now = Carbon::now();
             $today = Carbon::today();
             //$atendente = DB::table('atendentes AS a')->select('a.id AS ida')->where('id_pessoa', $idat)->get();
@@ -875,6 +891,7 @@ class GerenciarAtendimentoController extends Controller
                     'id_grupo' => $request->input('grupo'),
                     'id_associado' => $ida,
                     'dh_inicio' => $now,
+                    'id_tipo_atendimento' => $request->atendimento
                 ]);
 
                 app('flasher')->addSuccess('O atendente foi incluido e a sala vinculada.');

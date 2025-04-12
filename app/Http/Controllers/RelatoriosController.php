@@ -1579,7 +1579,7 @@ class RelatoriosController extends Controller
                 'm.dt_fim',
                 'tt.descricao as trabalho',
                 DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END) as status_membro"),
-                DB::raw("(CASE WHEN cro.modificador = 3 THEN 'Experimental' WHEN cro.modificador = 4 THEN 'Em Férias' WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status"),
+                DB::raw("(CASE WHEN cro.modificador = 3 THEN 'Experimental' WHEN cro.modificador = 4 THEN 'Em Férias' WHEN cro.data_fim <= '$now' THEN 'Inativo' ELSE 'Ativo' END) as status"),
 
             )
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')

@@ -316,7 +316,7 @@
                         let nm_2 = atendimento.nm_2 == null ? '' : atendimento.nm_2
                         let nm_3 = atendimento.nm_3 == null ? '' : atendimento.nm_3
                         let nr_sala = atendimento.nr_sala == null ? '' : atendimento.nr_sala
-                        let afe = atendimento.afe == null ? '' : atendimento.afe
+                        let sigla = atendimento.sigla == null ? '' : atendimento.sigla
                         let descricao = atendimento.descricao == null ? '' : atendimento.descricao
 
                 $('#tabelaPrincipal').append(
@@ -332,7 +332,7 @@
                     '<td class="representante">' + nm_2 + '</td>' +
                     '<td class="atendente">' + nm_3 + '</td>' +
                     '<td class="sala">' + nr_sala + '</td>' +
-                    '<td class="tipoAtendimento">' + afe + '</td>' +
+                    '<td class="tipoAtendimento">' + sigla + '</td>' +
                     '<td class="statusAtendimento" >' + descricao + '</td>' +
                     '<td class="">' +
 
