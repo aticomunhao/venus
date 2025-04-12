@@ -49,6 +49,7 @@ class GerenciarEntrevistaController extends Controller
                 'atendimentos.dh_inicio as inicio', // DateTime do atendimento
                 'entrevistas.id as ident', // ID entrevista, usado na view na tabela
                 'pessoa_pessoa.celular',
+                'pessoa_pessoa.cpf',
                 'pessoa_pessoa.id as id_pessoa',
                 'ddd.descricao as ddd',
                 'encaminhamento.id_tipo_entrevista',
@@ -75,6 +76,16 @@ class GerenciarEntrevistaController extends Controller
         if ($request->nome_pesquisa) {
             $informacoes->whereRaw("UNACCENT(LOWER(pessoa_pessoa.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome_pesquisa}%"]);
         }
+        if ($request->cpf) {
+            $cpfLimpo = preg_replace('/[^0-9]/', '', $request->cpf); // Remove pontos e traços
+
+            $informacoes->whereRaw(
+                "REGEXP_REPLACE(pessoa_pessoa.cpf, '[^0-9]', '', 'g') ILIKE ?",
+                ["%$cpfLimpo%"]
+            );
+        }
+
+
         if ($request->tipo_entrevista) { // Ex.: DIAMO, NUTRES
             $informacoes->where('tipo_entrevista.id', $request->tipo_entrevista);
         }
