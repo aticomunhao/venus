@@ -135,7 +135,6 @@ class AtendimentoFraternoController extends Controller
                 'p3.nome_completo as nm_4',
                 'sl.numero as nr_sala',
                 'ts.descricao',
-                DB::raw("(CASE WHEN at.afe = true THEN 'AFE' ELSE 'AFI' END) as afe")
             )->leftJoin('associado as ass', 'at.id_atendente', 'ass.id')
             ->leftJoin('associado as ass1', 'at.id_atendente_pref', 'ass1.id')
             ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
@@ -186,7 +185,6 @@ class AtendimentoFraternoController extends Controller
             ->leftjoin('associado AS a', 'm.id_associado', 'a.id')
             ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
             ->where('at.id_atendente', $atendente)
-            ->whereNull('afe') // Não conta os Atendimentos Fraternos Específicos
             ->whereIn('at.status_atendimento', [1, 4, 5]) // Apenas aguardando assistido, analisando, ou Em Atendimento
             ->count();
 
@@ -194,7 +192,6 @@ class AtendimentoFraternoController extends Controller
         //Devolve os IDs atendimento que estão Aguardando Atendimento
         $atende = DB::table('atendimentos')
             ->where('status_atendimento', 2)
-            ->whereNull('afe')
             ->whereNull('id_atendente_pref') // Atendente preferido null
             ->whereNull('pref_tipo_atendente') // Sexo de atendimento preferido null
             ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
@@ -203,7 +200,6 @@ class AtendimentoFraternoController extends Controller
 
         // Devolve os IDs que estão Aguardando Atendimento
         $atende1 = DB::table('atendimentos')->where('status_atendimento', 2)
-            ->whereNull('afe')
             ->where('id_atendente_pref', $atendente) // O atendente preferido é o usuário logado
             ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
             ->pluck('id')
@@ -214,7 +210,6 @@ class AtendimentoFraternoController extends Controller
                     *Caso o Atendente esteja sem sexo em pessoas, esse item não pegará nada,
                     gerando um bug que ele não consegue buscar essas pessoas */
         $atende2 = DB::table('atendimentos')->where('status_atendimento', 2)
-            ->whereNull('afe')
             ->where('pref_tipo_atendente', $pref_m) // O Sexo de preferência é o mesmo do Atendente
             ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
             ->pluck('id')
@@ -247,10 +242,6 @@ class AtendimentoFraternoController extends Controller
             $atendimentoSelecionado = DB::table('atendimentos')
                 ->where('status_atendimento', 2) // Status tem que ser Aguardando Atendimento
                 ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
-                ->where(function ($query) {
-                    $query->whereNull('afe')  // AFE tem que ser null
-                        ->orWhere('afe', false); // Caso alguma funcionalidade inclua AFE como false, Fallback
-                })
                 ->where(function ($query) use ($atendente) {
                     $query->whereNull('id_atendente_pref') // Atendente preferido vazio
                         ->orWhere('id_atendente_pref', $atendente); // Atendente preferido sendo o usuário logado
