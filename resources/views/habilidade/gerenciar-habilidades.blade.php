@@ -21,8 +21,8 @@
                     <div class="col">
                         <br>
                         <input class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;" type="submit" value="Pesquisar">
-                        <a href="/gerenciar-mediunidades" class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;">Limpar</a>
-                        <a href="criar-mediunidade" class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;">Nova habilidade +</a>
+                        <a href="/gerenciar-habilidade" class="btn btn-light btn-sm me-md-2" style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin: 5px;">Limpar</a>
+                        <a href="criar-habilidade" class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;">Nova habilidade +</a>
                     </div>
                 </div>
             </form>
@@ -43,22 +43,22 @@
                 </thead>
                 <tbody>
                     Quantidade filtrada: {{ $contar }}</div>
-                    @foreach ($mediunidade as $mediunidades)
+                    @foreach ($habilidade as $habilidades)
                         <tr>
-                            <td>{{ $mediunidades->idp }}</td>
-                            <td>{{ $mediunidades->nome_completo }}</td>
+                            <td>{{ $habilidades->idp }}</td>
+                            <td>{{ $habilidades->nome_completo }}</td>
 
-                            <td>{{ $mediunidades->status ? 'Ativo' : 'Inativo' }}</td>
+                            <td>{{ $habilidades->status ? 'Ativo' : 'Inativo' }}</td>
                             <td>
-                                <a href="/editar-mediunidade/{{ $mediunidades->idp }}" class="btn btn-outline-warning btn-sm tooltips">
+                                <a href="/editar-habilidade/{{ $habilidades->idp }}" class="btn btn-outline-warning btn-sm tooltips">
                                     <span class="tooltiptext">Editar</span>
                                     <i class="bi bi-pencil" style="font-size: 1rem; color: #000;"></i>
                                 </a>
-                                <a href="/visualizar-mediunidade/{{ $mediunidades->idp }}" class="btn btn-outline-primary btn-sm tooltips">
+                                <a href="/visualizar-habilidade/{{ $habilidades->idp }}" class="btn btn-outline-primary btn-sm tooltips">
                                     <span class="tooltiptext">Visualizar</span>
                                     <i class="bi bi-search" style="font-size: 1rem; color: #000;"></i>
                                 </a>
-                                <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao{{ $mediunidades->idp }}">
+                                <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao{{ $habilidades->idp }}">
                                     <span class="tooltiptext">Deletar</span>
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color: #000;"></i>
                                 </button>
@@ -66,7 +66,7 @@
                         </tr>
 
                         <!-- Modal de Confirmação de Exclusão -->
-                        <div class="modal fade" id="confirmacaoDelecao{{ $mediunidades->idp }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="confirmacaoDelecao{{ $habilidades->idp }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header" style="background-color: #DC4C64;">
@@ -74,11 +74,11 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body" style="text-align: center;">
-                                        Tem certeza que deseja excluir o membro<br><span style="color: #DC4C64; font-weight: bold;">{{ $mediunidades->nome_completo }}</span>?
+                                        Tem certeza que deseja excluir o membro<br><span style="color: #DC4C64; font-weight: bold;">{{ $habilidades->nome_completo }}</span>?
                                     </div>
                                     <div class="modal-footer mt-3">
                                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                                        <a class="btn btn-primary" href="/deletar-mediunidade/{{ $mediunidades->idp }}">Confirmar</a>
+                                        <a class="btn btn-primary" href="/deletar-habilidade/{{ $habilidades->idp }}">Confirmar</a>
                                     </div>
                                 </div>
                             </div>
@@ -87,7 +87,7 @@
                 </tbody>
             </table>
         </div class="d-flex justify-content-center">
-        {{ $mediunidade->links('pagination::bootstrap-5') }}
+        {{ $habilidade->links('pagination::bootstrap-5') }}
     </div>
         </div>
     </div>
