@@ -20,7 +20,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\MembroController;
-use App\Http\Controllers\MediunidadePessoaController;
+use App\Http\Controllers\HabilidadePessoaController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\GerenciarEncaminhamentoController;
@@ -269,15 +269,15 @@ Route::middleware('rotas:29')->group(function () {
     Route::get('/criar-membro-grupo/{id}', [MembroController::class, 'createGrupo'])->name('');
 });
 
-// Gerenciar Mediunidades
+// Gerenciar Habilidades
 Route::middleware('rotas:15')->group(function () {
-    Route::get('/gerenciar-mediunidades', [MediunidadePessoaController::class, 'index'])->name('names');
-    Route::get('/editar-mediunidade/{id}', [MediunidadePessoaController::class, 'edit'])->name('');
-    Route::any('/atualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'update'])->name('atualizar-mediunidade');
-    Route::get('/criar-mediunidade', [MediunidadePessoaController::class, 'create'])->name('');
-    Route::post('/incluir-mediunidade', [MediunidadePessoaController::class, 'store'])->name('');
-    Route::any('/deletar-mediunidade/{id}', [MediunidadePessoaController::class, 'destroy'])->name('');
-    Route::get('/visualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'show'])->name('');
+    Route::get('/gerenciar-habilidade', [HabilidadePessoaController::class, 'index'])->name('names');
+    Route::get('/editar-habilidade/{id}', [HabilidadePessoaController::class, 'edit'])->name('');
+    Route::any('/atualizar-habilidade/{id}', [HabilidadePessoaController::class, 'update'])->name('atualizar-Habilidade');
+    Route::get('/criar-habilidade', [HabilidadePessoaController::class, 'create'])->name('');
+    Route::post('/incluir-habilidade', [HabilidadePessoaController::class, 'store'])->name('');
+    Route::any('/deletar-habilidade/{id}', [HabilidadePessoaController::class, 'destroy'])->name('');
+    Route::get('/visualizar-habilidade/{id}', [HabilidadePessoaController::class, 'show'])->name('');
 });
 
 // Gerenciar Encaminhamentos
