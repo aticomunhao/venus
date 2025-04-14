@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
 use function Laravel\Prompts\select;
 
-class MediunidadePessoaController extends Controller
+class HabilidadePessoaController extends Controller
 {
 
 
@@ -17,38 +17,38 @@ class MediunidadePessoaController extends Controller
     {
 
 
-        $tipos = DB::table('mediunidade_pessoa')
+        $tipos = DB::table('habilidade_pessoa')
             ->select('id_pessoa')->groupBy('id_pessoa')->get();
 
         $array = json_decode(json_encode($tipos), true);
 
 
-        $mediunidade = DB::table('pessoas AS p')
+        $habilidade = DB::table('pessoas AS p')
             ->select('id as idp', 'nome_completo', 'cpf', 'status')
             ->whereIn('id', $array)
             ->orderBy('p.nome_completo', 'ASC');
 
-        $contar = $mediunidade->distinct()->count('p.id');
+        $contar = $habilidade->distinct()->count('p.id');
         $nome = $request->nome_pesquisa;
         $cpf = $request->cpf_pesquisa;
 
 
         if($nome){
-            $mediunidade = $mediunidade->where('nome_completo', 'ilike', "%$nome%");
+            $habilidade = $habilidade->where('nome_completo', 'ilike', "%$nome%");
         }
         if($cpf){
-            $mediunidade = $mediunidade->where('cpf', 'ilike', "%$cpf%");
+            $habilidade = $habilidade->where('cpf', 'ilike', "%$cpf%");
         }
 
-        $contarQuery = clone $mediunidade;
+        $contarQuery = clone $habilidade;
         $contar = $contarQuery->distinct('p.id')->count('p.id');
 
 
-        $mediunidade = $mediunidade->paginate(50);
+        $habilidade = $habilidade->paginate(50);
 
 
 
-        return view('mediunidade.gerenciar-mediunidades', compact('nome', 'cpf',  'mediunidade','contar'));
+        return view('habilidade.gerenciar-habilidades', compact('nome', 'cpf',  'habilidade','contar'));
     }
 
 
@@ -58,17 +58,17 @@ class MediunidadePessoaController extends Controller
     public function create()
     {
 
-        $id_mediunidade = 1;
+        $id_habilidade = 1;
         $grupo = DB::select('select id, nome from grupo');
-        $mediunidade = DB::select('select * from mediunidade_pessoa');
-        $tipo_mediunidade = DB::select('select id, tipo from tipo_mediunidade');
+        $habilidade = DB::select('select * from habilidade_pessoa');
+        $tipo_habilidade = DB::select('select id, tipo from tipo_habilidade');
         $pessoas = DB::select('SELECT id AS idp, nome_completo, motivo_status, status FROM pessoas ORDER BY nome_completo ASC');
         $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao');
-        $mediunidade_pessoa = DB::select('select id as idme, data_inicio from mediunidade_pessoa');
+        $habilidade_pessoa = DB::select('select id as idme, data_inicio from habilidade_pessoa');
         $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
 
 
-        return view('mediunidade.criar-mediunidade', compact('tipo_status_pessoa', 'grupo', 'id_mediunidade', 'mediunidade', 'tipo_mediunidade', 'pessoas', 'tipo_funcao', 'mediunidade_pessoa'));
+        return view('habilidade.criar-habilidade', compact('tipo_status_pessoa', 'grupo', 'id_habilidade', 'habilidade', 'tipo_habilidade', 'pessoas', 'tipo_funcao', 'habilidade_pessoa'));
     }
 
 
@@ -79,16 +79,16 @@ class MediunidadePessoaController extends Controller
         try{
         // Obter os dados do formulário
         $id_pessoa = $request->input('id_pessoa');
-        $tipo_ids = $request->input('id_tp_mediunidade');
+        $tipo_ids = $request->input('id_tp_habilidade');
 
-        // Inserir dados na tabela 'mediunidade_pessoa'
+        // Inserir dados na tabela 'habilidade_pessoa'
         foreach ($tipo_ids as $tipo_id) {
             $datas_inicio = $request->input("data_inicio.{$tipo_id}");
 
             foreach ($datas_inicio as $data_inicio) {
-                DB::table('mediunidade_pessoa')->insert([
+                DB::table('habilidade_pessoa')->insert([
                     'id_pessoa' => $id_pessoa,
-                    'id_mediunidade' => $tipo_id,
+                    'id_habilidade' => $tipo_id,
                       'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
                 ]);
             }
@@ -96,7 +96,7 @@ class MediunidadePessoaController extends Controller
 
         // Mensagem de sucesso e redirecionamento
         app('flasher')->addSuccess("Cadastrado com Sucesso");
-        return redirect('gerenciar-mediunidades');
+        return redirect('gerenciar-habilidade');
     }
 
     catch(\Exception $e){
@@ -110,28 +110,28 @@ class MediunidadePessoaController extends Controller
     public function edit($id)
     {
         try{
-        $id_mediunidade = 1;
-        $mediunidade = DB::table('mediunidade_pessoa AS m')
+        $id_habilidade = 1;
+        $habilidade = DB::table('habilidade_pessoa AS m')
             ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_status_pessoa as tsp', 'p.status', '=', 'tsp.id')
-            ->select('p.nome_completo', 'm.id_pessoa', 'm.id_mediunidade', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'm.data_inicio', 'tsp.tipo')
+            ->select('p.nome_completo', 'm.id_pessoa', 'm.id_habilidade', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'm.data_inicio', 'tsp.tipo')
             ->where('m.id_pessoa', $id)
             ->first();
 
         $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
         $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
         $pessoas = DB::table('pessoas')->get();
-        $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
+        $tipo_habilidade = DB::table('tipo_habilidade')->get();
 
-        $mediunidadesIds = DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->get();
+        $habilidadesIds = DB::table('habilidade_pessoa')->where('id_pessoa', $id)->get();
 
         $arrayChecked = [];
 
-        foreach ($mediunidadesIds as $ids) {
-            $arrayChecked[] = $ids->id_mediunidade;
+        foreach ($habilidadesIds as $ids) {
+            $arrayChecked[] = $ids->id_habilidade;
         }
 
-        return view('mediunidade.editar-mediunidade', compact('mediunidadesIds', 'arrayChecked', 'id_mediunidade', 'mediunidade', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_mediunidade', 'pessoas'));
+        return view('habilidade.editar-habilidade', compact('habilidadesIds', 'arrayChecked', 'id_habilidade', 'habilidade', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_habilidade', 'pessoas'));
     }
     catch(\Exception $e){
 
@@ -146,26 +146,26 @@ class MediunidadePessoaController extends Controller
 
                 // Inicia a transação
                 DB::beginTransaction();
-                // Excluir registros anteriores na tabela 'mediunidade_pessoa' para o mesmo id_pessoa
-                DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->delete();
+                // Excluir registros anteriores na tabela 'habilidade_pessoa' para o mesmo id_pessoa
+                DB::table('habilidade_pessoa')->where('id_pessoa', $id)->delete();
 
                 // Obter os dados do formulário
                 $id_pessoa = $request->input('id_pessoa');
-                $tipo_ids = $request->input('id_tp_mediunidade');
+                $tipo_ids = $request->input('id_tp_habilidade');
 
                 //dd($request->all());
                 // Certifique-se de que tipo_ids é um array
                 if (is_array($tipo_ids)) {
-                    // Inserir dados na tabela 'mediunidade_pessoa'
+                    // Inserir dados na tabela 'habilidade_pessoa'
                     foreach ($tipo_ids as $tipo_id) {
                         $datas_inicio = $request->input("data_inicio.{$tipo_id}");
 
                         // Certifique-se de que datas_inicio é um array
                         if (is_array($datas_inicio)) {
                             foreach ($datas_inicio as $data_inicio) {
-                                DB::table('mediunidade_pessoa')->insert([
+                                DB::table('habilidade_pessoa')->insert([
                                     'id_pessoa' => $id,
-                                    'id_mediunidade' => $tipo_id,
+                                    'id_habilidade' => $tipo_id,
                                     'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
                                 ]);
                             }
@@ -191,7 +191,7 @@ class MediunidadePessoaController extends Controller
                 // Commit da transação
                 DB::commit();
 
-                return redirect('gerenciar-mediunidades');
+                return redirect('gerenciar-habilidade');
             } catch (\Exception $e) {
                 // Rollback em caso de erro
                 DB::rollBack();
@@ -207,28 +207,28 @@ class MediunidadePessoaController extends Controller
     public function show($id)
     {
         try{
-        $id_mediunidade = 1;
-        $mediunidade = DB::table('mediunidade_pessoa AS m')
+        $id_habilidade = 1;
+        $habilidade = DB::table('habilidade_pessoa AS m')
             ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
             ->leftJoin('tipo_status_pessoa as tsp', 'p.status', '=', 'tsp.id')
-            ->select('p.nome_completo', 'm.id_pessoa', 'm.id_mediunidade', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'tsp.tipo')
+            ->select('p.nome_completo', 'm.id_pessoa', 'm.id_habilidade', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'tsp.tipo')
             ->where('m.id_pessoa', $id)
             ->first();
 
         $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
         $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
         $pessoas = DB::table('pessoas')->get();
-        $tipo_mediunidade = DB::table('tipo_mediunidade')->get();
+        $tipo_habilidade = DB::table('tipo_habilidade')->get();
 
-        $mediunidadesIds = DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->get();
+        $habilidadesIds = DB::table('habilidade_pessoa')->where('id_pessoa', $id)->get();
 
 
         $arrayChecked = [];
 
-        foreach ($mediunidadesIds as $ids) {
-            $arrayChecked[] = $ids->id_mediunidade;
+        foreach ($habilidadesIds as $ids) {
+            $arrayChecked[] = $ids->id_habilidade;
         }
-        return view('mediunidade.visualizar-mediunidade', compact('mediunidadesIds', 'arrayChecked', 'id_mediunidade', 'mediunidade', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_mediunidade', 'pessoas'));
+        return view('habilidade.visualizar-habilidade', compact('habilidadesIds', 'arrayChecked', 'id_habilidade', 'habilidade', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_habilidade', 'pessoas'));
     }
 
     catch(\Exception $e){
@@ -252,20 +252,20 @@ class MediunidadePessoaController extends Controller
             'obs' => $id
 
         ]);
-        $mediunidade = DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->first();
+        $habilidade = DB::table('habilidade_pessoa')->where('id_pessoa', $id)->first();
 
 
-        if (!$mediunidade) {
+        if (!$habilidade) {
             app('flasher')->addError('Pessoa não foi encontrada.');
-            return redirect('/gerenciar-mediunidades');
+            return redirect('/gerenciar-habilidade');
         }
 
 
-        DB::table('mediunidade_pessoa')->where('id_pessoa', $id)->delete();
+        DB::table('habilidade_pessoa')->where('id_pessoa', $id)->delete();
 
 
         app('flasher')->addError('Excluído com sucesso.');
-        return redirect('/gerenciar-mediunidades');
+        return redirect('/gerenciar-habilidade');
     }
 
 
