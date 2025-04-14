@@ -16,13 +16,19 @@ class HabilidadePessoaController extends Controller
     public function index(Request $request)
     {
 
+        $setores = session()->get('acessoInterno')[session()->get('acessoAtual')];
+        $setores = array_column($setores, 'id_setor');
 
-        $tipos = DB::table('habilidade_pessoa')
-            ->select('id_pessoa')->groupBy('id_pessoa')->get();
+        $tipos = DB::table('habilidade_pessoa as hp')
+        ->leftJoin('tipo_habilidade as th', 'hp.id_habilidade', 'th.id')
+            ->select('hp.id_pessoa')
+            ->whereIn('th.id_setor', $setores)
+            ->groupBy('hp.id_pessoa')
+            ->get();
 
         $array = json_decode(json_encode($tipos), true);
 
-
+        //dd($array);
         $habilidade = DB::table('pessoas AS p')
             ->select('id as idp', 'nome_completo', 'cpf', 'status')
             ->whereIn('id', $array)
@@ -33,10 +39,10 @@ class HabilidadePessoaController extends Controller
         $cpf = $request->cpf_pesquisa;
 
 
-        if($nome){
+        if ($nome) {
             $habilidade = $habilidade->where('nome_completo', 'ilike', "%$nome%");
         }
-        if($cpf){
+        if ($cpf) {
             $habilidade = $habilidade->where('cpf', 'ilike', "%$cpf%");
         }
 
@@ -48,7 +54,7 @@ class HabilidadePessoaController extends Controller
 
 
 
-        return view('habilidade.gerenciar-habilidades', compact('nome', 'cpf',  'habilidade','contar'));
+        return view('habilidade.gerenciar-habilidades', compact('nome', 'cpf',  'habilidade', 'contar'));
     }
 
 
@@ -57,6 +63,7 @@ class HabilidadePessoaController extends Controller
 
     public function create()
     {
+
 
         $id_habilidade = 1;
         $grupo = DB::select('select id, nome from grupo');
@@ -76,167 +83,162 @@ class HabilidadePessoaController extends Controller
 
     public function store(Request $request)
     {
-        try{
-        // Obter os dados do formulário
-        $id_pessoa = $request->input('id_pessoa');
-        $tipo_ids = $request->input('id_tp_habilidade');
+        try {
+            // Obter os dados do formulário
+            $id_pessoa = $request->input('id_pessoa');
+            $tipo_ids = $request->input('id_tp_habilidade');
 
-        // Inserir dados na tabela 'habilidade_pessoa'
-        foreach ($tipo_ids as $tipo_id) {
-            $datas_inicio = $request->input("data_inicio.{$tipo_id}");
+            // Inserir dados na tabela 'habilidade_pessoa'
+            foreach ($tipo_ids as $tipo_id) {
+                $datas_inicio = $request->input("data_inicio.{$tipo_id}");
 
-            foreach ($datas_inicio as $data_inicio) {
-                DB::table('habilidade_pessoa')->insert([
-                    'id_pessoa' => $id_pessoa,
-                    'id_habilidade' => $tipo_id,
-                      'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
-                ]);
+                foreach ($datas_inicio as $data_inicio) {
+                    DB::table('habilidade_pessoa')->insert([
+                        'id_pessoa' => $id_pessoa,
+                        'id_habilidade' => $tipo_id,
+                        'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
+                    ]);
+                }
             }
-        }
 
-        // Mensagem de sucesso e redirecionamento
-        app('flasher')->addSuccess("Cadastrado com Sucesso");
-        return redirect('gerenciar-habilidade');
+            // Mensagem de sucesso e redirecionamento
+            app('flasher')->addSuccess("Cadastrado com Sucesso");
+            return redirect('gerenciar-habilidade');
+        } catch (\Exception $e) {
+
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
+        }
     }
-
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
-            }
-        }
 
 
     public function edit($id)
     {
-        try{
-        $id_habilidade = 1;
-        $habilidade = DB::table('habilidade_pessoa AS m')
-            ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-            ->leftJoin('tipo_status_pessoa as tsp', 'p.status', '=', 'tsp.id')
-            ->select('p.nome_completo', 'm.id_pessoa', 'm.id_habilidade', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'm.data_inicio', 'tsp.tipo')
-            ->where('m.id_pessoa', $id)
-            ->first();
+        try {
+            $id_habilidade = 1;
+            $habilidade = DB::table('habilidade_pessoa AS m')
+                ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
+                ->leftJoin('tipo_status_pessoa as tsp', 'p.status', '=', 'tsp.id')
+                ->select('p.nome_completo', 'm.id_pessoa', 'm.id_habilidade', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'm.data_inicio', 'tsp.tipo')
+                ->where('m.id_pessoa', $id)
+                ->first();
 
-        $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
-        $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-        $pessoas = DB::table('pessoas')->get();
-        $tipo_habilidade = DB::table('tipo_habilidade')->get();
+            $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
+            $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
+            $pessoas = DB::table('pessoas')->get();
+            $tipo_habilidade = DB::table('tipo_habilidade')->get();
 
-        $habilidadesIds = DB::table('habilidade_pessoa')->where('id_pessoa', $id)->get();
+            $habilidadesIds = DB::table('habilidade_pessoa')->where('id_pessoa', $id)->get();
 
-        $arrayChecked = [];
+            $arrayChecked = [];
 
-        foreach ($habilidadesIds as $ids) {
-            $arrayChecked[] = $ids->id_habilidade;
-        }
-
-        return view('habilidade.editar-habilidade', compact('habilidadesIds', 'arrayChecked', 'id_habilidade', 'habilidade', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_habilidade', 'pessoas'));
-    }
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+            foreach ($habilidadesIds as $ids) {
+                $arrayChecked[] = $ids->id_habilidade;
             }
+
+            return view('habilidade.editar-habilidade', compact('habilidadesIds', 'arrayChecked', 'id_habilidade', 'habilidade', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_habilidade', 'pessoas'));
+        } catch (\Exception $e) {
+
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
         }
+    }
 
-        public function update(Request $request, string $id)
-        {
-            try {
+    public function update(Request $request, string $id)
+    {
+        try {
 
-                // Inicia a transação
-                DB::beginTransaction();
-                // Excluir registros anteriores na tabela 'habilidade_pessoa' para o mesmo id_pessoa
-                DB::table('habilidade_pessoa')->where('id_pessoa', $id)->delete();
+            // Inicia a transação
+            DB::beginTransaction();
+            // Excluir registros anteriores na tabela 'habilidade_pessoa' para o mesmo id_pessoa
+            DB::table('habilidade_pessoa')->where('id_pessoa', $id)->delete();
 
-                // Obter os dados do formulário
-                $id_pessoa = $request->input('id_pessoa');
-                $tipo_ids = $request->input('id_tp_habilidade');
+            // Obter os dados do formulário
+            $id_pessoa = $request->input('id_pessoa');
+            $tipo_ids = $request->input('id_tp_habilidade');
 
-                //dd($request->all());
-                // Certifique-se de que tipo_ids é um array
-                if (is_array($tipo_ids)) {
-                    // Inserir dados na tabela 'habilidade_pessoa'
-                    foreach ($tipo_ids as $tipo_id) {
-                        $datas_inicio = $request->input("data_inicio.{$tipo_id}");
+            //dd($request->all());
+            // Certifique-se de que tipo_ids é um array
+            if (is_array($tipo_ids)) {
+                // Inserir dados na tabela 'habilidade_pessoa'
+                foreach ($tipo_ids as $tipo_id) {
+                    $datas_inicio = $request->input("data_inicio.{$tipo_id}");
 
-                        // Certifique-se de que datas_inicio é um array
-                        if (is_array($datas_inicio)) {
-                            foreach ($datas_inicio as $data_inicio) {
-                                DB::table('habilidade_pessoa')->insert([
-                                    'id_pessoa' => $id,
-                                    'id_habilidade' => $tipo_id,
-                                    'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
-                                ]);
-                            }
+                    // Certifique-se de que datas_inicio é um array
+                    if (is_array($datas_inicio)) {
+                        foreach ($datas_inicio as $data_inicio) {
+                            DB::table('habilidade_pessoa')->insert([
+                                'id_pessoa' => $id,
+                                'id_habilidade' => $tipo_id,
+                                'data_inicio' => $data_inicio ? date('Y-m-d', strtotime($data_inicio)) : null,
+                            ]);
                         }
                     }
                 }
-
-                // Atualizar o status e motivo na tabela 'pessoas'
-                $status = $request->input('tipo_status_pessoa');
-                $motivo = $request->input('motivo_status');
-                DB::table('pessoas')->where('id', $id)->update(['status' => $status, 'motivo_status' => $motivo]);
-
-                // Gravar no histórico
-                $ida = session()->get('usuario.id_pessoa');
-                $data = Carbon::today();
-                DB::table('historico_venus')->insert([
-                    'id_usuario' => $ida,
-                    'data' => $data,
-                    'fato' => 18,
-                    'pessoa' => $id,
-                ]);
-
-                // Commit da transação
-                DB::commit();
-
-                return redirect('gerenciar-habilidade');
-            } catch (\Exception $e) {
-                // Rollback em caso de erro
-                DB::rollBack();
-
-                $code = $e->getCode();
-                $message = $e->getMessage();
-                return view('administrativo-erro.erro-inesperado', compact('code', 'message'));
             }
+
+            // Atualizar o status e motivo na tabela 'pessoas'
+            $status = $request->input('tipo_status_pessoa');
+            $motivo = $request->input('motivo_status');
+            DB::table('pessoas')->where('id', $id)->update(['status' => $status, 'motivo_status' => $motivo]);
+
+            // Gravar no histórico
+            $ida = session()->get('usuario.id_pessoa');
+            $data = Carbon::today();
+            DB::table('historico_venus')->insert([
+                'id_usuario' => $ida,
+                'data' => $data,
+                'fato' => 18,
+                'pessoa' => $id,
+            ]);
+
+            // Commit da transação
+            DB::commit();
+
+            return redirect('gerenciar-habilidade');
+        } catch (\Exception $e) {
+            // Rollback em caso de erro
+            DB::rollBack();
+
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            return view('administrativo-erro.erro-inesperado', compact('code', 'message'));
         }
+    }
 
 
 
     public function show($id)
     {
-        try{
-        $id_habilidade = 1;
-        $habilidade = DB::table('habilidade_pessoa AS m')
-            ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
-            ->leftJoin('tipo_status_pessoa as tsp', 'p.status', '=', 'tsp.id')
-            ->select('p.nome_completo', 'm.id_pessoa', 'm.id_habilidade', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'tsp.tipo')
-            ->where('m.id_pessoa', $id)
-            ->first();
+        try {
+            $id_habilidade = 1;
+            $habilidade = DB::table('habilidade_pessoa AS m')
+                ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
+                ->leftJoin('tipo_status_pessoa as tsp', 'p.status', '=', 'tsp.id')
+                ->select('p.nome_completo', 'm.id_pessoa', 'm.id_habilidade', 'm.id AS idm', 'm.id_pessoa', 'p.status', 'p.motivo_status', 'tsp.tipo')
+                ->where('m.id_pessoa', $id)
+                ->first();
 
-        $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
-        $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
-        $pessoas = DB::table('pessoas')->get();
-        $tipo_habilidade = DB::table('tipo_habilidade')->get();
+            $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
+            $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
+            $pessoas = DB::table('pessoas')->get();
+            $tipo_habilidade = DB::table('tipo_habilidade')->get();
 
-        $habilidadesIds = DB::table('habilidade_pessoa')->where('id_pessoa', $id)->get();
+            $habilidadesIds = DB::table('habilidade_pessoa')->where('id_pessoa', $id)->get();
 
 
-        $arrayChecked = [];
+            $arrayChecked = [];
 
-        foreach ($habilidadesIds as $ids) {
-            $arrayChecked[] = $ids->id_habilidade;
-        }
-        return view('habilidade.visualizar-habilidade', compact('habilidadesIds', 'arrayChecked', 'id_habilidade', 'habilidade', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_habilidade', 'pessoas'));
-    }
-
-    catch(\Exception $e){
-
-        $code = $e->getCode( );
-        return view('administrativo-erro.erro-inesperado', compact('code'));
+            foreach ($habilidadesIds as $ids) {
+                $arrayChecked[] = $ids->id_habilidade;
             }
+            return view('habilidade.visualizar-habilidade', compact('habilidadesIds', 'arrayChecked', 'id_habilidade', 'habilidade', 'tipo_motivo_status_pessoa', 'tipo_status_pessoa',  'tipo_habilidade', 'pessoas'));
+        } catch (\Exception $e) {
+
+            $code = $e->getCode();
+            return view('administrativo-erro.erro-inesperado', compact('code'));
         }
+    }
 
 
     public function destroy(string $id)
@@ -267,6 +269,4 @@ class HabilidadePessoaController extends Controller
         app('flasher')->addError('Excluído com sucesso.');
         return redirect('/gerenciar-habilidade');
     }
-
-
 }
