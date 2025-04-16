@@ -93,6 +93,19 @@ class HabilidadePessoaController extends Controller
             // Inserir dados na tabela 'habilidade_pessoa'
             foreach ($tipo_ids as $tipo_id) {
                 $datas_inicio = $request->input("data_inicio.{$tipo_id}");
+                // Verifica se já existe uma habilidade desse tipo para essa pessoa
+                $existe = DB::table('habilidade_pessoa')
+                    ->where('id_pessoa', $id_pessoa)
+                    ->where('id_habilidade', $tipo_id)
+                    ->exists();
+
+                if ($existe) {
+                    // Se já existe, pula para o próximo tipo
+                    continue;
+                }
+
+                // Insere apenas a primeira data (ou a única, se for o caso)
+                $data_inicio = $datas_inicio[0] ?? null;
 
                 foreach ($datas_inicio as $data_inicio) {
                     DB::table('habilidade_pessoa')->insert([
