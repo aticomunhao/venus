@@ -163,7 +163,7 @@
         </div>
     </div>
 
-    <div class="d-flex justify-content-center">
+</div class="d-flex justify-content-center">
         {{ $lista->links('pagination::bootstrap-5') }}
     </div>
 @endsection
