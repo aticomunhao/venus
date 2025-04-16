@@ -20,7 +20,7 @@ class HabilidadePessoaController extends Controller
         $setores = array_column($setores, 'id_setor');
 
         $tipos = DB::table('habilidade_pessoa as hp')
-        ->leftJoin('tipo_habilidade as th', 'hp.id_habilidade', 'th.id')
+            ->leftJoin('tipo_habilidade as th', 'hp.id_habilidade', 'th.id')
             ->select('hp.id_pessoa')
             ->whereIn('th.id_setor', $setores)
             ->groupBy('hp.id_pessoa')
@@ -64,11 +64,13 @@ class HabilidadePessoaController extends Controller
     public function create()
     {
 
+        $setores = session()->get('acessoInterno')[session()->get('acessoAtual')];
+        $setores = array_column($setores, 'id_setor');
 
         $id_habilidade = 1;
         $grupo = DB::select('select id, nome from grupo');
         $habilidade = DB::select('select * from habilidade_pessoa');
-        $tipo_habilidade = DB::select('select id, tipo from tipo_habilidade');
+        $tipo_habilidade = DB::table('tipo_habilidade')->select('id', 'tipo')->whereIn('id_setor', $setores)->orderBy('id_setor')->orderBy('tipo')->get();
         $pessoas = DB::select('SELECT id AS idp, nome_completo, motivo_status, status FROM pessoas ORDER BY nome_completo ASC');
         $tipo_funcao = DB::select('select id as idf, tipo_funcao, nome, sigla from tipo_funcao');
         $habilidade_pessoa = DB::select('select id as idme, data_inicio from habilidade_pessoa');
@@ -115,6 +117,10 @@ class HabilidadePessoaController extends Controller
     public function edit($id)
     {
         try {
+
+            $setores = session()->get('acessoInterno')[session()->get('acessoAtual')];
+            $setores = array_column($setores, 'id_setor');
+
             $id_habilidade = 1;
             $habilidade = DB::table('habilidade_pessoa AS m')
                 ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
@@ -126,7 +132,7 @@ class HabilidadePessoaController extends Controller
             $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
             $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
             $pessoas = DB::table('pessoas')->get();
-            $tipo_habilidade = DB::table('tipo_habilidade')->get();
+            $tipo_habilidade = DB::table('tipo_habilidade')->select('id', 'tipo')->whereIn('id_setor', $setores)->orderBy('id_setor')->orderBy('tipo')->get();
 
             $habilidadesIds = DB::table('habilidade_pessoa')->where('id_pessoa', $id)->get();
 
@@ -148,10 +154,13 @@ class HabilidadePessoaController extends Controller
     {
         try {
 
+            $setores = session()->get('acessoInterno')[session()->get('acessoAtual')];
+            $setores = array_column($setores, 'id_setor');
+
             // Inicia a transação
             DB::beginTransaction();
             // Excluir registros anteriores na tabela 'habilidade_pessoa' para o mesmo id_pessoa
-            DB::table('habilidade_pessoa')->where('id_pessoa', $id)->delete();
+            DB::table('habilidade_pessoa as hp')->leftJoin('tipo_habilidade as th', 'hp.id_habilidade', 'th.id')->where('id_pessoa', $id)->whereIn('id_setor', $setores)->delete();
 
             // Obter os dados do formulário
             $id_pessoa = $request->input('id_pessoa');
@@ -211,6 +220,10 @@ class HabilidadePessoaController extends Controller
     public function show($id)
     {
         try {
+
+            $setores = session()->get('acessoInterno')[session()->get('acessoAtual')];
+            $setores = array_column($setores, 'id_setor');
+
             $id_habilidade = 1;
             $habilidade = DB::table('habilidade_pessoa AS m')
                 ->leftJoin('pessoas AS p', 'm.id_pessoa', '=', 'p.id')
@@ -222,7 +235,7 @@ class HabilidadePessoaController extends Controller
             $tipo_motivo_status_pessoa = DB::select('select id,motivo  from tipo_motivo_status_pessoa');
             $tipo_status_pessoa = DB::select('select id,tipo as tipos from tipo_status_pessoa');
             $pessoas = DB::table('pessoas')->get();
-            $tipo_habilidade = DB::table('tipo_habilidade')->get();
+            $tipo_habilidade = DB::table('tipo_habilidade')->select('id', 'tipo')->whereIn('id_setor', $setores)->orderBy('id_setor')->orderBy('tipo')->get();
 
             $habilidadesIds = DB::table('habilidade_pessoa')->where('id_pessoa', $id)->get();
 
