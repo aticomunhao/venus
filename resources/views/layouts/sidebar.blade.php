@@ -59,9 +59,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Trabalhador</a></li>
                             @endif
                             @if (in_array(47, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de Voluntários</a>
-                            </li>
-                        @endif
+                                <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de
+                                        Voluntários</a>
+                                </li>
+                            @endif
                             @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-tratamento">Relatório de
                                         Tratamentos</a>
@@ -73,8 +74,9 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(34, $acesso))
-                            <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros por Setor</a>
-                            </li>
+                                <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros
+                                        por Setor</a>
+                                </li>
                             @endif
                             @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
@@ -91,54 +93,58 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                 </ul>
             @endif
             @if (in_array(31, $setores))
-            <ul class="navbar-nav" id="DAC">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="2" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">Gerenciar DAC</a>
-                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                <ul class="navbar-nav" id="DAC">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="2" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Gerenciar DAC</a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
 
-                        @if (in_array(14, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
-                            </li>
-                        @endif
+                            @if (in_array(14, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
+                                </li>
+                            @endif
 
-                        @if (in_array(3, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-pessoas">Pessoas</a></li>
-                        @endif
+                            @if (in_array(3, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-pessoas">Pessoas</a></li>
+                            @endif
+                            @if (in_array(15, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-habilidade">Habilidades</a></li>
+                            @endif
+                            @if (in_array(30, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença
+                                        Trabalhador</a></li>
+                            @endif
 
-                        @if (in_array(30, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença
-                                    Trabalhador</a></li>
-                        @endif
 
-
-                        @if (in_array(47, $acesso))
-                        <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de Voluntários</a>
-                        </li>
-                    @endif
-                        @if (in_array(34, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
-                                    Membros</a>
-                            </li>
-                        @endif
-                        @if (in_array(34, $acesso))
-                        <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros por Setor</a>
-                        </li>
-                        @endif
-                        @if (in_array(35, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
-                                    Reuniões</a>
-                            </li>
-                        @endif
-                        @if (in_array(48, $acesso))
-                            <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
-                                    Vagas em Grupos</a>
-                            </li>
-                        @endif
-                    </ul>
-                </li>
-            </ul>
-        @endif
+                            @if (in_array(47, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de
+                                        Voluntários</a>
+                                </li>
+                            @endif
+                            @if (in_array(34, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
+                                        Membros</a>
+                                </li>
+                            @endif
+                            @if (in_array(34, $acesso))
+                                <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros
+                                        por Setor</a>
+                                </li>
+                            @endif
+                            @if (in_array(35, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
+                                        Reuniões</a>
+                                </li>
+                            @endif
+                            @if (in_array(48, $acesso))
+                                <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
+                                        Vagas em Grupos</a>
+                                </li>
+                            @endif
+                        </ul>
+                    </li>
+                </ul>
+            @endif
             @if (in_array(7, $setores))
                 <ul class="navbar-nav" id="DAO">
                     <li class="nav-item dropdown">
@@ -199,9 +205,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(47, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de Voluntários</a>
-                            </li>
-                        @endif
+                                <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de
+                                        Voluntários</a>
+                                </li>
+                            @endif
                             @if (in_array(46, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-atendimento">Relatório de
                                         Atendimentos</a>
@@ -227,8 +234,9 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(34, $acesso))
-                            <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros por Setor</a>
-                            </li>
+                                <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros
+                                        por Setor</a>
+                                </li>
                             @endif
                             @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
@@ -236,9 +244,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(51, $acesso))
-                            <li><a class="dropdown-item" href="/visualizarRI-tratamento">Visualizar Tratamentos</a>
-                            </li>
-                        @endif
+                                <li><a class="dropdown-item" href="/visualizarRI-tratamento">Visualizar
+                                        Tratamentos</a>
+                                </li>
+                            @endif
                             @if (in_array(48, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
                                         Vagas em Grupos</a>
@@ -298,9 +307,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-reunioes">Gerenciar Reuniões </a></li>
                             @endif --}}
                             @if (in_array(47, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de Voluntários</a>
-                            </li>
-                        @endif
+                                <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de
+                                        Voluntários</a>
+                                </li>
+                            @endif
                             @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-tratamento">Relatório de
                                         Tratamentos</a>
@@ -311,8 +321,9 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Membros</a></li>
                             @endif
                             @if (in_array(34, $acesso))
-                            <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros por Setor</a>
-                            </li>
+                                <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros
+                                        por Setor</a>
+                                </li>
                             @endif
                             @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
@@ -323,7 +334,8 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Grupos</a></li>
                             @endif
                             @if (in_array(52, $acesso))
-                                <li><a class="dropdown-item" href='/relatorio-passes'>Relatório Quantidade Passes</a></li>
+                                <li><a class="dropdown-item" href='/relatorio-passes'>Relatório Quantidade Passes</a>
+                                </li>
                             @endif
 
                         </ul>
@@ -331,54 +343,56 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                 </ul>
             @endif
             @if (in_array(32, $setores))
-            <ul class="navbar-nav" id="DED">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="2" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">Gerenciar DED</a>
-                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                <ul class="navbar-nav" id="DED">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="2" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Gerenciar DED</a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
 
-                        @if (in_array(14, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
-                            </li>
-                        @endif
+                            @if (in_array(14, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
+                                </li>
+                            @endif
 
-                        @if (in_array(3, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-pessoas">Pessoas</a></li>
-                        @endif
+                            @if (in_array(3, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-pessoas">Pessoas</a></li>
+                            @endif
 
-                        @if (in_array(30, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença
-                                    Trabalhador</a></li>
-                        @endif
+                            @if (in_array(30, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença
+                                        Trabalhador</a></li>
+                            @endif
 
 
-                        @if (in_array(47, $acesso))
-                        <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de Voluntários</a>
-                        </li>
-                    @endif
-                        @if (in_array(34, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
-                                    Membros</a>
-                            </li>
-                        @endif
-                        @if (in_array(34, $acesso))
-                        <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros por Setor</a>
-                        </li>
-                        @endif
-                        @if (in_array(35, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
-                                    Reuniões</a>
-                            </li>
-                        @endif
-                        @if (in_array(48, $acesso))
-                            <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
-                                    Vagas em Grupos</a>
-                            </li>
-                        @endif
-                    </ul>
-                </li>
-            </ul>
-        @endif
+                            @if (in_array(47, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-balanco-voluntarios">Balanço de
+                                        Voluntários</a>
+                                </li>
+                            @endif
+                            @if (in_array(34, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
+                                        Membros</a>
+                                </li>
+                            @endif
+                            @if (in_array(34, $acesso))
+                                <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros
+                                        por Setor</a>
+                                </li>
+                            @endif
+                            @if (in_array(35, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
+                                        Reuniões</a>
+                                </li>
+                            @endif
+                            @if (in_array(48, $acesso))
+                                <li><a class="dropdown-item" href='/relatorio-vagas-grupos'>Relatório de
+                                        Vagas em Grupos</a>
+                                </li>
+                            @endif
+                        </ul>
+                    </li>
+                </ul>
+            @endif
             <ul class="navbar-nav" id="ADM">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="3" role="button"
