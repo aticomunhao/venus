@@ -398,6 +398,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                     <a class="nav-link dropdown-toggle" href="#" id="3" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">Gerenciar ATI</a>
                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                        @if (in_array(19, $acesso))
+                            <li><a class="dropdown-item" href="/relatorio-salas-cronograma">Calendário</a>
+                            </li>
+                        @endif
                         @if (in_array(11, $acesso))
                             <li><a class="dropdown-item" href="/gerenciar-fatos">Fatos</a></li>
                         @endif
@@ -424,6 +428,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             <li><a class="dropdown-item" href="/gerenciar-reunioes">Reuniões </a>
                             </li>
                         @endif
+
                     </ul>
                 </li>
             </ul>
