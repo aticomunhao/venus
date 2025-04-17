@@ -36,6 +36,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Especifico</a>
                                 </li>
                             @endif
+                            @if (in_array(33, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-salas-cronograma">Calendário</a>
+                                </li>
+                            @endif
                             @if (in_array(23, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Encaminhamentos
                                     </a></li>
@@ -103,7 +107,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
                                 </li>
                             @endif
-
+                            @if (in_array(33, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-salas-cronograma">Calendário</a>
+                                </li>
+                            @endif
                             @if (in_array(3, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-pessoas">Pessoas</a></li>
                             @endif
@@ -177,6 +184,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             @if (in_array(16, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">
                                         Encaminhamentos</a>
+                                </li>
+                            @endif
+                            @if (in_array(33, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-salas-cronograma">Calendário</a>
                                 </li>
                             @endif
                             @if (in_array(9, $acesso))
@@ -269,6 +280,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
                                 </li>
                             @endif
+                            @if (in_array(33, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-salas-cronograma">Calendário</a>
+                                </li>
+                            @endif
                             @if (in_array(22, $acesso) or in_array(40, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Encaminhamentos</a>
                                 </li>
@@ -353,7 +368,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
                                 </li>
                             @endif
-
+                            @if (in_array(33, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-salas-cronograma">Calendário</a>
+                                </li>
+                            @endif
                             @if (in_array(3, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-pessoas">Pessoas</a></li>
                             @endif
@@ -398,7 +416,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                     <a class="nav-link dropdown-toggle" href="#" id="3" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">Gerenciar ATI</a>
                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                        @if (in_array(19, $acesso))
+                        @if (in_array(33, $acesso))
                             <li><a class="dropdown-item" href="/relatorio-salas-cronograma">Calendário</a>
                             </li>
                         @endif
