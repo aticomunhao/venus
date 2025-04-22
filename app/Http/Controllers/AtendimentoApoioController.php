@@ -210,4 +210,63 @@ class AtendimentoApoioController extends Controller
     {
         //
     }
+
+    public function testeGer(){
+        return view('teste.teste');
+    }
+    public function teste1(){
+        return view('teste.carregamento');
+    }
+    public function testeInput(){
+
+        $habilidades = DB::table('tipo_habilidade')->get();
+        $cronogramas = DB::table('grupo AS g')
+            ->leftJoin('setor AS s', 'g.id_setor', 's.id')
+            ->leftJoin('cronograma as cro', 'g.id', '=', 'cro.id_grupo')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+            ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
+            ->select(
+                'cro.id AS idg',
+                'g.nome AS nomeg',
+                's.sigla',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'sl.numero as sala',
+                'td.nome as dia_semana',
+                'ts.descricao AS descricao_status',
+                DB::raw("(CASE WHEN cro.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status")
+            )
+            ->orderBy('g.nome', 'asc')
+            ->get();
+        return view('teste.inputs', compact('habilidades', 'cronogramas'));
+    }
+
+
+    public function testeInput2(){
+
+        $habilidades = DB::table('tipo_habilidade')->get();
+        $cronogramas = DB::table('grupo AS g')
+            ->leftJoin('setor AS s', 'g.id_setor', 's.id')
+            ->leftJoin('cronograma as cro', 'g.id', '=', 'cro.id_grupo')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+            ->leftJoin('tipo_status_grupo AS ts', 'g.status_grupo', 'ts.id')
+            ->select(
+                'cro.id AS idg',
+                'g.nome AS nomeg',
+                's.sigla',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'sl.numero as sala',
+                'td.nome as dia_semana',
+                'ts.descricao AS descricao_status',
+                DB::raw("(CASE WHEN cro.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status")
+            )
+            ->orderBy('g.nome', 'asc')
+            ->get();
+        return view('teste.inputs2', compact('habilidades', 'cronogramas'));
+    }
+
+
 }

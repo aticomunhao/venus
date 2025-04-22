@@ -483,3 +483,9 @@ Route::middleware('rotas:48')->group(function () {
 Route::middleware('rotas:53-36')->group(function () {
     Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
 });
+
+
+Route::any('/teste-ger', [AtendimentoApoioController::class, 'testeGer']);
+Route::any('/teste-1', [AtendimentoApoioController::class, 'teste1']);
+Route::any('/teste-input', [AtendimentoApoioController::class, 'testeInput']);
+Route::any('/teste-input2', [AtendimentoApoioController::class, 'testeInput2']);
