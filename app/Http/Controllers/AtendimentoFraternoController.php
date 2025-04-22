@@ -172,8 +172,15 @@ class AtendimentoFraternoController extends Controller
         $atendente = session()->get('usuario.id_associado'); // Id associado de quem está logado
         $pref_m = session()->get('usuario.sexo'); // Dados se a pessoa é [ 1 => 'Masculino', 2 => 'Feminino', 3 => 'Outros']
 
-        // Usado para validar se o atendente está em uma sala, e retorna o tipo de atendimento
+        // Usado para validar se o atendente está em uma sala, e retorna o id sala para o atendimento
         $sala = DB::table('atendente_dia AS atd')
+            ->whereDate('dh_inicio', Carbon::today()->toDateString()) // Se o item de sala dele é do dia de hoje
+            ->whereNull('dh_fim') // Não pode ter sido finalizado
+            ->where('id_associado', $atendente) // Apenas para o usuário logado
+            ->value('id_sala');
+
+        // Usado para validar se o atendente está em uma sala, e retorna o id sala para o atendimento
+        $atendimento = DB::table('atendente_dia AS atd')
             ->whereDate('dh_inicio', Carbon::today()->toDateString()) // Se o item de sala dele é do dia de hoje
             ->whereNull('dh_fim') // Não pode ter sido finalizado
             ->where('id_associado', $atendente) // Apenas para o usuário logado
@@ -194,14 +201,14 @@ class AtendimentoFraternoController extends Controller
             ->where('status_atendimento', 2)
             ->whereNull('id_atendente_pref') // Atendente preferido null
             ->whereNull('pref_tipo_atendente') // Sexo de atendimento preferido null
-            ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
+            ->where('id_tipo_atendimento', $atendimento) // Apenas os do mesmo tipo que o de trabalho do atendente
             ->pluck('id')
             ->toArray();
 
         // Devolve os IDs que estão Aguardando Atendimento
         $atende1 = DB::table('atendimentos')->where('status_atendimento', 2)
             ->where('id_atendente_pref', $atendente) // O atendente preferido é o usuário logado
-            ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
+            ->where('id_tipo_atendimento', $atendimento) // Apenas os do mesmo tipo que o de trabalho do atendente
             ->pluck('id')
             ->toArray();
 
@@ -211,7 +218,7 @@ class AtendimentoFraternoController extends Controller
                     gerando um bug que ele não consegue buscar essas pessoas */
         $atende2 = DB::table('atendimentos')->where('status_atendimento', 2)
             ->where('pref_tipo_atendente', $pref_m) // O Sexo de preferência é o mesmo do Atendente
-            ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
+            ->where('id_tipo_atendimento', $atendimento) // Apenas os do mesmo tipo que o de trabalho do atendente
             ->pluck('id')
             ->toArray();
 
@@ -241,7 +248,7 @@ class AtendimentoFraternoController extends Controller
             // Atualiza os atendimentos para o Atendente
             $atendimentoSelecionado = DB::table('atendimentos')
                 ->where('status_atendimento', 2) // Status tem que ser Aguardando Atendimento
-                ->where('id_tipo_atendimento', $sala) // Apenas os do mesmo tipo que o de trabalho do atendente
+                ->where('id_tipo_atendimento', $atendimento) // Apenas os do mesmo tipo que o de trabalho do atendente
                 ->where(function ($query) use ($atendente) {
                     $query->whereNull('id_atendente_pref') // Atendente preferido vazio
                         ->orWhere('id_atendente_pref', $atendente); // Atendente preferido sendo o usuário logado
