@@ -49,6 +49,7 @@ class GerenciarEntrevistaController extends Controller
                 'atendimentos.dh_inicio as inicio', // DateTime do atendimento
                 'entrevistas.id as ident', // ID entrevista, usado na view na tabela
                 'pessoa_pessoa.celular',
+                'pessoa_pessoa.cpf',
                 'pessoa_pessoa.id as id_pessoa',
                 'ddd.descricao as ddd',
                 'encaminhamento.id_tipo_entrevista',
@@ -75,6 +76,16 @@ class GerenciarEntrevistaController extends Controller
         if ($request->nome_pesquisa) {
             $informacoes->whereRaw("UNACCENT(LOWER(pessoa_pessoa.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%{$request->nome_pesquisa}%"]);
         }
+        if ($request->cpf) {
+            $cpfLimpo = preg_replace('/[^0-9]/', '', $request->cpf); // Remove pontos e traços
+
+            $informacoes->whereRaw(
+                "REGEXP_REPLACE(pessoa_pessoa.cpf, '[^0-9]', '', 'g') ILIKE ?",
+                ["%$cpfLimpo%"]
+            );
+        }
+
+
         if ($request->tipo_entrevista) { // Ex.: DIAMO, NUTRES
             $informacoes->where('tipo_entrevista.id', $request->tipo_entrevista);
         }
@@ -607,7 +618,7 @@ class GerenciarEntrevistaController extends Controller
         $dt = Carbon::createFromFormat('Y-m-d H:i:s', $entrevista->data . ' ' . $entrevista->hora);
 
         // A tabela Atendimentos pede o ID associado, logo, é necessária busca em banco desse dado
-        $id_entrevistador = DB::table('membro')->where('id', $entrevista->id_entrevistador)->select('id_associado')->first();
+        $id_entrevistador = DB::table('membro')->where('id_associado', $entrevista->id_entrevistador)->select('id_associado')->first();
 
         // Caso seja uma entrevista do tipo AFE
         if ($encaminhamento->id_tipo_entrevista == 3) {
@@ -621,8 +632,9 @@ class GerenciarEntrevistaController extends Controller
                 'id_atendente' => $id_entrevistador->id_associado,
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'id_sala' => $entrevista->id_sala,
-                'status_atendimento' => 7, // Cancelado
-                'afe' => true
+                'id_tipo_atendimento' => 2,
+                'status_atendimento' => 3,
+                'id_prioridade' => 3
             ]);
 
             // Atualiza a entrevista

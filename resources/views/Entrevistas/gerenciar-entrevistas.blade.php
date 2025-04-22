@@ -13,10 +13,16 @@
                 <div>
                     <form action="{{ route('gerenciamento') }}" class="form-horizontal mt-4" method="GET">
                         <div class="row align-items-end">
-                            <div class="col-4">
+                            <div class="col-3">
                                 Nome
                                 <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa"
                                     value="{{ request('nome_pesquisa') }}">
+                            </div>
+                            <div class="col-2">
+                                <label for="cpf">CPF</label>
+                                <input class="form-control" type="text" maxlength="11"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                    id="cpf" name="cpf" value="{{ $cpf ?? '' }}">
                             </div>
 
                             <div class="col-2">

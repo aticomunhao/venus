@@ -20,28 +20,4 @@ window.$ = $;
 
 
 
- //Editar mediunidade
- $(document).ready(function() {
-     $('.data_manifestou')
-         .hide()
-         .find('input[type=date]');
-
-
-     $('[name^=id_tp_mediunidade]').change(function() {
-         $('.data_manifestou')
-             .hide()
-             .find('input[type=date]');
-
-
-         $('[name^=id_tp_mediunidade]:checked').each(function() {
-             var tipoId = $(this).val();
-             $('#data_inicio_' + tipoId)
-                 .show()
-                 .find('input[type=date]');
-
-         });
-     });
-     $('[name^=id_tp_mediunidade]').change();
- });
-
 
