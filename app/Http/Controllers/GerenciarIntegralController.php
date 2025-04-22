@@ -97,6 +97,7 @@ class GerenciarIntegralController extends Controller
             ->pluck('at.id_assistido')
             ->toArray();
 
+
         $data = DB::table('presenca_cronograma as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->whereIn('id_tratamento', array_column($encaminhamentos, 'id'))
@@ -150,10 +151,11 @@ class GerenciarIntegralController extends Controller
 
             $encaminhamento->faltas = $consecutivas;
 
-
             // Resto do código (ptd, data, presenca, contagem...)
-            $ptdRegular = array_search($encaminhamento->id_assistido, $encaminhamentoPTD) ? $encaminhamentoPTD[array_search($encaminhamento->id, $encaminhamentoPTD)] : null;
+            $ptdRegular = array_search($encaminhamento->id_assistido, $encaminhamentoPTD) !== false ? $encaminhamentoPTD[array_search($encaminhamento->id, $encaminhamentoPTD)] : null;
             $encaminhamento->ptd = $ptdRegular ? true : false;
+
+        
 
             $encaminhamento->data = current(array_filter($data, function ($item) use ($encaminhamento) {
                 return $item->id_tratamento == $encaminhamento->id;
@@ -269,7 +271,7 @@ class GerenciarIntegralController extends Controller
             ->where('at.id_assistido', current(current($result))->id_assistido)
             ->whereIn('enc.id_tipo_tratamento', [1, 2]) // PTD e PTI
             ->where('enc.status_encaminhamento', '<', 3) // Finalizado
-            ->select('tr.id')
+            ->select('enc.id_tipo_tratamento', 'tr.id')
             ->first();
 
 
