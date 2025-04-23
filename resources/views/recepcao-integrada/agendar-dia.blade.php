@@ -58,7 +58,7 @@
                                         style="background-color:light; border-radius:8px; box-shadow: 1px 2px 5px #000000; margin:5px;">
                                         <div class="form-check form-check-inline p-3 d-grid gap-2">
                                             <input type="radio" class="btn-check" name="dia"
-                                                id="option{{ $dadoDia->dia }}" value="{{ $dadoDia->dia }}">
+                                                id="option{{ $dadoDia->dia }}" value="{{ $dadoDia->dia }}" required>
                                             <label class="btn btn-outline-dark"
                                                 for="option{{ $dadoDia->dia }}">{{ $dadoDia->dia_semana }}</label>
                                             <table class="table table-striped table-bordered">
