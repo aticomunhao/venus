@@ -57,7 +57,7 @@ class GerenciarEncaminhamentoController extends Controller
         $data_enc = $request->dt_enc; // Armazena a pesquisa de Data de Encaminhamento
         $assistido = $request->assist; // Armazena a pesquisa de Nome de Assistido
         $cpf = $request->cpf; // Armazena a pesquisa de CPF
-        $situacao = $request->status; // ArX3E-JZJ-VN3Bmazena a pesquisa por Status (Select)
+        $situacao = $request->status; // Armazena a pesquisa por Status (Select)
 
         if ($request->dt_enc) {
             $lista->where('at.dh_chegada', '>=', $request->dt_enc); // Pesquisa qualquer data que seja maior ou igual a pesquisada
@@ -83,7 +83,7 @@ class GerenciarEncaminhamentoController extends Controller
                 app('flasher')->addWarning('Nenhum Item Encontrado. Mostrando Pesquisa Aproximada');
             } else {
                 //Transforma a variavel em algo vazio
-                $pessoa = $pessoaVazia;
+                $lista = $pessoaVazia;
                 app('flasher')->addError('Nenhum Item Encontrado!');
             }
         }
@@ -273,7 +273,7 @@ class GerenciarEncaminhamentoController extends Controller
 
     public function tratar(Request $request, $ide)
     {
-        //try {
+
         $reu = intval($request->reuniao); // Guarda numa variavel o ID_cronograma
         $data_atual = Carbon::now(); // Dia de hoje, com dia e horário
         $dia_atual = $data_atual->weekday(); // ID do dia de hoje (Ex.: 0 => Domingo, 3 => Quarta-Feira)
@@ -529,16 +529,12 @@ class GerenciarEncaminhamentoController extends Controller
 
         app('flasher')->addSuccess('O tratamento foi agendo com sucesso.');
         return redirect('/gerenciar-encaminhamentos');
-        // } catch (\Exception $e) {
 
-        //     $code = $e->getCode();
-        //     return view('tratamento-erro.erro-inesperado', compact('code'));
-        // }
     }
 
     public function visualizar($ide)
     {
-        try {
+
             // Devolve o ID pessoa daquele encaminhamento, para buscar outros encaminhamentos, mesmo que não conectados
             $pessoa = DB::table('encaminhamento')
                 ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
@@ -589,24 +585,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->first();
 
 
-            $emergencia = DB::table('presenca_cronograma as dt')
-                ->select(
-                    'dt.id AS idp',
-                    'dt.presenca',
-                    'dc.data',
-                    'gp.nome',
-                )
-                ->leftJoin('tratamento as tr', 'dt.id_tratamento', 'tr.id')
-                ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
-                ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-                ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
-                ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
-                ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
-                ->where('id_pessoa', $result->id_pessoa)
-                // ->where('dc.data', '>=', $result->dt_inicio)
-                ->whereNull('id_tratamento')
-                ->get()
-                ->toArray();
+
 
             $encaminhamentosAlternativos = DB::table('encaminhamento as enc')
                 ->select(
@@ -661,6 +640,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
                 ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
                 ->where('tr.id_encaminhamento', $ide)
+                ->orderBy('dc.data','desc')
                 ->get();
 
             // Conta a quantidade de faltas do encaminhamento atual
@@ -675,14 +655,11 @@ class GerenciarEncaminhamentoController extends Controller
 
 
             return view('recepcao-integrada.historico-encaminhamento', compact('emergencia', 'result', 'list', 'faul', 'encaminhamentosAlternativos'));
-        } catch (\Exception $e) {
-            $code = $e->getCode();
-            return view('tratamento-erro.erro-inesperado', compact('code'));
-        }
+
     }
     public function inative(Request $request, $ide)
     {
-        //  try {
+
         $dt_hora = Carbon::now();
         $today = Carbon::today()->format('Y-m-d');
 
@@ -796,14 +773,19 @@ class GerenciarEncaminhamentoController extends Controller
             ->where('id_encaminhamento', $ide);
 
 
-        if ($tratamento) {
+            if ($tratamento && $tratamento->exists()) {
+                $firstTratamento = $tratamento->first();
 
-            $idTratamento = (clone $tratamento)->first()->id;
+                if ($firstTratamento) {
+                    $idTratamento = $firstTratamento->id;
 
-            $tratamento->update([
-                'dt_fim' => $today,
-                'status' => 6, // Inativado
-            ]);
+                    $tratamento->update([
+                        'dt_fim' => $today,
+                        'status' => 6, // Inativado
+                    ]);
+                }
+
+
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
@@ -819,10 +801,7 @@ class GerenciarEncaminhamentoController extends Controller
         app('flasher')->addSuccess('O encaminhamento foi inativado.');
 
         return redirect('/gerenciar-encaminhamentos');
-        // } catch (\Exception $e) {
-        //     $code = $e->getCode();
-        //     return view('tratamento-erro.erro-inesperado', compact('code'));
-        // }
+
     }
 
     // Metodo do botão Alterar Grupo na Index
@@ -998,7 +977,6 @@ class GerenciarEncaminhamentoController extends Controller
     public function trocarGrupo(Request $request, $ide)
     {
 
-        //     try{
 
         $reu = intval($request->reuniao); // Guarda em uma variável o ID do cronograma escolhido
         $countVagas = DB::table('tratamento')->where('id_reuniao', "$reu")->where('status', '<', '3')->count(); // Conta a quantidade de tratamentos ativos nessa reunião
@@ -1101,11 +1079,6 @@ class GerenciarEncaminhamentoController extends Controller
         app('flasher')->addSuccess('Troca efetuada com sucesso!');
         return redirect('/gerenciar-encaminhamentos');
     }
-    // catch(\Exception $e){
 
-    //     $code = $e->getCode( );
-    //     return view('tratamento-erro.erro-inesperado', compact('code'));
-    //         }
-    //     }
 
 }
