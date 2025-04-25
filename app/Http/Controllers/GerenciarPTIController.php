@@ -258,16 +258,74 @@ class GerenciarPTIController extends Controller
                 ]);
             }
 
-            // Insere uma entrevista NUTRES
-            DB::table('encaminhamento')->insert([
-                'dh_enc' => $hoje,
-                'id_usuario' => session()->get('usuario.id_pessoa'),
-                'status_encaminhamento' => 6, // Aguardando Manutenção
-                'id_tipo_encaminhamento' => 1, // Entrevista
-                'id_atendimento' => $todosIDs->ida,
-                'id_tipo_entrevista' => 4 // NUTRES
+            return redirect()->back();
+        } catch (\Exception $e) {
+            $code = $e->getCode();
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+        }
+    }
 
-            ]);
+    public function nutres(Request $request, string $id)
+    {
+        try {
+            $hoje = Carbon::today();
+            $todosIDs = DB::table('tratamento as t')
+                ->select('t.id as idt', 'e.id as ide', 'a.id as ida', 'a.id_assistido')
+                ->leftJoin('encaminhamento as e', 't.id_encaminhamento', 'e.id')
+                ->leftJoin('atendimentos as a', 'e.id_atendimento', 'a.id')
+                ->where('t.id', $id)->first();
+
+            // Retorna todos os IDs dos encaminhamentos de tratamento
+            $countTratamentos = DB::table('encaminhamento as enc')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
+                ->where('at.id_assistido', $todosIDs->id_assistido)
+                ->where('enc.status_encaminhamento', '<', 5) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+                ->pluck('id_tipo_tratamento')->toArray();
+
+
+            // Finaliza o tratamento PTI
+            DB::table('tratamento')->where('id', $id)->update(['status' => 4]);
+
+            // Finaliza o encaminhamento PTI
+            DB::table('encaminhamento')->where('id', $todosIDs->ide)->update(['status_encaminhamento' => 3]);
+
+            // Caso já exista um encaminhamento PTD
+            if (in_array(1, $countTratamentos)) {
+
+                // Atualiza todos os tratamentos PTD ativos para infinitos
+                DB::table('tratamento as tr')
+                    ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+                    ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                    ->where('at.id_assistido', $todosIDs->id_assistido)
+                    ->where('enc.id_tipo_tratamento', 1) // PTD
+                    ->where('tr.status', '<', 3) // Ativos
+                    ->update([
+                        'tr.dt_fim' => null
+                    ]);
+            } else {
+
+                // Insere um novo encaminhamento PTD
+                DB::table('encaminhamento')->insert([
+                    'dh_enc' => $hoje,
+                    'id_usuario' => session()->get('usuario.id_pessoa'),
+                    'status_encaminhamento' => 1, // Aguardando Agendamento
+                    'id_tipo_encaminhamento' => 2, // Tratamento
+                    'id_atendimento' => $todosIDs->ida,
+                    'id_tipo_tratamento' => 1 // PTD
+
+                ]);
+            }
+                // Insere uma entrevista NUTRES
+                DB::table('encaminhamento')->insert([
+                    'dh_enc' => $hoje,
+                    'id_usuario' => session()->get('usuario.id_pessoa'),
+                    'status_encaminhamento' => 6, // Aguardando Manutenção
+                    'id_tipo_encaminhamento' => 1, // Entrevista
+                    'id_atendimento' => $todosIDs->ida,
+                    'id_tipo_entrevista' => 4 // NUTRES
+
+                ]);
 
             return redirect()->back();
         } catch (\Exception $e) {
