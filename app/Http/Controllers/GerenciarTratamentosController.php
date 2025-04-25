@@ -117,11 +117,28 @@ class GerenciarTratamentosController extends Controller
             }
 
             if ($request->assist) {
-                $pesquisaNome = array();
-                $pesquisaNome = explode(' ', $request->assist);
 
-                foreach ($pesquisaNome as $itemPesquisa) {
-                    $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+                $pesquisaNome = array(); // Inicia um array
+                $pesquisaNome = explode(' ', $request->assist); // Popula esse array com cada palavra digitada no input
+                $margemErro = 0; // Inicializa em 0 uma variável de contagem de erros, usada para validação
+                foreach ($pesquisaNome as $itemPesquisa) { // Para cada palavra na pesquisa
+
+                    $bufferPessoa = (clone $lista); // Salva o estado anterior antes de pesquisar
+                    $lista =  $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]); // Pesquisa sem acento e sem case sensitive
+                    if (count($lista->get()->toArray()) < 1) { // Caso durante o select, o banco não retorne nada
+                        $pessoaVazia = (clone $lista); // Guarda em uma variável o que é um estado vazio, para popular a tabela
+                        $lista = (clone $bufferPessoa); // Devolve a variável para o estado antes dessa pesquisa
+                        $margemErro += 1; // Adiciona 1 na varíavel de contagem para validação
+
+                    }
+                }
+                if ($margemErro == 0) { // Caso não tenha sofrido nenhum erro, passa direto
+                } else if ($margemErro < (count($pesquisaNome) / 2)) { // Caso o número de erros seja inferior a 50% dos dados indicados
+                    app('flasher')->addWarning('Nenhum Item Encontrado. Mostrando Pesquisa Aproximada');
+                } else {
+                    //Transforma a variavel em algo vazio
+                    $lista = $pessoaVazia;
+                    app('flasher')->addError('Nenhum Item Encontrado!');
                 }
             }
 
@@ -188,7 +205,7 @@ class GerenciarTratamentosController extends Controller
 
 
             DB::table('tratamento')->where('id', $id)->update(['status' => 6, 'motivo' => $request->motivo, 'dt_fim' => $hoje]);
-            DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 4]);
+            DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 4]); // BUG Não tem motivo aqui, por isso fica null no banco
 
 
             // Recupera o nome completo da pessoa associado ao id_usuario
@@ -225,17 +242,18 @@ class GerenciarTratamentosController extends Controller
     {
         try {
 
-            $infoTrat = DB::table('tratamento')->leftJoin('encaminhamento', 'tratamento.id_encaminhamento', 'encaminhamento.id')->where('tratamento.id', $idtr)->first();
 
-            $data_atual = Carbon::now();
-            $dia_atual = $data_atual->weekday();
+            $data_atual = Carbon::now(); // Retorna o DATETIME de agora
+            $dia_atual = $data_atual->weekday(); // Retorna qual o dia da semana de hoje
 
+            // Confere a quantidade de presenças do assistido no dia de hoje
             $confere = DB::table('presenca_cronograma AS ds')
                 ->leftJoin('dias_cronograma as dc', 'ds.id_dias_cronograma', 'dc.id')
                 ->where('dc.data', $data_atual)
                 ->where('ds.id_tratamento', $idtr)
                 ->count();
 
+            // Retorna todos os dados do tratamento
             $lista = DB::table('tratamento AS tr')
                 ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
                 ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
@@ -244,48 +262,50 @@ class GerenciarTratamentosController extends Controller
                 ->first();
 
 
-
+            // Retorna o dia cronograma, usado para gerar a presença para o dia de hoje
             $dia_cronograma = DB::table('dias_cronograma')->where('id_cronograma', $lista->id_reuniao)->where('data', $data_atual)->first();
-
-            $acompanhantes = DB::table('dias_cronograma')->where('id_cronograma', $request->reuniao)->where('data', $data_atual)->first();
 
 
             if ($confere > 0) {
-
                 app('flasher')->addError('Já foi registrada a presença para este dia.');
 
                 return Redirect()->back();
             } else if ($lista->dia_semana != $dia_atual) {
-
                 app('flasher')->addError('Este assistido não corresponde ao dia de hoje.');
-
                 return Redirect()->back();
             } else {
 
-
+                // Usado para validar tratamentos PTD atrelados a um tratamento PTI
                 $encaminhamentosPTD = DB::table('encaminhamento as enc')
                     ->select('at.id')
                     ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
                     ->where('id_assistido', $lista->id_assistido)
-                    ->where('id_tipo_tratamento', 1)
-                    ->where('status_encaminhamento', 4)
+                    ->where('id_tipo_tratamento', 1) // PTD
+                    ->where('status_encaminhamento', '<' ,3) // Apenas Ativos
                     ->first();
 
-                if ($infoTrat->status == 1) {
+                // Caso o tratamento esteja no status AGUARDANDO TRATAMENTO
+                if ($lista->status == 1) {
+
+                    // Troca o tratamento para o status EM TRATAMENTO
                     DB::table('tratamento')->where('id', $idtr)->update([
                         'status' => 2
                     ]);
 
-                    if ($infoTrat->id_tipo_tratamento == 2 and $encaminhamentosPTD) {
-                        DB::table('encaminhamento')->where('id', $encaminhamentosPTD->id)->update([
+                    // Caso o tratamento seja PTI e tenha tratamentosPTD ativos
+                    if ($lista->id_tipo_tratamento == 2 and $encaminhamentosPTD) {
+
+
+                        DB::table('encaminhamento')->where('id', $encaminhamentosPTD->id)->update([ // BUG não inativa os tratamentos
                             'status_encaminhamento' => 3
                         ]);
                     }
                 }
 
+        
+                $acompanhantes = isset($dia_cronograma->nr_acompanhantes)  ? $dia_cronograma->nr_acompanhantes : 0; // Salva o numero atual de acompanhantes
+                $nrAcomp = $acompanhantes + $request->acompanhantes; // Soma a quantidade total de acompanhantes
 
-                $acompanhantes = isset($acompanhantes->nr_acompanhantes)  ? $acompanhantes->nr_acompanhantes : 0;
-                $nrAcomp = $acompanhantes + $request->acompanhantes;
                 // Recupera o nome completo da pessoa associado ao id_usuario
                 $nomePessoa = DB::table('pessoas')
                     ->where('id', session()->get('usuario.id_usuario'))
@@ -300,6 +320,7 @@ class GerenciarTratamentosController extends Controller
                     'pessoa' => $nomePessoa,
                 ]);
 
+                // Atualiza o número de acompanhantes da reunião
                 DB::table('dias_cronograma')
                     ->where('id_cronograma', $lista->id_reuniao)
                     ->where('data', $data_atual)
@@ -307,15 +328,13 @@ class GerenciarTratamentosController extends Controller
                         'nr_acompanhantes' => $nrAcomp
                     ]);
 
+                // Insere a presença na tabela
                 DB::table('presenca_cronograma')
                     ->insert([
                         'id_tratamento' => $idtr,
                         'presenca' => true,
                         'id_dias_cronograma' => $dia_cronograma->id
                     ]);
-
-
-
 
 
                 app('flasher')->addSuccess('Foi registrada a presença com sucesso.');
@@ -343,9 +362,7 @@ class GerenciarTratamentosController extends Controller
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
             ->where('tratamento.id', $idtr)
             ->first();
-
-
-
+            
         $result = DB::table('tratamento AS tr')
             ->select(
                 'enc.id AS ide',
@@ -646,150 +663,157 @@ class GerenciarTratamentosController extends Controller
     public function visualizarRI(Request $request)
     {
 
-            $now =  Carbon::now()->format('Y-m-d');
+        $now =  Carbon::now()->format('Y-m-d');
 
-            $selectGrupo = explode(' ', $request->grupo);
-            $lista = DB::table('tratamento AS tr')
-                ->select('tr.id AS idtr', 'tr.status', 'enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tst.nome AS tst', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'p1.cpf AS cpf_assistido', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla', 'tr.id AS idtr', 'gr.nome AS nomeg', 'td.nome AS nomed', 'rm.h_inicio', 'tr.dt_fim')
-                ->leftJoin('encaminhamento AS enc',  'tr.id_encaminhamento', 'enc.id')
-                ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-                ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-                ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-                ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
-                ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-                ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-                ->leftJoin('tipo_status_tratamento AS tst', 'tr.status', 'tst.id')
-                ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-                ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-                ->leftjoin('tipo_dia AS td', 'rm.dia_semana', 'td.id')
-                ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
-                ->where('enc.id_tipo_encaminhamento', 2)
-                ->where('enc.id_tipo_tratamento', '<>', 3);
+        $selectGrupo = explode(' ', $request->grupo);
+        $lista = DB::table('tratamento AS tr')
+            ->select('tr.id AS idtr', 'tr.status', 'enc.id AS ide', 'enc.id_tipo_encaminhamento', 'dh_enc', 'enc.id_atendimento', 'enc.status_encaminhamento', 'tst.nome AS tst', 'enc.id_tipo_tratamento AS idtt', 'id_tipo_entrevista', 'at.id AS ida', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante as idr', 'p2.nome_completo as nm_2', 'p1.cpf AS cpf_assistido', 'pa.nome', 'pr.id AS prid', 'pr.descricao AS prdesc', 'pr.sigla AS prsigla', 'tt.descricao AS desctrat', 'tt.sigla', 'tr.id AS idtr', 'gr.nome AS nomeg', 'td.nome AS nomed', 'rm.h_inicio', 'tr.dt_fim')
+            ->leftJoin('encaminhamento AS enc',  'tr.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+            ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+            ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+            ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
+            ->leftjoin('pessoas AS p4', 'at.id_atendente', 'p4.id')
+            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+            ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
+            ->leftJoin('tipo_status_tratamento AS tst', 'tr.status', 'tst.id')
+            ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+            ->leftjoin('tipo_dia AS td', 'rm.dia_semana', 'td.id')
+            ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
+            ->where('enc.id_tipo_encaminhamento', 2)
+            ->where('enc.id_tipo_tratamento', '<>', 3);
 
-            $cronogramas = DB::table('cronograma as cro')
-                ->select('cro.id', 'gr.nome', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 's.sigla as setor')
-                ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
-                ->leftJoin('setor as s', 'gr.id_setor', 's.id')
-                ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
-                ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
-                ->get();
+        $cronogramas = DB::table('cronograma as cro')
+            ->select('cro.id', 'gr.nome', 'td.nome as dia', 'cro.h_inicio', 'cro.h_fim', 's.sigla as setor')
+            ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+            ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
+            ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
+            ->get();
 
-            $cronogramasDirigente = DB::table('membro')->where('id_associado', session()->get('usuario.id_associado'))->whereIn('id_funcao', [1, 2])->pluck('id_cronograma');
-
-
-
-            $data_enc = $request->dt_enc;
-
-            $diaP = $request->dia;
-
-            $assistido = $request->assist;
-
-            $situacao = $request->status;
-            $cron = $request->grupo;
+        $cronogramasDirigente = DB::table('membro')->where('id_associado', session()->get('usuario.id_associado'))->whereIn('id_funcao', [1, 2])->pluck('id_cronograma');
 
 
-            $cpf = $request->cpf;
 
-            $acesso = DB::table('usuario_acesso')->where('id_usuario', session()->get('usuario.id_usuario'))->where('id_acesso', session()->get('acessoAtual'))->where('id_setor', '51')->first();
+        $data_enc = $request->dt_enc;
 
-            if (!$acesso and !in_array(36, session()->get('usuario.acesso'))) {
-                $lista = $lista->whereIn('tr.id_reuniao', $cronogramasDirigente);
-                $request->status ?? $situacao = 'all';
-            }
+        $diaP = $request->dia;
 
-            if ($request->dia != null) {
-                $lista->where('rm.dia_semana', '=', $request->dia);
-            }
+        $assistido = $request->assist;
 
-            if ($request->dt_enc) {
-                $lista->where('enc.dh_enc', '>=', $request->dt_enc);
-            }
-
-            if ($request->tratamento) {
-                $lista->where('enc.id_tipo_tratamento', $request->tratamento);
-            }
-
-            if (current($selectGrupo) != '') {
-
-                if (intval(current($selectGrupo)) != 0) {
-                    $lista->where('rm.id', current($selectGrupo));
-                } else {
-
-                    $pesquisaNome = array();
-                    $pesquisaNome = explode(' ', current($selectGrupo));
-
-                    foreach ($pesquisaNome as $itemPesquisa) {
-                        $lista->whereRaw("UNACCENT(LOWER(gr.nome)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
-                    }
-                }
-
-                if ($situacao == 'all') {
-                    $lista->whereIn('tr.status', [1, 2]);
-                }
-            }
-
-            if ($request->assist) {
-                $pesquisaNome = array();
-                $pesquisaNome = explode(' ', $request->assist);
-
-                foreach ($pesquisaNome as $itemPesquisa) {
-                    $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
-                }
-            }
+        $situacao = $request->status;
+        $cron = $request->grupo;
 
 
-            if ($request->cpf) {
-                $lista->whereRaw("LOWER(p1.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
+        $cpf = $request->cpf;
+
+        $acesso = DB::table('usuario_acesso')->where('id_usuario', session()->get('usuario.id_usuario'))->where('id_acesso', session()->get('acessoAtual'))->where('id_setor', '51')->first();
+
+        if (!$acesso and !in_array(36, session()->get('usuario.acesso'))) {
+            $lista = $lista->whereIn('tr.id_reuniao', $cronogramasDirigente);
+            $request->status ?? $situacao = 'all';
+        }
+
+        if ($request->dia != null) {
+            $lista->where('rm.dia_semana', '=', $request->dia);
+        }
+
+        if ($request->dt_enc) {
+            $lista->where('enc.dh_enc', '>=', $request->dt_enc);
+        }
+
+        if ($request->tratamento) {
+            $lista->where('enc.id_tipo_tratamento', $request->tratamento);
+        }
+
+        if (current($selectGrupo) != '') {
+
+            if (intval(current($selectGrupo)) != 0) {
+                $lista->where('rm.id', current($selectGrupo));
             } else {
 
-                if ($request->status && $situacao != 'all') {
-                    $lista->where('tr.status', $request->status);
-                } elseif ($situacao == 'all') {
-                } elseif (current($selectGrupo) == '') {
-                    $lista->where('tr.status', 2);
+                $pesquisaNome = array();
+                $pesquisaNome = explode(' ', current($selectGrupo));
+
+                foreach ($pesquisaNome as $itemPesquisa) {
+                    $lista->whereRaw("UNACCENT(LOWER(gr.nome)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
                 }
             }
 
-            $contar = $lista->count('enc.id');
-            $lista = $lista->orderby('tr.status', 'ASC')
-                ->orderby('nm_1', 'ASC')
-                ->orderby('at.id_prioridade', 'ASC')
-                ->paginate(50)
-                ->appends([
-                    'assist' => $assistido,
-                    'cpf' => $cpf,
-                    'dt_enc' => $data_enc,
-                    'dia' => $diaP,
-                    'status' => $situacao,
-                    'grupo' => $cron,
-                    'tratamento' => $request->tratamento
-                ]);
+            if ($situacao == 'all') {
+                $lista->whereIn('tr.status', [1, 2]);
+            }
+        }
+
+        if ($request->assist) {
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $request->assist);
+
+            foreach ($pesquisaNome as $itemPesquisa) {
+                $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+            }
+        }
 
 
-            $stat = DB::select("select
+        if ($request->cpf) {
+            $lista->whereRaw("LOWER(p1.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
+        } else {
+
+            if ($request->status && $situacao != 'all') {
+                $lista->where('tr.status', $request->status);
+            } elseif ($situacao == 'all') {
+            } elseif (current($selectGrupo) == '') {
+                $lista->where('tr.status', 2);
+            }
+        }
+
+        $contar = $lista->count('enc.id');
+        $lista = $lista->orderby('tr.status', 'ASC')
+            ->orderby('nm_1', 'ASC')
+            ->orderby('at.id_prioridade', 'ASC')
+            ->paginate(50)
+            ->appends([
+                'assist' => $assistido,
+                'cpf' => $cpf,
+                'dt_enc' => $data_enc,
+                'dia' => $diaP,
+                'status' => $situacao,
+                'grupo' => $cron,
+                'tratamento' => $request->tratamento
+            ]);
+
+
+        $stat = DB::select("select
         ts.id,
         ts.nome
         from tipo_status_tratamento ts
         ");
 
-            $dia = DB::select("select
+        $dia = DB::select("select
         id,
         nome
         from tipo_dia
         ");
 
-            $motivo = DB::table('tipo_mot_inat_at_enc')->get();
+        $motivo = DB::table('tipo_mot_inat_at_enc')->get();
 
 
 
-            return view('recepcao-integrada.visualizarRI', compact(
-                'cron', 'cronogramas', 'cpf', 'lista', 'stat',
-                'contar', 'data_enc', 'assistido', 'situacao',
-                'now', 'dia', 'diaP', 'motivo'
-            ));
-
-
-
+        return view('recepcao-integrada.visualizarRI', compact(
+            'cron',
+            'cronogramas',
+            'cpf',
+            'lista',
+            'stat',
+            'contar',
+            'data_enc',
+            'assistido',
+            'situacao',
+            'now',
+            'dia',
+            'diaP',
+            'motivo'
+        ));
     }
 }
