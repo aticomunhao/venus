@@ -58,7 +58,7 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->where('at.status_atendimento', '<', 5)
             ->whereNotNull('dh_chegada') // Garante que a pessoa já chegou
             ->whereNotNull('dh_marcada')
-            ->where('at.afe', true)
+            ->where('id_tipo_atendimento',2)
             ->Where('at.id_atendente', $afe->id)
             ->groupby('at.id', 'p1.id', 'p2.nome_completo', 'p3.nome_completo', 'p4.nome_completo', 'ts.descricao', 'tx.tipo', 'pa.nome', 'pr.descricao', 'pr.sigla')
             ->orderby('status_atendimento', 'DESC')
@@ -92,9 +92,9 @@ class AtendimentoFraternoEspecificoController extends Controller
             ->where('status_atendimento', '<', 5)
             ->where('status_atendimento', '>', 2)
             ->count();
-          
 
-        $assistido = DB::table('atendimentos')->where('status_atendimento', '<', 5)->where('afe', true)->where('id_atendente', $atendente)->count();
+
+        $assistido = DB::table('atendimentos')->where('status_atendimento', '<', 5)->where('id_tipo_atendimento',2)->where('id_atendente', $atendente)->count();
 
         $sala = DB::table('atendente_dia AS atd')
             ->where('dh_inicio', $now)
@@ -113,7 +113,7 @@ class AtendimentoFraternoEspecificoController extends Controller
 
             DB::table('atendimentos')
                 ->orderby('status_atendimento', 'ASC')->orderby('id_prioridade')->orderBy('dh_marcada')
-                ->where('afe', true)
+                ->where('id_tipo_atendimento',2)
                 ->where('id_atendente', $atendente)
                 ->where('status_atendimento', '<', 5)
                 ->update([
@@ -467,24 +467,24 @@ class AtendimentoFraternoEspecificoController extends Controller
         try{
             $r_tema = DB::table('registro_tema')->where('id_atendimento', $idat)->count();
             $nota= DB::table('atendimentos')->where('id', $idat)->first();
-    
-    
+
+
             // dd($ies, $obs, $coj);
-    
-    
-    
-    
+
+
+
+
             if ($r_tema > 0 or $nota->observacao != null) {
-    
+
                 app('flasher')->addError("As temáticas do atendimento $idat já foram registradas.");
-    
+
                 return Redirect('/atendendo');
             } else {
-    
+
                 $verifi =  $result = DB::table('registro_tema AS rt')
                     ->leftJoin('atendimentos AS at', 'rt.id_atendimento', 'at.id')
                     ->where('at.id', $idat)->count();
-    
+
                 $assistido = DB::table('atendimentos AS at')
                     ->select('at.id as idat', 'at.dh_chegada', 'at.dh_inicio', 'at.dh_fim', 'at.id_assistido', 'p1.nome_completo AS nm_1', 'at.id_representante', 'at.id_atendente')
                     ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
@@ -939,11 +939,11 @@ class AtendimentoFraternoEspecificoController extends Controller
     public function tematica(Request $request, $idat)
     {
         try{
-        
+
             DB::table('atendimentos AS at')->where('id', $idat)->update([
                 'observacao' => $request->input('nota')
             ]);
-    
+
             if($request->tematicas){
                 foreach($request->tematicas as $tematica){
                     DB::table('registro_tema AS rt')->insert([
@@ -952,12 +952,12 @@ class AtendimentoFraternoEspecificoController extends Controller
                          ]);
                 }
             }
-          
+
             app('flasher')->addSuccess('Os temas foram salvos com sucesso.');
 
             return Redirect('/atendendo-afe');
         }
-    
+
 
     catch(\Exception $e){
 
