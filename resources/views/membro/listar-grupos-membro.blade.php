@@ -30,7 +30,7 @@
                         <select class="form-select select2 membro" id="nome_membro" name="nome_membro" data-width="100%">
                             <option></option>
                             @foreach ($membro as $membros)
-                                <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }} -
+                                <option value="{{ $membros->id_associado }}" {{ request('nome_membro') == $membros->id_associado ? 'selected' : ''}}>{{ $membros->nome_completo }} -
                                     {{ $membros->nr_associado }}</option>
                             @endforeach
                         </select>
@@ -159,8 +159,8 @@
                 theme: 'bootstrap-5'
             });
             //Deixa o select status como padrão vazio
-            $(".grupo").prop("selectedIndex", 0);
-            $(".membro").prop("selectedIndex", 0);
+           // $(".grupo").prop("selectedIndex", 0);
+           // $(".membro").prop("selectedIndex", 0);
         });
     </script>
 
