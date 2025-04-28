@@ -296,8 +296,7 @@ class MembroController extends Controller
             )
             ->orderBy('status')
             ->orderBy('id_funcao')
-            ->orderBy('p.nome_completo', 'ASC')
-            ->whereNull('m.dt_fim');
+            ->orderBy('p.nome_completo', 'ASC');
 
 
         // Filtros
@@ -338,6 +337,11 @@ class MembroController extends Controller
         // Filtro de status
         if ($status && $status != 'Todos') {
             $membroQuery->where(DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END)"), '=', $status);
+        }else if( $status == 'Todos'){
+            
+        }
+        else{
+            $membroQuery->where('m.dt_fim', NULL);
         }
 
         // Paginação dos resultados
