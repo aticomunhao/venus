@@ -183,7 +183,7 @@ class GerenciarTratamentosController extends Controller
         from tipo_dia
         ");
 
-            $motivo = DB::table('tipo_mot_inat_at_enc')->get();
+            $motivo = DB::table('tipo_motivo')->where('vinculado', 1)->get();
 
 
 
@@ -204,8 +204,8 @@ class GerenciarTratamentosController extends Controller
             $tratamento = DB::table('tratamento')->where('id', $id)->first();
 
 
-            DB::table('tratamento')->where('id', $id)->update(['status' => 6, 'motivo' => $request->motivo, 'dt_fim' => $hoje]);
-            DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 4]); // BUG Não tem motivo aqui, por isso fica null no banco
+            DB::table('tratamento')->where('id', $id)->update(['status' => 6, 'dt_fim' => $hoje]);
+            DB::table('encaminhamento')->where('id', $tratamento->id_encaminhamento)->update(['status_encaminhamento' => 4, 'motivo' => $request->motivo,]);
 
 
             // Recupera o nome completo da pessoa associado ao id_usuario
