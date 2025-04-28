@@ -281,7 +281,7 @@
                                                                     name="motivo_entrevista" required>
                                                                     @foreach ($motivo as $motivos)
                                                                         <option value="{{ $motivos->id }}">
-                                                                            {{ $motivos->descricao }}</option>
+                                                                            {{ $motivos->tipo }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             </div>
