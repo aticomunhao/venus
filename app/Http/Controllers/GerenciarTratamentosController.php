@@ -282,7 +282,7 @@ class GerenciarTratamentosController extends Controller
                     ->where('id_assistido', $lista->id_assistido)
                     ->where('id_tipo_tratamento', 1) // PTD
                     ->where('status_encaminhamento', '<' ,3) // Apenas Ativos
-                    ->first();
+                    ->first(); // XXX Caso o assistiddo tenha 2 PTD, ignora um deles
 
                 // Caso o tratamento esteja no status AGUARDANDO TRATAMENTO
                 if ($lista->status == 1) {
@@ -295,9 +295,11 @@ class GerenciarTratamentosController extends Controller
                     // Caso o tratamento seja PTI e tenha tratamentosPTD ativos
                     if ($lista->id_tipo_tratamento == 2 and $encaminhamentosPTD) {
 
-
-                        DB::table('encaminhamento')->where('id', $encaminhamentosPTD->id)->update([ // BUG não inativa os tratamentos
+                        DB::table('encaminhamento')->where('id', $encaminhamentosPTD->id)->update([ // Inativa o encaminhamento PTD
                             'status_encaminhamento' => 3
+                        ]);
+                        DB::table('tratamento')->where('id_encaminhamento', $encaminhamentosPTD->id)->update([ // Inativa o tratamento PTD
+                            'status' => 4
                         ]);
                     }
                 }
@@ -355,134 +357,137 @@ class GerenciarTratamentosController extends Controller
 
     public function visualizar($idtr)
     {
-        // try{
 
-        $pessoa = DB::table('tratamento')
-            ->leftJoin('encaminhamento', 'tratamento.id_encaminhamento', 'encaminhamento.id')
-            ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
-            ->where('tratamento.id', $idtr)
-            ->first();
-            
-        $result = DB::table('tratamento AS tr')
-            ->select(
-                'enc.id AS ide',
-                'tr.id AS idtr',
-                'enc.id_tipo_encaminhamento',
-                'dh_enc',
-                'enc.id_atendimento',
-                'enc.status_encaminhamento',
-                'tse.descricao AS tsenc',
-                'enc.id_tipo_tratamento',
-                'id_tipo_entrevista',
-                'at.id AS ida',
-                'at.id_assistido',
-                'p1.dt_nascimento',
-                'p1.nome_completo AS nm_1',
-                'at.id_representante as idr',
-                'p2.nome_completo as nm_2',
-                'pa.id AS pid',
-                'pa.nome',
-                'pr.id AS prid',
-                'pr.descricao AS prdesc',
-                'pr.sigla AS prsigla',
-                'tt.descricao AS desctrat',
-                'tx.tipo',
-                'p4.nome_completo AS nm_4',
-                'at.dh_inicio',
-                'at.dh_fim',
-                'enc.status_encaminhamento AS tst',
-                'tr.id AS idtr',
-                'gr.nome AS nomeg',
-                'td.nome as nomedia',
-                'rm.h_inicio AS rm_inicio',
-                'tm.tipo AS tpmotivo',
-                'sat.descricao AS statat',
-                'sl.numero as sala',
-                'tr.dt_fim as final',
-                'tr.dt_inicio',
-                'tr.dt_fim',
-                'tst.nome as status_tratamento'
-            )
-            ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
-            ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-            ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
-            ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-            ->leftjoin('pessoas AS p3', 'at.id_atendente_pref', 'p3.id')
-            ->leftjoin('associado as ass', 'at.id_atendente', 'ass.id')
-            ->leftjoin('pessoas AS p4', 'ass.id_pessoa', 'p4.id')
-            ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
-            ->leftJoin('tipo_prioridade AS pr', 'at.id_prioridade', 'pr.id')
-            ->leftJoin('tipo_status_encaminhamento AS tse', 'enc.status_encaminhamento', 'tse.id')
-            ->leftJoin('tipo_status_atendimento AS sat', 'at.status_atendimento', 'sat.id')
-            ->leftJoin('tipo_status_tratamento AS tst', 'tr.status', 'tst.id')
-            ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
-            ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
-            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-            ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
-            ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
-            ->leftJoin('salas as sl', 'rm.id_sala', 'sl.id')
-            ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
+           // Devolve o ID pessoa daquele encaminhamento, para buscar outros encaminhamentos, mesmo que não conectados
+           $pessoa = DB::table('encaminhamento')
+           ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
+           ->where('encaminhamento.id', $idtr)
+           ->first('id_assistido');
 
-            ->where('at.id_assistido', $pessoa->id_assistido)
-            ->where('enc.id_tipo_encaminhamento', 2);
-
-        if ($pessoa->status_encaminhamento < 5) {
-            $result = $result->where('enc.status_encaminhamento', '<', 5)
-                ->get();
-        } else {
-
-            $result = $result->where('tr.id', $idtr)->get();
-        }
-
-
-        // dd($result, $pessoa);
-        $list = DB::table('presenca_cronograma AS dt')
-            ->select(
-                'enc.id AS ide',
-                'enc.id_tipo_encaminhamento',
-                'enc.dh_enc',
-                'enc.status_encaminhamento AS tst',
-                'tr.id AS idtr',
-                'rm.h_inicio AS rm_inicio',
-                'dt.id AS idp',
-                'dt.presenca',
-                'dc.data',
-                'gp.nome',
-                'tr.dt_inicio as dt_inicio_tr'
-            )
-            ->leftJoin('tratamento AS tr', 'dt.id_tratamento', 'tr.id')
-            ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
-            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-            ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
-            ->leftjoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
-            ->leftjoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
-            ->where('tr.id', $idtr)
-            ->get();
+       // Traz todas as informações da view exceto o header com nome, e o footer com as faltas
+       $result = DB::table('encaminhamento AS enc')
+           ->select(
+               'at.id AS ida', // ID atendimento, usado em Dados Atendimento Fraterno
+               'at.dh_inicio', // Datetime de Inicio do atendimento
+               'at.dh_fim', // Datetime de fim do atendimento
+               'enc.id AS ide',
+               'gr.nome AS nomeg', // Nome do grupo, mostrado em Dados do Encaminhamento
+               'p1.dt_nascimento', // Data de Nascimento Assistido usado em header
+               'p1.nome_completo AS nm_1', // Nome do Assistido usado em header
+               'p2.nome_completo as nm_2', // Nome do representante, usado em Dados do Atendimento Fraterno
+               'p4.nome_completo AS nm_4', // Nome do Atendente, usado em Dados do Atendimento Fraterno
+               'p1.id as id_pessoa',
+               'pa.nome', // Parentesco do representante com o Assistido (Ex.: Pai, Irmão)
+               'rm.h_inicio AS rm_inicio', // Inicio do Cronograma do Tratamento Marcado
+               'td.nome as nomedia', // Utilizado em Dados Encaminhamento para o Dia do Grupo
+               'tsa.descricao AS tst', // Status do atendimento, em String
+               'tse.nome AS tsenc', // Status do encaminhamento, em String
+               'tm.tipo AS tpmotivo', // Motivo de cancelamento do encaminhamento
+               'tr.id as idt',
+               'tr.dt_inicio', // Inicio Real do Tratamento
+               'tr.dt_fim as final', // Final do Tratamento
+               'tt.descricao AS desctrat', // Tipo de tratamento, usado em Dados do Encaminhamento (Ex.: Passe de Tratamento Desobsessivo)
+               'tx.tipo', // Sexo do assistido, usado no header
+           )
+           ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+           ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
+           ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
+           ->leftJoin('tipo_status_tratamento AS tse', 'tr.status', 'tse.id')
+           ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+           ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
+           ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
+           ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+           ->leftJoin('tipo_status_atendimento AS tsa', 'at.status_atendimento', 'tsa.id')
+           ->leftJoin('tp_parentesco AS pa', 'at.parentesco', 'pa.id')
+           ->leftjoin('associado AS ass', 'at.id_atendente', 'ass.id')
+           ->leftjoin('pessoas AS p4', 'ass.id_pessoa', 'p4.id')
+           ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
+           ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
+           ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+           ->Where('enc.id', $idtr)
+           ->first();
 
 
 
-        $faul = DB::table('tratamento AS tr')
-            ->select('enc.id AS ide', 'enc.id_tipo_encaminhamento', 'enc.dh_enc', 'enc.status_encaminhamento AS tst', 'tr.id AS idtr', 'rm.h_inicio AS rm_inicio', 'dt.id AS idp',  'dt.presenca')
-            ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
-            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
-            ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
-            ->where('tr.id', $idtr)
-            ->where('dt.presenca', 0)
-            ->count();
 
-        return view('/recepcao-integrada/historico-tratamento', compact('result', 'list', 'faul'));
+       $encaminhamentosAlternativos = DB::table('encaminhamento as enc')
+           ->select(
+               'enc.id as ide',
+               'gr.nome',
+               'rm.h_inicio',
+               'td.nome as dia',
+               'tr.id as idt',
+               'tr.dt_inicio',
+               'tr.dt_fim',
+               'tt.descricao',
+               'tse.nome as status'
+           )
+           ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+           ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+           ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
+           ->leftJoin('tipo_status_tratamento AS tse', 'tr.status', 'tse.id')
+           ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+           ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
+           ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
+           ->where('at.id_assistido', $pessoa->id_assistido) // Todos daquele assistido
+           ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
+           ->whereNot('enc.id_tipo_tratamento', 3) // Remove da lista o PTH (Passe de Tratamento de Harmonização)
+           ->where('tr.status', '<', 3)
+           ->whereNot('enc.id', $idtr)
+           ->get();
+
+       $emergencia = DB::table('presenca_cronograma as dt')
+           ->select(
+               'dt.id AS idp',
+               'dt.presenca',
+               'dc.data',
+               'gp.nome'
+           )
+           ->leftJoin('tratamento as tr', 'dt.id_tratamento', 'tr.id')
+           ->leftJoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
+           ->leftJoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+           ->leftJoin('dias_cronograma as dc', 'dt.id_dias_cronograma', 'dc.id')
+           ->leftJoin('cronograma AS rm1', 'dc.id_cronograma', 'rm1.id')
+           ->leftJoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
+           ->where('dt.id_pessoa', '=', $result->id_pessoa)
+           ->whereNull('dt.id_tratamento')
+           ->get()
+           ->toArray();
+
+
+       // Retorna todos os dados de presença do encaminhamento atual
+       $list = DB::table('presenca_cronograma as pc')
+           ->select('pc.id as idp', 'dc.data', 'pc.presenca', 'gr.nome')
+           ->leftJoin('dias_cronograma as dc', 'id_dias_cronograma', 'dc.id')
+           ->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')
+           ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
+           ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
+           ->where('tr.id_encaminhamento', $idtr)
+           ->orderBy('dc.data', 'desc')
+           ->get();
+
+       // Conta a quantidade de faltas do encaminhamento atual
+       $faul = DB::table('tratamento AS tr')
+           ->select('dt.presenca')
+           ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
+           ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+           ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
+           ->where('enc.id', $idtr)
+           ->where('dt.presenca', 0)
+           ->count();
+
+
+        return view('/recepcao-integrada/historico-tratamento', compact('emergencia', 'result', 'list', 'faul', 'encaminhamentosAlternativos'));
     }
-    // catch(\Exception $e){
 
-    //    $code = $e->getCode( );
-    //    return view('tratamento-erro.erro-inesperado', compact('code'));
-    //  }
-    //   }
-
+    // Edit de Reverter Faltas, utilizado por Tratamentos, Tratamento Integral, Tratamento PTI e Tratamento PROAMO
     public function faltas($idtr)
     {
+
+        // Reconhece qual a rota anterior a essa, utilizado para retornar o usuário para sua tela de origen
         $urlAnterior = str_replace(url('/'), '', url()->previous());
 
+        // Retorna os dados pessoais do assistido para o cabeçalho
         $result = DB::table('tratamento as tr')
             ->select('p.nome_completo as nm_1', 'p.dt_nascimento', 'ts.tipo')
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
@@ -490,9 +495,9 @@ class GerenciarTratamentosController extends Controller
             ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
             ->leftJoin('tp_sexo as ts', 'p.sexo', 'ts.id')
             ->where('tr.id', $idtr)
-            ->get();
+            ->first();
 
-
+        // Retorna todos os dados das presenças para utilização na view
         $list = DB::table('presenca_cronograma AS dt')
             ->select(
                 'enc.id AS ide',
@@ -518,33 +523,41 @@ class GerenciarTratamentosController extends Controller
             ->get();
 
 
-
+        // Armazena em uma variável, organizado por ano, todas as presenças do assistido, usado pelo accordion da view
         $arrayPresencas = [];
         foreach ($list as $presenca) {
-
             $arrayPresencas[date('Y', strtotime($presenca->data))][] = $presenca;
         }
 
+        // Remarca $list com a organização anterior
         $list = $arrayPresencas;
 
 
         return view('/recepcao-integrada/reverter-faltas-assisitido', compact('result', 'list', 'urlAnterior'));
     }
 
+    // Update de Reverter Falas
     public function remarcar(Request $request)
     {
+        dd($request->all());
         $data_atual = Carbon::now();
 
-
+        // Caso alguma checkbox seja marcada
         if ($request->checkbox) {
+
+            // Para cada checkbox marcada, separa a chave do valor
             foreach ($request->checkbox as $key => $presenca) {
+                
+                // Caso o valor da presença não seja TRUE, reconhece como false, em caso que haja NULL
                 $booleanPresenca = $presenca ?? false;
 
+                // Insere no banco de dados, onde o ID é igual a chave passada pela view, o inverso do boolean atual
                 DB::table('presenca_cronograma')
                     ->where('id', $key)
                     ->update([
                         'presenca' => !$booleanPresenca
                     ]);
+
 
                 $nomePessoa = DB::table('pessoas')
                     ->where('id', session()->get('usuario.id_pessoa'))
@@ -562,13 +575,14 @@ class GerenciarTratamentosController extends Controller
 
                 app('flasher')->addSuccess('Presença alterada com sucesso.');
             }
-        } else {
+        } else {// Caso nenhuma checkbox seja marcada
             app('flasher')->addError('Nenhum item selecionado.');
         }
 
         return redirect($request->url);
     }
 
+    // Executa manualmente todos os JOBs
     public function job()
     {
 
@@ -585,7 +599,7 @@ class GerenciarTratamentosController extends Controller
         return redirect()->back();
     }
 
-
+    
     public function createAvulso()
     {
         try {
