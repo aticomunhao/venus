@@ -185,7 +185,7 @@
                                             @foreach ($emergencia as $lists1)
                                                 <tr style="text-align:center; font-size:13px">
                                                     <td>{{ $lists1->idp }}</td>
-                                                    <td>{{ $lists1->data }}</td>
+                                                    <td>{{date('d-m-Y',strtotime($lists1->data)) }}</td>
                                                     <td>{{ $lists1->nome }}</td>
                                                     @if ($lists1->presenca == 1)
                                                         <td style="background-color:#90EE90;">Sim</td>
