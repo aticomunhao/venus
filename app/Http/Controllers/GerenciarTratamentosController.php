@@ -359,9 +359,10 @@ class GerenciarTratamentosController extends Controller
     {
 
         // Devolve o ID pessoa daquele encaminhamento, para buscar outros encaminhamentos, mesmo que não conectados
-        $pessoa = DB::table('encaminhamento')
+        $pessoa = DB::table('tratamento')
+            ->leftJoin('encaminhamento', 'tratamento.id_encaminhamento', 'encaminhamento.id')
             ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
-            ->where('encaminhamento.id', $idtr)
+            ->where('tratamento.id', $idtr)
             ->first('id_assistido');
 
         // Traz todas as informações da view exceto o header com nome, e o footer com as faltas
@@ -404,7 +405,7 @@ class GerenciarTratamentosController extends Controller
             ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
             ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
             ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-            ->Where('enc.id', $idtr)
+            ->Where('tr.id', $idtr)
             ->first();
 
 
