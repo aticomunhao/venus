@@ -31,6 +31,9 @@
 <script>
     $(document).ready(function() {
 
+
+        $('#cardTitle').html('Exemplo 3')
+
         let novoConteudo
         $('#Cpf').on('input', function() {
 
@@ -63,6 +66,11 @@
         })
 
 
+        $('#cardBody').on('teste123', function(event) {
+            // Trigger de evento customizado
+            $('#cardBody').trigger('teste1234');
+            
+        });
 
     });
 </script>

@@ -18,10 +18,10 @@
 
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span class="mb-0">DADOS PESSOAIS</span>
+                    <span class="mb-0" id="cardTitle">DADOS PESSOAIS</span>
 
                 </div>
-                <form action="">
+                <form action="" id="form">
                     <div class="card-body" id="cardBody">
                     </div>
                 </form>
@@ -83,7 +83,7 @@
                                         class="bi bi-cloud-arrow-up-fill"></i></button>
                             </div>
                             <div class="col">
-                                <button type="button" id="salvar" class="btn btn-primary col-12">Salvar <i
+                                <button type="button" id="salvar" class="btn btn-primary col-12 salvar">Salvar <i
                                         class="bi bi-cloud-arrow-down-fill"></i></button>
                             </div>
 
@@ -104,7 +104,7 @@
                                         class="bi bi-cloud-arrow-up-fill"></i></button>
                             </div>
                             <div class="col">
-                                <button type="button" id="salvar" class="btn btn-primary col-12">Salvar <i
+                                <button type="button" id="salvar2" class="btn btn-primary col-12 salvar">Salvar <i
                                         class="bi bi-cloud-arrow-down-fill"></i></button>
                             </div>
 
@@ -156,25 +156,23 @@
     <script>
         $(document).ready(function() {
 
+            localStorage.clear()
+
             let valor = 0
             let dadosSelect = {}
 
-            // "Pai" escuta o evento
-            $('#salvar').on('mensagemEnviada', function(evento, mensagem) {
-                console.log(mensagem);
-            });
-
+      
             function carregar1() {
-
+                $('#cardBody').off('teste123'),
                 $('#cardBody').load('/teste-1');
             }
 
             function carregarInput() {
-
+                $('#cardBody').off('teste123'),
                 $('#cardBody').load('/teste-input');
             }
             function carregarInput2() {
-
+                $('#cardBody').off('teste123'),
                 $('#cardBody').load('/teste-input2');
             }
 
@@ -204,13 +202,14 @@
                 let lixo = ['key', 'getItem', 'setItem', 'removeItem', 'clear', 'length']
 
                 
+                
                 $.each(localStorage, function(key, value) {
                     
-                    
+                    console.log(value)
                     let append = ''
                     if (!lixo.includes(key)) {
                         
-                         append = '<div class="card"><div class="card-body"><h5 class="card-title">' + key + '</h5><p>';
+                         append = '<div class="card mb-3"><div class="card-body"><h5 class="card-title">' + key + '</h5><p>';
                         
 
                         
@@ -284,26 +283,19 @@
             })
 
 
-            $('#salvar').click(() => {
-
-                localStorage.clear()
+            $('.salvar').click(() => {
+                document.getElementById('form').reportValidity()
                 $('#cardBody').trigger('teste123');
+            })
 
-
-                $('#cardBody').on('teste1234', function(event, param1) {
-                    dadosSelect = JSON.parse(param1)
-
-                    localStorage.setItem("Exemplo 2", JSON.stringify({
+            $('#cardBody').on('teste1234', function(event, param1) {
+                    param1 ? dadosSelect = JSON.parse(param1) : null
+                    localStorage.setItem($('#cardTitle').html(), JSON.stringify({
                         'form': $('form').serializeArray(),
                         'select': dadosSelect
                     }));
 
                 });
-
-
-
-
-            })
 
             valorF();
 

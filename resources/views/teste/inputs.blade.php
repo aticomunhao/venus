@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-8">
         Nome Completo
-        <input class="form-control" id="nome" name="nome" type="text" maxlength="100" placeholder="Nome...">
+        <input class="form-control" id="nome" name="nome" type="text" maxlength="100" placeholder="Nome..." required>
     </div>
 
 
@@ -44,7 +44,7 @@
 <script>
     $(document).ready(function() {
         let dados = {'Habilidade' : $('#Habilidade option:selected').html(), 'Cronograma' : $('#Cronograma option:selected').html()}
-
+        $('#cardTitle').html('Exemplo 2')
 
         $('#cardBody').on('teste123', function(event) {
             // Trigger de evento customizado
