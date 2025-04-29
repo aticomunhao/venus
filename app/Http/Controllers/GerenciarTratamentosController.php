@@ -540,7 +540,7 @@ class GerenciarTratamentosController extends Controller
     // Update de Reverter Falas
     public function remarcar(Request $request)
     {
-        dd($request->all());
+        
         $data_atual = Carbon::now();
 
         // Caso alguma checkbox seja marcada
