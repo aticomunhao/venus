@@ -21,7 +21,7 @@
                                 HISTÓRICO DO ASSISTIDO
                             </div>
                             <div class="d-md-flex justify-content-md-end col">
-                                <a href="/gerenciar-encaminhamentos" class=" btn-sm" style="color: red"><i
+                                <a href="/gerenciar-tratamentos" class=" btn-sm" style="color: red"><i
                                         class="bi bi-x-lg"></i></a>
                             </div>
                         </div>
@@ -246,7 +246,7 @@
                                             <td>{{ $encaminhamento->status }}</td>
                                             <td>
                                                 <a class="btn btn-sm tooltips"
-                                                    href="/visualizar-tratamento/{{ $encaminhamento->ide }}"
+                                                    href="/visualizar-tratamento/{{ $encaminhamento->idt }}"
                                                     style="text-align:right;" role="button">
                                                     <span class="tooltiptext">Visualizar</span>
                                                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
