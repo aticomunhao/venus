@@ -452,6 +452,7 @@ class GerenciarTratamentosController extends Controller
             ->leftJoin('grupo AS gp', 'rm1.id_grupo', 'gp.id')
             ->where('dt.id_pessoa', '=', $result->id_pessoa)
             ->whereNull('dt.id_tratamento')
+            ->orderBy('dc.data','desc')
             ->get()
             ->toArray();
 
