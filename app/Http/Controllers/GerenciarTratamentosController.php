@@ -434,7 +434,7 @@ class GerenciarTratamentosController extends Controller
             ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
             ->whereNot('enc.id_tipo_tratamento', 3) // Remove da lista o PTH (Passe de Tratamento de Harmonização)
             ->where('tr.status', '<', 3)
-            ->whereNot('enc.id', $idtr)
+            ->whereNot('tr.id', $idtr)
             ->get();
 
         $emergencia = DB::table('presenca_cronograma as dt')
@@ -464,7 +464,7 @@ class GerenciarTratamentosController extends Controller
             ->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
             ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
-            ->where('tr.id_encaminhamento', $idtr)
+            ->where('tr.id', $idtr)
             ->orderBy('dc.data', 'desc')
             ->get();
 
@@ -474,7 +474,7 @@ class GerenciarTratamentosController extends Controller
             ->leftjoin('encaminhamento AS enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
             ->leftJoin('presenca_cronograma AS dt', 'tr.id', 'dt.id_tratamento')
-            ->where('enc.id', $idtr)
+            ->where('tr.id', $idtr)
             ->where('dt.presenca', 0)
             ->count();
 
@@ -652,7 +652,7 @@ class GerenciarTratamentosController extends Controller
             ->where('data', $hoje);
 
 
-        $acompanhantesId = $acompanhantes->get();
+        $acompanhantesId = $acompanhantes->first();
 
         // Atualiza o número de acompanhantes da reunião
         $acompanhantes->update([
@@ -664,10 +664,11 @@ class GerenciarTratamentosController extends Controller
         DB::table('presenca_cronograma')->insert([
             'presenca' => true,
             'id_pessoa' => $request->assistido,
-            'id_dias_cronograma' => $acompanhantesId,
+            'id_dias_cronograma' => $acompanhantesId->id,
             'id_motivo' => $request->motivo
         ]);
 
+        app('flasher')->addSuccess('Atendimento de emergência incluido com sucesso.');
         return redirect('/gerenciar-tratamentos');
     }
     public function visualizarRI(Request $request)
