@@ -60,7 +60,7 @@ class AtendimentoFraternoController extends Controller
             ->value('grupo.nome');
 
 
-        //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente, que não sejam AFE
+        //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente
         $assistido = DB::table('atendimentos AS at')
             ->select(
                 'at.id AS idat',
@@ -105,13 +105,14 @@ class AtendimentoFraternoController extends Controller
         return view('atendimento-assistido.atendendo', compact('assistido', 'atendente', 'now', 'nome', 'grupo', 'motivo'));
     }
 
+    // Usado para calcular a fila para o atendente logado
     public function pessoas_para_atender()
     {
 
         $id_associado = session()->get('usuario.id_associado'); // ID associado do usuário logado
         $sexo = session()->get('usuario.sexo'); // // Dados se a pessoa é [ 1 => 'Masculino', 2 => 'Feminino', 3 => 'Outros']
 
-            // retorna o tipo de atendimento
+            // Retorna o tipo de atendimento
             $sala = DB::table('atendente_dia AS atd')
             ->whereDate('dh_inicio', Carbon::today()->toDateString()) // Se o item de sala dele é do dia de hoje
             ->whereNull('dh_fim') // Não pode ter sido finalizado
@@ -163,12 +164,7 @@ class AtendimentoFraternoController extends Controller
 
     public function atende_agora()
     {
-
-        // DB::beginTransaction();
-
-        // try {
-
-        $hoje =  Carbon::today(); // Data de Hoje
+        
         $atendente = session()->get('usuario.id_associado'); // Id associado de quem está logado
         $pref_m = session()->get('usuario.sexo'); // Dados se a pessoa é [ 1 => 'Masculino', 2 => 'Feminino', 3 => 'Outros']
 
@@ -282,12 +278,7 @@ class AtendimentoFraternoController extends Controller
             DB::commit();
             return redirect('/atendendo');
         }
-        // } catch (\Exception $e) {
 
-        //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
-        //     DB::rollBack();
-        //     return redirect()->back();
-        // }
     }
 
     //Botão Analisar na VIEW
