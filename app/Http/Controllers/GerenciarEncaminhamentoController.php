@@ -118,11 +118,7 @@ class GerenciarEncaminhamentoController extends Controller
         from tipo_status_encaminhamento ts
         ");
 
-        $motivo = DB::select("select
-        tm.id,
-        tm.tipo
-        from tipo_motivo tm
-        ");
+        $motivo = DB::table('tipo_motivo')->where('vinculado', 1)->get();
 
         return view('/recepcao-integrada/gerenciar-encaminhamentos', compact('cpf', 'lista', 'stat', 'contar', 'data_enc', 'assistido', 'situacao', 'motivo'));
     }
