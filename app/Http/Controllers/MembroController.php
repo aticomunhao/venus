@@ -170,7 +170,16 @@ class MembroController extends Controller
     public function createGrupo(Request $request, string $id)
     {
         try {
-            $grupo = DB::table('cronograma as cro')->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia')->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')->get();
+
+                $grupo = DB::table('cronograma as cro')
+                    ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 's.sigla as nsigla')
+                    ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+                    ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
+                    ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+                    ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+                    ->where('cro.id', $id)
+                    ->first();
+
 
             $membro = DB::select('select * from membro');
             $pessoas = DB::select('select id , nome_completo, motivo_status, status from pessoas order by nome_completo asc');
@@ -338,7 +347,7 @@ class MembroController extends Controller
         if ($status && $status != 'Todos') {
             $membroQuery->where(DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END)"), '=', $status);
         }else if( $status == 'Todos'){
-            
+
         }
         else{
             $membroQuery->where('m.dt_fim', NULL);
