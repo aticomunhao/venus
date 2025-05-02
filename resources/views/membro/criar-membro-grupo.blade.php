@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Cadastrar Membro')
 @section('content')
-<h4 class="card-title" style="font-size: 25px; text-align: center; color: gray; font-family: Calibri;">GRUPO -
+<h4 class="card-title" style="font-size: 20px; text-align: left; color: gray; font-family: Calibri;">CADASTRAR MEMBRO | GRUPO -
     {{ Str::upper($grupo->nome) }} ({{ $grupo->nsigla }}) - {{ Str::upper($grupo->dia) }}
     {{ date('H:i', strtotime($grupo->h_inicio)) }}/{{ date('H:i', strtotime($grupo->h_fim)) }}
 </h4>
