@@ -112,8 +112,8 @@ class AtendimentoFraternoController extends Controller
         $id_associado = session()->get('usuario.id_associado'); // ID associado do usuário logado
         $sexo = session()->get('usuario.sexo'); // // Dados se a pessoa é [ 1 => 'Masculino', 2 => 'Feminino', 3 => 'Outros']
 
-            // Retorna o tipo de atendimento
-            $sala = DB::table('atendente_dia AS atd')
+        // Retorna o tipo de atendimento
+        $sala = DB::table('atendente_dia AS atd')
             ->whereDate('dh_inicio', Carbon::today()->toDateString()) // Se o item de sala dele é do dia de hoje
             ->whereNull('dh_fim') // Não pode ter sido finalizado
             ->where('id_associado', $id_associado) // Apenas para o usuário logado
@@ -164,7 +164,7 @@ class AtendimentoFraternoController extends Controller
 
     public function atende_agora()
     {
-        
+
         $atendente = session()->get('usuario.id_associado'); // Id associado de quem está logado
         $pref_m = session()->get('usuario.sexo'); // Dados se a pessoa é [ 1 => 'Masculino', 2 => 'Feminino', 3 => 'Outros']
 
@@ -192,7 +192,7 @@ class AtendimentoFraternoController extends Controller
             ->count();
 
 
-        //Devolve os IDs atendimento que estão Aguardando Atendimento
+        //Devolve os IDs atendimento que estão Aguardando Atendimento, que não tenha nem atendente nem sexo preferido
         $atende = DB::table('atendimentos')
             ->where('status_atendimento', 2)
             ->whereNull('id_atendente_pref') // Atendente preferido null
@@ -201,7 +201,7 @@ class AtendimentoFraternoController extends Controller
             ->pluck('id')
             ->toArray();
 
-        // Devolve os IDs que estão Aguardando Atendimento
+        // Devolve os IDs que estão Aguardando Atendimento, cujo atendente preferido é o usuario logado
         $atende1 = DB::table('atendimentos')->where('status_atendimento', 2)
             ->where('id_atendente_pref', $atendente) // O atendente preferido é o usuário logado
             ->where('id_tipo_atendimento', $atendimento) // Apenas os do mesmo tipo que o de trabalho do atendente
@@ -209,7 +209,7 @@ class AtendimentoFraternoController extends Controller
             ->toArray();
 
 
-        /* Devolve os IDs que estão Aguardando Atendimento
+        /* Devolve os IDs que estão Aguardando Atendimento, cujo o sexo preferido seja o mesmo do usuario logado
                     *Caso o Atendente esteja sem sexo em pessoas, esse item não pegará nada,
                     gerando um bug que ele não consegue buscar essas pessoas */
         $atende2 = DB::table('atendimentos')->where('status_atendimento', 2)
@@ -219,9 +219,14 @@ class AtendimentoFraternoController extends Controller
             ->toArray();
 
         $atendeFinal = array_merge($atende, $atende1, $atende2); // Une os ids em uma única variável
-        $assistido = count($atendeFinal); // Conta a quaantidade de IDs retornados
+        $assistido = count($atendeFinal); // Conta a quantidade de IDs retornados
 
-        if ($atendendo > 0) { // Valida se outra pessoa já está em atendimento
+        if ($atendendo < 1 && $sala == null) { // Se não estiver atendendo niguém, porém sem uma sala cadastrada
+
+            app('flasher')->addError('O atendente deve estar designado para o trabalho de hoje.');
+
+            return redirect('/atendendo');
+        } elseif ($atendendo > 0) { // Valida se outra pessoa já está em atendimento
 
             app('flasher')->addError('Você não pode atender dois assistidos ao mesmo tempo.');
 
@@ -229,11 +234,6 @@ class AtendimentoFraternoController extends Controller
         } elseif ($assistido < 1) { // Checa se, seguindo as regras de sexo e atendimento preferido, existe pessoas na fila
 
             app('flasher')->addError('Todos os assistidos foram atendidos.');
-
-            return redirect('/atendendo');
-        } elseif ($atendendo < 1 && $sala == null) { // Se não estiver atendendo niguém, porém sem uma sala cadastrada
-
-            app('flasher')->addError('O atendente deve estar designado para o trabalho de hoje.');
 
             return redirect('/atendendo');
         } elseif ($atendendo < 1 && $sala > 0) { // Se não estiver atendendo ninguem e com uma sala cadastrada
@@ -255,7 +255,7 @@ class AtendimentoFraternoController extends Controller
                 })
                 ->orderby('id_prioridade')->orderBy('dh_chegada') // Ordena pela prioridade e após pelo horário de chegada
                 ->limit(1); // Traz apenas um por vez
-            // dd( $atendimentoSelecionado->first()->id);
+
             // Usado para conseguir o ID do atendimento selecionado, para a inserção no LOG
             $ida = ($atendimentoSelecionado->first()->id);
             $atendimentoSelecionado = $atendimentoSelecionado->update([
@@ -278,7 +278,6 @@ class AtendimentoFraternoController extends Controller
             DB::commit();
             return redirect('/atendendo');
         }
-
     }
 
     //Botão Analisar na VIEW
@@ -316,9 +315,8 @@ class AtendimentoFraternoController extends Controller
                 ->leftJoin('tipo_status_atendimento AS ts', 'at.status_atendimento', 'ts.id')
                 ->leftJoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
                 ->leftJoin('pessoas AS p2', 'at.id_representante', 'p2.id')
-                 ->leftJoin('associado AS ad1', 'at.id_atendente', 'ad1.id')
-                 ->leftJoin('pessoas AS ps1', 'ad1.id_pessoa', 'ps1.id')
-               //  ->leftJoin('membro AS m1', 'at.id_atendente_pref', 'm1.id_associado') // Era ligado a associado, logo abaixo
+                ->leftJoin('associado AS ad1', 'at.id_atendente', 'ad1.id')
+                ->leftJoin('pessoas AS ps1', 'ad1.id_pessoa', 'ps1.id')
                 ->leftJoin('associado AS ad2', 'at.id_atendente_pref', 'ad2.id')
                 ->leftJoin('pessoas AS ps2', 'ad1.id_pessoa', 'ps2.id')
                 ->leftJoin('tp_sexo AS tx', 'at.pref_tipo_atendente', 'tx.id')
@@ -465,7 +463,7 @@ class AtendimentoFraternoController extends Controller
             // Confere se o tratamento está em Atendimento
             $sit = DB::table('atendimentos AS at')
                 ->where('at.id', $idat)
-                ->where('status_atendimento', 5)
+                ->where('status_atendimento', 5) //Status Em atendimento
                 ->count();
 
             // Traz o nome completo do assistido para a view, através do id_pessoa
@@ -520,7 +518,7 @@ class AtendimentoFraternoController extends Controller
     {
         try {
 
-            // Confere se o atendimento está Em Atendimento
+            // Confere se o atendimento está com status Em Atendimento
             $sit = DB::table('atendimentos AS at')
                 ->where('at.id', $idat)
                 ->where('status_atendimento', 5) // Em Atendimento
@@ -530,7 +528,7 @@ class AtendimentoFraternoController extends Controller
             $verifi = DB::table('encaminhamento AS enc')
                 ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
                 ->where('at.id', $idat)
-                ->where('id_tipo_encaminhamento', 1) // Tipo Entrevista
+                ->where('id_tipo_encaminhamento', 1) // Status  Entrevista
                 ->count();
 
 
@@ -571,7 +569,7 @@ class AtendimentoFraternoController extends Controller
 
         $r_tema = DB::table('registro_tema')->where('id_atendimento', $idat)->count(); // Confere se existem temas para o atendimento
         $nota = DB::table('atendimentos')->where('id', $idat)->first(); // Tem o objetivo de conseguir a anotação de atendimentos
-        // Confere se o atendimento está Em Atendimento
+        // Confere se o atendimento está  com o status Em Atendimento
         $sit = DB::table('atendimentos AS at')
             ->where('at.id', $idat)
             ->where('status_atendimento', 5) // Em Atendimento
@@ -623,7 +621,7 @@ class AtendimentoFraternoController extends Controller
             })
             ->pluck('id_tipo_tratamento')->toArray();
 
-            return $countTratamentos;
+        return $countTratamentos;
     }
 
 
@@ -652,7 +650,7 @@ class AtendimentoFraternoController extends Controller
 
 
         // PTD -> Passe de Tratamento Desobsessivo
-        if (in_array(1, $countEncaminhamentos) and $desobsessivo) { // Confere se njá tem um PTD
+        if (in_array(1, $countEncaminhamentos) and $desobsessivo) { // Confere se Já tem um PTD
             app('flasher')->addWarning('Já existe um encaminhamento PTD ativo para esta pessoa!');
         } else if (in_array(2, $countEncaminhamentos) and $desobsessivo) { // Confere se já tem PTI
             app('flasher')->addWarning('Existe um encaminhamento PTI ativo para esta pessoa!');
