@@ -25,19 +25,19 @@
                                 <div class="form-group row">
                                     <div class="col">
                                         <label for="disabledTextInput" class="form-label">Assistido:</label>
-                                        <input type="text" id="" value="{{ $result[0]->nm_1 }}"
+                                        <input type="text" id="" value="{{ $result->nm_1 }}"
                                             class="form-control" placeholder="Disabled input" disabled>
                                     </div>
                                     <div class="col-2">
                                         <label for="disabledTextInput" class="form-label">Sexo:</label>
-                                        <input type="text" id="" value="{{ $result[0]->tipo }}"
+                                        <input type="text" id="" value="{{ $result->tipo }}"
                                             style="text-align:center;" class="form-control" placeholder="Disabled input"
                                             disabled>
                                     </div>
                                     <div class="col-3">
                                         <label for="disabledTextInput" class="form-label">Dt nascimento:</label>
                                         <input type="date" class="form-control" id="" name="date"
-                                            value="{{ $result[0]->dt_nascimento }}" class="form-control"
+                                            value="{{ $result->dt_nascimento }}" class="form-control"
                                             placeholder="Disabled input" disabled>
                                     </div>
                                 </div>

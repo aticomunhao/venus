@@ -28,9 +28,9 @@
                     <div class="col-md-3">
                         <label class="form-label">Número da Sala:</label>
                         <select class="form-select text-center" name="sala">
+                            <option value="{{ $atende->id_sala }}" selected>{{ $atende->nm_sala }}</option>
                             @foreach ($sala as $salas)
                                 @if ($salas->numero > $atende->nm_sala && $atende->nm_sala > 0)
-                                    <option value="{{ $atende->id_sala }}" selected>{{ $atende->nm_sala }}</option>
                                 @endif
                                 <option value="{{ $salas->id }}">{{ $salas->numero }}</option>
                             @endforeach
@@ -46,7 +46,7 @@
                             @endforeach
                         </select>
                     </div>
-                    
+
                     <div class="col-md-6">
                         <label class="form-label">Grupo:</label>
                         <select class="form-select text-center" name="grupo">

@@ -220,7 +220,7 @@ class GerenciarEntrevistaController extends Controller
         // dd($informacoes); // Debug the fetched data
 
         $status = DB::table('tipo_status_entrevista')->orderBy('id', 'ASC')->get(); // Traz os itens para pesquisa de Status
-        $motivo = DB::table('tipo_motivo_entrevista')->orderBy('descricao')->get(); // Usado no Select de Motivo no Modal de Inativação
+        $motivo = DB::table('tipo_motivo')->where('vinculado', 3)->orderBy('tipo')->get(); // Usado no Select de Motivo no Modal de Inativação
 
         $informacoes = $this->paginate($informacoes, 50); // Pagina o Array
         $informacoes->withPath('')->appends(
@@ -618,7 +618,7 @@ class GerenciarEntrevistaController extends Controller
         $dt = Carbon::createFromFormat('Y-m-d H:i:s', $entrevista->data . ' ' . $entrevista->hora);
 
         // A tabela Atendimentos pede o ID associado, logo, é necessária busca em banco desse dado
-        $id_entrevistador = DB::table('membro')->where('id', $entrevista->id_entrevistador)->select('id_associado')->first();
+        $id_entrevistador = DB::table('membro')->where('id_associado', $entrevista->id_entrevistador)->select('id_associado')->first();
 
         // Caso seja uma entrevista do tipo AFE
         if ($encaminhamento->id_tipo_entrevista == 3) {
@@ -632,8 +632,9 @@ class GerenciarEntrevistaController extends Controller
                 'id_atendente' => $id_entrevistador->id_associado,
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'id_sala' => $entrevista->id_sala,
-                'status_atendimento' => 7, // Cancelado
-                'afe' => true
+                'id_tipo_atendimento' => 2,
+                'status_atendimento' => 3,
+                'id_prioridade' => 3
             ]);
 
             // Atualiza a entrevista

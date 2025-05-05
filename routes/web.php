@@ -365,6 +365,7 @@ Route::middleware('rotas:21')->group(function () {
 Route::middleware('rotas:24')->group(function () {
     Route::get('/gerenciar-pti', [GerenciarPTIController::class, 'index']);
     Route::get('/alta-pti/{id}', [GerenciarPTIController::class, 'update']);
+    Route::get('/alta-nutres/{id}', [GerenciarPTIController::class, 'nutres']);
     Route::get('/visualizar-pti/{id}', [GerenciarPTIController::class, 'show']);
 });
 
