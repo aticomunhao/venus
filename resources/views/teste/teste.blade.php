@@ -113,6 +113,24 @@
                 </div>
             </div>
 
+            <div class="col mt-5">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body ">
+                        <h5 class="card-title">Exemplo 4</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">Quadro Kanban</h6>
+                        <p class="card-text">Aplicação completa de um Quadro Kanban</p>
+                        <div class="row">
+                            <div class="col">
+                                <button type="button" id="carregamentoKanban" class="btn btn-primary col-12">Carregar <i
+                                        class="bi bi-cloud-arrow-up-fill"></i></button>
+                            </div>
+                           
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="col mt-5">
                 <div class="card" style="width: 18rem;">
@@ -174,6 +192,10 @@
             function carregarInput2() {
                 $('#cardBody').off('teste123'),
                 $('#cardBody').load('/teste-input2');
+            }
+            function carregarKanban() {
+                $('#cardBody').off('teste123'),
+                $('#cardBody').load('/teste-kanban');
             }
 
 
@@ -276,6 +298,14 @@
             $('#carregamentoInput2').click(() => {
                 carregarInput2()
             })
+            $('#carregamentoKanban').click(() => {
+                carregarKanban()
+            })
+
+            // var intervalIdTime = window.setInterval(function() {
+            //     [carregarKanban()]
+            // }, 1000);
+
             $('#visualizar').click(() => {
                 preencheModal();
                 $('#visualizarModal').html() === "" ? modalVazio() : null

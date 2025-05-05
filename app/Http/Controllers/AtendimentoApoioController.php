@@ -268,5 +268,10 @@ class AtendimentoApoioController extends Controller
         return view('teste.inputs2', compact('habilidades', 'cronogramas'));
     }
 
+    public function testeKanban(){
+
+        return view ('teste.kanban');
+    }
+
 
 }

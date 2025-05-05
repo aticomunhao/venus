@@ -489,3 +489,4 @@ Route::any('/teste-ger', [AtendimentoApoioController::class, 'testeGer']);
 Route::any('/teste-1', [AtendimentoApoioController::class, 'teste1']);
 Route::any('/teste-input', [AtendimentoApoioController::class, 'testeInput']);
 Route::any('/teste-input2', [AtendimentoApoioController::class, 'testeInput2']);
+Route::any('/teste-kanban', [AtendimentoApoioController::class, 'testeKanban']);
