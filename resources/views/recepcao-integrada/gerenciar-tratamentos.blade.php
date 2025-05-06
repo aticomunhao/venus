@@ -306,7 +306,7 @@
                         @endif
                         @endif
                         {{-- modal de inativação --}}
-                        <form action="/inativar-tratamento/{{ $listas->idtr }}">
+                        <form action="/inativar-tratamento/{{ $listas->ide }}">
                             <div class="modal fade" id="inativa{{ $listas->idtr }}" data-bs-keyboard="false"
                                 tabindex="-1" aria-labelledby="inativarLabel" aria-hidden="true">
                                 <div class="modal-dialog">
