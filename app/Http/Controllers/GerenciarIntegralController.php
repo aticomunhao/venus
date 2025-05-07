@@ -416,16 +416,6 @@ class GerenciarIntegralController extends Controller
 
             $hoje = Carbon::today();
 
-
-            $id_encaminhamento = DB::table('tratamento')->where('id', $id)->first();
-            DB::table('tratamento')->where('id', $id)->update(['status' => 4, 'dt_fim' => $hoje]);
-            DB::table('encaminhamento')->where('id', $id_encaminhamento->id_encaminhamento)->update(['status_encaminhamento' => 3]);
-
-
-
-
-
-
             $dt_hora = Carbon::now();
             $today = Carbon::today()->format('Y-m-d');
 
