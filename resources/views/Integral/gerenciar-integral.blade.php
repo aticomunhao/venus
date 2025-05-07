@@ -326,7 +326,7 @@
                                                     <button type="button" class="btn btn-danger"
                                                         data-bs-dismiss="modal">Cancelar</button>
                                                     <a type="button" class="btn btn-primary"
-                                                        href="/infinito-integral/{{ $encaminhamento->id }}">Confirmar
+                                                        href="/infinito-integral/{{ $encaminhamento->ide }}">Confirmar
                                                     </a>
                                                 </div>
                                             </div>
@@ -355,7 +355,7 @@
                                                 <button type="button" class="btn btn-danger"
                                                     data-bs-dismiss="modal">Cancelar</button>
                                                 <a type="button" class="btn btn-primary"
-                                                    href="/alta-integral/{{ $encaminhamento->id }}">Confirmar
+                                                    href="/alta-integral/{{ $encaminhamento->ide }}">Confirmar
                                                 </a>
                                             </div>
                                         </div>
