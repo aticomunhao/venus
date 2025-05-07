@@ -414,9 +414,6 @@ class GerenciarIntegralController extends Controller
         try {
 
 
-            dd(true); // HACK Usado para bloquar o clique do botão // 
-
-
             $hoje = Carbon::today();
 
 
