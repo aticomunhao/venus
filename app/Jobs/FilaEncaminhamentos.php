@@ -401,7 +401,6 @@ class FilaEncaminhamentos implements ShouldQueue
             ->get()
             ->toArray();
 
-
         // Encontra todas os Encaminhamentos PTD Aguardando Agendamento
         $encaminhamentoPTD = DB::table('encaminhamento as enc')
             ->select('at.dh_chegada', 'at.id_assistido', 'enc.id')
@@ -445,7 +444,7 @@ class FilaEncaminhamentos implements ShouldQueue
             } else {
 
                 // Confere se a dt_fim do tratamento faz mais de X dias e a dh_chegada da entrevista faz mais de X dias
-                if ($dh_chegada < $data and $tratamentos[array_search($proamo->id_assistido, array_column($tratamentos, 'id_assistido'))]->dt_fim < $data) {
+                if ($dh_chegada < $data and $tratamentos[array_search($proamo->id_assistido, array_column($tratamentos, 'id_assistido'))]->dt_fim < $data and $tratamentos[array_search($proamo->id_assistido, array_column($tratamentos, 'id_assistido'))]->dt_fim != null) {
                     $this->inativar($proamo->id);
                 }
             }
