@@ -221,7 +221,7 @@
                         <!-- Modal Declarar Alta -->
                         <div class="modal fade" id="modalA{{ $encaminhamento->id }}" tabindex="-1"
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <form action="/alta-proamo/{{ $encaminhamento->id }}" class="form-horizontal mt-4">
+                            <form action="/alta-proamo/{{ $encaminhamento->ide }}" class="form-horizontal mt-4">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header bg-danger text-white">
