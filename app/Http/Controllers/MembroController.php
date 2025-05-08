@@ -245,7 +245,7 @@ class MembroController extends Controller
             'id_associado' => $request->input('id_associado'),
             'id_funcao' => $request->input('id_funcao'),
             'id_cronograma' => $id,
-            'dt_inicio' => $data,
+            'dt_inicio' => $request->input('dt_inicio'),
         ]);
 
         $nomePessoa = DB::table('pessoas')
@@ -438,7 +438,7 @@ class MembroController extends Controller
             'id_associado' => $request->input('id_associado'),
             'id_funcao' => $request->input('id_funcao'),
             'id_cronograma' => $request->input('id_reuniao'),
-            'dt_inicio' => $data,
+            'dt_inicio' => $request->input('dt_inicio'),
         ]);
 
         $nomePessoa = DB::table('pessoas')

@@ -62,6 +62,16 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="dt_inicio" class="form-label">Data de Início</label>
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
+                                <input type="date" class="form-control" name="dt_inicio" id="dt_inicio" required>
+                            </div>
+                        </div>
                     </div>
                     <br>
                     <div class="row mt-1 justify-content-center">
