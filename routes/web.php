@@ -112,7 +112,7 @@ Route::middleware('rotas:5')->group(function () {
     Route::post('/grava-atualizacao/{ida}', [GerenciarAtendimentoController::class, 'altera'])->name('atealt');
     Route::post('/novo-atendimento', [GerenciarAtendimentoController::class, 'store'])->name('atetore');
     Route::get('/visualizar-atendimentos/{idas}', [GerenciarAtendimentoController::class, 'visual'])->name('atevis');
-    Route::any('/tabela-atendimentos/{assist}/{cpf}/{status}/{dt_ini}/{atendente}', [GerenciarAtendimentoController::class, 'ajaxAtendimento']);
+    Route::any('/tabela-atendimentos', [GerenciarAtendimentoController::class, 'ajaxAtendimento']);
     Route::any('/ajaxCRUD', [GerenciarAtendimentoController::class, 'ajaxCRUD']);
     Route::get('/pessoas-para-atender-atendimento', [GerenciarAtendimentoController::class, 'pessoas_para_atender']);
 });

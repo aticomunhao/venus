@@ -252,21 +252,19 @@
 
             function ajax() {
 
-                let assist = $('#assist').val() == '' ? null : $('#assist').val()
-                let cpf = $('#cpf').val() == '' ? null : $('#cpf').val()
-                let status = $('#status').val() == '' ? null : $('#status').val()
-                let dt_ini = $('#dt_ini').val() == '' ? null : $('#dt_ini').val()
-                let atendente = $('#idatendente').val() == '' ? null : $('#idatendente').val();
+                let assist = $('#assist').val()
+                let cpf = $('#cpf').val()
+                let status = $('#status').val() 
+                let dt_ini = $('#dt_ini').val()
+                let atendente = $('#idatendente').val()
 
 
 
                 $.ajax({
                     type: "GET",
-                    url: "/tabela-atendimentos/" + assist + "/" + cpf + "/" + status + "/" + dt_ini + "/" +
-                        atendente,
+                    url: "/tabela-atendimentos?assist=" + assist + "&cpf=" + cpf + "&status=" + status + "&dt_ini=" + dt_ini + "&atendente=" + atendente,
                     dataType: "json",
                     success: function(response) {
-
                         atendimentos = response
                     },
                     error: function(xhr) {
@@ -295,17 +293,19 @@
             }
 
             function linha(atendimento) {
-
-                const date = Date.parse(atendimento.dh_chegada);
-                        const formatter = new Intl.DateTimeFormat('pt-BR', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit'
-                        });
-                        const formattedDate = formatter.format(date);
+                let formattedDate = 0;
+                        if(atendimento.dh_chegada){
+                            const date = Date.parse(atendimento.dh_chegada);
+                            const formatter = new Intl.DateTimeFormat('pt-BR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                            formattedDate = formatter.format(date);
+                        }
 
                         let ida = atendimento.ida == null ? '' : atendimento.ida
                         let nm_4 = atendimento.nm_4 == null ? ' ' : atendimento.nm_4

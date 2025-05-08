@@ -14,10 +14,10 @@ class GerenciarAtendimentoController extends Controller
     ////GERENCIAR ATENDIMENTOS DO DIA
 
 
-    public function ajaxAtendimento(String $assist, String $cpf, String $status, String $dt_ini, String $atendente)
+    public function ajaxAtendimento(Request $request)
     {
 
-
+        
         $lista = DB::table('atendimentos AS at')
             ->select(
                 'at.id as ida',
@@ -49,33 +49,31 @@ class GerenciarAtendimentoController extends Controller
         // Filtra pela data de início, se fornecida, caso contrário, usa a data atual
 
 
-        if ($dt_ini != 'null') {
-            $lista->whereDate('dh_chegada', $dt_ini);
-        } elseif ($assist != 'null' or $atendente != 'null' or $cpf != 'null' or $status != 'null') {
+        if ($request->dt_ini) {
+            $lista->whereDate('dh_chegada', $request->dt_ini);
+        } elseif ($request->assist or $request->atendente or $request->cpf or $request->status) {
         } else {
             $lista->whereDate('dh_chegada', '>', Carbon::today()->toDateString());
         }
 
-        if ($assist != 'null') {
-
+        if ($request->assist) {
+            
 
             $pesquisaAssist = array();
-            $pesquisaAssist = explode(' ', $assist);
-
+            $pesquisaAssist = explode(' ', $request->assist);
             foreach ($pesquisaAssist as $itemPesquisaAssist) {
                 $lista =  $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAssist%"]);
             }
         }
 
-        if ($status != 'null') {
-            $lista->where('at.status_atendimento', $status);
+        if ($request->status != 'null') {
+            $lista->where('at.status_atendimento', $request->status);
         }
 
-        if ($atendente != 'null') {
+        if ($request->atendente) {
 
             $pesquisaAtendente = array();
-            $pesquisaAtendente = explode(' ', $assist);
-
+            $pesquisaAtendente = explode(' ', $request->atendente);
             foreach ($pesquisaAtendente as $itemPesquisaAtendente) {
                 $lista =  $lista->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisaAtendente%"]);
             }
@@ -83,13 +81,13 @@ class GerenciarAtendimentoController extends Controller
 
 
 
-        if ($cpf != 'null') {
-            $lista->where('p1.cpf', 'ilike', "%$cpf%");
+        if ($request->cpf) {
+            $lista->where('p1.cpf', 'ilike', "%$request->cpf%");
         }
 
         $lista = $lista->orderby('at.status_atendimento', 'ASC')->orderBy('at.id_prioridade', 'ASC')->orderby('at.dh_chegada', 'ASC');
 
-        $lista = $lista->get();
+        $lista = $lista->limit(200)->get();
 
 
         $lista = json_encode($lista);
@@ -335,7 +333,7 @@ class GerenciarAtendimentoController extends Controller
 
         $assistido = $request->assist;
 
-        $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 6)->where('id_assistido', $assistido)->count();
+        $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 6)->where('id_assistido', $assistido)->whereNot('id_tipo_atendimento', 2)->count();
         $dadosAssistido = DB::table('pessoas')->where('id', $request->input('assist'))->first();
 
         //dd($resultado);
@@ -633,7 +631,7 @@ class GerenciarAtendimentoController extends Controller
                 ->addDay(1)
                 ->format('Y-m-d');
             $atende->where('atd.dh_inicio', '>', $request->data)
-                   ->where('atd.dh_inicio', '<', $dataAmanha);
+                ->where('atd.dh_inicio', '<', $dataAmanha);
         } else {
             $atende->where('atd.dh_inicio', '>', $now);
             $data = $now;
@@ -669,8 +667,8 @@ class GerenciarAtendimentoController extends Controller
 
         // Consulta no banco
         $atende = $atende->orderBy('status', 'ASC')
-                         ->orderBy('nm_sala', 'ASC')
-                         ->get();
+            ->orderBy('nm_sala', 'ASC')
+            ->get();
 
         // Se não encontrou nenhum resultado, tentamos fazer uma busca por aproximação
         if ($request->atendente && $atende->isEmpty()) {
@@ -729,7 +727,7 @@ class GerenciarAtendimentoController extends Controller
         $grupo = DB::table('grupo')->select('id', 'nome')->where('id_tipo_grupo', 3)->where('status_grupo', 1)->orderBy('id')->get();
 
         // Retorna a view com os dados
-        return view('/recepcao-AFI/gerenciar-atendente-dia', compact('atende','resultados', 'atendente', 'status', 'situacao', 'grupo', 'data', 'now'));
+        return view('/recepcao-AFI/gerenciar-atendente-dia', compact('atende', 'resultados', 'atendente', 'status', 'situacao', 'grupo', 'data', 'now'));
     }
 
 
