@@ -240,6 +240,7 @@ class GerenciarEncaminhamentoController extends Controller
                 $query->orWhere('reu.modificador', '<>', 4);
             })
             ->where('me.id_funcao', 1) // Busca apenas dirigentes, gera um bug de duplicação caso um grupo tenha mais de um dirigente
+            ->whereNull('me.dt_fim')
             ->where('reu.dia_semana', $dia)
             ->where('reu.id_tipo_tratamento', $tp_trat)
             ->orWhere('tr.status', null)
@@ -945,6 +946,7 @@ class GerenciarEncaminhamentoController extends Controller
                     $query->orWhere('reu.modificador', '<>', 4);
                 })
                 ->where('me.id_funcao', 1) // XXX Busca apenas dirigentes, gera um bug de duplicação caso um grupo tenha mais de um dirigente
+                ->whereNull('me.dt_fim')
                 ->where('reu.dia_semana', $dia)
                 ->where('reu.id_tipo_tratamento', $tp_trat)
                 ->orWhere('tr.status', null)
