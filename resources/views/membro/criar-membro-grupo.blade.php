@@ -1,16 +1,17 @@
 @extends('layouts.app')
 @section('title', 'Cadastrar Membro')
 @section('content')
-<h4 class="card-title" style="font-size: 20px; text-align: left; color: gray; font-family: Calibri;">CADASTRAR MEMBRO -
-    {{ Str::upper($grupo->nome) }} ({{ $grupo->nsigla }}) - {{ Str::upper($grupo->dia) }}
-    {{ date('H:i', strtotime($grupo->h_inicio)) }}/{{ date('H:i', strtotime($grupo->h_fim)) }}
-</h4>
+
     <div class="container mt-4">
         <div class="card">
             <div class="card-header">
                 <div class="row">
                     <div class="col">
-                        CADASTRAR MEMBRO
+                        <h4 class="card-title" style="font-size: 20px; text-align: left; color: gray; font-family: Calibri;">
+                            CADASTRAR MEMBRO -
+                            {{ Str::upper($grupo->nome) }} ({{ $grupo->nsigla }}) - {{ Str::upper($grupo->dia) }}
+                            {{ date('H:i', strtotime($grupo->h_inicio)) }}/{{ date('H:i', strtotime($grupo->h_fim)) }}
+                        </h4>
                     </div>
                 </div>
             </div>
@@ -27,9 +28,11 @@
                                     <span class="tooltiptext">Obrigatório</span>
                                     <span style="color:red">*</span>
                                 </span>
-                                <select class="form-select select2" aria-label=".form-select-lg example" name="id_associado">
+                                <select class="form-select select2" aria-label=".form-select-lg example"
+                                    name="id_associado">
                                     @foreach ($associado as $associados)
-                                        <option value="{{ $associados->id}}">{{ $associados->nome_completo}}  - {{ $associados->nr_associado}}</option>
+                                        <option value="{{ $associados->id }}">{{ $associados->nome_completo }} -
+                                            {{ $associados->nr_associado }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -69,14 +72,15 @@
                                     <span class="tooltiptext">Obrigatório</span>
                                     <span style="color:red">*</span>
                                 </span>
-                                <input type="date" class="form-control" name="dt_inicio" id="dt_inicio" required>
+                                <input type="date" class="form-control" name="dt_inicio" id="dt_inicio">
                             </div>
                         </div>
                     </div>
                     <br>
                     <div class="row mt-1 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-danger" href="/gerenciar-membro/{{ $id }}" role="button">Cancelar</a>
+                            <a class="btn btn-danger" href="/gerenciar-membro/{{ $id }}"
+                                role="button">Cancelar</a>
                         </div>
                         <div class="d-grid gap-2 col-4 mx-auto">
                             <button type="submit" class="btn btn-primary">Confirmar</button>
@@ -89,7 +93,9 @@
 
     <script>
         $(document).ready(function() {
-            $('.select2').select2({ theme: 'bootstrap-5'});
+            $('.select2').select2({
+                theme: 'bootstrap-5'
+            });
         });
     </script>
 @endsection
