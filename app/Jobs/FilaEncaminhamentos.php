@@ -395,11 +395,11 @@ class FilaEncaminhamentos implements ShouldQueue
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
             ->where('enc.id_tipo_tratamento', 1)
+            ->where('tr.status', '<', 3)
             ->whereIn('at.id_assistido', array_column($proamoRequisitos, 'id_assistido'))
             ->orderBy('at.id_assistido')
             ->get()
             ->toArray();
-
 
         // Encontra todas os Encaminhamentos PTD Aguardando Agendamento
         $encaminhamentoPTD = DB::table('encaminhamento as enc')
@@ -411,27 +411,25 @@ class FilaEncaminhamentos implements ShouldQueue
             ->get()
             ->toArray();
 
-        // Encontra todas as entrevistas exceto PROAMO,PTI E INTEGRAL
-        $encaminhamentoEntrevista = DB::table('encaminhamento as enc')
-            ->select('at.dh_chegada', 'at.id_assistido', 'enc.id', 'enc.id_tipo_tratamento')
-            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-            ->where('id_tipo_encaminhamento', 1)
-            ->whereNotIn('enc.id_tipo_entrevista', [6, 4, 5])
-            ->where('enc.status_encaminhamento', 1)
-            ->where('at.dh_chegada', '<', $data)
-            ->whereNotIn('enc.id_tipo_tratamento', [2, 6]) // Evita PTI e TFI
-            ->get()
-            ->toArray();
-
+        // // Encontra todas as entrevistas exceto PROAMO,PTI E INTEGRAL
+        // $encaminhamentoEntrevista = DB::table('encaminhamento as enc')
+        //     ->select('at.dh_chegada', 'at.id_assistido', 'enc.id', 'enc.id_tipo_tratamento')
+        //     ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+        //     ->where('id_tipo_encaminhamento', 1)
+        //     ->whereNotIn('enc.id_tipo_entrevista', [6, 4, 5])
+        //     ->where('enc.status_encaminhamento', 1)
+        //     ->where('at.dh_chegada', '<', $data)
+        //     ->get()
+        //     ->toArray();
 
 
         foreach ($encaminhamentoPTD as $ptd) {
             $this->inative($ptd->id);
         }
 
-        foreach ($encaminhamentoEntrevista as $entrevista) {
-            $this->inativar($entrevista->id);
-        }
+        // foreach ($encaminhamentoEntrevista as $entrevista) {
+        //     $this->inativar($entrevista->id);
+        // }
 
         foreach ($proamoRequisitos as $proamo) {
             $dh_chegada = Carbon::parse($proamo->dh_chegada)->format('Y-m-d');
@@ -445,8 +443,8 @@ class FilaEncaminhamentos implements ShouldQueue
                 }
             } else {
 
-                // Confere se a dt_fim do tratamento faz mais de X dias e a dh_chegada da entrevista faz mais dde X dias
-                if ($dh_chegada < $data and $tratamentos[array_search($proamo->id_assistido, array_column($tratamentos, 'id_assistido'))]->dt_fim < $data) {
+                // Confere se a dt_fim do tratamento faz mais de X dias e a dh_chegada da entrevista faz mais de X dias
+                if ($dh_chegada < $data and $tratamentos[array_search($proamo->id_assistido, array_column($tratamentos, 'id_assistido'))]->dt_fim < $data and $tratamentos[array_search($proamo->id_assistido, array_column($tratamentos, 'id_assistido'))]->dt_fim != null) {
                     $this->inativar($proamo->id);
                 }
             }
