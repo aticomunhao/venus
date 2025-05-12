@@ -17,7 +17,7 @@ class GerenciarAtendimentoController extends Controller
     public function ajaxAtendimento(Request $request)
     {
 
-        
+
         $lista = DB::table('atendimentos AS at')
             ->select(
                 'at.id as ida',
@@ -57,7 +57,7 @@ class GerenciarAtendimentoController extends Controller
         }
 
         if ($request->assist) {
-            
+
 
             $pesquisaAssist = array();
             $pesquisaAssist = explode(' ', $request->assist);
@@ -330,10 +330,22 @@ class GerenciarAtendimentoController extends Controller
 
 
         $dt_hora = Carbon::now();
-
+        $hoje = Carbon::today();
         $assistido = $request->assist;
 
-        $resultado = DB::table('atendimentos')->where('status_atendimento', '<', 6)->where('id_assistido', $assistido)->whereNot('id_tipo_atendimento', 2)->count();
+        $resultado = DB::table('atendimentos')
+        ->where('status_atendimento', '<', 6) // Ativos
+        ->where('id_assistido', $assistido)
+        ->where(function ($query) use ($hoje){ // Todos os atendimentos, AFE apenas de hoje
+            $query->whereNot('id_tipo_atendimento', 2);
+            $query->orWhere(function ($innerQuery) use ($hoje) {
+                $innerQuery->where('id_tipo_atendimento', 2);
+                $innerQuery->where('dh_marcada', '>', $hoje);
+                $innerQuery->where('dh_marcada', '<', $hoje->addDay(1));
+            });
+        })
+        ->count(); 
+
         $dadosAssistido = DB::table('pessoas')->where('id', $request->input('assist'))->first();
 
         //dd($resultado);
@@ -741,28 +753,49 @@ class GerenciarAtendimentoController extends Controller
             $now = Carbon::today();
             $no = Carbon::today()->addDay(1);
 
-            $atende = DB::table('atendente_dia as atd')->select('atd.id AS nr', 'atd.id_associado', 'atd.id AS idatd', 'atd.id_associado AS idad', 'atd.id_sala', 'atd.dh_inicio', 'atd.dh_fim', 'atd.id_tipo_atendimento', 'p.nome_completo AS nm_4', 'p.id', 'tsp.tipo', 'g.id AS idg', 'g.nome AS nomeg', 's.id AS ids', 's.numero AS nm_sala', 'p.status')->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')->leftJoin('salas AS s', 'atd.id_sala', 's.id')->leftJoin('cronograma as cro', 'atd.id_grupo', 'cro.id')->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')->where('atd.id', $idatd)->first();
-            $st_atend = DB::select("select
-        tsp.id,
-        tsp.tipo
-        from tipo_status_pessoa tsp
-        ");
+            $atende = DB::table('atendente_dia as atd')
+                ->select(
+                    'atd.id AS nr',
+                    'atd.id_associado',
+                    'atd.id AS idatd',
+                    'atd.id_associado AS idad',
+                    'atd.id_sala',
+                    'atd.dh_inicio',
+                    'atd.dh_fim',
+                    'atd.id_tipo_atendimento',
+                    'p.nome_completo AS nm_4',
+                    'p.id',
+                    'tsp.tipo',
+                    'g.id AS idg',
+                    'g.nome AS nomeg',
+                    's.id AS ids',
+                    's.numero AS nm_sala',
+                    'p.status'
+                )
+                ->leftJoin('associado as a', 'atd.id_associado', '=', 'a.id')
+                ->leftjoin('pessoas AS p', 'a.id_pessoa', 'p.id')
+                ->leftJoin('tipo_status_pessoa AS tsp', 'p.status', 'tsp.id')
+                ->leftJoin('salas AS s', 'atd.id_sala', 's.id')
+                ->leftJoin('cronograma as cro', 'atd.id_grupo', 'cro.id')
+                ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')
+                ->where('atd.id', $idatd)->first();
 
             $situacao = DB::table('tipo_status_pessoa')->select('id', 'tipo')->get();
 
-            $tipo_atendimento = DB::table('tipo_atendimento')->whereNot('id', 2)->get();
+            $tipo_atendimento = DB::table('tipo_atendimento')->get();
 
             $grupos = DB::table('membro as m')->where('id_associado', $atende->id_associado)->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')->leftJoin('grupo as g', 'cro.id_grupo', 'g.id')->whereIn('id_funcao', [5, 6])->orderBy('g.nome')->get();
 
             $salaAtendendo = DB::table('atendente_dia AS atd')->leftjoin('associado AS a', 'atd.id_associado', 'a.id')->where('dh_inicio', '>=', $now)->where('dh_inicio', '<', $no)->where('dh_fim', '=', null)->pluck('id_sala');
 
-            $salaAFE = DB::table('atendimentos')->where('dh_marcada', '>=', $now)->where('dh_marcada', '<', $no)->where('status_atendimento', 7)->pluck('id_sala');
+            $sala = DB::table('salas AS s')
+                ->select('s.id', 's.numero')
+                ->where('s.id_finalidade', 2)
+                ->where('s.status_sala', 1)
+                ->whereNotIn('id', $salaAtendendo)
+                ->orderBy('numero')->get();
 
-            $sala = DB::table('salas AS s')->select('s.id', 's.numero')->where('s.id_finalidade', 2)->where('s.status_sala', 1)->whereNotIn('id', $salaAtendendo)->whereNotIn('id', $salaAFE)->orderBy('numero')->get();
-
-            //  dd($atende);
-
-            return view('/recepcao-AFI/editar-atendente-dia', compact('atende', 'st_atend', 'grupos', 'sala', 'tipo_atendimento'));
+            return view('/recepcao-AFI/editar-atendente-dia', compact('atende', 'grupos', 'sala', 'tipo_atendimento'));
         } catch (\Exception $e) {
             app('flasher')->addError('Houve um erro inesperado: #' . $e->getCode());
             DB::rollBack();
@@ -908,23 +941,15 @@ class GerenciarAtendimentoController extends Controller
                 ->whereNull('dh_fim')
                 ->pluck('id_sala');
 
-            $salaAFE = DB::table('atendimentos')
-                ->where('dh_marcada', '>=', $now)
-                ->where('dh_marcada', '<', $no)
-                ->whereIn('status_atendimento', [2, 3])
-                ->pluck('id_sala');
-
             $sala = DB::table('salas AS s')
                 ->select('s.id', 's.numero')
                 ->where('s.id_finalidade', 2)
                 ->where('s.status_sala', 1)
                 ->whereNotIn('id', $salaAtendendo)
-                ->whereNotIn('id', $salaAFE)
                 ->orderBy('numero')
                 ->get();
 
             $tipoAtendimento = DB::table('tipo_atendimento')
-                ->whereNot('id', 2)
                 ->get();
 
             return view('/recepcao-AFI/incluir-atendente-dia', compact('contar', 'atende', 'st_atend', 'situacao', 'grupo', 'sala', 'atendentesParaSelect', 'tipoAtendimento'));
