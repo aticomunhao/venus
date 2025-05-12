@@ -301,7 +301,7 @@ class RelatoriosController extends Controller
 
         // Obter os atendentes para o select2
         $atendentesParaSelect = DB::table('membro AS m')
-            ->select('m.id_associado AS ida', 'p.nome_completo AS nm_4')
+            ->select('m.id_associado AS ida', 'a.nr_associado' , 'p.nome_completo AS nm_4')
             ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
             ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
@@ -333,6 +333,9 @@ class RelatoriosController extends Controller
                 'cro.h_fim',
                 'tf.nome as nome_funcao',
                 'st.nome as sala',
+                'm.dt_inicio',
+                'm.dt_fim',
+                'ass.nr_associado',
                 DB::raw("CASE WHEN m.dt_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END AS status")
             )
             // Aplicação dos filtros opcionais
@@ -376,7 +379,7 @@ class RelatoriosController extends Controller
         $result = [];
 
         foreach ($membros as $element) {
-            $result[$element->nome_completo][$element->id] = $element;
+            $result[$element->nome_completo . ' - ' . $element->nr_associado][$element->id] = $element;
         }
 
         $result = $this->paginate($result, 50);
