@@ -568,68 +568,67 @@ class GerenciarEntrevistaController extends Controller
     {
 
 
-            $dt_hora = Carbon::now();
+        $dt_hora = Carbon::now();
 
-            // Traz os dados da entrevista gerada
-            $entrevista = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)
-                ->select('at.id_assistido', 'ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id_sala', 'ent.id_entrevistador', 'ent.status')
-                ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
-                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id');
+        // Traz os dados da entrevista gerada
+        $entrevista = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)
+            ->select('at.id_assistido', 'ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id_sala', 'ent.id_entrevistador', 'ent.status')
+            ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id');
 
-            $idEntrevista = $entrevista->first();
+        $idEntrevista = $entrevista->first();
 
-            // Força uma variável DATE e uma TIME a forçarem uma única DATETIME
-            $dt = Carbon::createFromFormat('Y-m-d H:i:s', $idEntrevista->data . ' ' . $idEntrevista->hora);
-            $dt_new = Carbon::createFromFormat('Y-m-d H:i:s', $request->input('data') . ' ' . $request->input('hora'));
+        // Força uma variável DATE e uma TIME a forçarem uma única DATETIME
+        $dt = Carbon::createFromFormat('Y-m-d H:i:s', $idEntrevista->data . ' ' . $idEntrevista->hora);
+        $dt_new = Carbon::createFromFormat('Y-m-d H:i:s', $request->input('data') . ' ' . $request->input('hora'));
 
 
-            $entrevista->update([
-                'id_entrevistador' => $request->input('entrevistador'),
-                'data' => $request->input('data'),
-                'hora' => $request->input('hora'),
-                'id_sala' => $request->input('numero_sala'),
-            ]);
+        $entrevista->update([
+            'id_entrevistador' => $request->input('entrevistador'),
+            'data' => $request->input('data'),
+            'hora' => $request->input('hora'),
+            'id_sala' => $request->input('numero_sala'),
+        ]);
 
-            // Insere no histórico a criação do atendimento
-            DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idEntrevista->id,
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 3, // foi editado
-                'id_origem' => 4, // Entrevista
-                'data_hora' => $dt_hora
-            ]);
+        // Insere no histórico a criação do atendimento
+        DB::table('log_atendimentos')->insert([
+            'id_referencia' => $idEntrevista->id,
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'id_acao' => 3, // foi editado
+            'id_origem' => 4, // Entrevista
+            'data_hora' => $dt_hora
+        ]);
 
-            // Caso seja uma entrevista do tipo AFE
-            if ($idEntrevista->id_tipo_entrevista == 3 and $idEntrevista->status == 4) {
+        // Caso seja uma entrevista do tipo AFE
+        if ($idEntrevista->id_tipo_entrevista == 3 and $idEntrevista->status == 4) {
 
-                // Busca um atendimento com especificações iguais a da entrevista
-                $afe = DB::table('atendimentos')
-                    ->where('dh_marcada', $dt)
-                    ->where('id_assistido', $idEntrevista->id_assistido)
-                    ->where('id_atendente', $idEntrevista->id_entrevistador)
-                    ->where('id_tipo_atendimento', 2)
-                    ->where('status_atendimento', 3);   
+            // Busca um atendimento com especificações iguais a da entrevista
+            $afe = DB::table('atendimentos')
+                ->where('dh_marcada', $dt)
+                ->where('id_assistido', $idEntrevista->id_assistido)
+                ->where('id_atendente', $idEntrevista->id_entrevistador)
+                ->where('id_tipo_atendimento', 2)
+                ->where('status_atendimento', 3);
 
-                    if($afe->first()){
-                        // Insere no histórico a criação do atendimento
-                        DB::table('log_atendimentos')->insert([
-                            'id_referencia' => $afe->first()->id,
-                            'id_usuario' => session()->get('usuario.id_usuario'),
-                            'id_acao' => 3, // foi editado
-                            'id_origem' => 1, // Atendimento
-                            'data_hora' => $dt_hora
-                        ]);
+            if ($afe->first()) {
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $afe->first()->id,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 3, // foi editado
+                    'id_origem' => 1, // Atendimento
+                    'data_hora' => $dt_hora
+                ]);
 
-                    $afe->update([
-                        'id_atendente' => $request->input('entrevistador'),
-                        'dh_marcada' => $dt_new,
-                    ]);
-                }
+                $afe->update([
+                    'id_atendente' => $request->input('entrevistador'),
+                    'dh_marcada' => $dt_new,
+                ]);
             }
+        }
 
-            app('flasher')->addSuccess("Entrevista atualizada com sucesso");
-            return redirect('gerenciar-entrevistas');
-    
+        app('flasher')->addSuccess("Entrevista atualizada com sucesso");
+        return redirect('gerenciar-entrevistas');
     }
 
     public function finalizar($id)
@@ -777,6 +776,45 @@ class GerenciarEntrevistaController extends Controller
             ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
             ->whereNot('enc.id', $id) // Exclui a entrevista de agora
             ->pluck('id_tipo_entrevista')->toArray();
+
+
+        // Traz os dados da entrevista gerada
+        $idEntrevista = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)
+            ->select('at.id_assistido', 'ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id_sala', 'ent.id_entrevistador', 'ent.status')
+            ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->first();
+
+
+        // Caso seja uma entrevista do tipo AFE
+        if ($idEntrevista and $idEntrevista->id_tipo_entrevista == 3) {
+            // Força uma variável DATE e uma TIME a forçarem uma única DATETIME
+            $dt = Carbon::createFromFormat('Y-m-d H:i:s', $idEntrevista->data . ' ' . $idEntrevista->hora);
+
+            // Busca um atendimento com especificações iguais a da entrevista
+            $afe = DB::table('atendimentos')
+                ->where('dh_marcada', $dt)
+                ->where('id_assistido', $idEntrevista->id_assistido)
+                ->where('id_atendente', $idEntrevista->id_entrevistador)
+                ->where('id_tipo_atendimento', 2)
+                ->where('status_atendimento', 3);
+
+            if ($afe->first()) {
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $afe->first()->id,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 3, // foi editado
+                    'id_origem' => 1, // Atendimento
+                    'data_hora' => $dt_hora
+                ]);
+
+                $afe->update([
+                    'status_atendimento' => 7,
+                    'motivo' => 5
+                ]);
+            }
+        }
 
         $tfiInfinito = array_search(6, array_column($countTratamentos, 'id_tipo_tratamento')); // Busca, caso exista, a array key dos dados de Integral
         $tfiInfinito = $tfiInfinito ? $countTratamentos[$tfiInfinito] : false; // Caso tenha encontrado, retorna os dados de Integral
