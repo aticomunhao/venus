@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('title')
-    Relatório de Trabalhadores
+    histórico de membros
 @endsection
 
 @section('content')
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family: calibri">
-            RELATÓRIO DE TRABALHADORES
+            HISTÓRICO DE MEMBROS
         </h4>
         <div class="col-12">
             <div class="row justify-content-center">
