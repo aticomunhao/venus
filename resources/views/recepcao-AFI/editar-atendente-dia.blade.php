@@ -40,7 +40,7 @@
                         <label class="form-label">Tipo de Atendimento:</label>
                         <select class="form-select text-center" name="tipo_atendimento">
                             @foreach ($tipo_atendimento as $tipos)
-                                <option value="{{ $tipos->id }}" {{ $tipos->id == $atende->id_tipo_atendimento ? 'selected' : '' }}>
+                                <option value="{{ $tipos->id }}" {{ $tipos->id == $atende->id_tipo_atendimento ? 'selected' : '' }} {{ (!$membro and $tipos->id == 2) ? 'hidden' : null }}>
                                     {{ $tipos->sigla }}
                                 </option>
                             @endforeach
