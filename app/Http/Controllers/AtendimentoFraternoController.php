@@ -54,10 +54,11 @@ class AtendimentoFraternoController extends Controller
         $grupo = DB::table('atendente_dia AS ad') // traz o grupo que a pessoa foi indicada em Atendente Dia
             ->leftJoin('cronograma as cro', 'cro.id', 'ad.id_grupo')
             ->leftJoin('grupo', 'grupo.id', 'cro.id_grupo')
+            ->leftJoin('tipo_atendimento as at', 'ad.id_tipo_atendimento', 'at.id')
             ->where('ad.id_associado',  $atendente)
             ->where('dh_inicio', '>', $data_inicio) // dh_inicio é um datetime, por isso tem que ser maior e não igual
             ->whereNull('dh_fim') // Só traz ativos
-            ->value('grupo.nome');
+            ->first();
 
 
         //Traz todas as informações do assistido que está em sendo atendido pelo proprio atendente
