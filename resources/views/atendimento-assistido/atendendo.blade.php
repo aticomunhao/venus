@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('title')
-    Atendimento Fraterno Individual
+     {{ $grupo ? $grupo->descricao: 'Atendimento Fraterno' }}
 @endsection
 
 @section('content')
     <div class="container-xxl" ;>
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
-            ATENDIMENTO FRATERNO INDIVIDUAL</h4>
+            {{ $grupo ? mb_strtoupper($grupo->descricao) : 'ATENDIMENTO FRATERNO' }}</h4>
         <div class="col-12">
             <br />
             <div class="card">
@@ -21,7 +21,7 @@
                         <div class="col-3">Grupo
                             <input class="form-control"
                                 style="text-align:left; font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
-                                value="{{ $grupo }}" name="nome" id="" type="text" disabled>
+                                value="{{ $grupo ? $grupo->nome : null }}" name="nome" id="" type="text" disabled>
                         </div>
 
                         <div class="col-2">Cod AFI
