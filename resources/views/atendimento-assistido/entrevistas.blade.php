@@ -34,8 +34,12 @@
                                         <input type="checkbox" id="afe" name="afe" class="form-check-input"
                                             data-size="small" data-toggle="toggle" data-size="sm" data-onstyle="success"
                                             data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não">
-                                        <label for="afe" class="form-check-label">Atendente Fraterno Específico -
-                                            AFE</label>
+                                        @if ($atendimento == 2)
+                                            <label for="afe" class="form-check-label">Declarar Alta - AFE</label>
+                                        @else<label for="afe" class="form-check-label">Atendente Fraterno
+                                                Específico -
+                                                AFE</label>
+                                        @endif
                                     </div>
                                     <br>
                                     <br>
@@ -130,7 +134,7 @@
                 if (diamo) {
                     $('.modal').modal('hide')
                     $('#avisoProamo').modal('show')
-                }else{
+                } else {
                     $('#entr').submit()
                 }
             })
