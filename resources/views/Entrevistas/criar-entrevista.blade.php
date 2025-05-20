@@ -50,7 +50,7 @@
             </div>
         </div>
         <br />
-        <div id="accordion" class="card">
+        <div id="accordion" class="card" {{ $informacoes->id_tipo_entrevista == 3 ? 'hidden' : null  }}>
             <div class="card-header" id="headingOne">
                 <siv class="mb-0">SALA</siv>
 
@@ -63,7 +63,7 @@
                             <span class="tooltiptext">Obrigatório</span>
                             <span style="color:red">*</span>
                         </span>
-                        <select class="form-select" id="id_sala" name="id_sala" required>
+                        <select class="form-select" id="id_sala" name="id_sala" {{ $informacoes->id_tipo_entrevista != 3 ? 'required' : null  }} >
                             <option value=""></option>
                             @foreach ($salas as $sala)
                                 <option value="{{ $sala->id }}" data-nome="{{ $sala->nome }}"

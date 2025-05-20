@@ -63,7 +63,7 @@
                         <br>
                         <div class="form-group row">
                             <div class="col">
-                                <div id="accordion" class="card">
+                                <div id="accordion" class="card" {{ $entrevistas->id_tipo_entrevista == 3 ? 'hidden' : null  }}>
                                     <div class="card-header" id="headingOne">
                                         <h5 class="mb-0">
                                             Sala
@@ -77,7 +77,7 @@
                                                     <span class="tooltiptext">Obrigatório</span>
                                                     <span style="color:red">*</span>
                                                 </span>
-                                                <select class="form-select" id="numero_sala" name="numero_sala">
+                                                <select class="form-select" id="numero_sala" name="numero_sala" {{ $entrevistas->id_tipo_entrevista != 3 ? 'required' : null  }}>
                                                     <option value="{{ $entrevistas->sala_id }}">{{ $entrevistas ? $entrevistas->numero : '' }}</option>
                                                     @foreach ($salas as $sala)
                                                         <option value="{{ $sala->id }}" data-nome="{{ $sala->nome }}"
