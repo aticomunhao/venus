@@ -207,6 +207,8 @@
                     <div>Total Atendidos: {{ $contar }}</div>
                     <div style="border-inline-start: 2px solid #000; margin: 0 20px;"></div> <!-- Vertical bar -->
                     <div>Fila de Espera: <span id="id_pessoas_para_atender"></span></div>
+                    <div style="border-inline-start: 2px solid #000; margin: 0 20px;"></div> <!-- Vertical bar -->
+                    <div>Atendentes Disponíveis: <span id="id_atendentes"></span></div>
                 </div>
             </div>
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
@@ -456,8 +458,9 @@
                     url: "/pessoas-para-atender-atendimento",
                     dataType: "JSON",
                     success: function(response) {
-
-                        $('#id_pessoas_para_atender').text(response);
+                        console.log(response)
+                        $('#id_pessoas_para_atender').text(response.atender);
+                        $('#id_atendentes').text(response.atendentes);
                     },
                     error: function(error) {
                         console.error('Erro ao buscar dados:', error);
