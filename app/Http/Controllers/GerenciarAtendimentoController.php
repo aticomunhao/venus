@@ -99,7 +99,8 @@ class GerenciarAtendimentoController extends Controller
 
     public function pessoas_para_atender()
     {
-        $id_associado = session()->get('usuario.id_associado');
+
+        $hoje = Carbon::today();
 
         $numero_de_assistidos_para_atender = DB::table('atendimentos AS at')
             ->select(
@@ -132,7 +133,10 @@ class GerenciarAtendimentoController extends Controller
             ->where('at.status_atendimento', '=', 2)
             ->get();
 
-        $contagem = $numero_de_assistidos_para_atender->count();
+            $atendentes = DB::table('atendente_dia')->where('dh_inicio', '>', $hoje)->whereNull('dh_fim')->count();
+            
+
+        $contagem = ['atender' =>$numero_de_assistidos_para_atender->count(), 'atendentes' => $atendentes];
 
         return response()->json($contagem);
     }
