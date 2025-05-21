@@ -1203,7 +1203,7 @@ class AtendimentoFraternoController extends Controller
 
     public function finaliza(Request $request, $idat)
     {
-        try {
+       
             $now = Carbon::now();
             $hoje = Carbon::today();
             $emergencia = $request->emergencia == 'on' ? 1 : 0;
@@ -1296,7 +1296,6 @@ class AtendimentoFraternoController extends Controller
                         'id_entrevistador' => $membro->id,
                         'hora' => Carbon::createFromFormat('Y-m-d G:i:s', $atendimento->dh_marcada)->toTimeString(),
                         'id_sala' => $atendimento->id_sala,
-                        'id_tipo_entrevista' => 3,
                         'status' => 3
                     ]);
                 }
@@ -1321,11 +1320,7 @@ class AtendimentoFraternoController extends Controller
 
             app('flasher')->addSuccess('Atendimento Finalizado com Sucesso.');
             return redirect()->back();
-        } catch (\Exception $e) {
-            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
-            DB::rollBack();
-            return redirect()->back();
-        }
+       
     }
 
     public function meus_atendimentos()
