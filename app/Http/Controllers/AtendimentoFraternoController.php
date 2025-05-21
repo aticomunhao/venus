@@ -112,7 +112,7 @@ class AtendimentoFraternoController extends Controller
 
         $id_associado = session()->get('usuario.id_associado'); // ID associado do usuário logado
         $sexo = session()->get('usuario.sexo'); // // Dados se a pessoa é [ 1 => 'Masculino', 2 => 'Feminino', 3 => 'Outros']
-
+        $hoje = Carbon::today();
         // Retorna o tipo de atendimento
         $sala = DB::table('atendente_dia AS atd')
             ->whereDate('dh_inicio', Carbon::today()->toDateString()) // Se o item de sala dele é do dia de hoje
@@ -160,7 +160,13 @@ class AtendimentoFraternoController extends Controller
             })->count(); // Conta
 
 
-        return response()->json($numero_de_assistidos_para_atender); // Retorna para o Ajax o número de pessoas na fila
+        $atendentes = DB::table('atendente_dia')->where('dh_inicio', '>', $hoje)->whereNull('dh_fim')->where('id_tipo_atendimento', $sala)->count();
+
+
+        $contagem = ['atender' => $numero_de_assistidos_para_atender, 'atendentes' => $atendentes];
+
+
+        return response()->json($contagem); // Retorna para o Ajax o número de pessoas na fila
     }
 
     public function atende_agora()
@@ -1195,133 +1201,132 @@ class AtendimentoFraternoController extends Controller
         return redirect('/atendendo');
     }
 
-  public function finaliza(Request $request, $idat)
-{
-    try {
-        $now = Carbon::now();
-        $hoje = Carbon::today();
-        $emergencia = $request->emergencia == 'on' ? 1 : 0;
+    public function finaliza(Request $request, $idat)
+    {
+        try {
+            $now = Carbon::now();
+            $hoje = Carbon::today();
+            $emergencia = $request->emergencia == 'on' ? 1 : 0;
 
-        $status = DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento');
-        $atendente = session()->get('usuario.id_associado');
-        $atendimento = DB::table('atendimentos')->where('id', $idat)->first();
-        $membro = DB::table('membro')
-            ->where('id_associado', $atendente)
-            ->where('id_funcao', 5)
-            ->first();
-
-        // Finaliza somente se o atendimento estiver "Em atendimento"
-        if ($status != 5) {
-            app('flasher')->addError('O assistido deve estar "Em atendimento" para a marcação de tratamentos!');
-            return redirect()->back();
-        }
-
-        // AFE (Atendimento Fraterno Específico)
-        if ($atendimento->id_tipo_atendimento == 2) {
-            $entrevistas = DB::table('entrevistas AS ent')
-                ->leftJoin('encaminhamento AS enc', 'ent.id_encaminhamento', 'enc.id')
-                ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-                ->where('at.id_assistido', $atendimento->id_assistido)
-                ->where('enc.status_encaminhamento', '<', 4)
-                ->where('ent.status', 4)
-                ->where('enc.id_tipo_entrevista', 3)
+            $status = DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento');
+            $atendente = session()->get('usuario.id_associado');
+            $atendimento = DB::table('atendimentos')->where('id', $idat)->first();
+            $membro = DB::table('membro')
+                ->where('id_associado', $atendente)
+                ->where('id_funcao', 5)
                 ->first();
 
-            if ($entrevistas) {
-                // Finaliza entrevista
-                $finalizaEntrAFE = DB::table('entrevistas AS ent')
+            // Finaliza somente se o atendimento estiver "Em atendimento"
+            if ($status != 5) {
+                app('flasher')->addError('O assistido deve estar "Em atendimento" para a marcação de tratamentos!');
+                return redirect()->back();
+            }
+
+            // AFE (Atendimento Fraterno Específico)
+            if ($atendimento->id_tipo_atendimento == 2) {
+                $entrevistas = DB::table('entrevistas AS ent')
                     ->leftJoin('encaminhamento AS enc', 'ent.id_encaminhamento', 'enc.id')
                     ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
                     ->where('at.id_assistido', $atendimento->id_assistido)
                     ->where('enc.status_encaminhamento', '<', 4)
                     ->where('ent.status', 4)
-                    ->where('enc.id_tipo_entrevista', 3);
+                    ->where('enc.id_tipo_entrevista', 3)
+                    ->first();
 
-                $idfinalizaEntrAFE = $finalizaEntrAFE->select('ent.id')->first();
+                if ($entrevistas) {
+                    // Finaliza entrevista
+                    $finalizaEntrAFE = DB::table('entrevistas AS ent')
+                        ->leftJoin('encaminhamento AS enc', 'ent.id_encaminhamento', 'enc.id')
+                        ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+                        ->where('at.id_assistido', $atendimento->id_assistido)
+                        ->where('enc.status_encaminhamento', '<', 4)
+                        ->where('ent.status', 4)
+                        ->where('enc.id_tipo_entrevista', 3);
 
-                if ($idfinalizaEntrAFE) {
-                    $finalizaEntrAFE->update(['status' => 5]);
+                    $idfinalizaEntrAFE = $finalizaEntrAFE->select('ent.id')->first();
 
-                    DB::table('log_atendimentos')->insert([
-                        'id_referencia' => $idfinalizaEntrAFE->id,
-                        'id_usuario' => session()->get('usuario.id_usuario'),
-                        'id_acao' => 1,
-                        'id_observacao' => 6,
-                        'id_origem' => 1,
-                        'data_hora' => $now
+                    if ($idfinalizaEntrAFE) {
+                        $finalizaEntrAFE->update(['status' => 5]);
+
+                        DB::table('log_atendimentos')->insert([
+                            'id_referencia' => $idfinalizaEntrAFE->id,
+                            'id_usuario' => session()->get('usuario.id_usuario'),
+                            'id_acao' => 1,
+                            'id_observacao' => 6,
+                            'id_origem' => 1,
+                            'data_hora' => $now
+                        ]);
+                    }
+
+                    // Finaliza encaminhamento
+                    $finalizaEncAFE = DB::table('encaminhamento AS enc')
+                        ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+                        ->where('at.id_assistido', $atendimento->id_assistido)
+                        ->where('enc.status_encaminhamento', '<', 4)
+                        ->where('enc.id_tipo_entrevista', 3);
+
+                    $idfinalizaEncAFE = $finalizaEncAFE->select('enc.id')->first();
+
+                    if ($idfinalizaEncAFE) {
+                        $finalizaEncAFE->update(['enc.status_encaminhamento' => 4]);
+
+                        DB::table('log_atendimentos')->insert([
+                            'id_referencia' => $idfinalizaEncAFE->id,
+                            'id_usuario' => session()->get('usuario.id_usuario'),
+                            'id_acao' => 1,
+                            'id_observacao' => 6,
+                            'id_origem' => 1,
+                            'data_hora' => $now
+                        ]);
+                    }
+
+                    // Novo encaminhamento e nova entrevista
+                    $idEncaminhamento = DB::table('encaminhamento AS enc')->insertGetId([
+                        'dh_enc' => $now,
+                        'id_usuario' => $atendente,
+                        'id_tipo_encaminhamento' => 1,
+                        'id_atendimento' => $idat,
+                        'id_tipo_entrevista' => 3,
+                        'status_encaminhamento' => 1
+                    ]);
+
+                    DB::table('entrevistas')->insert([
+                        'id_encaminhamento' => $idEncaminhamento,
+                        'data' => $hoje->addWeek(1),
+                        'id_entrevistador' => $membro->id,
+                        'hora' => Carbon::createFromFormat('Y-m-d G:i:s', $atendimento->dh_marcada)->toTimeString(),
+                        'id_sala' => $atendimento->id_sala,
+                        'id_tipo_entrevista' => 3,
+                        'status' => 3
                     ]);
                 }
-
-                // Finaliza encaminhamento
-                $finalizaEncAFE = DB::table('encaminhamento AS enc')
-                    ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
-                    ->where('at.id_assistido', $atendimento->id_assistido)
-                    ->where('enc.status_encaminhamento', '<', 4)
-                    ->where('enc.id_tipo_entrevista', 3);
-
-                $idfinalizaEncAFE = $finalizaEncAFE->select('enc.id')->first();
-
-                if ($idfinalizaEncAFE) {
-                    $finalizaEncAFE->update(['enc.status_encaminhamento' => 4]);
-
-                    DB::table('log_atendimentos')->insert([
-                        'id_referencia' => $idfinalizaEncAFE->id,
-                        'id_usuario' => session()->get('usuario.id_usuario'),
-                        'id_acao' => 1,
-                        'id_observacao' => 6,
-                        'id_origem' => 1,
-                        'data_hora' => $now
-                    ]);
-                }
-
-                // Novo encaminhamento e nova entrevista
-                $idEncaminhamento = DB::table('encaminhamento AS enc')->insertGetId([
-                    'dh_enc' => $now,
-                    'id_usuario' => $atendente,
-                    'id_tipo_encaminhamento' => 1,
-                    'id_atendimento' => $idat,
-                    'id_tipo_entrevista' => 3,
-                    'status_encaminhamento' => 1
-                ]);
-
-                DB::table('entrevistas')->insert([
-                    'id_encaminhamento' => $idEncaminhamento,
-                    'data' => $hoje->addWeek(1),
-                    'id_entrevistador' => $membro->id,
-                    'hora' => Carbon::createFromFormat('Y-m-d G:i:s', $atendimento->dh_marcada)->toTimeString(),
-                    'id_sala' => $atendimento->id_sala,
-                    'id_tipo_entrevista' => 3,
-                    'status' => 3
-                ]);
             }
+
+            // Finaliza o atendimento (para AFE ou AFI)
+            DB::table('atendimentos')->where('id', $idat)->update([
+                'status_atendimento' => 6,
+                'dh_fim' => $now,
+                'emergencia' => $emergencia
+            ]);
+
+            // Log da finalização
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $idat,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1,
+                'id_observacao' => 6,
+                'id_origem' => 1,
+                'data_hora' => $now
+            ]);
+
+            app('flasher')->addSuccess('Atendimento Finalizado com Sucesso.');
+            return redirect()->back();
+        } catch (\Exception $e) {
+            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
+            DB::rollBack();
+            return redirect()->back();
         }
-
-        // Finaliza o atendimento (para AFE ou AFI)
-        DB::table('atendimentos')->where('id', $idat)->update([
-            'status_atendimento' => 6,
-            'dh_fim' => $now,
-            'emergencia' => $emergencia
-        ]);
-
-        // Log da finalização
-        DB::table('log_atendimentos')->insert([
-            'id_referencia' => $idat,
-            'id_usuario' => session()->get('usuario.id_usuario'),
-            'id_acao' => 1,
-            'id_observacao' => 6,
-            'id_origem' => 1,
-            'data_hora' => $now
-        ]);
-
-        app('flasher')->addSuccess('Atendimento Finalizado com Sucesso.');
-        return redirect()->back();
-
-    } catch (\Exception $e) {
-        app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
-        DB::rollBack();
-        return redirect()->back();
     }
-}
 
     public function meus_atendimentos()
     {
