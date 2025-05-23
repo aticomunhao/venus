@@ -1030,7 +1030,7 @@ class GerenciarEncaminhamentoController extends Controller
                 'dt_inicio' => $data,
             ]);
 
-        // Atualiza a reunião do tratamento para a nova 
+        // Atualiza a reunião do tratamento para a nova
         if ($idt->dt_fim) {
 
             // Busca o Tratamento a ser editado
@@ -1071,6 +1071,7 @@ class GerenciarEncaminhamentoController extends Controller
             if ($editDtFim) {
 
                 if ($idt->dt_inicio > $data_hoje) {
+                    $dia_inicio = $data_hoje;
                     $idEditDtFim = $editDtFim->first()->id;
                     $editDtFim->update([
                         'id_reuniao' => $reu,
