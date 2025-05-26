@@ -32,6 +32,7 @@ class PresencaDirigenteController extends Controller
             ->leftJoin('membro as m', 'cr.id', 'm.id_cronograma')
             ->leftJoin('associado as ass', 'm.id_associado', 'ass.id')
             ->whereNull('cr.data_fim')
+            ->whereNull('m.dt_fim')
             ->groupBy('gr.nome', 'cr.h_inicio', 'cr.h_fim', 'd.nome', 's.sigla', 'sl.numero', 'cr.id')->orderBy('gr.nome', 'asc');
 
 
