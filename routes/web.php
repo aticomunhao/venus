@@ -20,7 +20,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\MembroController;
-use App\Http\Controllers\MediunidadePessoaController;
+use App\Http\Controllers\HabilidadePessoaController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\GerenciarEncaminhamentoController;
@@ -112,7 +112,7 @@ Route::middleware('rotas:5')->group(function () {
     Route::post('/grava-atualizacao/{ida}', [GerenciarAtendimentoController::class, 'altera'])->name('atealt');
     Route::post('/novo-atendimento', [GerenciarAtendimentoController::class, 'store'])->name('atetore');
     Route::get('/visualizar-atendimentos/{idas}', [GerenciarAtendimentoController::class, 'visual'])->name('atevis');
-    Route::any('/tabela-atendimentos/{assist}/{cpf}/{status}/{dt_ini}/{atendente}', [GerenciarAtendimentoController::class, 'ajaxAtendimento']);
+    Route::any('/tabela-atendimentos', [GerenciarAtendimentoController::class, 'ajaxAtendimento']);
     Route::any('/ajaxCRUD', [GerenciarAtendimentoController::class, 'ajaxCRUD']);
     Route::get('/pessoas-para-atender-atendimento', [GerenciarAtendimentoController::class, 'pessoas_para_atender']);
 });
@@ -269,15 +269,15 @@ Route::middleware('rotas:29')->group(function () {
     Route::get('/criar-membro-grupo/{id}', [MembroController::class, 'createGrupo'])->name('');
 });
 
-// Gerenciar Mediunidades
+// Gerenciar Habilidades
 Route::middleware('rotas:15')->group(function () {
-    Route::get('/gerenciar-mediunidades', [MediunidadePessoaController::class, 'index'])->name('names');
-    Route::get('/editar-mediunidade/{id}', [MediunidadePessoaController::class, 'edit'])->name('');
-    Route::any('/atualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'update'])->name('atualizar-mediunidade');
-    Route::get('/criar-mediunidade', [MediunidadePessoaController::class, 'create'])->name('');
-    Route::post('/incluir-mediunidade', [MediunidadePessoaController::class, 'store'])->name('');
-    Route::any('/deletar-mediunidade/{id}', [MediunidadePessoaController::class, 'destroy'])->name('');
-    Route::get('/visualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'show'])->name('');
+    Route::get('/gerenciar-habilidade', [HabilidadePessoaController::class, 'index'])->name('names');
+    Route::get('/editar-habilidade/{id}', [HabilidadePessoaController::class, 'edit'])->name('');
+    Route::any('/atualizar-habilidade/{id}', [HabilidadePessoaController::class, 'update'])->name('atualizar-Habilidade');
+    Route::get('/criar-habilidade', [HabilidadePessoaController::class, 'create'])->name('');
+    Route::post('/incluir-habilidade', [HabilidadePessoaController::class, 'store'])->name('');
+    Route::any('/deletar-habilidade/{id}', [HabilidadePessoaController::class, 'destroy'])->name('');
+    Route::get('/visualizar-habilidade/{id}', [HabilidadePessoaController::class, 'show'])->name('');
 });
 
 // Gerenciar Encaminhamentos
@@ -365,6 +365,7 @@ Route::middleware('rotas:21')->group(function () {
 Route::middleware('rotas:24')->group(function () {
     Route::get('/gerenciar-pti', [GerenciarPTIController::class, 'index']);
     Route::get('/alta-pti/{id}', [GerenciarPTIController::class, 'update']);
+    Route::get('/alta-nutres/{id}', [GerenciarPTIController::class, 'nutres']);
     Route::get('/visualizar-pti/{id}', [GerenciarPTIController::class, 'show']);
 });
 
@@ -465,7 +466,6 @@ Route::middleware('rotas:35')->group(function () {
 
 //Relatório de Atendimentos
 Route::middleware('rotas:46')->group(function () {
-    Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
     Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
 });
 
@@ -478,4 +478,9 @@ Route::middleware('rotas:47')->group(function () {
 Route::middleware('rotas:48')->group(function () {
     Route::get('/curriculo-medium/{id}', [RelatoriosController::class, 'curriculo']);
     Route::get('/pdf-curriculo-medium/{id}', [RelatoriosController::class, 'pdfCurriculo']);
+});
+
+//Relatório de Tratamentos
+Route::middleware('rotas:53-36')->group(function () {
+    Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
 });

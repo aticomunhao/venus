@@ -47,7 +47,7 @@
                     </div>
                     <br>
                     <div class="row">
-                        <div class="col">
+                        <div class="col-6">
                             <div class="form-group">
                                 <label for="id_funcao" class="form-label">Função</label>
                                 <span class="tooltips">
@@ -61,7 +61,17 @@
                                 </select>
                             </div>
                         </div>
-
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="dt_inicio" class="form-label">Data de Início</label>
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
+                                <input type="date" class="form-control" name="dt_inicio" id="dt_inicio" required>
+                            </div>
+                        </div>
+                    </div>
                         <div class="col-12 mt-3">
                             <div class="form-group">
                                 <label for="id_grupo" class="form-label">Nome Reunião</label>
@@ -78,7 +88,7 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
+
                     <br>
                     <div class="row mt-1 justify-content-center">
                         <div class="d-grid gap-1 col-4 mx-auto">

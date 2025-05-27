@@ -57,7 +57,8 @@ class GerenciarIntegralController extends Controller
                 'tse.nome as status',
                 'tr.status as id_status',
                 'tr.maca',
-                'atd.id_assistido'
+                'atd.id_assistido',
+                'enc.id as ide'
             )
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('cronograma as cro', 'tr.id_reuniao', 'cro.id')
@@ -97,6 +98,7 @@ class GerenciarIntegralController extends Controller
             ->pluck('at.id_assistido')
             ->toArray();
 
+
         $data = DB::table('presenca_cronograma as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->whereIn('id_tratamento', array_column($encaminhamentos, 'id'))
@@ -129,27 +131,32 @@ class GerenciarIntegralController extends Controller
             $arrayTratamentosFaltas[$element->id_tratamento][] = $element->data;
         }
 
-        $array = array();
         foreach ($encaminhamentos as $key => $encaminhamento) {
+            $presencasFaltas = DB::table('presenca_cronograma as pc')
+                ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+                ->where('pc.id_tratamento', $encaminhamento->id)
+                ->orderBy('dc.data', 'asc')
+                ->select('pc.presenca', 'dc.data')
+                ->get()
+                ->toArray();
 
-            // Para cada ID tratamento
-            $faltasEncaminhamento =  isset($arrayTratamentosFaltas[$encaminhamento->id]) ? $arrayTratamentosFaltas[$encaminhamento->id] : [];
-            $consecutivo = 1; // Contagem de faltas consecutivas
+            $consecutivas = 0;
 
-            $array[] = $faltasEncaminhamento;
-
-            foreach ($faltasEncaminhamento as $falta) { // Para cada falta
-                foreach ($faltasEncaminhamento as $faltaCross) { // Para cada falta
-
-                    // Confere se as faltas são consecutivas com as ultimas, aumentando a contagem
-                    if (Carbon::parse($falta)->addWeek($consecutivo) == Carbon::parse($faltaCross)) {
-                        $consecutivo += 1;
-                    }
+            foreach ($presencasFaltas as $presenca) {
+                if ($presenca->presenca == false) {
+                    $consecutivas++;
+                } else {
+                    $consecutivas = 0; // Zera a contagem se teve uma presença
                 }
             }
 
-            $ptdRegular = array_search($encaminhamento->id_assistido, $encaminhamentoPTD) ? $encaminhamentoPTD[array_search($encaminhamento->id, $encaminhamentoPTD)] : null;
-            $encaminhamento->ptd  = $ptdRegular ? $encaminhamento->ptd = true : $encaminhamento->ptd = false;
+            $encaminhamento->faltas = $consecutivas;
+
+            // Resto do código (ptd, data, presenca, contagem...)
+            $ptdRegular = array_search($encaminhamento->id_assistido, $encaminhamentoPTD) !== false ? $encaminhamentoPTD[array_search($encaminhamento->id, $encaminhamentoPTD)] : null;
+            $encaminhamento->ptd = $ptdRegular ? true : false;
+
+
 
             $encaminhamento->data = current(array_filter($data, function ($item) use ($encaminhamento) {
                 return $item->id_tratamento == $encaminhamento->id;
@@ -159,14 +166,14 @@ class GerenciarIntegralController extends Controller
 
             $encaminhamento->presenca = array_search($encaminhamento->id, array_column($presencas, 'id_tratamento')) ? $presencas[array_search($encaminhamento->id, array_column($presencas, 'id_tratamento'))]->conta : null;
 
-            $encaminhamento->faltas = $consecutivo - 1;
-
             if ($encaminhamento->dt_fim) {
                 $encaminhamento->contagem = $hoje->diffInWeeks(Carbon::parse($encaminhamento->dt_inicio));
             } else {
                 $encaminhamento->contagem = null;
             }
         }
+
+
 
         // Usado para Macas
         $vagas = DB::table('cronograma')->where('id', $selected_grupo)->pluck('max_atend')->toArray(); // Retorna o número máximo de assistidos de um cronograma
@@ -265,7 +272,7 @@ class GerenciarIntegralController extends Controller
             ->where('at.id_assistido', current(current($result))->id_assistido)
             ->whereIn('enc.id_tipo_tratamento', [1, 2]) // PTD e PTI
             ->where('enc.status_encaminhamento', '<', 3) // Finalizado
-            ->select('tr.id')
+            ->select('enc.id_tipo_tratamento', 'tr.id')
             ->first();
 
 
@@ -370,13 +377,29 @@ class GerenciarIntegralController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $ide)
     {
-       try {
+        try {
 
-            DB::table('tratamento')->where('id', $id)->update(['dt_fim' => null]);
+            // Recolhe o ID_assistido do tratamento selecionado
+            $idAssistido = DB::table('encaminhamento')->where('encaminhamento.id', $ide)
+                ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
+                ->pluck('atendimentos.id_assistido')->toArray();
+
+            // Infinita todos os tratamentos PTD do assistido selecionado
+            DB::table('tratamento as t')
+                ->leftJoin('encaminhamento as e', 't.id_encaminhamento', 'e.id')
+                ->leftJoin('atendimentos as a', 'e.id_atendimento', 'a.id')
+                ->where('a.id_assistido', $idAssistido)
+                ->where('t.status', '<', 3) // Ativos
+                ->where('e.id_tipo_tratamento', 1) // PTD
+                ->update(['dt_fim' => null]); // Infinito
+
+            // Infinita o tratamento atual
+            DB::table('tratamento')->where('id_encaminhamento', $ide)->update(['dt_fim' => null]);
+
+
             app('flasher')->addSuccess('Limite de semanas removido com Sucesso!');
-
             return redirect()->back();
         } catch (\Exception $e) {
 
@@ -386,19 +409,138 @@ class GerenciarIntegralController extends Controller
         }
     }
 
-    public function alta(Request $request, string $id)
+    public function alta(Request $request, string $ide)
     {
         try {
+
+
             $hoje = Carbon::today();
-            $id_encaminhamento = DB::table('tratamento')->where('id', $id)->first();
-            DB::table('tratamento')->where('id', $id)->update(['status' => 4, 'dt_fim' => $hoje]);
-            DB::table('encaminhamento')->where('id', $id_encaminhamento->id_encaminhamento)->update(['status_encaminhamento' => 3]);
+
+            $dt_hora = Carbon::now();
+            $today = Carbon::today()->format('Y-m-d');
+
+            $idAssistido = DB::table('encaminhamento')->where('encaminhamento.id', $ide)
+                ->leftJoin('atendimentos', 'encaminhamento.id_atendimento', 'atendimentos.id')
+                ->pluck('atendimentos.id_assistido')->toArray();
+
+            // Retorna todos os IDs dos encaminhamentos de tratamento
+            $countTratamentos = DB::table('encaminhamento as enc')
+                ->select('id_tipo_tratamento', 't.dt_fim', 't.id')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->leftJoin('tratamento as t', 'enc.id', 't.id_encaminhamento')
+                ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
+                ->where('at.id_assistido', $idAssistido)
+                ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+                ->whereNot('enc.id', $ide) // Exclui o tratamento de agora
+                ->get()->toArray();
+
+            // Retorna todos os IDs dos encaminhamentos de entrevista
+            $countEntrevistas = DB::table('encaminhamento as enc')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->where('enc.id_tipo_encaminhamento', 1) // Encaminhamento de Entrevista
+                ->where('at.id_assistido', $idAssistido)
+                ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+                ->pluck('id_tipo_entrevista')->toArray();
+
+
+            $tfiInfinito = array_search(6, array_column($countTratamentos, 'id_tipo_tratamento')); // Busca, caso exista, a array key dos dados de Integral
+            $tfiInfinito = $tfiInfinito ? $countTratamentos[$tfiInfinito] : false; // Caso tenha encontrado, retorna os dados de Integral
+            $tfiInfinito = $tfiInfinito ? ($tfiInfinito->dt_fim == null and $tfiInfinito->id != null and in_array(6, array_column($countTratamentos, 'id_tipo_tratamento'))) : false; // Confere se é um Integral Permanente caso os dados existam
+            // Essa é a clausula para um PTD infinito que está sendo apoiado em outro tratamento
+            //      Tratamento PTI                                                         Entrevista NUTRES (PTI)                Tratamento PROAMO                                             Entrevista DIAMO (PROAMO)   Tratamento Integral Permanente
+            if (in_array(2, array_column($countTratamentos, 'id_tipo_tratamento')) or in_array(4, $countEntrevistas) or in_array(4, array_column($countTratamentos, 'id_tipo_tratamento')) or in_array(6, $countEntrevistas) or $tfiInfinito) {
+
+                // Não executa nenhum comando especial, apenas o padrão do método
+
+            } else {
+
+                $ptdAtivo = DB::table('tratamento as t')
+                    ->select('t.id', 'e.id as ide', 't.dt_fim', 'c.dia_semana')
+                    ->leftJoin('encaminhamento as e', 't.id_encaminhamento', 'e.id')
+                    ->leftJoin('atendimentos as a', 'e.id_atendimento', 'a.id')
+                    ->leftJoin('cronograma as c', 't.id_reuniao', 'c.id')
+                    ->where('a.id_assistido', $idAssistido)
+                    ->where('t.status', '<', 3)
+                    ->where('e.id_tipo_tratamento', 1)
+                    ->first();
+
+                // Caso aquela entrevista tenha um PTD marcado, e ele seja infinito, e o motivo do cancelamento foi alta da avaliação, tire de infinito
+                $ptdAtivoInfinito = $ptdAtivo ? $ptdAtivo->dt_fim == null : false; //
+                if ($ptdAtivoInfinito) {
+
+                    // Adiciona 8 semanas ao PTD
+                    $novaDataFim = Carbon::parse($ptdAtivo->dt_fim)->addWeeks(8); // Soma 8 semanas à data de fim atual
+
+                    // Atualiza o PTD com a nova data de fim
+                    DB::table('tratamento')
+                        ->where('id', $ptdAtivo->id)
+                        ->update([
+                            'dt_fim' => $novaDataFim,
+                        ]);
+
+                    // Insere no histórico a criação do atendimento
+                    DB::table('log_atendimentos')->insert([
+                        'id_referencia' => $ptdAtivo->id,
+                        'id_usuario' => session()->get('usuario.id_usuario'),
+                        'id_acao' => 10, // mudou de Status para
+                        'id_origem' => 3, // Tratamento
+                        'data_hora' => $dt_hora
+                    ]);
+                }
+            }
+
+            DB::table('encaminhamento AS enc') // Atualiza o encaminhamento para finalizado
+                ->where('enc.id', $ide)
+                ->update([
+                    'status_encaminhamento' => 3,
+                ]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $ide,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_origem' => 2, // Encaminhamento
+                'id_observacao' => 3, // Finalizado
+                'data_hora' => $dt_hora
+            ]);
+
+            // Caso esse encaminhamento tenha um tratamento
+            $tratamento = DB::table('tratamento')
+                ->where('id_encaminhamento', $ide);
+
+
+            if ($tratamento && $tratamento->exists()) {
+                $firstTratamento = $tratamento->first();
+
+                if ($firstTratamento) {
+                    $idTratamento = $firstTratamento->id;
+
+                    $tratamento->update([
+                        'dt_fim' => $today,
+                        'status' => 4, // tratamento Finalizado
+                    ]);
+                }
+
+
+
+                // Insere no histórico a criação do atendimento
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $idTratamento,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 1, // mudou de Status para
+                    'id_origem' => 3, // Tratamento
+                    'id_observacao' => 4, // Tratamento finalizado
+                    'data_hora' => $dt_hora
+                ]);
+            }
+
+
+
 
             app('flasher')->addSuccess('Alta declarada com Sucesso!');
-
             return redirect()->back();
         } catch (\Exception $e) {
-
             app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
             DB::rollBack();
             return redirect()->back();

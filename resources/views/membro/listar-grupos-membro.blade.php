@@ -3,7 +3,6 @@
 @section('content')
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
     <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
-
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">ADMINISTRAR GRUPOS
         </h4>
@@ -30,7 +29,7 @@
                         <select class="form-select select2 membro" id="nome_membro" name="nome_membro" data-width="100%">
                             <option></option>
                             @foreach ($membro as $membros)
-                                <option value="{{ $membros->id_associado }}">{{ $membros->nome_completo }} -
+                                <option value="{{ $membros->id_associado }}" {{ request('nome_membro') == $membros->id_associado ? 'selected' : ''}}>{{ $membros->nome_completo }} -
                                     {{ $membros->nr_associado }}</option>
                             @endforeach
                         </select>
@@ -159,8 +158,8 @@
                 theme: 'bootstrap-5'
             });
             //Deixa o select status como padrão vazio
-            $(".grupo").prop("selectedIndex", 0);
-            $(".membro").prop("selectedIndex", 0);
+           // $(".grupo").prop("selectedIndex", 0);
+           // $(".membro").prop("selectedIndex", 0);
         });
     </script>
 

@@ -68,7 +68,7 @@
                         <th class="col">GRUPO</th>
                         <th class="col">ATENDENTE</th>
                         <th class="col-1">SALA</th>
-                        <th class="col">STATUS</th>
+                        <th class="col">TIPO</th>
                         <th class="col">AÇÕES</th>
                     </tr>
                 </thead>
@@ -92,7 +92,15 @@
                                             <option value="{{ $salas->id }}">{{ $salas->numero }}</option>
                                         @endforeach
                                     </select></td>
-                                <td>{{ $atendes->tipo }}</td>
+                                <td>
+                                    <select class="form-select" id="" name="atendimento">
+                                        @foreach ($tipoAtendimento as $tipo)
+                                            <option value="{{ $tipo->id }}"
+                                                {{ (!in_array($atendes->ida, $membros) and $tipo->id == 2) ? 'hidden' : null }}>
+                                                {{ $tipo->sigla }}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
                                 <td>
                                     <button type="submit" formaction="/incluir-afi-sala/{{ $atendes->ida }}"
                                         class="btn btn-success btn-sm" style="color:#fff;">Confirmar</button>
