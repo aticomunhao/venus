@@ -5,11 +5,11 @@
 @endsection
 
 @section('content')
-
     <button type="button" class="btn btn-danger btn-floating btn-lg" id="btn-back-to-top">
         <i class="bi bi-arrow-up"></i>
     </button>
-    <a href="/pdf-curriculo-medium/{{ $id }}" type="button" class="btn btn-info btn-floating btn-lg" id="btn-pdf-print">
+    <a href="/pdf-curriculo-medium/{{ $id }}" type="button" class="btn btn-info btn-floating btn-lg"
+        id="btn-pdf-print">
         <i class="bi bi-cloud-download"></i>
     </a>
 
@@ -75,8 +75,10 @@
                                     <tr>
                                         <td> {{ $dadoMembro->trabalho }} </td>
                                         <td> {{ $dadoMembro->nome_funcao }} </td>
-                                        <td> {{ $dadoMembro->dt_inicio ? date('d/m/Y', strtotime($dadoMembro->dt_inicio)) : '-' }} </td>
-                                        <td> {{ $dadoMembro->dt_fim ? date('d/m/Y',strtotime($dadoMembro->dt_fim)) : '-' }} </td>
+                                        <td> {{ $dadoMembro->dt_inicio ? date('d/m/Y', strtotime($dadoMembro->dt_inicio)) : '-' }}
+                                        </td>
+                                        <td> {{ $dadoMembro->dt_fim ? date('d/m/Y', strtotime($dadoMembro->dt_fim)) : '-' }}
+                                        </td>
                                         <td> {{ $dadoMembro->status_membro }} </td>
                                     </tr>
                                 @endforeach
@@ -93,8 +95,8 @@
                 </div>
             </div>
 
-            </div>
         </div>
+    </div>
     </div>
     </div>
     <style>
