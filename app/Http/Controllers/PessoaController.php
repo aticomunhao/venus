@@ -110,7 +110,7 @@ class PessoaController extends Controller
     {
         try {
 
-           
+
             $ddd = DB::select('select id, descricao from tp_ddd');
 
             $sexo = DB::select('select id, tipo from tp_sexo');
@@ -125,14 +125,14 @@ class PessoaController extends Controller
 
     public function create(Request $request)
     {
-
+         $now = Carbon::now()->format('Y-m-d');
         $today = Carbon::today()->format('Y-m-d');
 
         $cpf = $request->cpf;
 
         $vercpf = DB::table('pessoas')->where('cpf', $cpf)->count();
 
-    
+
 
         try {
             $validated = $request->validate([
@@ -168,6 +168,7 @@ class PessoaController extends Controller
                 'cel_estrangeiro' => $request->input('cel_estrangeiro'),
                 'tel_fixo' => $request->input('tel_fixo'),
                 'email' => $request->input('email'),
+                  'dt_cadastro' => $now,
                 'status' => 1
 
 
@@ -203,7 +204,7 @@ class PessoaController extends Controller
             $sexo = DB::select('select id, tipo from tp_sexo');
             $status_p = DB::select('select id, tipo from tipo_status_pessoa');
             $motivo = DB::select('select id, motivo from tipo_motivo_status_pessoa order by id');
-            
+
 
             // Buscando uma única pessoa pelo ID, mas retornando uma coleção
             $lista = DB::table('pessoas as p')
@@ -251,7 +252,7 @@ class PessoaController extends Controller
     {
         try {
 
-         
+
             $ddd = DB::select('select id, descricao from tp_ddd');
 
             $sexo = DB::select('select id, tipo from tp_sexo');
