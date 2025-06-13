@@ -1,8 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Administrar Grupos')
 @section('content')
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
-    <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">ADMINISTRAR GRUPOS
         </h4>

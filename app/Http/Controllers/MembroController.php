@@ -122,7 +122,7 @@ class MembroController extends Controller
             ->join('pessoas AS p', 'associado.id_pessoa', 'p.id')
             ->leftJoin('tipo_funcao AS tf', 'm.id_funcao',  'tf.id')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
-            ->leftJoin('grupo AS g', 'cro.id_grupo','g.id')
+            ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')
             ->select('p.nome_completo', 'm.id_associado', 'associado.nr_associado')
             ->whereIn('m.id_cronograma', $cronogramasLogin)
             ->distinct()
@@ -169,14 +169,14 @@ class MembroController extends Controller
     {
         try {
 
-                $grupo = DB::table('cronograma as cro')
-                    ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 's.sigla as nsigla')
-                    ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
-                    ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
-                    ->leftJoin('setor as s', 'gr.id_setor', 's.id')
-                    ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
-                    ->where('cro.id', $id)
-                    ->first();
+            $grupo = DB::table('cronograma as cro')
+                ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 's.sigla as nsigla')
+                ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+                ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
+                ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+                ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+                ->where('cro.id', $id)
+                ->first();
 
 
             $membro = DB::select('select * from membro');
@@ -199,6 +199,7 @@ class MembroController extends Controller
         $now = Carbon::now()->format('Y-m-d');
         $seletedCronograma = DB::table('cronograma as cro')->where('id', $id)->first();
         $cronogramasPessoa = DB::table('membro')->whereNull('dt_fim')->where('id_associado', $request->input('id_associado'))->pluck('id_cronograma');
+        $data =  $request->input('dt_inicio') ?  $request->input('dt_inicio') : $now;
 
         $repeat = DB::table('cronograma AS rm')
             ->leftJoin('grupo AS g', 'rm.id_grupo', 'g.id')
@@ -245,7 +246,7 @@ class MembroController extends Controller
             'id_associado' => $request->input('id_associado'),
             'id_funcao' => $request->input('id_funcao'),
             'id_cronograma' => $id,
-            'dt_inicio' => $request->input('dt_inicio'),
+            'dt_inicio' => $data,
         ]);
 
         $nomePessoa = DB::table('pessoas')
@@ -270,7 +271,7 @@ class MembroController extends Controller
 
         // Busca os detalhes do grupo
         $grupo = DB::table('cronograma as cro')
-            ->select('cro.id', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.modificador', 's.sigla as nsigla')
+            ->select('cro.id', 'gr.id as idg', 'gr.nome', 'cro.h_inicio', 'cro.h_fim', 'sa.numero', 'td.nome as dia', 'cro.modificador', 's.sigla as nsigla')
             ->leftJoin('salas as sa', 'cro.id_sala', 'sa.id')
             ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
             ->leftJoin('setor as s', 'gr.id_setor', 's.id')
@@ -344,10 +345,8 @@ class MembroController extends Controller
         // Filtro de status
         if ($status && $status != 'Todos') {
             $membroQuery->where(DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END)"), '=', $status);
-        }else if( $status == 'Todos'){
-
-        }
-        else{
+        } else if ($status == 'Todos') {
+        } else {
             $membroQuery->where('m.dt_fim', NULL);
         }
 
@@ -356,8 +355,31 @@ class MembroController extends Controller
 
         // Contagem total de membros sem considerar dt_fim
         $contar = $membroQuery->whereNull('m.dt_fim')->count(); // Co
+
+
+        /* VALIDAÇÃO DE OUTROS GRUPOS */
+
+        // Recupera todos os cronogramas que o usuario logado é dirigente ou subdirigente
+        $id_cronogramas_usuario = DB::table('membro')
+            ->where('id_associado', session()->get('usuario.id_associado'))
+            ->whereIn('id_funcao', [1, 2])
+            ->whereNull('dt_fim')
+            ->pluck('id_cronograma')
+            ->toArray();
+
+        // Retorna todos os membros nesse mesmo grupo que o usuário logado é dirigente
+        $id_membros = DB::table('membro as m')
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+            ->where('cro.id_grupo', $grupo->idg)
+            ->whereIn('m.id_cronograma', $id_cronogramas_usuario)
+            ->whereNot('m.id_cronograma', $id)
+            ->whereNull('m.dt_fim')
+            ->pluck('m.id_associado')
+            ->toArray();
+
+
         // Retorno da view com os dados
-        return view('membro.gerenciar-membro', compact('contar', 'membro', 'id', 'grupo', 'status', 'statu', 'grupos'));
+        return view('membro.gerenciar-membro', compact('contar', 'membro', 'id', 'grupo', 'status', 'statu', 'grupos', 'id_membros'));
     }
 
     public function create()
@@ -695,7 +717,15 @@ class MembroController extends Controller
 
 
         // Verifica se o membro existe
-        $membro = DB::table('membro')->where('id', $id)->first();
+        $membro = DB::table('membro as m')->select('m.id_associado', 'cro.id_grupo as idg')->where('m.id', $id)->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')->first();
+
+        // Busca os cronogramas que eu sou dirigente ou sub-dirigente
+        $id_cronogramas_usuario = DB::table('membro')
+            ->where('id_associado', session()->get('usuario.id_associado'))
+            ->whereIn('id_funcao', [1, 2])
+            ->whereNull('dt_fim')
+            ->pluck('id_cronograma')
+            ->toArray();
 
         if (!$membro) {
             app('flasher')->addError('O membro não foi encontrado.');
@@ -710,12 +740,25 @@ class MembroController extends Controller
             $dataInativacao = Carbon::today()->toDateString(); // Formato Y-m-d
         }
 
-        // Atualiza a data de término e o status para "Inativo"
-        DB::table('membro')
-            ->where('id', $id)
-            ->update([
-                'dt_fim' => $dataInativacao,
-            ]);
+        if ($request->escolha == 1) {
+            // Retorna todos os membros nesse mesmo grupo que o usuário logado é dirigente
+            DB::table('membro as m')
+                ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+                ->where('m.id_associado', $membro->id_associado)
+                ->whereNull('m.dt_fim')
+                ->whereIn('m.id_cronograma', $id_cronogramas_usuario)
+                ->where('cro.id_grupo', $membro->idg)
+                ->update([
+                    'dt_fim' => $dataInativacao,
+                ]);
+        } else {
+            // Atualiza a data de término e o status para "Inativo"
+            DB::table('membro')
+                ->where('id', $id)
+                ->update([
+                    'dt_fim' => $dataInativacao,
+                ]);
+        }
 
         app('flasher')->addSuccess('Membro inativado com sucesso.');
         return redirect("/gerenciar-membro/$idcro");

@@ -40,7 +40,12 @@
 
                         <div class="col">
                             <div class="form-group">
+
                                 <label for="tipo_status_pessoa" class="form-label">Status</label>
+                                <span class="tooltips">
+                                    <span class="tooltiptext">Obrigatório</span>
+                                    <span style="color:red">*</span>
+                                </span>
                                 <select class="form-select" aria-label=".form-select-lg example" name="tipo_status_pessoa">
                                     @foreach ($tipo_status_pessoa as $tipo)
                                         <option value="{{ $tipo->id }}">{{ $tipo->tipos }}</option>
@@ -68,10 +73,6 @@
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="dt_inicio" class="form-label">Data de Início</label>
-                                <span class="tooltips">
-                                    <span class="tooltiptext">Obrigatório</span>
-                                    <span style="color:red">*</span>
-                                </span>
                                 <input type="date" class="form-control" name="dt_inicio" id="dt_inicio">
                             </div>
                         </div>
