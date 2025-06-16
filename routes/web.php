@@ -387,6 +387,7 @@ Route::middleware('rotas:41')->group(function () {
 // Alta Proamo
 Route::middleware('rotas:49')->group(function () {
     Route::get('/alta-proamo/{id}', [GerenciarProamoController::class, 'update']);
+    Route::get('/alta-ptd-proamo/{id}', [GerenciarProamoController::class, 'altaPtd']);
 });
 
 // Gerenciar Perfis
