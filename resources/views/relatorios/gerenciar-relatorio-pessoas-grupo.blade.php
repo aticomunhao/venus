@@ -3,7 +3,6 @@
 @section('title')
     histórico de membros
 @endsection
-
 @section('content')
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family: calibri">

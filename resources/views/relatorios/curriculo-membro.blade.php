@@ -90,7 +90,7 @@
             <br>
             <div class="row">
                 <div class="col">
-                    <a class="btn btn-danger" href="/gerenciar-grupos-membro" style="text-align:right;"
+                    <a class="btn btn-danger" href="{{ session()->get('usuario.url') }}" style="text-align:right;"
                         role="button">Fechar</a>
                 </div>
             </div>
