@@ -14,7 +14,7 @@
                                         height="100" alt="logo"></a>
                             </h3>
                             <div class="p-3">
-                                <form  id="form" name="form" class="form-horizontal mt-4" action="/login/home" >
+                                <form  id="form" name="form" class="form-horizontal mt-4" method="POST" action="/login/home" >
                                     @csrf
                                     <div class="form-group">
                                         <label for="username">CPF</label>
