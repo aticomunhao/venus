@@ -123,6 +123,7 @@ class GerenciarPassesController extends Controller
                 'td.nome AS dia_semana'
             )
             ->where('s.id', '=', 48)
+            ->distinct('g.nome')
             ->orderBy('g.nome', 'asc');
 
 
