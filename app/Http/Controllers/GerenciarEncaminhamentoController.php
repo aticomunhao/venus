@@ -222,7 +222,24 @@ class GerenciarEncaminhamentoController extends Controller
 
         // Devolve todos os dados dos grupos que podem ser selecionados
         $trata = DB::table('cronograma AS reu')
-            ->select(DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'), 'p.nome_completo', 'reu.id AS idr', 'gr.nome AS nomeg', 'reu.dia_semana', 'reu.id_sala', 'reu.id_tipo_tratamento', 'reu.h_inicio', 'td.nome AS nomed', 'reu.h_fim', 'reu.max_atend', 'gr.status_grupo AS idst', 'tsg.descricao AS descst', 'tst.descricao AS tstd', 'sa.numero')
+            ->select(
+                DB::raw('(reu.max_atend - (select count(*) from tratamento tr where tr.id_reuniao = reu.id and tr.status < 3)) as trat'),
+                'p.nome_completo',
+                'reu.id AS idr',
+                'gr.nome AS nomeg',
+                'reu.dia_semana',
+                'reu.id_sala',
+                'reu.id_tipo_tratamento',
+                'reu.h_inicio',
+                'td.nome AS nomed',
+                'reu.h_fim',
+                'reu.max_atend',
+                'gr.status_grupo AS idst',
+                'tsg.descricao AS descst',
+                'tst.descricao AS tstd',
+                'sa.numero',
+                'tor.descricao as des'
+            )
             ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
             ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
             ->leftJoin('salas AS sa', 'reu.id_sala', 'sa.id')
@@ -232,6 +249,7 @@ class GerenciarEncaminhamentoController extends Controller
             ->leftJoin('membro AS me', 'reu.id', 'me.id_cronograma')
             ->leftJoin('associado as ass', 'me.id_associado', 'ass.id')
             ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->leftJoin('tipo_observacao_reuniao as tor', 'reu.observacao', 'tor.id')
             ->where(function ($query) use ($hoje) {
                 $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
             })
@@ -240,11 +258,12 @@ class GerenciarEncaminhamentoController extends Controller
                 $query->orWhere('reu.modificador', '<>', 4);
             })
             ->where('me.id_funcao', 1) // Busca apenas dirigentes, gera um bug de duplicação caso um grupo tenha mais de um dirigente
+            ->whereNull('me.dt_fim')
             ->where('reu.dia_semana', $dia)
             ->where('reu.id_tipo_tratamento', $tp_trat)
             ->orWhere('tr.status', null)
             ->where('tr.status', '<', 3)
-            ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
+            ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero', 'tor.descricao')
             ->orderBy('h_inicio');
 
         // Caso não seja menor de idade, exclua os grupos de criança
@@ -307,8 +326,14 @@ class GerenciarEncaminhamentoController extends Controller
             ->where('enc.id_tipo_encaminhamento', 1) // Encaminhamento de Entrevista
             ->where('at.id_assistido', $tratID->id_assistido)
             ->where(function ($query) {
-                $query->where('enc.status_encaminhamento', '<', 3); // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
-                $query->orWhere('enc.status_encaminhamento', 7); // Entrevista Proamo Aguardando Requisitos
+                $query->where(function ($subQuery) { // Caso seja um PROAMO aguardando requsitos
+                    $subQuery->where('enc.id_tipo_entrevista', 6); // Entrevista PROAMO
+                    $subQuery->where('enc.status_encaminhamento', 5); // Aguardando Requisitos
+                });
+                $query->orWhere(function ($subQuery) { // Caso seja qualquer outro encaminhamento ativo
+                    $subQuery->whereNot('enc.id_tipo_entrevista', 6); // Entrevista PROAMO
+                    $subQuery->where('enc.status_encaminhamento', '<', 3); // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+                });
             })
             ->pluck('id_tipo_entrevista')->toArray();
 
@@ -677,7 +702,16 @@ class GerenciarEncaminhamentoController extends Controller
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
             ->where('enc.id_tipo_encaminhamento', 1) // Encaminhamento de Entrevista
             ->where('at.id_assistido', $idAssistido)
-            ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+            ->where(function ($query) {
+                $query->where(function ($subQuery) { // Caso seja um PROAMO aguardando requsitos
+                    $subQuery->where('enc.id_tipo_entrevista', 6); // Entrevista PROAMO
+                    $subQuery->where('enc.status_encaminhamento', 5); // Aguardando Requisitos
+                });
+                $query->orWhere(function ($subQuery) { // Caso seja qualquer outro encaminhamento ativo
+                    $subQuery->whereNot('enc.id_tipo_entrevista', 6); // Entrevista PROAMO
+                    $subQuery->where('enc.status_encaminhamento', '<', 3); // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+                });
+            })
             ->pluck('id_tipo_entrevista')->toArray();
 
 
@@ -926,7 +960,8 @@ class GerenciarEncaminhamentoController extends Controller
                     'gr.status_grupo AS idst',
                     'tsg.descricao AS descst',
                     'tst.descricao AS tstd',
-                    'sa.numero'
+                    'sa.numero',
+                    'tor.descricao as des'
                 )
                 ->leftJoin('tratamento AS tr', 'reu.id', 'tr.id_reuniao')
                 ->leftJoin('tipo_tratamento AS tst', 'reu.id_tipo_tratamento', 'tst.id')
@@ -937,6 +972,7 @@ class GerenciarEncaminhamentoController extends Controller
                 ->leftJoin('membro AS me', 'reu.id', 'me.id_cronograma')
                 ->leftJoin('associado as ass', 'me.id_associado', 'ass.id')
                 ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+                ->leftJoin('tipo_observacao_reuniao as tor', 'reu.observacao', 'tor.id')
                 ->where(function ($query) use ($hoje) {
                     $query->whereRaw('reu.data_fim > ?', [$hoje])->orWhereNull('reu.data_fim');
                 })
@@ -945,11 +981,12 @@ class GerenciarEncaminhamentoController extends Controller
                     $query->orWhere('reu.modificador', '<>', 4);
                 })
                 ->where('me.id_funcao', 1) // XXX Busca apenas dirigentes, gera um bug de duplicação caso um grupo tenha mais de um dirigente
+                ->whereNull('me.dt_fim')
                 ->where('reu.dia_semana', $dia)
                 ->where('reu.id_tipo_tratamento', $tp_trat)
                 ->orWhere('tr.status', null)
                 ->where('tr.status', '<', 3)
-                ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero')
+                ->groupBy('p.nome_completo', 'reu.h_inicio', 'reu.max_atend', 'reu.id', 'gr.nome', 'td.nome', 'gr.status_grupo', 'tsg.descricao', 'tst.descricao', 'sa.numero', 'tor.descricao')
                 ->orderBy('h_inicio')
                 ->get();
 
@@ -976,9 +1013,22 @@ class GerenciarEncaminhamentoController extends Controller
         $maxAtend = DB::table('cronograma')->where('id', "$reu")->first(); // Usado para retornar o número máximo de assistidos da reunião
         $tratID = DB::table('encaminhamento')->where('id',  $ide)->first(); // Retorna o tipo de tratamento, usado para validação do número de vagas
         $idt = DB::table('tratamento')->where('id_encaminhamento', $ide)->first(); // Pega os dados do tratamento, usados: DT_FIM e ID
+
         $data_ontem = Carbon::yesterday();
         $data_hoje = Carbon::today();
         $dt_hora = Carbon::now();
+
+        $dia_inicio = Carbon::createFromFormat('Y-m-d G:i:s', "$idt->dt_inicio 00:00:00"); // Força um campo DATE se transformar em um DATETIME
+
+
+        if ($data_hoje > (clone $dia_inicio)->weekday($maxAtend->dia_semana)) { // Caso o dia seja menor ou igual o esperado
+            $dia_inicio->weekday($maxAtend->dia_semana)->addWeek();
+        } elseif ((clone $dia_inicio)->weekday($maxAtend->dia_semana)->subWeek() > $data_hoje) { // Caso o assistido não precisa começar na semana que vem
+            $dia_inicio->weekday($maxAtend->dia_semana)->subWeek();
+        } else { // Caso não necessite mudar a semana, apenas o dia
+            $dia_inicio->weekday($maxAtend->dia_semana);
+        }
+
 
         // Se o tratamento não for permanente
         if ($idt->dt_fim) {
@@ -987,8 +1037,7 @@ class GerenciarEncaminhamentoController extends Controller
             $dia_fim = Carbon::createFromFormat('Y-m-d G:i:s', "$idt->dt_fim 00:00:00"); // Força um campo DATE se transformar em um DATETIME
             $dia_fim->weekday($maxAtend->dia_semana); // Descobre o dia na semana da DT_FIM correspondente ao dia da semana selecionado pelo grupo
 
-            $dia_inicio = Carbon::createFromFormat('Y-m-d G:i:s', "$idt->dt_inicio 00:00:00"); // Força um campo DATE se transformar em um DATETIME
-            $dia_inicio->weekday($maxAtend->dia_semana); // Descobre o dia na semana da DT_INICIO correspondente ao dia da semana selecionado pelo grupo
+
 
             // Caso não seja um tratamento PTD e o número de tratamentos seja maior ou igual ao número máximo de assisitidos
             if ($tratID->id_tipo_tratamento != 1 and $countVagas >= $maxAtend->max_atend) {
@@ -1028,7 +1077,7 @@ class GerenciarEncaminhamentoController extends Controller
                 'dt_inicio' => $data,
             ]);
 
-        // Atualiza a reunião do tratamento para a nova 
+        // Atualiza a reunião do tratamento para a nova
         if ($idt->dt_fim) {
 
             // Busca o Tratamento a ser editado
@@ -1078,6 +1127,7 @@ class GerenciarEncaminhamentoController extends Controller
                     $idEditDtFim = $editDtFim->first()->id;
                     $editDtFim->update([
                         'id_reuniao' => $reu,
+                        'dt_inicio' => $dia_inicio, // remarca a data inicio
                     ]);
                 }
 

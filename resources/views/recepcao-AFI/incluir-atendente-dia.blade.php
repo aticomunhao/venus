@@ -95,7 +95,9 @@
                                 <td>
                                     <select class="form-select" id="" name="atendimento">
                                         @foreach ($tipoAtendimento as $tipo)
-                                            <option value="{{ $tipo->id }}">{{ $tipo->sigla }}</option>
+                                            <option value="{{ $tipo->id }}"
+                                                {{ (!in_array($atendes->ida, $membros) and $tipo->id == 2) ? 'hidden' : null }}>
+                                                {{ $tipo->sigla }}</option>
                                         @endforeach
                                     </select>
                                 </td>

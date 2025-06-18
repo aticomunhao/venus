@@ -31,11 +31,15 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
 
-                            @if (in_array(7, $acesso))
+                            {{-- @if (in_array(7, $acesso))
                                 <li><a class="dropdown-item" href="/atendendo-afe">Atendimento Fraterno
                                         Especifico</a>
                                 </li>
-                            @endif
+                            @endif --}}
+                            @if (in_array(7, $acesso))
+                            <li><a class="dropdown-item" href="/atendendo">Atendimento Fraterno</a>
+                            </li>
+                        @endif
                             @if (in_array(33, $acesso))
                                 <li><a class="dropdown-item" href="/relatorio-salas-cronograma">Calendário</a>
                                 </li>
@@ -73,7 +77,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(34, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Histórico de
                                         Membros</a>
                                 </li>
                             @endif
@@ -129,7 +133,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(34, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Histórico de
                                         Membros</a>
                                 </li>
                             @endif
@@ -164,7 +168,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(6, $acesso))
-                                <li><a class="dropdown-item" href="/atendendo">Atendimento Fraterno Individual</a>
+                                <li><a class="dropdown-item" href="/atendendo">Atendimento Fraterno</a>
                                 </li>
                             @endif
                             @if (in_array(20, $acesso))
@@ -240,7 +244,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(34, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Histórico de
                                         Membros</a>
                                 </li>
                             @endif
@@ -255,7 +259,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(51, $acesso))
-                                <li><a class="dropdown-item" href="/visualizarRI-tratamento">Visualizar
+                                <li><a class="dropdown-item" href="/visualizarRI-tratamento">Lista de 
                                         Tratamentos</a>
                                 </li>
                             @endif
@@ -332,7 +336,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(34, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Histórico de
                                         Membros</a></li>
                             @endif
                             @if (in_array(34, $acesso))
@@ -388,7 +392,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                 </li>
                             @endif
                             @if (in_array(34, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Relatório de
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Histórico de
                                         Membros</a>
                                 </li>
                             @endif
