@@ -275,7 +275,6 @@
                         <!-- Modal Declarar Alta PTD -->
                         <div class="modal fade" id="modalB{{ $encaminhamento->id }}" tabindex="-1"
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <form action="/alta-proamo/{{ $encaminhamento->ide }}" class="form-horizontal mt-4">
                                 @csrf
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -286,16 +285,20 @@
                                         </div>
                                         <center>
                                             <div class="modal-body">
-                                                Tem certeza que deseja declarar a não necessidade do assistido participar de um PTD?
+                                                Tem certeza que deseja declarar a não necessidade do assistido participar de
+                                                um PTD?
                                                 <br />
                                                 <br />
                                                 <br />
-                                                <span style="color:rgb(196, 27, 27); font-size: 15px; font-style: italic">Essa ação não inativa nenhum PTD ativo!</span>
+                                                <span
+                                                    style="color:rgb(196, 27, 27); font-size: 15px; font-style: italic">Essa
+                                                    ação não inativa nenhum PTD ativo!</span>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-danger"
                                                     data-bs-dismiss="modal">Cancelar</button>
-                                                <a href="/alta-ptd-proamo/{{$encaminhamento->id}}" type="button" class="btn btn-primary">Cofirmar</a>
+                                                <a href="/alta-ptd-proamo/{{ $encaminhamento->id }}" type="button"
+                                                    class="btn btn-primary">Cofirmar</a>
                                             </div>
                                     </div>
                                 </div>
