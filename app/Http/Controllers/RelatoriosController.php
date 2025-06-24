@@ -682,7 +682,7 @@ class RelatoriosController extends Controller
             $presencasCountMembros[1] = $presencasCountMembros[1]->total;
         }
 
-        // 
+        //
         $presencasCountMembros[2] = 0;
 
         return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasCountAssistidos', 'presencasCountMembros', 'reunioesPesquisa', 'dt_inicio', 'dt_fim'));
@@ -1029,6 +1029,7 @@ class RelatoriosController extends Controller
             )->get()
             ->toArray();
 
+           // dd($passes);
 
 
         // if ($request->tipo_visualizacao == 2) {
@@ -1042,14 +1043,13 @@ class RelatoriosController extends Controller
         //         $passes
         //     }
         // } else {
-
         // Insere os atendimentos
         foreach ($grupos as $key => $grupo) {
 
 
             $tratamentosAtivosForeach = (clone $tratamentosAtivos[array_search($grupo->id, array_column($tratamentosAtivos, 'id_reuniao'))])->count;
-            $acompForeach = array_search($grupo->id, array_column($acomp, 'id_cronograma')) ? (clone $acomp[array_search($grupo->id, array_column($acomp, 'id_cronograma'))])->acomp : null;
-            $passesForeach = array_search($grupo->id, array_column($passes, 'id_cronograma')) ? (clone $passes[array_search($grupo->id, array_column($passes, 'id_cronograma'))])->assist : null;
+            $acompForeach = array_search($grupo->id, array_column($acomp, 'id_cronograma')) !== false ? (clone $acomp[array_search($grupo->id, array_column($acomp, 'id_cronograma'))])->acomp : null;
+            $passesForeach = array_search($grupo->id, array_column($passes, 'id_cronograma')) !== false ? (clone $passes[array_search($grupo->id, array_column($passes, 'id_cronograma'))])->assist : null;
 
             if ($grupo->id_tp_tratamento == 3) { // Caso seja um grupo de PTH, conta os assistidos
                 $grupos[$key]->passes =  $acompForeach;
@@ -1060,7 +1060,6 @@ class RelatoriosController extends Controller
                 $grupos[$key]->passes =  $passesForeach;
             }
         }
-
 
         // Pesquisa de grupos
         if ($request->grupo != null) {
