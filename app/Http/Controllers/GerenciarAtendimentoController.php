@@ -133,10 +133,10 @@ class GerenciarAtendimentoController extends Controller
             ->where('at.status_atendimento', '=', 2)
             ->get();
 
-            $atendentes = DB::table('atendente_dia')->where('dh_inicio', '>', $hoje)->whereNull('dh_fim')->count();
-            
+        $atendentes = DB::table('atendente_dia')->where('dh_inicio', '>', $hoje)->whereNull('dh_fim')->count();
 
-        $contagem = ['atender' =>$numero_de_assistidos_para_atender->count(), 'atendentes' => $atendentes];
+
+        $contagem = ['atender' => $numero_de_assistidos_para_atender->count(), 'atendentes' => $atendentes];
 
         return response()->json($contagem);
     }
@@ -251,18 +251,41 @@ class GerenciarAtendimentoController extends Controller
     public function ajaxCRUD(Request $request)
     {
 
-        $pessoas = DB::table('pessoas')
-            ->select('id', 'nome_completo');
 
-        $pesquisaNome = array();
-        $pesquisaNome = explode(' ', $request->nome);
+        $pessoas = Array();
 
-        foreach ($pesquisaNome as $itemPesquisa) {
-            $pessoas->whereRaw("UNACCENT(LOWER(nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+        if ($request->cpf) {
+            $pessoasCPF = DB::table('pessoas')->where('cpf','LIKE', "%$request->cpf%")->get();
+            $pessoas = $pessoasCPF;
         }
+        
+        if ($request->nome and !count($pessoas)) {
 
-        $pessoas =  $pessoas->orderBy('nome_completo')->get();
+            $pessoasNome = DB::table('pessoas as p');
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $request->nome);
+    
+            $margemErro = 0;
+            foreach ($pesquisaNome as $itemPesquisa) {
 
+                $bufferPessoa = (clone $pessoasNome);
+                $pessoasNome =  $pessoasNome->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+
+                if (count($pessoasNome->get()->toArray()) < 1) {
+                    $pessoaVazia = (clone $pessoasNome);
+                    $pessoasNome = $bufferPessoa;
+                    $margemErro += 1;
+                }
+            }
+
+
+            if ($margemErro < (count($pesquisaNome) / 2)) {
+            } else {
+                //Transforma a variavel em algo vazio
+                $pessoasNome = $pessoaVazia;
+            }
+            $pessoas = $pessoasNome->get();
+        }
         return $pessoas;
     }
 
@@ -856,106 +879,106 @@ class GerenciarAtendimentoController extends Controller
     public function definir_sala(Request $request)
     {
 
-            $now = Carbon::today();
-            $no = Carbon::today()->addDay(1);
+        $now = Carbon::today();
+        $no = Carbon::today()->addDay(1);
 
-            // Obtenha todos os atendentes únicos para o select2
-            $atendentesParaSelect = DB::table('membro AS m')
-                ->select('m.id_associado AS ida', 'p.nome_completo AS nm_4')
-                ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
-                ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
+        // Obtenha todos os atendentes únicos para o select2
+        $atendentesParaSelect = DB::table('membro AS m')
+            ->select('m.id_associado AS ida', 'p.nome_completo AS nm_4')
+            ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
+            ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->where('gr.id_tipo_grupo', 3)
+            ->where('p.status', 1)
+            ->distinct('p.nome_completo') // Garante que o nome completo seja único
+            ->orderBy('p.nome_completo') // Ordene pela coluna de nome
+            ->get();
+
+        // Crie a consulta para a listagem paginada
+        $atendeQuery = DB::table('membro AS m')
+            ->distinct('m.id_associado')
+            ->select('m.id AS idat', 'm.id_associado AS ida', 'p.nome_completo AS nm_4', 'p.id AS pid')
+            ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
+            ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->where('gr.id_tipo_grupo', 3)
+            ->where('p.status', 1)
+            ->leftJoin('atendente_dia AS atd', function ($join) use ($now, $no) {
+                $join->on('m.id_associado', '=', 'atd.id_associado')
+                    ->whereNull('atd.dh_fim')
+                    ->where('atd.dh_inicio', '>=', $now)
+                    ->where('atd.dh_inicio', '<', $no);
+            })
+
+            ->where('gr.id_tipo_grupo', 3)
+            ->where('p.status', 1)
+            ->whereNull('atd.id'); // Excluir aqueles que já estão em uma sala e sem fim de turno
+
+        // Restorna todos os atendentes considerados AFE    
+        $membros = DB::table('membro')->whereIn('id_associado', array_column(($atendeQuery->get()->toArray()), 'ida'))->where('id_funcao', 5)->pluck('id_associado')->toArray();
+
+        // Aplicar filtros
+        if ($request->atendente) {
+            $atendeQuery->where('m.id_associado', $request->atendente);
+        }
+
+        if ($request->status) {
+            $atendeQuery->where('p.status', $request->status);
+        }
+
+        // Contar o total de atendentes antes da paginação
+        $contar = $atendeQuery->count('m.id_associado');
+
+        // Ordena e pagina
+        $atende = $atendeQuery->orderBy('m.id_associado', 'ASC')->orderBy('nm_4', 'ASC')->paginate(10);
+
+
+
+        // Outras consultas
+        $st_atend = DB::table('tipo_status_pessoa')->select('id', 'tipo')->get();
+        $situacao = DB::table('tipo_status_pessoa')->select('id AS ids', 'tipo')->get();
+        $grupo = DB::table('grupo AS g')
+            ->select('id', 'nome')
+            ->where('id_tipo_grupo', 3)
+            ->whereNull('data_fim')
+            ->orderBy('nome')
+            ->get();
+
+
+        foreach ($atende as $key => $lista) {
+            $result = DB::table('membro AS m')
                 ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
-                ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
-                ->where('gr.id_tipo_grupo', 3)
-                ->where('p.status', 1)
-                ->distinct('p.nome_completo') // Garante que o nome completo seja único
-                ->orderBy('p.nome_completo') // Ordene pela coluna de nome
+                ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')
+                ->where('m.id_associado', '=', $lista->ida)
+                ->where('g.id_tipo_grupo', 3)
+                ->whereNull('g.data_fim')
+                ->select('m.id_associado', 'cro.id', 'g.nome AS gnome')
+                ->groupBy('m.id_associado', 'cro.id', 'g.nome')
                 ->get();
+            $lista->grup = $result;
+        }
 
-            // Crie a consulta para a listagem paginada
-            $atendeQuery = DB::table('membro AS m')
-                ->distinct('m.id_associado')
-                ->select('m.id AS idat', 'm.id_associado AS ida', 'p.nome_completo AS nm_4', 'p.id AS pid')
-                ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
-                ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
-                ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
-                ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
-                ->where('gr.id_tipo_grupo', 3)
-                ->where('p.status', 1)
-                ->leftJoin('atendente_dia AS atd', function ($join) use ($now, $no) {
-                    $join->on('m.id_associado', '=', 'atd.id_associado')
-                        ->whereNull('atd.dh_fim')
-                        ->where('atd.dh_inicio', '>=', $now)
-                        ->where('atd.dh_inicio', '<', $no);
-                })
+        $salaAtendendo = DB::table('atendente_dia AS atd')
+            ->leftJoin('associado AS a', 'atd.id_associado', 'a.id')
+            ->where('dh_inicio', '>=', $now)
+            ->where('dh_inicio', '<', $no)
+            ->whereNull('dh_fim')
+            ->pluck('id_sala');
 
-                ->where('gr.id_tipo_grupo', 3)
-                ->where('p.status', 1)
-                ->whereNull('atd.id'); // Excluir aqueles que já estão em uma sala e sem fim de turno
+        $sala = DB::table('salas AS s')
+            ->select('s.id', 's.numero')
+            ->where('s.id_finalidade', 2)
+            ->where('s.status_sala', 1)
+            ->whereNotIn('id', $salaAtendendo)
+            ->orderBy('numero')
+            ->get();
 
-            // Restorna todos os atendentes considerados AFE    
-            $membros = DB::table('membro')->whereIn('id_associado', array_column(($atendeQuery->get()->toArray()), 'ida'))->where('id_funcao', 5)->pluck('id_associado')->toArray();
+        $tipoAtendimento = DB::table('tipo_atendimento')
+            ->get();
 
-            // Aplicar filtros
-            if ($request->atendente) {
-                $atendeQuery->where('m.id_associado', $request->atendente);
-            }
-
-            if ($request->status) {
-                $atendeQuery->where('p.status', $request->status);
-            }
-
-            // Contar o total de atendentes antes da paginação
-            $contar = $atendeQuery->count('m.id_associado');
-
-            // Ordena e pagina
-            $atende = $atendeQuery->orderBy('m.id_associado', 'ASC')->orderBy('nm_4', 'ASC')->paginate(10);
-
-           
-            
-            // Outras consultas
-            $st_atend = DB::table('tipo_status_pessoa')->select('id', 'tipo')->get();
-            $situacao = DB::table('tipo_status_pessoa')->select('id AS ids', 'tipo')->get();
-            $grupo = DB::table('grupo AS g')
-                ->select('id', 'nome')
-                ->where('id_tipo_grupo', 3)
-                ->whereNull('data_fim')
-                ->orderBy('nome')
-                ->get();
-
-
-            foreach ($atende as $key => $lista) {
-                $result = DB::table('membro AS m')
-                    ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
-                    ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')
-                    ->where('m.id_associado', '=', $lista->ida)
-                    ->where('g.id_tipo_grupo', 3)
-                    ->whereNull('g.data_fim')
-                    ->select('m.id_associado', 'cro.id', 'g.nome AS gnome')
-                    ->groupBy('m.id_associado', 'cro.id', 'g.nome')
-                    ->get();
-                $lista->grup = $result;
-            }
-
-            $salaAtendendo = DB::table('atendente_dia AS atd')
-                ->leftJoin('associado AS a', 'atd.id_associado', 'a.id')
-                ->where('dh_inicio', '>=', $now)
-                ->where('dh_inicio', '<', $no)
-                ->whereNull('dh_fim')
-                ->pluck('id_sala');
-
-            $sala = DB::table('salas AS s')
-                ->select('s.id', 's.numero')
-                ->where('s.id_finalidade', 2)
-                ->where('s.status_sala', 1)
-                ->whereNotIn('id', $salaAtendendo)
-                ->orderBy('numero')
-                ->get();
-
-            $tipoAtendimento = DB::table('tipo_atendimento')
-                ->get();
-
-            return view('/recepcao-AFI/incluir-atendente-dia', compact('contar', 'membros', 'atende', 'st_atend', 'situacao', 'grupo', 'sala', 'atendentesParaSelect', 'tipoAtendimento'));
+        return view('/recepcao-AFI/incluir-atendente-dia', compact('contar', 'membros', 'atende', 'st_atend', 'situacao', 'grupo', 'sala', 'atendentesParaSelect', 'tipoAtendimento'));
     }
 
 
