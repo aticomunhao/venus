@@ -252,19 +252,19 @@ class GerenciarAtendimentoController extends Controller
     {
 
 
-        $pessoas = Array();
+        $pessoas = array();
 
         if ($request->cpf) {
-            $pessoasCPF = DB::table('pessoas')->where('cpf','LIKE', "%$request->cpf%")->get();
+            $pessoasCPF = DB::table('pessoas')->where('cpf', 'LIKE', "%$request->cpf%")->get();
             $pessoas = $pessoasCPF;
         }
-        
+
         if ($request->nome and !count($pessoas)) {
 
             $pessoasNome = DB::table('pessoas as p');
             $pesquisaNome = array();
             $pesquisaNome = explode(' ', $request->nome);
-    
+
             $margemErro = 0;
             foreach ($pesquisaNome as $itemPesquisa) {
 
@@ -372,7 +372,6 @@ class GerenciarAtendimentoController extends Controller
                 });
             })
             ->count();
-
         $dadosAssistido = DB::table('pessoas')->where('id', $request->input('assist'))->first();
 
         //dd($resultado);
@@ -809,7 +808,11 @@ class GerenciarAtendimentoController extends Controller
 
         $situacao = DB::table('tipo_status_pessoa')->select('id', 'tipo')->get();
         $tipo_atendimento = DB::table('tipo_atendimento')->get();
-        $grupos = DB::table('membro as m')->where('id_associado', $atende->id_associado)->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')->leftJoin('grupo as g', 'cro.id_grupo', 'g.id')->whereIn('id_funcao', [5, 6])->orderBy('g.nome')->get();
+        $grupos = DB::table('membro as m')->where('id_associado', $atende->id_associado)
+            ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
+            ->leftJoin('grupo as g', 'cro.id_grupo', 'g.id')
+             ->whereNull('m.dt_fim')
+            ->whereIn('id_funcao', [5, 6])->orderBy('g.nome')->get();
         $salaAtendendo = DB::table('atendente_dia AS atd')->leftjoin('associado AS a', 'atd.id_associado', 'a.id')->where('dh_inicio', '>=', $now)->where('dh_inicio', '<', $no)->where('dh_fim', '=', null)->pluck('id_sala');
 
         $membro = DB::table('membro')->where('id_associado', $atende->id_associado)->where('id_funcao', 5)->exists();
@@ -916,7 +919,7 @@ class GerenciarAtendimentoController extends Controller
             ->where('p.status', 1)
             ->whereNull('atd.id'); // Excluir aqueles que já estão em uma sala e sem fim de turno
 
-        // Restorna todos os atendentes considerados AFE    
+        // Restorna todos os atendentes considerados AFE
         $membros = DB::table('membro')->whereIn('id_associado', array_column(($atendeQuery->get()->toArray()), 'ida'))->where('id_funcao', 5)->pluck('id_associado')->toArray();
 
         // Aplicar filtros
@@ -953,12 +956,15 @@ class GerenciarAtendimentoController extends Controller
                 ->leftJoin('grupo AS g', 'cro.id_grupo', 'g.id')
                 ->where('m.id_associado', '=', $lista->ida)
                 ->where('g.id_tipo_grupo', 3)
+                ->whereNull('cro.data_fim')
                 ->whereNull('g.data_fim')
+                ->whereNull('m.dt_fim')
                 ->select('m.id_associado', 'cro.id', 'g.nome AS gnome')
                 ->groupBy('m.id_associado', 'cro.id', 'g.nome')
                 ->get();
             $lista->grup = $result;
         }
+
 
         $salaAtendendo = DB::table('atendente_dia AS atd')
             ->leftJoin('associado AS a', 'atd.id_associado', 'a.id')
