@@ -25,9 +25,11 @@
                     <ul class="dropdown-menu">
                         <li><button class="dropdown-item drop" value="2" tipo="1">Id de Referência</button></li>
                         <li><button class="dropdown-item drop" value="3" tipo="1">Id do Assistido</button></li>
-                        <li><button class="dropdown-item drop" value="4" tipo="2">Nome do Assistido</button></li>
-                        <li><button class="dropdown-item drop" value="5" tipo="1">Id do Usuário</button></li>
-                        <li><button class="dropdown-item drop" value="6" tipo="2">Nome do Usuário</button></li>
+                        <li><button class="dropdown-item drop" value="4" tipo="3">CPF do Assistido</button></li>
+                        <li><button class="dropdown-item drop" value="5" tipo="2">Nome do Assistido</button></li>
+                        <li><button class="dropdown-item drop" value="6" tipo="1">Id do Usuário</button></li>
+                        <li><button class="dropdown-item drop" value="7" tipo="3">CPF do Usuário</button></li>
+                        <li><button class="dropdown-item drop" value="8" tipo="2">Nome do Usuário</button></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -36,11 +38,11 @@
                     {{-- Fim do Dropdown de Seleção de Tipo de Pesquisa --}}
 
 
-                    <input id="inputGeral" type="text" class="form-control">{{-- Input de Pesquisa --}}
+                    <input id="inputGeral" type="text" class="form-control" maxlength="100">{{-- Input de Pesquisa --}}
 
 
                     <button id="btnClear" class="btn btn-outline-secondary">Limpar</button>
-                    <button id="btnPesquisa" class="btn btn-secondary">Pesquisar</button>
+                    <button class="btn btn-secondary btnPesquisa">Pesquisar</button>
                     <div class="invalid-feedback">
                         É necessário pesquisar algo para iniciar a pesquisa!
                     </div>
@@ -93,6 +95,7 @@
                                 </center>
                                 <div class="modal-footer">
                                     <button id="btnLimparModal"type="button" class="btn btn-secondary">Limpar</button>
+                                    <button class="btn btn-primary btnPesquisa" data-bs-dismiss="modal">Pesquisar</button>
                                 </div>
                             </div>
                         </div>
@@ -145,7 +148,58 @@
 
 
 
+            function ajaxPesquisa() {
 
+                let placeholderTimeout;
+                const realTableLoad = $.Deferred();
+                const regexTemLetra = /[A-Za-zÀ-ÿ]/;
+
+                let pesquisaGeral = $('#inputGeral').val()
+                let id_origem = $('#id_origem option:selected').val()
+                let id_acao = $('#id_acao option:selected').val()
+                let inputObs = $('#inputObs').val()
+                let dt_inicio = $('#dt_inicio').val()
+                let dt_fim = $('#dt_fim').val()
+
+
+                if ((value == 4 || value == 7 || value == 1) && !regexTemLetra.test(pesquisaGeral)) {
+                    pesquisaGeral = pesquisaGeral.replace(/\D/g, '')
+                } else if (value == 5 || value == 8 || value == 1) {
+                    pesquisaGeral = pesquisaGeral.replace(/ /g, "+")
+                }
+
+                if (pesquisaGeral === '') {
+                    $('#inputGeral').addClass('is-invalid')
+                } else {
+                    $('#tabela').load('/tabela-log-atendimentos?' +
+                        'pesquisaGeral=' + pesquisaGeral +
+                        '&value=' + value +
+                        '&id_origem=' + id_origem +
+                        '&id_acao=' + id_acao +
+                        '&inputObs=' + inputObs +
+                        '&dt_inicio=' + dt_inicio +
+                        '&dt_fim=' + dt_fim,
+                        function() {
+                            realTableLoad.resolve()
+                        })
+
+
+                    $('#tabela').prop('hidden', true)
+                    placeholderTimeout = setTimeout(function() {
+                        $('#placeholder').load('/placeholder-log-atendimentos')
+                        $('#placeholder').prop('hidden', false)
+                    }, 200);
+
+                    realTableLoad.done(function() {
+                        clearTimeout(placeholderTimeout); // Cancel placeholder if it's pending
+                        $('#placeholder').prop('hidden', true)
+                        $('#tabela').prop('hidden', false)
+                    });
+                }
+
+
+
+            }
 
             // DropDown de Seleção de Tipo de Pesquisa
             $('.drop').click(function() {
@@ -170,8 +224,38 @@
             $('#inputGeral').on('input', function() {
 
                 if (tipo == 1) {
+                    $(this).attr('maxlength', 9);
                     novoConteudo = $(this).val().replace(/\D/g, '')
+                } else if (tipo == 3) {
+                    $(this).attr('maxlength', 14);
+
+                    // ---- Validação de letras ---- //
+                    novoConteudo = $(this).val().replace(/\D/g, '')
+                    $(this).val(novoConteudo)
+
+                    let numeros = ($(this).val().match(/\d/g) || [])
+                        .length; // Conta a quantidade de números no input
+
+                    // ---- Máscara de CPF ---- //
+
+                    if (numeros > 3) {
+                        novoConteudo = $(this).val().slice(0, 3) + '.' + novoConteudo.slice(
+                            3, ) // Separa os números e adiciona um ponto
+                        $(this).val(novoConteudo)
+                    }
+                    if (numeros > 6) {
+                        novoConteudo = $(this).val().slice(0, 7) + '.' + novoConteudo.slice(
+                            7, ) // Separa os números e adiciona um ponto
+                        $(this).val(novoConteudo)
+                    }
+                    if (numeros > 9) {
+                        novoConteudo = $(this).val().slice(0, 11) + '-' + novoConteudo.slice(
+                            11, ) // Separa os números e adiciona um hífen
+                        $(this).val(novoConteudo)
+                    }
+
                 } else {
+                    $(this).attr('maxlength', 100);
                     novoConteudo = $(this).val()
                 }
 
@@ -201,50 +285,17 @@
                 $('#dt_fim').val('')
             })
 
+            // Pesquisa com Enter
+            $("#inputGeral").keydown(function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault(); // Prevent form submission
+                    ajaxPesquisa()
+                }
+            });
 
             // Botão de Pesquisar
-            $('#btnPesquisa').click(function() {
-
-                let placeholderTimeout;
-                const realTableLoad = $.Deferred();
-
-                let pesquisaGeral = $('#inputGeral').val()
-                let id_origem = $('#id_origem option:selected').val()
-                let id_acao = $('#id_acao option:selected').val()
-                let inputObs = $('#inputObs').val()
-                let dt_inicio = $('#dt_inicio').val()
-                let dt_fim = $('#dt_fim').val()
-
-                if (pesquisaGeral === '') {
-                    $('#inputGeral').addClass('is-invalid')
-                } else {
-                    $('#tabela').load('/tabela-log-atendimentos?' +
-                        'pesquisaGeral=' + pesquisaGeral +
-                        '&id_origem=' + id_origem +
-                        '&id_acao=' + id_acao +
-                        '&inputObs=' + inputObs +
-                        '&dt_inicio=' + dt_inicio +
-                        '&dt_fim=' + dt_fim,
-                        function() {
-                            realTableLoad.resolve()
-                        })
-
-
-                    $('#tabela').prop('hidden', true)
-                    placeholderTimeout = setTimeout(function() {
-                        $('#placeholder').load('/placeholder-log-atendimentos')
-                        $('#placeholder').prop('hidden', false)
-                    }, 200);
-
-                    realTableLoad.done(function() {
-                        clearTimeout(placeholderTimeout); // Cancel placeholder if it's pending
-                        $('#placeholder').prop('hidden', true)
-                        $('#tabela').prop('hidden', false)
-                    });
-                }
-
-
-
+            $('.btnPesquisa').click(function() {
+                ajaxPesquisa()
             })
 
 

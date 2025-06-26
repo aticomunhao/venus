@@ -24,14 +24,13 @@ class LogAtendimentosController extends Controller
      * Display the specified resource.
      */
 
-    
-
 
     public function show(Request $request)
     {
 
-
         //sleep(3);
+        $pesquisaGeral = $request->pesquisaGeral;
+        $value = $request->value;
 
         $dadosTabela = DB::table('log_atendimentos as la')
             ->select(
@@ -49,23 +48,80 @@ class LogAtendimentosController extends Controller
             ->leftJoin('tipo_log_acao as ta', 'la.id_acao', 'ta.id')
             ->leftJoin('usuario as u', 'la.id_usuario', 'u.id')
             ->leftJoin('pessoas as p', 'u.id_pessoa', 'p.id')
-            ->when($request->id_origem, function($query, $param){
+            ->when($request->id_origem, function ($query, $param) { // Pesquisa de Origem
                 $query->where('la.id_origem', $param);
             })
-            ->when($request->id_acao, function($query, $param){
+            ->when($request->id_acao, function ($query, $param) { // Pesquisa de Ação
                 $query->where('la.id_acao', $param);
             })
-            ->when($request->inputObs, function($query, $param){
+            ->when($request->inputObs, function ($query, $param) { // Pesquisa de Observação
                 $query->where('la.id_observacao', $param);
             })
-            ->when($request->dt_inicio, function($query, $param){
-                $query->where('la.data_hora', '>=',$param);
+            ->when($request->dt_inicio, function ($query, $param) { // Pesquisa de Inicio de Tempo
+                $query->where('la.data_hora', '>=', $param);
             })
-            ->when($request->dt_fim, function($query, $param){
-                $query->where('la.data_hora', '<=',$param);
+            ->when($request->dt_fim, function ($query, $param) { // Pesquisa de Final de Tempo
+                $query->where('la.data_hora', '<=', $param);
             })
-            ->limit(2000)
-            ->inRandomOrder()
+            ->when($request->value == 2, function ($query, $param) use ($pesquisaGeral) { // Pesquisa por Referência
+                $query->where('la.id_referencia', $pesquisaGeral);
+            })
+            ->when(in_array($request->value, [3, 4, 5]), function ($query, $param) use ($pesquisaGeral, $value) {
+                $query->where(function ($subQuery) use ($pesquisaGeral, $value) {
+                    $subQuery->where('la.id_origem', 1);
+                    $subQuery->WhereIn('la.id_referencia', $this->retornaIdsParaAssistido($value, $pesquisaGeral)[1]);
+                });
+                $query->orWhere(function ($subQuery) use ($pesquisaGeral, $value) {
+                    $subQuery->where('la.id_origem', 2);
+                    $subQuery->WhereIn('la.id_referencia', $this->retornaIdsParaAssistido($value, $pesquisaGeral)[2]);
+                });
+                $query->orWhere(function ($subQuery) use ($pesquisaGeral, $value) {
+                    $subQuery->where('la.id_origem', 3);
+                    $subQuery->WhereIn('la.id_referencia', $this->retornaIdsParaAssistido($value, $pesquisaGeral)[3]);
+                });
+                $query->orWhere(function ($subQuery) use ($pesquisaGeral, $value) {
+                    $subQuery->where('la.id_origem', 4);
+                    $subQuery->WhereIn('la.id_referencia', $this->retornaIdsParaAssistido($value, $pesquisaGeral)[4]);
+                });
+                $query->orWhere(function ($subQuery) use ($pesquisaGeral, $value) {
+                    $subQuery->where('la.id_origem', 5);
+                    $subQuery->WhereIn('la.id_referencia', $this->retornaIdsParaAssistido($value, $pesquisaGeral)[5]);
+                });
+            })
+
+            ->when($request->value == 6, function ($query, $param) use ($pesquisaGeral) { // Pesquisa por Id de Usuário
+                $query->where('la.id_usuario', $pesquisaGeral);
+            })
+            ->when(in_array($request->value, [7, 8]), function ($query, $param) use ($pesquisaGeral, $value) { // Pesquisa por Id de Usuário
+                $query->whereIn('p.id', $this->retornaIdsParaUsuario($value, $pesquisaGeral));
+            })
+            ->when($request->value == 1, function ($query, $param) use ($pesquisaGeral, $value) {
+                intval($pesquisaGeral) ? $query->where('la.id_referencia', $pesquisaGeral) : null;
+                intval($pesquisaGeral) ? $query->orWhere('la.id_usuario', $pesquisaGeral) : null;
+                $query->orWhere(function ($subQuery) use ($pesquisaGeral, $value) {
+                    $subQuery->where('la.id_origem', 1);
+                    $subQuery->WhereIn('la.id_referencia', $this->retornaIdsParaAssistido($value, $pesquisaGeral)[1]);
+                });
+                $query->orWhere(function ($subQuery) use ($pesquisaGeral, $value) {
+                    $subQuery->where('la.id_origem', 2);
+                    $subQuery->WhereIn('la.id_referencia', $this->retornaIdsParaAssistido($value, $pesquisaGeral)[2]);
+                });
+                $query->orWhere(function ($subQuery) use ($pesquisaGeral, $value) {
+                    $subQuery->where('la.id_origem', 3);
+                    $subQuery->WhereIn('la.id_referencia', $this->retornaIdsParaAssistido($value, $pesquisaGeral)[3]);
+                });
+                $query->orWhere(function ($subQuery) use ($pesquisaGeral, $value) {
+                    $subQuery->where('la.id_origem', 4);
+                    $subQuery->WhereIn('la.id_referencia', $this->retornaIdsParaAssistido($value, $pesquisaGeral)[4]);
+                });
+                $query->orWhere(function ($subQuery) use ($pesquisaGeral, $value) {
+                    $subQuery->where('la.id_origem', 5);
+                    $subQuery->WhereIn('la.id_referencia', $this->retornaIdsParaAssistido($value, $pesquisaGeral)[5]);
+                });
+                $query->orWhereIn('p.id', $this->retornaIdsParaUsuario($value, $pesquisaGeral));
+            })
+            ->orderBy('la.data_hora')
+            ->limit(5000)
             ->get()
             ->toArray();
 
@@ -182,27 +238,205 @@ class LogAtendimentosController extends Controller
         return view('log-atendimentos.placeholder');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+
+    // ============================================ //
+    //                                              //
+    //              Região de Pesquisas             //
+    //                                              //
+    // ============================================ //
+
+    // Região dedicada a todas as pesquisas
+    public function retornaIdsParaAssistido(Int $param, String $value)
     {
-        //
+        $id = [];
+        if ($param == 3) {
+            $id = [$value];
+        } elseif ($param == 4) {
+            $pessoa = DB::table('pessoas as p')->where('p.cpf', 'LIKE', "%$value%");
+            $id = array_column($pessoa->get()->toArray(), 'id');
+        } elseif ($param == 5) {
+            $pessoa = DB::table('pessoas as p');
+
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $value);
+            $margemErro = 0;
+            foreach ($pesquisaNome as $itemPesquisa) {
+
+                $bufferPessoa = (clone $pessoa);
+                $pessoa =  $pessoa->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+
+                if (count($pessoa->get()->toArray()) < 1) {
+                    $pessoaVazia = (clone $pessoa);
+                    $pessoa = $bufferPessoa;
+                    $margemErro += 1;
+                }
+            }
+
+
+            if ($margemErro < (count($pesquisaNome) / 2)) {
+            } else {
+                //Transforma a variavel em algo vazio
+                $pessoa = $pessoaVazia;
+            }
+
+            $id = array_column($pessoa->get()->toArray(), 'id');
+        } else {
+            $pessoaCPF = DB::table('pessoas as p')->where('p.cpf', 'LIKE', "%$value%");
+
+             $pessoa = DB::table('pessoas as p');
+
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $value);
+            $margemErro = 0;
+            foreach ($pesquisaNome as $itemPesquisa) {
+
+                $bufferPessoa = (clone $pessoa);
+                $pessoa =  $pessoa->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+
+                if (count($pessoa->get()->toArray()) < 1) {
+                    $pessoaVazia = (clone $pessoa);
+                    $pessoa = $bufferPessoa;
+                    $margemErro += 1;
+                }
+            }
+
+
+            if ($margemErro < (count($pesquisaNome) / 2)) {
+            } else {
+                //Transforma a variavel em algo vazio
+                $pessoa = $pessoaVazia;
+            }
+
+            $idPesquisa = strlen($value) < 11 ? [$value] : [];
+            $id = $idPesquisa + array_column($pessoaCPF->get()->toArray(), 'id') + array_column($pessoa->get()->toArray(), 'id');
+        }
+
+        $atendimentos = DB::table('atendimentos as at')
+            ->select('at.id', 'p.nome_completo')
+            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+            ->whereIn('p.id', $id)
+            ->pluck('at.id')
+            ->toArray();
+
+        $encaminhamentos = DB::table('encaminhamento as enc')
+            ->select('enc.id', 'p.nome_completo')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+            ->whereIn('p.id', $id)
+            ->pluck('enc.id')
+            ->toArray();
+
+        $tratamentos = DB::table('tratamento as tr')
+            ->select('tr.id', 'p.nome_completo')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+            ->whereIn('p.id', $id)
+            ->pluck('tr.id')
+            ->toArray();
+
+        $entrevistas = DB::table('entrevistas as ent')
+            ->select('ent.id', 'p.nome_completo')
+            ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+            ->whereIn('p.id', $id)
+            ->pluck('ent.id')
+            ->toArray();
+
+        $presencasTratamento = DB::table('presenca_cronograma as pc')
+            ->select('pc.id', 'p.nome_completo')
+            ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+            ->whereIn('p.id', $id)
+            ->whereNull('pc.id_pessoa')
+            ->pluck('pc.id')
+            ->toArray();
+
+        $presencasEmergencia = DB::table('presenca_cronograma as pc')
+            ->select('pc.id', 'p.nome_completo')
+            ->leftJoin('pessoas as p', 'pc.id_pessoa', 'p.id')
+            ->whereIn('p.id', $id)
+            ->whereNull('id_tratamento')
+            ->pluck('pc.id')
+            ->toArray();
+
+        $presencas = $presencasTratamento + $presencasEmergencia;
+
+
+        $referenciasUnidas = [
+            1 => $atendimentos,
+            2 => $encaminhamentos,
+            3 => $tratamentos,
+            4 => $entrevistas,
+            5 => $presencas
+        ];
+
+        return $referenciasUnidas;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function retornaIdsParaUsuario(Int $param, String $value)
     {
-        //
-    }
+        $id = [];
+        if ($param == 7) {
+            $pessoa = DB::table('pessoas as p')->where('p.cpf', 'LIKE', "%$value%");
+            $id = array_column($pessoa->get()->toArray(), 'id');
+        } elseif ($param == 8) {
+            $pessoa = DB::table('pessoas as p');
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $value);
+            $margemErro = 0;
+            foreach ($pesquisaNome as $itemPesquisa) {
+
+                $bufferPessoa = (clone $pessoa);
+                $pessoa =  $pessoa->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+
+                if (count($pessoa->get()->toArray()) < 1) {
+                    $pessoaVazia = (clone $pessoa);
+                    $pessoa = $bufferPessoa;
+                    $margemErro += 1;
+                }
+            }
+
+
+            if ($margemErro < (count($pesquisaNome) / 2)) {
+            } else {
+                //Transforma a variavel em algo vazio
+                $pessoa = $pessoaVazia;
+            }
+
+            $id = array_column($pessoa->get()->toArray(), 'id');
+        } else {
+            $pessoaCPF = DB::table('pessoas as p')->where('p.cpf', 'LIKE', "%$value%");
+
+            $pessoa = DB::table('pessoas as p');
+
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $value);
+            $margemErro = 0;
+            foreach ($pesquisaNome as $itemPesquisa) {
+
+                $bufferPessoa = (clone $pessoa);
+                $pessoa =  $pessoa->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+
+                if (count($pessoa->get()->toArray()) < 1) {
+                    $pessoaVazia = (clone $pessoa);
+                    $pessoa = $bufferPessoa;
+                    $margemErro += 1;
+                }
+            }
+
+
+            if ($margemErro < (count($pesquisaNome) / 2)) {
+            } else {
+                //Transforma a variavel em algo vazio
+                $pessoa = $pessoaVazia;
+            }
+            $id = array_column($pessoaCPF->get()->toArray(), 'id') + array_column($pessoa->get()->toArray(), 'id');
+        }
+        return $id;
     }
 }

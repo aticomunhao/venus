@@ -2,12 +2,12 @@
                         <thead style="text-align: center;">
                             <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                                 <th class="col">ID</th>
-                                <th class="col">ASSISTIDO</th>
                                 <th class="col">USUARIO</th>
                                 <th class="col">ORIGEM</th>
                                 <th class="col">REFERENCIA</th>
                                 <th class="col">AÇÃO</th>
                                 <th class="col">OBS</th>
+                                <th class="col">ASSISTIDO</th>
                                 <th class="col">DATA</th>
 
                             </tr>
