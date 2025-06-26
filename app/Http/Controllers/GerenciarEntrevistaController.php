@@ -572,7 +572,7 @@ class GerenciarEntrevistaController extends Controller
 
         // Traz os dados da entrevista gerada
         $entrevista = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)
-            ->select('at.id_assistido', 'ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id_sala', 'ent.id_entrevistador', 'ent.status')
+            ->select('at.id_assistido', 'ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id','ent.id as ide', 'ent.id_sala', 'ent.id_entrevistador', 'ent.status')
             ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id');
 
@@ -592,7 +592,7 @@ class GerenciarEntrevistaController extends Controller
 
         // Insere no histórico a criação do atendimento
         DB::table('log_atendimentos')->insert([
-            'id_referencia' => $idEntrevista->id,
+            'id_referencia' => $idEntrevista->ide,
             'id_usuario' => session()->get('usuario.id_usuario'),
             'id_acao' => 3, // foi editado
             'id_origem' => 4, // Entrevista
@@ -708,7 +708,7 @@ class GerenciarEntrevistaController extends Controller
                 'id_referencia' => $nova,
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'id_acao' => 2, // foi criado
-                'id_origem' => 3, // Encaminhamento
+                'id_origem' => 2, // Encaminhamento
                 'data_hora' => $data
             ]);
 
@@ -837,8 +837,8 @@ class GerenciarEntrevistaController extends Controller
                 'id_referencia' => $id_encaminhamento,
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'id_acao' => 1, // mudou de Status para
-                'id_origem' => 4, // Entrevista
-                'id_observacao' => 5, // Entrevista Finalizada
+                'id_origem' => 2, // Entrevista
+                'id_observacao' => 4, // Entrevista Finalizada
                 'data_hora' => $dt_hora
             ]);
 

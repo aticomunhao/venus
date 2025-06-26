@@ -450,6 +450,10 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             <li><a class="dropdown-item" href="/gerenciar-reunioes">Reuniões </a>
                             </li>
                         @endif
+                        @if (in_array(53, $acesso))
+                            <li><a class="dropdown-item" href="/gerenciar-log-atendimentos">Log Atendimentos</a>
+                            </li>
+                        @endif
 
                     </ul>
                 </li>

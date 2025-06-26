@@ -41,7 +41,7 @@ use App\Http\Controllers\GerenciarVersoesControllerController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\GerenciarPassesController;
 use App\Http\Controllers\GerenciarRequisitoAtividadeController;
-
+use App\Http\Controllers\LogAtendimentosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -485,8 +485,15 @@ Route::middleware('rotas:48')->group(function () {
 });
 
 //Relatório de Tratamentos
-Route::middleware('rotas:53-36')->group(function () {
+Route::middleware('rotas:36')->group(function () {
     Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
+});
+
+// Log de Atendimentos
+Route::middleware('rotas:53')->group(function () {
+    Route::any('/gerenciar-log-atendimentos', [LogAtendimentosController::class, 'index']);
+    Route::any('/tabela-log-atendimentos', [LogAtendimentosController::class, 'show']);
+    Route::any('/placeholder-log-atendimentos', [LogAtendimentosController::class, 'placeholder']);
 });
 
 
