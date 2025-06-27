@@ -19,7 +19,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span class="mb-0">DADOS PESSOAIS</span>
-                    <a href="/gerenciar-grupos-membro" class="btn btn-outline-danger btn-sm" title="Fechar">
+                    <a  href="{{ session()->get('usuario.url') }}" class="btn btn-outline-danger btn-sm" title="Fechar">
                         <i class="bi bi-x-lg"></i>
                     </a>
                 </div>
