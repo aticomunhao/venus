@@ -110,7 +110,7 @@ class ReuniaoMediunicaController extends Controller
         }
 
         if ($setor) {
-            $reuniao->where('cro.id_setor', $setor);
+            $reuniao->where('gr.id_setor', $setor);
         }
         // Aplica filtro por status com base na expressão CASE WHEN
         $statusCaseWhen = DB::raw("CASE WHEN cro.data_fim is not null THEN 'Inativo' ELSE 'Ativo' END");
@@ -253,7 +253,9 @@ class ReuniaoMediunicaController extends Controller
         //  try {
         $usuario = session()->get('usuario.id_pessoa');
         $now = Carbon::now()->format('Y-m-d');
-        $amanha = Carbon::now()->addDay()->format('Y-m-d');
+        $amanha = Carbon::tomorrow();
+        
+        // dd($request->h_inicio);
 
         $modalidade = intval($request->modalidade);
         $observacao = $request->observacao;
@@ -261,11 +263,30 @@ class ReuniaoMediunicaController extends Controller
         $sala = intval($request->id_sala);
         $grupo = intval($request->grupo);
         $numero = $sala;
-        $h_inicio = Carbon::createFromFormat('H:i:s', $request->h_inicio);
-        $h_fim = Carbon::createFromFormat('H:i:s', $request->h_fim);
+        $h_inicio = Carbon::parse($request->h_inicio);
+        $h_fim = Carbon::parse($request->h_fim);
         $dia = intval($request->dia);
         $repete = isset($request->repete) ? 1 : 0;
         $tipo_semanas = $request->tipo_semana ?? [0];
+        $dt_inicio = $request->dt_inicio;
+        $dt_fim = $request->dt_fim;
+
+       if ($h_inicio > $h_fim) {
+            app('flasher')->addError('A hora de inicio não pode ser maior que a hora fim');
+            return redirect()->back()->withInput();
+        }
+
+            // Validação: data início não pode ser nula
+        if (empty($request->dt_inicio)) {
+            app('flasher')->addError('A data de início é obrigatória.');
+            return redirect()->back()->withInput();
+        }
+
+        // Validação: data início maior que data fim (se informada)
+        if ($dt_fim && $dt_inicio  > $dt_fim) {
+            app('flasher')->addError('Divergência na cronologia das datas.');
+            return redirect()->back()->withInput();
+        }
 
         $semestre = DB::table('tipo_tratamento')
             ->where('id', $tratamento)
@@ -524,7 +545,26 @@ class ReuniaoMediunicaController extends Controller
     $h_fim_buffer = $h_fim->copy()->addMinutes(30);
     $dia = intval($request->dia);
     $tipo_semanas = $request->tipo_semana ?? [0];
-//dd( $h_inicio,  $h_fim);
+    $dt_inicio = $request->dt_inicio;
+    $dt_fim = $request->dt_fim;
+
+
+    if ($h_inicio > $h_fim) {
+        app('flasher')->addError('A hora de inicio não pode ser maior que a hora fim');
+        return redirect()->back()->withInput();
+    }
+
+        // Validação: data início não pode ser nula
+    if (empty($request->dt_inicio)) {
+        app('flasher')->addError('A data de início é obrigatória.');
+        return redirect()->back()->withInput();
+    }
+
+    // Validação: data início maior que data fim (se informada)
+    if ($dt_fim && $dt_inicio > $dt_fim) {
+        app('flasher')->addError('Divergência na cronologia das datas.');
+        return redirect()->back()->withInput();
+    }
     
 
     $semestre = DB::table('tipo_tratamento')
