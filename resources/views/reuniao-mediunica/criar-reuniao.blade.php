@@ -41,18 +41,27 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-2">
-                                    <label for="dia" class="form-label">Dia da semana <span class="tooltips">
-                                            <span class="tooltiptext">Obrigatório</span>
-                                            <span style="color:red">*</span>
-                                        </span></label>
-                                    <select class="form-select slct" id="dia" name="dia" value="{{old('dia')}}" required>
-                                        <option></option>
-                                        @foreach ($dia as $dias)
-                                        <option value="{{ $dias->idd }}" {{ request('dia') == $dias->idd ? 'selected' : '' }}>
-                                        {{ $dias->nome}}
+                                <div class="col">
+                                    <label class="form-label d-block">Dia da Semana <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span></label>
+                                    <div class="d-flex gap-2">
+                                        @php
+                                            $diasSemana = ['D' => 0, 'S' => 1, 'T' => 2, 'Q' => 3, 'Q' => 4, 'S' => 5, 'S' => 6];
+                                            $iniciais = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+                                            $valores = [0, 1, 2, 3, 4, 5, 6];
+                                        @endphp
+
+                                        @foreach ($valores as $index => $val)
+                                            @php $letra = $iniciais[$index]; @endphp
+                                            <input type="checkbox" class="btn-check" id="dia-{{ $val }}" name="dia[]" value="{{ $val }}"
+                                                {{ in_array($val, old('dia', [])) ? 'checked' : '' }} autocomplete="off">
+                                            <label class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" 
+                                                style="width: 40px; height: 40px; padding: 0;" 
+                                                for="dia-{{ $val }}">{{ $letra }}</label>
                                         @endforeach
-                                    </select>
+                                    </div>
                                 </div>
                                 <div class="col-2">
                                     <label for="h_inicio" class="form-label">Hora de início</label>

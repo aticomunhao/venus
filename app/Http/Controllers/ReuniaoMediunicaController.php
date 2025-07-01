@@ -250,12 +250,10 @@ class ReuniaoMediunicaController extends Controller
 
     public function store(Request $request)
     {
-        //  try {
+        try {
         $usuario = session()->get('usuario.id_pessoa');
         $now = Carbon::now()->format('Y-m-d');
         $amanha = Carbon::tomorrow();
-        
-        // dd($request->h_inicio);
 
         $modalidade = intval($request->modalidade);
         $observacao = $request->observacao;
@@ -265,25 +263,23 @@ class ReuniaoMediunicaController extends Controller
         $numero = $sala;
         $h_inicio = Carbon::parse($request->h_inicio);
         $h_fim = Carbon::parse($request->h_fim);
-        $dia = intval($request->dia);
         $repete = isset($request->repete) ? 1 : 0;
         $tipo_semanas = $request->tipo_semana ?? [0];
         $dt_inicio = $request->dt_inicio;
         $dt_fim = $request->dt_fim;
+        $dias = $request->input('dia', []);
 
-       if ($h_inicio > $h_fim) {
-            app('flasher')->addError('A hora de inicio não pode ser maior que a hora fim');
+        if ($h_inicio > $h_fim) {
+            app('flasher')->addError('A hora de início não pode ser maior que a hora fim');
             return redirect()->back()->withInput();
         }
 
-            // Validação: data início não pode ser nula
-        if (empty($request->dt_inicio)) {
+        if (empty($dt_inicio)) {
             app('flasher')->addError('A data de início é obrigatória.');
             return redirect()->back()->withInput();
         }
 
-        // Validação: data início maior que data fim (se informada)
-        if ($dt_fim && $dt_inicio  > $dt_fim) {
+        if ($dt_fim && $dt_inicio > $dt_fim) {
             app('flasher')->addError('Divergência na cronologia das datas.');
             return redirect()->back()->withInput();
         }
@@ -292,23 +288,64 @@ class ReuniaoMediunicaController extends Controller
             ->where('id', $tratamento)
             ->value('id_semestre');
 
-        foreach ($tipo_semanas as $tipo_semana) {
-            // Validação específica para modalidade presencial
-            if ($modalidade == 1) {
-                if ($sala === 0) {
-                    app('flasher')->addError('Preencha um número na sala.');
-                    return redirect()->back()->withInput();
-                }
+        foreach ($dias as $dia) {
+            $dia = intval($dia);
 
-                // Exclusividade: tipo de semana 0 (todos) não pode coexistir com tipos 1 a 4 e vice-versa
-                if ($tipo_semana == 0) {
-                    $conflito = DB::table('cronograma')
+            foreach ($tipo_semanas as $tipo_semana) {
+
+                if ($modalidade == 1) {
+                    if ($sala === 0) {
+                        app('flasher')->addError('Preencha um número na sala.');
+                        return redirect()->back()->withInput();
+                    }
+
+                    if ($tipo_semana == 0) {
+                        $conflito = DB::table('cronograma')
+                            ->where(function ($q) use ($amanha) {
+                                $q->whereNull('data_fim')->orWhere('data_fim', '>=', $amanha);
+                            })
+                            ->where('id_sala', $numero)
+                            ->where('dia_semana', $dia)
+                            ->whereIn('id_tipo_semana', [1, 2, 3, 4])
+                            ->where('id_tipo_modalidade', 1)
+                            ->where(function ($q) use ($h_inicio, $h_fim) {
+                                $q->where('h_inicio', '<', $h_fim)
+                                ->where('h_fim', '>', $h_inicio);
+                            })
+                            ->exists();
+
+                        if ($conflito) {
+                            app('flasher')->addError("Conflito: tipo de semana 0 não pode coexistir com 1-4 para o dia {$dia}.");
+                            return redirect()->back()->withInput();
+                        }
+                    } elseif (in_array($tipo_semana, [1, 2, 3, 4])) {
+                        $conflito = DB::table('cronograma')
+                            ->where(function ($q) use ($amanha) {
+                                $q->whereNull('data_fim')->orWhere('data_fim', '>=', $amanha);
+                            })
+                            ->where('id_sala', $numero)
+                            ->where('dia_semana', $dia)
+                            ->where('id_tipo_semana', 0)
+                            ->where('id_tipo_modalidade', 1)
+                            ->where(function ($q) use ($h_inicio, $h_fim) {
+                                $q->where('h_inicio', '<', $h_fim)
+                                ->where('h_fim', '>', $h_inicio);
+                            })
+                            ->exists();
+
+                        if ($conflito) {
+                            app('flasher')->addError("Conflito: tipos de semana 1 a 4 não podem coexistir com tipo 0 para o dia {$dia}.");
+                            return redirect()->back()->withInput();
+                        }
+                    }
+
+                    $conflitoHorario = DB::table('cronograma')
                         ->where(function ($q) use ($amanha) {
                             $q->whereNull('data_fim')->orWhere('data_fim', '>=', $amanha);
                         })
                         ->where('id_sala', $numero)
                         ->where('dia_semana', $dia)
-                        ->whereIn('id_tipo_semana', [1, 2, 3, 4])
+                        ->where('id_tipo_semana', $tipo_semana)
                         ->where('id_tipo_modalidade', 1)
                         ->where(function ($q) use ($h_inicio, $h_fim) {
                             $q->where('h_inicio', '<', $h_fim)
@@ -316,107 +353,68 @@ class ReuniaoMediunicaController extends Controller
                         })
                         ->exists();
 
-                    if ($conflito) {
-                        app('flasher')->addError('Tipo de semana 0 não pode coexistir com tipos 1 a 4 no mesmo horário.');
+                    if ($conflitoHorario) {
+                        app('flasher')->addError("Já existe um cronograma neste horário para o dia {$dia}.");
                         return redirect()->back()->withInput();
                     }
-                } elseif (in_array($tipo_semana, [1, 2, 3, 4])) {
-                    $conflito = DB::table('cronograma')
-                        ->where(function ($q) use ($amanha) {
-                            $q->whereNull('data_fim')->orWhere('data_fim', '>=', $amanha);
-                        })
-                        ->where('id_sala', $numero)
+                }
+
+                if (in_array($modalidade, [2, 3])) {
+                    $duplicado = DB::table('cronograma')
+                        ->whereNull('data_fim')
+                        ->where('id_tipo_modalidade', $modalidade)
                         ->where('dia_semana', $dia)
-                        ->where('id_tipo_semana', 0)
-                        ->where('id_tipo_modalidade', 1)
-                        ->where(function ($q) use ($h_inicio, $h_fim) {
-                            $q->where('h_inicio', '<', $h_fim)
-                            ->where('h_fim', '>', $h_inicio);
-                        })
+                        ->where('h_inicio', $request->h_inicio)
+                        ->where('h_fim', $request->h_fim)
+                        ->where('id_grupo', $grupo)
+                        ->where('id_tipo_tratamento', $tratamento)
+                        ->whereDate('data_inicio', $dt_inicio)
                         ->exists();
 
-                    if ($conflito) {
-                        app('flasher')->addError('Tipos de semana 1 a 4 não podem coexistir com o tipo 0 no mesmo horário.');
+                    if ($duplicado) {
+                        app('flasher')->addError("Já existe um cronograma com os mesmos dados para o dia {$dia}.");
                         return redirect()->back()->withInput();
                     }
                 }
 
-                // Verifica conflito de horário e modalidade igual
-                $conflitoHorario = DB::table('cronograma')
-                    ->where(function ($q) use ($amanha) {
-                        $q->whereNull('data_fim')->orWhere('data_fim', '>=', $amanha);
-                    })
-                    ->where('id_sala', $numero)
-                    ->where('dia_semana', $dia)
-                    ->where('id_tipo_semana', $tipo_semana)
-                    ->where('id_tipo_modalidade', 1)
-                    ->where(function ($q) use ($h_inicio, $h_fim) {
-                        $q->where('h_inicio', '<', $h_fim)
-                        ->where('h_fim', '>', $h_inicio);
-                    })
-                    ->exists();
-
-                if ($conflitoHorario) {
-                    app('flasher')->addError('Já existe um cronograma para este horário.');
-                    return redirect()->back()->withInput();
-                }
+                DB::table('cronograma')->insert([
+                    'id_grupo' => $grupo,
+                    'id_sala' => $sala ?: null,
+                    'h_inicio' => $request->h_inicio,
+                    'h_fim' => $request->h_fim,
+                    'max_atend' => $request->max_atend,
+                    'max_trab' => $request->max_trab,
+                    'dia_semana' => $dia,
+                    'id_tipo_modalidade' => $modalidade,
+                    'id_tipo_semana' => $tipo_semana,
+                    'id_tipo_tratamento' => $tratamento,
+                    'id_tipo_semestre' => $semestre,
+                    'data_inicio' => $dt_inicio,
+                    'data_fim' => $dt_fim,
+                    'observacao' => $observacao
+                ]);
             }
-
-                // Validação para evitar duplicidade com modalidade online (2) ou externa (3)
-            if (in_array($modalidade, [2, 3])) {
-                $duplicado = DB::table('cronograma')
-                    ->whereNull('data_fim') // apenas cronogramas ativos
-                    ->where('id_tipo_modalidade', $modalidade)
-                    ->where('dia_semana', $dia)
-                    ->where('h_inicio', $request->h_inicio)
-                    ->where('h_fim', $request->h_fim)
-                    ->where('id_grupo', $grupo)
-                    ->where('id_tipo_tratamento', $tratamento)
-                    ->whereDate('data_inicio', $request->dt_inicio)
-                    ->exists();
-
-                if ($duplicado) {
-                    app('flasher')->addError('Já existe um cronograma ativo com os mesmos dados para esta modalidade.');
-                    return redirect()->back()->withInput();
-                }
-            }
-
-            // Insere o novo cronograma
-            DB::table('cronograma')->insert([
-                'id_grupo' => $grupo,
-                'id_sala' => $request->input('id_sala') ?: null,
-                'h_inicio' => $request->h_inicio,
-                'h_fim' => $request->h_fim,
-                'max_atend' => $request->max_atend,
-                'max_trab' => $request->max_trab,
-                'dia_semana' => $dia,
-                'id_tipo_modalidade' => $modalidade,
-                'id_tipo_semana' => $tipo_semana,
-                'id_tipo_tratamento' => $tratamento,
-                'id_tipo_semestre' => $semestre,
-                'data_inicio' => $request->dt_inicio,
-                'data_fim' => $request->dt_fim,
-                'observacao' => $observacao
-            ]);
         }
 
-        $id = DB::getPdo()->lastInsertId();
+            $id = DB::getPdo()->lastInsertId();
 
-        DB::table('historico_venus')->insert([
-            'id_usuario' => $usuario,
-            'data' => $now,
-            'fato' => 16,
-            'id_ref' => $id
-        ]);
+            DB::table('historico_venus')->insert([
+                'id_usuario' => $usuario,
+                'data' => $now,
+                'fato' => 16,
+                'id_ref' => $id
+            ]);
 
-        app('flasher')->addSuccess('A reunião foi cadastrada com sucesso.');
+            app('flasher')->addSuccess('A reunião foi cadastrada com sucesso.');
 
-        return $repete ? redirect()->back()->withInput() : redirect('/gerenciar-reunioes');
-        // } catch (\Exception $e) {
+            return $repete ? redirect()->back()->withInput() : redirect('/gerenciar-reunioes');
 
-        //     $code = $e->getCode();
-        //     return view('administrativo-erro.erro-inesperado', compact('code'));
-        // }
+        } catch (\Exception $e) {
+            app('flasher')->addError('Erro inesperado ao cadastrar: ' . $e->getMessage());
+            return redirect()->back()->withInput();
+        }
+
+
     }
 
     public function show(string $id)
