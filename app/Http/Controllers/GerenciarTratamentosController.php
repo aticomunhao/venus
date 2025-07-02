@@ -818,33 +818,13 @@ class GerenciarTratamentosController extends Controller
         // Recupera o nome da pessoa, o tratamento e o dia, exibindo essas informações na tela
         $lista = DB::table('tratamento AS tr')
             ->select(
-                'tr.id AS idtr',
-                'tr.status',
-                'enc.id AS ide',
-                'enc.id_tipo_encaminhamento',
-                'dh_enc',
-                'enc.id_atendimento',
-                'enc.status_encaminhamento',
-                'tst.nome AS tst',
-                'enc.id_tipo_tratamento AS idtt',
-                'id_tipo_entrevista',
-                'at.id AS ida',
-                'at.id_assistido',
-                'p1.nome_completo AS nm_1',
-                'at.id_representante as idr',
-                'p2.nome_completo as nm_2',
-                'p1.cpf AS cpf_assistido',
-                'pa.nome',
-                'pr.id AS prid',
-                'pr.descricao AS prdesc',
-                'pr.sigla AS prsigla',
-                'tt.descricao AS desctrat',
+                'p1.nome_completo AS nm_1', // 
+                'p2.nome_completo as nm_2', //
+                'tst.nome AS tst', //
                 'tt.sigla',
-                'tr.id AS idtr',
                 'gr.nome AS nomeg',
                 'td.nome AS nomed',
                 'rm.h_inicio',
-                'tr.dt_fim'
             )
             ->leftJoin('encaminhamento AS enc',  'tr.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
@@ -871,6 +851,23 @@ class GerenciarTratamentosController extends Controller
             ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
             ->get();
 
+
+        $entrevistasProamo = DB::table('encaminhamento as enc')
+            ->select(
+                'p1.nome_completo as nm_1',
+                'p2.nome_completo as nm_2',
+                'tse.descricao as tst',
+                DB::raw('NULL as sigla'),
+                DB::raw('NULL as nomeg'),
+                DB::raw('NULL as nomed'),
+                DB::raw('NULL as h_inicio')
+            )
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('pessoas as p1', 'at.id_assistido', 'p1.id')
+            ->leftJoin('pessoas as p2', 'at.id_representante', 'p2.id')
+            ->leftJoin('tipo_status_encaminhamento as tse', 'enc.status_encaminhamento', 'tse.id')
+            ->where('enc.status_encaminhamento', 5);
+
         $cronogramasDirigente = DB::table('membro')->where('id_associado', session()->get('usuario.id_associado'))->whereIn('id_funcao', [1, 2])->pluck('id_cronograma');
 
 
@@ -878,7 +875,7 @@ class GerenciarTratamentosController extends Controller
         $data_enc = $request->dt_enc;
 
         $diaP = $request->dia;
-
+ 
         $assistido = $request->assist;
 
         $situacao = $request->status;
@@ -932,11 +929,16 @@ class GerenciarTratamentosController extends Controller
             foreach ($pesquisaNome as $itemPesquisa) {
                 $lista->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
             }
+
+            foreach ($pesquisaNome as $itemPesquisa) {
+                $entrevistasProamo->whereRaw("UNACCENT(LOWER(p1.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+            }
         }
 
 
         if ($request->cpf) {
             $lista->whereRaw("LOWER(p1.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
+            $entrevistasProamo->whereRaw("LOWER(p1.cpf) LIKE LOWER(?)", ["%{$request->cpf}%"]);
         } else {
 
             if ($request->status && $situacao != 'all') {
@@ -948,9 +950,11 @@ class GerenciarTratamentosController extends Controller
         }
 
         $contar = $lista->count('enc.id');
-        $lista = $lista->orderby('tr.status', 'ASC')
+        $lista = $lista
+            ->orderby('tr.status', 'ASC')
             ->orderby('nm_1', 'ASC')
             ->orderby('at.id_prioridade', 'ASC')
+            ->union($entrevistasProamo)
             ->paginate(50)
             ->appends([
                 'assist' => $assistido,
@@ -963,7 +967,7 @@ class GerenciarTratamentosController extends Controller
             ]);
 
 
-            $stat = DB::select("SELECT
+        $stat = DB::select("SELECT
             ts.id,
             ts.nome
         FROM tipo_status_tratamento ts
