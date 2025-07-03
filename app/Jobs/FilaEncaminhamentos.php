@@ -79,8 +79,8 @@ class FilaEncaminhamentos implements ShouldQueue
                 'id_referencia' => $id_encaminhamento,
                 'id_usuario' => session()->get('usuario.id_usuario'),
                 'id_acao' => 1, // mudou de Status para
-                'id_origem' => 4, // Entrevista
-                'id_observacao' => 5, // Entrevista Finalizada
+                'id_origem' => 2, // Encaminhamento
+                'id_observacao' => 4, // Entrevista Finalizada
                 'data_hora' => $dt_hora
             ]);
 

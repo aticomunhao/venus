@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('title')
-     Visualizar Tratamentos
+     Lista de  Tratamentos
 @endsection
 
 @section('content')
     <div class="container-fluid";>
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
-            VISUALIZAR TRATAMENTOS</h4>
+            LISTA DE  TRATAMENTOS</h4>
         <div class="col-12">
             <div class="row justify-content-center">
                 <div>
@@ -83,10 +83,6 @@
                                                                     {{ $status->nome }}
                                                                 </option>
                                                             @endforeach
-                                                            <option value="all"
-                                                                {{ $situacao == 'all' ? 'selected' : '' }}>
-                                                                Todos os Status
-                                                            </option>
                                                         </select>
                                                     </div>
                                                 </div>

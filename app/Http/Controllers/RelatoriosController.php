@@ -283,6 +283,7 @@ class RelatoriosController extends Controller
 
     public function indexmembro(Request $request)
     {
+
         // Obter os parâmetros de busca
         $setorId = $request->input('setor');
         $grupoId = $request->input('grupo');
@@ -301,7 +302,7 @@ class RelatoriosController extends Controller
 
         // Obter os atendentes para o select2
         $atendentesParaSelect = DB::table('membro AS m')
-            ->select('m.id_associado AS ida', 'a.nr_associado' , 'p.nome_completo AS nm_4')
+            ->select('m.id_associado AS ida', 'a.nr_associado', 'p.nome_completo AS nm_4')
             ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
             ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
@@ -681,7 +682,7 @@ class RelatoriosController extends Controller
             $presencasCountMembros[1] = $presencasCountMembros[1]->total;
         }
 
-        // 
+        //
         $presencasCountMembros[2] = 0;
 
         return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasCountAssistidos', 'presencasCountMembros', 'reunioesPesquisa', 'dt_inicio', 'dt_fim'));
@@ -755,7 +756,7 @@ class RelatoriosController extends Controller
             ->select('m.id', 'p.nome_completo', 'dc.data', 'pm.presenca')
             ->get();
 
-        
+
 
         $presencasCountAssistidos = $presencasCountAssistidos->get();
         $presencasCountAssistidos = json_decode(json_encode($presencasCountAssistidos));
@@ -1028,6 +1029,7 @@ class RelatoriosController extends Controller
             )->get()
             ->toArray();
 
+           // dd($passes);
 
 
         // if ($request->tipo_visualizacao == 2) {
@@ -1041,14 +1043,13 @@ class RelatoriosController extends Controller
         //         $passes
         //     }
         // } else {
-
         // Insere os atendimentos
         foreach ($grupos as $key => $grupo) {
 
 
             $tratamentosAtivosForeach = (clone $tratamentosAtivos[array_search($grupo->id, array_column($tratamentosAtivos, 'id_reuniao'))])->count;
-            $acompForeach = array_search($grupo->id, array_column($acomp, 'id_cronograma')) ? (clone $acomp[array_search($grupo->id, array_column($acomp, 'id_cronograma'))])->acomp : null;
-            $passesForeach = array_search($grupo->id, array_column($passes, 'id_cronograma')) ? (clone $passes[array_search($grupo->id, array_column($passes, 'id_cronograma'))])->assist : null;
+            $acompForeach = array_search($grupo->id, array_column($acomp, 'id_cronograma')) !== false ? (clone $acomp[array_search($grupo->id, array_column($acomp, 'id_cronograma'))])->acomp : null;
+            $passesForeach = array_search($grupo->id, array_column($passes, 'id_cronograma')) !== false ? (clone $passes[array_search($grupo->id, array_column($passes, 'id_cronograma'))])->assist : null;
 
             if ($grupo->id_tp_tratamento == 3) { // Caso seja um grupo de PTH, conta os assistidos
                 $grupos[$key]->passes =  $acompForeach;
@@ -1059,7 +1060,6 @@ class RelatoriosController extends Controller
                 $grupos[$key]->passes =  $passesForeach;
             }
         }
-
 
         // Pesquisa de grupos
         if ($request->grupo != null) {
@@ -1548,6 +1548,9 @@ class RelatoriosController extends Controller
     }
     public function curriculo(String $id)
     {
+        session()->flash('usuario.url', str_replace(url('/'), '', url()->previous())); // Salva o caminho de entrada desta view
+        session()->reflash(); // Permite um acesso temporário para inclusão
+
         $now = Carbon::today();
 
         // Retorna a view com os dados
@@ -1671,7 +1674,7 @@ class RelatoriosController extends Controller
     {
         $now = Carbon::now()->format('Y-m-d');
 
-        $trata = DB::table('tipo_tratamento')->whereIn('id', [1,2,3, 6])->orderBy('descricao')->get();
+        $trata = DB::table('tipo_tratamento')->whereIn('id', [1, 2, 3, 6])->orderBy('descricao')->get();
 
         $dt_inicio = $request->dt_inicio;
         $dt_fim = $request->dt_fim;
@@ -1702,7 +1705,7 @@ class RelatoriosController extends Controller
         }
 
         if ($tratamento === null) {
-            $passe->whereIn('t.id', [1,2,3,6]);
+            $passe->whereIn('t.id', [1, 2, 3, 6]);
         } else {
             $passe->where('t.id', $tratamento);
         }
@@ -1728,19 +1731,19 @@ class RelatoriosController extends Controller
             }
 
             $resultadoAgrupado[$t_id]['dados'][] = [
-                'acomp' => $item->acomp, 
+                'acomp' => $item->acomp,
                 'assist' => $item->assist,
                 'ultimo_dia_mes' => $item->ultimo_dia_mes, // Adicionando a chave
             ];
-            
+
             $resultadoAgrupado[$t_id]['total_assist'] += $item->assist;
             $resultadoAgrupado[$t_id]['total_acomp'] += $item->acomp; // Somando acompanhantes
         }
-        
-        $totalGeralAssistidos = array_sum(array_column($resultadoAgrupado, 'total_assist')) 
-                        + array_sum(array_column($resultadoAgrupado, 'total_acomp'));
+
+        $totalGeralAssistidos = array_sum(array_column($resultadoAgrupado, 'total_assist'))
+            + array_sum(array_column($resultadoAgrupado, 'total_acomp'));
         //dd($resultadoAgrupado);
-                
+
         return view('relatorios.passes', [
             'passe' => json_decode(json_encode($resultadoAgrupado), true),
             'dt_inicio' => $dt_inicio,

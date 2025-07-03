@@ -1211,10 +1211,6 @@ class AtendimentoFraternoController extends Controller
             $status = DB::table('atendimentos AS at')->where('at.id', $idat)->value('status_atendimento');
             $atendente = session()->get('usuario.id_associado');
             $atendimento = DB::table('atendimentos')->where('id', $idat)->first();
-            $membro = DB::table('membro')
-                ->where('id_associado', $atendente)
-                ->where('id_funcao', 5)
-                ->first();
 
             // Finaliza somente se o atendimento estiver "Em atendimento"
             if ($status != 5) {
@@ -1293,7 +1289,7 @@ class AtendimentoFraternoController extends Controller
                     DB::table('entrevistas')->insert([
                         'id_encaminhamento' => $idEncaminhamento,
                         'data' => $hoje->addWeek(1),
-                        'id_entrevistador' => $membro->id,
+                        'id_entrevistador' => $atendente,
                         'hora' => Carbon::createFromFormat('Y-m-d G:i:s', $atendimento->dh_marcada)->toTimeString(),
                         'id_sala' => $atendimento->id_sala,
                         'status' => 3

@@ -963,11 +963,12 @@ class GerenciarTratamentosController extends Controller
             ]);
 
 
-        $stat = DB::select("select
-        ts.id,
-        ts.nome
-        from tipo_status_tratamento ts
-        ");
+            $stat = DB::select("SELECT
+            ts.id,
+            ts.nome
+        FROM tipo_status_tratamento ts
+        WHERE ts.id IN (1, 2)");
+
 
         $dia = DB::select("select
         id,
