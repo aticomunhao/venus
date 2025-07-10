@@ -33,7 +33,7 @@
                                 value="{{ $grupo ? $grupo->nome : null }}" name="nome" id="" type="text" disabled>
                         </div>
                         <div class="col">Fila de Espera
-                            <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
+                            <input class="form-control " style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
                                 value="" name="nome_usuario" type="text" disabled id="id_pessoas_para_atender">
                         </div>
                         <div class="col">Atendentes
@@ -408,6 +408,16 @@
         .emergencia {
             opacity: 50%;
         }
+
+        @keyframes fila {
+
+            0% { background-color:#f3f0f0 }
+            50% { background-color: #eeaab0 }
+            100% { background-color:#f3f0f0 }
+        }
+        .fila{
+            animation: fila 3s infinite
+        }
     </style>
 
     <script>
@@ -466,6 +476,8 @@
 
                         $('#id_pessoas_para_atender').val(response.atender);
                         $('#id_atendentes').val(response.atendentes);
+
+                        response.atender > 0 ? $('#id_pessoas_para_atender').addClass('fila') : $('#id_pessoas_para_atender').removeClass('fila')
                     },
                     error: function(error) {
                         console.error('Erro ao buscar dados:', error);

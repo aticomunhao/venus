@@ -3,7 +3,6 @@
 @section('title')
     histórico de membros
 @endsection
-
 @section('content')
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family: calibri">
@@ -117,8 +116,7 @@
                                 <div id="collapse{{ reset($membro)->id }}" class="accordion-collapse collapse "
                                     data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
-                                        <table
-                                            class="table table-striped table-bordered border-secondary table-hover align-middle">
+                                        <table class="table table-striped table-bordered border-secondary table-hover align-middle">
                                             <thead style="text-align: center;">
                                                 <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                                                     <th>GRUPO</th>
@@ -130,22 +128,27 @@
                                                     <th>HORA INÍCIO</th>
                                                     <th>HORA FIM</th>
                                                     <th>SETOR</th>
+                                                    <th>CURRÍCULO</th> <!-- Corrigido aqui -->
                                                 </tr>
                                             </thead>
                                             <tbody style="font-size: 14px; color:#000000; text-align: center;">
                                                 @foreach ($membro as $dado)
                                                     <tr>
                                                         <td>{{ $dado->grupo_nome }}</td>
-                                                        <td>{{ $dado->dt_inicio ? date('d/m/Y', strtotime($dado->dt_inicio)) : '-' }}
-                                                        </td>
-                                                        <td>{{ $dado->dt_fim ? date('d/m/Y', strtotime($dado->dt_fim)) : '-' }}
-                                                        </td>
+                                                        <td>{{ $dado->dt_inicio ? date('d/m/Y', strtotime($dado->dt_inicio)) : '-' }}</td>
+                                                        <td>{{ $dado->dt_fim ? date('d/m/Y', strtotime($dado->dt_fim)) : '-' }}</td>
                                                         <td>{{ $dado->status }}</td>
                                                         <td>{{ $dado->nome_funcao }}</td>
                                                         <td>{{ $dado->dia_nome }}</td>
                                                         <td>{{ $dado->h_inicio }}</td>
                                                         <td>{{ $dado->h_fim }}</td>
                                                         <td>{{ $dado->setor_sigla }}</td>
+                                                        <td>
+                                                            <a href="/curriculo-medium/{{ $dado->id ?? '' }}" class="btn btn-outline-primary btn-sm tooltips">
+                                                                <span class="tooltiptext">Currículo</span>
+                                                                <i class="bi bi-newspaper" style="font-size: 1rem; color:#000;"></i>
+                                                            </a>
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>

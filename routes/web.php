@@ -28,6 +28,7 @@ use App\Http\Controllers\GerenciarEncaminhamentoPTIController;
 use App\Http\Controllers\GerenciarEncaminhamentoIntegralController;
 use App\Http\Controllers\GerenciarTratamentosController;
 use App\Http\Controllers\GerenciarEntrevistaController;
+use App\Http\Controllers\GerenciarInscricaoController;
 use App\Http\Controllers\GerenciarPTIController;
 use App\Http\Controllers\GerenciarIntegralController;
 use App\Http\Controllers\GerenciarProamoController;
@@ -39,7 +40,8 @@ use App\Http\Controllers\PresencaDirigenteController;
 use App\Http\Controllers\GerenciarVersoesControllerController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\GerenciarPassesController;
-
+use App\Http\Controllers\GerenciarRequisitoAtividadeController;
+use App\Http\Controllers\LogAtendimentosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -337,8 +339,9 @@ Route::middleware('rotas:19')->group(function () {
     Route::post('/nova-reuniao', [ReuniaoMediunicaController::class, 'store'])->name('remore');
     Route::get('/editar-reuniao/{id}', [ReuniaoMediunicaController::class, 'edit']);
     Route::any('/atualizar-reuniao/{id}', [ReuniaoMediunicaController::class, 'update']);
-    Route::any('/excluir-reuniao/{id}', [ReuniaoMediunicaController::class, 'destroy']);
+    Route::any('/inativa-reuniao/{id}', [ReuniaoMediunicaController::class, 'inativa']);
     Route::any('/visualizar-reuniao/{id}', [ReuniaoMediunicaController::class, 'show']);
+    Route::any('/excluir-reuniao/{id}', [ReuniaoMediunicaController::class, 'destroy']);
 });
 
 // Gerenciar Atendente de Apoio
@@ -387,6 +390,7 @@ Route::middleware('rotas:41')->group(function () {
 // Alta Proamo
 Route::middleware('rotas:49')->group(function () {
     Route::get('/alta-proamo/{id}', [GerenciarProamoController::class, 'update']);
+    Route::get('/alta-ptd-proamo/{id}', [GerenciarProamoController::class, 'altaPtd']);
 });
 
 // Gerenciar Perfis
@@ -481,6 +485,31 @@ Route::middleware('rotas:48')->group(function () {
 });
 
 //Relatório de Tratamentos
-Route::middleware('rotas:53-36')->group(function () {
+Route::middleware('rotas:36')->group(function () {
     Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
+});
+
+// Log de Atendimentos
+Route::middleware('rotas:53')->group(function () {
+    Route::any('/gerenciar-log-atendimentos', [LogAtendimentosController::class, 'index']);
+    Route::any('/tabela-log-atendimentos', [LogAtendimentosController::class, 'show']);
+    Route::any('/placeholder-log-atendimentos', [LogAtendimentosController::class, 'placeholder']);
+});
+
+
+//Gerenciar requisitos
+Route::middleware('rotas:54')->group(function () {
+    Route::get('/gerenciar-requisito', [GerenciarRequisitoAtividadeController::class, 'index'])->name('index.req');
+    Route::get('/criar-requisito', [GerenciarRequisitoAtividadeController::class, 'create']);
+    Route::post('/incluir-requisito', [GerenciarRequisitoAtividadeController::class, 'include']);
+    Route::get('/equivalencia-requisito/{id}', [GerenciarRequisitoAtividadeController::class, 'equivale']);
+    Route::post('/incluir-equivalencia-requisito/{idatv}', [GerenciarRequisitoAtividadeController::class, 'vincular']);
+    
+});
+
+//Gerenciar inscrições
+Route::middleware('rotas:54')->group(function () {
+    Route::get('/gerenciar-inscricao', [GerenciarInscricaoController::class, 'index'])->name('index.insc');
+    Route::get('/criar-inscricao', [GerenciarInscricaoController::class, 'create']);
+    Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'include']);
 });
