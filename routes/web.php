@@ -40,6 +40,7 @@ use App\Http\Controllers\PresencaDirigenteController;
 use App\Http\Controllers\GerenciarVersoesControllerController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\GerenciarPassesController;
+use App\Http\Controllers\GerenciarQuestoesControler;
 use App\Http\Controllers\GerenciarRequisitoAtividadeController;
 use App\Http\Controllers\LogAtendimentosController;
 
@@ -494,6 +495,13 @@ Route::middleware('rotas:53')->group(function () {
     Route::any('/gerenciar-log-atendimentos', [LogAtendimentosController::class, 'index']);
     Route::any('/tabela-log-atendimentos', [LogAtendimentosController::class, 'show']);
     Route::any('/placeholder-log-atendimentos', [LogAtendimentosController::class, 'placeholder']);
+});
+
+// Log de Atendimentos
+Route::middleware('rotas:54')->group(function () {
+    Route::any('/gerenciar-questoes', [GerenciarQuestoesControler::class, 'index']);
+    Route::any('/criar-questoes', [GerenciarQuestoesControler::class, 'create']);
+    Route::any('/armazenar-questoes', [GerenciarQuestoesControler::class, 'store']);
 });
 
 
