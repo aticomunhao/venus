@@ -247,6 +247,10 @@ Route::middleware('rotas:13')->group(function () {
     Route::post('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('membro.destroy');
     Route::post('/inativar-membro/{idcro}/{id}', [MembroController::class, 'inactivate'])->name('membro.inactivate');
     Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
+
+    //Email comunicado voluntario novo
+    Route::get('/editar-email/{idm}/{id_cronograma}', [GerenciarEmailController::class, 'edit'])->name('rev.mail');
+    Route::post('/enviar-email/{id_cronograma}', [GerenciarEmailController::class, 'send'])->name('send.mail');
 });
 
 // Gerenciar Membros
@@ -516,6 +520,3 @@ Route::middleware('rotas:55')->group(function () {
     Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'include']);
 });
 
-//Email comunicado voluntario novo
-Route::get('/editar-email/{idm}/{id_cronograma}', [GerenciarEmailController::class, 'edit'])->name('rev.mail');
-Route::post('/enviar-email/{id_cronograma}', [GerenciarEmailController::class, 'send'])->name('send.mail');
