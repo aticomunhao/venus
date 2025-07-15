@@ -29,7 +29,6 @@
                             <option value="{{ $pessoa->id }}"> {{ $pessoa->nome_completo }} </option>
                             @endforeach
                         </select>
-
                     </div>
                     <div class="col">
                         <label for="tipo_status_pessoa" class="form-label ">Status</label>
@@ -148,7 +147,7 @@
 <!-- Adicione antes do fechamento da tag </body> -->
 
 
-<script>
+ <script>
   $(document).ready(function() {
     $('.status').change(function(){
 
@@ -210,5 +209,5 @@
      });
      $('[name^=id_tp_habilidade]').change();
     });
-  </script>
+  </script> 
   @endsection
