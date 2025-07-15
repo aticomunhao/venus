@@ -179,6 +179,10 @@
                                             <input type="checkbox" class="btn-check option-check" id="btn-check-4" name="tipo_semana[]" value="4" {{ in_array("4", old('tipo_semana', [])) ? 'checked' : '' }} autocomplete="off">
                                             <label class="btn btn-outline-primary" for="btn-check-4">4ª</label>      
                                         </div>
+                                        <div class="col">
+                                        <input type="checkbox" class="btn-check option-check" id="btn-check-5" name="tipo_semana[]" value="5" {{ in_array("5", old('tipo_semana', [])) ? 'checked' : '' }} autocomplete="off">
+                                        <label class="btn btn-outline-primary" for="btn-check-5">5ª</label>      
+                                    </div>
                                     </div>
                                 </div>
                             </div>
@@ -282,33 +286,33 @@
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const tdCheckbox = document.getElementById("btn-check-td");
-            const optionCheckboxes = document.querySelectorAll(".option-check");
+document.addEventListener("DOMContentLoaded", function() {
+    const tdCheckbox = document.getElementById("btn-check-td");
+    const optionCheckboxes = document.querySelectorAll(".option-check");
 
-            tdCheckbox.addEventListener("change", function() {
-                if (tdCheckbox.checked) {
-                    optionCheckboxes.forEach(cb => cb.checked = false);
+    tdCheckbox.addEventListener("change", function() {
+        if (tdCheckbox.checked) {
+            optionCheckboxes.forEach(cb => cb.checked = false);
+        }
+    });
+
+    optionCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", function() {
+            if (this.checked) {
+                tdCheckbox.checked = false;
+
+                const checkedCount = [...optionCheckboxes].filter(cb => cb.checked).length;
+
+                if (checkedCount > 4) {
+                    alert("Pode selecionar no máximo 4 opções.");
+                    this.checked = false;
                 }
-            });
-
-            optionCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener("change", function() {
-                    if (this.checked) {
-                        tdCheckbox.checked = false;
-
-                        // Conta quantos checkboxes estão marcados
-                        const checkedCount = [...optionCheckboxes].filter(cb => cb.checked).length;
-                        
-                        // Se mais de 3 checkboxes forem marcados, desmarca o atual
-                        if (checkedCount > 3) {
-                            this.checked = false;
-                        }
-                    }
-                });
-            });
+            }
         });
-    </script>
+    });
+});
+</script>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {

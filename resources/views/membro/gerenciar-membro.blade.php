@@ -123,6 +123,19 @@
                                 </button>
                             @endif
 
+                            <!-- Botão para email -->
+                             @if ($membros->status == 'Ativo')
+                             <a href="/editar-email/{{ $membros->idm }}/{{ $membros->id_cronograma }}" class="btn btn-outline-warning btn-sm tooltips">
+                            <span class="tooltiptext">Email</span>
+                            <i class="bi bi-envelope" style="font-size: 1rem; color:#000;"></i>
+                            </a>
+                             @else
+                              <a href="/editar-email/{{ $membros->idm }}/{{ $membros->id_cronograma }}" class="btn btn-outline-warning btn-sm tooltips" disabled>
+                            <span class="tooltiptext">Email</span>
+                            <i class="bi bi-envelope" style="font-size: 1rem; color:#000;"></i>
+                            </a>
+                            @endif
+
                             <!-- Botão para inativar -->
                             @if ($membros->status == 'Ativo')
                                 <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
@@ -137,6 +150,7 @@
                                     <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
                                 </button>
                             @endif
+                           
 
                             @if ($membros->status == 'Ativo')
                             <!-- Botão para deletar -->
@@ -152,6 +166,7 @@
                                     <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
                                 </button>
                             @endif
+                            
                     </td>
                 </tr>
             @endif
