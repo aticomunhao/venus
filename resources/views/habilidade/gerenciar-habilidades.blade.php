@@ -14,9 +14,18 @@
                         Nome
                         <input class="form-control" type="text" id="nome_pesquisa" name="nome_pesquisa" value="{{ request('nome_pesquisa') }}">
                     </div>
-                    <div class="col-2">
+                    <div class="col-2">   
                         CPF
                         <input class="form-control" type="text" id="cpf_pesquisa" name="cpf_pesquisa" value="{{ request('cpf_pesquisa') }}">
+                    </div>
+                    <div class="col-2">
+                        CPF
+                          <select class="form-select" aria-label=".form-select-lg example"
+                                name="tipo_habilidade">
+                                @foreach ($tiposHabilidade as $tipo)
+                                    <option value="{{ $tipo->id }}">{{ $tipo->tipo }}</option>
+                                @endforeach
+                            </select>
                     </div>
                     <div class="col">
                         <br>
