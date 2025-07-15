@@ -23,8 +23,13 @@ class HabilidadePessoaController extends Controller
             ->leftJoin('tipo_habilidade as th', 'hp.id_habilidade', 'th.id')
             ->select('hp.id_pessoa')
             ->whereIn('th.id_setor', $setores)
+            ->when($request->tipo_habilidade, function ($query, $tipo){
+                $query->where('id_habilidade', $tipo);
+            })
             ->groupBy('hp.id_pessoa')
             ->get();
+
+        $tiposHabilidade = DB::table('tipo_habilidade')->orderBy('tipo')->get();
 
         $array = json_decode(json_encode($tipos), true);
 
@@ -54,7 +59,7 @@ class HabilidadePessoaController extends Controller
 
 
 
-        return view('habilidade.gerenciar-habilidades', compact('nome', 'cpf',  'habilidade', 'contar'));
+        return view('habilidade.gerenciar-habilidades', compact('nome', 'cpf',  'habilidade', 'contar', 'tiposHabilidade'));
     }
 
 
