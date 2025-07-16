@@ -28,9 +28,15 @@
                         <label for="nome" class="form-label">Nome:</label>
                         <input type="text" class="form-control" value="Central de Voluntários" id="name" name="name" readonly >
                     </div>
+                </div>
+                <div class="row">
                     <div class="col">
                         <label for="nome" class="form-label">Para:</label>
-                        <input type="text" class="form-control" value="{{$destino[0]->emaildirigente}}" id="emailv" name="emailv" readonly >
+                        <input type="text" class="form-control" value="{{$destino[0]->emaild}}" id="emaild" name="emaild" readonly >
+                    </div>
+                     <div class="col">
+                        <label for="nome" class="form-label">CC:</label>
+                        <input type="text" class="form-control" value="{{$destino[0]->emailv}}" id="emailv" name="emailv" readonly >
                     </div>
                 </div>
                 <div class="row">
@@ -48,7 +54,7 @@
                         Dia/horário: {{$destino[0]->sigla}}-{{$destino[0]->h_inicio}}-{{$destino[0]->h_fim}}
                         Coordenador: {{$destino[0]->nomedirigente}}
                         Contato: ({{$destino[0]->ddddirigente}})-{{$destino[0]->celulardirigente}}
-                        Email: {{$destino[0]->emaildirigente}}
+                        Email: {{$destino[0]->emaild}}
 
                         Atenciosamente,
                         {{$trabalhador}}
