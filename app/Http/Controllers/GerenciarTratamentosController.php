@@ -23,6 +23,50 @@ use PhpParser\Node\Expr\BinaryOp\Coalesce as BinaryOpCoalesce;
 
 class GerenciarTratamentosController extends Controller
 {
+
+
+    public function ajax(Request $request)
+    {
+
+
+        $pessoas = array();
+
+        if ($request->cpf) {
+            $pessoasCPF = DB::table('pessoas')->where('cpf', 'LIKE', "%$request->cpf%")->get();
+            $pessoas = $pessoasCPF;
+        }
+
+        if ($request->nome and !count($pessoas)) {
+
+            $pessoasNome = DB::table('pessoas as p');
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $request->nome);
+
+            $margemErro = 0;
+            foreach ($pesquisaNome as $itemPesquisa) {
+
+                $bufferPessoa = (clone $pessoasNome);
+                $pessoasNome =  $pessoasNome->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+
+                if (count($pessoasNome->get()->toArray()) < 1) {
+                    $pessoaVazia = (clone $pessoasNome);
+                    $pessoasNome = $bufferPessoa;
+                    $margemErro += 1;
+                }
+            }
+
+
+            if ($margemErro < (count($pesquisaNome) / 2)) {
+            } else {
+                //Transforma a variavel em algo vazio
+                $pessoasNome = $pessoaVazia;
+            }
+            $pessoas = $pessoasNome->get();
+        }
+        return $pessoas;
+    }
+
+
     public function index(Request $request)
     {
         try {
@@ -791,7 +835,7 @@ class GerenciarTratamentosController extends Controller
         // Insere a presença do assistido
         $idPresenca = DB::table('presenca_cronograma')->insertGetId([
             'presenca' => true,
-            'id_pessoa' => $request->assistido,
+            'id_pessoa' => $request->assist,
             'id_dias_cronograma' => $acompanhantesId->id,
             'id_motivo' => $request->motivo
         ]);
@@ -875,7 +919,7 @@ class GerenciarTratamentosController extends Controller
         $data_enc = $request->dt_enc;
 
         $diaP = $request->dia;
- 
+
         $assistido = $request->assist;
 
         $situacao = $request->status;
