@@ -137,7 +137,7 @@
                 } else {
                     $.ajax({
                         type: "GET",
-                        url: "/ajaxCRUD?nome=" + nome + '&cpf=' + cpf,
+                        url: "/ajax-avulso?nome=" + nome + '&cpf=' + cpf,
                         dataType: "json",
                         success: function(response) {
                             console.log(response);
