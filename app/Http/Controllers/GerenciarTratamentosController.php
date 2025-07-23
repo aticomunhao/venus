@@ -566,6 +566,7 @@ class GerenciarTratamentosController extends Controller
                 'tr.dt_fim as final', // Final do Tratamento
                 'tt.descricao AS desctrat', // Tipo de tratamento, usado em Dados do Encaminhamento (Ex.: Passe de Tratamento Desobsessivo)
                 'tx.tipo', // Sexo do assistido, usado no header
+                'sl.numero as sala',
             )
             ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
             ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
@@ -582,6 +583,7 @@ class GerenciarTratamentosController extends Controller
             ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
             ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
             ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+            ->leftjoin('salas as sl', 'rm.id_sala', 'sl.id')
             ->Where('tr.id', $idtr)
             ->first();
 
