@@ -29,6 +29,9 @@ class EnviarEmail extends Mailable
     {
         return new Envelope(
             from: new Address($this->data['fromEmail'], $this->data['fromName']),
+            replyTo: [
+                new Address($this->data['emaild'], $this->data['nomedir']),
+            ],
             subject: $this->data['subject'],
         );
 
