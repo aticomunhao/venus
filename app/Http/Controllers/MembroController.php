@@ -916,5 +916,46 @@ class MembroController extends Controller
         return redirect("/gerenciar-membro/$id");
     }
 
+    public function editLimiteCronograma(String $id)
+    {
+
+
+        $cronograma = DB::table('cronograma as cro')
+            ->select(
+                'cro.id',
+                'gr.nome',
+                's.sigla as setor',
+                'td.nome as dia',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'sl.numero',
+                'cro.max_atend',
+                'cro.max_trab'
+
+            )
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+            ->where('cro.id', $id)
+            ->first();
+
+        return view('membro.editar-limite', compact('cronograma'));
+    }
+
+    public function updateLimiteCronograma(Request $request, String $id)
+    {
+
+
+        DB::table('cronograma')
+        ->where('id', $id)
+        ->update([
+            'max_atend' => $request->max_atend,
+            'max_trab' => $request->max_trab
+        ]);
+
+        return redirect("/gerenciar-grupos-membro");;
+    }
+
     public function transferirLote(Request $request) {}
 }

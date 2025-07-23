@@ -247,6 +247,12 @@ Route::middleware('rotas:13')->group(function () {
     Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
 });
 
+// Editar Limite Cronograma Membro
+Route::middleware('rotas:13')->group(function () {
+    Route::get('/editar-limite-cronograma/{id}', [MembroController::class, 'editLimiteCronograma'])->name('');
+    Route::any('/atualizar-limite-cronograma/{id}', [MembroController::class, 'updateLimiteCronograma'])->name('');
+});
+
 // Gerenciar Membros
 Route::middleware('rotas:14')->group(function () {
     Route::get('/gerenciar-membro/{id}', [MembroController::class, 'index'])->name('lista');
