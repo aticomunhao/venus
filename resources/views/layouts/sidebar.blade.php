@@ -76,6 +76,11 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Tratamentos</a>
                                 </li>
                             @endif
+                             @if (in_array(57, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-geral-atendimento">Relatório Geral de
+                                        Passes</a>
+                                </li>
+                            @endif
                             @if (in_array(34, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Histórico de
                                         Membros</a>
@@ -140,6 +145,11 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             @if (in_array(34, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros
                                         por Setor</a>
+                                </li>
+                            @endif
+                            @if (in_array(57, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-geral-atendimento">Relatório Geral de
+                                        Passes</a>
                                 </li>
                             @endif
                             @if (in_array(35, $acesso))
@@ -227,6 +237,11 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             @if (in_array(46, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-atendimento">Relatório de
                                         Atendimentos</a>
+                                </li>
+                            @endif
+                            @if (in_array(57, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-geral-atendimento">Relatório Geral de
+                                        Passes</a>
                                 </li>
                             @endif
                             @if (in_array(35, $acesso))
@@ -335,6 +350,11 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Tratamentos</a>
                                 </li>
                             @endif
+                            @if (in_array(57, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-geral-atendimento">Relatório Geral de
+                                        Passes</a>
+                                </li>
+                            @endif
                             @if (in_array(34, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Histórico de
                                         Membros</a></li>
@@ -396,6 +416,11 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                                         Membros</a>
                                 </li>
                             @endif
+                            @if (in_array(57, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-geral-atendimento">Relatório Geral de
+                                        Passes</a>
+                                </li>
+                            @endif
                             @if (in_array(34, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros
                                         por Setor</a>
@@ -455,6 +480,11 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
                             @if (in_array(34, $acesso))
                                 <li><a class="dropdown-item" href='/relatorio-setor-trabalhador'>Relatório de Membros
                                         por Setor</a>
+                                </li>
+                            @endif
+                            @if (in_array(57, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-geral-atendimento">Relatório Geral de
+                                        Passes</a>
                                 </li>
                             @endif
                             @if (in_array(35, $acesso))
