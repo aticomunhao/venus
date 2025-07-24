@@ -486,6 +486,12 @@ Route::middleware('rotas:46')->group(function () {
     Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
 });
 
+
+//Relatório de Geral de  Atendimentos
+Route::middleware('rotas:57')->group(function () {
+    Route::any('/relatorio-geral-atendimento', [RelatoriosController::class, 'AtendimentosGeral']);
+});
+
 //Relatório de Balanço de Voluntários
 Route::middleware('rotas:47')->group(function () {
     Route::any('/gerenciar-balanco-voluntarios', [RelatoriosController::class, 'BalancoVoluntarios']);
@@ -517,7 +523,7 @@ Route::middleware('rotas:54')->group(function () {
     Route::post('/incluir-criterio', [GerenciarCriterioAtividadeController::class, 'include']);
     Route::get('/equivalencia-criterio/{id}', [GerenciarCriterioAtividadeController::class, 'equivale']);
     Route::post('/incluir-equivalencia-criterio/{idatv}', [GerenciarCriterioAtividadeController::class, 'vincular']);
-    
+
 });
 
 //Gerenciar inscrições
