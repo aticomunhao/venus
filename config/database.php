@@ -74,12 +74,8 @@ return [
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
-<<<<<<< Updated upstream
             'search_path' => 'pessoal',
-=======
-            'search_path' => 'pessoal
-',
->>>>>>> Stashed changes
+            'search_path' => 'pessoal',
             'sslmode' => 'prefer',
         ],
 
