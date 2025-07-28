@@ -116,7 +116,6 @@
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                 <thead style="text-align: center;">
                     <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                        <th class="col">PRIORIDADE</th>
                         <th class="col">ASSISTIDO</th>
                         <th class="col">REPRESENTANTE</th>
                         <th class="col">DIA</th>
@@ -129,13 +128,12 @@
                 <tbody style="font-size: 16px; color:#000000; text-align: center;">
                     @foreach ($lista as $listas)
                         <tr>
-                            <td>{{ $listas->prdesc }}</td>
                             <td>{{ $listas->nm_1 }}</td>
                             <td>{{ $listas->nm_2 }}</td>
-                            <td>{{ $listas->nomed }}</td>
-                            <td>{{ date('H:i', strtotime($listas->h_inicio)) }}</td>
-                            <td>{{ $listas->sigla }}</td>
-                            <td>{{ $listas->nomeg }}</td>
+                            <td>{{ isset($listas->nomed) ? $listas->nomed : null  }}</td>
+                            <td>{{ isset($listas->h_inicio) ? date('H:i', strtotime($listas->h_inicio)) : null }}</td>
+                            <td>{{ isset($listas->sigla) ? $listas->sigla : null }}</td>
+                            <td>{{ isset($listas->nomeg) ? $listas->nomeg : null }}</td>
                             <td>{{ $listas->tst }}</td>
                         </tr>
                     @endforeach

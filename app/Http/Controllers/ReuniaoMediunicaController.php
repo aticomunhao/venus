@@ -20,13 +20,14 @@ class ReuniaoMediunicaController extends Controller
 
 
         $statusCaseWhen = DB::raw("
-    CASE
-        WHEN cro.modificador = 3 THEN 'Experimental'
-        WHEN cro.modificador = 4 THEN 'Em Férias'
-        WHEN cro.data_fim < '$now' THEN 'Inativo'
-        ELSE 'Ativo'
-    END as status
-");
+                        CASE 
+                        WHEN cro.modificador = 3 THEN 'Experimental'
+                        WHEN cro.modificador = 4 THEN 'Em Férias'
+                        WHEN cro.data_fim IS NOT NULL AND DATE(cro.data_fim) < '$now' THEN 'Inativo'
+                        ELSE 'Ativo'
+                    END AS status
+                    ");
+
         // Inicializa a consulta
         $reuniao = DB::table('cronograma AS cro')
             ->select(
@@ -54,7 +55,13 @@ class ReuniaoMediunicaController extends Controller
                 'ts.nome as nsemana',
                 'tst.descricao as tipo',
                 'tst.id as idt',
-                DB::raw("(CASE WHEN cro.data_fim is not null THEN 'Inativo' ELSE 'Ativo' END) as status")
+                DB::raw("CASE 
+                        WHEN cro.modificador = 3 THEN 'Experimental'
+                        WHEN cro.modificador = 4 THEN 'Em Férias'
+                        WHEN cro.data_fim IS NOT NULL AND DATE(cro.data_fim) < '$now' THEN 'Inativo'
+                        ELSE 'Ativo'
+                    END AS status
+                    ")
             )
             ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
             ->leftJoin('tipo_observacao_reuniao AS t', 'cro.observacao', 't.id')
@@ -66,8 +73,6 @@ class ReuniaoMediunicaController extends Controller
             ->leftJoin('tipo_modalidade AS tm', 'cro.id_tipo_modalidade', 'tm.id')
             ->leftJoin('tipo_semana AS ts', 'cro.id_tipo_semana', 'ts.id')
             ->leftJoin('tipo_semestre as tse', 'tst.id_semestre', 'tse.id');
-
-
 
         // Obtém os valores de pesquisa da requisição
         $semana = $request->input('semana', null);
@@ -110,11 +115,10 @@ class ReuniaoMediunicaController extends Controller
         }
 
         if ($setor) {
-            $reuniao->where('cro.id_setor', $setor);
+            $reuniao->where('gr.id_setor', $setor);
         }
-        // Aplica filtro por status com base na expressão CASE WHEN
-        $statusCaseWhen = DB::raw("CASE WHEN cro.data_fim is not null THEN 'Inativo' ELSE 'Ativo' END");
-        // dd($reuniao->get());
+
+        
         if ($status) {
             switch ($status) {
                 case 1:
@@ -137,9 +141,7 @@ class ReuniaoMediunicaController extends Controller
             $reuniao->where('tm.id', $modalidade);
         }
 
-        // Conta o número de registros
-        $contar = $reuniao->distinct()->count('cro.id');
-
+        
           // Carregar a lista de grupos para o Select2
           $grupos = DB::table('cronograma as c')
           ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
@@ -155,6 +157,8 @@ class ReuniaoMediunicaController extends Controller
           ->values();     // reindexa os itens do array
 
 
+        // Conta o número de registros
+        $contar = $reuniao->distinct()->count('cro.id');
 
         // Aplica a paginação e mantém os parâmetros de busca na URL
         $reuniao = $reuniao
@@ -171,6 +175,9 @@ class ReuniaoMediunicaController extends Controller
                 'tipo_tratamento' => $tipo_tratamento,
                 'modalidade' => $modalidade
             ]);
+
+   
+
 
         // Obtém os dados para os filtros
         $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
@@ -250,153 +257,346 @@ class ReuniaoMediunicaController extends Controller
 
     public function store(Request $request)
     {
-        //  try {
-        $usuario = session()->get('usuario.id_pessoa');
-        $now = Carbon::now()->format('Y-m-d');
-        $amanha = Carbon::now()->addDay()->format('Y-m-d');
+function diasDa5Semana(int $diaSemana, string $dt_inicio_str, ?string $dt_fim_str = null): array
+{
+    $datas = [];
 
-        $modalidade = intval($request->modalidade);
-        $observacao = $request->observacao;
-        $tratamento = intval($request->tratamento);
-        $sala = intval($request->id_sala);
-        $grupo = intval($request->grupo);
-        $numero = $sala;
-        $h_inicio = Carbon::createFromFormat('H:i:s', $request->h_inicio);
-        $h_fim = Carbon::createFromFormat('H:i:s', $request->h_fim);
-        $dia = intval($request->dia);
-        $repete = isset($request->repete) ? 1 : 0;
-        $tipo_semanas = $request->tipo_semana ?? [0];
+    // Ajusta o ano de início e fim com base nas datas de entrada
+    $startYear = Carbon::parse($dt_inicio_str)->startOfYear();
+    $endYear = $dt_fim_str ? Carbon::parse($dt_fim_str)->endOfYear() : Carbon::parse($dt_inicio_str)->endOfYear();
 
-        $semestre = DB::table('tipo_tratamento')
-            ->where('id', $tratamento)
-            ->value('id_semestre');
+    // Loop pelos anos desde o ano de dt_inicio até o ano de dt_fim
+    $currentYear = $startYear->copy();
+    while ($currentYear->lte($endYear)) {
+        // Percorre cada mês do ano atual
+        $currentMonth = $currentYear->copy()->startOfMonth();
+        while ($currentMonth->year === $currentYear->year) { // Garante que permanece no ano atual
+            $contador = 0;
+            $diaAtual = $currentMonth->copy();
+
+            // Percorre cada dia do mês atual
+            while ($diaAtual->month === $currentMonth->month) {
+                if ($diaAtual->dayOfWeek === $diaSemana) {
+                    $contador++;
+                    if ($contador === 5) {
+                        $datas[] = $diaAtual->copy(); // Adiciona a data como um objeto Carbon
+                    }
+                }
+                $diaAtual->addDay();
+            }
+            $currentMonth->addMonth(); // Move para o próximo mês
+        }
+        $currentYear->addYear(); // Move para o próximo ano
+    }
+
+    return $datas;
+}
+
+// ------ Seu código original com as correções aplicadas ------
+
+try {
+    $usuario = session()->get('usuario.id_pessoa');
+    $now = Carbon::now()->format('Y-m-d');
+    // $amanha = Carbon::tomorrow(); // Variável não utilizada
+
+    $modalidade = intval($request->modalidade);
+    $observacao = $request->observacao;
+    $tratamento = intval($request->tratamento);
+    $sala = intval($request->id_sala);
+    $grupo = intval($request->grupo);
+    // $numero = $sala; // Variável não utilizada
+    $h_inicio = Carbon::parse($request->h_inicio);
+    $h_fim = Carbon::parse($request->h_fim);
+    $repete = isset($request->repete) ? 1 : 0;
+    $tipo_semanas = $request->tipo_semana ?? [];
+    $dt_inicio = $request->dt_inicio;
+    $dt_fim = $request->dt_fim; // Pode ser null
+    $dias = $request->input('dia', []);
+
+    // Converte as datas de início e fim de strings para objetos Carbon para fácil comparação
+    $dtInicioCarbon = Carbon::parse($dt_inicio);
+    $dtFimCarbon = $dt_fim ? Carbon::parse($dt_fim) : null;
+
+    if ($h_inicio->greaterThan($h_fim)) { // Usar métodos Carbon para comparação
+        app('flasher')->addError('A hora de início não pode ser maior que a hora fim');
+        return redirect()->back()->withInput();
+    }
+
+    if (empty($dt_inicio)) {
+        app('flasher')->addError('A data de início é obrigatória.');
+        return redirect()->back()->withInput();
+    }
+
+    if ($dtFimCarbon && $dtInicioCarbon->greaterThan($dtFimCarbon)) { // Usar objetos Carbon
+        app('flasher')->addError('Divergência na cronologia das datas.');
+        return redirect()->back()->withInput();
+    }
+
+    $tipo_semanas = $request->tipo_semana ?? [];
+
+    // Regra 1: tipo 0 não pode ser combinado com nenhum outro
+    if (in_array(0, $tipo_semanas) && count($tipo_semanas) > 1) {
+        app('flasher')->addError('Tipo 0 (Todas as semanas) não pode ser combinado com outros tipos de semana.');
+        return redirect()->back()->withInput();
+    }
+
+    // Regra 2: não pode selecionar todos os tipos 1 a 5
+    $tipos_1a5 = array_intersect($tipo_semanas, [1, 2, 3, 4, 5]);
+    if (count($tipos_1a5) === 5) {
+        app('flasher')->addError('Não é permitido selecionar todos os tipos de semana de 1 a 5. Utilize o tipo 0 (Todas as semanas) nesse caso.');
+        return redirect()->back()->withInput();
+    }
+
+
+    $semestre = DB::table('tipo_tratamento')
+        ->where('id', $tratamento)
+        ->value('id_semestre');
+
+    foreach ($dias as $dia) {
+        $dia = intval($dia);
 
         foreach ($tipo_semanas as $tipo_semana) {
-            // Validação específica para modalidade presencial
-            if ($modalidade == 1) {
+            // Lógica para o tipo de semana 5 (ocorrencias específicas)
+            if ($tipo_semana == 5) { // Removido o 'empty($dt_fim)' aqui
+                // Passa as datas de início e fim do período para a função
+                $datas5Semana = diasDa5Semana($dia, $dt_inicio, $dt_fim);
+
+                foreach ($datas5Semana as $data) {
+                    // Filtra as datas da 5ª semana para estarem dentro do intervalo dt_inicio/dt_fim do usuário
+                    if ($data->lt($dtInicioCarbon)) {
+                        continue;
+                    }
+                    if ($dtFimCarbon && $data->gt($dtFimCarbon)) {
+                        continue;
+                    }
+
+                    // A data de início e fim para o cronograma do tipo 5 deve ser a mesma para o dia específico
+                    $schedule_date_str = $data->format('Y-m-d');
+
+                    $conflito = DB::table('cronograma')
+                        ->where('id_tipo_modalidade', $modalidade)
+                        ->where('id_sala', $sala)
+                        ->where('dia_semana', $dia)
+                        // A verificação de conflito para tipo_semana 5 deve considerar o dia exato
+                        // de início/fim do agendamento existente para não bloquear outras 5as semanas
+                        ->where('id_tipo_semana', 5)
+                        ->where(function ($q) use ($h_inicio, $h_fim) {
+                            $q->where('h_inicio', '<', $h_fim->format('H:i:s'))
+                              ->where('h_fim', '>', $h_inicio->format('H:i:s'));
+                        })
+                        // Verifica se existe um agendamento que cobre esta data específica
+                        ->whereDate('data_inicio', '<=', $schedule_date_str)
+                        ->where(function ($q) use ($schedule_date_str) {
+                            $q->whereNull('data_fim')
+                              ->orWhereDate('data_fim', '>=', $schedule_date_str);
+                        })
+                        ->exists();
+
+                    if (!$conflito) {
+                        DB::table('cronograma')->insert([
+                            'id_grupo'           => $grupo,
+                            'id_sala'            => $sala ?: null,
+                            'h_inicio'           => $request->h_inicio,
+                            'h_fim'              => $request->h_fim,
+                            'max_atend'          => $request->max_atend,
+                            'max_trab'           => $request->max_trab,
+                            'dia_semana'         => $dia,
+                            'id_tipo_modalidade' => $modalidade,
+                            'id_tipo_semana'     => $tipo_semana, // Será 5
+                            'id_tipo_tratamento' => $tratamento,
+                            'id_tipo_semestre'   => $semestre,
+                            'data_inicio'        => $schedule_date_str, // Data específica da 5ª ocorrência
+                            'data_fim'           => $schedule_date_str,   // Fim na mesma data da 5ª ocorrência
+                            'observacao'         => $observacao
+                        ]);
+                    }
+                }
+                continue; // Pula para o próximo dia, pois este tipo de semana já foi processado
+            }
+
+            // Lógica para tipos de semana 1, 2, 3, 4 (ocorrências recorrentes no mês)
+            if (in_array($tipo_semana, [1, 2, 3, 4])) {
+                $ocorrenciaExiste = false;
+                // Os cálculos de início/fim abaixo precisam levar em conta o dt_inicio/dt_fim do agendamento
+                // para verificar se uma Nª ocorrência existe dentro desse período.
+                $inicioBusca = $dtInicioCarbon->copy()->startOfMonth();
+                $fimBusca = $dtFimCarbon ? $dtFimCarbon->copy()->endOfMonth() : $dtInicioCarbon->copy()->endOfMonth();
+
+
+                while ($inicioBusca->lte($fimBusca)) {
+                    $contador = 0;
+                    $diaAtual = $inicioBusca->copy();
+                    while ($diaAtual->month == $inicioBusca->month) {
+                        if ($diaAtual->dayOfWeek == $dia) {
+                            $contador++;
+                            if ($contador == $tipo_semana) {
+                                // Verifica se a data da ocorrência está dentro do período de agendamento desejado
+                                if ($diaAtual->greaterThanOrEqualTo($dtInicioCarbon) && (!$dtFimCarbon || $diaAtual->lessThanOrEqualTo($dtFimCarbon))) {
+                                    $ocorrenciaExiste = true;
+                                    break 2; // Sai dos dois loops (interno e externo)
+                                }
+                            }
+                        }
+                        $diaAtual->addDay();
+                    }
+                    $inicioBusca->addMonth();
+                }
+
+                if (!$ocorrenciaExiste) {
+                    app('flasher')->addWarning("Aviso: nenhum dia {$dia} da {$tipo_semana}ª semana foi encontrado no período informado. O cronograma será salvo");
+                }
+            }
+
+            // Lógica de validação de sala para modalidade presencial
+            if ($modalidade === 1) {
                 if ($sala === 0) {
-                    app('flasher')->addError('Preencha um número na sala.');
+                    app('flasher')->addError('Sala obrigatória para modalidade presencial.');
                     return redirect()->back()->withInput();
                 }
 
-                // Exclusividade: tipo de semana 0 (todos) não pode coexistir com tipos 1 a 4 e vice-versa
-                if ($tipo_semana == 0) {
-                    $conflito = DB::table('cronograma')
-                        ->where(function ($q) use ($amanha) {
-                            $q->whereNull('data_fim')->orWhere('data_fim', '>=', $amanha);
-                        })
-                        ->where('id_sala', $numero)
-                        ->where('dia_semana', $dia)
-                        ->whereIn('id_tipo_semana', [1, 2, 3, 4])
+                // Conflito com tipo 0 (Todas) ao tentar inserir tipos específicos (1-5)
+                if ($tipo_semana > 0) {
+                    $conflitoComTipoZero = DB::table('cronograma')
                         ->where('id_tipo_modalidade', 1)
-                        ->where(function ($q) use ($h_inicio, $h_fim) {
-                            $q->where('h_inicio', '<', $h_fim)
-                            ->where('h_fim', '>', $h_inicio);
-                        })
-                        ->exists();
-
-                    if ($conflito) {
-                        app('flasher')->addError('Tipo de semana 0 não pode coexistir com tipos 1 a 4 no mesmo horário.');
-                        return redirect()->back()->withInput();
-                    }
-                } elseif (in_array($tipo_semana, [1, 2, 3, 4])) {
-                    $conflito = DB::table('cronograma')
-                        ->where(function ($q) use ($amanha) {
-                            $q->whereNull('data_fim')->orWhere('data_fim', '>=', $amanha);
-                        })
-                        ->where('id_sala', $numero)
+                        ->where('id_sala', $sala)
                         ->where('dia_semana', $dia)
                         ->where('id_tipo_semana', 0)
-                        ->where('id_tipo_modalidade', 1)
-                        ->where(function ($q) use ($h_inicio, $h_fim) {
-                            $q->where('h_inicio', '<', $h_fim)
-                            ->where('h_fim', '>', $h_inicio);
+                        ->where(function($q) use ($h_inicio, $h_fim) {
+                            $q->where('h_inicio', '<', $h_fim->format('H:i:s'))
+                              ->where('h_fim', '>', $h_inicio->format('H:i:s'));
+                        })
+                        ->where(function($q) use ($dtInicioCarbon, $dtFimCarbon) {
+                            $q->whereNull('data_fim')
+                              ->orWhereDate('data_fim', '>=', $dtInicioCarbon);
+                            // Verificação de data_inicio também é importante para conflitos de datas
+                            if ($dtFimCarbon) {
+                                $q->whereDate('data_inicio', '<=', $dtFimCarbon);
+                            }
                         })
                         ->exists();
 
-                    if ($conflito) {
-                        app('flasher')->addError('Tipos de semana 1 a 4 não podem coexistir com o tipo 0 no mesmo horário.');
+                    if ($conflitoComTipoZero) {
+                        app('flasher')->addError("Não é permitido inserir tipo de semana {$tipo_semana} pois já existe um com tipo 'Todas' (0) para este dia e sala. Dia {$dia}, sala {$sala}.");
                         return redirect()->back()->withInput();
                     }
                 }
 
-                // Verifica conflito de horário e modalidade igual
+                // Conflito com tipos específicos (1-5) ao tentar inserir tipo 0 (Todas)
+                if ($tipo_semana == 0) {
+                    $conflito = DB::table('cronograma')
+                        ->where('id_tipo_modalidade', 1)
+                        ->where('id_sala', $sala)
+                        ->where('dia_semana', $dia)
+                        // Note: o tipo semana 5 foi removido daqui pois agora é tratado separadamente para não conflitar com 0 de forma inadequada.
+                        // Se o tipo 0 (Todas) entra em conflito com um tipo 5, o sistema deve decidir qual prevalece.
+                        // Atualmente, um tipo 5 é um evento único no dia. Tipo 0 é recorrente todo dia.
+                        // O tipo 0 conflita com 1, 2, 3, 4.
+                        // Se tipo 0 deve conflitar com tipo 5 também, adicione 5 de volta à array.
+                        ->whereIn('id_tipo_semana', [1, 2, 3, 4])
+                        ->where(function ($q) use ($h_inicio, $h_fim) {
+                            $q->where('h_inicio', '<', $h_fim->format('H:i:s'))
+                              ->where('h_fim', '>', $h_inicio->format('H:i:s'));
+                        })
+                        ->where(function($q) use ($dtInicioCarbon, $dtFimCarbon) {
+                            $q->whereNull('data_fim')
+                              ->orWhereDate('data_fim', '>=', $dtInicioCarbon);
+                            if ($dtFimCarbon) {
+                                $q->whereDate('data_inicio', '<=', $dtFimCarbon);
+                            }
+                        })
+                        ->exists();
+
+                    if ($conflito) {
+                        app('flasher')->addError("Conflito: tipo de semana 0 não pode coexistir com 1–4 para o dia {$dia}.");
+                        return redirect()->back()->withInput();
+                    }
+                }
+
+                // Conflito de horário genérico para a mesma sala, dia e tipo de semana
+                // Isso deve ser verificado para todos os tipos (0-4) que chegam aqui.
                 $conflitoHorario = DB::table('cronograma')
-                    ->where(function ($q) use ($amanha) {
-                        $q->whereNull('data_fim')->orWhere('data_fim', '>=', $amanha);
-                    })
-                    ->where('id_sala', $numero)
+                    ->where('id_tipo_modalidade', 1)
+                    ->where('id_sala', $sala)
                     ->where('dia_semana', $dia)
                     ->where('id_tipo_semana', $tipo_semana)
-                    ->where('id_tipo_modalidade', 1)
                     ->where(function ($q) use ($h_inicio, $h_fim) {
-                        $q->where('h_inicio', '<', $h_fim)
-                        ->where('h_fim', '>', $h_inicio);
+                        $q->where('h_inicio', '<', $h_fim->format('H:i:s'))
+                          ->where('h_fim', '>', $h_inicio->format('H:i:s'));
+                    })
+                    ->where(function($q) use ($dtInicioCarbon, $dtFimCarbon) {
+                        $q->whereNull('data_fim')
+                          ->orWhereDate('data_fim', '>=', $dtInicioCarbon);
+                        if ($dtFimCarbon) {
+                            $q->whereDate('data_inicio', '<=', $dtFimCarbon);
+                        }
                     })
                     ->exists();
 
                 if ($conflitoHorario) {
-                    app('flasher')->addError('Já existe um cronograma para este horário.');
+                    app('flasher')->addError("Conflito: cronograma já existente para sala {$sala}, dia {$dia}, tipo semana {$tipo_semana}.");
                     return redirect()->back()->withInput();
                 }
             }
 
-                // Validação para evitar duplicidade com modalidade online (2) ou externa (3)
+            // Validação de duplicidade para modalidades online/externa (sem sala)
             if (in_array($modalidade, [2, 3])) {
                 $duplicado = DB::table('cronograma')
-                    ->whereNull('data_fim') // apenas cronogramas ativos
                     ->where('id_tipo_modalidade', $modalidade)
                     ->where('dia_semana', $dia)
                     ->where('h_inicio', $request->h_inicio)
                     ->where('h_fim', $request->h_fim)
                     ->where('id_grupo', $grupo)
                     ->where('id_tipo_tratamento', $tratamento)
-                    ->whereDate('data_inicio', $request->dt_inicio)
+                    ->whereDate('data_inicio', $dt_inicio) // Verifica se já existe um cronograma com a mesma data de início
+                    ->where('id_tipo_semana', $tipo_semana) // Incluir tipo_semana na verificacao de duplicidade
                     ->exists();
 
                 if ($duplicado) {
-                    app('flasher')->addError('Já existe um cronograma ativo com os mesmos dados para esta modalidade.');
+                    app('flasher')->addError("Já existe cronograma online/externa igual para este dia, horário e tipo de semana.");
                     return redirect()->back()->withInput();
                 }
             }
 
-            // Insere o novo cronograma
+            // Inserção para os tipos de semana 0, 1, 2, 3, 4
+            // (O tipo 5 é inserido separadamente na sua própria lógica acima)
             DB::table('cronograma')->insert([
-                'id_grupo' => $grupo,
-                'id_sala' => $request->input('id_sala') ?: null,
-                'h_inicio' => $request->h_inicio,
-                'h_fim' => $request->h_fim,
-                'max_atend' => $request->max_atend,
-                'max_trab' => $request->max_trab,
-                'dia_semana' => $dia,
+                'id_grupo'           => $grupo,
+                'id_sala'            => $sala ?: null, // Se sala for 0, insere null
+                'h_inicio'           => $request->h_inicio,
+                'h_fim'              => $request->h_fim,
+                'max_atend'          => $request->max_atend,
+                'max_trab'           => $request->max_trab,
+                'dia_semana'         => $dia,
                 'id_tipo_modalidade' => $modalidade,
-                'id_tipo_semana' => $tipo_semana,
+                'id_tipo_semana'     => $tipo_semana,
                 'id_tipo_tratamento' => $tratamento,
-                'id_tipo_semestre' => $semestre,
-                'data_inicio' => $request->dt_inicio,
-                'data_fim' => $request->dt_fim,
-                'observacao' => $observacao
+                'id_tipo_semestre'   => $semestre,
+                'data_inicio'        => $dt_inicio,
+                'data_fim'           => $dt_fim, // Para 0,1,2,3,4, data_fim pode ser um período
+                'observacao'         => $observacao
             ]);
         }
-
-        $id = DB::getPdo()->lastInsertId();
-
-        DB::table('historico_venus')->insert([
-            'id_usuario' => $usuario,
-            'data' => $now,
-            'fato' => 16,
-            'id_ref' => $id
-        ]);
-
-        app('flasher')->addSuccess('A reunião foi cadastrada com sucesso.');
-
-        return $repete ? redirect()->back()->withInput() : redirect('/gerenciar-reunioes');
-        // } catch (\Exception $e) {
-
-        //     $code = $e->getCode();
-        //     return view('administrativo-erro.erro-inesperado', compact('code'));
-        // }
     }
+
+    $id = DB::getPdo()->lastInsertId(); // Pega o último ID inserido (pode ser o ID do último cronograma inserido no loop)
+
+    DB::table('historico_venus')->insert([
+        'id_usuario' => $usuario,
+        'data'       => $now,
+        'fato'       => 16,
+        'id_ref'     => $id
+    ]);
+
+    app('flasher')->addSuccess('O cronograma foi cadastrado com sucesso.');
+    return $repete ? redirect()->back()->withInput() : redirect('/gerenciar-reunioes');
+
+} catch (\Exception $e) {
+    app('flasher')->addError('Erro inesperado ao cadastrar: ' . $e->getMessage());
+    // Sugestão: Logar o erro completo para depuração, ex: Log::error($e);
+    return redirect()->back()->withInput();
+}
+
+}
 
     public function show(string $id)
     {
@@ -524,7 +724,26 @@ class ReuniaoMediunicaController extends Controller
     $h_fim_buffer = $h_fim->copy()->addMinutes(30);
     $dia = intval($request->dia);
     $tipo_semanas = $request->tipo_semana ?? [0];
-//dd( $h_inicio,  $h_fim);
+    $dt_inicio = $request->dt_inicio;
+    $dt_fim = $request->dt_fim;
+
+
+    if ($h_inicio > $h_fim) {
+        app('flasher')->addError('A hora de inicio não pode ser maior que a hora fim');
+        return redirect()->back()->withInput();
+    }
+
+        // Validação: data início não pode ser nula
+    if (empty($request->dt_inicio)) {
+        app('flasher')->addError('A data de início é obrigatória.');
+        return redirect()->back()->withInput();
+    }
+
+    // Validação: data início maior que data fim (se informada)
+    if ($dt_fim && $dt_inicio > $dt_fim) {
+        app('flasher')->addError('Divergência na cronologia das datas.');
+        return redirect()->back()->withInput();
+    }
     
 
     $semestre = DB::table('tipo_tratamento')

@@ -40,8 +40,10 @@ use App\Http\Controllers\PresencaDirigenteController;
 use App\Http\Controllers\GerenciarVersoesControllerController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\GerenciarPassesController;
-use App\Http\Controllers\GerenciarRequisitoAtividadeController;
+use App\Http\Controllers\GerenciarCriterioAtividadeController;
+use App\Http\Controllers\GerenciarEmailController;
 use App\Http\Controllers\LogAtendimentosController;
+use App\Mail\EnviarEmail;
 
 /*
 |--------------------------------------------------------------------------
@@ -245,6 +247,16 @@ Route::middleware('rotas:13')->group(function () {
     Route::post('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('membro.destroy');
     Route::post('/inativar-membro/{idcro}/{id}', [MembroController::class, 'inactivate'])->name('membro.inactivate');
     Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
+
+    //Email comunicado voluntario novo
+    Route::get('/editar-email/{idm}/{id_cronograma}', [GerenciarEmailController::class, 'edit'])->name('rev.mail');
+    Route::post('/enviar-email/{id_cronograma}', [GerenciarEmailController::class, 'send'])->name('send.mail');
+});
+
+// Editar Limite Cronograma Membro
+Route::middleware('rotas:13')->group(function () {
+    Route::get('/editar-limite-cronograma/{id}', [MembroController::class, 'editLimiteCronograma'])->name('');
+    Route::any('/atualizar-limite-cronograma/{id}', [MembroController::class, 'updateLimiteCronograma'])->name('');
 });
 
 // Gerenciar Membros
@@ -319,6 +331,7 @@ Route::middleware('rotas:18')->group(function () {
     Route::get('/visualizar-tratamento/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
     Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
     Route::any('/incluir-avulso', [GerenciarTratamentosController::class, 'createAvulso']);
+    Route::any('/ajax-avulso', [GerenciarTratamentosController::class, 'ajax']);
     Route::any('/armazenar-avulso', [GerenciarTratamentosController::class, 'storeAvulso']);
     Route::any('/inativar-tratamento/{id}', [GerenciarTratamentosController::class, 'destroy']);
 });
@@ -473,6 +486,12 @@ Route::middleware('rotas:46')->group(function () {
     Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
 });
 
+
+//Relatório de Geral de  Atendimentos
+Route::middleware('rotas:57')->group(function () {
+    Route::any('/relatorio-geral-atendimento', [RelatoriosController::class, 'AtendimentosGeral']);
+});
+
 //Relatório de Balanço de Voluntários
 Route::middleware('rotas:47')->group(function () {
     Route::any('/gerenciar-balanco-voluntarios', [RelatoriosController::class, 'BalancoVoluntarios']);
@@ -497,19 +516,20 @@ Route::middleware('rotas:53')->group(function () {
 });
 
 
-//Gerenciar requisitos
+//Gerenciar critérios
 Route::middleware('rotas:54')->group(function () {
-    Route::get('/gerenciar-requisito', [GerenciarRequisitoAtividadeController::class, 'index'])->name('index.req');
-    Route::get('/criar-requisito', [GerenciarRequisitoAtividadeController::class, 'create']);
-    Route::post('/incluir-requisito', [GerenciarRequisitoAtividadeController::class, 'include']);
-    Route::get('/equivalencia-requisito/{id}', [GerenciarRequisitoAtividadeController::class, 'equivale']);
-    Route::post('/incluir-equivalencia-requisito/{idatv}', [GerenciarRequisitoAtividadeController::class, 'vincular']);
-    
+    Route::get('/gerenciar-criterio', [GerenciarCriterioAtividadeController::class, 'index'])->name('index.req');
+    Route::get('/criar-criterio', [GerenciarCriterioAtividadeController::class, 'create']);
+    Route::post('/incluir-criterio', [GerenciarCriterioAtividadeController::class, 'include']);
+    Route::get('/equivalencia-criterio/{id}', [GerenciarCriterioAtividadeController::class, 'equivale']);
+    Route::post('/incluir-equivalencia-criterio/{idatv}', [GerenciarCriterioAtividadeController::class, 'vincular']);
+
 });
 
 //Gerenciar inscrições
-Route::middleware('rotas:54')->group(function () {
+Route::middleware('rotas:55')->group(function () {
     Route::get('/gerenciar-inscricao', [GerenciarInscricaoController::class, 'index'])->name('index.insc');
     Route::get('/criar-inscricao', [GerenciarInscricaoController::class, 'create']);
     Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'include']);
 });
+

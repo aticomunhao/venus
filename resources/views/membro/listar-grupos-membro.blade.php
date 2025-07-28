@@ -1,8 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Administrar Grupos')
 @section('content')
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
-    <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     <div class="container-fluid">
         <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">ADMINISTRAR GRUPOS
         </h4>
@@ -29,7 +27,9 @@
                         <select class="form-select select2 membro" id="nome_membro" name="nome_membro" data-width="100%">
                             <option></option>
                             @foreach ($membro as $membros)
-                                <option value="{{ $membros->id_associado }}" {{ request('nome_membro') == $membros->id_associado ? 'selected' : ''}}>{{ $membros->nome_completo }} -
+                                <option value="{{ $membros->id_associado }}"
+                                    {{ request('nome_membro') == $membros->id_associado ? 'selected' : '' }}>
+                                    {{ $membros->nome_completo }} -
                                     {{ $membros->nr_associado }}</option>
                             @endforeach
                         </select>
@@ -109,6 +109,13 @@
                                     <span class="tooltiptext">Gerenciar</span>
                                     <i class="bi bi-gear" style="font-size: 1rem; color:#000;"></i>
                                 </a>
+                                @if (in_array(56, session()->get('usuario.acesso')))
+                                <a href="/editar-limite-cronograma/{{ $membros->id }}" type="button"
+                                    class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Editar Limite Vagas</span>
+                                    <i class="fa-solid fa-chair" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                                @endif
         </div>
         </td>
         @endforeach
@@ -158,8 +165,8 @@
                 theme: 'bootstrap-5'
             });
             //Deixa o select status como padrão vazio
-           // $(".grupo").prop("selectedIndex", 0);
-           // $(".membro").prop("selectedIndex", 0);
+            // $(".grupo").prop("selectedIndex", 0);
+            // $(".membro").prop("selectedIndex", 0);
         });
     </script>
 
@@ -184,7 +191,7 @@
         $(document).ready(function() {
 
             function grid() {
-              if ($(window).width() < 992) { // md
+                if ($(window).width() < 992) { // md
 
                     // Controle de Header
                     $('#thGrupo').prop('hidden', false)

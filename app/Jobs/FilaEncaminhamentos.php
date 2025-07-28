@@ -431,23 +431,23 @@ class FilaEncaminhamentos implements ShouldQueue
         //     $this->inativar($entrevista->id);
         // }
 
-        foreach ($proamoRequisitos as $proamo) {
-            $dh_chegada = Carbon::parse($proamo->dh_chegada)->format('Y-m-d');
+        // foreach ($proamoRequisitos as $proamo) {
+        //     $dh_chegada = Carbon::parse($proamo->dh_chegada)->format('Y-m-d');
 
-            // Caso o assistido não tenha um tratamento
-            if (!array_search($proamo->id_assistido, array_column($tratamentos, 'id_assistido'))) {
+        //     // Caso o assistido não tenha um tratamento
+        //     if (!array_search($proamo->id_assistido, array_column($tratamentos, 'id_assistido'))) {
 
-                // Confere se a dh_chegada da entrevista foi a mais de X tempo
-                if ($dh_chegada < $data) {
-                    $this->inativar($proamo->id);
-                }
-            } else {
+        //         // Confere se a dh_chegada da entrevista foi a mais de X tempo
+        //         if ($dh_chegada < $data) {
+        //             $this->inativar($proamo->id);
+        //         }
+        //     } else {
 
-                // Confere se a dt_fim do tratamento faz mais de X dias e a dh_chegada da entrevista faz mais de X dias
-                if ($dh_chegada < $data and $tratamentos[array_search($proamo->id_assistido, array_column($tratamentos, 'id_assistido'))]->dt_fim < $data and $tratamentos[array_search($proamo->id_assistido, array_column($tratamentos, 'id_assistido'))]->dt_fim != null) {
-                    $this->inativar($proamo->id);
-                }
-            }
-        }
+        //         Confere se a dt_fim do tratamento faz mais de X dias e a dh_chegada da entrevista faz mais de X dias
+        //         if ($dh_chegada < $data and $tratamentos[array_search($proamo->id_assistido, array_column($tratamentos, 'id_assistido'))]->dt_fim < $data and $tratamentos[array_search($proamo->id_assistido, array_column($tratamentos, 'id_assistido'))]->dt_fim != null) {
+        //             $this->inativar($proamo->id);
+        //         }
+        //    }
+        // }
     }
 }
