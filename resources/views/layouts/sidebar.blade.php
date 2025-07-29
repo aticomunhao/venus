@@ -96,7 +96,7 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                                 <li><a class="dropdown-item" href="/gerenciar-grupos-membro">Administrar Grupos</a>
                                 </li>
                             @endif
-                             @if (in_array(20, $acesso))
+                            @if (in_array(20, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-atendentes-apoio">Atendente
                                         de
                                         Apoio</a></li>
@@ -109,7 +109,7 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                             @if (in_array(15, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-habilidade">Habilidades</a></li>
                             @endif
-                             @if (in_array(21, $acesso))
+                            @if (in_array(21, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-atendentes-plantonistas">Plantonistas</a>
                                 </li>
                             @endif
@@ -136,8 +136,9 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                                 <li><a class="dropdown-item" href="/relatorio-salas-cronograma">Calendário</a>
                                 </li>
                             @endif
-                               @if (in_array(57, $acesso))
-                                <li><a class="dropdown-item" href="/relatorio-geral-atendimento2">Disponibilidade de Vagas</a>
+                            @if (in_array(57, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-geral-atendimento2">Disponibilidade de
+                                        Vagas</a>
                                 </li>
                             @endif
                             @if (in_array(34, $acesso))
@@ -145,12 +146,12 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                                         Membros</a>
                                 </li>
                             @endif
-                             @if (in_array(51, $acesso))
+                            @if (in_array(51, $acesso))
                                 <li><a class="dropdown-item" href="/visualizarRI-tratamento">Lista de
                                         Tratamentos</a>
                                 </li>
                             @endif
-                             @if (in_array(46, $acesso))
+                            @if (in_array(46, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-atendimento">Relatório de
                                         Atendimentos</a>
                                 </li>
@@ -165,7 +166,7 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                                         AFI</a>
                                 </li>
                             @endif
-                             @if (in_array(35, $acesso))
+                            @if (in_array(35, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-reuniao">Relatório de
                                         Reuniões</a>
                                 </li>
@@ -184,7 +185,7 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                                         Vagas em Grupos</a>
                                 </li>
                             @endif
-                             @if (in_array(57, $acesso))
+                            @if (in_array(57, $acesso))
                                 <li><a class="dropdown-item" href="/relatorio-geral-atendimento">Relatório Geral de
                                         Passes</a>
                                 </li>
@@ -197,6 +198,19 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                     </li>
                 </ul>
             @endif
+            {{-- @if (array_intersect($idAcessoEstudos, $acesso))
+                <ul class="navbar-nav" id="relatorios">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="1" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Estudos</a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                            @if (in_array(30, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Gerenciar Planejamento</a></li>
+                            @endif
+                        </ul>
+                    </li>
+                </ul>
+            @endif --}}
             <ul class="navbar-nav" id="ADM">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="3" role="button"
