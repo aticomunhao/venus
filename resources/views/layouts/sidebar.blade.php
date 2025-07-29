@@ -136,6 +136,10 @@ $idAcessoAtendimentos = [7, 5, 3]; // IDs de acesso para Atendimentos
                                 <li><a class="dropdown-item" href="/relatorio-salas-cronograma">Calendário</a>
                                 </li>
                             @endif
+                               @if (in_array(57, $acesso))
+                                <li><a class="dropdown-item" href="/relatorio-geral-atendimento2">Disponibilidade de Vagas</a>
+                                </li>
+                            @endif
                             @if (in_array(34, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Histórico de
                                         Membros</a>
