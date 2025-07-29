@@ -12,7 +12,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
 $idAcessoRelatorios = [35, 57, 34, 35, 48, 46, 31, 32, 51, 47, 52, 33]; // IDs de acesso para relatórios
 $idAcessoMembros = [14, 30, 20, 4, 15, 21]; // IDs de acesso para Membros
 $idAcessoTratamentos = [23, 9, 25, 8, 18, 24, 39, 41]; // IDs de acesso para Tratamentos
-$idAcessoAtendimentos = [7, 5, 3]; // IDs de acesso para Atendimentos
+$idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light shadow-sm"
@@ -31,7 +31,7 @@ $idAcessoAtendimentos = [7, 5, 3]; // IDs de acesso para Atendimentos
                         <a class="nav-link dropdown-toggle" href="#" id="1" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">Atendimentos</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                            @if (in_array(7, $acesso))
+                            @if (in_array(6, $acesso))
                                 <li><a class="dropdown-item" href="/atendendo">Atendimento Fraterno</a>
                                 </li>
                             @endif
