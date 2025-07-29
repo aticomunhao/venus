@@ -198,7 +198,7 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                     </li>
                 </ul>
             @endif
-            @if (array_intersect($idAcessoEstudos, $acesso))
+            {{-- @if (array_intersect($idAcessoEstudos, $acesso))
                 <ul class="navbar-nav" id="relatorios">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="1" role="button"
@@ -210,7 +210,7 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                         </ul>
                     </li>
                 </ul>
-            @endif
+            @endif --}}
             <ul class="navbar-nav" id="ADM">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="3" role="button"
