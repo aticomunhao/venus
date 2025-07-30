@@ -254,6 +254,12 @@ Route::middleware('rotas:13')->group(function () {
     Route::post('/enviar-email/{id_cronograma}', [GerenciarEmailController::class, 'send'])->name('send.mail');
 });
 
+// Editar Limite Cronograma Membro
+Route::middleware('rotas:13')->group(function () {
+    Route::get('/editar-limite-cronograma/{id}', [MembroController::class, 'editLimiteCronograma'])->name('');
+    Route::any('/atualizar-limite-cronograma/{id}', [MembroController::class, 'updateLimiteCronograma'])->name('');
+});
+
 // Gerenciar Membros
 Route::middleware('rotas:14')->group(function () {
     Route::get('/gerenciar-membro/{id}', [MembroController::class, 'index'])->name('lista');
@@ -326,13 +332,14 @@ Route::middleware('rotas:18')->group(function () {
     Route::get('/visualizar-tratamento/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
     Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
     Route::any('/incluir-avulso', [GerenciarTratamentosController::class, 'createAvulso']);
+    Route::any('/ajax-avulso', [GerenciarTratamentosController::class, 'ajax']);
     Route::any('/armazenar-avulso', [GerenciarTratamentosController::class, 'storeAvulso']);
     Route::any('/inativar-tratamento/{id}', [GerenciarTratamentosController::class, 'destroy']);
 });
 
 // Visualizar Proamo(Recepção Integrada)
 Route::middleware('rotas:51')->group(function () {
-Route::get('/visualizarRI-tratamento', [GerenciarTratamentosController::class, 'visualizarRI'])->name('RI');
+    Route::get('/visualizarRI-tratamento', [GerenciarTratamentosController::class, 'visualizarRI'])->name('RI');
 });
 // Botão de Presença
 Route::middleware('rotas:43')->group(function () {
@@ -466,7 +473,7 @@ Route::middleware('rotas:34')->group(function () {
 
 //Relatório Setores trabalhadores
 Route::middleware('rotas:34')->group(function () {
-Route::get('/relatorio-setor-trabalhador', [RelatoriosController::class, 'trabalhadores'])->name('form.trab');
+    Route::get('/relatorio-setor-trabalhador', [RelatoriosController::class, 'trabalhadores'])->name('form.trab');
 });
 
 //Relatório de Reuniões
@@ -478,6 +485,13 @@ Route::middleware('rotas:35')->group(function () {
 //Relatório de Atendimentos
 Route::middleware('rotas:46')->group(function () {
     Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
+});
+
+
+//Relatório de Geral de  Atendimentos
+Route::middleware('rotas:57')->group(function () {
+    Route::any('/relatorio-geral-atendimento', [RelatoriosController::class, 'AtendimentosGeral']);
+    Route::any('/relatorio-geral-atendimento2', [RelatoriosController::class, 'AtendimentosGeral2']);
 });
 
 //Relatório de Balanço de Voluntários
@@ -519,7 +533,6 @@ Route::middleware('rotas:54')->group(function () {
     Route::post('/incluir-criterio', [GerenciarCriterioAtividadeController::class, 'include']);
     Route::get('/equivalencia-criterio/{id}', [GerenciarCriterioAtividadeController::class, 'equivale']);
     Route::post('/incluir-equivalencia-criterio/{idatv}', [GerenciarCriterioAtividadeController::class, 'vincular']);
-    
 });
 
 //Gerenciar inscrições
@@ -528,4 +541,3 @@ Route::middleware('rotas:55')->group(function () {
     Route::get('/criar-inscricao', [GerenciarInscricaoController::class, 'create']);
     Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'include']);
 });
-

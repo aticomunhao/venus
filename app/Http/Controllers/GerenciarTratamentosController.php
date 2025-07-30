@@ -23,6 +23,50 @@ use PhpParser\Node\Expr\BinaryOp\Coalesce as BinaryOpCoalesce;
 
 class GerenciarTratamentosController extends Controller
 {
+
+
+    public function ajax(Request $request)
+    {
+
+
+        $pessoas = array();
+
+        if ($request->cpf) {
+            $pessoasCPF = DB::table('pessoas')->where('cpf', 'LIKE', "%$request->cpf%")->get();
+            $pessoas = $pessoasCPF;
+        }
+
+        if ($request->nome and !count($pessoas)) {
+
+            $pessoasNome = DB::table('pessoas as p');
+            $pesquisaNome = array();
+            $pesquisaNome = explode(' ', $request->nome);
+
+            $margemErro = 0;
+            foreach ($pesquisaNome as $itemPesquisa) {
+
+                $bufferPessoa = (clone $pessoasNome);
+                $pessoasNome =  $pessoasNome->whereRaw("UNACCENT(LOWER(p.nome_completo)) ILIKE UNACCENT(LOWER(?))", ["%$itemPesquisa%"]);
+
+                if (count($pessoasNome->get()->toArray()) < 1) {
+                    $pessoaVazia = (clone $pessoasNome);
+                    $pessoasNome = $bufferPessoa;
+                    $margemErro += 1;
+                }
+            }
+
+
+            if ($margemErro < (count($pesquisaNome) / 2)) {
+            } else {
+                //Transforma a variavel em algo vazio
+                $pessoasNome = $pessoaVazia;
+            }
+            $pessoas = $pessoasNome->get();
+        }
+        return $pessoas;
+    }
+
+
     public function index(Request $request)
     {
         try {
@@ -522,6 +566,7 @@ class GerenciarTratamentosController extends Controller
                 'tr.dt_fim as final', // Final do Tratamento
                 'tt.descricao AS desctrat', // Tipo de tratamento, usado em Dados do Encaminhamento (Ex.: Passe de Tratamento Desobsessivo)
                 'tx.tipo', // Sexo do assistido, usado no header
+                'sl.numero as sala',
             )
             ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
             ->leftJoin('tipo_motivo AS tm', 'enc.motivo', 'tm.id')
@@ -538,6 +583,7 @@ class GerenciarTratamentosController extends Controller
             ->leftjoin('pessoas AS p1', 'at.id_assistido', 'p1.id')
             ->leftJoin('tp_sexo AS tx', 'p1.sexo', 'tx.id')
             ->leftjoin('pessoas AS p2', 'at.id_representante', 'p2.id')
+            ->leftjoin('salas as sl', 'rm.id_sala', 'sl.id')
             ->Where('tr.id', $idtr)
             ->first();
 
@@ -791,7 +837,7 @@ class GerenciarTratamentosController extends Controller
         // Insere a presença do assistido
         $idPresenca = DB::table('presenca_cronograma')->insertGetId([
             'presenca' => true,
-            'id_pessoa' => $request->assistido,
+            'id_pessoa' => $request->assist,
             'id_dias_cronograma' => $acompanhantesId->id,
             'id_motivo' => $request->motivo
         ]);
@@ -875,7 +921,7 @@ class GerenciarTratamentosController extends Controller
         $data_enc = $request->dt_enc;
 
         $diaP = $request->dia;
- 
+
         $assistido = $request->assist;
 
         $situacao = $request->status;

@@ -153,14 +153,14 @@
                            
 
                             @if ($membros->status == 'Ativo')
-                            <!-- Botão para deletar -->
-                            <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
-                                data-bs-target="#confirmDelete{{ $membros->idm }}">
-                                <span class="tooltiptext">Deletar</span>
-                                <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
-                            </button>
+                                <!-- Botão para deletar -->
+                                <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                    data-bs-target="#confirmDelete{{ $membros->idm }}">
+                                    <span class="tooltiptext">Deletar</span>
+                                    <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
+                                </button>
                             @else
-                                 <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
+                                <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
                                     data-bs-target="#confirmDelete{{ $membros->idm }}" disabled>
                                     <span class="tooltiptext">Deletar</span>
                                     <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
@@ -171,41 +171,85 @@
                 </tr>
             @endif
 
-            <!-- Modal de confirmação para inativar -->
-            <div class="modal fade" id="confirmInactivate{{ $membros->idm }}" tabindex="-1"
-                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header" style="background-color:#DC4C64">
-                            <h5 class="modal-title" id="exampleModalLabel" style="color:white">Inativar membro</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body " style="text-align: center;">
-                            Tem certeza que deseja inativar o membro<br /><span style="color:#DC4C64; font-weight: bold;">
-                                {{ $membros->nome_completo }}</span>?
-                            <form action="{{ route('membro.inactivate', ['idcro' => $id, 'id' => $membros->idm]) }}"
-                                method="POST">
-                                @csrf
+            <form action="{{ route('membro.inactivate', ['idcro' => $id, 'id' => $membros->idm]) }}" method="POST"
+                id="formulario{{ $membros->idm }}">
+                @csrf
+                <!-- Modal de confirmação para inativar -->
+                <div class="modal fade" id="confirmInactivate{{ $membros->idm }}" tabindex="-1"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color:#DC4C64">
+                                <h5 class="modal-title" id="exampleModalLabel" style="color:white">Inativar membro</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body " style="text-align: center;">
+                                Tem certeza que deseja inativar o membro<br /><span
+                                    style="color:#DC4C64; font-weight: bold;">
+                                    {{ $membros->nome_completo }}</span>?
                                 <center>
                                     <div class="col-10">
                                         <label for="data_inativacao" class="form-label mt-3">Escolha a data de
                                             inativação:</label>
-                                        <input type="date" name="data_inativacao"
-                                            id="data_inativacao{{ $membros->idm }}" class="form-control mb-3" required>
+                                        <input type="date" name="data_inativacao" id="data_inativacao"
+                                            class="form-control mb-3" required>
+                                        <input type="text" name="escolha" id="escolha{{ $membros->idm }}"
+                                            value="0" hidden>
+                                        {{-- Usado para guardar se é uma inativcação em massa ou não --}}
                                     </div>
                                 </center>
-                                <div class="modal-footer mt-3 ">
+                                <div class="modal-footer mt-3"
+                                    multiplo="{{ in_array($membros->id_associado, $id_membros) }}">
                                     <button type="button" class="btn btn-danger"
                                         data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                                    <button id="{{ $membros->idm }}" class="btn btn-primary btnModal">Confirmar</button>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- Modal de confirmação para deletar -->
+                <!-- Modal de confirmação para deletar -->
+
+
+                {{-- Modal de confirmação de inativação em massa --}}
+                <div class="modal fade" id="confirmMass{{ $membros->idm }}" tabindex="-1"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color:#DC4C64">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel" style="color:white">Inativação em
+                                    Massa</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="modal-body " style="text-align: center;">
+                                    O membro<span style="color:#DC4C64;">
+                                        {{ $membros->nome_completo }}</span>
+                                    Faz parte de outras reuniões desse grupo
+                                    <br />
+                                    <br />
+                                    <br />
+                                    <span style="color:#DC4C64; font-weight: bold;">
+                                        Deseja inativar em todas as reuniões?</span>
+
+                                </div>
+                                <div class="modal-footer" id_membro="{{ $membros->idm }}">
+                                    <button type="button" class="btn btn-danger"
+                                        data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" id="btnTodas" class="btn btn-primary confirm">Inativar
+                                        Todas</button>
+                                    <button type="button" id="btnUnica"class="btn btn-primary confirm">Inatinar
+                                        Nesta</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{-- Fim do modal de confirmação de inativação em massa --}}
+
+            </form>
             <div class="modal fade" id="confirmDelete{{ $membros->idm }}" tabindex="-1"
                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -276,5 +320,41 @@
     {{ $membro->links('pagination::bootstrap-5') }}
     </div>
 
-    <style>
-    @endsection
+    <script>
+        $(document).ready(function() {
+
+            // Ao apertar o botão do modal de inativação
+            $(".btnModal").click(function(e) {
+                e.preventDefault();
+
+                // Caso o forumlário esteja valido (Todos os required preenchidos)
+                if (document.getElementById('formulario' + this.id).reportValidity()) {
+
+                    // Caso esse membro seja marcado como presente em mais de um cronograma nesse grupo
+                    if (this.parentElement.getAttribute("multiplo") == 1) {
+                        $('.modal').modal('hide');
+                        $('#confirmMass' + this.id).modal('show');
+                    } else {
+                        $('#formulario' + this.id).submit();
+
+                    }
+                }
+            })
+
+            // Ao confirmar no modla de Inativação em massa
+            $('.confirm').click(function(e) {
+                e.preventDefault();
+
+                // Caso o botão usado seja o de confirmar em massa
+                if (this.id == 'btnTodas') {
+                    $('#escolha' + this.parentElement.getAttribute("id_membro")).val(
+                    '1'); // Coloca a varíavel como true
+                    $('#formulario' + this.parentElement.getAttribute("id_membro")).submit();
+                } else {
+                    $('#formulario' + this.parentElement.getAttribute("id_membro")).submit();
+                }
+            })
+
+        });
+    </script>
+@endsection
