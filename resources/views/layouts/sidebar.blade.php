@@ -211,7 +211,7 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                     </li>
                 </ul>
             @endif --}}
-            <ul class="navbar-nav" id="ADM">
+            <ul class="navbar-nav" id="estudos">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="3" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">Gerenciar ATI</a>
@@ -248,6 +248,17 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                             </li>
                         @endif
 
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav" id="ADM">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="3" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">Estudos</a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                        @if (in_array(1, $acesso))
+                            <li><a class="dropdown-item">Gerenciar Requisitos</a></li>
+                        @endif
                     </ul>
                 </li>
             </ul>
@@ -298,6 +309,9 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
 
     if ($('#ADM .dropdown-item').length == 0) {
         $('#ADM').hide();
+    }
+    if ($('#estudos .dropdown-item').length == 0) {
+        $('#estudos').hide();
     }
 
     $('#sair').click(function() {
