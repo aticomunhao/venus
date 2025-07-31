@@ -43,6 +43,7 @@ use App\Http\Controllers\GerenciarPassesController;
 use App\Http\Controllers\GerenciarCriterioAtividadeController;
 use App\Http\Controllers\GerenciarEmailController;
 use App\Http\Controllers\LogAtendimentosController;
+use App\Http\Controllers\GerenciarEstudosExternosController;
 use App\Mail\EnviarEmail;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
@@ -539,3 +540,7 @@ Route::middleware('rotas:55')->group(function () {
 if (!App::environment('local')) {
     URL::forceScheme('https');
 }
+
+Route::middleware('rotas:55')->group(function () {
+    Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
+});
