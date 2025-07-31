@@ -522,7 +522,8 @@ Route::middleware('rotas:55')->group(function () {
     Route::any('/ficha-voluntario/{id}', [GerenciarFichaVoluntariosController::class, 'edit']);
     Route::any('/atualizar-ficha-voluntario/{ida}/{idp}', [GerenciarFichaVoluntariosController::class, 'update']);
     Route::any('/retorna-cidades/{id}', [GerenciarFichaVoluntariosController::class, 'retornaCidades']);
-    Route::any('/teste-camera', [GerenciarFichaVoluntariosController::class, 'index']);
+    Route::any('/salvar-foto', [GerenciarFichaVoluntariosController::class, 'salvarFoto']);
+    Route::any('/retorna-foto', [GerenciarFichaVoluntariosController::class, 'retornaFoto']);
 });
 
 

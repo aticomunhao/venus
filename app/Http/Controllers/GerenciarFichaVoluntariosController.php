@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class GerenciarFichaVoluntariosController extends Controller
 {
@@ -18,6 +21,67 @@ class GerenciarFichaVoluntariosController extends Controller
             ->get();
 
         return response()->json($cidadeDadosResidenciais);
+    }
+
+    public function salvarFoto(Request $request)
+    {
+
+        $data = $request->input('imagem');
+        $path = '/mnt/fotos';
+
+        $pessoa = DB::table('associado as ass')
+            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->where('ass.id', $request->associado)
+            ->first();
+
+        $fileName = md5($pessoa->cpf) . '.png';
+        $fullPath = $path . '/' . $fileName;
+
+        if (!$data) {
+            return response()->json(['message' => 'Imagem não enviada.'], 400);
+        }
+        $base64Image = preg_replace('#^data:image/\w+;base64,#i', '', $data);
+        $imageData = base64_decode($base64Image);
+
+
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0755, true);
+        }
+
+        if (file_exists($fullPath)) {
+            unlink($fullPath);
+        }
+        file_put_contents($fullPath, $imageData);
+
+        DB::table('associado')->where('id', $request->associado)->update([
+            'caminho_foto_associado' => $fullPath
+        ]);
+
+        return response()->json(['message' => 'Imagem salva com sucesso!', 'arquivo' => $fileName]);
+    }
+
+    public function retornaFoto(Request $request)
+    {
+        $dir = '/mnt/fotos';
+
+
+        $pessoa = DB::table('associado as ass')
+            ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
+            ->where('ass.id', $request->associado)
+            ->first();
+
+
+        $imagemAleatoria = md5($pessoa->cpf);
+        $path = $dir . '/' . $imagemAleatoria . '.png';
+
+        $tipo = pathinfo($path, PATHINFO_EXTENSION);
+        $data = file_get_contents($path);
+        $base64 = base64_encode($data);
+
+        return response()->json([
+            'base64' => $base64,
+            'tipo' => $tipo,
+        ]);
     }
 
     /**

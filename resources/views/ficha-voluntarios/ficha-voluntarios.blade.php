@@ -4,10 +4,53 @@
 @endsection
 
 @section('content')
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+
+
+
+
+    <button type="button" id="foto-voluntario" class="btn btn-warning btn-floating btn-lg" data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+        <i class="fa-solid fa-user"></i>
+    </button>
+
+    <style>
+
+    </style>
+
+    <div class="offcanvas offcanvas-start mt-5" style="border-radius: 0px 30px 30px 0px; width: 300px; height: 55%"
+        tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header" style="background-color:#DC4C64;color:white;">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Imagem Voluntário</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <center>
+                <canvas id="canvas"></canvas>
+                <video id="video" autoplay playsinline style="display: none;" hidden></video>
+                <canvas id="canvasPreview" hidden></canvas>
+
+                <hr />
+                <button class="btn btn-warning btn-sm" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                    Atualizar foto
+                </button>
+            </center>
+
+
+        </div>
+
+    </div>
+
+
+
+
     <div class="container"> {{-- Container completo da página  --}}
         <div class="justify-content-center">
             <div class="col-12">
                 <br>
+            
+
                 <div class="card">
                     <div class="card-header">
                         DADOS PESSOAIS
@@ -143,7 +186,13 @@
     </div>
 
 
-
+    <style>
+        #foto-voluntario {
+            position: fixed;
+            bottom: 50px;
+            right: 20px;
+        }
+    </style>
 
 
     <script>
@@ -238,5 +287,128 @@
                 }
             });
         });
+    </script>
+    <script>
+        const video = document.getElementById('video'); // oculto
+        const canvas = document.getElementById('canvas'); // foto final
+        const preview = document.getElementById('canvasPreview'); // visualização ao vivo
+        const context = canvas.getContext('2d');
+        const previewCtx = preview.getContext('2d');
+        const id = {{ $edit_associado->ida }};
+
+        // Define resoluções
+        video.width = 640;
+        video.height = 480;
+        canvas.width = 240;
+        canvas.height = 320;
+        preview.width = 240;
+        preview.height = 320;
+
+
+        function iniciarCamera() {
+            // Inicia a câmera
+            navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: 640,
+                        height: 480
+                    }
+                })
+                .then(stream => {
+                    video.srcObject = stream;
+                    video.play();
+                    requestAnimationFrame(atualizarPreview);
+                })
+                .catch(err => {
+                    console.error("Erro ao acessar a câmera:", err);
+                });
+        }
+
+        // Atualiza o canvasPreview em tempo real com corte 3x4
+        function atualizarPreview() {
+            // Define área de crop central (360x480 = 3:4)
+            const cropWidth = 360;
+            const cropHeight = 480;
+            const cropX = (640 - cropWidth) / 2;
+            const cropY = 0;
+
+            // Desenha o corte no preview
+            previewCtx.clearRect(0, 0, preview.width, preview.height);
+            previewCtx.drawImage(
+                video,
+                cropX, cropY, cropWidth, cropHeight,
+                0, 0, preview.width, preview.height
+            );
+
+            requestAnimationFrame(atualizarPreview); // loop contínuo
+        }
+
+        // Captura a foto cortada
+        function tirarFoto() {
+            const cropWidth = 360;
+            const cropHeight = 480;
+            const cropX = (640 - cropWidth) / 2;
+            const cropY = 0;
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(
+                video,
+                cropX, cropY, cropWidth, cropHeight,
+                0, 0, canvas.width, canvas.height
+            );
+        }
+
+
+        function enviarImagem() {
+            const imagemBase64 = canvas.toDataURL('image/png');
+            fetch('/salvar-foto', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                    body: JSON.stringify({
+                        imagem: imagemBase64,
+                        associado: id
+                    })
+                })
+                .then(async response => {
+                    const text = await response.text(); // lê como texto
+                    console.log('Resposta bruta do servidor:', text);
+
+                    try {
+                        const json = JSON.parse(text); // tenta transformar em JSON
+                        alert(json.message);
+                    } catch (e) {
+                        console.error('Resposta não é JSON:', e);
+                        alert('Erro no servidor. Verifique o console.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao enviar imagem:', error);
+                    alert('Erro ao enviar imagem.');
+                });
+        }
+
+        function buscaImagem() {
+            $.ajax({
+                url: '/retorna-foto?associado=' + id, // Rota que busca a imagem aleatória
+                method: 'GET',
+                success: function(response) {
+                    // Cria nova imagem com a resposta base64
+                    let img = new Image();
+                    img.onload = function() {
+                        const canvas = document.getElementById('canvas');
+                        const ctx = canvas.getContext('2d');
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    };
+                    img.src = 'data:image/jpeg;base64,' + response.base64; // ou image/png se for o caso
+                },
+                error: function(xhr) {
+                    console.error('Erro ao buscar imagem:', xhr.responseText);
+                }
+            });
+        }
+        buscaImagem()
     </script>
 @endsection
