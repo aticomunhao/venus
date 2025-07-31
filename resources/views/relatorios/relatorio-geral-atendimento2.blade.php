@@ -94,7 +94,7 @@
                         <tr>
                             <td>TOTAL</td>
                             @foreach ($dadosFreq as $dado)
-                                <td>{{ $dado['Total'] ?? '--' }}</td>
+                                <td>{{ number_format($dado['Total'], 0, ',', '.') ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
@@ -102,13 +102,29 @@
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
-                            <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosFreq, 'Total'))) }}</td>
+                            <td>{{ count($valores) > 0 ? number_format( round(array_sum($valores) / count($valores)) , 0, ',', '.')  : '--' }}</td>
+                            <td>{{number_format( round(array_sum(array_column($dadosFreq, 'Total'))) , 0, ',', '.')  }}</td>
                         </tr>
+                        @if (!request('tipo_tratamento') or in_array(3, request('tipo_tratamento')))
+                        <tr>
+                            <td>HARMONIZAÇÃO</td>
+                            @foreach ($dadosFreq as $dado)
+                                <td>{{ number_format($dado['Harmonização'], 0, ',', '.') ?? '--' }}</td>
+                            @endforeach
+                            @php
+                                $valores = array_filter(
+                                    array_column($dadosFreq, 'Harmonização'),
+                                    fn($a) => $a !== 0 && $a !== null,
+                                );
+                            @endphp
+                            <td>{{ count($valores) > 0 ? number_format( round(array_sum($valores) / count($valores)) , 0, ',', '.')  : '--' }}</td>
+                            <td>{{number_format( round(array_sum(array_column($dadosFreq, 'Harmonização'))) , 0, ',', '.')  }}</td>
+                        </tr>
+                        @endif
                         <tr>
                             <td rowspan="2">AUSENTES</td>
                             @foreach ($dadosFreq as $dado)
-                                <td>{{ $dado['Ausentes'] ?? '--' }}</td>
+                                <td>{{ number_format( $dado['Ausentes'] , 0, ',', '.')  ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
@@ -116,8 +132,8 @@
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
-                            <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosFreq, 'Ausentes'))) }}</td>
+                            <td>{{ count($valores) > 0 ? number_format( round(array_sum($valores) / count($valores)) , 0, ',', '.') : '--' }}</td>
+                            <td>{{ number_format( round(array_sum(array_column($dadosFreq, 'Ausentes'))) , 0, ',', '.') }}</td>
                         </tr>
                         <tr>
                             @foreach ($dadosFreq as $dado)
@@ -137,7 +153,7 @@
                         <tr>
                             <td rowspan="2">PRESENTES</td>
                             @foreach ($dadosFreq as $dado)
-                                <td>{{ $dado['Presenças'] ?? '--' }}</td>
+                              <td>{{ number_format($dado['Presenças'], 0, ',', '.') ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
@@ -145,8 +161,8 @@
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
-                            <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosFreq, 'Presenças'))) }}</td>
+                            <td>{{ count($valores) > 0 ? number_format( round(array_sum($valores) / count($valores)) , 0, ',', '.') : '--' }}</td>
+                            <td>{{ number_format( round(array_sum(array_column($dadosFreq, 'Presenças')))  , 0, ',', '.') }}</td>
                         </tr>
                         <tr>
                             @foreach ($dadosFreq as $dado)
@@ -194,7 +210,7 @@
                          <tr>
                             <td>TRATAMENTOS</td>
                             @foreach ($dadosTrat as $dado)
-                                <td>{{ $dado['Tratamentos'] ?? '--' }}</td>
+                                <td>{{ number_format( $dado['Tratamentos'] , 0, ',', '.') ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
@@ -202,13 +218,13 @@
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
-                            <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosTrat, 'Tratamentos'))) }}</td>
+                            <td>{{ count($valores) > 0 ? number_format( round(array_sum($valores) / count($valores)) , 0, ',', '.')  : '--' }}</td>
+                            <td>{{number_format( round(array_sum(array_column($dadosTrat, 'Tratamentos'))) , 0, ',', '.')  }}</td>
                         </tr>
                         <tr>
                             <td rowspan="2">ALTA</td>
                             @foreach ($dadosTrat as $dado)
-                                <td>{{ $dado['Alta'] ?? '--' }}</td>
+                                <td>{{number_format( $dado['Alta'] , 0, ',', '.')  ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
@@ -216,8 +232,8 @@
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
-                            <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosTrat, 'Alta'))) }}</td>
+                            <td>{{ count($valores) > 0 ? number_format( round(array_sum($valores) / count($valores)) , 0, ',', '.')  : '--' }}</td>
+                            <td>{{ number_format( round(array_sum(array_column($dadosTrat, 'Alta'))) , 0, ',', '.') }}</td>
                         </tr>
                         <tr>
                             @foreach ($dadosTrat as $dado)
@@ -238,7 +254,7 @@
                         <tr>
                             <td rowspan="2">TRANSFERIDOS</td>
                             @foreach ($dadosTrat as $dado)
-                                <td>{{ $dado['Transferidos'] ?? '--' }}</td>
+                                <td>{{ number_format( $dado['Transferidos'] , 0, ',', '.')  ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
@@ -246,8 +262,8 @@
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
-                            <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosTrat, 'Transferidos'))) }}</td>
+                            <td>{{ count($valores) > 0 ? number_format( round(array_sum($valores) / count($valores)) , 0, ',', '.')  : '--' }}</td>
+                            <td>{{ number_format( round(array_sum(array_column($dadosTrat, 'Transferidos')))  , 0, ',', '.') }}</td>
                         </tr>
                         <tr>
                             @foreach ($dadosTrat as $dado)
@@ -268,7 +284,7 @@
                         <tr>
                             <td rowspan="2">DESISTÊNCIAS</td>
                             @foreach ($dadosTrat as $dado)
-                                <td>{{ $dado['Desistência'] ?? '--' }}</td>
+                                <td>{{number_format( $dado['Desistência'] , 0, ',', '.')  ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
@@ -276,8 +292,8 @@
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
-                            <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosTrat, 'Desistência'))) }}</td>
+                            <td>{{ count($valores) > 0 ? number_format(round(array_sum($valores) / count($valores)) , 0, ',', '.')  : '--' }}</td>
+                            <td>{{ number_format( round(array_sum(array_column($dadosTrat, 'Desistência'))) , 0, ',', '.') }}</td>
                         </tr>
                         <tr>
                             @foreach ($dadosTrat as $dado)
@@ -298,7 +314,13 @@
             </div>
         </div>
         <div class="card mt-5">
-            <div class="card-header">CAPACIDADE E VAGAS</div>
+            <div>
+                <div class="card-header">
+                    CAPACIDADE E VAGAS
+                @if (count($nomesSelecionados))
+                       <small class="text-muted">| TIPO DE TRATAMENTO: {{ implode(', ', $nomesSelecionados) }}</small>
+                   @endif
+            </div>
             <div class="card-body">
                 <table class="table table-striped table-bordered border-secondary table-hover align-middle mt-3">
                     <thead class="text-center">
@@ -310,10 +332,10 @@
                     <tbody class="text-center" style="font-size: 14px; color:#000000;">
                         <tr>
                             <TD>
-                                {{ $maxAtend->max_atend }}
+                                {{number_format( $maxAtend->max_atend , 0, ',', '.')  }}
                             </TD>
                             <td>
-                                {{ $maxAtend->max_trab }}
+                                {{number_format( $maxAtend->max_trab , 0, ',', '.')  }}
                             </td>
 
                         </tr>
