@@ -206,7 +206,8 @@ $idAcessoEstudos = [1]; // IDs de acesso para Estudos
                             data-bs-toggle="dropdown" aria-expanded="false">Estudos</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                             @if (in_array(1, $acesso))
-                                <li><a class="dropdown-item">Gerenciar Requisitos</a></li>
+                                <li><a class="dropdown-item" href="{{ route('index.req') }}">Gerenciar Requisitos</a>
+                                </li>
                             @endif
                         </ul>
                     </li>
