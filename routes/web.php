@@ -42,6 +42,7 @@ use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\GerenciarPassesController;
 use App\Http\Controllers\GerenciarCriterioAtividadeController;
 use App\Http\Controllers\GerenciarEmailController;
+use App\Http\Controllers\GerenciarFichaVoluntariosController;
 use App\Http\Controllers\LogAtendimentosController;
 use App\Mail\EnviarEmail;
 use Illuminate\Support\Facades\App;
@@ -516,6 +517,14 @@ Route::middleware('rotas:53')->group(function () {
     Route::any('/gerenciar-log-atendimentos', [LogAtendimentosController::class, 'index']);
     Route::any('/tabela-log-atendimentos', [LogAtendimentosController::class, 'show']);
     Route::any('/placeholder-log-atendimentos', [LogAtendimentosController::class, 'placeholder']);
+});
+
+// Ficha de Voluntários
+Route::middleware('rotas:55')->group(function () {
+    Route::any('/ficha-voluntario/{id}', [GerenciarFichaVoluntariosController::class, 'edit']);
+    Route::any('/atualizar-ficha-voluntario/{ida}/{idp}', [GerenciarFichaVoluntariosController::class, 'update']);
+    Route::any('/retorna-cidades/{id}', [GerenciarFichaVoluntariosController::class, 'retornaCidades']);
+    Route::any('/teste-camera', [GerenciarFichaVoluntariosController::class, 'index']);
 });
 
 
