@@ -104,7 +104,7 @@
                         <tbody style="font-size: 14px; color:#000000; text-align: center;">
                             @foreach ($informacoes as $informacao)
                                 @if ($informacao->id_tipo_entrevista == 6 and $informacao->status === 1 and $informacao->status_encaminhamento_id == 1)
-                                    <tr class="table-success">
+                                    <tr class="table-success"> 
                                     @elseif ($informacao->id_tipo_entrevista == 6 and !isset($informacao->ptd) and $informacao->status_encaminhamento_id == 5)
                                     <tr class="table-danger">
                                     @else
