@@ -24,18 +24,16 @@
                         @endfor
                     </select>
                 </div>
-
                 <div class="col-md-3">
                     <label for="tipo_tratamento" class="form-label">Tipo Tratamento</label>
-                    <select class="form-select" id="tipo_tratamento" name="tipo_tratamento">
+                    <select class="form-select select2" id="tipo_tratamento" name="tipo_tratamento[]" multiple>
                         <option value="1" @if (request('tipo_tratamento') == 1) selected @endif>PTD</option>
                         <option value="2" @if (request('tipo_tratamento') == 2) selected @endif>PTI</option>
-                        <option value="4" @if (request('tipo_tratamento') == 4) selected @endif>PROAMO</option>
+                        <option value="3" @if (request('tipo_tratamento') == 3) selected @endif>PPH</option>
                         <option value="6" @if (request('tipo_tratamento') == 6) selected @endif>Integral</option>
                         <option value="5" @if (request('tipo_tratamento') == 5) selected @endif>Todos</option>
                     </select>
                 </div>
-
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-light w-100 me-2"
                         style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;">
@@ -52,13 +50,40 @@
 
         <br />
         <div class="card">
-            <div class="card-header">ESTATÍSTICA FREQUÊNCIA</div>
+            @php
+                $tiposTratamento = [
+                    1 => 'PTD',
+                    2 => 'PTI',
+                    3 => 'PPH',
+                    6 => 'Integral',
+                    5 => 'Todos',
+                ];
+
+                $selecionados = request('tipo_tratamento', []);
+                $nomesSelecionados = [];
+
+                if (is_array($selecionados)) {
+                    foreach ($selecionados as $id) {
+                        if (isset($tiposTratamento[$id])) {
+                            $nomesSelecionados[] = $tiposTratamento[$id];
+                        }
+                    }
+                }
+            @endphp
+
+            <div class="card-header">
+                ESTATÍSTICA FREQUÊNCIA
+
+                @if (count($nomesSelecionados))
+                    <small class="text-muted">| TIPO DE TRATAMENTO: {{ implode(', ', $nomesSelecionados) }}</small>
+                @endif
+            </div>
             <div class="card-body" id="printTable">
                 <table class="table table-striped table-bordered border-secondary table-hover align-middle">
                     <thead class="text-center">
                         <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
                             <th>TIPOS</th>
-                            @foreach (array_keys($dadosChart) as $mes)
+                            @foreach (array_keys($dadosFreq) as $mes)
                                 <th>{{ $mes }}</th>
                             @endforeach
                             <th>MÉDIA</th>
@@ -68,39 +93,39 @@
                     <tbody class="text-center" style="font-size: 14px; color:#000000;">
                         <tr>
                             <td>TOTAL</td>
-                            @foreach ($dadosChart as $dado)
+                            @foreach ($dadosFreq as $dado)
                                 <td>{{ $dado['Total'] ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
-                                    array_column($dadosChart, 'Total'),
+                                    array_column($dadosFreq, 'Total'),
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
                             <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosChart, 'Total'))) }}</td>
+                            <td>{{ round(array_sum(array_column($dadosFreq, 'Total'))) }}</td>
                         </tr>
                         <tr>
                             <td rowspan="2">AUSENTES</td>
-                            @foreach ($dadosChart as $dado)
+                            @foreach ($dadosFreq as $dado)
                                 <td>{{ $dado['Ausentes'] ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
-                                    array_column($dadosChart, 'Ausentes'),
+                                    array_column($dadosFreq, 'Ausentes'),
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
                             <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosChart, 'Ausentes'))) }}</td>
+                            <td>{{ round(array_sum(array_column($dadosFreq, 'Ausentes'))) }}</td>
                         </tr>
                         <tr>
-                            @foreach ($dadosChart as $dado)
+                            @foreach ($dadosFreq as $dado)
                                 <td>{{ isset($dado['PCT Ausentes']) ? $dado['PCT Ausentes'] . '%' : '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
-                                    array_column($dadosChart, 'PCT Ausentes'),
+                                    array_column($dadosFreq, 'PCT Ausentes'),
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
@@ -111,25 +136,25 @@
 
                         <tr>
                             <td rowspan="2">PRESENTES</td>
-                            @foreach ($dadosChart as $dado)
+                            @foreach ($dadosFreq as $dado)
                                 <td>{{ $dado['Presenças'] ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
-                                    array_column($dadosChart, 'Presenças'),
+                                    array_column($dadosFreq, 'Presenças'),
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
                             <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosChart, 'Presenças'))) }}</td>
+                            <td>{{ round(array_sum(array_column($dadosFreq, 'Presenças'))) }}</td>
                         </tr>
                         <tr>
-                            @foreach ($dadosChart as $dado)
+                            @foreach ($dadosFreq as $dado)
                                 <td>{{ isset($dado['PCT Presenças']) ? $dado['PCT Presenças'] . '%' : '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
-                                    array_column($dadosChart, 'PCT Presenças'),
+                                    array_column($dadosFreq, 'PCT Presenças'),
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
@@ -137,51 +162,136 @@
                             </td>
                             <td>--</td>
                         </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <br />
+        <br />
+
+        <div class="card">
+            <div class="card-header">
+                ESTATÍSTICA TRATAMENTOS
+
+                @if (count($nomesSelecionados))
+                    <small class="text-muted">| TIPO DE TRATAMENTO: {{ implode(', ', $nomesSelecionados) }}</small>
+                @endif
+            </div>
+            <div class="card-body" id="printTable">
+                <table class="table table-striped table-bordered border-secondary table-hover align-middle">
+                    <thead class="text-center">
+                        <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
+                            <th>TIPOS</th>
+                            @foreach (array_keys($dadosTrat) as $mes)
+                                <th>{{ $mes }}</th>
+                            @endforeach
+                            <th>MÉDIA</th>
+                            <th>TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center" style="font-size: 14px; color:#000000;">
+                         <tr>
+                            <td>TRATAMENTOS</td>
+                            @foreach ($dadosTrat as $dado)
+                                <td>{{ $dado['Tratamentos'] ?? '--' }}</td>
+                            @endforeach
+                            @php
+                                $valores = array_filter(
+                                    array_column($dadosTrat, 'Tratamentos'),
+                                    fn($a) => $a !== 0 && $a !== null,
+                                );
+                            @endphp
+                            <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
+                            <td>{{ round(array_sum(array_column($dadosTrat, 'Tratamentos'))) }}</td>
+                        </tr>
                         <tr>
-                            <td>ALTA</td>
-                            @foreach ($dadosChart as $dado)
+                            <td rowspan="2">ALTA</td>
+                            @foreach ($dadosTrat as $dado)
                                 <td>{{ $dado['Alta'] ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
-                                    array_column($dadosChart, 'Alta'),
+                                    array_column($dadosTrat, 'Alta'),
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
                             <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosChart, 'Alta'))) }}</td>
+                            <td>{{ round(array_sum(array_column($dadosTrat, 'Alta'))) }}</td>
+                        </tr>
+                        <tr>
+                            @foreach ($dadosTrat as $dado)
+                                <td>{{ isset($dado['PCT Alta']) ? $dado['PCT Alta'] . '%' : '--' }}</td>
+                            @endforeach
+                            @php
+                                $valores = array_filter(
+                                    array_column($dadosTrat, 'PCT Alta'),
+                                    fn($a) => $a !== 0 && $a !== null,
+                                );
+                            @endphp
+                            <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores), 2) . '%' : '--' }}
+                            </td>
+                            <td>--</td>
                         </tr>
 
                         {{-- TRANSFERIDOS --}}
                         <tr>
-                            <td>TRANSFERIDOS</td>
-                            @foreach ($dadosChart as $dado)
+                            <td rowspan="2">TRANSFERIDOS</td>
+                            @foreach ($dadosTrat as $dado)
                                 <td>{{ $dado['Transferidos'] ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
-                                    array_column($dadosChart, 'Transferidos'),
+                                    array_column($dadosTrat, 'Transferidos'),
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
                             <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosChart, 'Transferidos'))) }}</td>
+                            <td>{{ round(array_sum(array_column($dadosTrat, 'Transferidos'))) }}</td>
+                        </tr>
+                        <tr>
+                            @foreach ($dadosTrat as $dado)
+                                <td>{{ isset($dado['PCT Transferidos']) ? $dado['PCT Transferidos'] . '%' : '--' }}</td>
+                            @endforeach
+                            @php
+                                $valores = array_filter(
+                                    array_column($dadosTrat, 'PCT Transferidos'),
+                                    fn($a) => $a !== 0 && $a !== null,
+                                );
+                            @endphp
+                            <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores), 2) . '%' : '--' }}
+                            </td>
+                            <td>--</td>
                         </tr>
 
                         {{-- DESISTÊNCIAS --}}
                         <tr>
-                            <td>DESISTÊNCIAS</td>
-                            @foreach ($dadosChart as $dado)
+                            <td rowspan="2">DESISTÊNCIAS</td>
+                            @foreach ($dadosTrat as $dado)
                                 <td>{{ $dado['Desistência'] ?? '--' }}</td>
                             @endforeach
                             @php
                                 $valores = array_filter(
-                                    array_column($dadosChart, 'Desistência'),
+                                    array_column($dadosTrat, 'Desistência'),
                                     fn($a) => $a !== 0 && $a !== null,
                                 );
                             @endphp
                             <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores)) : '--' }}</td>
-                            <td>{{ round(array_sum(array_column($dadosChart, 'Desistência'))) }}</td>
+                            <td>{{ round(array_sum(array_column($dadosTrat, 'Desistência'))) }}</td>
+                        </tr>
+                        <tr>
+                            @foreach ($dadosTrat as $dado)
+                                <td>{{ isset($dado['PCT Desistência']) ? $dado['PCT Desistência'] . '%' : '--' }}</td>
+                            @endforeach
+                            @php
+                                $valores = array_filter(
+                                    array_column($dadosTrat, 'PCT Desistência'),
+                                    fn($a) => $a !== 0 && $a !== null,
+                                );
+                            @endphp
+                            <td>{{ count($valores) > 0 ? round(array_sum($valores) / count($valores), 2) . '%' : '--' }}
+                            </td>
+                            <td>--</td>
                         </tr>
                     </tbody>
                 </table>
@@ -224,7 +334,7 @@
         }
     </style>
 
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             let tratamento = @JSON(request('tipo_tratamento'));
 
@@ -233,5 +343,5 @@
             }
 
         });
-    </script>
+    </script> --}}
 @endsection
