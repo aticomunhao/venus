@@ -303,7 +303,6 @@ $idAcessoEstudos = [1]; // IDs de acesso para Estudos
     if ($('#estudos .dropdown-item').length == 0) {
         $('#estudos').hide();
     }
-
     $('#sair').click(function() {
         checkSession();
         setTimeout(function() {
@@ -312,10 +311,7 @@ $idAcessoEstudos = [1]; // IDs de acesso para Estudos
             } else {
                 console.log(session)
                 document.getElementById('logout-form').submit();
-                //document.getElementById('logout-form').submit();
             }
         }, 1000);
-
-
     })
 </script>
