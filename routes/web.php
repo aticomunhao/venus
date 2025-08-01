@@ -543,4 +543,6 @@ if (!App::environment('local')) {
 
 Route::middleware('rotas:55')->group(function () {
     Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
+    Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
+    Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
 });

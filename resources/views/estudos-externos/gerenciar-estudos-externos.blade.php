@@ -22,7 +22,7 @@
                             data-bs-toggle="modal" data-bs-target="#modalAprovarLote">
                             Aprovar em Lote
                         </a>
-                        <a href="" class="btn btn-success btn-sm"
+                        <a href="/incluir-estudos-externos" class="btn btn-success btn-sm"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;">
                             Novo+
                         </a>
