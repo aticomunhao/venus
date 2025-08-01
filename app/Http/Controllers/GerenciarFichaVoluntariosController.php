@@ -27,7 +27,7 @@ class GerenciarFichaVoluntariosController extends Controller
     {
 
         $data = $request->input('imagem');
-        $path = '/mnt/fotos';
+        $path = env('PATH_IMAGE_ASSOCIADO');
 
         $pessoa = DB::table('associado as ass')
             ->leftJoin('pessoas as p', 'ass.id_pessoa', 'p.id')
@@ -62,7 +62,7 @@ class GerenciarFichaVoluntariosController extends Controller
 
     public function retornaFoto(Request $request)
     {
-        $dir = '/mnt/fotos';
+        $dir = env('PATH_IMAGE_ASSOCIADO');
 
 
         $pessoa = DB::table('associado as ass')
@@ -74,9 +74,16 @@ class GerenciarFichaVoluntariosController extends Controller
         $imagemAleatoria = md5($pessoa->cpf);
         $path = $dir . '/' . $imagemAleatoria . '.png';
 
+        try {
+            $data = file_get_contents($path);
+        } catch (\Exception $e) {
+            $data =  file_get_contents($path = $dir . '/placeholder.jpg');
+        }
+
         $tipo = pathinfo($path, PATHINFO_EXTENSION);
-        $data = file_get_contents($path);
         $base64 = base64_encode($data);
+
+
 
         return response()->json([
             'base64' => $base64,
