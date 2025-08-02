@@ -83,44 +83,95 @@
 
         <br>
 
-        @if($presencas)
-        <div class="card">
-            <div class="card-header" id="headingOne">
-                PRESENÇAS
-            </div>
-            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+        @if (($tratamento))
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            ÚLTIMO ENCAMINHAMENTO
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body">
+                        <table class="table table-sm table-bordered table-striped">
+                            <thead style="text-align:center; background: #daffe0;">
+                                <tr style="text-align:center; font-weight: bold; font-size:12px">
+                                    <td class="col">NR</td>
+                                    <td class="col">INICIO</td>
+                                    <td class="col">FINAL</td>
+                                    <td class="col">TRATAMENTO</td>
+                                    <td class="col">GRUPO</td>
+                                    <td class="col">DIA</td>
+                                    <td class="col">HORÁRIO</td>
+                                    <td class="col">STATUS</td>
+                                    <td class="col">LINK</td>
+                                </tr>
 
-                    <table class="table table-sm table-bordered table-striped">
-                        <thead style="text-align:center; background: #daffe0;">
-                            <tr style="text-align:center; font-weight: bold; font-size:12px">
-                                <td>DATA</td>
-                                <td>GRUPO</td>
-                                <td>PRESENÇA</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            @foreach($presencas as $presenca)
-                            <tr style="text-align:center;font-size:13px">
-                                <td> {{ date('d-m-Y', strtotime($presenca->data)) }} </td>
-                                <td>{{ $presenca->nome }}</td>
-                                @if ($presenca->presenca == true)
-                                <td style="background-color:#90EE90;">Sim</td>
-                            @else
-                                <td style="background-color:#FA8072;">Não</td>
-                            @endif
-                            </tr>
-
-                            @endforeach
-                        </tbody>
-
-                    </table>
-
+                            </thead>
+                            <tbody>
+                                <tr style="text-align:center;font-size:13px">
+                                    <td>{{ $tratamento->idt ?? $tratamento->ide }}</td>
+                                    <td>{{ $tratamento->dt_inicio != null ? date('d/m/Y', strtotime($tratamento->dt_inicio)) : '-' }}
+                                    </td>
+                                    <td>{{ $tratamento->dt_fim != null ? date('d/m/Y', strtotime($tratamento->dt_fim)) : '-' }}
+                                    </td>
+                                    <td>{{ $tratamento->descricao }}</td>
+                                    <td>{{ $tratamento->nome }}</td>
+                                    <td>{{ $tratamento->dia }}</td>
+                                    <td>{{ $tratamento->h_inicio }}</td>
+                                    <td>{{ $tratamento->status }}</td>
+                                    <td>
+                                        <a class="btn btn-sm tooltips" href="/visualizar-enc/{{ $tratamento->ide }}"
+                                            style="text-align:right;" role="button">
+                                            <span class="tooltiptext">Visualizar</span>
+                                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                 </div>
             </div>
-        </div>
-@endif
+        @endif
+        <br>
+
+        @if ($presencas)
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    PRESENÇAS
+                </div>
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+
+                        <table class="table table-sm table-bordered table-striped">
+                            <thead style="text-align:center; background: #daffe0;">
+                                <tr style="text-align:center; font-weight: bold; font-size:12px">
+                                    <td>DATA</td>
+                                    <td>GRUPO</td>
+                                    <td>PRESENÇA</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach ($presencas as $presenca)
+                                    <tr style="text-align:center;font-size:13px">
+                                        <td> {{ date('d-m-Y', strtotime($presenca->data)) }} </td>
+                                        <td>{{ $presenca->nome }}</td>
+                                        @if ($presenca->presenca == true)
+                                            <td style="background-color:#90EE90;">Sim</td>
+                                        @else
+                                            <td style="background-color:#FA8072;">Não</td>
+                                        @endif
+                                    </tr>
+                                @endforeach
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        @endif
         <br>
 
         <div class="row mt-4 justify-content-center">

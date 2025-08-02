@@ -111,7 +111,6 @@ class GerenciarEntrevistaController extends Controller
             ->orderBy('atendimentos.dh_inicio')
             ->get()->toArray();
 
-
         // Confere se a pessoa tem um tratamento PTD ativo
         $ptdAtivos = DB::table('tratamento as tr')
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
@@ -122,9 +121,10 @@ class GerenciarEntrevistaController extends Controller
             ->pluck('id_assistido')->toArray();
 
 
-
         foreach ($ptdAtivos as $ptd) {
-            $informacoes[array_search($ptd, array_column($informacoes, 'id_pessoa'))]->ptd = true;
+            foreach (array_keys(array_column($informacoes, 'id_pessoa'), $ptd) as $info) {
+                $informacoes[$info]->ptd = true;
+            }
         }
 
 
@@ -453,6 +453,43 @@ class GerenciarEntrevistaController extends Controller
             ->where('enc.id', $id)
             ->first();
 
+        // XXX Uma gambiarra pra resolver tradução entre tratamentos e entrevistas
+        $tradutor = [
+            2 => 4,
+            5 => 6,
+            6 => 4
+        ];
+
+        $tradutor = isset($tradutor[$entrevistas->id_tipo_entrevista]) ?  $tradutor[$entrevistas->id_tipo_entrevista] : 0;
+
+
+        $tratamento = DB::table('encaminhamento as enc')
+            ->select(
+                'enc.id as ide',
+                'gr.nome',
+                'rm.h_inicio',
+                'td.nome as dia',
+                'tr.id as idt',
+                'tr.dt_inicio',
+                'tr.dt_fim',
+                'tt.descricao',
+                'tse.nome as status',
+                'enc.id_tipo_tratamento',
+                'at.id_assistido'
+            )
+            ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+            ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+            ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
+            ->leftJoin('tipo_status_tratamento AS tse', 'tr.status', 'tse.id')
+            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+            ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
+            ->where('at.id_assistido', $entrevistas->id_assistido) // Todos daquele assistido
+            ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
+           ->where('enc.id_tipo_tratamento', $tradutor)
+           ->orderBy('tr.dt_fim', 'DESC')
+           ->orderBy('tr.dt_inicio', 'DESC')
+           ->first();
 
         $presencas = DB::table('presenca_cronograma as pc')
             ->select('enc.id_tipo_tratamento', 'dc.data', 'pc.presenca', 'gr.nome')
@@ -469,7 +506,7 @@ class GerenciarEntrevistaController extends Controller
             ->get();
 
 
-        return view('Entrevistas.visualizar-entrevista', compact('entrevistas', 'id', 'presencas'));
+        return view('Entrevistas.visualizar-entrevista', compact('entrevistas', 'id', 'presencas', 'tratamento'));
         // } catch (\Exception $e) {
 
         //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
@@ -572,7 +609,7 @@ class GerenciarEntrevistaController extends Controller
 
         // Traz os dados da entrevista gerada
         $entrevista = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)
-            ->select('at.id_assistido', 'ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id','ent.id as ide', 'ent.id_sala', 'ent.id_entrevistador', 'ent.status')
+            ->select('at.id_assistido', 'ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id as ide', 'ent.id_sala', 'ent.id_entrevistador', 'ent.status')
             ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id');
 

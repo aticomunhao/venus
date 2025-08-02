@@ -13,6 +13,7 @@ $idAcessoRelatorios = [35, 57, 34, 35, 48, 46, 31, 32, 51, 47, 52, 33]; // IDs d
 $idAcessoMembros = [14, 30, 20, 4, 15, 21]; // IDs de acesso para Membros
 $idAcessoTratamentos = [23, 9, 25, 8, 18, 24, 39, 41]; // IDs de acesso para Tratamentos
 $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
+$idAcessoEstudos = [1, 60]; // IDs de acesso para Estudos
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light shadow-sm"
@@ -198,19 +199,23 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                     </li>
                 </ul>
             @endif
-            {{-- @if (array_intersect($idAcessoEstudos, $acesso))
+            @if (array_intersect($idAcessoEstudos, $acesso))
                 <ul class="navbar-nav" id="relatorios">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="1" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">Estudos</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                            @if (in_array(30, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Gerenciar Planejamento</a></li>
+                            @if (in_array(1, $acesso))
+                                <li><a class="dropdown-item" href="{{ route('index.req') }}">Gerenciar Requisitos</a>
+                                </li>
+                            @endif
+                             @if (in_array(55, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-estudos-externos">Gerenciar Estudos Externos</a></li>
                             @endif
                         </ul>
                     </li>
                 </ul>
-            @endif --}}
+            @endif
             <ul class="navbar-nav" id="estudos">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="3" role="button"
@@ -248,17 +253,6 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
                             </li>
                         @endif
 
-                    </ul>
-                </li>
-            </ul>
-            <ul class="navbar-nav" id="ADM">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="3" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">Estudos</a>
-                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                        @if (in_array(1, $acesso))
-                            <li><a class="dropdown-item">Gerenciar Requisitos</a></li>
-                        @endif
                     </ul>
                 </li>
             </ul>
@@ -313,7 +307,6 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
     if ($('#estudos .dropdown-item').length == 0) {
         $('#estudos').hide();
     }
-
     $('#sair').click(function() {
         checkSession();
         setTimeout(function() {
@@ -322,10 +315,7 @@ $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
             } else {
                 console.log(session)
                 document.getElementById('logout-form').submit();
-                //document.getElementById('logout-form').submit();
             }
         }, 1000);
-
-
     })
 </script>

@@ -42,8 +42,13 @@ use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\GerenciarPassesController;
 use App\Http\Controllers\GerenciarCriterioAtividadeController;
 use App\Http\Controllers\GerenciarEmailController;
+use App\Http\Controllers\GerenciarFichaVoluntariosController;
 use App\Http\Controllers\LogAtendimentosController;
+use App\Http\Controllers\GerenciarTipoCriterioController;
+use App\Http\Controllers\GerenciarEstudosExternosController;
 use App\Mail\EnviarEmail;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\URL;
 
 /*
 |--------------------------------------------------------------------------
@@ -516,6 +521,14 @@ Route::middleware('rotas:53')->group(function () {
     Route::any('/placeholder-log-atendimentos', [LogAtendimentosController::class, 'placeholder']);
 });
 
+// Ficha de Voluntários
+Route::middleware('rotas:55')->group(function () {
+    Route::any('/ficha-voluntario/{id}', [GerenciarFichaVoluntariosController::class, 'edit']);
+    Route::any('/atualizar-ficha-voluntario/{ida}/{idp}', [GerenciarFichaVoluntariosController::class, 'update']);
+    Route::any('/retorna-cidades/{id}', [GerenciarFichaVoluntariosController::class, 'retornaCidades']);
+    Route::any('/teste-camera', [GerenciarFichaVoluntariosController::class, 'index']);
+});
+
 
 //Gerenciar critérios
 Route::middleware('rotas:54')->group(function () {
@@ -531,4 +544,23 @@ Route::middleware('rotas:55')->group(function () {
     Route::get('/gerenciar-inscricao', [GerenciarInscricaoController::class, 'index'])->name('index.insc');
     Route::get('/criar-inscricao', [GerenciarInscricaoController::class, 'create']);
     Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'include']);
+});
+//Gerenciar Tipo Criterios Atividades
+
+Route::get('/gerenciar-tipo-criterio', [GerenciarTipoCriterioController::class, 'index'])->name('index.tipo');
+Route::get('/criar-tipo-criterio', [GerenciarTipoCriterioController::class, 'create']);
+Route::post('/incluir-tipo-criterio', [GerenciarTipoCriterioController::class, 'include']);
+Route::get('/editar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'edit']);
+Route::post('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'update']);
+Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy']);
+
+
+if (!App::environment('local')) {
+    URL::forceScheme('https');
+}
+
+Route::middleware('rotas:55')->group(function () {
+    Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
+    Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
+    Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
 });
