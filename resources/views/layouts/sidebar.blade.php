@@ -209,8 +209,14 @@ $idAcessoEstudos = [1, 60]; // IDs de acesso para Estudos
                                 <li><a class="dropdown-item" href="{{ route('index.req') }}">Gerenciar Requisitos</a>
                                 </li>
                             @endif
-                             @if (in_array(55, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-estudos-externos">Gerenciar Estudos Externos</a></li>
+                            @if (in_array(1, $acesso))
+                                <li><a class="dropdown-item"
+                                        href="{{ route('index.tipo_criterio_controller') }}">Gerenciar Criterios</a>
+                                </li>
+                            @endif
+                            @if (in_array(55, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-estudos-externos">Gerenciar Estudos
+                                        Externos</a></li>
                             @endif
                         </ul>
                     </li>
