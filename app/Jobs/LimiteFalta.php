@@ -29,6 +29,8 @@ class LimiteFalta implements ShouldQueue
     public function handle(): void
     {
 
+        $dataFim = Carbon::yesterday();
+        $dt_hora = Carbon::now();
 
         // Retorna todas as faltas de todos os tratamentos ativos
         $tratamentos_faltas = DB::table('presenca_cronograma as pc')
@@ -66,26 +68,50 @@ class LimiteFalta implements ShouldQueue
 
 
                 //  Caso seja um tratamento não PROAMO, com 3 consecutivas | Caso seja um PROAMO com 5 faltas consecutivas
-                if(   (explode(',',$key)[1] != 4 and $current > 2) or (explode(',',$key)[1] == 4 and $current > 4)  ){
+                if ((explode(',', $key)[1] != 4 and $current > 2) or (explode(',', $key)[1] == 4 and $current > 4)) {
 
 
                     // Descobre o id_encaminhamento do tratamento atual
-                    $id_encaminhamento = DB::table('tratamento')->select('id_encaminhamento')->where('id', explode(',',$key)[0])->first();
-    
-                    // Inativa o tratamento por faltas
-                    DB::table('tratamento')
-                        ->where('id', explode(',',$key)[0])
-                        ->update([
-                            'status' => 5 // Finalizado por faltas
-                        ]);
-    
-                    // Inativa o encaminhamento
-                    DB::table('encaminhamento')
-                        ->where('id', $id_encaminhamento->id_encaminhamento)
-                        ->update([
-                            'status_encaminhamento' => 4 // Inativado
-                        ]);
+                    $id_encaminhamento = DB::table('tratamento')->select('id_encaminhamento')->where('id', explode(',', $key)[0])->first();
 
+                    $inativPTD = DB::table('tratamento')
+                        ->where('id', explode(',', $key)[0]);
+                    $idInativPTD = $inativPTD->first()->id;
+                    $inativPTD->update([
+                        'dt_fim' => $dataFim,
+                        'status' => 5,  // Finalizado por faltas
+                    ]);
+
+                    // Insere no histórico a criação do atendimento
+                    DB::table('log_atendimentos')->insert([
+                        'id_referencia' => $idInativPTD,
+                        'id_usuario' => session()->get('usuario.id_usuario'),
+                        'id_acao' => 1, // mudou de Status para
+                        'id_origem' => 3, // Tratamento
+                        'id_observacao' => 5,  // Finalizado por faltas
+                        'data_hora' => $dt_hora
+                    ]);
+
+
+                    $inativEncPTD = DB::table('encaminhamento')
+                        ->where('id', $id_encaminhamento->id_encaminhamento);
+                    $idInativEncPTD = $inativEncPTD->first()->id;
+                    $inativEncPTD->update([
+                        'status_encaminhamento' => 4 // Inativado
+                    ]);
+
+
+                    // Insere no histórico a criação do atendimento
+                    DB::table('log_atendimentos')->insert([
+                        'id_referencia' => $idInativEncPTD,
+                        'id_usuario' => session()->get('usuario.id_usuario'),
+                        'id_acao' => 1, // mudou de Status para
+                        'id_origem' => 2, // Encaminhamento
+                        'id_observacao' => 4, // Inativado
+                        'data_hora' => $dt_hora
+                    ]);
+
+                    
                 }
             }
         }

@@ -13,7 +13,7 @@ $idAcessoRelatorios = [35, 57, 34, 35, 48, 46, 31, 32, 51, 47, 52, 33]; // IDs d
 $idAcessoMembros = [14, 30, 20, 4, 15, 21]; // IDs de acesso para Membros
 $idAcessoTratamentos = [23, 9, 25, 8, 18, 24, 39, 41]; // IDs de acesso para Tratamentos
 $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
-$idAcessoEstudos = [1]; // IDs de acesso para Estudos
+$idAcessoEstudos = [1, 60]; // IDs de acesso para Estudos
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light shadow-sm"
@@ -206,7 +206,11 @@ $idAcessoEstudos = [1]; // IDs de acesso para Estudos
                             data-bs-toggle="dropdown" aria-expanded="false">Estudos</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                             @if (in_array(1, $acesso))
-                                <li><a class="dropdown-item">Gerenciar Requisitos</a></li>
+                                <li><a class="dropdown-item" href="{{ route('index.req') }}">Gerenciar Requisitos</a>
+                                </li>
+                            @endif
+                             @if (in_array(55, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-estudos-externos">Gerenciar Estudos Externos</a></li>
                             @endif
                         </ul>
                     </li>
@@ -303,7 +307,6 @@ $idAcessoEstudos = [1]; // IDs de acesso para Estudos
     if ($('#estudos .dropdown-item').length == 0) {
         $('#estudos').hide();
     }
-
     $('#sair').click(function() {
         checkSession();
         setTimeout(function() {
@@ -312,10 +315,7 @@ $idAcessoEstudos = [1]; // IDs de acesso para Estudos
             } else {
                 console.log(session)
                 document.getElementById('logout-form').submit();
-                //document.getElementById('logout-form').submit();
             }
         }, 1000);
-
-
     })
 </script>
