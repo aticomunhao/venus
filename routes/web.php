@@ -44,6 +44,7 @@ use App\Http\Controllers\GerenciarCriterioAtividadeController;
 use App\Http\Controllers\GerenciarEmailController;
 use App\Http\Controllers\GerenciarFichaVoluntariosController;
 use App\Http\Controllers\LogAtendimentosController;
+use App\Http\Controllers\GerenciarTipoCriterioController;
 use App\Mail\EnviarEmail;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
@@ -543,6 +544,14 @@ Route::middleware('rotas:55')->group(function () {
     Route::get('/criar-inscricao', [GerenciarInscricaoController::class, 'create']);
     Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'include']);
 });
+//Gerenciar Tipo Criterios Atividades
+
+Route::get('/gerenciar-tipo-criterio', [GerenciarTipoCriterioController::class, 'index'])->name('index.tipo');
+Route::get('/criar-tipo-criterio', [GerenciarTipoCriterioController::class, 'create']);
+Route::post('/incluir-tipo-criterio', [GerenciarTipoCriterioController::class, 'include']);
+Route::get('/editar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'edit']);
+Route::post('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'update']);
+Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy']);
 
 
 if (!App::environment('local')) {

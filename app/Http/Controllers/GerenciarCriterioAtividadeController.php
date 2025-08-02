@@ -29,6 +29,12 @@ class GerenciarCriterioAtividadeController extends Controller
         $snome = $request->nome_setor;
 
         $status = $request->status;
+        $setores = DB::table('setor AS s')->select('s.id AS ids', 's.sigla', 's.nome')->get();
+        if ($snome) {
+            $criterio->where('s.nome', 'like', '%' . $snome . '%');
+        }
+
+
 
 
         if ($request->status) {
@@ -47,7 +53,7 @@ class GerenciarCriterioAtividadeController extends Controller
             ->get();
 
 
-        return view('criterio.gerenciar-criterio', compact('criterio', 'contar', 'tipo_motivo', 'tipo_atv'));
+        return view('criterio.gerenciar-criterio', compact('criterio', 'contar', 'tipo_motivo', 'tipo_atv', 'setores', 'snome', 'status'));
     }
 
     public function create()
