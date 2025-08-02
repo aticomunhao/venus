@@ -548,11 +548,11 @@ Route::middleware('rotas:55')->group(function () {
 //Gerenciar Tipo Criterios Atividades
 
 Route::get('/gerenciar-tipo-criterio', [GerenciarTipoCriterioController::class, 'index'])->name('index.tipo_criterio_controller');
-Route::get('/criar-tipo-criterio', [GerenciarTipoCriterioController::class, 'create.tipo_criterio_controller']);
-Route::post('/incluir-tipo-criterio', [GerenciarTipoCriterioController::class, 'include.tipo_criterio_controller']);
-Route::get('/editar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'edit.tipo_criterio_controller']);
-Route::post('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'update.tipo_criterio_controller']);
-Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy.tipo_criterio_controller']);
+Route::get('/criar-tipo-criterio', [GerenciarTipoCriterioController::class, 'create'])->name('criar.tipo_criterio_controller');
+Route::post('/incluir-tipo-criterio', [GerenciarTipoCriterioController::class, 'store'])->name('incluir.tipo_criterio_controller');
+Route::get('/editar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'edit'])->name('editar.tipo_criterio_controller');
+Route::post('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'update'])->name('atualizar.tipo_criterio_controller');
+Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy'])->name('deletar.tipo_criterio_controller');
 
 
 if (!App::environment('local')) {
