@@ -45,6 +45,7 @@ use App\Http\Controllers\GerenciarEmailController;
 use App\Http\Controllers\GerenciarFichaVoluntariosController;
 use App\Http\Controllers\LogAtendimentosController;
 use App\Http\Controllers\GerenciarTipoCriterioController;
+use App\Http\Controllers\GerenciarEstudosExternosController;
 use App\Mail\EnviarEmail;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
@@ -557,3 +558,9 @@ Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::clas
 if (!App::environment('local')) {
     URL::forceScheme('https');
 }
+
+Route::middleware('rotas:55')->group(function () {
+    Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
+    Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
+    Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
+});
