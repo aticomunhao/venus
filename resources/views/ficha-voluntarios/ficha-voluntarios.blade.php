@@ -440,24 +440,30 @@
                     $('#video').prop('hidden', true)
                     $('#canvasPreview').prop('hidden', true)
 
+                    console.log(stop)
+                    console.log(intervalo)
+
                     // Inicia o loop de tentativas apenas se ainda não estiver em execução
                     if (!intervalo) {
                         intervalo = setInterval(() => {
-                           if(!stop){
+                            if (!stop) {
 
-                               contador++;
+                                contador++;
                                 console.log(`Tentando novamente... (${contador})`);
                                 iniciarCamera();
-    
+
                                 if (contador >= 30) {
                                     clearInterval(intervalo);
                                     intervalo = null;
                                     contador = 0;
                                     $('#cancelar').click();
                                 }
-                           } else{
-                            clearInterval(intervalo);
-                           }
+                            } else {
+                                clearInterval(intervalo);
+                                intervalo = null;
+                                contador = 0;
+
+                            }
                         }, 1000);
                     }
                 });
