@@ -212,7 +212,7 @@
             </div>
         </div>
         <div class="mb-5 mt-5">
-            <a class="btn btn-danger col-md-3 col-sm-12 col-2 mt-3 offset-md-2" href="#"
+            <a class="btn btn-danger col-md-3 col-sm-12 col-2 mt-3 offset-md-2" href="/gerenciar-pessoas"
                 class="btn btn-danger">Cancelar</a>
             <button type="submit" class="btn btn-primary col-md-3 col-sm-12 col-2 mt-3 offset-md-2">Confirmar</button>
             </form>
