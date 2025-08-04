@@ -11,7 +11,7 @@ $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column(
 
 $idAcessoRelatorios = [35, 57, 34, 35, 48, 46, 31, 32, 51, 47, 52, 33]; // IDs de acesso para relatórios
 $idAcessoMembros = [14, 30, 20, 4, 15, 21]; // IDs de acesso para Membros
-$idAcessoTratamentos = [23, 9, 25, 8, 18, 24, 39, 41]; // IDs de acesso para Tratamentos
+$idAcessoTratamentos = [16, 22, 23, 40, 9, 25, 8, 18, 24, 39, 41]; // IDs de acesso para Tratamentos
 $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
 $idAcessoEstudos = [1, 60]; // IDs de acesso para Estudos
 ?>
@@ -53,9 +53,8 @@ $idAcessoEstudos = [1, 60]; // IDs de acesso para Estudos
                         <a class="nav-link dropdown-toggle" href="#" id="1" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">Tratamentos</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                            @if (in_array(23, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Encaminhamentos
-                                    </a></li>
+                            @if (array_intersect([16, 22, 23, 40], $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-encaminhamentos">Encaminhamentos</a></li>
                             @endif
                             @if (in_array(9, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-entrevistas">Entrevistas</a>

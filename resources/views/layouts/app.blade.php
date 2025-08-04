@@ -39,9 +39,6 @@
 
     {{-- Import Dos Gráficos --}}
     <script src="{{ asset('js/chart.js') }}"></script>
-   
-    {{-- Import Da Webcam --}}
-    <script src="{{ asset('js/webcam.js') }}"></script>
 
     {{-- Import do Calendário --}}
     <script src="{{ asset('js/fullcalendar.js') }}"></script>
