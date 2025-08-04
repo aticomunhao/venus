@@ -34,7 +34,7 @@ class GerenciarEstudosExternosController extends Controller
         $setores = DB::table('setor')->select('id', 'nome', 'sigla')->whereNull('dt_fim')->get();
         $estudos = DB::table('tipo_tratamento')->select('id', 'id_semestre', 'sigla')->where('id_tipo_grupo', '2')->get();
         $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->orderBy('nome_completo')->get();
-        $instituicoes = DB::table('entidade')->select('id', 'nome_fantasia', 'razao_social')->get();
+        $instituicoes = DB::table('instituicao')->select('id', 'nome_fantasia', 'razao_social')->get();
 
         return view('/estudos-externos/incluir-estudos-externos', compact('setores', 'estudos', 'pessoas', 'instituicoes'));
     }
