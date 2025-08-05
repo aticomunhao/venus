@@ -556,9 +556,9 @@ Route::post('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::c
 Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy.tipo_criterio_controller']);
 
 
-if (!App::environment('local')) {
-    URL::forceScheme('https');
-}
+// if (!App::environment('local')) {
+//     URL::forceScheme('https');
+// }
 
 Route::middleware('rotas:55')->group(function () {
     Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
