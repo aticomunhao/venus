@@ -553,8 +553,8 @@ Route::get('/gerenciar-tipo-criterio', [GerenciarTipoCriterioController::class, 
 Route::get('/criar-tipo-criterio', [GerenciarTipoCriterioController::class, 'create'])->name('criar.tipo_criterio_controller');
 Route::post('/incluir-tipo-criterio', [GerenciarTipoCriterioController::class, 'store'])->name('incluir.tipo_criterio_controller');
 Route::get('/editar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'edit'])->name('editar.tipo_criterio_controller');
-Route::post('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'update'])->name('atualizar.tipo_criterio_controller');
-Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy'])->name('deletar.tipo_criterio_controller');
+Route::put('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'update'])->name('atualizar.tipo_criterio_controller');
+Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy'])->name('inativar.tipo_criterio_controller');
 
 
 if (!App::environment('local')) {
