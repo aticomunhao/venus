@@ -861,7 +861,7 @@ try {
         // Atualização do cronograma
         DB::table('cronograma')->where('id', $id)->update([
             'id_grupo' => $grupo,
-            'id_sala' => $numero,
+            'id_sala' => $numero ?: null,
             'h_inicio' => $request->h_inicio,
             'h_fim' => $request->h_fim,
             'max_atend' => $request->max_atend,
