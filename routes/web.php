@@ -571,7 +571,7 @@ Route::get('/retorna-dados-endereco/{id}', [AjaxController::class, 'getAddressBy
 //     URL::forceScheme('https');
 // }
 
-Route::middleware('rotas:55')->group(function () {
+Route::middleware('rotas:58')->group(function () {
     Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
     Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
     Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
