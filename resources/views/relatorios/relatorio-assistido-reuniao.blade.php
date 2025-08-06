@@ -14,7 +14,7 @@
                     <select class="form-select select2 grupo" type="text" id="nome_grupo" name="nome_grupo"
                          value="{{ request('nome_grupo') }}">
                          @foreach($reunioesPesquisa as $reuniao)
-                         <option value="{{ $reuniao->id }}" {{request('nome_grupo') == $reuniao->id ? 'selected' : ''}}>{{ $reuniao->nome }}-({{ $reuniao->sigla }})-{{ $reuniao->SiglaTratamento }}-{{ $reuniao->dia }}-{{ date('H:i', strtotime($reuniao->h_inicio)) }}/{{ date('H:i', strtotime($reuniao->h_fim ))}}  | {{ $reuniao->status == 'Inativo' ? 'Inativo' : $reuniao->descricao}}</option>>
+                         <option value="{{ $reuniao->id }}" {{request('nome_grupo') == $reuniao->id ? 'selected' : ''}}>{{ $reuniao->nome }}-({{ $reuniao->sigla }})-{{ $reuniao->dia }}-{{ date('H:i', strtotime($reuniao->h_inicio)) }}/{{ date('H:i', strtotime($reuniao->h_fim ))}}  | {{ $reuniao->status == 'Inativo' ? 'Inativo' : $reuniao->descricao}}</option>>
                         @endforeach
                         </select>
                 </div>
@@ -79,7 +79,7 @@
                                     <td> {{$reuniao->h_inicio}} </td>
                                     <td> {{$reuniao->h_fim}} </td>
                                     <td>
-                                        <a href="/visualizar-relatorio-reuniao/{{ $reuniao->id }}" type="button"
+                                        <a href="/visualizar-relatorio-reuniao/{{ $reuniao->id }}?dt_inicio={{request('dt_inicio')}}&dt_fim={{request('dt_fim')}}" type="button"
                                             class="btn btn-outline-primary btn-sm tooltips">
                                             <span class="tooltiptext">Gerenciar</span>
                                             <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
@@ -94,7 +94,7 @@
         </div>
         <script>
             $(document).ready(function () {
-                let idCronogramaPesquisa = @JSON($idCronogramaPesquisa);
+                let idCronogramaPesquisa = @JSON(request('nome_grupo'));
 
                 if(idCronogramaPesquisa == null){
                     $('#nome_grupo').prop('selectedIndex',-1);

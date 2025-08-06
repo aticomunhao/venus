@@ -95,7 +95,8 @@
                                             name="pEspecial" data-size="small" data-toggle="toggle" data-onstyle="success"
                                             data-offstyle="danger" data-onlabel="Sim" data-offlabel="Não"
                                             {{ $result->idsx != null ? 'checked' : '' }}
-                                            {{ $result->iap != null ? 'checked' : '' }}></div>
+                                            {{ $result->iap != null ? 'checked' : '' }}{{ $result->tpat != 1 ? 'checked' : '' }}>
+                                    </div>
                                 </div>
 
 
@@ -179,6 +180,19 @@
                         </select>
                     </div>
 
+                    <div class="col-3">Tipo Atendimento
+                        <select class="form-select pedido" id="tipo_atendimento" name="tipo_atendimento">
+                            @foreach ($tipoAtendimento as $tipo)
+                                <option value="{{ $tipo->id }}" {{ $result->tpat == $tipo->id ? 'selected' : '' }}>
+                                    {{ $tipo->sigla }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+
+
+
+
                     <div class="col" id="hiddenField">AFI preferido
                         <select class="form-select pedido" id="afi_p" name="afi_p">
                             <option></option>
@@ -229,8 +243,8 @@
                     $('#represent').prop('hidden', false)
                 } else {
                     $('#repres').html('')
-                 //   $('#repres').prop('selectedIndex', -1)
-                 //   $('#parent').prop('selectedIndex', -1)
+                    //   $('#repres').prop('selectedIndex', -1)
+                    //   $('#parent').prop('selectedIndex', -1)
                     $('#represent').prop('hidden', true)
                 }
                 if ($('#pEspecial').prop('checked')) {

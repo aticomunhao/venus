@@ -8,7 +8,8 @@
     <button type="button" class="btn btn-danger btn-floating btn-lg" id="btn-back-to-top">
         <i class="bi bi-arrow-up"></i>
     </button>
-    <a href="/pdf-curriculo-medium/{{ $id }}" type="button" class="btn btn-info btn-floating btn-lg" id="btn-pdf-print">
+    <a href="/pdf-curriculo-medium/{{ $id }}" type="button" class="btn btn-info btn-floating btn-lg"
+        id="btn-pdf-print">
         <i class="bi bi-cloud-download"></i>
     </a>
 
@@ -16,8 +17,11 @@
         <div class="justify-content-center">
             <br>
             <div class="card">
-                <div class="card-header">
-                    DADOS PESSOAIS
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="mb-0">DADOS PESSOAIS</span>
+                    <a  href="{{ session()->get('usuario.url') }}" class="btn btn-outline-danger btn-sm" title="Fechar">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
                 </div>
                 <div class="card-body">
                     <div class="row ">
@@ -71,8 +75,10 @@
                                     <tr>
                                         <td> {{ $dadoMembro->trabalho }} </td>
                                         <td> {{ $dadoMembro->nome_funcao }} </td>
-                                        <td> {{ $dadoMembro->dt_inicio }} </td>
-                                        <td> {{ $dadoMembro->dt_fim }} </td>
+                                        <td> {{ $dadoMembro->dt_inicio ? date('d/m/Y', strtotime($dadoMembro->dt_inicio)) : '-' }}
+                                        </td>
+                                        <td> {{ $dadoMembro->dt_fim ? date('d/m/Y', strtotime($dadoMembro->dt_fim)) : '-' }}
+                                        </td>
                                         <td> {{ $dadoMembro->status_membro }} </td>
                                     </tr>
                                 @endforeach
@@ -81,11 +87,18 @@
                     </div>
                 </div>
             @endforeach
+            <br>
+            <div class="row">
+                <div class="col">
+                    <a class="btn btn-danger" href="{{ session()->get('usuario.url') }}" style="text-align:right;"
+                        role="button">Fechar</a>
+                </div>
+            </div>
+
         </div>
     </div>
     </div>
-
-
+    </div>
     <style>
         #btn-back-to-top {
             position: fixed;

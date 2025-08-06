@@ -283,6 +283,7 @@ class RelatoriosController extends Controller
 
     public function indexmembro(Request $request)
     {
+
         // Obter os parâmetros de busca
         $setorId = $request->input('setor');
         $grupoId = $request->input('grupo');
@@ -301,7 +302,7 @@ class RelatoriosController extends Controller
 
         // Obter os atendentes para o select2
         $atendentesParaSelect = DB::table('membro AS m')
-            ->select('m.id_associado AS ida', 'p.nome_completo AS nm_4')
+            ->select('m.id_associado AS ida', 'a.nr_associado', 'p.nome_completo AS nm_4')
             ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
             ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
@@ -333,6 +334,9 @@ class RelatoriosController extends Controller
                 'cro.h_fim',
                 'tf.nome as nome_funcao',
                 'st.nome as sala',
+                'm.dt_inicio',
+                'm.dt_fim',
+                'ass.nr_associado',
                 DB::raw("CASE WHEN m.dt_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END AS status")
             )
             // Aplicação dos filtros opcionais
@@ -376,7 +380,7 @@ class RelatoriosController extends Controller
         $result = [];
 
         foreach ($membros as $element) {
-            $result[$element->nome_completo][$element->id] = $element;
+            $result[$element->nome_completo . ' - ' . $element->nr_associado][$element->id] = $element;
         }
 
         $result = $this->paginate($result, 50);
@@ -531,9 +535,8 @@ class RelatoriosController extends Controller
 
     public function relatorioReuniao(Request $request)
     {
-        $dt_inicio = $request->dt_inicio == null ? (Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d')) : $request->dt_inicio;
+        $dt_inicio = $request->dt_inicio == null ? (Carbon::now()->subMonth()->format('Y-m-d')) : $request->dt_inicio;
         $dt_fim =  $request->dt_fim == null ? Carbon::today()->format('Y-m-d') : $request->dt_fim;
-        $idCronogramaPesquisa = $request->nome_grupo;
 
         //Traz todas as reuniões onde a pessoa logada é Dirigente ou Sub-dirigente
         $cronogramasAutorizados = DB::table('membro as m')
@@ -543,18 +546,14 @@ class RelatoriosController extends Controller
             ->distinct('m.id_cronograma')
             ->pluck('m.id_cronograma');
 
-        $reunioesDirigentes = DB::table('membro as mem')
+        // Retorna a lista de grupos para a tabela
+        $reunioesDirigentes = DB::table('cronograma as cr')
             ->select('cr.id', 'gr.nome', 'cr.id', 'gr.status_grupo', 'd.nome as dia', 'cr.h_inicio', 'cr.h_fim')
-            ->leftJoin('associado as ass', 'mem.id_associado', 'ass.id')
-            ->leftJoin('cronograma as cr', 'mem.id_cronograma', 'cr.id')
             ->leftJoin('grupo as gr', 'cr.id_grupo', 'gr.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
-            ->when($idCronogramaPesquisa, function ($query, $idCronogramaPesquisa) {
-                return $query->where('cr.id', $idCronogramaPesquisa);
-            })
+            ->orderBy('gr.nome');
 
-            ->distinct('gr.nome');
-
+        // Retorna os nomes dos grupo para o campo de pesquisa, com todos os dados
         $reunioesPesquisa = DB::table('cronograma as cr')
             ->select(
                 'cr.id',
@@ -564,7 +563,7 @@ class RelatoriosController extends Controller
                 'cr.modificador',
                 'ts.descricao',
                 'gr.nome',
-                'cr.dia_semana as dia',
+                'd.nome as dia',
                 'cr.h_inicio',
                 'cr.h_fim',
                 DB::raw("(CASE WHEN cr.data_fim IS NOT NULL THEN 'Inativo' ELSE 'Ativo' END) AS status") // Correção aqui
@@ -574,90 +573,119 @@ class RelatoriosController extends Controller
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->leftJoin('tipo_dia as d', 'cr.dia_semana', 'd.id')
             ->leftJoin('tipo_status_grupo AS ts', 'gr.status_grupo', 'ts.id')
-            ->groupBy(
-                'cr.id',
-                'gr.nome',
-                'd.nome',
-                'cr.h_inicio',
-                'cr.h_fim',
-                'st.sigla',
-                't.sigla',
-                'ts.descricao'
-            )
             ->orderBy('gr.nome', 'asc');
 
+        // Conta todas as presenças nas datas especificadas
         $presencasCountAssistidos = DB::table('presenca_cronograma as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->where('dc.data', '>=', $dt_inicio)
-            ->where('dc.data', '<', $dt_fim)
+            ->where('dc.data', '<=', $dt_fim)
             ->groupBy('presenca')
             ->select('presenca', DB::raw("count(*) as total"));
 
-        $acompanhantes = DB::table('dias_cronograma as dc')->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')->whereNot('id_tipo_tratamento', 3);
+        // Conta todos os acompanhantes, exclui PTH por incosistencia
+        $acompanhantes = DB::table('dias_cronograma as dc')
+            ->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<=', $dt_fim)
+            ->whereNot('id_tipo_tratamento', 3);
 
+        // Conta os assistidos PTH
+        $presencasCountPTH = DB::table('dias_cronograma as dc')
+            ->leftJoin('cronograma as cr', 'dc.id_cronograma', 'cr.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<=', $dt_fim)
+            ->where('id_tipo_tratamento', 3);
+
+        // Conta todas as presenças de membros no periodo especificado
         $presencasCountMembros = DB::table('presenca_membros as pc')
             ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
             ->where('dc.data', '>=', $dt_inicio)
-            ->where('dc.data', '<', $dt_fim)
+            ->where('dc.data', '<=', $dt_fim)
             ->groupBy('presenca')
             ->select('presenca', DB::raw("count(*) as total"));
 
+        // Caso o usuário não seja Master Admin, aplique as regras
         if (!in_array(36, session()->get('usuario.acesso'))) {
-            $reunioesDirigentes = $reunioesDirigentes->whereIn('mem.id_cronograma', $cronogramasAutorizados);
+            $reunioesDirigentes = $reunioesDirigentes->whereIn('cr.id', $cronogramasAutorizados);
             $reunioesPesquisa = $reunioesPesquisa->whereIn('mem.id_cronograma', $cronogramasAutorizados);
             $presencasCountAssistidos = $presencasCountAssistidos->whereIn('dc.id_cronograma', $cronogramasAutorizados);
             $acompanhantes = $acompanhantes->whereIn('id_cronograma', $cronogramasAutorizados);
+            $presencasCountPTH = $presencasCountPTH->whereIn('id_cronograma', $cronogramasAutorizados);
             $presencasCountMembros = $presencasCountMembros->whereIn('dc.id_cronograma', $cronogramasAutorizados);
         }
 
+        // Caso algum grupo seja pesquisado
+        if ($request->nome_grupo) {
+            $reunioesDirigentes = $reunioesDirigentes->where('cr.id', $request->nome_grupo);
+            $presencasCountAssistidos = $presencasCountAssistidos->where('dc.id_cronograma', $request->nome_grupo);
+            $acompanhantes = $acompanhantes->where('dc.id_cronograma', $request->nome_grupo);
+            $presencasCountPTH = $presencasCountPTH->where('dc.id_cronograma', $request->nome_grupo);
+            $presencasCountMembros = $presencasCountMembros->where('dc.id_cronograma', $request->nome_grupo);
+        }
 
-        $reunioesDirigentes = $reunioesDirigentes->get();
-        $reunioesIds = json_decode(json_encode($reunioesDirigentes));
 
+        $reunioesDirigentes = $reunioesDirigentes->get()->toArray();
         $reunioesPesquisa = $reunioesPesquisa->get();
-
-        $presencasCountAssistidos = $presencasCountAssistidos->get();
-        $presencasCountAssistidos = json_decode(json_encode($presencasCountAssistidos));
-
+        $presencasCountAssistidos = $presencasCountAssistidos->get()->toArray();
+        $presencasCountMembros = $presencasCountMembros->get()->toArray();
         $acompanhantes = $acompanhantes->sum('nr_acompanhantes');
+        $presencasCountPTH = $presencasCountPTH->sum('nr_acompanhantes');
 
+        // Caso exista presença na varíavel, adiciona os PTH a contagem, caso não exista, gera uma com PTH
+        if (array_search(true, array_column($presencasCountAssistidos, 'presenca'))) {
+            $presencasCountAssistidos[array_search(true, array_column($presencasCountAssistidos, 'presenca'))]->total += $presencasCountPTH;
+        } else {
+            $presencasCountAssistidos[] = (object) ['presenca' => true, 'total' => $presencasCountPTH];
+        }
 
-        $presencasCountMembros = $presencasCountMembros->get();
-        $presencasCountMembros = json_decode(json_encode($presencasCountMembros));
-
-
-
+        // Caso a varíavel saia 100% nula, plota o grafico vazio
         if ($presencasCountAssistidos == []) {
             $presencasCountAssistidos[0] = 0;
             $presencasCountAssistidos[1] = 0;
+
+            // Caso tenha apenas falta, desloca a presença para a segunda posição, e deixa a primeira vazia
         } elseif (!in_array(false, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
             $presencasCountAssistidos[1] = $presencasCountAssistidos[0]->total;
             $presencasCountAssistidos[0] = 0;
+
+            // Caso não tenha presenca, cria um espaço falso na segunda posição para plotar o gráfico
         } elseif (!in_array(true, array_values(array_column($presencasCountAssistidos, 'presenca')))) {
             $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
             $presencasCountAssistidos[1] = 0;
+
+            // Caso todo os dados estejam de acordo, plota o gráfico com os dados exatamente como pensado
         } else {
             $presencasCountAssistidos[0] = $presencasCountAssistidos[0]->total;
             $presencasCountAssistidos[1] = $presencasCountAssistidos[1]->total;
         }
         $presencasCountAssistidos[2] =  $acompanhantes;
 
+        // Caso a varíavel saia 100% nula, plota o grafico vazio
         if ($presencasCountMembros == []) {
             $presencasCountMembros[0] = 0;
             $presencasCountMembros[1] = 0;
+
+            // Caso tenha apenas falta, desloca a presença para a segunda posição, e deixa a primeira vazia
         } elseif (!in_array(false, array_values(array_column($presencasCountMembros, 'presenca')))) {
             $presencasCountMembros[1] = $presencasCountMembros[0]->total;
             $presencasCountMembros[0] = 0;
+
+            // Caso não tenha presenca, cria um espaço falso na segunda posição para plotar o gráfico
         } elseif (!in_array(true, array_values(array_column($presencasCountMembros, 'presenca')))) {
             $presencasCountMembros[0] = $presencasCountMembros[0]->total;
             $presencasCountMembros[1] = 0;
+
+            // Caso todo os dados estejam de acordo, plota o gráfico com os dados exatamente como pensado
         } else {
             $presencasCountMembros[0] = $presencasCountMembros[0]->total;
             $presencasCountMembros[1] = $presencasCountMembros[1]->total;
         }
+
+        //
         $presencasCountMembros[2] = 0;
 
-        return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasCountAssistidos', 'presencasCountMembros', 'reunioesPesquisa', 'dt_inicio', 'dt_fim', 'idCronogramaPesquisa'));
+        return view('relatorios.relatorio-assistido-reuniao', compact('reunioesDirigentes', 'presencasCountAssistidos', 'presencasCountMembros', 'reunioesPesquisa', 'dt_inicio', 'dt_fim'));
     }
 
     /**
@@ -728,10 +756,7 @@ class RelatoriosController extends Controller
             ->select('m.id', 'p.nome_completo', 'dc.data', 'pm.presenca')
             ->get();
 
-        $presencasMembrosArray = array();
-        foreach ($presencasMembros as $element) {
-            $presencasMembrosArray["$element->nome_completo"][] = $element;
-        }
+
 
         $presencasCountAssistidos = $presencasCountAssistidos->get();
         $presencasCountAssistidos = json_decode(json_encode($presencasCountAssistidos));
@@ -741,6 +766,11 @@ class RelatoriosController extends Controller
 
         $presencasCountMembros = $presencasCountMembros->get();
         $presencasCountMembros = json_decode(json_encode($presencasCountMembros));
+
+        $presencasMembrosArray = array();
+        foreach ($presencasMembros as $element) {
+            $presencasMembrosArray["$element->nome_completo"][] = $element;
+        }
 
         $presencasAssistidosArray = array();
         foreach ($presencasAssistidos as $element) {
@@ -884,7 +914,6 @@ class RelatoriosController extends Controller
             ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
             ->leftJoin('setor as st', 'gr.id_setor', 'st.id')
             ->whereIn('t.id', [1, 2, 3, 4, 6])
-            ->whereIn('tr.status', [2, 3, 4])
             ->select(
                 'cro.id',
                 'cro.h_inicio',
@@ -900,7 +929,6 @@ class RelatoriosController extends Controller
                 'st.id as id_setor',
             )
             ->orderBy('gr.nome');
-
 
         // Consultar setores para o filtro
         $setores = DB::table('setor')
@@ -946,49 +974,92 @@ class RelatoriosController extends Controller
         $grupo2 = $grupo2->get();
         $setores = $setores->get();
 
+
+
+        // Retorna todos os tratamentos ativos, por grupo
+        $tratamentosAtivos = DB::table('tratamento as tra')
+            ->select('tra.id_reuniao', DB::raw("COUNT('tra.id')"))
+            ->leftJoin('encaminhamento as enc', 'tra.id', 'enc.id')
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->groupBy('tra.id_reuniao')
+            ->where(function ($query) use ($dt_inicio, $dt_fim) {
+
+                // Data Inicio Tratamento
+                $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
+                    $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
+                        $innerQuery->where('tra.dt_inicio', '>=', $dt_inicio)->where('tra.dt_inicio', '<=', $dt_fim);
+                    });
+                    $subQuery->orWhere('tra.dt_inicio', '<=', $dt_inicio);
+                });
+
+                // Data Fim Tratamento
+                $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
+                    $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
+                        $innerQuery->where('tra.dt_fim', '>=', $dt_inicio)->where('tra.dt_inicio', '<=', $dt_fim);
+                    });
+                    $subQuery->orWhere('tra.dt_fim', '>=', $dt_fim);
+                    $subQuery->orWhere('tra.dt_fim', NULL);
+                });
+            })
+            ->get()
+            ->toArray();
+
+        // Retorna os números de acompanhantes, por grupo
+        $acomp = DB::table('dias_cronograma as dc')
+            //->leftJoin('presenca_cronograma as pc', 'dc.id', 'pc.id_dias_cronograma')
+            ->where('data', '>=', $dt_inicio)
+            ->where('data', '<=', $dt_fim)
+            ->groupBy('id_cronograma')
+            ->select(
+                'id_cronograma',
+                DB::raw('SUM(dc.nr_acompanhantes) as acomp'),
+                //  DB::raw('SUM(CASE WHEN pc.presenca = TRUE THEN 1 ELSE 0 END) as assist')
+            )->get()
+            ->toArray();
+
+        // Retorna os números de passes reais, por grupo
+        $passes = DB::table('dias_cronograma as dc')
+            ->leftJoin('presenca_cronograma as pc', 'dc.id', 'pc.id_dias_cronograma')
+            ->where('data', '>=', $dt_inicio)
+            ->where('data', '<=', $dt_fim)
+            ->groupBy('id_cronograma')
+            ->select(
+                'id_cronograma',
+                DB::raw('SUM(CASE WHEN pc.presenca = TRUE THEN 1 ELSE 0 END) as assist')
+            )->get()
+            ->toArray();
+
+        // dd($passes);
+
+
+        // if ($request->tipo_visualizacao == 2) {
+        //     Carbon::setlocale(config('app.locale'));
+        //     $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
+
+        //     foreach ($meses as $mes) {
+
+        //         $tratamentosAtivos
+        //         $acomp
+        //         $passes
+        //     }
+        // } else {
         // Insere os atendimentos
         foreach ($grupos as $key => $grupo) {
 
-            $tratamentosAtivos = DB::table('tratamento as tra')
-                ->leftJoin('encaminhamento as enc', 'tra.id', 'enc.id')
-                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-                ->where('id_reuniao', $grupo->id)
-                ->where(function ($query) use ($dt_inicio, $dt_fim) {
 
-                    // Data Inicio Tratamento
-                    $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
-                        $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
-                            $innerQuery->where('tra.dt_inicio', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
-                        });
-                        $subQuery->orWhere('tra.dt_inicio', '<', $dt_inicio);
-                    });
-
-                    // Data Fim Tratamento
-                    $query->where(function ($subQuery) use ($dt_inicio, $dt_fim) {
-                        $subQuery->where(function ($innerQuery) use ($dt_inicio, $dt_fim) {
-                            $innerQuery->where('tra.dt_fim', '>', $dt_inicio)->where('tra.dt_inicio', '<', $dt_fim);
-                        });
-                        $subQuery->orWhere('tra.dt_fim', '>', $dt_fim);
-                        $subQuery->orWhere('tra.dt_fim', NULL);
-                    });
-                })
-                ->count();
-
-            $passes = DB::table('dias_cronograma')
-                ->where('id_cronograma', $grupo->id)
-                ->where('data', '>=', $dt_inicio)
-                ->where('data', '<', $dt_fim)
-                ->sum('nr_acompanhantes');
+            $tratamentosAtivosForeach = (clone $tratamentosAtivos[array_search($grupo->id, array_column($tratamentosAtivos, 'id_reuniao'))])->count;
+            $acompForeach = array_search($grupo->id, array_column($acomp, 'id_cronograma')) !== false ? (clone $acomp[array_search($grupo->id, array_column($acomp, 'id_cronograma'))])->acomp : null;
+            $passesForeach = array_search($grupo->id, array_column($passes, 'id_cronograma')) !== false ? (clone $passes[array_search($grupo->id, array_column($passes, 'id_cronograma'))])->assist : null;
 
             if ($grupo->id_tp_tratamento == 3) { // Caso seja um grupo de PTH, conta os assistidos
-                $grupos[$key]->atendimentos =  $passes;
+                $grupos[$key]->passes =  $acompForeach;
+                // $grupos[$key]->acompanhantes =  '-';
             } else {
-                $grupos[$key]->atendimentos =  $tratamentosAtivos;
-                $grupos[$key]->acompanhantes =  $passes;
+                $grupos[$key]->atendimentos =  $tratamentosAtivosForeach;
+                $grupos[$key]->acompanhantes =  $acompForeach;
+                $grupos[$key]->passes =  $passesForeach;
             }
         }
-
-
 
         // Pesquisa de grupos
         if ($request->grupo != null) {
@@ -999,27 +1070,35 @@ class RelatoriosController extends Controller
                     $buffer[$grupo->id]['descricao'] = $grupo->descricao;
                     $buffer[$grupo->id]['nome'] = $grupo->nome;
                     $buffer[$grupo->id]['sigla'] =  $grupo->sigla;
-                    $buffer[$grupo->id]['atendimentos'] = $grupo->atendimentos;
                     $buffer[$grupo->id]['dia_semana'] = $grupo->dia;
                     $buffer[$grupo->id]['h_inicio'] = $grupo->h_inicio;
                     $buffer[$grupo->id]['h_fim'] = $grupo->h_fim;
                     $buffer[$grupo->id]['id_tp_tratamento'] = $grupo->id_tp_tratamento;
 
-                    isset($grupo->acompanhantes) ?  $buffer[$grupo->id]['acompanhantes'] = $grupo->acompanhantes : null;
+                    isset($grupo->atendimentos) ? $buffer[$grupo->id]['atendimentos'] = $grupo->atendimentos : null;
+                    isset($grupo->acompanhantes) ? $buffer[$grupo->id]['acompanhantes'] = $grupo->acompanhantes : null;
+                    isset($grupo->passes) ? $buffer[$grupo->id]['passes'] = $grupo->passes : null;
                 }
             }
             $grupos = $buffer;
         } else {
-
             $buffer = array();
             foreach ($grupos as $grupo) {
                 $buffer[$grupo->id_tp_tratamento]['descricao'] = $grupo->descricao;
                 $buffer[$grupo->id_tp_tratamento]['sigla'] =  $grupo->sigla;
                 $buffer[$grupo->id_tp_tratamento]['id'] =  $grupo->id;
 
-                array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
-                    $buffer[$grupo->id_tp_tratamento]['atendimentos'] += $grupo->atendimentos :
-                    $buffer[$grupo->id_tp_tratamento]['atendimentos'] = $grupo->atendimentos;
+                if (isset($grupo->atendimentos)) {
+                    array_key_exists("atendimentos", $buffer[$grupo->id_tp_tratamento]) ?
+                        $buffer[$grupo->id_tp_tratamento]['atendimentos'] += $grupo->atendimentos :
+                        $buffer[$grupo->id_tp_tratamento]['atendimentos'] = $grupo->atendimentos;
+                }
+
+                if (isset($grupo->passes)) {
+                    array_key_exists("passes", $buffer[$grupo->id_tp_tratamento]) ?
+                        $buffer[$grupo->id_tp_tratamento]['passes'] += $grupo->passes :
+                        $buffer[$grupo->id_tp_tratamento]['passes'] = $grupo->passes;
+                }
 
                 if (isset($grupo->acompanhantes)) {
                     array_key_exists("acompanhantes", $buffer[$grupo->id_tp_tratamento]) ?
@@ -1027,12 +1106,16 @@ class RelatoriosController extends Controller
                         $buffer[$grupo->id_tp_tratamento]['acompanhantes'] = $grupo->acompanhantes;
                 }
 
-
                 $grupos = $buffer;
             }
 
             // Retornar a view com os dados
         }
+        //  }
+
+
+
+
         return view('relatorios.gerenciar-relatorio-tratamento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
     }
 
@@ -1465,6 +1548,9 @@ class RelatoriosController extends Controller
     }
     public function curriculo(String $id)
     {
+        session()->flash('usuario.url', str_replace(url('/'), '', url()->previous())); // Salva o caminho de entrada desta view
+        session()->reflash(); // Permite um acesso temporário para inclusão
+
         $now = Carbon::today();
 
         // Retorna a view com os dados
@@ -1499,7 +1585,7 @@ class RelatoriosController extends Controller
                 'm.dt_fim',
                 'tt.descricao as trabalho',
                 DB::raw("(CASE WHEN m.dt_fim > '1969-06-12' THEN 'Inativo' ELSE 'Ativo' END) as status_membro"),
-                DB::raw("(CASE WHEN cro.modificador = 3 THEN 'Experimental' WHEN cro.modificador = 4 THEN 'Em Férias' WHEN cro.data_fim < '$now' THEN 'Inativo' ELSE 'Ativo' END) as status"),
+                DB::raw("(CASE WHEN cro.modificador = 3 THEN 'Experimental' WHEN cro.modificador = 4 THEN 'Em Férias' WHEN cro.data_fim <= '$now' THEN 'Inativo' ELSE 'Ativo' END) as status"),
 
             )
             ->leftJoin('cronograma as cro', 'm.id_cronograma', 'cro.id')
@@ -1577,62 +1663,269 @@ class RelatoriosController extends Controller
             ->get()
             ->toArray();
 
-         //   dd($membros, $dadosP);
+        //   dd($membros, $dadosP);
 
 
         $pdf = Pdf::loadView('relatorios.pdf-curriculo-membro', compact('membros', 'dadosP'))->setPaper('a4', 'landscape');
-        return $pdf->download( $dadosP->nome_completo .'.pdf');
-
+        return $pdf->download($dadosP->nome_completo . '.pdf');
     }
-<<<<<<< Updated upstream
-=======
 
     public function passes(Request $request)
     {
         $now = Carbon::now()->format('Y-m-d');
 
-        $trata = DB::table('tipo_tratamento')->whereIn('id',[1,2,3])->get();
-
-
-        $passe = DB::table('dias_cronograma as dc')
-            ->leftJoin('presenca_cronograma as pc', 'dc.id', 'pc.id_dias_cronograma')
-            ->leftJoin('cronograma as c', 'dc.id_cronograma', 'c.id')
-            ->leftJoin('tipo_tratamento as t', 'c.id_tipo_tratamento', 't.id')
-            ->select('t.sigla as tsigla', 't.descricao as tnome',
-             DB::raw('SUM(dc.nr_acompanhantes) as acomp'),
-             DB::raw('SUM(CASE WHEN pc.presenca = TRUE THEN 1 ELSE 0 END) as assist'));
-
-           
+        $trata = DB::table('tipo_tratamento')->whereIn('id', [1, 2, 3, 6])->orderBy('descricao')->get();
 
         $dt_inicio = $request->dt_inicio;
         $dt_fim = $request->dt_fim;
         $tratamento = $request->tratamento;
 
-       // dd($dt_inicio);
+        // Verifica se as variáveis têm valor, senão define um valor padrão
+        $dt_inicio = $dt_inicio ? $dt_inicio : Carbon::now()->startOfMonth()->format('Y-m-d');
+        $dt_fim = $dt_fim ? $dt_fim : Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        $passe = DB::table('dias_cronograma as dc')
+            ->leftJoin('presenca_cronograma as pc', 'dc.id', 'pc.id_dias_cronograma')
+            ->leftJoin('cronograma as c', 'dc.id_cronograma', 'c.id')
+            ->leftJoin('tipo_tratamento as t', 'c.id_tipo_tratamento', 't.id')
+            ->select(
+                't.id as t_id',
+                't.sigla as tsigla',
+                't.descricao as tnome',
+                DB::raw("(DATE_TRUNC('MONTH', dc.data) + INTERVAL '1 MONTH' - INTERVAL '1 DAY') as ultimo_dia_mes"),
+                DB::raw('SUM(dc.nr_acompanhantes) as acomp'),
+                DB::raw('SUM(CASE WHEN pc.presenca = TRUE THEN 1 ELSE 0 END) as assist')
+            );
 
         if ($request->dt_inicio) {
-        $passe->whereDate('dc.data', '>=', $dt_inicio);    
+            $passe->whereDate('dc.data', '>=', $dt_inicio);
         }
         if ($request->dt_fim) {
-            $passe->whereDate('dc.data', '<=', $dt_fim);    
+            $passe->whereDate('dc.data', '<=', $dt_fim);
         }
 
-        if ($tratamento === null){
-            $passe->whereIn('t.id', [1,2,3]);
-        }else{
+        if ($tratamento === null) {
+            $passe->whereIn('t.id', [1, 2, 3, 6]);
+        } else {
             $passe->where('t.id', $tratamento);
         }
 
-        $passe = $passe->groupBy('t.sigla', 't.descricao')->get();
+        $passe = $passe->groupBy('t.id', 't.sigla', 't.descricao', DB::raw("(DATE_TRUNC('MONTH', dc.data) + INTERVAL '1 MONTH' - INTERVAL '1 DAY')"))
+            ->orderBy('t.descricao')
+            ->orderBy(DB::raw("(DATE_TRUNC('MONTH', dc.data) + INTERVAL '1 MONTH' - INTERVAL '1 DAY')"))
+            ->get();
 
-        $qtd_ass = $passe->count('pc.presenca', true);
+        // Para exibição, podemos organizar os dados para que a soma apareça antes de iniciar a próxima lista de t.id
+        $resultadoAgrupado = [];
+        foreach ($passe as $item) {
+            $t_id = $item->t_id;
 
-        $qtd_acomp = $passe->sum('dc.nr_acompanhantes');
+            if (!isset($resultadoAgrupado[$t_id])) {
+                $resultadoAgrupado[$t_id] = [
+                    'tsigla' => $item->tsigla,
+                    'tnome' => $item->tnome,
+                    'dados' => [],
+                    'total_assist' => 0,
+                    'total_acomp' => 0, // Adicionando o total de acompanhantes
+                ];
+            }
 
-          //dd($passe, $qtd_ass, $qtd_acomp);
-        
-        return view('relatorios.passes', compact('dt_inicio', 'dt_fim', 'trata', 'passe', 'qtd_acomp', 'qtd_ass'));
+            $resultadoAgrupado[$t_id]['dados'][] = [
+                'acomp' => $item->acomp,
+                'assist' => $item->assist,
+                'ultimo_dia_mes' => $item->ultimo_dia_mes, // Adicionando a chave
+            ];
+
+            $resultadoAgrupado[$t_id]['total_assist'] += $item->assist;
+            $resultadoAgrupado[$t_id]['total_acomp'] += $item->acomp; // Somando acompanhantes
+        }
+
+        $totalGeralAssistidos = array_sum(array_column($resultadoAgrupado, 'total_assist'))
+            + array_sum(array_column($resultadoAgrupado, 'total_acomp'));
+        //dd($resultadoAgrupado);
+
+        return view('relatorios.passes', [
+            'passe' => json_decode(json_encode($resultadoAgrupado), true),
+            'dt_inicio' => $dt_inicio,
+            'dt_fim' => $dt_fim,
+            'tratamento' => $tratamento,
+            'trata' => $trata,
+            'totalGeralAssistidos' => $totalGeralAssistidos, // Adicionando o total geral
+        ]);
     }
-    
->>>>>>> Stashed changes
+    public function AtendimentosGeral(Request $request)
+    {
+        $now = Carbon::now()->format('Y-m-d');
+        $dt_inicio = $request->dt_inicio == null ? Carbon::now()->subMonth()->firstOfMonth() : Carbon::parse($request->dt_inicio);
+        $dt_fim = $request->dt_fim == null ? Carbon::today() : Carbon::parse($request->dt_fim);
+        $multiplicador = ceil(($dt_fim->diffInDays($dt_inicio) + 1) / 7);
+
+        // Presenças, Faltas,Total, Max_vagas
+
+        // Mês, ano, normal
+
+        $tipo_tratamento = $request->tipo_tratamento;
+        $presencas = DB::table('presenca_cronograma as pc')
+            ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<=', $dt_fim)
+            ->when($request->tipo_tratamento and $request->tipo_tratamento != 5, function ($query) use ($tipo_tratamento) {
+                $query->where('enc.id_tipo_tratamento', $tipo_tratamento);
+            });
+
+        $maxAtend = DB::table('cronograma')
+            ->where(function ($query) use ($dt_fim) {
+                $query->where('data_fim', '>=', $dt_fim);
+                $query->orWhereNull('data_fim');
+            })
+            ->whereIn('id_tipo_tratamento', [1, 2, 4, 6])
+            ->when($request->tipo_tratamento and $request->tipo_tratamento != 5, function ($query) use ($tipo_tratamento) {
+                $query->where('id_tipo_tratamento', $tipo_tratamento);
+            });
+
+
+        if ($request->tipo_visualizacao == 2) {
+
+            Carbon::setlocale(config('app.locale'));
+            $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
+
+            foreach ($meses as $mes) {
+
+                $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F')) . ' - ' . $mes->format('Y')] = [
+                    'Presenças' => (clone $presencas)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->where('pc.presenca', true)->count(),
+                    'Faltas' => (clone $presencas)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->where('pc.presenca', false)->count(),
+                    'Vagas Disponibilizadas' => (clone $presencas)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->count(),
+                    'Capacidade Máxima' => ($maxAtend->sum('max_atend') * round($multiplicador / count($meses))),
+                ];
+            }
+        } elseif ($request->tipo_visualizacao == 3) {
+
+
+            $meses = collect(range($dt_inicio->year, $dt_fim->year))
+                ->map(fn($ano) => Carbon::create($ano, 1, 1))
+                ->toArray();
+
+            foreach ($meses as $mes) {
+
+                $dadosChart[$mes->format('Y')] = [
+                    'Presenças' => (clone $presencas)->whereYear('dc.data', $mes->year)->where('pc.presenca', true)->count(),
+                    'Faltas' => (clone $presencas)->whereYear('dc.data', $mes->year)->where('pc.presenca', false)->count(),
+                    'Vagas Disponibilizadas' => (clone $presencas)->whereYear('dc.data', $mes->year)->count(),
+                    'Capacidade Máxima' => ($maxAtend->sum('max_atend') * round($multiplicador / count($meses))),
+                ];
+            }
+        } else {
+            $dadosChart = [
+                'Presenças' => (clone $presencas)->where('pc.presenca', true)->count(),
+                'Faltas' => (clone $presencas)->where('pc.presenca', false)->count(),
+                'Vagas Disponibilizadas' => (clone $presencas)->count(),
+                'Capacidade Máxima' => ($maxAtend->sum('max_atend') * $multiplicador),
+            ];
+        }
+
+
+        return view('relatorios.relatorio-geral-atendimento', compact('dt_inicio', 'dt_fim', 'dadosChart'));
+    }
+
+    public function AtendimentosGeral2(Request $request)
+    {
+        $now = Carbon::now()->format('Y-m-d');
+        $ano = $request->input('ano', date('Y'));
+
+        $dt_inicio = date("{$ano}-01-01 00:00:00");
+        $dt_fim = date("{$ano}-12-31 23:59:59");
+
+
+        // Presenças, Faltas, Total, Alta, Transferido, Desistência
+
+        // Mês, ano, normal
+
+        $tipo_tratamento = $request->tipo_tratamento;
+        $presencas = DB::table('presenca_cronograma as pc')
+            ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<=', $dt_fim)
+            ->whereNot('enc.id_tipo_tratamento', 3)
+            ->when($request->tipo_tratamento and !in_array(3, $request->tipo_tratamento) and !in_array(5, $request->tipo_tratamento), function ($query) use ($tipo_tratamento) {
+                $query->whereIn('enc.id_tipo_tratamento', $tipo_tratamento);
+            });
+
+        $harmonizacao = DB::table('dias_cronograma as dc')
+        ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<=', $dt_fim)
+            ->where('cro.id_tipo_tratamento', 3);
+
+        $alta = DB::table('tratamento as tr')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->where('tr.dt_fim', '>=', $dt_inicio)
+            ->where('tr.dt_fim', '<=', $dt_fim)
+            ->when($request->tipo_tratamento and !in_array(5, $request->tipo_tratamento), function ($query) use ($tipo_tratamento) {
+                $query->whereIn('enc.id_tipo_tratamento', $tipo_tratamento);
+            });
+
+
+        $transferidos = DB::table('tratamento_grupos as tg')
+            ->leftJoin('tratamento as tr', 'tg.id_tratamento', '=', 'tr.id')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->where('tg.dt_fim', '>=', $dt_inicio)
+            ->where('tg.dt_fim', '<=', $dt_fim)
+            ->when($request->tipo_tratamento and !in_array(5, $request->tipo_tratamento), function ($query) use ($tipo_tratamento) {
+                $query->whereIn('enc.id_tipo_tratamento', $tipo_tratamento);
+            });
+
+        $tratamentos = DB::table('tratamento as tr')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->where('tr.dt_inicio', '>=', $dt_inicio)
+            ->where('tr.dt_inicio', '<=', $dt_fim)
+            ->when($request->tipo_tratamento and !in_array(5, $request->tipo_tratamento), function ($query) use ($tipo_tratamento) {
+                $query->whereIn('enc.id_tipo_tratamento', $tipo_tratamento);
+            });
+
+        $maxAtend = DB::table('cronograma')
+            ->where(function ($query) use ($dt_fim) {
+                $query->where('data_fim', '>=', $dt_fim);
+                $query->orWhereNull('data_fim');
+            })
+            ->when($request->tipo_tratamento and !in_array(5, $request->tipo_tratamento), function ($query) use ($tipo_tratamento) {
+                $query->whereIn('id_tipo_tratamento', $tipo_tratamento);
+            }, function ($query) {
+                $query->whereIn('id_tipo_tratamento', [1, 2, 3, 6]);
+            })
+            ->select(DB::raw('SUM(max_atend) as max_atend'), DB::raw('SUM(max_trab) as max_trab'))->first();
+        Carbon::setlocale(config('app.locale'));
+        $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
+
+
+
+        foreach ($meses as $mes) {
+
+            $pre = (clone $presencas)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->where('pc.presenca', true)->count();
+            $aus =  (clone $presencas)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->where('pc.presenca', false)->count();
+            $trat = (clone $tratamentos)->whereMonth('tr.dt_inicio', $mes->month)->whereYear('tr.dt_inicio', $mes->year)->count();
+
+            $dadosFreq[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                'Total' => (clone $presencas)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->count(),
+                'Harmonização' => (clone $harmonizacao)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->sum('dc.nr_acompanhantes'),
+                'Presenças' => $pre,
+                'PCT Presenças' => $pre ? round(($pre * 100) / ($pre + $aus), 2)  : 0,
+                'Ausentes' => $aus,
+                'PCT Ausentes' => $aus ? round(($aus * 100) / ($pre + $aus), 2)  : 0,
+            ];
+            $dadosTrat[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                'Tratamentos' => $trat,
+                'Alta' => (clone $alta)->whereMonth('dt_fim', $mes->month)->whereYear('dt_fim', $mes->year)->where('status', 4)->count(),
+                'PCT Alta' => $trat ? round(((clone $alta)->whereMonth('dt_fim', $mes->month)->whereYear('dt_fim', $mes->year)->where('status', 4)->count() * 100) / $trat, 2)  : 0,
+                'Transferidos' => (clone $transferidos)->whereMonth('tg.dt_fim', $mes->month)->whereYear('tg.dt_fim', $mes->year)->count(),
+                'PCT Transferidos' => $trat ? round(((clone $transferidos)->whereMonth('tg.dt_fim', $mes->month)->whereYear('tg.dt_fim', $mes->year)->count() * 100) / $trat, 2)  : 0,
+                'Desistência' => (clone $alta)->whereMonth('tr.dt_fim', $mes->month)->whereYear('tr.dt_fim', $mes->year)->where('status', 5)->count(),
+                'PCT Desistência' => $trat ? round(((clone $alta)->whereMonth('tr.dt_fim', $mes->month)->whereYear('tr.dt_fim', $mes->year)->where('status', 5)->count() * 100) / $trat, 2)  : 0,
+            ];
+        }
+        return view('relatorios.relatorio-geral-atendimento2', compact('dt_inicio', 'dt_fim', 'dadosFreq', 'dadosTrat', 'maxAtend'));
+    }
 }

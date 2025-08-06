@@ -67,10 +67,10 @@
 
                         <tr class="">
                             <td
-                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
+                                style="{{ !$encaminhamento->ptd && !$encaminhamento->alta_ptd_proamo ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
                                 {{ $encaminhamento->nome_completo }}</td>
                             <td
-                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
+                                style="{{ !$encaminhamento->ptd && !$encaminhamento->alta_ptd_proamo ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
                                 {{ $encaminhamento->nome }}</td>
                             {{-- <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
                                 @if ($encaminhamento->contagem == 0)
@@ -80,10 +80,10 @@
                                 @endif
                             </td> --}}
                             <td
-                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
+                                style="{{ !$encaminhamento->ptd && !$encaminhamento->alta_ptd_proamo ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
                                 {{ $encaminhamento->faltas }} </td>
                             <td
-                                style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
+                                style="{{ !$encaminhamento->ptd && !$encaminhamento->alta_ptd_proamo ? 'color:#dc3545; font-weight: bold;' : '' }}{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
                                 {{ $encaminhamento->status }}</td>
                             <td
                                 style="{{ ($encaminhamento->id_status < 3 and $encaminhamento->avaliacao < 91) ? 'background-color: #FFFF61' : '' }}">
@@ -207,6 +207,19 @@
                                         <i class="fa fa-person-walking fa-lg" style="font-size: 1rem; color:#000;"></i>
                                     </button>
                                 @endif
+                                @if ($encaminhamento->id_status != 1 and in_array(49, session()->get('usuario.acesso')))
+                                    <button type="button" class="btn btn-outline-danger btn-sm tooltips"
+                                        data-bs-toggle="modal" data-bs-target="#modalB{{ $encaminhamento->id }}">
+                                        <span class="tooltiptext" style="width: 130px">Declarar Alta PTD</span>
+                                        <i class="fa-solid fa-award" style="font-size: 1rem; color:#000;"></i>
+                                    </button>
+                                @else
+                                    <button type="button" disabled class="btn btn-outline-danger btn-sm tooltips"
+                                        data-bs-toggle="modal" data-bs-target="#modalB{{ $encaminhamento->id }}">
+                                        <span class="tooltiptext" style="width: 150px">Declarar Alta PTD</span>
+                                        <i class="fa-solid fa-award fa-lg" style="font-size: 1rem; color:#000;"></i>
+                                    </button>
+                                @endif
 
                                 <a href="/visualizar-proamo/{{ $encaminhamento->id }}" type="button"
                                     class="btn btn-outline-primary btn-sm tooltips">
@@ -217,11 +230,11 @@
                             </td>
                         </tr>
 
-                        @csrf
                         <!-- Modal Declarar Alta -->
                         <div class="modal fade" id="modalA{{ $encaminhamento->id }}" tabindex="-1"
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <form action="/alta-proamo/{{ $encaminhamento->id }}" class="form-horizontal mt-4">
+                            <form action="/alta-proamo/{{ $encaminhamento->ide }}" class="form-horizontal mt-4">
+                                @csrf
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header bg-danger text-white">
@@ -254,8 +267,48 @@
                                             </button>
                                         </div>
                                     </div>
+                                </div>
                             </form>
                         </div>
+                        <!-- Modal Declarar Alta -->
+
+                        <!-- Modal Declarar Alta PTD -->
+                        <div class="modal fade" id="modalB{{ $encaminhamento->id }}" tabindex="-1"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                @csrf
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title">Declarar Alta PTD</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <center>
+                                            <div class="modal-body">
+                                                Tem certeza que deseja declarar a não necessidade do assistido participar de
+                                                um PTD?
+                                                <br />
+                                                <br />
+                                                <br />
+                                                <span
+                                                    style="color:rgb(196, 27, 27); font-size: 15px; font-style: italic">Essa
+                                                    ação não inativa nenhum PTD ativo!</span>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger"
+                                                    data-bs-dismiss="modal">Cancelar</button>
+                                                <a href="/alta-ptd-proamo/{{ $encaminhamento->id }}" type="button"
+                                                    class="btn btn-primary">Cofirmar</a>
+                                            </div>
+                                    </div>
+                                </div>
+                        </div>
+
+                        <!-- Modal Declarar Alta PTD-->
+
+
+
+
         </div>
         @endforeach
         </tbody>

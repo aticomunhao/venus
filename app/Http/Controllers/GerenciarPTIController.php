@@ -48,7 +48,7 @@ class GerenciarPTIController extends Controller
             }
 
 
-            // Traz todos os encaminhamentos de todos os grupos selecionados // TODO otimitzar para trazer apenas os necessários, ao invés de todos
+            // Traz todos os encaminhamentos de todos os grupos selecionados
             $encaminhamentos = DB::table('tratamento as tr')
                 ->select(
                     'tr.id',
@@ -83,9 +83,19 @@ class GerenciarPTIController extends Controller
                 $encaminhamentos = $encaminhamentos->where('tr.id_reuniao', current($grupos_autorizados));
             }
 
-            $encaminhamentos = $encaminhamentos->get();
+            $encaminhamentos = $encaminhamentos->get()->toArray();
             $totalAssistidos = count($encaminhamentos);
-            return view('pti.gerenciar-pti', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'totalAssistidos'));
+
+            // Recolhe todos os IDs dos presentes do grupo selecionado
+            $presencaHoje = DB::table('presenca_cronograma as pc')
+                ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+                ->whereIn('id_tratamento', array_column($encaminhamentos, 'id'))
+                ->where('dc.data', $hoje)
+                ->pluck('id_tratamento')
+                ->toArray();
+
+
+            return view('pti.gerenciar-pti', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'totalAssistidos', 'presencaHoje'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('tratamento-erro.erro-inesperado', compact('code'));
@@ -200,6 +210,109 @@ class GerenciarPTIController extends Controller
     {
         try {
             $hoje = Carbon::today();
+            $dt_hora = Carbon::now();
+            $todosIDs = DB::table('tratamento as t')
+                ->select('t.id as idt', 'e.id as ide', 'a.id as ida', 'a.id_assistido')
+                ->leftJoin('encaminhamento as e', 't.id_encaminhamento', 'e.id')
+                ->leftJoin('atendimentos as a', 'e.id_atendimento', 'a.id')
+                ->where('t.id', $id)->first();
+
+            // Retorna todos os IDs dos encaminhamentos de tratamento
+            $countTratamentos = DB::table('encaminhamento as enc')
+                ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
+                ->where('at.id_assistido', $todosIDs->id_assistido)
+                ->where('enc.status_encaminhamento', '<', 3) // 3 => Finalizado, Traz apenas os ativos (Para Agendar, Agendado)
+                ->pluck('id_tipo_tratamento')->toArray();
+
+
+            // Finaliza o tratamento PTI
+            DB::table('tratamento')->where('id', $id)->update(['status' => 4]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $id,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_origem' => 3, // Tratamento
+                'id_observacao' => 4,
+                'data_hora' =>  $dt_hora
+            ]);
+
+            // Finaliza o encaminhamento PTI
+            DB::table('encaminhamento')->where('id', $todosIDs->ide)->update(['status_encaminhamento' => 3]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $id,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_origem' => 2, // Encaminhamento
+                'id_observacao' => 3,
+                'data_hora' => $dt_hora
+            ]);
+
+            // Caso já exista um encaminhamento PTD
+            if (in_array(1, $countTratamentos)) {
+
+                // Atualiza todos os tratamentos PTD ativos para infinitos
+                $ptdInfinito = DB::table('tratamento as tr')
+                    ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+                    ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+                    ->where('at.id_assistido', $todosIDs->id_assistido)
+                    ->where('enc.id_tipo_tratamento', 1) // PTD
+                    ->where('tr.status', '<', 3); // Ativos
+
+                $idPtdInfinito = $ptdInfinito->first();
+
+                if ($idPtdInfinito) {
+                    $ptdInfinito->update([
+                        'tr.dt_fim' => null
+                    ]);
+
+                    DB::table('log_atendimentos')->insert([
+                        'id_referencia' => $idPtdInfinito,
+                        'id_usuario' => session()->get('usuario.id_usuario'),
+                        'id_acao' => 1, // mudou de Status para
+                        'id_origem' => 2, // Encaminhamento
+                        'id_observacao' => 3,
+                        'data_hora' => $dt_hora
+                    ]);
+                }
+            } else {
+
+                // Insere um novo encaminhamento PTD
+                $ptd = DB::table('encaminhamento')->insertGetId([
+                    'dh_enc' => $hoje,
+                    'id_usuario' => session()->get('usuario.id_pessoa'),
+                    'status_encaminhamento' => 1, // Aguardando Agendamento
+                    'id_tipo_encaminhamento' => 2, // Tratamento
+                    'id_atendimento' => $todosIDs->ida,
+                    'id_tipo_tratamento' => 1 // PTD
+
+                ]);
+
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $ptd,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 2, // mudou de Status para
+                    'id_origem' => 2, // Encaminhamento
+                    'data_hora' => $dt_hora
+                ]);
+            }
+
+            return redirect()->back();
+        } catch (\Exception $e) {
+            $code = $e->getCode();
+            return view('tratamento-erro.erro-inesperado', compact('code'));
+        }
+    }
+
+    public function nutres(Request $request, string $id)
+    {
+        try {
+            $hoje = Carbon::today();
+            $dt_hora = Carbon::now();
             $todosIDs = DB::table('tratamento as t')
                 ->select('t.id as idt', 'e.id as ide', 'a.id as ida', 'a.id_assistido')
                 ->leftJoin('encaminhamento as e', 't.id_encaminhamento', 'e.id')
@@ -218,26 +331,60 @@ class GerenciarPTIController extends Controller
             // Finaliza o tratamento PTI
             DB::table('tratamento')->where('id', $id)->update(['status' => 4]);
 
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $id,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_origem' => 3, // Tratamento
+                'id_observacao' => 4,
+                'data_hora' =>  $dt_hora
+            ]);
+
             // Finaliza o encaminhamento PTI
             DB::table('encaminhamento')->where('id', $todosIDs->ide)->update(['status_encaminhamento' => 3]);
+
+            // Insere no histórico a criação do atendimento
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $id,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 1, // mudou de Status para
+                'id_origem' => 2, // Encaminhamento
+                'id_observacao' => 3,
+                'data_hora' => $dt_hora
+            ]);
 
             // Caso já exista um encaminhamento PTD
             if (in_array(1, $countTratamentos)) {
 
                 // Atualiza todos os tratamentos PTD ativos para infinitos
-                DB::table('tratamento as tr')
+                $ptdInfinito = DB::table('tratamento as tr')
                     ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
                     ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
                     ->where('at.id_assistido', $todosIDs->id_assistido)
                     ->where('enc.id_tipo_tratamento', 1) // PTD
-                    ->where('tr.status', '<', 3) // Ativos
-                    ->update([
+                    ->where('tr.status', '<', 3); // Ativos
+
+                $idPtdInfinito = $ptdInfinito->first();
+
+                if ($idPtdInfinito) {
+                    $ptdInfinito->update([
                         'tr.dt_fim' => null
                     ]);
+
+                    DB::table('log_atendimentos')->insert([
+                        'id_referencia' => $idPtdInfinito->id,
+                        'id_usuario' => session()->get('usuario.id_usuario'),
+                        'id_acao' => 1, // mudou de Status para
+                        'id_origem' => 2, // Encaminhamento
+                        'id_observacao' => 3,
+                        'data_hora' => $dt_hora
+                    ]);
+                }
             } else {
 
                 // Insere um novo encaminhamento PTD
-                DB::table('encaminhamento')->insert([
+                $ptd = DB::table('encaminhamento')->insertGetId([
                     'dh_enc' => $hoje,
                     'id_usuario' => session()->get('usuario.id_pessoa'),
                     'status_encaminhamento' => 1, // Aguardando Agendamento
@@ -246,10 +393,20 @@ class GerenciarPTIController extends Controller
                     'id_tipo_tratamento' => 1 // PTD
 
                 ]);
+               
+                DB::table('log_atendimentos')->insert([
+                    'id_referencia' => $ptd,
+                    'id_usuario' => session()->get('usuario.id_usuario'),
+                    'id_acao' => 2, // foi criado
+                    'id_origem' => 2, // Encaminhamento
+                    'data_hora' => $dt_hora
+                ]);
             }
 
+
+
             // Insere uma entrevista NUTRES
-            DB::table('encaminhamento')->insert([
+            $nutres = DB::table('encaminhamento')->insertGetId([
                 'dh_enc' => $hoje,
                 'id_usuario' => session()->get('usuario.id_pessoa'),
                 'status_encaminhamento' => 6, // Aguardando Manutenção
@@ -257,6 +414,14 @@ class GerenciarPTIController extends Controller
                 'id_atendimento' => $todosIDs->ida,
                 'id_tipo_entrevista' => 4 // NUTRES
 
+            ]);
+
+            DB::table('log_atendimentos')->insert([
+                'id_referencia' => $nutres,
+                'id_usuario' => session()->get('usuario.id_usuario'),
+                'id_acao' => 2, // foi Criado
+                'id_origem' => 2, // Encaminhamento
+                'data_hora' => $dt_hora
             ]);
 
             return redirect()->back();

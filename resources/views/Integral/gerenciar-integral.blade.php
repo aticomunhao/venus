@@ -92,8 +92,8 @@
                                     {{ $encaminhamento->contagem }}
                                 @endif
                             </td>
-                            <td> {{ $encaminhamento->presenca }} </td>
-                            <td> {{ $encaminhamento->faltas }} </td>
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}"> {{ $encaminhamento->presenca }} </td>
+                            <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}"> {{ $encaminhamento->faltas }} </td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
                                 {{ $encaminhamento->status }}</td>
                             <td style="{{ !$encaminhamento->ptd ? 'color:#dc3545; font-weight: bold' : '' }}">
@@ -306,32 +306,33 @@
                                 </form>
 
                                 {{--  Modal de Exclusao --}}
-                                <div class="modal fade" id="modal{{ $encaminhamento->id }}" tabindex="-1"
-                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header" style="background-color:#DC4C64">
-                                                <h5 class="modal-title" id="exampleModalLabel" style=" color:white">
-                                                    Retirar
-                                                    Tempo Limite</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Tem certeza que deseja retirar o limite de semanas de <br /><span
-                                                    style="color:#DC4C64; font-weight: bold;">{{ $encaminhamento->nome_completo }}</span>&#63;
-
-                                            </div>
-                                            <div class="modal-footer mt-2">
-                                                <button type="button" class="btn btn-danger"
-                                                    data-bs-dismiss="modal">Cancelar</button>
-                                                <a type="button" class="btn btn-primary"
-                                                    href="/alta-integral/{{ $encaminhamento->id }}">Confirmar
-                                                </a>
+                                <form action="">
+                                    <div class="modal fade" id="modal{{ $encaminhamento->id }}" tabindex="-1"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header" style="background-color:#DC4C64">
+                                                    <h5 class="modal-title" id="exampleModalLabel" style=" color:white">
+                                                        Retirar
+                                                        Tempo Limite</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja retirar o limite de semanas de <br /><span
+                                                        style="color:#DC4C64; font-weight: bold;">{{ $encaminhamento->nome_completo }}</span>&#63;
+                                                </div>
+                                                <div class="modal-footer mt-2">
+                                                    <button type="button" class="btn btn-danger"
+                                                        data-bs-dismiss="modal">Cancelar</button>
+                                                    <a type="button" class="btn btn-primary"
+                                                        href="/infinito-integral/{{ $encaminhamento->ide }}">Confirmar
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </form>
                                 {{-- Fim Modal de Exclusao --}}
 
                                 {{--  Modal de Exclusao --}}
@@ -354,7 +355,7 @@
                                                 <button type="button" class="btn btn-danger"
                                                     data-bs-dismiss="modal">Cancelar</button>
                                                 <a type="button" class="btn btn-primary"
-                                                    href="/alta-integral/{{ $encaminhamento->id }}">Confirmar
+                                                    href="/alta-integral/{{ $encaminhamento->ide }}">Confirmar
                                                 </a>
                                             </div>
                                         </div>

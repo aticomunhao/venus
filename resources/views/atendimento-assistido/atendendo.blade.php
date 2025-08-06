@@ -1,30 +1,24 @@
 @extends('layouts.app')
 
 @section('title')
-    Atendimento Fraterno Individual
+     {{ $grupo ? $grupo->descricao: 'Atendimento Fraterno' }}
 @endsection
 
 @section('content')
     <div class="container-xxl" ;>
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
-            ATENDIMENTO FRATERNO INDIVIDUAL</h4>
+            {{ $grupo ? mb_strtoupper($grupo->descricao) : 'ATENDIMENTO FRATERNO' }}</h4>
         <div class="col-12">
             <br />
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-2">Data
+                        <div class="col">Data
                             <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
                                 value="{{ date('d/m/Y', strtotime($now)) }}" type="text" name="data" id=""
                                 disabled>
                         </div>
-                        <div class="col-3">Grupo
-                            <input class="form-control"
-                                style="text-align:left; font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
-                                value="{{ $grupo }}" name="nome" id="" type="text" disabled>
-                        </div>
-
-                        <div class="col-2">Cod AFI
+                        <div class="col-1">Cod AFI
                             <input class="form-control" style="font-weight:bold; background:#f3f3f3; color:#000;"
                                 type="text" name="id_atendene" id="" value="{{ $atendente }}" disabled>
                         </div>
@@ -33,9 +27,18 @@
                             <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
                                 value="{{ $nome }}" name="nome_usuario" id="" type="text" disabled>
                         </div>
-                        <div class="col-2">Fila de espera
-                            <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
+                        <div class="col-3">Grupo
+                            <input class="form-control"
+                                style="text-align:left; font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
+                                value="{{ $grupo ? $grupo->nome : null }}" name="nome" id="" type="text" disabled>
+                        </div>
+                        <div class="col">Fila de Espera
+                            <input class="form-control " style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
                                 value="" name="nome_usuario" type="text" disabled id="id_pessoas_para_atender">
+                        </div>
+                        <div class="col">Atendentes
+                            <input class="form-control" style="font-weight:bold; background: #f3f3f3; color: rgb(0, 0, 0);"
+                                value="" name="nome_usuario" type="text" disabled id="id_atendentes">
                         </div>
                     </div>
                 </div>
@@ -405,6 +408,16 @@
         .emergencia {
             opacity: 50%;
         }
+
+        @keyframes fila {
+
+            0% { background-color:#f3f0f0 }
+            50% { background-color: #eeaab0 }
+            100% { background-color:#f3f0f0 }
+        }
+        .fila{
+            animation: fila 3s infinite
+        }
     </style>
 
     <script>
@@ -461,7 +474,10 @@
                     dataType: "JSON",
                     success: function(response) {
 
-                        $('#id_pessoas_para_atender').val(response);
+                        $('#id_pessoas_para_atender').val(response.atender);
+                        $('#id_atendentes').val(response.atendentes);
+
+                        response.atender > 0 ? $('#id_pessoas_para_atender').addClass('fila') : $('#id_pessoas_para_atender').removeClass('fila')
                     },
                     error: function(error) {
                         console.error('Erro ao buscar dados:', error);

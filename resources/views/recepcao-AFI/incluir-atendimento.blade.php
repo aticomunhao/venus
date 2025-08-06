@@ -24,10 +24,13 @@
                             </span>
                         </span>
                         <div class="input-group mt-1">
-                            <input type="text" class="form-control " placeholder="Nome..."
-                                aria-label="Recipient's username" aria-describedby="button-addon2" id="cpfAssistido"
+                            <input type="text" class="form-control assistido" placeholder="Nome..."
+                                aria-label="Recipient's username" aria-describedby="button-addon2" id="nomeAssistido"
                                 maxlength="100">
-                            <button class="btn btn-outline-primary" type="button" id="bCpfAssistido">
+                            <input type="text" class="form-control assistido" placeholder="CPF..."
+                                aria-label="Recipient's username" aria-describedby="button-addon2" id="cpfAssistido"
+                                maxlength="14">
+                            <button class="btn btn-outline-primary" type="button" id="bNomeAssistido">
                                 Buscar <i class="bi bi-search"></i>
                             </button>
                             <a href="/dados-pessoa" type="button" class="btn btn-outline-success">
@@ -35,10 +38,10 @@
                             </a>
                         </div>
 
-                        <label id="labelNumeroCpfAssistido" style="font-size: 14px; color:red" hidden>
+                        <label id="labelNumeroNomeAssistido" style="font-size: 14px; color:red" hidden>
                             *Número insuficiente de caracteres.
                         </label>
-                        <label id="labelCpfAssistido" style="font-size: 14px; color:red" hidden>
+                        <label id="labelNomeAssistido" style="font-size: 14px; color:red" hidden>
                             *Nenhuma pessoa encontrada.
                         </label>
                     </div>
@@ -161,11 +164,18 @@
                 <div class="row">
 
 
-                    <div class="col">Tipo AFI
+                    <div class="col-3">Tipo AFI
                         <select class="form-select pedido" id="tipo_afi" name="tipo_afi">
                             <option></option>
                             @foreach ($sexo as $sexos)
                                 <option value="{{ $sexos->id }}">{{ $sexos->tipo }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-3">Tipo Atendimento
+                        <select class="form-select pedido" id="tipo_atendimento" name="tipo_atendimento">
+                            @foreach ($tipoAtendimento as $tipo)
+                                <option value="{{ $tipo->id }}">{{ $tipo->sigla }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -212,26 +222,30 @@
             $('#parent').prop('selectedIndex', -1);
 
             function ajaxAssistido() {
-                var nome = $('#cpfAssistido').val();
+                var nome = $('#nomeAssistido').val();
+                var cpf = $('#cpfAssistido').val().replace(/\D/g, '');
+
+                $('#nomeAssistido').removeClass('is-invalid');
                 $('#cpfAssistido').removeClass('is-invalid');
-                $('#labelNumeroCpfAssistido').prop('hidden', true);
-                $('#labelCpfAssistido').prop('hidden', true);
+                $('#labelNumeroNomeAssistido').prop('hidden', true);
+                $('#labelNomeAssistido').prop('hidden', true);
                 $('#assist').html('');
                 $('#assist').prop('selectedIndex', -1);
 
-                if (nome.length < 1) {
+                if (nome.length < 1 && cpf.length < 1) {
+                    $('#nomeAssistido').addClass('is-invalid');
                     $('#cpfAssistido').addClass('is-invalid');
-                    $('#labelNumeroCpfAssistido').prop('hidden', false);
+                    $('#labelNumeroNomeAssistido').prop('hidden', false);
                 } else {
                     $.ajax({
                         type: "GET",
-                        url: "/ajaxCRUD?nome=" + nome,
+                        url: "/ajaxCRUD?nome=" + nome + '&cpf=' + cpf,
                         dataType: "json",
                         success: function(response) {
                             console.log(response);
                             if (response.length === 0) {
-                                $('#cpfAssistido').addClass('is-invalid');
-                                $('#labelCpfAssistido').prop('hidden', false);
+                                $('#nomeAssistido').addClass('is-invalid');
+                                $('#labelNomeAssistido').prop('hidden', false);
                             } else {
                                 $.each(response, function() {
                                     $('#assist').append('<option value="' + this.id + '">' +
@@ -241,8 +255,8 @@
                         },
                         error: function(xhr) {
                             console.log(xhr.responseText);
-                            $('#cpfAssistido').addClass('is-invalid');
-                            $('#labelCpfAssistido').prop('hidden', false);
+                            $('#NomeAssistido').addClass('is-invalid');
+                            $('#labelNomeAssistido').prop('hidden', false);
                         }
                     });
                 }
@@ -285,12 +299,12 @@
             }
 
             // Clicar no Botão Buscar
-            $('#bCpfAssistido').click(function() {
+            $('#bNomeAssistido').click(function() {
                 ajaxAssistido();
             });
 
             // Modificar o campo
-            $('#cpfAssistido').change(function() {
+            $('.assistido').change(function() {
                 ajaxAssistido();
             });
 
@@ -303,6 +317,38 @@
             $('#cpfResponsavel').change(function() {
                 ajaxResponsavel();
             });
+
+            // Mascara de CPF do Assistido
+             $('#cpfAssistido').on('input', function() {
+
+                // ---- Validação de letras ---- //
+                novoConteudo = $(this).val().replace(/\D/g, '')
+                $(this).val(novoConteudo)
+
+                let numeros = ($(this).val().match(/\d/g) || [])
+                .length; // Conta a quantidade de números no input
+
+                // ---- Máscara de CPF ---- //
+
+                if (numeros > 3) {
+                    novoConteudo = $(this).val().slice(0, 3) + '.' + novoConteudo.slice(
+                        3, ) // Separa os números e adiciona um ponto
+                    $(this).val(novoConteudo)
+                }
+                if (numeros > 6) {
+                    novoConteudo = $(this).val().slice(0, 7) + '.' + novoConteudo.slice(
+                        7, ) // Separa os números e adiciona um ponto
+                    $(this).val(novoConteudo)
+                }
+                if (numeros > 9) {
+                    novoConteudo = $(this).val().slice(0, 11) + '-' + novoConteudo.slice(
+                        11, ) // Separa os números e adiciona um hífen
+                    $(this).val(novoConteudo)
+                }
+
+
+            })
+
 
             // Apertar enter ao digitar no input de representante, previne o submit do formulário
             $("#cpfResponsavel").keydown(function(event) {
@@ -323,10 +369,10 @@
                     $('#cpfResponsavel').prop('required', false)
                     $('#parent').prop('required', false)
                 }
-                if ($('#pEspecial').prop('checked')) {
+                if ($('#pEspecial').prop('checked')) { 
                     $('#pedidoEspecial').prop('hidden', false);
-                    $('#tipo_afi').prop('required', true)
-                    $('#afi_p').prop('required', true)
+                    //$('#tipo_afi').prop('required', true)
+                    //$('#afi_p').prop('required', true)
                     
                 } else {
                     $('#pedidoEspecial').prop('hidden', true);

@@ -20,7 +20,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\MembroController;
-use App\Http\Controllers\MediunidadePessoaController;
+use App\Http\Controllers\HabilidadePessoaController;
 use LaravelLegends\PtBrValidator\Rules\FormatoCpf;
 use App\Http\Controllers\ReuniaoMediunicaController;
 use App\Http\Controllers\GerenciarEncaminhamentoController;
@@ -28,6 +28,7 @@ use App\Http\Controllers\GerenciarEncaminhamentoPTIController;
 use App\Http\Controllers\GerenciarEncaminhamentoIntegralController;
 use App\Http\Controllers\GerenciarTratamentosController;
 use App\Http\Controllers\GerenciarEntrevistaController;
+use App\Http\Controllers\GerenciarInscricaoController;
 use App\Http\Controllers\GerenciarPTIController;
 use App\Http\Controllers\GerenciarIntegralController;
 use App\Http\Controllers\GerenciarProamoController;
@@ -39,7 +40,15 @@ use App\Http\Controllers\PresencaDirigenteController;
 use App\Http\Controllers\GerenciarVersoesControllerController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\GerenciarPassesController;
-
+use App\Http\Controllers\GerenciarCriterioAtividadeController;
+use App\Http\Controllers\GerenciarEmailController;
+use App\Http\Controllers\GerenciarFichaVoluntariosController;
+use App\Http\Controllers\LogAtendimentosController;
+use App\Http\Controllers\GerenciarTipoCriterioController;
+use App\Http\Controllers\GerenciarEstudosExternosController;
+use App\Mail\EnviarEmail;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\URL;
 
 /*
 |--------------------------------------------------------------------------
@@ -112,7 +121,7 @@ Route::middleware('rotas:5')->group(function () {
     Route::post('/grava-atualizacao/{ida}', [GerenciarAtendimentoController::class, 'altera'])->name('atealt');
     Route::post('/novo-atendimento', [GerenciarAtendimentoController::class, 'store'])->name('atetore');
     Route::get('/visualizar-atendimentos/{idas}', [GerenciarAtendimentoController::class, 'visual'])->name('atevis');
-    Route::any('/tabela-atendimentos/{assist}/{cpf}/{status}/{dt_ini}/{atendente}', [GerenciarAtendimentoController::class, 'ajaxAtendimento']);
+    Route::any('/tabela-atendimentos', [GerenciarAtendimentoController::class, 'ajaxAtendimento']);
     Route::any('/ajaxCRUD', [GerenciarAtendimentoController::class, 'ajaxCRUD']);
     Route::get('/pessoas-para-atender-atendimento', [GerenciarAtendimentoController::class, 'pessoas_para_atender']);
 });
@@ -243,6 +252,16 @@ Route::middleware('rotas:13')->group(function () {
     Route::post('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('membro.destroy');
     Route::post('/inativar-membro/{idcro}/{id}', [MembroController::class, 'inactivate'])->name('membro.inactivate');
     Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
+
+    //Email comunicado voluntario novo
+    Route::get('/editar-email/{idm}/{id_cronograma}', [GerenciarEmailController::class, 'edit'])->name('rev.mail');
+    Route::post('/enviar-email/{id_cronograma}', [GerenciarEmailController::class, 'send'])->name('send.mail');
+});
+
+// Editar Limite Cronograma Membro
+Route::middleware('rotas:13')->group(function () {
+    Route::get('/editar-limite-cronograma/{id}', [MembroController::class, 'editLimiteCronograma'])->name('');
+    Route::any('/atualizar-limite-cronograma/{id}', [MembroController::class, 'updateLimiteCronograma'])->name('');
 });
 
 // Gerenciar Membros
@@ -269,15 +288,15 @@ Route::middleware('rotas:29')->group(function () {
     Route::get('/criar-membro-grupo/{id}', [MembroController::class, 'createGrupo'])->name('');
 });
 
-// Gerenciar Mediunidades
+// Gerenciar Habilidades
 Route::middleware('rotas:15')->group(function () {
-    Route::get('/gerenciar-mediunidades', [MediunidadePessoaController::class, 'index'])->name('names');
-    Route::get('/editar-mediunidade/{id}', [MediunidadePessoaController::class, 'edit'])->name('');
-    Route::any('/atualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'update'])->name('atualizar-mediunidade');
-    Route::get('/criar-mediunidade', [MediunidadePessoaController::class, 'create'])->name('');
-    Route::post('/incluir-mediunidade', [MediunidadePessoaController::class, 'store'])->name('');
-    Route::any('/deletar-mediunidade/{id}', [MediunidadePessoaController::class, 'destroy'])->name('');
-    Route::get('/visualizar-mediunidade/{id}', [MediunidadePessoaController::class, 'show'])->name('');
+    Route::get('/gerenciar-habilidade', [HabilidadePessoaController::class, 'index'])->name('names');
+    Route::get('/editar-habilidade/{id}', [HabilidadePessoaController::class, 'edit'])->name('');
+    Route::any('/atualizar-habilidade/{id}', [HabilidadePessoaController::class, 'update'])->name('atualizar-Habilidade');
+    Route::get('/criar-habilidade', [HabilidadePessoaController::class, 'create'])->name('');
+    Route::post('/incluir-habilidade', [HabilidadePessoaController::class, 'store'])->name('');
+    Route::any('/deletar-habilidade/{id}', [HabilidadePessoaController::class, 'destroy'])->name('');
+    Route::get('/visualizar-habilidade/{id}', [HabilidadePessoaController::class, 'show'])->name('');
 });
 
 // Gerenciar Encaminhamentos
@@ -301,7 +320,7 @@ Route::middleware("rotas:44")->group(function () {
     Route::any('/vagasGruposAjax/{id}', [RelatoriosController::class, 'vagasGruposAjax']);
 });
 //Relatório de passes PTD, PTI e PPH
-Route::middleware("rotas:45")->group(function () {
+Route::middleware("rotas:52")->group(function () {
     Route::get('/relatorio-passes', [RelatoriosController::class, 'passes']);
     Route::any('/passesAjax/{id}', [RelatoriosController::class, 'passesAjax']);
 });
@@ -317,13 +336,14 @@ Route::middleware('rotas:18')->group(function () {
     Route::get('/visualizar-tratamento/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
     Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
     Route::any('/incluir-avulso', [GerenciarTratamentosController::class, 'createAvulso']);
+    Route::any('/ajax-avulso', [GerenciarTratamentosController::class, 'ajax']);
     Route::any('/armazenar-avulso', [GerenciarTratamentosController::class, 'storeAvulso']);
     Route::any('/inativar-tratamento/{id}', [GerenciarTratamentosController::class, 'destroy']);
 });
 
 // Visualizar Proamo(Recepção Integrada)
 Route::middleware('rotas:51')->group(function () {
-Route::get('/visualizarRI-tratamento', [GerenciarTratamentosController::class, 'visualizarRI'])->name('RI');
+    Route::get('/visualizarRI-tratamento', [GerenciarTratamentosController::class, 'visualizarRI'])->name('RI');
 });
 // Botão de Presença
 Route::middleware('rotas:43')->group(function () {
@@ -337,8 +357,9 @@ Route::middleware('rotas:19')->group(function () {
     Route::post('/nova-reuniao', [ReuniaoMediunicaController::class, 'store'])->name('remore');
     Route::get('/editar-reuniao/{id}', [ReuniaoMediunicaController::class, 'edit']);
     Route::any('/atualizar-reuniao/{id}', [ReuniaoMediunicaController::class, 'update']);
-    Route::any('/excluir-reuniao/{id}', [ReuniaoMediunicaController::class, 'destroy']);
+    Route::any('/inativa-reuniao/{id}', [ReuniaoMediunicaController::class, 'inativa']);
     Route::any('/visualizar-reuniao/{id}', [ReuniaoMediunicaController::class, 'show']);
+    Route::any('/excluir-reuniao/{id}', [ReuniaoMediunicaController::class, 'destroy']);
 });
 
 // Gerenciar Atendente de Apoio
@@ -365,13 +386,15 @@ Route::middleware('rotas:21')->group(function () {
 Route::middleware('rotas:24')->group(function () {
     Route::get('/gerenciar-pti', [GerenciarPTIController::class, 'index']);
     Route::get('/alta-pti/{id}', [GerenciarPTIController::class, 'update']);
+    Route::get('/alta-nutres/{id}', [GerenciarPTIController::class, 'nutres']);
     Route::get('/visualizar-pti/{id}', [GerenciarPTIController::class, 'show']);
 });
 
 // Gerenciar Assistido Integral
 Route::middleware('rotas:25')->group(function () {
     Route::get('/gerenciar-integral', [GerenciarIntegralController::class, 'index']);
-    Route::get('/alta-integral/{id}', [GerenciarIntegralController::class, 'update']);
+    Route::get('/infinito-integral/{id}', [GerenciarIntegralController::class, 'update']);
+    Route::get('/alta-integral/{id}', [GerenciarIntegralController::class, 'alta']);
     Route::get('/visualizar-integral/{id}', [GerenciarIntegralController::class, 'show']);
     Route::any('/maca-integral/{id}', [GerenciarIntegralController::class, 'store']);
 });
@@ -385,6 +408,7 @@ Route::middleware('rotas:41')->group(function () {
 // Alta Proamo
 Route::middleware('rotas:49')->group(function () {
     Route::get('/alta-proamo/{id}', [GerenciarProamoController::class, 'update']);
+    Route::get('/alta-ptd-proamo/{id}', [GerenciarProamoController::class, 'altaPtd']);
 });
 
 // Gerenciar Perfis
@@ -453,7 +477,7 @@ Route::middleware('rotas:34')->group(function () {
 
 //Relatório Setores trabalhadores
 Route::middleware('rotas:34')->group(function () {
-Route::get('/relatorio-setor-trabalhador', [RelatoriosController::class, 'trabalhadores'])->name('form.trab');
+    Route::get('/relatorio-setor-trabalhador', [RelatoriosController::class, 'trabalhadores'])->name('form.trab');
 });
 
 //Relatório de Reuniões
@@ -464,8 +488,14 @@ Route::middleware('rotas:35')->group(function () {
 
 //Relatório de Atendimentos
 Route::middleware('rotas:46')->group(function () {
-    Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
     Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
+});
+
+
+//Relatório de Geral de  Atendimentos
+Route::middleware('rotas:57')->group(function () {
+    Route::any('/relatorio-geral-atendimento', [RelatoriosController::class, 'AtendimentosGeral']);
+    Route::any('/relatorio-geral-atendimento2', [RelatoriosController::class, 'AtendimentosGeral2']);
 });
 
 //Relatório de Balanço de Voluntários
@@ -477,4 +507,61 @@ Route::middleware('rotas:47')->group(function () {
 Route::middleware('rotas:48')->group(function () {
     Route::get('/curriculo-medium/{id}', [RelatoriosController::class, 'curriculo']);
     Route::get('/pdf-curriculo-medium/{id}', [RelatoriosController::class, 'pdfCurriculo']);
+});
+
+//Relatório de Tratamentos
+Route::middleware('rotas:36')->group(function () {
+    Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
+});
+
+// Log de Atendimentos
+Route::middleware('rotas:53')->group(function () {
+    Route::any('/gerenciar-log-atendimentos', [LogAtendimentosController::class, 'index']);
+    Route::any('/tabela-log-atendimentos', [LogAtendimentosController::class, 'show']);
+    Route::any('/placeholder-log-atendimentos', [LogAtendimentosController::class, 'placeholder']);
+});
+
+// Ficha de Voluntários
+Route::middleware('rotas:55')->group(function () {
+    Route::any('/ficha-voluntario/{id}', [GerenciarFichaVoluntariosController::class, 'edit']);
+    Route::any('/atualizar-ficha-voluntario/{ida}/{idp}', [GerenciarFichaVoluntariosController::class, 'update']);
+    Route::any('/retorna-cidades/{id}', [GerenciarFichaVoluntariosController::class, 'retornaCidades']);
+    Route::any('/salvar-foto', [GerenciarFichaVoluntariosController::class, 'salvarFoto']);
+    Route::any('/retorna-foto', [GerenciarFichaVoluntariosController::class, 'retornaFoto']);
+});
+
+
+//Gerenciar critérios
+Route::middleware('rotas:54')->group(function () {
+    Route::get('/gerenciar-criterio', [GerenciarCriterioAtividadeController::class, 'index'])->name('index.req');
+    Route::get('/criar-criterio', [GerenciarCriterioAtividadeController::class, 'create']);
+    Route::post('/incluir-criterio', [GerenciarCriterioAtividadeController::class, 'include']);
+    Route::get('/equivalencia-criterio/{id}', [GerenciarCriterioAtividadeController::class, 'equivale']);
+    Route::post('/incluir-equivalencia-criterio/{idatv}', [GerenciarCriterioAtividadeController::class, 'vincular']);
+});
+
+//Gerenciar inscrições
+Route::middleware('rotas:55')->group(function () {
+    Route::get('/gerenciar-inscricao', [GerenciarInscricaoController::class, 'index'])->name('index.insc');
+    Route::get('/criar-inscricao', [GerenciarInscricaoController::class, 'create']);
+    Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'include']);
+});
+//Gerenciar Tipo Criterios Atividades
+
+Route::get('/gerenciar-tipo-criterio', [GerenciarTipoCriterioController::class, 'index'])->name('index.tipo_criterio_controller');
+Route::get('/criar-tipo-criterio', [GerenciarTipoCriterioController::class, 'create.tipo_criterio_controller']);
+Route::post('/incluir-tipo-criterio', [GerenciarTipoCriterioController::class, 'include.tipo_criterio_controller']);
+Route::get('/editar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'edit.tipo_criterio_controller']);
+Route::post('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'update.tipo_criterio_controller']);
+Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy.tipo_criterio_controller']);
+
+
+// if (!App::environment('local')) {
+//     URL::forceScheme('https');
+// }
+
+Route::middleware('rotas:55')->group(function () {
+    Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
+    Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
+    Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
 });

@@ -65,16 +65,16 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '192.168.1.137'),
+            'url' => env('DB_URL'),
+            'host' => env('DB_HOST', '192.168.1.237'),
             'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'pessoalprodteste'),
+            'database' => env('DB_DATABASE', 'comunhao'),
             'username' => env('DB_USERNAME', 'postgres'),
             'password' => env('DB_PASSWORD', 'scga2298'),
-            'charset' => 'utf8',
+            'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
-            'search_path' => 'public',
+            'search_path' => 'pessoal',
             'sslmode' => 'prefer',
         ],
 

@@ -41,18 +41,27 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-2">
-                                    <label for="dia" class="form-label">Dia da semana <span class="tooltips">
-                                            <span class="tooltiptext">Obrigatório</span>
-                                            <span style="color:red">*</span>
-                                        </span></label>
-                                    <select class="form-select slct" id="dia" name="dia" value="{{old('dia')}}" required>
-                                        <option></option>
-                                        @foreach ($dia as $dias)
-                                        <option value="{{ $dias->idd }}" {{ request('dia') == $dias->idd ? 'selected' : '' }}>
-                                        {{ $dias->nome}}
+                                <div class="col">
+                                    <label class="form-label d-block">Dia da Semana <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span></label>
+                                    <div class="d-flex gap-2">
+                                        @php
+                                            $diasSemana = ['D' => 0, 'S' => 1, 'T' => 2, 'Q' => 3, 'Q' => 4, 'S' => 5, 'S' => 6];
+                                            $iniciais = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+                                            $valores = [0, 1, 2, 3, 4, 5, 6];
+                                        @endphp
+
+                                        @foreach ($valores as $index => $val)
+                                            @php $letra = $iniciais[$index]; @endphp
+                                            <input type="checkbox" class="btn-check" id="dia-{{ $val }}" name="dia[]" value="{{ $val }}"
+                                                {{ in_array($val, old('dia', [])) ? 'checked' : '' }} autocomplete="off">
+                                            <label class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" 
+                                                style="width: 40px; height: 40px; padding: 0;" 
+                                                for="dia-{{ $val }}">{{ $letra }}</label>
                                         @endforeach
-                                    </select>
+                                    </div>
                                 </div>
                                 <div class="col-2">
                                     <label for="h_inicio" class="form-label">Hora de início</label>
@@ -74,7 +83,7 @@
                             </div>
                             <div class="row mt-3">
                                 <div class="col">
-                                    <label for="tratamento" class="form-label">Tipo de Trabalho</label>
+                                    <label for="tratamento" class="form-label">Tipo de Atividade</label>
                                     <span class="tooltips">
                                         <span class="tooltiptext">Obrigatório</span>
                                         <span style="color:red">*</span>
@@ -84,19 +93,7 @@
                                         @foreach ($tratamento as $tratamentos)
                                         <option value="{{ $tratamentos->idt}}" 
                                         {{old('tratamento', request('tratamento')) == $tratamentos->idt ? 'selected' : '' }}>
-                                        {{ $tratamentos->descricao}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-2">
-                                    <label for="tratamento" class="form-label">Semestre</label>
-                                    <select class="form-select slct" id="semestre" value="" name="semestre">
-                                            <option></option>
-                                        @foreach ($semestre as $semestres)
-                                        <option value="{{ $semestres->id }}" 
-                                            {{ old('semestre', request('semestre')) == $semestres->id ? 'selected' : '' }}>
-                                            {{ $semestres->nome }}
-                                        </option>
+                                        {{ $tratamentos->descricao}} - {{ $tratamentos->sigla}} - {{ $tratamentos->siglasem}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -182,6 +179,10 @@
                                             <input type="checkbox" class="btn-check option-check" id="btn-check-4" name="tipo_semana[]" value="4" {{ in_array("4", old('tipo_semana', [])) ? 'checked' : '' }} autocomplete="off">
                                             <label class="btn btn-outline-primary" for="btn-check-4">4ª</label>      
                                         </div>
+                                        <div class="col">
+                                        <input type="checkbox" class="btn-check option-check" id="btn-check-5" name="tipo_semana[]" value="5" {{ in_array("5", old('tipo_semana', [])) ? 'checked' : '' }} autocomplete="off">
+                                        <label class="btn btn-outline-primary" for="btn-check-5">5ª</label>      
+                                    </div>
                                     </div>
                                 </div>
                             </div>
@@ -285,33 +286,33 @@
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const tdCheckbox = document.getElementById("btn-check-td");
-            const optionCheckboxes = document.querySelectorAll(".option-check");
+document.addEventListener("DOMContentLoaded", function() {
+    const tdCheckbox = document.getElementById("btn-check-td");
+    const optionCheckboxes = document.querySelectorAll(".option-check");
 
-            tdCheckbox.addEventListener("change", function() {
-                if (tdCheckbox.checked) {
-                    optionCheckboxes.forEach(cb => cb.checked = false);
+    tdCheckbox.addEventListener("change", function() {
+        if (tdCheckbox.checked) {
+            optionCheckboxes.forEach(cb => cb.checked = false);
+        }
+    });
+
+    optionCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", function() {
+            if (this.checked) {
+                tdCheckbox.checked = false;
+
+                const checkedCount = [...optionCheckboxes].filter(cb => cb.checked).length;
+
+                if (checkedCount > 4) {
+                    alert("Pode selecionar no máximo 4 opções.");
+                    this.checked = false;
                 }
-            });
-
-            optionCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener("change", function() {
-                    if (this.checked) {
-                        tdCheckbox.checked = false;
-
-                        // Conta quantos checkboxes estão marcados
-                        const checkedCount = [...optionCheckboxes].filter(cb => cb.checked).length;
-                        
-                        // Se mais de 3 checkboxes forem marcados, desmarca o atual
-                        if (checkedCount > 3) {
-                            this.checked = false;
-                        }
-                    }
-                });
-            });
+            }
         });
-    </script>
+    });
+});
+</script>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {

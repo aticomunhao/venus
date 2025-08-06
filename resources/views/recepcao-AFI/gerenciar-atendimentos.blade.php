@@ -207,6 +207,8 @@
                     <div>Total Atendidos: {{ $contar }}</div>
                     <div style="border-inline-start: 2px solid #000; margin: 0 20px;"></div> <!-- Vertical bar -->
                     <div>Fila de Espera: <span id="id_pessoas_para_atender"></span></div>
+                    <div style="border-inline-start: 2px solid #000; margin: 0 20px;"></div> <!-- Vertical bar -->
+                    <div>Atendentes Disponíveis: <span id="id_atendentes"></span></div>
                 </div>
             </div>
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
@@ -252,21 +254,19 @@
 
             function ajax() {
 
-                let assist = $('#assist').val() == '' ? null : $('#assist').val()
-                let cpf = $('#cpf').val() == '' ? null : $('#cpf').val()
-                let status = $('#status').val() == '' ? null : $('#status').val()
-                let dt_ini = $('#dt_ini').val() == '' ? null : $('#dt_ini').val()
-                let atendente = $('#idatendente').val() == '' ? null : $('#idatendente').val();
+                let assist = $('#assist').val()
+                let cpf = $('#cpf').val()
+                let status = $('#status').val() 
+                let dt_ini = $('#dt_ini').val()
+                let atendente = $('#idatendente').val()
 
 
 
                 $.ajax({
                     type: "GET",
-                    url: "/tabela-atendimentos/" + assist + "/" + cpf + "/" + status + "/" + dt_ini + "/" +
-                        atendente,
+                    url: "/tabela-atendimentos?assist=" + assist + "&cpf=" + cpf + "&status=" + status + "&dt_ini=" + dt_ini + "&atendente=" + atendente,
                     dataType: "json",
                     success: function(response) {
-
                         atendimentos = response
                     },
                     error: function(xhr) {
@@ -295,17 +295,19 @@
             }
 
             function linha(atendimento) {
-
-                const date = Date.parse(atendimento.dh_chegada);
-                        const formatter = new Intl.DateTimeFormat('pt-BR', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit'
-                        });
-                        const formattedDate = formatter.format(date);
+                let formattedDate = 0;
+                        if(atendimento.dh_chegada){
+                            const date = Date.parse(atendimento.dh_chegada);
+                            const formatter = new Intl.DateTimeFormat('pt-BR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                            formattedDate = formatter.format(date);
+                        }
 
                         let ida = atendimento.ida == null ? '' : atendimento.ida
                         let nm_4 = atendimento.nm_4 == null ? ' ' : atendimento.nm_4
@@ -316,7 +318,7 @@
                         let nm_2 = atendimento.nm_2 == null ? '' : atendimento.nm_2
                         let nm_3 = atendimento.nm_3 == null ? '' : atendimento.nm_3
                         let nr_sala = atendimento.nr_sala == null ? '' : atendimento.nr_sala
-                        let afe = atendimento.afe == null ? '' : atendimento.afe
+                        let sigla = atendimento.sigla == null ? '' : atendimento.sigla
                         let descricao = atendimento.descricao == null ? '' : atendimento.descricao
 
                 $('#tabelaPrincipal').append(
@@ -332,7 +334,7 @@
                     '<td class="representante">' + nm_2 + '</td>' +
                     '<td class="atendente">' + nm_3 + '</td>' +
                     '<td class="sala">' + nr_sala + '</td>' +
-                    '<td class="tipoAtendimento">' + afe + '</td>' +
+                    '<td class="tipoAtendimento">' + sigla + '</td>' +
                     '<td class="statusAtendimento" >' + descricao + '</td>' +
                     '<td class="">' +
 
@@ -456,8 +458,9 @@
                     url: "/pessoas-para-atender-atendimento",
                     dataType: "JSON",
                     success: function(response) {
-
-                        $('#id_pessoas_para_atender').text(response);
+                        console.log(response)
+                        $('#id_pessoas_para_atender').text(response.atender);
+                        $('#id_atendentes').text(response.atendentes);
                     },
                     error: function(error) {
                         console.error('Erro ao buscar dados:', error);

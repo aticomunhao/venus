@@ -70,6 +70,7 @@
                                                 <th class="col">NR REU</th>
                                                 <th class="col-3">DIRIGENTE</th>
                                                 <th class="col-2">GRUPO</th>
+                                                <th class="col-">OBS</th>
                                                 <th class="col">SALA</th>
                                                 <th class="col">TRATAMENTO</th>
                                                 <th class="col">HORÁRIO INÍCIO</th>
@@ -84,6 +85,7 @@
                                                 <td>{{$tratas->idr}}</td>
                                                 <td>{{$tratas->nome_completo}}</td>
                                                 <td>{{$tratas->nomeg}}</td>
+                                                <td>{{$tratas->des}}</td>
                                                 <td>{{$tratas->numero}}</td>
                                                 <td>{{$tratas->tstd}}</td>
                                                 <td>{{date('H:i:s', strtotime($tratas->h_inicio))}}</td>

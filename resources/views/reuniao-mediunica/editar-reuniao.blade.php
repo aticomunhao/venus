@@ -21,6 +21,15 @@
                         <form class="form-horizontal mt-4" method="post" action="/atualizar-reuniao/{{ $info->id }}">
                             @csrf
                             <div class="row mt-3">
+                                
+                                <div class="col-auto">
+                                    <label for="crono" class="form-label">ID</label>
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Desabilitado</span>
+                                        <span style="color:red"></span>                                    
+                                    </span>
+                                    <input class="form-control" type="text" value="{{$cronograma}}" disabled>
+                                </div> 
                                 <div class="col">
                                     <label for="grupo" class="form-label">Grupo</label>
                                     <span class="tooltips">
@@ -45,15 +54,25 @@
                                         @foreach ($tratamento as $tratamentos)
                                             <option value="{{ $tratamentos->idt }}"
                                                 {{ $tratamentos->descricao == $info->descricao ? 'selected' : '' }}>
-                                                {{ $tratamentos->descricao }}</option>
+                                                {{ $tratamentos->descricao }}-{{ $tratamentos->sigla }}-{{ $tratamentos->siglasem }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-
-
-
                             <div class="row mt-3">
+                                <div class="col-2">
+                                    <label for="h_fim" class="form-label">Modalidade</label>
+                                    <span class="tooltips">
+                                        <span class="tooltiptext">Obrigatório</span>
+                                        <span style="color:red">*</span>
+                                    </span>
+                                    <select class="form-select slct" id="modalidade" name="modalidade">
+                                        @foreach ($modalidade as $modal)
+                                        <option value="{{ $modal->id }}" {{ request('modalidade') == $modal->id ? 'selected' : '' }}>
+                                        {{ $modal->nome}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="col">
                                     <label for="dia" class="form-label">Dia da semana</label>
                                     <span class="tooltips">
@@ -106,23 +125,48 @@
                                         <span class="tooltiptext">Obrigatório</span>
                                         <span style="color:red">*</span>
                                     </span>
-                                    <input type="number" class="form-control" id="max_atend" min="1" max="800"
-                                        name="max_atend" value="{{ $info->max_atend }}" required>
+                                    <input type="number" class="form-control" id="max_atend" min="1" max="800" name="max_atend" value="{{ $info->max_atend }}" required>
                                 </div>
                                 <div class="col">
                                     <label class="form-label">Data Inicio</label>
-                                    <input type="date" class="form-control" id="dt_inicio" name="dt_inicio"
-                                        value="{{ $info->data_inicio }}">
+                                    <input type="date" class="form-control" id="dt_inicio" name="dt_inicio" value="{{ $info->data_inicio }}">
                                 </div>
                                 <div class="col">
                                     <label class="form-label">Data Fim</label>
-                                    <input type="date" class="form-control" id="dt_fim" min="1" max="800"
-                                        name="dt_fim" value="{{ $info->data_fim }}">
+                                    <input type="date" class="form-control" id="dt_fim" min="1" max="800" name="dt_fim" value="{{ $info->data_fim }}">
+                                </div>
+                                <div class="col-auto">
+                                    <label for="tp_semana" class="form-label">Semana de trabalho</label>
+                                    <span class="tooltips">
+                                            <span class="tooltiptext">Obrigatório</span>
+                                            <span style="color:red">*</span>
+                                    </span>
+                                    <div class="row">
+                                        <div class="col">
+                                                <input type="checkbox" class="btn-check" id="btn-check-td" name="tipo_semana[]" value="0" {{ in_array("0", old('tipo_semana', [])) ? 'checked' : '' }} checked autocomplete="off">
+                                                <label class="btn btn-outline-primary" for="btn-check-td">Td</label>
+                                            </div>
+                                            <div class="col">
+                                                <input type="checkbox" class="btn-check option-check" id="btn-check-1" name="tipo_semana[]" value="1" {{ in_array("1", old('tipo_semana', [])) ? 'checked' : '' }} autocomplete="off">
+                                                <label class="btn btn-outline-primary" for="btn-check-1">1ª</label>
+                                            </div>
+                                            <div class="col">
+                                                <input type="checkbox" class="btn-check option-check" id="btn-check-2" name="tipo_semana[]" value="2" {{ in_array("2", old('tipo_semana', [])) ? 'checked' : '' }} autocomplete="off">
+                                                <label class="btn btn-outline-primary" for="btn-check-2">2ª</label>      
+                                            </div>
+                                            <div class="col">
+                                                <input type="checkbox" class="btn-check option-check" id="btn-check-3" name="tipo_semana[]" value="3" {{ in_array("3", old('tipo_semana', [])) ? 'checked' : '' }} autocomplete="off">
+                                                <label class="btn btn-outline-primary" for="btn-check-3">3ª</label>
+                                            </div>
+                                            <div class="col">
+                                                <input type="checkbox" class="btn-check option-check" id="btn-check-4" name="tipo_semana[]" value="4" {{ in_array("4", old('tipo_semana', [])) ? 'checked' : '' }} autocomplete="off">
+                                                <label class="btn btn-outline-primary" for="btn-check-4">4ª</label>      
+                                            </div>
+                                        </div>                                    
+                                    </div>
                                 </div>
                             </div>
-                            <br />
-                    </div>
-                </div>
+                        </div>
                 <br />
                 <div class="card">
                     <div class="card-header">
@@ -235,6 +279,58 @@
             })
         })
     </script>
+
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const tdCheckbox = document.getElementById("btn-check-td");
+            const optionCheckboxes = document.querySelectorAll(".option-check");
+
+            tdCheckbox.addEventListener("change", function() {
+                if (tdCheckbox.checked) {
+                    optionCheckboxes.forEach(cb => cb.checked = false);
+                }
+            });
+
+            optionCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener("change", function() {
+                    if (this.checked) {
+                        tdCheckbox.checked = false;
+
+                        // Conta quantos checkboxes estão marcados
+                        const checkedCount = [...optionCheckboxes].filter(cb => cb.checked).length;
+                        
+                        // Se mais de 3 checkboxes forem marcados, desmarca o atual
+                        if (checkedCount > 3) {
+                            this.checked = false;
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modalidadeSelect = document.getElementById("modalidade");
+        const salaSelect = document.getElementById("id_sala");
+
+        function toggleSala() {
+            // Verifica se a opção selecionada é "1"
+            if (modalidadeSelect.value === "1") {
+                salaSelect.removeAttribute("disabled");
+            } else {
+                salaSelect.setAttribute("disabled", "disabled");
+            }
+        }
+
+        // Executa a função ao carregar a página
+        toggleSala();
+
+        // Adiciona um evento para alterar o estado do select de id_sala
+        modalidadeSelect.addEventListener("change", toggleSala);
+    });
+</script>
+
 @endsection
 
 @section('footerScript')
