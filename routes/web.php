@@ -44,6 +44,7 @@ use App\Http\Controllers\GerenciarCriterioAtividadeController;
 use App\Http\Controllers\GerenciarEmailController;
 use App\Http\Controllers\GerenciarFichaVoluntariosController;
 use App\Http\Controllers\LogAtendimentosController;
+use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\GerenciarTipoCriterioController;
 use App\Http\Controllers\GerenciarEstudosExternosController;
 use App\Mail\EnviarEmail;
@@ -543,8 +544,10 @@ Route::middleware('rotas:54')->group(function () {
 //Gerenciar inscrições
 Route::middleware('rotas:55')->group(function () {
     Route::get('/gerenciar-inscricao', [GerenciarInscricaoController::class, 'index'])->name('index.insc');
-    Route::get('/criar-inscricao', [GerenciarInscricaoController::class, 'create']);
-    Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'include']);
+    Route::get('/formar-inscricao', [GerenciarInscricaoController::class, 'formar']);
+    Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'criar']);
+    Route::get('/altera-turma/{idi}', [GerenciarInscricaoController::class, 'trocar']);
+    Route::get('/visualizar-inscricao/{idi}', [GerenciarInscricaoController::class, 'visualizar']);
 });
 //Gerenciar Tipo Criterios Atividades
 
@@ -556,6 +559,13 @@ Route::post('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::c
 Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy.tipo_criterio_controller']);
 
 
+if (!App::environment('local')) {
+    URL::forceScheme('https');
+}
+
+/*Ajax Controller */
+Route::get('/retorna-cidades/{id}', [AjaxController::class, 'retornaCidades']);
+Route::get('/retorna-dados-endereco/{id}', [AjaxController::class, 'getAddressByCep']);
 // if (!App::environment('local')) {
 //     URL::forceScheme('https');
 // }
