@@ -43,19 +43,35 @@ class GerenciarInstituicaoController extends Controller
     }
     public function create()
     {
+        $uf = DB::table('tp_uf')->get();
         $instituicoes = DB::table('instituicao')
-            ->select('id', 'nome_fantasia', 'razao_social', 'cnpj', 'email_contato', 'site', 'status')
+            ->leftJoin('tp_uf', 'instituicao.uf', 'tp_uf.id')
             ->get();
 
-        return view('/instituicao/incluir-instituicao', compact('instituicoes'));
+        return view('/instituicao/incluir-instituicao', compact('instituicoes', 'uf'));
     }
     public function store(Request $request)
     {
+        $cnpj = preg_replace('/\D/', '', $request->cnpj);
+        $cep = preg_replace('/\D/', '', $request->cep);
+        //dd($request->all(), $cnpj);
         // Inserção dos dados na tabela instituicao
         DB::table('instituicao')->insert([
             'nome_fantasia' => $request->input('nome_fantasia'),
             'razao_social' => $request->input('razao_social'),
-            'cnpj' => $request->input('cnpj'),
+            'inscricao_estadual' => $request->input('insc_est'),
+            'nome_contato' => $request->input('nome_cont'),
+            'ibge' => $request->input('ibge'),
+            'cep' => $cep,
+            'logradouro' => $request->input('logradouro'),
+            'bairro' => $request->input('bairro'),
+            'uf' => $request->input('uf'),
+            'localidade' => $request->input('localidade'),
+            'complemento' => $request->input('complemento'),
+            'unidade' => $request->input('unidade'),
+            'gia' => $request->input('gia'),
+            'numero' => $request->input('numero'),
+            'cnpj' => $cnpj,
             'email_contato' => $request->input('email_contato'),
             'site' => $request->input('site'),
             'status' => '1',
@@ -64,5 +80,20 @@ class GerenciarInstituicaoController extends Controller
         // Redirecionamento com mensagem de sucesso
         app('flasher')->addSuccess('Instituição incluída com sucesso!');
         return redirect('/gerenciar-instituicao');
+    }
+    public function edit($id)
+    {
+        $uf = DB::table('tp_uf')->get();
+        $instituicao = DB::table('instituicao')
+            ->leftJoin('tp_uf', 'instituicao.uf', 'tp_uf.id')
+            ->where('instituicao.id', $id)
+            ->first();
+
+        if (!$instituicao) {
+            app('flasher')->addError('Instituição não encontrada!');
+            return redirect('/gerenciar-instituicao');
+        }
+
+        return view('/instituicao/editar-instituicao', compact('instituicao', 'uf'));
     }
 }
