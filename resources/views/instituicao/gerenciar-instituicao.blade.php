@@ -65,7 +65,7 @@
                             </a>
                             {{-- @endif --}}
                             {{-- @if ($aquisicaos->tipoStatus->id == '1') --}}
-                            <a href="" class="btn btn-sm btn-outline-warning" data-tt="tooltip"
+                            <a href="/editar-instituicao/{{ $listas->id }}" class="btn btn-sm btn-outline-warning" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a>

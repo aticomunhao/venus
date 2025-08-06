@@ -261,7 +261,7 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
                             </li>
                         @endif
                         @if (in_array(59, $acesso))
-                            <li><a class="dropdown-item" href="/gerenciar-instituicao">Instituições</a>
+                            <li><a class="dropdown-item" href="{{ route('index.instituicao') }}">Instituições</a>
                             </li>
                         @endif
                     </ul>

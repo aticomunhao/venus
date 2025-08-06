@@ -578,7 +578,9 @@ Route::middleware('rotas:58')->group(function () {
 });
 
 Route::middleware('rotas:59')->group(function () {
-    Route::get('/gerenciar-instituicao', [GerenciarInstituicaoController::class, 'index'])->name('index.estExt');
+    Route::get('/gerenciar-instituicao', [GerenciarInstituicaoController::class, 'index'])->name('index.instituicao');
     Route::get('/incluir-instituicao', [GerenciarInstituicaoController::class, 'create']);
     Route::post('/salvar-instituicao', [GerenciarInstituicaoController::class, 'store']);
+    Route::get('/editar-instituicao/{id}', [GerenciarInstituicaoController::class, 'edit']);
+    Route::post('/atualizar-instituicao/{id}', [GerenciarInstituicaoController::class, 'update']);
 });
