@@ -44,12 +44,9 @@ use App\Http\Controllers\GerenciarCriterioAtividadeController;
 use App\Http\Controllers\GerenciarEmailController;
 use App\Http\Controllers\GerenciarFichaVoluntariosController;
 use App\Http\Controllers\LogAtendimentosController;
-<<<<<<< HEAD
 use App\Http\Controllers\AjaxController;
-=======
 use App\Http\Controllers\GerenciarTipoCriterioController;
 use App\Http\Controllers\GerenciarEstudosExternosController;
->>>>>>> origin/homolog
 use App\Mail\EnviarEmail;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
@@ -562,7 +559,6 @@ Route::post('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::c
 Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy.tipo_criterio_controller']);
 
 
-<<<<<<< HEAD
 if (!App::environment('local')) {
     URL::forceScheme('https');
 }
@@ -570,7 +566,6 @@ if (!App::environment('local')) {
 /*Ajax Controller */
 Route::get('/retorna-cidades/{id}', [AjaxController::class, 'retornaCidades']);
 Route::get('/retorna-dados-endereco/{id}', [AjaxController::class, 'getAddressByCep']);
-=======
 // if (!App::environment('local')) {
 //     URL::forceScheme('https');
 // }
@@ -580,4 +575,3 @@ Route::middleware('rotas:55')->group(function () {
     Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
     Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
 });
->>>>>>> origin/homolog
