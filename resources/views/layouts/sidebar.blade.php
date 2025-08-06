@@ -217,6 +217,9 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
                                 <li><a class="dropdown-item" href="/gerenciar-estudos-externos">Gerenciar Estudos
                                         Externos</a></li>
                             @endif
+                             @if (in_array(1, $acesso))
+                                <li><a class="dropdown-item" href='/gerenciar-inscricao'>Gerenciar inscrição</a></li>
+                            @endif
                         </ul>
                     </li>
                 </ul>
