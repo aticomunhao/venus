@@ -13,7 +13,7 @@ $idAcessoRelatorios = [35, 57, 34, 35, 48, 46, 31, 32, 51, 47, 52, 33]; // IDs d
 $idAcessoMembros = [14, 30, 20, 4, 15, 21]; // IDs de acesso para Membros
 $idAcessoTratamentos = [16, 22, 23, 40, 9, 25, 8, 18, 24, 39, 41]; // IDs de acesso para Tratamentos
 $idAcessoAtendimentos = [6, 5, 3]; // IDs de acesso para Atendimentos
-$idAcessoEstudos = [1, 60]; // IDs de acesso para Estudos
+$idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light shadow-sm"
@@ -213,7 +213,7 @@ $idAcessoEstudos = [1, 60]; // IDs de acesso para Estudos
                                         href="{{ route('index.tipo_criterio_controller') }}">Gerenciar Criterios</a>
                                 </li>
                             @endif
-                            @if (in_array(55, $acesso))
+                            @if (in_array(58, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-estudos-externos">Gerenciar Estudos
                                         Externos</a></li>
                             @endif
@@ -257,7 +257,10 @@ $idAcessoEstudos = [1, 60]; // IDs de acesso para Estudos
                             <li><a class="dropdown-item" href="/gerenciar-log-atendimentos">Log Atendimentos</a>
                             </li>
                         @endif
-
+                        @if (in_array(59, $acesso))
+                            <li><a class="dropdown-item" href="/gerenciar-instituicao">Instituições</a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
             </ul>
