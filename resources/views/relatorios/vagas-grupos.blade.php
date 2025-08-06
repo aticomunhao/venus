@@ -75,14 +75,14 @@
             <div class="card-body">
 
                 @if ($quantidade_vagas_tipo_tratamento != 0 and $tipo_de_tratamento != null)
-                <div class="d-flex align-items-center">
-                    <!-- Nome do Tratamento -->
-                    <p class="mb-0 text-muted fs-5 me-3">{{ $tipo_de_tratamento->descricao }}:</p>
+                    <div class="d-flex align-items-center">
+                        <!-- Nome do Tratamento -->
+                        <p class="mb-0 text-muted fs-5 me-3">{{ $tipo_de_tratamento->descricao }}:</p>
 
-                    <!-- Badge de Vagas -->
-                    <span class="badge bg-success fs-6">{{ $quantidade_vagas_tipo_tratamento }} vagas</span>
-                </div>
-            @endif
+                        <!-- Badge de Vagas -->
+                        <span class="badge bg-success fs-6">{{ $quantidade_vagas_tipo_tratamento }} vagas</span>
+                    </div>
+                @endif
 
 
                 <table class="table table-striped table-bordered border-secondary table-hover align-middle">
@@ -92,7 +92,8 @@
                             <th class="col-auto">DIA</th>
                             <th class="col-auto">HORÁRIO</th>
                             <th class="col-auto">TRABALHO</th>
-                            <th class="col-auto">VAGAS</th>
+                            <th class="col-auto">VAGAS DISPONIVEIS</th>
+                            <th class="col-auto">VAGAS OCUPADAS</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 14px; color: #000000; text-align: center;">
@@ -125,8 +126,25 @@
                                     <td style="padding: 10px; color: green; font-weight: bold;">
                                         {{ $grupo->max_atend - $grupo->trat }}</td>
                                 @endif
+                                @php
+                                    $ocupadas = $grupo->trat;
+                                    $total = $grupo->max_atend;
+                                    $percentual = $total > 0 ? $ocupadas / $total : 0;
+                                @endphp
+
+                                @if ($percentual > 0.9)
+                                    <td style="padding: 10px; color: red; font-weight: bold;">
+                                        {{ $ocupadas }}
+                                    </td>
+                                @else
+                                    <td style="padding: 10px; color: green; font-weight: bold;">
+                                        {{ $ocupadas }}
+                                    </td>
+                                @endif
+
                             </tr>
                         @endforeach
+                        </tr>
                     </tbody>
                 </table>
 

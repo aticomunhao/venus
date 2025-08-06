@@ -56,6 +56,13 @@
                             <td scope="" >{{$pessoas->tpsta}}</td>
                             <td scope="">
                                 @if(in_array(2 ,session()->get('usuario.acesso')))
+                                <a href="/ficha-voluntario/{{ $pessoas->idp }}" type="button"
+                                    class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Editar</span>
+                                   <i class="bi bi-file-person" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                                @endif
+                                    @if(in_array(2 ,session()->get('usuario.acesso')))
                                 <a href="/editar-pessoa/{{ $pessoas->idp }}" type="button"
                                     class="btn btn-outline-warning btn-sm tooltips">
                                     <span class="tooltiptext">Editar</span>
