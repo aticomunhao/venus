@@ -96,4 +96,54 @@ class GerenciarInstituicaoController extends Controller
 
         return view('/instituicao/editar-instituicao', compact('instituicao', 'uf'));
     }
+    public function update(Request $request, $id)
+    {
+        $cnpj = preg_replace('/\D/', '', $request->cnpj);
+        $cep = preg_replace('/\D/', '', $request->cep);
+
+        DB::table('instituicao')->where('id', $id)->update([
+            'nome_fantasia' => $request->input('nome_fantasia'),
+            'razao_social' => $request->input('razao_social'),
+            'inscricao_estadual' => $request->input('insc_est'),
+            'nome_contato' => $request->input('nome_cont'),
+            'ibge' => $request->input('ibge'),
+            'cep' => $cep,
+            'logradouro' => $request->input('logradouro'),
+            'bairro' => $request->input('bairro'),
+            'uf' => $request->input('uf'),
+            'localidade' => $request->input('localidade'),
+            'complemento' => $request->input('complemento'),
+            'unidade' => $request->input('unidade'),
+            'gia' => $request->input('gia'),
+            'numero' => $request->input('numero'),
+            'cnpj' => $cnpj,
+            'email_contato' => $request->input('email_contato'),
+            'site' => $request->input('site'),
+            'status' => '1',
+        ]);
+
+        app('flasher')->addSuccess('Instituição atualizada com sucesso!');
+        return redirect('/gerenciar-instituicao');
+    }
+    public function destroy($id)
+    {
+        DB::table('instituicao')->where('id', $id)->delete();
+
+        app('flasher')->addSuccess('Instituição excluída com sucesso!');
+        return redirect()->back();
+    }
+    public function show($id)
+    {
+        $instituicao = DB::table('instituicao')
+            ->leftJoin('tp_uf', 'instituicao.uf', 'tp_uf.id')
+            ->where('instituicao.id', $id)
+            ->first();
+
+        if (!$instituicao) {
+            app('flasher')->addError('Instituição não encontrada!');
+            return redirect('/gerenciar-instituicao');
+        }
+
+        return view('/instituicao/visualizar-instituicao', compact('instituicao'));
+    }
 }

@@ -54,36 +54,22 @@
                         <td>{{ $listas->site }}</td>
                         <td>{{ $listas->status }}</td>
                         <td>
-                            <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
+                            <a href="/visualizar-instituicao/{{ $listas->id }}" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Visualizar">
                                 <i class="bi bi-search"></i>
                             </a>
-                            {{-- @if (in_array($aquisicaos->tipoStatus->id, ['3', '2'])) --}}
-                            <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Aprovar">
-                                <i class="bi bi-check-lg"></i>
-                            </a>
-                            {{-- @endif --}}
                             {{-- @if ($aquisicaos->tipoStatus->id == '1') --}}
-                            <a href="/editar-instituicao/{{ $listas->id }}" class="btn btn-sm btn-outline-warning" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Editar">
+                            <a href="/editar-instituicao/{{ $listas->id }}" class="btn btn-sm btn-outline-warning"
+                                data-tt="tooltip" style="font-size: 1rem; color:#303030" data-placement="top"
+                                title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Enviar">
-                                <i class="bi bi-cart-check"></i>
-                            </a>
-                            {{-- @endif --}}
-                            {{-- @if (isset($aquisicaos->aut_usu_pres, $aquisicaos->aut_usu_adm, $aquisicaos->aut_usu_daf)) --}}
-                            <a href="" class="btn btn-sm btn-outline-info" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Anexar">
-                                <i class="bi bi-hand-thumbs-up"></i>
-                            </a>
                             {{-- @endif --}}
                             {{-- @if ($aquisicaos->tipoStatus->id == '1') --}}
-                            <a href="#" class="btn btn-sm btn-outline-danger excluirSolicitacao" data-tt="tooltip"
+                            <a href="#" class="btn btn-sm btn-outline-danger excluirInstituicao" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Excluir"
-                                data-bs-toggle="modal" data-bs-target="#modalExcluirSolicitacao" data-id="">
+                                data-bs-toggle="modal" data-bs-target="#modalExcluirInstituicao"
+                                data-id="{{ $listas->id }}">
                                 <i class="bi bi-trash"></i>
                             </a>
                             {{-- @endif --}}
@@ -93,7 +79,6 @@
             </tbody>
             {{-- Fim body da tabela --}}
         </table>
-    </div>
     </div>
 
 
@@ -146,8 +131,7 @@
 
                                 <div class="col-12 mb-3">CNPJ
                                     <input class="form-control" type="number" maxlength="14"
-                                        placeholder="Insira apenas números" name="cnpj"
-                                        value="{{ request('cnpj') }}">
+                                        placeholder="Insira apenas números" name="cnpj" value="{{ request('cnpj') }}">
                                 </div>
 
                                 <div class="col-12 mb-3">Site
@@ -178,15 +162,55 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                        <a class="btn btn-secondary" href="/gerenciar-encaminhamentos">Limpar</a>
+                        <a class="btn btn-secondary" href="{{ route('index.instituicao') }}">Limpar</a>
                         <button type="submit" class="btn btn-primary">Confirmar</button>
                     </div>
                 </div>
             </div>
         </div>
     </form>
-@endsection
+    <!-- Modal Excluir Instituições -->
+    <div class="modal fade" id="modalExcluirInstituicao" tabindex="-1" aria-labelledby="modalExcluirInstituicaoLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form id="formExcluirInstituicao" class="form-horizontal" method="post">
+                @csrf
+                @method('DELETE')
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:#DC4C64;">
+                        <h5 class="modal-title" id="modalExcluirInstituicaoLabel">Exclusão de Instituição</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="modal-body-content-excluir-material">
+                        Deseja realmente excluir a instituição de Número: <span id="InstituicaoId"
+                            style="color: #DC4C64"></span>?
+                    </div>
+                    <div class="modal-footer mt-2">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- FIM da Modal Excluir Instituições -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const botoesExcluir = document.querySelectorAll('.excluirInstituicao');
+            const modalInstituicaoId = document.getElementById('InstituicaoId');
+            const formExcluir = document.getElementById('formExcluirInstituicao');
 
-@section('footerScript')
+            botoesExcluir.forEach(botao => {
+                botao.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+
+                    // Atualiza o texto no modal
+                    modalInstituicaoId.textContent = id;
+
+                    // Define a action correta para o formulário
+                    formExcluir.action = `/excluir-instituicao/${id}`;
+                });
+            });
+        });
     </script>
 @endsection

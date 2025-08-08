@@ -583,4 +583,6 @@ Route::middleware('rotas:59')->group(function () {
     Route::post('/salvar-instituicao', [GerenciarInstituicaoController::class, 'store']);
     Route::get('/editar-instituicao/{id}', [GerenciarInstituicaoController::class, 'edit']);
     Route::post('/atualizar-instituicao/{id}', [GerenciarInstituicaoController::class, 'update']);
+    Route::delete('/excluir-instituicao/{id}', [GerenciarInstituicaoController::class, 'destroy'])->name('instituicao.destroy');
+    Route::get('/visualizar-instituicao/{id}', [GerenciarInstituicaoController::class, 'show']);
 });
