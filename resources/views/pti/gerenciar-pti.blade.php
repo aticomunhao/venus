@@ -96,7 +96,7 @@
                                     </button>
                                 @endif
                             @endif
-                            @if ($encaminhamento->id_status == 1)
+                            {{-- @if ($encaminhamento->id_status == 1)
                                 <button disabled type="button" class="btn btn-outline-danger btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modal{{ $encaminhamento->id }}">
                                     <span class="tooltiptext">Declarar Alta</span>
@@ -108,20 +108,20 @@
                                     <span class="tooltiptext">Declarar Alta</span>
                                     Alta
                                 </button>
-                            @endif
+                            @endif --}}
 
 
                             @if ($encaminhamento->id_status == 1)
                                 <button disabled type="button" class="btn btn-outline-success btn-sm tooltips"
                                     data-bs-toggle="modal" data-bs-target="#modalNutres{{ $encaminhamento->id }}">
-                                    <span class="tooltiptext">Nutres</span>
-                                     Nutres
+                                    <span class="tooltiptext">Nutres/Alta</span>
+                                     Nutres/Alta
                                 </button>
                             @else
                                 <button type="button" class="btn btn-outline-success btn-sm tooltips" data-bs-toggle="modal"
                                     data-bs-target="#modalNutres{{ $encaminhamento->id }}">
-                                    <span class="tooltiptext">Nutres</span>
-                                    Nutres
+                                    <span class="tooltiptext">Nutres/Alta</span>
+                                    Nutres/Alta
                                 </button>
                             @endif
 
@@ -132,7 +132,7 @@
                             </a>
 
                             {{--  Modal de Exclusao --}}
-                            <div class="modal fade" id="modal{{ $encaminhamento->id }}" tabindex="-1"
+                            {{-- <div class="modal fade" id="modal{{ $encaminhamento->id }}" tabindex="-1"
                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -157,7 +157,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                             {{-- Fim Modal de Exclusao --}}
 
                             {{--  Modal de Nutres --}}
@@ -168,7 +168,7 @@
                                         <div class="modal-header" style="background-color:rgb(196, 27, 27);">
                                             <h5 class="modal-title" id="exampleModalLabel" style=" color:white">
                                                 Confirmação de
-                                                Alta Nutres </h5>
+                                                Alta  </h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
