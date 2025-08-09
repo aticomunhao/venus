@@ -13,205 +13,176 @@ use function Laravel\Prompts\select;
 class ReuniaoMediunicaController extends Controller
 {
 
-    public function index(Request $request)
-    {
-        // Obtém a data atual formatada
-        $now = Carbon::now()->format('Y-m-d');
+  public function index(Request $request)
+{
+    $now = Carbon::now()->format('Y-m-d');
 
+    // CASE para o filtro no WHERE (sem alias)
+    $statusCaseWhenForWhere = DB::raw("
+        CASE
+            WHEN cro.modificador = 3 THEN 'Experimental'
+            WHEN cro.modificador = 4 THEN 'Em Férias'
+            WHEN cro.data_fim IS NOT NULL AND DATE(cro.data_fim) < '$now' THEN 'Inativo'
+            ELSE 'Ativo'
+        END
+    ");
 
-        $statusCaseWhen = DB::raw("
-                        CASE 
-                        WHEN cro.modificador = 3 THEN 'Experimental'
-                        WHEN cro.modificador = 4 THEN 'Em Férias'
-                        WHEN cro.data_fim IS NOT NULL AND DATE(cro.data_fim) < '$now' THEN 'Inativo'
-                        ELSE 'Ativo'
-                    END AS status
-                    ");
+    // Consulta principal
+    $reuniao = DB::table('cronograma AS cro')
+        ->select(
+            'cro.id AS idr',
+            'gr.nome AS nomeg',
+            'cro.dia_semana AS idd',
+            'cro.id_sala',
+            'cro.id_tipo_tratamento',
+            'cro.id_tipo_semestre',
+            'cro.h_inicio',
+            'td.nome AS nomed',
+            'cro.h_fim',
+            'cro.max_atend',
+            'cro.max_trab',
+            'cro.data_inicio',
+            'cro.data_fim',
+            'gr.status_grupo AS idst',
+            'tst.descricao AS trnome',
+            'tst.sigla AS trsigla',
+            's.sigla as stsigla',
+            'tse.sigla as sesigla',
+            'sa.numero',
+            't.descricao',
+            'tm.nome as nmodal',
+            'ts.nome as nsemana',
+            'tst.descricao as tipo',
+            'tst.id as idt',
+            DB::raw("
+                CASE
+                    WHEN cro.modificador = 3 THEN 'Experimental'
+                    WHEN cro.modificador = 4 THEN 'Em Férias'
+                    WHEN cro.data_fim IS NOT NULL AND DATE(cro.data_fim) < '$now' THEN 'Inativo'
+                    ELSE 'Ativo'
+                END AS status
+            ")
+        )
+        ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
+        ->leftJoin('tipo_observacao_reuniao AS t', 'cro.observacao', 't.id')
+        ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
+        ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+        ->leftJoin('membro AS me', 'gr.id', 'me.id_cronograma')
+        ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
+        ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
+        ->leftJoin('tipo_modalidade AS tm', 'cro.id_tipo_modalidade', 'tm.id')
+        ->leftJoin('tipo_semana AS ts', 'cro.id_tipo_semana', 'ts.id')
+        ->leftJoin('tipo_semestre as tse', 'tst.id_semestre', 'tse.id');
 
-        // Inicializa a consulta
-        $reuniao = DB::table('cronograma AS cro')
-            ->select(
-                'cro.id AS idr',
-                'gr.nome AS nomeg',
-                'cro.dia_semana AS idd',
-                'cro.id_sala',
-                'cro.id_tipo_tratamento',
-                'cro.id_tipo_semestre',
-                'cro.h_inicio',
-                'td.nome AS nomed',
-                'cro.h_fim',
-                'cro.max_atend',
-                'cro.max_trab',
-                'cro.data_inicio',
-                'cro.data_fim',
-                'gr.status_grupo AS idst',
-                'tst.descricao AS trnome',
-                'tst.sigla AS trsigla',
-                's.sigla as stsigla',
-                'tse.sigla as sesigla',
-                'sa.numero',
-                't.descricao',
-                'tm.nome as nmodal',
-                'ts.nome as nsemana',
-                'tst.descricao as tipo',
-                'tst.id as idt',
-                DB::raw("CASE 
-                        WHEN cro.modificador = 3 THEN 'Experimental'
-                        WHEN cro.modificador = 4 THEN 'Em Férias'
-                        WHEN cro.data_fim IS NOT NULL AND DATE(cro.data_fim) < '$now' THEN 'Inativo'
-                        ELSE 'Ativo'
-                    END AS status
-                    ")
-            )
-            ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
-            ->leftJoin('tipo_observacao_reuniao AS t', 'cro.observacao', 't.id')
-            ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
-            ->leftJoin('setor as s', 'gr.id_setor', 's.id')
-            ->leftJoin('membro AS me', 'gr.id', 'me.id_cronograma')
-            ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
-            ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
-            ->leftJoin('tipo_modalidade AS tm', 'cro.id_tipo_modalidade', 'tm.id')
-            ->leftJoin('tipo_semana AS ts', 'cro.id_tipo_semana', 'ts.id')
-            ->leftJoin('tipo_semestre as tse', 'tst.id_semestre', 'tse.id');
+    // Filtros
+    $semana = $request->input('semana');
+    $grupo = $request->input('grupo');
+    $tipo_tratamento = $request->input('tipo_tratamento');
+    $semestre = $request->input('semestre');
+    $setor = $request->input('setor');
+    $status = $request->input('status');
+    $modalidade = $request->input('modalidade');
 
-        // Obtém os valores de pesquisa da requisição
-        $semana = $request->input('semana', null);
-        $grupo = $request->input('grupo', null);
-        $tipo_tratamento = $request->input('tipo_tratamento', null);
-        $semestre = $request->input('semestre', null);
-        $setor = $request->input('setor', null);
-        $status = $request->input('status','');
-        $modalidade = $request->input('modalidade', null);
+    if ($semana !== null && $semana !== '') {
+        $reuniao->where('cro.dia_semana', '=', $semana);
+    }
 
+    if ($grupo) {
+        $reuniao->where('cro.id_grupo', $grupo);
+    }
 
-        //dd($tipo_tratamento, $semestre );
-        // Aplica filtro por semana
-        if ($semana != '') {
-            // Se o valor de semana não for vazio, aplica o filtro
-            $reuniao->where('cro.dia_semana', '=', $semana);
+    if ($request->filled('tipo_tratamento')) {
+        $descricao = DB::table('tipo_tratamento')
+            ->where('id', $tipo_tratamento)
+            ->value('descricao');
+
+        $ids = DB::table('tipo_tratamento')
+            ->where('descricao', $descricao)
+            ->pluck('id');
+
+        $reuniao->whereIn('cro.id_tipo_tratamento', $ids);
+    }
+
+    if ($semestre) {
+        $reuniao->where('id_tipo_semestre', $semestre);
+    }
+
+    if ($setor) {
+        $reuniao->where('gr.id_setor', $setor);
+    }
+
+    if ($status) {
+        $statusLabel = match ((int) $status) {
+            1 => 'Ativo',
+            2 => 'Inativo',
+            3 => 'Experimental',
+            4 => 'Em Férias',
+            default => null
+        };
+
+        if ($statusLabel) {
+            $reuniao->where($statusCaseWhenForWhere, '=', $statusLabel);
         }
+    }
 
-        if ($grupo) {
-            $reuniao->where('cro.id_grupo', $grupo);
-        }
+    if ($modalidade) {
+        $reuniao->where('tm.id', $modalidade);
+    }
 
+    // Lista de grupos
+    $grupos = DB::table('cronograma as c')
+        ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
+        ->leftJoin('setor AS s', 'g.id_setor', 's.id')
+        ->select('g.id AS idg', 'g.nome AS nomeg', 's.sigla')
+        ->orderBy('g.nome', 'asc')
+        ->get()
+        ->unique('idg')
+        ->values();
 
-        if ($request->filled('tipo_tratamento')) {
-            $descricao = DB::table('tipo_tratamento')
-                ->where('id', $request->input('tipo_tratamento'))
-                ->value('descricao');
+    // Conta o total
+    $contar = $reuniao->distinct()->count('cro.id');
 
-            $ids = DB::table('tipo_tratamento')
-                ->where('descricao', $descricao)
-                ->pluck('id');
+    // Paginação e ordenação
+    $reuniao = $reuniao
+        ->orderBy('status', 'ASC')
+        ->orderBy('cro.id_tipo_tratamento', 'ASC')
+        ->orderBy('nomeg', 'ASC')
+        ->groupBy(
+            'idt', 'idr', 'gr.nome', 'td.nome', 'tse.sigla', 't.descricao',
+            'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero', 'tm.nome', 'ts.nome'
+        )
+        ->paginate(50)
+        ->appends(compact('status', 'semana', 'grupo', 'setor', 'tipo_tratamento', 'modalidade'));
 
-            $reuniao->whereIn('cro.id_tipo_tratamento', $ids);
-        }
+    // Dados para filtros
+    $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
 
-        if ($semestre) {
-            $reuniao->when($semestre, function ($query, $semestre) {
-            return $query->where('id_tipo_semestre', $semestre);
-            });
-        }
-
-        if ($setor) {
-            $reuniao->where('gr.id_setor', $setor);
-        }
-
-        
-        if ($status) {
-            switch ($status) {
-                case 1:
-                    $reuniao->where($statusCaseWhen, 'Ativo');
-                    break;
-                case 2:
-                    $reuniao->where($statusCaseWhen, 'Inativo');
-                    break;
-                case 3:
-                    $reuniao->where($statusCaseWhen, 'Experimental');
-                    break;
-                case 4:
-                    $reuniao->where($statusCaseWhen, 'Em ferias');
-                    break;
-            }
-        }
-
-        // Aplica filtro por setor
-        if ($modalidade) {
-            $reuniao->where('tm.id', $modalidade);
-        }
-
-        
-          // Carregar a lista de grupos para o Select2
-          $grupos = DB::table('cronograma as c')
-          ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
-          ->leftJoin('setor AS s', 'g.id_setor', 's.id')
-          ->select(
-              'g.id AS idg',
-              'g.nome AS nomeg',
-              's.sigla'
-          )
-          ->orderBy('g.nome', 'asc')
-          ->get()
-          ->unique('idg') // aqui garantimos que o ID do grupo seja único
-          ->values();     // reindexa os itens do array
-
-
-        // Conta o número de registros
-        $contar = $reuniao->distinct()->count('cro.id');
-
-        // Aplica a paginação e mantém os parâmetros de busca na URL
-        $reuniao = $reuniao
-            ->orderBy('status', 'ASC')
-            ->orderBy('cro.id_tipo_tratamento', 'ASC')
-            ->orderBy('nomeg', 'ASC')
-            ->groupBy('idt', 'idr', 'gr.nome', 'td.nome', 'tse.sigla', 't.descricao', 'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero', 'tm.nome', 'ts.nome')
-            ->paginate(50)
-            ->appends([
-                'status' => $status,
-                'semana' => $semana,
-                'grupo' => $grupo,
-                'setor' => $setor,
-                'tipo_tratamento' => $tipo_tratamento,
-                'modalidade' => $modalidade
-            ]);
-
-   
-
-
-        // Obtém os dados para os filtros
-        $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
-
-        $tipo_tratamento = DB::table('tipo_tratamento AS tt')
-        ->select('tt.id AS idt','tt.descricao', 'tt.sigla AS tipo')
+    $tipo_tratamento = DB::table('tipo_tratamento AS tt')
+        ->select('tt.id AS idt', 'tt.descricao', 'tt.sigla AS tipo')
         ->orderBy('tt.sigla')
         ->distinct('tt.sigla')
         ->get();
 
-         $tipo_semestre = DB::table('tipo_tratamento AS tt')
+    $tipo_semestre = DB::table('tipo_tratamento AS tt')
         ->leftJoin('tipo_semestre AS ts', 'tt.id_semestre', 'ts.id')
         ->whereNotNull('tt.id_semestre')
         ->select('ts.id AS ids', 'ts.sigla')
         ->orderBy('ts.id')
         ->get();
 
-        $tipo_motivo = DB::table('tipo_mot_inat_gr_reu')->get();
+    $tipo_motivo = DB::table('tipo_mot_inat_gr_reu')->get();
+    $tmodalidade = DB::table('tipo_modalidade')->get();
+    $tpdia = DB::table('tipo_dia')->select('id AS idtd', 'nome AS nomed')
+        ->orderByRaw('CASE WHEN id = 0 THEN 1 ELSE 0 END, idtd ASC')
+        ->get();
+    $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
 
-        $tmodalidade = DB::table('tipo_modalidade')->get();
+    return view('/reuniao-mediunica/gerenciar-reunioes', compact(
+        'tipo_semestre', 'tipo_motivo', 'reuniao', 'tpdia', 'situacao', 'status',
+        'contar', 'semana', 'grupos', 'setores', 'tmodalidade', 'modalidade', 'tipo_tratamento'
+    ));
+}
 
-        $tpdia = DB::table('tipo_dia')
-            ->select('id AS idtd', 'nome AS nomed')
-            ->orderByRaw('CASE WHEN id = 0 THEN 1 ELSE 0 END, idtd ASC')
-            ->get();
-
-        // Carregar a lista de setores para o Select2
-        $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
-
-
-
-            // Retorna a view com os dados
-        return view('/reuniao-mediunica/gerenciar-reunioes', compact('tipo_semestre', 'tipo_motivo', 'reuniao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores', 'tmodalidade', 'modalidade', 'tipo_tratamento'));
-    }
 
 
     public function create()
@@ -660,7 +631,7 @@ try {
                 ->select('gr.id AS idg', 'gr.nome', 'gr.id_tipo_grupo', 's.sigla as nsigla')
                 ->orderBy('gr.nome');
 
-            $modalidade = DB::table('tipo_modalidade')->get(); 
+            $modalidade = DB::table('tipo_modalidade')->get();
 
             $grupo = $grupo->get();
 
@@ -744,7 +715,7 @@ try {
         app('flasher')->addError('Divergência na cronologia das datas.');
         return redirect()->back()->withInput();
     }
-    
+
 
     $semestre = DB::table('tipo_tratamento')
         ->where('id', $tratamento)
@@ -861,7 +832,7 @@ try {
         // Atualização do cronograma
         DB::table('cronograma')->where('id', $id)->update([
             'id_grupo' => $grupo,
-            'id_sala' => $numero,
+            'id_sala' => $numero ?: null,
             'h_inicio' => $request->h_inicio,
             'h_fim' => $request->h_fim,
             'max_atend' => $request->max_atend,
@@ -949,21 +920,21 @@ try {
 
             app('flasher')->addError('A reunião já esta ligada a um tratamento.');
             return redirect()->back();
-            
+
         } else {
 
             DB::table('dias_cronograma as dc')
                 ->where('dc.id_cronograma', $id)
                 ->delete();
-            
+
             DB::table('cronograma as cro')
                 ->where('cro.id', $id)
                 ->delete();
-            
+
 
             app('flasher')->addSuccess('A reunião foi excluida com sucesso.');
             return redirect()->back();
-           
+
         }
 
         // Verifica se há algum registro com o fato específico na tabela 'historico_venus'
