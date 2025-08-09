@@ -1177,7 +1177,7 @@ class AtendimentoFraternoController extends Controller
         // if (in_array(8, $countEntrevistas) and $evangelho ) {
         //     app('flasher')->addWarning('Já existe um encaminhamento para o Grupo de Evangelho no Lar ativo para esta pessoa!');
         // }
-         if ($evangelho) {
+        if ($evangelho) {
             // Cria o encaminhamento novo com status 1
             $idEnvagelho = DB::table('encaminhamento AS enc')->insertGetId([
                 'id_tipo_encaminhamento' => 1,
@@ -1464,31 +1464,29 @@ class AtendimentoFraternoController extends Controller
     // Função de Limpar na tela de Atendendo
     public function reset(string $idat)
     {
-        try {
 
-            $dt_hora = Carbon::now();
-            DB::table('encaminhamento')->where('id_atendimento', $idat)->delete(); // Apaga todos os Tratamentos gerados
-            DB::table('registro_tema')->where('id_atendimento', $idat)->delete(); //  Apaga todas as Entrevistas geradas
-            DB::table('atendimentos')->where('id', $idat)->update([ // Limpa o campo de anotação do atendimento
-                'observacao' => null
-            ]);
 
-            // Insere no histórico a criação do atendimento
-            DB::table('log_atendimentos')->insert([
-                'id_referencia' => $idat,
-                'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 8, // foi Resetado
-                'id_origem' => 1, // Atendimento
-                'data_hora' => $dt_hora
-            ]);
+        $dt_hora = Carbon::now();
+        DB::table('entrevistas')->whereIn('id_encaminhamento', function ($query) use ($idat) {
+            $query->select('id')->from('encaminhamento')->where('id_atendimento', $idat);
+        })->delete();
+        DB::table('encaminhamento')->where('id_atendimento', $idat)->delete(); // Apaga todos os Tratamentos gerados
+        DB::table('registro_tema')->where('id_atendimento', $idat)->delete(); //  Apaga todas as Entrevistas geradas
+        DB::table('atendimentos')->where('id', $idat)->update([ // Limpa o campo de anotação do atendimento
+            'observacao' => null
+        ]);
 
-            app('flasher')->addSuccess('Todos os dados foram apagados com sucesso!');
-            return redirect()->back();
-        } catch (\Exception $e) {
-            app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
-            DB::rollBack();
-            return redirect()->back();
-        }
+        // Insere no histórico a criação do atendimento
+        DB::table('log_atendimentos')->insert([
+            'id_referencia' => $idat,
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'id_acao' => 8, // foi Resetado
+            'id_origem' => 1, // Atendimento
+            'data_hora' => $dt_hora
+        ]);
+
+        app('flasher')->addSuccess('Todos os dados foram apagados com sucesso!');
+        return redirect()->back();
     }
 
 
