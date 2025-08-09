@@ -1178,6 +1178,7 @@ class AtendimentoFraternoController extends Controller
         //     app('flasher')->addWarning('Já existe um encaminhamento para o Grupo de Evangelho no Lar ativo para esta pessoa!');
         // }
         if ($evangelho) {
+            // Cria o encaminhamento novo
             $idEnvagelho = DB::table('encaminhamento AS enc')->insertGetId([
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
@@ -1185,17 +1186,27 @@ class AtendimentoFraternoController extends Controller
                 'status_encaminhamento' => 1
             ]);
 
+            // Cria a entrevista associada
             DB::table('entrevistas')->insert([
                 'id_encaminhamento' => $idEnvagelho,
                 'status' => 3,
                 'data' => now(),
             ]);
 
+            // Apaga (ou inativa) os outros encaminhamentos que estejam aguardando agendamento,
+            // para o mesmo atendimento, exceto o recém criado
+            DB::table('encaminhamento')
+                ->where('id_atendimento', $idat)
+                ->where('status_encaminhamento', 1)
+                ->where('id', '!=', $idEnvagelho)
+                ->delete();  // ou ->update(['status_encaminhamento' => algum_status_inativo])
+
+            // Registra o log normalmente
             DB::table('log_atendimentos')->insert([
                 'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 6,//Gerou uma entrevista
-                'id_origem' => 1,//Atendimento
+                'id_acao' => 6, // Gerou uma entrevista
+                'id_origem' => 1, // Atendimento
                 'id_observacao' => $idEnvagelho,
                 'data_hora' => $dt_hora
             ]);
