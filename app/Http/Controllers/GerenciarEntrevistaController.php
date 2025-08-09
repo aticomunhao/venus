@@ -67,9 +67,8 @@ class GerenciarEntrevistaController extends Controller
             ->leftJoin('pessoas as pessoa_entrevistador', 'associado.id_pessoa', 'pessoa_entrevistador.id')
             ->leftJoin('tipo_status_entrevista as tse', 'entrevistas.status', 'tse.id')
             ->where('encaminhamento.id_tipo_encaminhamento', 1) // Tipo Entrevista
-            ->whereNot('tipo_entrevista.id', 8) // Exclui o tipo de entrevista 8 (Evangelho no Lar)
             ->whereIn('tipo_entrevista.id_setor', $setores);
-
+               
         $i = 0;
         $pesquisaValue = $request->status == null ? 'limpo' : $request->status; // XXX Se remover o 'limpo' o sistema quebra, por algum motivo
 
@@ -212,7 +211,7 @@ class GerenciarEntrevistaController extends Controller
 
         // Traz as entrevistar para o Select de Pesquisa de Status
         $tipo_entrevista = DB::table('tipo_entrevista')
-            ->whereIn('id', [3, 4, 5, 6]) // AME, AFE, DIAMO, NUTRES
+            ->whereIn('id', [3, 4, 5, 6,8]) // AME, AFE, DIAMO, NUTRES,GEL
             ->select('id as id_ent', 'sigla as ent_desc')
             ->orderby('descricao', 'asc')
             ->get();
