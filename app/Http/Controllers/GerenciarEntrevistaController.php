@@ -68,7 +68,7 @@ class GerenciarEntrevistaController extends Controller
             ->leftJoin('tipo_status_entrevista as tse', 'entrevistas.status', 'tse.id')
             ->where('encaminhamento.id_tipo_encaminhamento', 1) // Tipo Entrevista
             ->whereIn('tipo_entrevista.id_setor', $setores);
-               
+
         $i = 0;
         $pesquisaValue = $request->status == null ? 'limpo' : $request->status; // XXX Se remover o 'limpo' o sistema quebra, por algum motivo
 
@@ -211,7 +211,7 @@ class GerenciarEntrevistaController extends Controller
 
         // Traz as entrevistar para o Select de Pesquisa de Status
         $tipo_entrevista = DB::table('tipo_entrevista')
-            ->whereIn('id', [3, 4, 5, 6,8]) // AME, AFE, DIAMO, NUTRES,GEL
+            ->whereIn('id', [3, 4, 5, 6, 8]) // AME, AFE, DIAMO, NUTRES,GEL
             ->select('id as id_ent', 'sigla as ent_desc')
             ->orderby('descricao', 'asc')
             ->get();
@@ -485,10 +485,10 @@ class GerenciarEntrevistaController extends Controller
             ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
             ->where('at.id_assistido', $entrevistas->id_assistido) // Todos daquele assistido
             ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
-           ->where('enc.id_tipo_tratamento', $tradutor)
-           ->orderBy('tr.dt_fim', 'DESC')
-           ->orderBy('tr.dt_inicio', 'DESC')
-           ->first();
+            ->where('enc.id_tipo_tratamento', $tradutor)
+            ->orderBy('tr.dt_fim', 'DESC')
+            ->orderBy('tr.dt_inicio', 'DESC')
+            ->first();
 
         $presencas = DB::table('presenca_cronograma as pc')
             ->select('enc.id_tipo_tratamento', 'dc.data', 'pc.presenca', 'gr.nome')
@@ -683,8 +683,13 @@ class GerenciarEntrevistaController extends Controller
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
             ->first();
 
-        // Força uma variável DATE e uma TIME a forçarem uma única DATETIME
-        $dt = Carbon::createFromFormat('Y-m-d H:i:s', $entrevista->data . ' ' . $entrevista->hora);
+        if (!empty($entrevista->hora)) {
+            $dt = Carbon::createFromFormat('Y-m-d H:i:s', $entrevista->data . ' ' . $entrevista->hora);
+        } else {
+            // Se não tiver hora, você pode usar só a data com hora 00:00:00
+            $dt = Carbon::createFromFormat('Y-m-d H:i:s', $entrevista->data . ' 00:00:00');
+        }
+
 
         // A tabela Atendimentos pede o ID associado, logo, é necessária busca em banco desse dado
         $id_entrevistador = DB::table('membro')->where('id_associado', $entrevista->id_entrevistador)->select('id_associado')->first();
