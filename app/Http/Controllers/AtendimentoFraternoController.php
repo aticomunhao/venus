@@ -1177,8 +1177,8 @@ class AtendimentoFraternoController extends Controller
         // if (in_array(8, $countEntrevistas) and $evangelho ) {
         //     app('flasher')->addWarning('Já existe um encaminhamento para o Grupo de Evangelho no Lar ativo para esta pessoa!');
         // }
-        if ($evangelho) {
-            // Cria o encaminhamento novo
+         if ($evangelho) {
+            // Cria o encaminhamento novo com status 1
             $idEnvagelho = DB::table('encaminhamento AS enc')->insertGetId([
                 'id_tipo_encaminhamento' => 1,
                 'id_atendimento' => $idat,
@@ -1193,20 +1193,24 @@ class AtendimentoFraternoController extends Controller
                 'data' => now(),
             ]);
 
-            // Apaga (ou inativa) os outros encaminhamentos que estejam aguardando agendamento,
-            // para o mesmo atendimento, exceto o recém criado
+            // Atualiza o status do encaminhamento para indicar que a entrevista foi criada
+            DB::table('encaminhamento')
+                ->where('id', $idEnvagelho)
+                ->update(['status_encaminhamento' => 2]); // exemplo: 2 = Entrevista criada/agendada
+
+            // Apaga/inativa os outros encaminhamentos com status 1 (aguardando agendamento), se necessário
             DB::table('encaminhamento')
                 ->where('id_atendimento', $idat)
                 ->where('status_encaminhamento', 1)
                 ->where('id', '!=', $idEnvagelho)
-                ->delete();  // ou ->update(['status_encaminhamento' => algum_status_inativo])
+                ->delete();
 
-            // Registra o log normalmente
+            // Insere no log
             DB::table('log_atendimentos')->insert([
                 'id_referencia' => $idat,
                 'id_usuario' => session()->get('usuario.id_usuario'),
-                'id_acao' => 6, // Gerou uma entrevista
-                'id_origem' => 1, // Atendimento
+                'id_acao' => 6,
+                'id_origem' => 1,
                 'id_observacao' => $idEnvagelho,
                 'data_hora' => $dt_hora
             ]);
