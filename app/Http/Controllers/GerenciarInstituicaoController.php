@@ -66,7 +66,7 @@ class GerenciarInstituicaoController extends Controller
             'logradouro' => $request->input('logradouro'),
             'bairro' => $request->input('bairro'),
             'uf' => $request->input('uf'),
-            'localidade' => $request->input('localidade'),
+            'cidade' => $request->input('cidade'),
             'complemento' => $request->input('complemento'),
             'unidade' => $request->input('unidade'),
             'gia' => $request->input('gia'),
@@ -86,10 +86,33 @@ class GerenciarInstituicaoController extends Controller
         $uf = DB::table('tp_uf')->get();
         $instituicao = DB::table('instituicao')
             ->leftJoin('tp_uf', 'instituicao.uf', 'tp_uf.id')
+            ->leftJoin('tp_cidade', 'tp_cidade.id_cidade', 'instituicao.cidade')
+             ->select(
+                'instituicao.id as id',
+                'instituicao.nome_fantasia',
+                'instituicao.razao_social',
+                'instituicao.inscricao_estadual',
+                'instituicao.nome_contato',
+                'instituicao.ibge',
+                'instituicao.cep',
+                'instituicao.logradouro',
+                'instituicao.bairro',
+                'tp_uf.id as uf',
+                'tp_uf.sigla as sigla',
+                'instituicao.cidade as cidade_id',
+                'tp_cidade.descricao as cidade',
+                'instituicao.complemento',
+                'instituicao.unidade',
+                'instituicao.gia',
+                'instituicao.numero',
+                'instituicao.cnpj',
+                'instituicao.email_contato',
+                'instituicao.site'
+            )
             ->where('instituicao.id', $id)
             ->first();
 
-        if (!$instituicao) {
+            if (!$instituicao) {
             app('flasher')->addError('Instituição não encontrada!');
             return redirect('/gerenciar-instituicao');
         }
@@ -111,7 +134,7 @@ class GerenciarInstituicaoController extends Controller
             'logradouro' => $request->input('logradouro'),
             'bairro' => $request->input('bairro'),
             'uf' => $request->input('uf'),
-            'localidade' => $request->input('localidade'),
+            'cidade' => $request->input('cidade'),
             'complemento' => $request->input('complemento'),
             'unidade' => $request->input('unidade'),
             'gia' => $request->input('gia'),
@@ -145,5 +168,13 @@ class GerenciarInstituicaoController extends Controller
         }
 
         return view('/instituicao/visualizar-instituicao', compact('instituicao'));
+    }
+    public function retornaCidadeDadosResidenciais($id)
+    {
+        $cidadeDadosResidenciais = DB::table('tp_cidade')
+            ->where('id_uf', $id)
+            ->get();
+
+        return response()->json($cidadeDadosResidenciais);
     }
 }

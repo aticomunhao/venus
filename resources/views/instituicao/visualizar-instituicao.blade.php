@@ -18,6 +18,7 @@
                                 <div class="col">
                                     EDITAR INSTITUIÇÕES
                                 </div>
+                                <a href="javascript:history.back()" class="btn-close" aria-label="Fechar"></a>
                             </div>
                         </div>
                         <div class="card-body">
@@ -79,8 +80,8 @@
                                     </div>
                                     <div class="col-4">
                                         <label for="logradouro">Logradouro</label>
-                                        <input type="text" class="form-control" name="logradouro" id="logradouro" disabled
-                                            value="{{ $instituicao->logradouro }}" maxlength="18" required>
+                                        <input type="text" class="form-control" name="logradouro" id="logradouro"
+                                            disabled value="{{ $instituicao->logradouro }}" maxlength="18" required>
                                     </div>
                                     <div class="col-4">
                                         <label for="bairro">Bairro</label>
@@ -91,14 +92,15 @@
                                 <div class="row mb-3">
                                     <div class="col-4">
                                         <label for="uf">Uf</label>
-                                        <input type="text" class="form-control" name="uf" id="uf" disabled value="{{ $instituicao->sigla }}">
+                                        <input type="text" class="form-control" name="uf" id="uf" disabled
+                                            value="{{ $instituicao->sigla }}">
 
                                         </input>
                                     </div>
                                     <div class="col-4">
-                                        <label for="localidade">Localidade</label>
-                                        <input type="text" class="form-control" name="localidade" disabled
-                                            value="{{ $instituicao->localidade }}" required>
+                                        <label for="cidade">Cidade</label>
+                                        <input type="text" class="form-control" name="cidade" disabled
+                                            value="{{ $instituicao->cidade }}" required>
                                     </div>
                                     <div class="col-4">
                                         <label for="complemento">Complemento</label>
@@ -109,8 +111,8 @@
                                 <div class="row mb-3">
                                     <div class="col-4">
                                         <label for="unidade">Unidade</label>
-                                        <input type="text" class="form-control" name="unidade" id="unidade" disabled
-                                            value="{{ $instituicao->unidade }}" maxlength="18">
+                                        <input type="text" class="form-control" name="unidade" id="unidade"
+                                            disabled value="{{ $instituicao->unidade }}" maxlength="18">
                                     </div>
                                     <div class="col-4">
                                         <label for="gia">Gia</label>
@@ -130,8 +132,7 @@
                     <br>
                     <div class="row mb-3">
                         <div class="d-grid gap-1 col-4 mx-auto">
-                            <a class="btn btn-primary" href="javascript:history.back()"
-                                role="button">Retornar</a>
+                            <a class="btn btn-primary" href="javascript:history.back()" role="button">Retornar</a>
                         </div>
                     </div>
                 </form>
