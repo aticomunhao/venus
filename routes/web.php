@@ -586,4 +586,5 @@ Route::middleware('rotas:59')->group(function () {
     Route::delete('/excluir-instituicao/{id}', [GerenciarInstituicaoController::class, 'destroy'])->name('instituicao.destroy');
     Route::get('/visualizar-instituicao/{id}', [GerenciarInstituicaoController::class, 'show']);
     Route::get('/retorna-cidade-dados-residenciais/{id}', [GerenciarInstituicaoController::class, 'retornaCidadeDadosResidenciais']);
+    Route::patch('/instituicao/{id}/status', [GerenciarInstituicaoController::class, 'toggleStatus'])->name('instituicao.toggleStatus');
 });
