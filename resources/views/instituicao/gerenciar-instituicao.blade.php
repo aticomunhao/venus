@@ -82,7 +82,7 @@
     </div>
 
 
-    <form action="{{ route('index.estExt') }}" class="form-horizontal mt-4" method="GET">
+    <form action="{{ route('index.instituicao') }}" class="form-horizontal mt-4" method="GET">
         <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
