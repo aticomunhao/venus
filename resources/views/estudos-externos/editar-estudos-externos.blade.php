@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Criar Estudos Externos
+    Editar Estudos Externos
 @endsection
 
 @section('content')
@@ -16,7 +16,8 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col">
-                                    CRIAR ESTUDOS EXTERNOS
+
+                                     ESTUDOS EXTERNOS
                                 </div>
                             </div>
                         </div>

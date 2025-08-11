@@ -13,8 +13,16 @@ class GerenciarEstudosExternosController extends Controller
     {
         $lista = DB::table('cursos_externos as ce')
             ->leftJoin('pessoas as p', 'ce.id_pessoa', 'p.id')
+            ->leftJoin('tipo_tratamento as tt', 'ce.id_tipo_atividade', 'tt.id')
+            ->leftJoin('instituicao as i', 'ce.instituicao', 'i.id')
+            ->leftJoin('setor as s', 'ce.setor', 's.id')
             ->select(
                 'p.nome_completo as nome_completo',
+                's.sigla as setor_sigla',
+                'i.nome_fantasia as instituicao_nome',
+                'tt.sigla',
+                'tt.descricao',
+                'p.nome_completo',
                 'id_tipo_atividade',
                 'instituicao',
                 'data_inicio',
@@ -47,6 +55,7 @@ class GerenciarEstudosExternosController extends Controller
             $pessoas = $request->input('pessoa');
             $instituicoes = $request->input('instituicao');
             $estudos = $request->input('estudo');
+            $dataIncial = $request->input('dt_inicial');
             $datasFinais = $request->input('dt_final');
             $arquivos = $request->file('arquivo');
 
@@ -58,10 +67,11 @@ class GerenciarEstudosExternosController extends Controller
             // Percorrer cada estudo enviado
             foreach ($instituicoes as $index => $instituicaoId) {
                 DB::table('cursos_externos')->insert([
-                    'id_setor' => $setores,
+                    'setor' => $setores,
                     'id_pessoa' => $pessoas,
-                    'id_instituicao' => $instituicaoId[$index] ?? null,
-                    'id_estudo' => $estudos[$index] ?? null,
+                    'instituicao' => $instituicaoId[$index] ?? null,
+                    'id_tipo_atividade' => $estudos[$index] ?? null,
+                    'data_inicio' => $dataIncial[$index] ?? null,
                     'data_fim' => $datasFinais[$index] ?? null,
                     'documento_comprovante' => isset($arquivos[$index])
                         ? $arquivos[$index]->store('anexos_estudos', 'public')

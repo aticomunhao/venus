@@ -64,46 +64,39 @@
                             </div>
                         </td>
                         <td>{{ $listas->id }}</td>
-                        <td>{{ $listas->setor }}</td>
-                        <td>{{ $listas->id_pessoa }}</td>
-                        <td>{{ $listas->id_tipo_atividade }}</td>
-                        <td>{{ $listas->data_fim }}</td>
-                        <td>{{ $listas->instituicao }}</td>
+                        <td>{{ $listas->setor_sigla }}</td>
+                        <td>{{ $listas->nome_completo }}</td>
+                        <td>{{ $listas->sigla }} - {{ $listas->descricao }}</td>
+                        <td>{{ $listas->data_fim ? \Carbon\Carbon::parse($listas->data_fim)->format('d/m/Y') : '' }}</td>
+                        <td>{{ $listas->instituicao_nome }}</td>
                         <td>{{ $listas->status }}</td>
                         <td>
                             <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Visualizar">
                                 <i class="bi bi-search"></i>
                             </a>
-                            {{-- @if (in_array($aquisicaos->tipoStatus->id, ['3', '2'])) --}}
-                            <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Aprovar">
-                                <i class="bi bi-check-lg"></i>
-                            </a>
-                            {{-- @endif --}}
-                            {{-- @if ($aquisicaos->tipoStatus->id == '1') --}}
                             <a href="" class="btn btn-sm btn-outline-warning" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Enviar">
-                                <i class="bi bi-cart-check"></i>
+                                <i class="bi bi-fast-forward"></i>
                             </a>
-                            {{-- @endif --}}
-                            {{-- @if (isset($aquisicaos->aut_usu_pres, $aquisicaos->aut_usu_adm, $aquisicaos->aut_usu_daf)) --}}
+
                             <a href="" class="btn btn-sm btn-outline-info" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Anexar">
+                                style="font-size: 1rem; color:#303030" data-placement="top" title="Aprovar">
                                 <i class="bi bi-hand-thumbs-up"></i>
                             </a>
-                            {{-- @endif --}}
-                            {{-- @if ($aquisicaos->tipoStatus->id == '1') --}}
+                            <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
+                                style="font-size: 1rem; color:#303030" data-placement="top" title="Anexar">
+                                <i class="bi bi-archive"></i>
+                            </a>
                             <a href="#" class="btn btn-sm btn-outline-danger excluirSolicitacao" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Excluir"
                                 data-bs-toggle="modal" data-bs-target="#modalExcluirSolicitacao" data-id="">
                                 <i class="bi bi-trash"></i>
                             </a>
-                            {{-- @endif --}}
                         </td>
                     </tr>
                 @endforeach
