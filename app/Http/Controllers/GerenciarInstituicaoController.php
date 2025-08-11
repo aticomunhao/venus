@@ -12,7 +12,8 @@ class GerenciarInstituicaoController extends Controller
     public function index(Request $request)
     {
         $lista = DB::table('instituicao')
-            ->select('id', 'nome_fantasia', 'razao_social', 'cnpj', 'email_contato', 'site', 'status')
+            ->leftJoin('tipo_status', 'instituicao.status', 'tipo_status.id')
+            ->select('instituicao.id', 'nome_fantasia', 'razao_social', 'cnpj', 'email_contato', 'site', 'tipo_status.descricao as status', 'instituicao.status as status_id')
             ->when($request->nome_fantasia, function ($query, $value) {
                 return $query->where('nome_fantasia', $value);
             })
@@ -87,7 +88,7 @@ class GerenciarInstituicaoController extends Controller
         $instituicao = DB::table('instituicao')
             ->leftJoin('tp_uf', 'instituicao.uf', 'tp_uf.id')
             ->leftJoin('tp_cidade', 'tp_cidade.id_cidade', 'instituicao.cidade')
-             ->select(
+            ->select(
                 'instituicao.id as id',
                 'instituicao.nome_fantasia',
                 'instituicao.razao_social',
@@ -112,7 +113,7 @@ class GerenciarInstituicaoController extends Controller
             ->where('instituicao.id', $id)
             ->first();
 
-            if (!$instituicao) {
+        if (!$instituicao) {
             app('flasher')->addError('Instituição não encontrada!');
             return redirect('/gerenciar-instituicao');
         }
@@ -160,7 +161,7 @@ class GerenciarInstituicaoController extends Controller
         $instituicao = DB::table('instituicao')
             ->leftJoin('tp_uf', 'instituicao.uf', 'tp_uf.id')
             ->leftJoin('tp_cidade', 'tp_cidade.id_cidade', 'instituicao.cidade')
-             ->select(
+            ->select(
                 'instituicao.id as id',
                 'instituicao.nome_fantasia',
                 'instituicao.razao_social',
@@ -199,5 +200,22 @@ class GerenciarInstituicaoController extends Controller
             ->get();
 
         return response()->json($cidadeDadosResidenciais);
+    }
+    public function toggleStatus(Request $request, $id)
+    {
+        $instituicao = DB::table('instituicao')->where('id', $id)->first();
+        if (!$instituicao) {
+            app('flasher')->addError('Instituição não encontrada!');
+            return redirect()->back();
+        }
+
+        $novoStatus = $instituicao->status == '1' ? '2' : '1';
+
+        DB::table('instituicao')->where('id', $id)->update(['status' => $novoStatus]);
+
+        $msg = $novoStatus == '1' ? 'Instituição ativada com sucesso!' : 'Instituição inativada com sucesso!';
+        app('flasher')->addSuccess($msg);
+
+        return redirect()->back();
     }
 }

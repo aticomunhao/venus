@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="container-fluid">
-        <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
+        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
             GERENCIAR INSTITUIÇÕES</h4>
         <br>
         <div class="col-12">
@@ -54,8 +54,9 @@
                         <td>{{ $listas->site }}</td>
                         <td>{{ $listas->status }}</td>
                         <td>
-                            <a href="/visualizar-instituicao/{{ $listas->id }}" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Visualizar">
+                            <a href="/visualizar-instituicao/{{ $listas->id }}" class="btn btn-sm btn-outline-primary"
+                                data-tt="tooltip" style="font-size: 1rem; color:#303030" data-placement="top"
+                                title="Visualizar">
                                 <i class="bi bi-search"></i>
                             </a>
                             {{-- @if ($aquisicaos->tipoStatus->id == '1') --}}
@@ -65,6 +66,17 @@
                                 <i class="bi bi-pencil"></i>
                             </a>
                             {{-- @endif --}}
+                            @if ($listas->status_id == '1')
+                                <button class="btn btn-sm btn-outline-danger btn-inativar" data-id="{{ $listas->id }}" title="Inativar"
+                                    data-nome="{{ $listas->nome_fantasia }}" style="font-size: 1rem; color:#303030" data-status="1" title="Inativar">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            @elseif($listas->status_id == '2')
+                                <button class="btn btn-sm btn-outline-success btn-ativar" data-id="{{ $listas->id }}" title="Ativar"
+                                    data-nome="{{ $listas->nome_fantasia }}" data-status="2" title="Ativar" style="font-size: 1rem; color:#303030">
+                                    <i class="bi bi-check-circle"></i>
+                                </button>
+                            @endif
                             {{-- @if ($aquisicaos->tipoStatus->id == '1') --}}
                             <a href="#" class="btn btn-sm btn-outline-danger excluirInstituicao" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Excluir"
@@ -81,6 +93,30 @@
         </table>
     </div>
 
+    <!-- Modal Inativar/Ativar Instituição -->
+    <div class="modal fade" id="modalInativarInstituicao" tabindex="-1" aria-labelledby="modalInativarInstituicaoLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form id="formInativarInstituicao" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="modal-content">
+                    <div class="modal-header bg-secondary text-dark">
+                        <h5 class="modal-title" id="modalInativarInstituicaoLabel">Confirmar Alteração de Status</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body" id="modal-body-content-inativar">
+                        Deseja realmente <span id="acao-status"></span> a instituição: <strong><span
+                                id="nomeInstituicao"></span></strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <form action="{{ route('index.instituicao') }}" class="form-horizontal mt-4" method="GET">
         <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -131,7 +167,8 @@
 
                                 <div class="col-12 mb-3">CNPJ
                                     <input class="form-control" type="number" maxlength="14"
-                                        placeholder="Insira apenas números" name="cnpj" value="{{ request('cnpj') }}">
+                                        placeholder="Insira apenas números" name="cnpj"
+                                        value="{{ request('cnpj') }}">
                                 </div>
 
                                 <div class="col-12 mb-3">Site
@@ -209,6 +246,31 @@
 
                     // Define a action correta para o formulário
                     formExcluir.action = `/excluir-instituicao/${id}`;
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const botoesInativar = document.querySelectorAll('.btn-inativar, .btn-ativar');
+            const modal = new bootstrap.Modal(document.getElementById('modalInativarInstituicao'));
+            const form = document.getElementById('formInativarInstituicao');
+            const nomeSpan = document.getElementById('nomeInstituicao');
+            const acaoSpan = document.getElementById('acao-status');
+
+            botoesInativar.forEach(botao => {
+                botao.addEventListener('click', () => {
+                    const id = botao.getAttribute('data-id');
+                    const nome = botao.getAttribute('data-nome');
+                    const status = botao.getAttribute('data-status');
+
+                    nomeSpan.textContent = nome;
+                    const acao = status === '1' ? 'inativar' : 'ativar';
+                    acaoSpan.textContent = acao;
+
+                    form.action = `/instituicao/${id}/status`;
+
+                    modal.show();
                 });
             });
         });
