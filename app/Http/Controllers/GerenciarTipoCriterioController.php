@@ -15,6 +15,8 @@ class GerenciarTipoCriterioController extends Controller
         $tipos_criterio = DB::table('tipos_criterios')->get();
         $result = DB::select("SELECT unnest(enum_range(NULL::tipo_valor_enum)) AS valor");
         $tipo_valores = collect($result)->pluck('valor')->toArray();
+        $status = DB::table('tipos_criterios')->pluck('status')->first();
+        dd($status);
 
         $pesquisa_search = $request->input('search');
         if ($pesquisa_search) {
