@@ -69,12 +69,12 @@
                             @if ($listas->status_id == '1')
                                 <button class="btn btn-sm btn-outline-danger btn-inativar" data-id="{{ $listas->id }}" title="Inativar"
                                     data-nome="{{ $listas->nome_fantasia }}" style="font-size: 1rem; color:#303030" data-status="1" title="Inativar">
-                                    <i class="bi bi-x-circle"></i>
+                                    <i class="bi bi-unlock-fill"></i>
                                 </button>
                             @elseif($listas->status_id == '2')
                                 <button class="btn btn-sm btn-outline-success btn-ativar" data-id="{{ $listas->id }}" title="Ativar"
                                     data-nome="{{ $listas->nome_fantasia }}" data-status="2" title="Ativar" style="font-size: 1rem; color:#303030">
-                                    <i class="bi bi-check-circle"></i>
+                                    <i class="bi bi-lock-fill"></i>
                                 </button>
                             @endif
                             {{-- @if ($aquisicaos->tipoStatus->id == '1') --}}
