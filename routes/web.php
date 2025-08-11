@@ -560,9 +560,9 @@ Route::put('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::cl
 Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy'])->name('inativar.tipo_criterio_controller');
 
 
-if (!App::environment('local')) {
-    URL::forceScheme('https');
-}
+// if (!App::environment('local')) {
+//     URL::forceScheme('https');
+// }
 
 /*Ajax Controller */
 Route::get('/retorna-cidades/{id}', [AjaxController::class, 'retornaCidades']);
