@@ -47,6 +47,7 @@ use App\Http\Controllers\LogAtendimentosController;
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\GerenciarTipoCriterioController;
 use App\Http\Controllers\GerenciarEstudosExternosController;
+use App\Http\Controllers\GerenciarInstituicaoController;
 use App\Mail\EnviarEmail;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
@@ -559,9 +560,6 @@ Route::post('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::c
 Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy.tipo_criterio_controller']);
 
 
-// if (!App::environment('local')) {
-//     URL::forceScheme('https');
-// }
 
 /*Ajax Controller */
 Route::get('/retorna-cidades/{id}', [AjaxController::class, 'retornaCidades']);
@@ -570,8 +568,24 @@ Route::get('/retorna-dados-endereco/{id}', [AjaxController::class, 'getAddressBy
 //     URL::forceScheme('https');
 // }
 
-Route::middleware('rotas:55')->group(function () {
+Route::middleware('rotas:58')->group(function () {
     Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
     Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
     Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
+
+    if (!App::environment('local')) {
+    URL::forceScheme('https');
+}
+});
+
+Route::middleware('rotas:59')->group(function () {
+    Route::get('/gerenciar-instituicao', [GerenciarInstituicaoController::class, 'index'])->name('index.instituicao');
+    Route::get('/incluir-instituicao', [GerenciarInstituicaoController::class, 'create']);
+    Route::post('/salvar-instituicao', [GerenciarInstituicaoController::class, 'store']);
+    Route::get('/editar-instituicao/{id}', [GerenciarInstituicaoController::class, 'edit']);
+    Route::post('/atualizar-instituicao/{id}', [GerenciarInstituicaoController::class, 'update']);
+    Route::delete('/excluir-instituicao/{id}', [GerenciarInstituicaoController::class, 'destroy'])->name('instituicao.destroy');
+    Route::get('/visualizar-instituicao/{id}', [GerenciarInstituicaoController::class, 'show']);
+    Route::get('/retorna-cidade-dados-residenciais/{id}', [GerenciarInstituicaoController::class, 'retornaCidadeDadosResidenciais']);
+    Route::patch('/instituicao/{id}/status', [GerenciarInstituicaoController::class, 'toggleStatus'])->name('instituicao.toggleStatus');
 });
