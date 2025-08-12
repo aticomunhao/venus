@@ -9,11 +9,11 @@ $setores = DB::table('setor as st')->leftJoin('setor as stp', 'st.setor_pai', 's
 
 $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column($setores, 'idp'), array_column($setores, 'ida')));
 
-$idAcessoRelatorios = [35, 57, 34, 35, 48, 46, 31, 32, 51, 47, 52, 33]; // IDs de acesso para relatórios
-$idAcessoMembros = [14, 20, 15, 21]; // IDs de acesso para Membros
-$idAcessoTratamentos = [25, 24, 39, 41]; // IDs de acesso para Tratamentos
-$idAcessoAgendamentos = [16, 22, 23, 40, 9, 18, 30, 8]; // IDs de acesso para Agendamentos
 $idAcessoAtendimentos = [6, 5, 3, 4]; // IDs de acesso para Atendimentos
+$idAcessoAgendamentos = [16, 22, 23, 40, 9, 18, 30, 8]; // IDs de acesso para Agendamentos
+$idAcessoTratamentos = [25, 24, 39, 41]; // IDs de acesso para Tratamentos
+$idAcessoMembros = [14, 20, 15, 21]; // IDs de acesso para Membros
+$idAcessoRelatorios = [35, 57, 34, 35, 48, 46, 31, 32, 51, 47, 52, 33]; // IDs de acesso para relatórios
 $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
 ?>
 
