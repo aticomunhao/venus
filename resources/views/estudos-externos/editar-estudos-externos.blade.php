@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Criar Estudos Externos
+    Editar Estudos Externos
 @endsection
 
 @section('content')
@@ -16,7 +16,8 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col">
-                                    CRIAR ESTUDOS EXTERNOS
+
+                                    ESTUDOS EXTERNOS
                                 </div>
                             </div>
                         </div>
@@ -56,7 +57,7 @@
                             <div class="card curso-principal" style="border-color: #355089; margin-top: 20px;">
                                 <div class="form-group row" style="margin: 5px; margin-top: 5px; margin-bottom: 15px;">
                                     <div class="col-md-5">Instituição
-                                        <select class="form-select select2" name="instituicao[]" id="instituicao" required>
+                                        <select class="form-select select2" name="instituicao[]" required>
                                             <option value="">Selecione uma instituição</option>
                                             @foreach ($instituicoes as $instituicao)
                                                 <option value="{{ $instituicao->id }}">{{ $instituicao->nome_fantasia }}
@@ -115,7 +116,7 @@
             </button>
             <div class="form-group row" style="margin: 5px; margin-top: 5px; margin-bottom: 15px;">
                 <div class="col-md-5">Instituição
-                    <select class="form-select js-categoria-curso" name="instituicao[]" id="instituicao" required>
+                    <select class="form-select js-categoria-curso" name="instituicao[]" required>
                         <option value="">Selecione uma instituição</option>
                         @foreach ($instituicoes as $instituicao)
                             <option value="{{ $instituicao->id }}">{{ $instituicao->nome_fantasia }}</option>
