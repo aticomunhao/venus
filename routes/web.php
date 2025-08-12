@@ -560,9 +560,6 @@ Route::post('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::c
 Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy.tipo_criterio_controller']);
 
 
-// if (!App::environment('local')) {
-//     URL::forceScheme('https');
-// }
 
 /*Ajax Controller */
 Route::get('/retorna-cidades/{id}', [AjaxController::class, 'retornaCidades']);
@@ -576,6 +573,9 @@ Route::middleware('rotas:58')->group(function () {
     Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
     Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
     Route::delete('/deletar-estudo-externo/{id}', [GerenciarEstudosExternosController::class, 'destroy']);
+    if (!App::environment('local')) {
+        URL::forceScheme('https');
+    }
 });
 
 Route::middleware('rotas:59')->group(function () {
