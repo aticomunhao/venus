@@ -17,7 +17,7 @@
                             <div class="row">
                                 <div class="col">
 
-                                     ESTUDOS EXTERNOS
+                                    ESTUDOS EXTERNOS
                                 </div>
                             </div>
                         </div>

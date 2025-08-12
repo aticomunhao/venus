@@ -575,6 +575,7 @@ Route::middleware('rotas:58')->group(function () {
     Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
     Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
     Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
+    Route::delete('/deletar-estudo-externo/{id}', [GerenciarEstudosExternosController::class, 'destroy']);
 });
 
 Route::middleware('rotas:59')->group(function () {

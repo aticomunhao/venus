@@ -31,6 +31,7 @@ class GerenciarEstudosExternosController extends Controller
                 'documento_comprovante',
                 'ce.setor',
                 'ce.id',
+                'tt.id_semestre',
             )
             ->get();
 
@@ -40,7 +41,10 @@ class GerenciarEstudosExternosController extends Controller
     public function create()
     {
         $setores = DB::table('setor')->select('id', 'nome', 'sigla')->whereNull('dt_fim')->get();
-        $estudos = DB::table('tipo_tratamento')->select('id', 'id_semestre', 'sigla')->where('id_tipo_grupo', '2')->get();
+        $estudos = DB::table('tipo_tratamento')
+            ->select('id', 'id_semestre', 'sigla')
+            ->where('id_tipo_grupo', '2')
+            ->get();
         $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->orderBy('nome_completo')->get();
         $instituicoes = DB::table('instituicao')->select('id', 'nome_fantasia', 'razao_social')->get();
 
@@ -69,7 +73,7 @@ class GerenciarEstudosExternosController extends Controller
                 DB::table('cursos_externos')->insert([
                     'setor' => $setores,
                     'id_pessoa' => $pessoas,
-                    'instituicao' => $instituicaoId[$index] ?? null,
+                    'instituicao' => $instituicoes[$index] ?? null,
                     'id_tipo_atividade' => $estudos[$index] ?? null,
                     'data_inicio' => $dataIncial[$index] ?? null,
                     'data_fim' => $datasFinais[$index] ?? null,
@@ -87,6 +91,25 @@ class GerenciarEstudosExternosController extends Controller
             DB::rollBack();
             app('flasher')->addError("Erro ao salvar os estudos:" . $e->getMessage());
             return back()->withInput();
+        }
+    }
+    public function destroy($id)
+    {
+        try {
+            // Verifica se o estudo existe
+            $estudo = DB::table('cursos_externos')->where('id', $id)->first();
+            if (!$estudo) {
+                app('flasher')->addError("Estudo externo não encontrado.");
+                return redirect()->route('index.estExt');
+            }
+
+            // Deleta o estudo
+            DB::table('cursos_externos')->where('id', $id)->delete();
+
+            app('flasher')->addSuccess("Estudo externo excluído com sucesso!");
+            return redirect()->route('index.estExt');
+        } catch (\Exception $e) {
+            return redirect()->route('index.estExt')->with('error', 'Erro ao excluir o estudo externo: ' . $e->getMessage());
         }
     }
 }
