@@ -572,6 +572,7 @@ Route::middleware('rotas:58')->group(function () {
     Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
     Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
     Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
+    Route::get('/editar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'edit']);
     Route::delete('/deletar-estudo-externo/{id}', [GerenciarEstudosExternosController::class, 'destroy']);
     if (!App::environment('local')) {
         URL::forceScheme('https');
