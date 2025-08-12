@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
+
 
 class AjaxController extends Controller
 {
@@ -45,6 +46,6 @@ class AjaxController extends Controller
             return response()->json(['error' => 'Unable to fetch address'], 400);
         }
     }
-   
+
 
 }

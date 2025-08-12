@@ -64,46 +64,39 @@
                             </div>
                         </td>
                         <td>{{ $listas->id }}</td>
-                        <td>{{ $listas->setor }}</td>
-                        <td>{{ $listas->id_pessoa }}</td>
-                        <td>{{ $listas->id_tipo_atividade }}</td>
-                        <td>{{ $listas->data_fim }}</td>
-                        <td>{{ $listas->instituicao }}</td>
+                        <td>{{ $listas->setor_sigla }}</td>
+                        <td>{{ $listas->nome_completo }}</td>
+                        <td>{{ $listas->sigla }} {{ $listas->id_semestre }} - {{ $listas->descricao }}</td>
+                        <td>{{ $listas->data_fim ? \Carbon\Carbon::parse($listas->data_fim)->format('d/m/Y') : '' }}</td>
+                        <td>{{ $listas->instituicao_nome }}</td>
                         <td>{{ $listas->status }}</td>
                         <td>
                             <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Visualizar">
                                 <i class="bi bi-search"></i>
                             </a>
-                            {{-- @if (in_array($aquisicaos->tipoStatus->id, ['3', '2'])) --}}
-                            <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Aprovar">
-                                <i class="bi bi-check-lg"></i>
-                            </a>
-                            {{-- @endif --}}
-                            {{-- @if ($aquisicaos->tipoStatus->id == '1') --}}
                             <a href="" class="btn btn-sm btn-outline-warning" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Enviar">
-                                <i class="bi bi-cart-check"></i>
+                                <i class="bi bi-fast-forward"></i>
                             </a>
-                            {{-- @endif --}}
-                            {{-- @if (isset($aquisicaos->aut_usu_pres, $aquisicaos->aut_usu_adm, $aquisicaos->aut_usu_daf)) --}}
+
                             <a href="" class="btn btn-sm btn-outline-info" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Anexar">
+                                style="font-size: 1rem; color:#303030" data-placement="top" title="Aprovar">
                                 <i class="bi bi-hand-thumbs-up"></i>
                             </a>
-                            {{-- @endif --}}
-                            {{-- @if ($aquisicaos->tipoStatus->id == '1') --}}
-                            <a href="#" class="btn btn-sm btn-outline-danger excluirSolicitacao" data-tt="tooltip"
+                            <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
+                                style="font-size: 1rem; color:#303030" data-placement="top" title="Anexar">
+                                <i class="bi bi-archive"></i>
+                            </a>
+                            <a href="#" class="btn btn-sm btn-outline-danger excluirEstudoExterno" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Excluir"
-                                data-bs-toggle="modal" data-bs-target="#modalExcluirSolicitacao" data-id="">
+                                data-bs-toggle="modal" data-bs-target="#modalExcluirEstudoExterno" data-id="{{ $listas->id }}">
                                 <i class="bi bi-trash"></i>
                             </a>
-                            {{-- @endif --}}
                         </td>
                     </tr>
                 @endforeach
@@ -163,19 +156,19 @@
         </div>
     </form>
     <!-- Modal Excluir Solicitação -->
-    <div class="modal fade" id="modalExcluirSolicitacao" tabindex="-1" aria-labelledby="modalExcluirSolicitacaoLabel"
+    <div class="modal fade" id="modalExcluirEstudoExterno" tabindex="-1" aria-labelledby="modalExcluirEstudoExternoLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <form id="formExcluirSolicitacao" class="form-horizontal" method="post">
+        <div class="modal-dialog modal-md">
+            <form id="formExcluirEstudoExterno" class="form-horizontal" method="post">
                 @csrf
                 @method('DELETE')
                 <div class="modal-content">
                     <div class="modal-header" style="background-color:#DC4C64;">
-                        <h5 class="modal-title" id="modalExcluirSolicitacaoLabel">Exclusão de Estudo</h5>
+                        <h5 class="modal-title" id="modalExcluirEstudoExternoLabel">Exclusão de Estudo</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="modal-body-content-excluir-material">
-                        Deseja realmente excluir o estudo: <span id="solicitacaoId" style="color: #DC4C64"></span>?
+                        Deseja realmente excluir o estudo: <span id="estudoExternoId" style="color: #DC4C64"></span>?
                     </div>
                     <div class="modal-footer mt-2">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
@@ -209,21 +202,18 @@
         </div>
     </div>
     <!-- FIM da Modal Aprovar em Lote -->
-@endsection
-
-@section('footerScript')
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll(".excluirSolicitacao").forEach(button => {
+            document.querySelectorAll(".excluirEstudoExterno").forEach(button => {
                 button.addEventListener("click", function() {
                     let id = this.getAttribute("data-id");
-                    let form = document.getElementById("formExcluirSolicitacao");
+                    let form = document.getElementById("formExcluirEstudoExterno");
 
                     // Atualiza a ação do formulário com o ID correto
-                    form.setAttribute("action", "/deletar-aquisicao-material/" + id);
+                    form.setAttribute("action", "/deletar-estudo-externo/" + id);
 
                     // Atualiza o texto dentro da modal
-                    document.getElementById("solicitacaoId").textContent = id;
+                    document.getElementById("estudoExternoId").textContent = id;
                 });
             });
         });
@@ -289,4 +279,8 @@
             });
         });
     </script>
+@endsection
+
+@section('footerScript')
+
 @endsection
