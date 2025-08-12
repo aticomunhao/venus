@@ -44,8 +44,10 @@ use App\Http\Controllers\GerenciarCriterioAtividadeController;
 use App\Http\Controllers\GerenciarEmailController;
 use App\Http\Controllers\GerenciarFichaVoluntariosController;
 use App\Http\Controllers\LogAtendimentosController;
+use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\GerenciarTipoCriterioController;
 use App\Http\Controllers\GerenciarEstudosExternosController;
+use App\Http\Controllers\GerenciarInstituicaoController;
 use App\Mail\EnviarEmail;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
@@ -526,7 +528,8 @@ Route::middleware('rotas:55')->group(function () {
     Route::any('/ficha-voluntario/{id}', [GerenciarFichaVoluntariosController::class, 'edit']);
     Route::any('/atualizar-ficha-voluntario/{ida}/{idp}', [GerenciarFichaVoluntariosController::class, 'update']);
     Route::any('/retorna-cidades/{id}', [GerenciarFichaVoluntariosController::class, 'retornaCidades']);
-    Route::any('/teste-camera', [GerenciarFichaVoluntariosController::class, 'index']);
+    Route::any('/salvar-foto', [GerenciarFichaVoluntariosController::class, 'salvarFoto']);
+    Route::any('/retorna-foto', [GerenciarFichaVoluntariosController::class, 'retornaFoto']);
 });
 
 
@@ -542,8 +545,10 @@ Route::middleware('rotas:54')->group(function () {
 //Gerenciar inscrições
 Route::middleware('rotas:55')->group(function () {
     Route::get('/gerenciar-inscricao', [GerenciarInscricaoController::class, 'index'])->name('index.insc');
-    Route::get('/criar-inscricao', [GerenciarInscricaoController::class, 'create']);
-    Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'include']);
+    Route::get('/formar-inscricao', [GerenciarInscricaoController::class, 'formar']);
+    Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'criar']);
+    Route::get('/altera-turma/{idi}', [GerenciarInscricaoController::class, 'trocar']);
+    Route::get('/visualizar-inscricao/{idi}', [GerenciarInscricaoController::class, 'visualizar']);
 });
 //Gerenciar Tipo Criterios Atividades
 
@@ -556,7 +561,14 @@ Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::clas
 
 
 
-Route::middleware('rotas:55')->group(function () {
+/*Ajax Controller */
+Route::get('/retorna-cidades/{id}', [AjaxController::class, 'retornaCidades']);
+Route::get('/retorna-dados-endereco/{id}', [AjaxController::class, 'getAddressByCep']);
+// if (!App::environment('local')) {
+//     URL::forceScheme('https');
+// }
+
+Route::middleware('rotas:58')->group(function () {
     Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
     Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
     Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
@@ -564,4 +576,16 @@ Route::middleware('rotas:55')->group(function () {
     if (!App::environment('local')) {
     URL::forceScheme('https');
 }
+});
+
+Route::middleware('rotas:59')->group(function () {
+    Route::get('/gerenciar-instituicao', [GerenciarInstituicaoController::class, 'index'])->name('index.instituicao');
+    Route::get('/incluir-instituicao', [GerenciarInstituicaoController::class, 'create']);
+    Route::post('/salvar-instituicao', [GerenciarInstituicaoController::class, 'store']);
+    Route::get('/editar-instituicao/{id}', [GerenciarInstituicaoController::class, 'edit']);
+    Route::post('/atualizar-instituicao/{id}', [GerenciarInstituicaoController::class, 'update']);
+    Route::delete('/excluir-instituicao/{id}', [GerenciarInstituicaoController::class, 'destroy'])->name('instituicao.destroy');
+    Route::get('/visualizar-instituicao/{id}', [GerenciarInstituicaoController::class, 'show']);
+    Route::get('/retorna-cidade-dados-residenciais/{id}', [GerenciarInstituicaoController::class, 'retornaCidadeDadosResidenciais']);
+    Route::patch('/instituicao/{id}/status', [GerenciarInstituicaoController::class, 'toggleStatus'])->name('instituicao.toggleStatus');
 });

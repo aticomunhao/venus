@@ -1,0 +1,278 @@
+@extends('layouts.app')
+
+@section('title')
+    Gerenciar Instituições
+@endsection
+
+@section('content')
+    <div class="container-fluid">
+        <h4 class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
+            GERENCIAR INSTITUIÇÕES</h4>
+        <br>
+        <div class="col-12">
+            <div class="row justify-content-center">
+                <div class="row">
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#filtros"
+                            style="box-shadow: 1px 2px 3px #000000; margin-right: 10px;">
+                            Pesquisar <i class="bi bi-funnel"></i>
+                        </button>
+                        <a href="/incluir-instituicao" class="btn btn-success btn-sm"
+                            style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;">
+                            Novo+
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <hr>
+        <table {{-- Inicio da tabela de informacoes --}}
+            class= "table table-sm table-striped table-bordered border-secondary table-hover align-middle"
+            id="tabela-materiais" style="width: 100%">
+            <thead style="text-align: center;">{{-- inicio header tabela --}}
+                <tr style="background-color: #d6e3ff; font-size:15px; color:#000;" class="align-middle">
+                    <th>ID</th>
+                    <th>NOME FANTASIA</th>
+                    <th>RAZÃO SOCIAL</th>
+                    <th>EMAIL</th>
+                    <th>CNPJ</th>
+                    <th>SITE</th>
+                    <th>STATUS</th>
+                    <th>AÇÕES</th>
+                </tr>
+            </thead>{{-- Fim do header da tabela --}}
+            <tbody style="font-size: 15px; color:#000000; text-align: center;">
+                {{-- Inicio body tabela --}}
+                @foreach ($lista as $listas)
+                    <tr>
+                        <td>{{ $listas->id }}</td>
+                        <td>{{ $listas->nome_fantasia }}</td>
+                        <td>{{ $listas->razao_social }}</td>
+                        <td>{{ $listas->email_contato }}</td>
+                        <td>{{ $listas->cnpj }}</td>
+                        <td>{{ $listas->site }}</td>
+                        <td>{{ $listas->status }}</td>
+                        <td>
+                            <a href="/visualizar-instituicao/{{ $listas->id }}" class="btn btn-sm btn-outline-primary"
+                                data-tt="tooltip" style="font-size: 1rem; color:#303030" data-placement="top"
+                                title="Visualizar">
+                                <i class="bi bi-search"></i>
+                            </a>
+                            {{-- @if ($aquisicaos->tipoStatus->id == '1') --}}
+                            <a href="/editar-instituicao/{{ $listas->id }}" class="btn btn-sm btn-outline-warning"
+                                data-tt="tooltip" style="font-size: 1rem; color:#303030" data-placement="top"
+                                title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            {{-- @endif --}}
+                            @if ($listas->status_id == '1')
+                                <button class="btn btn-sm btn-outline-danger btn-inativar" data-id="{{ $listas->id }}" title="Inativar"
+                                    data-nome="{{ $listas->nome_fantasia }}" style="font-size: 1rem; color:#303030" data-status="1" title="Inativar">
+                                    <i class="bi bi-unlock-fill"></i>
+                                </button>
+                            @elseif($listas->status_id == '2')
+                                <button class="btn btn-sm btn-outline-success btn-ativar" data-id="{{ $listas->id }}" title="Ativar"
+                                    data-nome="{{ $listas->nome_fantasia }}" data-status="2" title="Ativar" style="font-size: 1rem; color:#303030">
+                                    <i class="bi bi-lock-fill"></i>
+                                </button>
+                            @endif
+                            {{-- @if ($aquisicaos->tipoStatus->id == '1') --}}
+                            <a href="#" class="btn btn-sm btn-outline-danger excluirInstituicao" data-tt="tooltip"
+                                style="font-size: 1rem; color:#303030" data-placement="top" title="Excluir"
+                                data-bs-toggle="modal" data-bs-target="#modalExcluirInstituicao"
+                                data-id="{{ $listas->id }}">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                            {{-- @endif --}}
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+            {{-- Fim body da tabela --}}
+        </table>
+    </div>
+
+    <!-- Modal Inativar/Ativar Instituição -->
+    <div class="modal fade" id="modalInativarInstituicao" tabindex="-1" aria-labelledby="modalInativarInstituicaoLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form id="formInativarInstituicao" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="modal-content">
+                    <div class="modal-header bg-secondary text-dark">
+                        <h5 class="modal-title" id="modalInativarInstituicaoLabel">Confirmar Alteração de Status</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body" id="modal-body-content-inativar">
+                        Deseja realmente <span id="acao-status"></span> a instituição: <strong><span
+                                id="nomeInstituicao"></span></strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <form action="{{ route('index.instituicao') }}" class="form-horizontal mt-4" method="GET">
+        <div class="modal fade" id="filtros" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:grey;color:white">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Filtrar Opções</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <center>
+                            <div class="row col-10">
+                                <div class="col-12 mb-3">Nome Fantasia
+                                    <select class="form-select" name="nome_fantasia">
+                                        <option value="">Selecione uma opção</option>
+                                        @foreach ($pesquisa as $item)
+                                            <option value="{{ $item->nome_fantasia }}"
+                                                {{ request('nome_fantasia') == $item->nome_fantasia ? 'selected' : '' }}>
+                                                {{ $item->nome_fantasia }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-12 mb-3">Razão Social
+                                    <select class="form-select" name="razao_social">
+                                        <option value="">Selecione uma opção</option>
+                                        @foreach ($pesquisa as $item)
+                                            <option value="{{ $item->razao_social }}"
+                                                {{ request('razao_social') == $item->razao_social ? 'selected' : '' }}>
+                                                {{ $item->razao_social }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-12 mb-3">Email
+                                    <select class="form-select" name="email_contato">
+                                        <option value="">Selecione uma opção</option>
+                                        @foreach ($pesquisa as $item)
+                                            <option value="{{ $item->email_contato }}"
+                                                {{ request('email_contato') == $item->email_contato ? 'selected' : '' }}>
+                                                {{ $item->email_contato }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-12 mb-3">CNPJ
+                                    <input class="form-control" type="number" maxlength="14"
+                                        placeholder="Insira apenas números" name="cnpj"
+                                        value="{{ request('cnpj') }}">
+                                </div>
+
+                                <div class="col-12 mb-3">Site
+                                    <select class="form-select" name="site">
+                                        <option value="">Selecione uma opção</option>
+                                        @foreach ($pesquisa as $item)
+                                            <option value="{{ $item->site }}"
+                                                {{ request('site') == $item->site ? 'selected' : '' }}>
+                                                {{ $item->site }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-12 mb-3">Status
+                                    <select class="form-select" name="status">
+                                        <option value="">Selecione uma opção</option>
+                                        @foreach ($pesquisa->unique('status') as $item)
+                                            <option value="{{ $item->status }}"
+                                                {{ request('status') == $item->status ? 'selected' : '' }}>
+                                                {{ $item->status }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </center>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        <a class="btn btn-secondary" href="{{ route('index.instituicao') }}">Limpar</a>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- Modal Excluir Instituições -->
+    <div class="modal fade" id="modalExcluirInstituicao" tabindex="-1" aria-labelledby="modalExcluirInstituicaoLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form id="formExcluirInstituicao" class="form-horizontal" method="post">
+                @csrf
+                @method('DELETE')
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:#DC4C64;">
+                        <h5 class="modal-title" id="modalExcluirInstituicaoLabel">Exclusão de Instituição</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="modal-body-content-excluir-material">
+                        Deseja realmente excluir a instituição de Número: <span id="InstituicaoId"
+                            style="color: #DC4C64"></span>?
+                    </div>
+                    <div class="modal-footer mt-2">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- FIM da Modal Excluir Instituições -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const botoesExcluir = document.querySelectorAll('.excluirInstituicao');
+            const modalInstituicaoId = document.getElementById('InstituicaoId');
+            const formExcluir = document.getElementById('formExcluirInstituicao');
+
+            botoesExcluir.forEach(botao => {
+                botao.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+
+                    // Atualiza o texto no modal
+                    modalInstituicaoId.textContent = id;
+
+                    // Define a action correta para o formulário
+                    formExcluir.action = `/excluir-instituicao/${id}`;
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const botoesInativar = document.querySelectorAll('.btn-inativar, .btn-ativar');
+            const modal = new bootstrap.Modal(document.getElementById('modalInativarInstituicao'));
+            const form = document.getElementById('formInativarInstituicao');
+            const nomeSpan = document.getElementById('nomeInstituicao');
+            const acaoSpan = document.getElementById('acao-status');
+
+            botoesInativar.forEach(botao => {
+                botao.addEventListener('click', () => {
+                    const id = botao.getAttribute('data-id');
+                    const nome = botao.getAttribute('data-nome');
+                    const status = botao.getAttribute('data-status');
+
+                    nomeSpan.textContent = nome;
+                    const acao = status === '1' ? 'inativar' : 'ativar';
+                    acaoSpan.textContent = acao;
+
+                    form.action = `/instituicao/${id}/status`;
+
+                    modal.show();
+                });
+            });
+        });
+    </script>
+@endsection
