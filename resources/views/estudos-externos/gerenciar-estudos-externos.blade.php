@@ -71,7 +71,7 @@
                         <td>{{ $listas->instituicao_nome }}</td>
                         <td>{{ $listas->status }}</td>
                         <td>
-                            <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
+                            <a href="/visualizar-estudos-externos/{{ $listas->id }}" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Visualizar">
                                 <i class="bi bi-search"></i>
                             </a>

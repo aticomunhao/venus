@@ -172,6 +172,30 @@ class GerenciarEstudosExternosController extends Controller
             return back()->withInput();
         }
     }
+    public function show($id)
+    {
+        $lista = DB::table('cursos_externos')->where('id', $id)->first();
+        if (!$lista) {
+            app('flasher')->addError("Estudo externo não encontrado.");
+            return redirect()->route('index.estExt');
+        }
+
+        $setores = DB::table('setor')->select('id', 'nome', 'sigla')->whereNull('dt_fim')->get();
+        $estudos = DB::table('tipo_tratamento')
+            ->select('id', 'id_semestre', 'sigla')
+            ->where('id_tipo_grupo', '2')
+            ->get();
+        $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->orderBy('nome_completo')->get();
+        $instituicoes = DB::table('instituicao')->select('id', 'nome_fantasia', 'razao_social')->get();
+
+        return view('/estudos-externos/visualizar-estudos-externos', compact(
+            'setores',
+            'estudos',
+            'pessoas',
+            'instituicoes',
+            'lista'
+        ));
+    }
     public function destroy($id)
     {
         try {

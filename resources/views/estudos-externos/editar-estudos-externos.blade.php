@@ -99,7 +99,7 @@
                                         <div class="col-auto">
                                             <a href="{{ asset('storage/' . $lista->documento_comprovante) }}"
                                                 target="_blank" class="btn btn-outline-primary btn-sm">
-                                                Visualizar atual
+                                                Arquivo Atual
                                             </a>
                                         </div>
                                     @endif
