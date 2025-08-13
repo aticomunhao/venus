@@ -572,10 +572,12 @@ Route::middleware('rotas:58')->group(function () {
     Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
     Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
     Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
-
-    if (!App::environment('local')) {
-    URL::forceScheme('https');
-}
+    Route::get('/editar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'edit']);
+    Route::post('/atualizar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'update']);
+    Route::delete('/deletar-estudo-externo/{id}', [GerenciarEstudosExternosController::class, 'destroy']);
+    Route::get('/visualizar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'show']);
+    Route::get('/aprovar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'aprovar']);
+    Route::post('/salva-aprova-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'aprovarStore']);
 });
 
 Route::middleware('rotas:59')->group(function () {
@@ -589,3 +591,7 @@ Route::middleware('rotas:59')->group(function () {
     Route::get('/retorna-cidade-dados-residenciais/{id}', [GerenciarInstituicaoController::class, 'retornaCidadeDadosResidenciais']);
     Route::patch('/instituicao/{id}/status', [GerenciarInstituicaoController::class, 'toggleStatus'])->name('instituicao.toggleStatus');
 });
+
+if (!App::environment('local')) {
+    URL::forceScheme('https');
+}
