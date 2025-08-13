@@ -536,7 +536,7 @@ Route::middleware('rotas:55')->group(function () {
 //Gerenciar critérios
 Route::middleware('rotas:54')->group(function () {
     Route::get('/gerenciar-criterio', [GerenciarCriterioAtividadeController::class, 'index'])->name('index.req');
-    Route::get('/criar-criterio', [GerenciarCriterioAtividadeController::class, 'create']);
+    Route::get('/criar-criterio', [GerenciarCriterioAtividadeController::class, 'create'])->name('criar.criterio');
     Route::post('/incluir-criterio', [GerenciarCriterioAtividadeController::class, 'include']);
     Route::get('/equivalencia-criterio/{id}', [GerenciarCriterioAtividadeController::class, 'equivale']);
     Route::post('/incluir-equivalencia-criterio/{idatv}', [GerenciarCriterioAtividadeController::class, 'vincular']);

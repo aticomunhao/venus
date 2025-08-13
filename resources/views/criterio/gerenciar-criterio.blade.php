@@ -9,17 +9,20 @@
             <div class="card-body">
                 <h5 class="card-title">
                     {{-- // Formulário de Pesquisa --}}
-                    <div class="row">
+                    <div class="row justify-content-around">
                         <div class="col-2 col-form-label">
                             <label for="_idsetor">Setor</label>
                             <select class="form-select" aria-label="Default select example" name="nome_setor" id="id_setor">
                                 <option value="">Selecione</option>
-                                @foreach ($setores as $setor)
+                                {{-- @foreach ($setores as $setor)
                                     <option value="{{ $setor->ids }}" {{ $setor->ids == $snome ? 'selected' : '' }}>
                                         {{ $setor->sigla }} </option>
-                                @endforeach
+                                @endforeach --}}
 
                             </select>
+                        </div>
+                        <div class="col-2 col-form-label">
+                            <a href="{{ route('criar.criterio') }}" class="btn btn-primary">Criar Critério</a>
                         </div>
                     </div>
                 </h5>

@@ -29,6 +29,17 @@
                                 </select>
                             </div>
                             <div class="col-auto">
+                                <label for="tipo" class="form-label">Status</label>
+                                <select class="form-select" id="tipo" name="pesquisa_status">
+                                    <option value="">Todos</option>
+                                    @foreach ($status as $valor)
+                                        <option value="{{ $valor['valor'] }}"
+                                            {{ $valor['valor'] === $pesquisa_status ? 'selected' : '' }}>
+                                            {{ $valor['nome'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-auto">
                                 <button type="submit" class="btn btn-secondary">Pesquisar</button>
                             </div>
                         </form>

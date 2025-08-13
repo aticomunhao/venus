@@ -13,58 +13,26 @@ class GerenciarCriterioAtividadeController extends Controller
     public function index(Request $request)
     {
 
-        $criterio = DB::table('criterios_tipo_atividade AS cta')
-            ->leftJoin('tipo_tratamento AS tt', 'cta.id_tipo_atividade', 'tt.id')
-            ->leftJoin('tipo_semestre AS ts', 'tt.id_semestre', 'ts.id')
-            ->leftJoin('tipo_grupo AS tg', 'tt.id_tipo_grupo', 'tg.id')
-            ->select(
-                'cta.id',
-                'ts.sigla AS ssigla',
-                'tt.descricao AS tnome',
-                'tt.sigla AS tsigla',
-                'tg.nm_tipo_grupo',
-                DB::raw("CASE WHEN status = true THEN 'Ativo' ELSE 'Inativo' END AS status")
-            );
-
-        $snome = $request->nome_setor;
-
-        $status = $request->status;
-        $setores = DB::table('setor AS s')->select('s.id AS ids', 's.sigla', 's.nome')->get();
-        if ($snome) {
-            $criterio->where('s.nome', 'like', '%' . $snome . '%');
-        }
 
 
-
-
-        if ($request->status) {
-            $criterio->where('cta.status', $status);
-        }
-
-        $criterio = $criterio->paginate(10);
-
-        $contar = $criterio->total();
-
-        $tipo_motivo = DB::table('tipo_mot_inat_gr_reu')->get();
-
-        $tipo_atv = DB::table('tipo_tratamento AS tt')
-            ->leftJoin('tipo_semestre AS ts', 'tt.id_semestre', 'ts.id')
-            ->select('tt.id', 'tt.descricao', 'tt.sigla', 'tt.id_tipo_grupo', 'ts.sigla AS ssigla')
-            ->get();
-
-
-        return view('criterio.gerenciar-criterio', compact('criterio', 'contar', 'tipo_motivo', 'tipo_atv', 'setores', 'snome', 'status'));
+        return view(
+            'criterio.gerenciar-criterio',
+            // compact('criterio', 'contar', 'tipo_motivo', 'tipo_atv', 'setores', 'snome', 'status')
+        );
     }
 
     public function create()
     {
 
-        $tipo_atv = DB::table('tipo_tratamento AS tt')
-            ->leftJoin('tipo_semestre AS ts', 'tt.id_semestre', 'ts.id')
-            ->select('tt.id', 'tt.descricao', 'tt.sigla', 'tt.id_tipo_grupo', 'ts.sigla AS ssigla')
-            ->get();
+        $setores = DB::table('setor AS s')->select('s.id AS ids', 's.sigla', 's.nome')->get();
+        $tipos_criterios = DB::table('tipos_criterios')->get();
+        $tipos_tratamentos = DB::table('tipo_tratamento')->get();
 
-        return view('criterio.criar-criterio', compact('tipo_atv'));
+
+        return view(
+            'criterio.criar-criterio',
+            compact('setores', 'tipos_criterios', 'tipos_tratamentos')
+        );
     }
 
     public function include(Request $request)

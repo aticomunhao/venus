@@ -12,11 +12,23 @@ class GerenciarTipoCriterioController extends Controller
      */
     public function index(Request $request)
     {
-        $tipos_criterio = DB::table('tipos_criterios')->get();
+        $tipos_criterio = DB::table('tipos_criterios')
+            ->get();
         $result = DB::select("SELECT unnest(enum_range(NULL::tipo_valor_enum)) AS valor");
-        $tipo_valores = collect($result)->pluck('valor')->toArray();
-        $status = DB::table('tipos_criterios')->pluck('status')->first();
-        dd($status);
+        $tipo_valores = collect($result)
+            ->pluck('valor')
+            ->toArray();
+        $status = DB::table('tipos_criterios')
+            ->distinct()
+            ->pluck('status')
+            ->map(function ($value) {
+                return [
+                    'valor' => $value,
+                    'nome' => $value ? 'Verdadeiro' : 'Falso'
+                ];
+            });
+        // dd($status);
+        // dd($status);
 
         $pesquisa_search = $request->input('search');
         if ($pesquisa_search) {
@@ -30,11 +42,24 @@ class GerenciarTipoCriterioController extends Controller
                 ->where('tipo_valor', $pesquisa_tipo_criterio)
                 ->get();
         }
+        $pesquisa_status = $request->input('pesquisa_status');
+        if ($pesquisa_status) {
+            $tipos_criterio = DB::table('tipos_criterios')
+                ->where('status', $pesquisa_status)
+                ->get();
+        }
 
         // Ordenar os resultados por descrição
         $tipos_criterio = $tipos_criterio->sortBy('descricao');
 
-        return view('tipo-criterio.index', compact('tipos_criterio', 'tipo_valores', 'pesquisa_search', 'pesquisa_tipo_criterio'));
+        return view('tipo-criterio.index', compact(
+            'tipos_criterio',
+            'tipo_valores',
+            'status',
+            'pesquisa_search',
+            'pesquisa_tipo_criterio',
+            'pesquisa_status'
+        ));
     }
 
     /**
