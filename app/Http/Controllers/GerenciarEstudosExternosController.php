@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
+
 
 
 class GerenciarEstudosExternosController extends Controller
@@ -86,12 +88,113 @@ class GerenciarEstudosExternosController extends Controller
 
             DB::commit();
 
-            return redirect()->route('index.estExt')->with('success', 'Estudo externo adicionado com sucesso!');
+            app('flasher')->addSuccess('Estudo externo adicionado com sucesso!');
+            return redirect()->route('index.estExt');
         } catch (\Exception $e) {
             DB::rollBack();
             app('flasher')->addError("Erro ao salvar os estudos:" . $e->getMessage());
             return back()->withInput();
         }
+    }
+    public function edit($id)
+    {
+        $lista = DB::table('cursos_externos')->where('id', $id)->first();
+        if (!$lista) {
+            app('flasher')->addError("Estudo externo não encontrado.");
+            return redirect()->route('index.estExt');
+        }
+
+        $setores = DB::table('setor')->select('id', 'nome', 'sigla')->whereNull('dt_fim')->get();
+        $estudos = DB::table('tipo_tratamento')
+            ->select('id', 'id_semestre', 'sigla')
+            ->where('id_tipo_grupo', '2')
+            ->get();
+        $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->orderBy('nome_completo')->get();
+        $instituicoes = DB::table('instituicao')->select('id', 'nome_fantasia', 'razao_social')->get();
+
+        return view('/estudos-externos/editar-estudos-externos', compact(
+            'setores',
+            'estudos',
+            'pessoas',
+            'instituicoes',
+            'lista'
+        ));
+    }
+    public function update(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Validação básica
+            if (!$request->setor || !$request->pessoa || !$request->instituicao) {
+                return back()->with('error', 'Dados obrigatórios ausentes.');
+            }
+
+            // Buscar o registro existente
+            $registro = DB::table('cursos_externos')->where('id', $id)->first();
+            if (!$registro) {
+                app('flasher')->addError("Estudo externo não encontrado.");
+                return redirect()->route('index.estExt');
+            }
+
+            // Monta os dados para atualizar
+            $dados = [
+                'setor' => $request->setor,
+                'id_pessoa' => $request->pessoa,
+                'instituicao' => $request->instituicao,
+                'id_tipo_atividade' => $request->estudo,
+                'data_inicio' => $request->dt_inicial,
+                'data_fim' => $request->dt_final,
+                'status' => 'Pendente'
+            ];
+
+            // Upload do arquivo (se houver)
+            if ($request->hasFile('arquivo')) {
+                // Apaga o arquivo antigo, se existir
+                if (!empty($registro->documento_comprovante) && Storage::disk('public')->exists($registro->documento_comprovante)) {
+                    Storage::disk('public')->delete($registro->documento_comprovante);
+                }
+
+                // Salva o novo arquivo
+                $dados['documento_comprovante'] = $request->file('arquivo')->store('anexos_estudos', 'public');
+            }
+
+            // Atualiza o registro
+            DB::table('cursos_externos')->where('id', $id)->update($dados);
+
+            DB::commit();
+
+            app('flasher')->addSuccess('Estudo externo atualizado com sucesso!');
+            return redirect()->route('index.estExt');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            app('flasher')->addError("Erro ao atualizar o estudo: " . $e->getMessage());
+            return back()->withInput();
+        }
+    }
+    public function show($id)
+    {
+        $lista = DB::table('cursos_externos')->where('id', $id)->first();
+        if (!$lista) {
+            app('flasher')->addError("Estudo externo não encontrado.");
+            return redirect()->route('index.estExt');
+        }
+
+        $setores = DB::table('setor')->select('id', 'nome', 'sigla')->whereNull('dt_fim')->get();
+        $estudos = DB::table('tipo_tratamento')
+            ->select('id', 'id_semestre', 'sigla')
+            ->where('id_tipo_grupo', '2')
+            ->get();
+        $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->orderBy('nome_completo')->get();
+        $instituicoes = DB::table('instituicao')->select('id', 'nome_fantasia', 'razao_social')->get();
+
+        return view('/estudos-externos/visualizar-estudos-externos', compact(
+            'setores',
+            'estudos',
+            'pessoas',
+            'instituicoes',
+            'lista'
+        ));
     }
     public function destroy($id)
     {

@@ -16,20 +16,21 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col">
-
-                                    ESTUDOS EXTERNOS
+                                    EDITAR ESTUDOS EXTERNOS
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="col-12">
                                 <div class="row">
-                                    <div class="col-md-5">Setor
-                                        <select class="form-select select2" name="setor" required>
-                                            <option value="">Selecione um setor</option>
+                                    <div class="col-md-5">
+                                        <label for="setor">Setor</label>
+                                        <select class="form-select select2" name="setor" id="setor" required>
                                             @foreach ($setores as $setor)
-                                                <option value="{{ $setor->id }}">{{ $setor->sigla }} -
-                                                    {{ $setor->nome }}</option>
+                                                <option value="{{ $setor->id }}"
+                                                    {{ $setor->id == $lista->setor ? 'selected' : '' }}>
+                                                    {{ $setor->sigla }} - {{ $setor->nome }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -37,7 +38,9 @@
                                         <select class="form-select select2" name="pessoa" required>
                                             <option value="">Selecione uma pessoa</option>
                                             @foreach ($pessoas as $pessoa)
-                                                <option value="{{ $pessoa->id }}">{{ $pessoa->nome_completo }}</option>
+                                                <option value="{{ $pessoa->id }}"
+                                                    {{ $pessoa->id == $lista->id_pessoa ? 'selected' : '' }}>
+                                                    {{ $pessoa->nome_completo }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -50,46 +53,59 @@
                     <div class="card mt-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <span>CURSO</span>
-                            <!-- Botão para adicionar nova proposta comercial -->
-                            <button type="button" id="add-curso-secundario" class="btn btn-success">Adicionar</button>
                         </div>
-                        <div class="card-body" id="cursoContainer">
-                            <div class="card curso-principal" style="border-color: #355089; margin-top: 20px;">
-                                <div class="form-group row" style="margin: 5px; margin-top: 5px; margin-bottom: 15px;">
-                                    <div class="col-md-5">Instituição
-                                        <select class="form-select select2" name="instituicao[]" required>
-                                            <option value="">Selecione uma instituição</option>
-                                            @foreach ($instituicoes as $instituicao)
-                                                <option value="{{ $instituicao->id }}">{{ $instituicao->nome_fantasia }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                        <div class="form-group row" style="margin: 5px; margin-top: 5px; margin-bottom: 15px;">
+                            <div class="col-md-5">Instituição
+                                <select class="form-select select2" name="instituicao" required>
+                                    <option value="">Selecione uma instituição</option>
+                                    @foreach ($instituicoes as $instituicao)
+                                        <option value="{{ $instituicao->id }}"
+                                            {{ $instituicao->id == $lista->instituicao ? 'selected' : '' }}>
+                                            {{ $instituicao->nome_fantasia }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-5">Estudo
+                                <select class="form-select select2" name="estudo" required>
+                                    <option value="">Selecione um estudo</option>
+                                    @foreach ($estudos as $estudo)
+                                        <option value="{{ $estudo->id }}"
+                                            {{ $estudo->id == $lista->id_tipo_atividade ? 'selected' : '' }}>
+                                            {{ $estudo->sigla }} -
+                                            {{ $estudo->id_semestre ?? 'N/P' }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">Início
+                                <input type="date" class="form-control"
+                                    value="{{ old('dt_inicial', $lista->data_inicio) }}" name="dt_inicial" required>
+                            </div>
+                            <div class="col-md-3">Término
+                                <input type="date" class="form-control" value="{{ old('dt_fim', $lista->data_fim) }}"
+                                    name="dt_final" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="arquivo">Arquivo de Anexo</label>
+                                <div class="row align-items-center">
+                                    {{-- Input de upload --}}
+                                    <div class="col">
+                                        <input type="file" class="form-control" name="arquivo"
+                                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                            @if (!isset($lista->id)) required @endif>
                                     </div>
-                                    <div class="col-md-5">Estudo
-                                        <select class="form-select select2" name="estudo[]" required>
-                                            <option value="">Selecione um estudo</option>
-                                            @foreach ($estudos as $estudo)
-                                                <option value="{{ $estudo->id }}">{{ $estudo->sigla }} -
-                                                    {{ $estudo->id_semestre ?? 'N/P' }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">Início
-                                        <input type="date" class="form-control" name="dt_inicial[]" required>
-                                    </div>
-                                    <div class="col-md-3">Término
-                                        <input type="date" class="form-control" name="dt_final[]" required>
-                                    </div>
-                                    <div class="col-md-6">Arquivo de Anexo
-                                        <input type="file" class="form-control" name="arquivo[]" required
-                                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-                                    </div>
+                                    {{-- Link para arquivo atual --}}
+                                    @if (!empty($lista->documento_comprovante))
+                                        <div class="col-auto">
+                                            <a href="{{ asset('storage/' . $lista->documento_comprovante) }}"
+                                                target="_blank" class="btn btn-outline-primary btn-sm">
+                                                Arquivo Atual
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
-                            <!-- Container para os formulários de curso -->
-                            <div id="form-curso-secundario">
-                                <!-- Formulários de materiais serão adicionados aqui -->
-                            </div>
+
                         </div>
                     </div>
 
@@ -108,59 +124,4 @@
             </div>
         </div>
     </div>
-    <!-- Template de formulário de curso -->
-    <div id="template-curso-secundario" style="display: none;">
-        <div class="card curso-secundario" style="border-color: #355089; margin-top: 20px;">
-            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-curso-secundario">
-                <i class="bi bi-x"></i>
-            </button>
-            <div class="form-group row" style="margin: 5px; margin-top: 5px; margin-bottom: 15px;">
-                <div class="col-md-5">Instituição
-                    <select class="form-select js-categoria-curso" name="instituicao[]" required>
-                        <option value="">Selecione uma instituição</option>
-                        @foreach ($instituicoes as $instituicao)
-                            <option value="{{ $instituicao->id }}">{{ $instituicao->nome_fantasia }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-5">Estudo
-                    <select class="form-select js-categoria-curso" name="estudo[]" required>
-                        <option value="">Selecione um estudo</option>
-                        @foreach ($estudos as $estudo)
-                            <option value="{{ $estudo->id }}">{{ $estudo->sigla }} -
-                                {{ $estudo->id_semestre ?? 'N/P' }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3">Início
-                    <input type="date" class="form-control" name="dt_inicial[]" required>
-                </div>
-                <div class="col-md-3">Término
-                    <input type="date" class="form-control" name="dt_final[]" required>
-                </div>
-                <div class="col-md-6">Arquivo de Anexo
-                    <input type="file" class="form-control" name="arquivo[]" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-                        required>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- FIM do Template de formulário de curso -->
-    <script>
-        $(document).ready(function() {
-            // Adiciona novo curso
-            $("#add-curso-secundario").click(function() {
-                const newProposta = $("#template-curso-secundario").html();
-                $("#form-curso-secundario").append(newProposta);
-                $("#form-curso-secundario .js-categoria-curso").select2({
-                    theme: "bootstrap-5"
-                });
-            });
-
-            // Remove curso
-            $(document).on("click", ".remove-curso-secundario", function() {
-                $(this).closest(".curso-secundario").remove();
-            });
-        });
-    </script>
 @endsection
