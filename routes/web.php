@@ -390,7 +390,10 @@ Route::middleware('rotas:24')->group(function () {
     Route::get('/alta-pti/{id}', [GerenciarPTIController::class, 'update']);
     Route::get('/alta-nutres/{id}', [GerenciarPTIController::class, 'nutres']);
     Route::get('/visualizar-pti/{id}', [GerenciarPTIController::class, 'show']);
+    Route::any('/incluir-avulso-pti', [GerenciarPTIController::class, 'createAvulsopti']);
+    Route::any('/armazenar-avulsopti', [GerenciarPTIController::class, 'storeAvulsopti']);
 });
+
 
 // Gerenciar Assistido Integral
 Route::middleware('rotas:25')->group(function () {
