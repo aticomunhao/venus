@@ -11,6 +11,8 @@ class GerenciarPTIController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+   
     public function index(Request $request)
     {
 
@@ -46,6 +48,33 @@ class GerenciarPTIController extends Controller
             foreach ($dirigentes as $dir) {
                 $grupos_autorizados[] = $dir->id;
             }
+
+            // Usado para o passe de emergência
+            $reuniao = DB::table('cronograma AS cro')
+                ->select(
+                    'cro.id AS idr',
+                    'gr.nome AS nomeg',
+                    'cro.dia_semana AS idd',
+                    'cro.id_sala',
+                    'cro.id_tipo_tratamento',
+                    'cro.h_inicio',
+                    'td.nome AS nomed',
+                    'cro.h_fim',
+                    'cro.max_atend',
+                    'gr.status_grupo AS idst',
+                    'tst.descricao AS tstd',
+                    's.sigla as nsigla',
+                    'sa.numero'
+                )
+                ->leftJoin('tipo_tratamento AS tst', 'cro.id_tipo_tratamento', 'tst.id')
+                ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
+                ->leftJoin('setor as s', 'gr.id_setor', 's.id')
+                ->leftJoin('membro AS me', 'cro.id', 'me.id_cronograma')
+                ->leftJoin('salas AS sa', 'cro.id_sala', 'sa.id')
+                ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
+                ->first();
+
+
 
 
             // Traz todos os encaminhamentos de todos os grupos selecionados
@@ -95,32 +124,97 @@ class GerenciarPTIController extends Controller
                 ->toArray();
 
 
-            return view('pti.gerenciar-pti', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'totalAssistidos', 'presencaHoje'));
+            return view('pti.gerenciar-pti', compact('encaminhamentos', 'dirigentes', 'selected_grupo', 'totalAssistidos', 'presencaHoje', 'reuniao'));
         } catch (\Exception $e) {
             $code = $e->getCode();
             return view('tratamento-erro.erro-inesperado', compact('code'));
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function createAvulsopti()
     {
-        //
+
+
+        $hoje = Carbon::today();
+        $dia = Carbon::today()->weekday();
+
+        // Busca o nome dos assisitido para o select do avulso (atendimento de emergência)
+        $assistidos = DB::table('pessoas')->select('id', 'nome_completo')->orderBy('nome_completo')->get();
+
+        $reuniao = DB::table('cronograma as cro')
+            ->leftJoin('grupo as gr', 'cro.id_grupo', 'gr.id')
+            ->leftJoin('salas as sl', 'cro.id_sala', 'sl.id')
+            ->leftJoin('tipo_dia as td', 'cro.dia_semana', 'td.id')
+            ->leftJoin('membro as me', 'cro.id', 'me.id_cronograma') // liga membro ao cronograma
+            ->leftJoin('associado as ass', 'me.id_associado', 'ass.id') // liga associado ao membro
+            ->where('cro.id_tipo_tratamento', 2) // Tratamento PTI
+            ->where('cro.dia_semana', $dia) // Dia de hoje
+            ->where('ass.id_pessoa', session()->get('usuario.id_pessoa')) // apenas onde sou membro
+            ->where(function ($query) use ($hoje) { // Cronogramas Ativos
+                $query->whereRaw("cro.data_fim > ?", [$hoje])
+                    ->orWhereNull('cro.data_fim');
+            })
+            ->select(
+                'cro.id',
+                'cro.h_inicio',
+                'cro.h_fim',
+                'td.nome as nomedia',
+                'gr.nome',
+                'sl.numero as sala'
+            )
+            ->get();
+
+
+        // Retorna os motivos para a criação do avulso
+        $motivo = DB::table('tipo_motivo_presenca')->get();
+
+
+        return view('pti.incluir-avulsopti', compact('assistidos', 'reuniao', 'motivo'));
+    }
+    public function storeAvulsopti(Request $request)
+    {
+        $hoje = Carbon::today();
+        $dt_hora = Carbon::now();
+
+        $acompanhantes = isset($dia_cronograma->nr_acompanhantes)  ? $dia_cronograma->nr_acompanhantes : 0; // Salva o numero atual de acompanhantes
+        $nrAcomp = $acompanhantes + $request->acompanhantes; // Soma a quantidade total de acompanhantes
+
+        // Recolhe o dia cronoograma do grupo selecionado
+        $acompanhantes = DB::table('dias_cronograma')
+            ->where('id_cronograma', $request->reuniao)
+            ->where('data', $hoje);
+
+
+        $acompanhantesId = $acompanhantes->first();
+
+        // Atualiza o número de acompanhantes da reunião
+        $acompanhantes->update([
+            'nr_acompanhantes' => $nrAcomp
+        ]);
+
+
+        // Insere a presença do assistido
+        $idPresenca = DB::table('presenca_cronograma')->insertGetId([
+            'presenca' => true,
+            'id_pessoa' => $request->assist,
+            'id_dias_cronograma' => $acompanhantesId->id,
+            'id_motivo' => $request->motivo
+        ]);
+
+        // Insere no histórico a criação do atendimento
+        DB::table('log_atendimentos')->insert([
+            'id_referencia' => $idPresenca,
+            'id_usuario' => session()->get('usuario.id_usuario'),
+            'id_acao' => 2, // foi Criado
+            'id_origem' => 5, // Presença
+            'data_hora' => $dt_hora
+        ]);
+
+
+        app('flasher')->addSuccess('Atendimento de emergência incluido com sucesso.');
+       return redirect('/gerenciar-pti');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         try {
@@ -393,7 +487,7 @@ class GerenciarPTIController extends Controller
                     'id_tipo_tratamento' => 1 // PTD
 
                 ]);
-               
+
                 DB::table('log_atendimentos')->insert([
                     'id_referencia' => $ptd,
                     'id_usuario' => session()->get('usuario.id_usuario'),
