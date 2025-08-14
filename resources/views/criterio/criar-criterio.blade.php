@@ -6,9 +6,10 @@
             <div class="card-header">
                 Criar Critério
             </div>
-            <form method="POST" >
+            <form method="POST" action="">
                 @csrf
                 <div class="card-body">
+                    {{-- Setor e Atividade --}}
                     <div class="row justify-content-around">
                         <div class="col-md-4 col-sm-12">
                             <label for="idsetor" class="form-label">Setor:</label>
@@ -32,6 +33,7 @@
                     </div>
                     <hr>
 
+                    {{-- Linha de adição de critério --}}
                     <div class="row mb-3">
                         <div class="col-md-5">
                             <label for="criterioSelect">Critério:</label>
@@ -44,15 +46,12 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <label for="valorInput">Valor:</label>
-                            <input type="text" id="valorInput" class="form-control">
-                        </div>
                         <div class="col-md-2 d-flex align-items-end">
                             <button type="button" class="btn btn-primary" id="addCriterio">Adicionar</button>
                         </div>
                     </div>
 
+                    {{-- Tabela --}}
                     <div class="table-responsive">
                         <table class="table table-sm table-striped table-bordered align-middle" id="criteriosTable">
                             <thead>
@@ -68,6 +67,7 @@
                         </table>
                     </div>
 
+                    {{-- Botão salvar --}}
                     <button type="submit" class="btn btn-success">Salvar</button>
                 </div>
             </form>
@@ -75,7 +75,7 @@
     </div>
 
     {{-- jQuery --}}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
     <script>
         $(function() {
 
@@ -83,7 +83,6 @@
                 let criterioId = $('#criterioSelect').val();
                 let criterioNome = $('#criterioSelect option:selected').text();
                 let tipoValor = $('#criterioSelect option:selected').data('tipovalor');
-                let valor = $('#valorInput').val();
 
                 if (!criterioId) {
                     alert('Selecione um critério antes de adicionar.');
@@ -102,16 +101,40 @@
                     return;
                 }
 
-                // Adiciona na tabela
+                // Gera input conforme o tipo
+                let inputValor = '';
+                switch (tipoValor) {
+                    case 'numero':
+                        inputValor =
+                            `<input type="number" class="form-control" name="valores[]" step="any" required>`;
+                        break;
+                    case 'texto':
+                        inputValor = `<input type="text" class="form-control" name="valores[]" required>`;
+                        break;
+                    case 'data':
+                        inputValor = `<input type="date" class="form-control" name="valores[]" required>`;
+                        break;
+                    case 'boolean':
+                        inputValor = `
+                    <select class="form-select" name="valores[]" required>
+                        <option value="">Selecione...</option>
+                        <option value="1">Sim</option>
+                        <option value="0">Não</option>
+                    </select>
+                `;
+                        break;
+                    default:
+                        inputValor = `<input type="text" class="form-control" name="valores[]" required>`;
+                }
+
+                // Adiciona linha
                 let linha = `
             <tr>
                 <td>${criterioNome}
                     <input type="hidden" name="criterios[]" value="${criterioId}">
                 </td>
                 <td>${tipoValor}</td>
-                <td>
-                    <input type="text" class="form-control" name="valores[]" value="${valor}" required>
-                </td>
+                <td>${inputValor}</td>
                 <td>
                     <button type="button" class="btn btn-danger btn-sm remover">Remover</button>
                 </td>
@@ -119,9 +142,8 @@
         `;
                 $('#criteriosTable tbody').append(linha);
 
-                // Limpa campos
+                // Limpa seleção
                 $('#criterioSelect').val('');
-                $('#valorInput').val('');
             });
 
             // Remover linha
