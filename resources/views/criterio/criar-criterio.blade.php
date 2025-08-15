@@ -78,7 +78,6 @@
     {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
     <script>
         $(function() {
-
             $('#addCriterio').click(function() {
                 let criterioId = $('#criterioSelect').val();
                 let criterioNome = $('#criterioSelect option:selected').text();
@@ -88,7 +87,6 @@
                     alert('Selecione um critério antes de adicionar.');
                     return;
                 }
-
                 // Evita duplicados
                 let existe = false;
                 $('input[name="criterios[]"]').each(function() {
@@ -100,13 +98,12 @@
                     alert('Este critério já foi adicionado.');
                     return;
                 }
-
                 // Gera input conforme o tipo
                 let inputValor = '';
                 switch (tipoValor) {
                     case 'numero':
                         inputValor =
-                            `<input type="number" class="form-control" name="valores[]" step="any" required>`;
+                            `<input type="number" class="form-control" name="valores[]" required>`;
                         break;
                     case 'texto':
                         inputValor = `<input type="text" class="form-control" name="valores[]" required>`;
