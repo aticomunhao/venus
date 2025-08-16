@@ -27,7 +27,8 @@
                                         <select class="form-select select2" name="setor" required>
                                             <option value="">Selecione um setor</option>
                                             @foreach ($setores as $setor)
-                                                <option value="{{ $setor->id }}">{{ $setor->sigla }} - {{ $setor->nome }}</option>
+                                                <option value="{{ $setor->id }}">{{ $setor->sigla }} -
+                                                    {{ $setor->nome }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -55,10 +56,11 @@
                             <div class="card curso-principal" style="border-color: #355089; margin-top: 20px;">
                                 <div class="form-group row" style="margin: 5px; margin-top: 5px; margin-bottom: 15px;">
                                     <div class="col-md-5">Instituição
-                                        <select class="form-select select2" name="instituicao[]" required>
+                                        <select class="form-select select2" name="instituicao[]" id="instituicao" required>
                                             <option value="">Selecione uma instituição</option>
                                             @foreach ($instituicoes as $instituicao)
-                                                <option value="{{ $instituicao->id }}">{{ $instituicao->nome }}</option>
+                                                <option value="{{ $instituicao->id }}">{{ $instituicao->nome_fantasia }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -71,10 +73,13 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-5">Término
+                                    <div class="col-md-3">Início
+                                        <input type="date" class="form-control" name="dt_inicial[]" required>
+                                    </div>
+                                    <div class="col-md-3">Término
                                         <input type="date" class="form-control" name="dt_final[]" required>
                                     </div>
-                                    <div class="col-md-5">Arquivo de Anexo
+                                    <div class="col-md-6">Arquivo de Anexo
                                         <input type="file" class="form-control" name="arquivo[]" required
                                             accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
                                     </div>
@@ -105,16 +110,15 @@
     <!-- Template de formulário de curso -->
     <div id="template-curso-secundario" style="display: none;">
         <div class="card curso-secundario" style="border-color: #355089; margin-top: 20px;">
-            <button type="button"
-                class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-curso-secundario">
+            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-curso-secundario">
                 <i class="bi bi-x"></i>
             </button>
             <div class="form-group row" style="margin: 5px; margin-top: 5px; margin-bottom: 15px;">
                 <div class="col-md-5">Instituição
-                    <select class="form-select js-categoria-curso" name="instituicao[]" required>
+                    <select class="form-select js-categoria-curso" name="instituicao[]" id="instituicao" required>
                         <option value="">Selecione uma instituição</option>
                         @foreach ($instituicoes as $instituicao)
-                            <option value="{{ $instituicao->id }}">{{ $instituicao->nome }}</option>
+                            <option value="{{ $instituicao->id }}">{{ $instituicao->nome_fantasia }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -127,10 +131,13 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-5">Término
+                <div class="col-md-3">Início
+                    <input type="date" class="form-control" name="dt_inicial[]" required>
+                </div>
+                <div class="col-md-3">Término
                     <input type="date" class="form-control" name="dt_final[]" required>
                 </div>
-                <div class="col-md-5">Arquivo de Anexo
+                <div class="col-md-6">Arquivo de Anexo
                     <input type="file" class="form-control" name="arquivo[]" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
                         required>
                 </div>

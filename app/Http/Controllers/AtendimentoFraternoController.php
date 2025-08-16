@@ -276,12 +276,17 @@ class AtendimentoFraternoController extends Controller
             }
 
             // Usado para conseguir o ID do atendimento selecionado, para a inserção no LOG
-            $ida = ($atendimentoSelecionado->first()->id);
-            $atendimentoSelecionado = $atendimentoSelecionado->update([
-                'id_atendente' => $atendente, // Marca o usuário logado como atendente deste atendimento
-                'id_sala' => $sala, // Marca a sala que o usuário logado está
-                'status_atendimento' => 4 // Troca o status do atendimento para Analisando
-            ]);
+            if ($atendimentoSelecionado->first()) {
+                $ida = $atendimentoSelecionado->first()->id;
+
+                $atendimentoSelecionado = $atendimentoSelecionado->update([
+                    'id_atendente' => $atendente, // Marca o usuário logado como atendente deste atendimento
+                    'id_sala' => $sala,           // Marca a sala que o usuário logado está
+                    'status_atendimento' => 4     // Troca o status do atendimento para Analisando
+                ]);
+            } else {
+                return back()->with('error', 'Nenhum atendimento encontrado.');
+            }
 
             // Insere no histórico a criação do atendimento
             DB::table('log_atendimentos')->insert([
@@ -861,14 +866,18 @@ class AtendimentoFraternoController extends Controller
                     ]);
 
                     // Insere no histórico a criação do atendimento
-                    DB::table('log_atendimentos')->insert([
-                        'id_referencia' => $idupdateAFE,
-                        'id_usuario' => session()->get('usuario.id_usuario'),
-                        'id_acao' => 1, // Mudou de status
-                        'id_origem' => 4, // Entrevista
-                        'id_observacao' => 5,
-                        'data_hora' => $dt_hora
-                    ]);
+                    $idupdateAFE = $idupdateAFE->id ?? null;
+                    if ($idupdateAFE) {
+                        DB::table('log_atendimentos')->insert([
+                            'id_referencia' => $idupdateAFE,
+                            'id_usuario'    => session('usuario.id_usuario'),
+                            'id_acao'       => 1, // Mudou de status
+                            'id_origem'     => 4, // Entrevista
+                            'id_observacao' => 5,
+                            'data_hora'     => $dt_hora
+
+                        ]);
+                    }
                 }
 
 
@@ -885,15 +894,26 @@ class AtendimentoFraternoController extends Controller
                     ]);
 
 
-                    // Insere no histórico a criação do atendimento
-                    DB::table('log_atendimentos')->insert([
-                        'id_referencia' => $encaAFE,
-                        'id_usuario' => session()->get('usuario.id_usuario'),
-                        'id_acao' => 1, // Mudou de status
-                        'id_origem' => 2, // Encaminhamento
-                        'id_observacao' => 4,
-                        'data_hora' => $dt_hora
-                    ]);
+                    $idencaAFE = $encaAFE->select('enc.id')->first();
+                    if ($idencaAFE) {
+                        $encaAFE->update([
+                            'enc.status_encaminhamento' => 4
+                        ]);
+
+
+                        // Insere no histórico a criação do atendimento
+                        $encaAFE = $encaAFE->id ?? null;
+                        if ($encaAFE) {
+                            DB::table('log_atendimentos')->insert([
+                                'id_referencia' => $encaAFE,
+                                'id_usuario'    => session('usuario.id_usuario'),
+                                'id_acao'       => 1, // Mudou de status
+                                'id_origem'     => 2, // Encaminhamento
+                                'id_observacao' => 4,
+                                'data_hora'     => $dt_hora
+                            ]);
+                        }
+                    }
                 }
 
                 app('flasher')->addSuccess('Alta declarada com sucesso.');
@@ -1199,10 +1219,12 @@ class AtendimentoFraternoController extends Controller
                 ->update(['status_encaminhamento' => 2]); // exemplo: 2 = Entrevista criada/agendada
 
             // Apaga/inativa os outros encaminhamentos com status 1 (aguardando agendamento), se necessário
-            DB::table('encaminhamento')
-                ->where('id_atendimento', $idat)
-                ->where('status_encaminhamento', 1)
-                ->where('id', '!=', $idEnvagelho)
+            DB::table('encaminhamento as e')
+                ->join('tipo_tratamento as t', 'e.id_tipo_tratamento', '=', 't.id')
+                ->where('e.id_atendimento', $idat)
+                ->where('e.status_encaminhamento', 1)
+                ->where('e.id', '!=', $idEnvagelho)
+                ->where('t.id', 8) // somente tipo_tratamento id 8(GEL)
                 ->delete();
 
             // Insere no log

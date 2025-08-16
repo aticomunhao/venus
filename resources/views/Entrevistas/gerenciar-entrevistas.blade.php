@@ -21,8 +21,8 @@
                             <div class="col-2">
                                 <label for="cpf">CPF</label>
                                 <input class="form-control" type="text" maxlength="11"
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                    id="cpf" name="cpf" value="{{ $cpf ?? '' }}">
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')" id="cpf" name="cpf"
+                                    value="{{ $cpf ?? '' }}">
                             </div>
 
                             <div class="col-2">
@@ -104,12 +104,15 @@
                         <tbody style="font-size: 14px; color:#000000; text-align: center;">
                             @foreach ($informacoes as $informacao)
                                 @if ($informacao->id_tipo_entrevista == 6 and $informacao->status === 1 and $informacao->status_encaminhamento_id == 1)
-                                    <tr class="table-success"> 
-                                    @elseif ($informacao->id_tipo_entrevista == 6 and !isset($informacao->ptd) and $informacao->status_encaminhamento_id == 5)
+                                    <tr class="table-success">
+                                    @elseif (in_array($informacao->id_tipo_entrevista, [4, 5, 6]) and
+                                            !isset($informacao->ptd) and
+                                            in_array($informacao->status_encaminhamento_id, [1, 5]))
                                     <tr class="table-danger">
                                     @else
                                     <tr>
                                 @endif
+
                                 {{-- <td>{{ $informacao->ide }}</td>Traz o ID do encaminhamento --}}
                                 @if (in_array(26, session()->get('usuario.acesso')))
                                     <td>{{ $informacao->ident ? 'ENT:' . $informacao->ident : 'ENC:' . $informacao->ide }}
