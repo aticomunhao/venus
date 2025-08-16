@@ -9,7 +9,7 @@
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">GERENCIAR REUNIÕES </h4>
         <div class="col-12">
             <form action="{{ route('remdex') }}" class="form-horizontal mt-4" method="GET">
-            <div class="row justify-content-center">               
+            <div class="row justify-content-center">
                 <div class="col-auto">Dia
                     <select class="form-select semana" id="4" name="semana" type="number">
                         <option value="" {{ request('semana') == '' ? 'selected' : '' }}>Todos
@@ -75,14 +75,13 @@
                     </select>
                 </div>
                 <div class="col">Status
-                    <select class="form-select status" id="4" name="status" type="number">
-                        <option value="" {{ $situacao[0]->ids == $status ? 'selected' : '' }}>
-                            Todos</option>
-                        @foreach ($situacao as $situ)
-                            <option value="{{ $situ->ids }}" {{ $situ->ids == $status ? 'selected' : '' }}>
-                                {{ $situ->descs }}</option>
-                        @endforeach
-                    </select>
+                    <select name="status" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="1" {{ $status == 1 ? 'selected' : '' }}>Ativo</option>
+                            <option value="2" {{ $status == 2 ? 'selected' : '' }}>Inativo</option>
+                            <option value="3" {{ $status == 3 ? 'selected' : '' }}>Experimental</option>
+                            <option value="4" {{ $status == 4 ? 'selected' : '' }}>Em Férias</option>
+                        </select>
                 </div>
                 <div class="col-auto d-flex align-items-center justify-content-end">
                     <input class="btn btn-light btn-sm me-md-2"
@@ -93,7 +92,7 @@
                     <a href="/criar-reuniao"><input class="btn btn-success btn-md me-md-2"
                             style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" autofocus
                             value="Nova reunião &plus;"></a>
-                
+
                 </div>
                 </form>
             </div>
@@ -237,7 +236,7 @@
                                                         <span
                                                             style="color:#DC4C64; font-weight: bold;">{{ $reuni->nomeg }} - {{ $reuni->stsigla }}</span>&#63;
                                                     </label>
-                                                    <br />            
+                                                    <br />
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" data-bs-dismiss="modal"
@@ -247,7 +246,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </form>                               
+                                </form>
 
                                 <tr>
                                 </form>
