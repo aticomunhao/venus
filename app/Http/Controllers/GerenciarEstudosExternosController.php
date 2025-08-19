@@ -18,6 +18,8 @@ class GerenciarEstudosExternosController extends Controller
             ->leftJoin('tipo_tratamento as tt', 'ce.id_tipo_atividade', 'tt.id')
             ->leftJoin('instituicao as i', 'ce.instituicao', 'i.id')
             ->leftJoin('setor as s', 'ce.setor', 's.id')
+            ->leftJoin('tipo_status_cursos_externos as tse', 'ce.status', 'tse.id')
+            ->orderBy('ce.id', 'desc')
             ->select(
                 'p.nome_completo as nome_completo',
                 's.sigla as setor_sigla',
@@ -34,6 +36,7 @@ class GerenciarEstudosExternosController extends Controller
                 'ce.setor',
                 'ce.id',
                 'tt.id_semestre',
+                'tse.descricao as status_descricao',
             )
             ->get();
 
@@ -57,6 +60,25 @@ class GerenciarEstudosExternosController extends Controller
         DB::beginTransaction();
 
         try {
+            // Validação
+            $request->validate([
+                'setor' => 'required',
+                'pessoa' => 'required',
+                'instituicao' => 'required|array',
+                'instituicao.*' => 'required|integer',
+                'estudo' => 'required|array',
+                'estudo.*' => 'required|integer',
+                'dt_inicial' => 'required|array',
+                'dt_inicial.*' => 'required|date|before_or_equal:dt_final.*',
+                'dt_final' => 'required|array',
+                'dt_final.*' => 'required|date|after_or_equal:dt_inicial.*',
+                'arquivo' => 'nullable|array',
+                'arquivo.*' => 'nullable|file|mimes:pdf,doc,docx,png,jpg,jpeg|max:2048',
+            ], [
+                'dt_inicial.*.before_or_equal' => 'A data inicial deve ser anterior ou igual à data final.',
+                'dt_final.*.after_or_equal' => 'A data final deve ser posterior ou igual à data inicial.',
+            ]);
+
             $setores = $request->input('setor');
             $pessoas = $request->input('pessoa');
             $instituicoes = $request->input('instituicao');
@@ -82,7 +104,7 @@ class GerenciarEstudosExternosController extends Controller
                     'documento_comprovante' => isset($arquivos[$index])
                         ? $arquivos[$index]->store('anexos_estudos', 'public')
                         : null,
-                    'status' => 'Pendente'
+                    'status' => '1'
                 ]);
             }
 
@@ -125,10 +147,14 @@ class GerenciarEstudosExternosController extends Controller
         DB::beginTransaction();
 
         try {
-            // Validação básica
-            if (!$request->setor || !$request->pessoa || !$request->instituicao) {
-                return back()->with('error', 'Dados obrigatórios ausentes.');
-            }
+            // Validação
+            $request->validate([
+                'dt_inicial' => 'required|date|before_or_equal:dt_final',
+                'dt_final' => 'required|date|after_or_equal:dt_inicial',
+            ], [
+                'dt_inicial.before_or_equal' => 'A data inicial deve ser anterior ou igual à data final.',
+                'dt_final.after_or_equal' => 'A data final deve ser posterior ou igual à data inicial.',
+            ]);
 
             // Buscar o registro existente
             $registro = DB::table('cursos_externos')->where('id', $id)->first();
@@ -145,7 +171,7 @@ class GerenciarEstudosExternosController extends Controller
                 'id_tipo_atividade' => $request->estudo,
                 'data_inicio' => $request->dt_inicial,
                 'data_fim' => $request->dt_final,
-                'status' => 'Pendente'
+                'status' => '1'
             ];
 
             // Upload do arquivo (se houver)
@@ -237,11 +263,9 @@ class GerenciarEstudosExternosController extends Controller
         ]);
 
         // Mapeamento status → texto
-        $statusTexto = match ((int) $request->status) {
-            1 => 'Devolvido',
-            2 => 'Aprovado',
-            3 => 'Reprovado',
-        };
+        // 1 => 'Pendente',
+        // 2 => 'Aprovado',
+        // 3 => 'Reprovado',
 
         // Atualiza no banco
         DB::table('cursos_externos')
@@ -253,15 +277,13 @@ class GerenciarEstudosExternosController extends Controller
                 'id_tipo_atividade' => $request->estudo,
                 'data_inicio' => $request->dt_inicial,
                 'data_fim' => $request->dt_final,
-                'status' => $statusTexto,
+                'status' => $request->status,
                 'motivo_rejeicao' => $request->motivoRejeicao,
             ]);
 
         app('flasher')->addSuccess("Decisão registrada com sucesso!");
         return redirect()->route('index.estExt');
     }
-
-
     public function destroy($id)
     {
         try {

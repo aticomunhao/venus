@@ -80,7 +80,7 @@
                                         <input type="date" class="form-control" name="dt_final[]" required>
                                     </div>
                                     <div class="col-md-6">Arquivo de Anexo
-                                        <input type="file" class="form-control" name="arquivo[]" required
+                                        <input type="file" class="form-control" name="arquivo[]"
                                             accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
                                     </div>
                                 </div>
