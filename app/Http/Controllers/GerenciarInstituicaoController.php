@@ -151,6 +151,15 @@ class GerenciarInstituicaoController extends Controller
     }
     public function destroy($id)
     {
+        // Verifica se a instituição está sendo usada na tabela cursos_externos
+        $emUso = DB::table('cursos_externos')->where('instituicao', $id)->exists();
+
+        if ($emUso) {
+            app('flasher')->addError('Não é possível excluir esta instituição, pois ela está vinculada a cursos externos.');
+            return redirect()->back();
+        }
+
+        // Caso não esteja em uso, pode excluir
         DB::table('instituicao')->where('id', $id)->delete();
 
         app('flasher')->addSuccess('Instituição excluída com sucesso!');
