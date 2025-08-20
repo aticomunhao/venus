@@ -69,12 +69,12 @@
                                             <option value="">Selecione um estudo</option>
                                             @foreach ($estudos as $estudo)
                                                 <option value="{{ $estudo->id }}">{{ $estudo->sigla }} -
-                                                    {{ $estudo->id_semestre ?? 'N/P' }}</option>
+                                                    {{ $estudo->semestre_sigla ?? 'N/P' }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-3">Início
-                                        <input type="date" class="form-control" name="dt_inicial[]" required>
+                                        <input type="date" class="form-control" name="dt_inicial[]">
                                     </div>
                                     <div class="col-md-3">Término
                                         <input type="date" class="form-control" name="dt_final[]" required>

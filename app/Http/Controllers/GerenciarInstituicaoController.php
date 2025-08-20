@@ -53,41 +53,45 @@ class GerenciarInstituicaoController extends Controller
     }
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'cnpj' => 'required|cnpj|unique:instituicao,cnpj',
-        ], [
-            'cnpj.cnpj' => 'CNPJ inválido.',
-            'cnpj.unique' => 'Já existe uma instituição com esse CNPJ.',
-        ]);
+        try {
+            $request->validate([
+                'cnpj' => 'required|cnpj|unique:instituicao,cnpj',
+            ], [
+                'cnpj.cnpj' => 'CNPJ inválido.',
+                'cnpj.unique' => 'Já existe uma instituição com esse CNPJ.',
+            ]);
 
-        $cnpj = preg_replace('/\D/', '', $request->cnpj);
-        $cep = preg_replace('/\D/', '', $request->cep);
-        //dd($request->all(), $cnpj);
-        // Inserção dos dados na tabela instituicao
-        DB::table('instituicao')->insert([
-            'nome_fantasia' => $request->input('nome_fantasia'),
-            'razao_social' => $request->input('razao_social'),
-            'inscricao_estadual' => $request->input('insc_est'),
-            'nome_contato' => $request->input('nome_cont'),
-            'ibge' => $request->input('ibge'),
-            'cep' => $cep,
-            'logradouro' => $request->input('logradouro'),
-            'bairro' => $request->input('bairro'),
-            'uf' => $request->input('uf'),
-            'cidade' => $request->input('cidade'),
-            'complemento' => $request->input('complemento'),
-            'unidade' => $request->input('unidade'),
-            'gia' => $request->input('gia'),
-            'numero' => $request->input('numero'),
-            'cnpj' => $cnpj,
-            'email_contato' => $request->input('email_contato'),
-            'site' => $request->input('site'),
-            'status' => '1',
-        ]);
-
-        // Redirecionamento com mensagem de sucesso
-        app('flasher')->addSuccess('Instituição incluída com sucesso!');
-        return redirect('/gerenciar-instituicao');
+            $cnpj = preg_replace('/\D/', '', $request->cnpj);
+            $cep = preg_replace('/\D/', '', $request->cep);
+            //dd($request->all(), $cnpj);
+            // Inserção dos dados na tabela instituicao
+            DB::table('instituicao')->insert([
+                'nome_fantasia' => $request->input('nome_fantasia'),
+                'razao_social' => $request->input('razao_social'),
+                'inscricao_estadual' => $request->input('insc_est'),
+                'nome_contato' => $request->input('nome_cont'),
+                'ibge' => $request->input('ibge'),
+                'cep' => $cep,
+                'logradouro' => $request->input('logradouro'),
+                'bairro' => $request->input('bairro'),
+                'uf' => $request->input('uf'),
+                'cidade' => $request->input('cidade'),
+                'complemento' => $request->input('complemento'),
+                'unidade' => $request->input('unidade'),
+                'gia' => $request->input('gia'),
+                'numero' => $request->input('numero'),
+                'cnpj' => $cnpj,
+                'email_contato' => $request->input('email_contato'),
+                'site' => $request->input('site'),
+                'status' => '1',
+            ]);
+            // Redirecionamento com mensagem de sucesso
+            app('flasher')->addSuccess('Instituição incluída com sucesso!');
+            return redirect('/gerenciar-instituicao');
+        } catch (\Exception $e) {
+            app('flasher')->addError("Erro ao criar instituição: " . $e->getMessage());
+            return back()->withInput();
+        }
     }
     public function edit($id)
     {

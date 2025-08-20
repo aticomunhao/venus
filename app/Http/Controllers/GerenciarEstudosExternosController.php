@@ -47,8 +47,11 @@ class GerenciarEstudosExternosController extends Controller
     {
         $setores = DB::table('setor')->select('id', 'nome', 'sigla')->whereNull('dt_fim')->get();
         $estudos = DB::table('tipo_tratamento')
-            ->select('id', 'id_semestre', 'sigla')
+        ->leftJoin('tipo_semestre', 'tipo_tratamento.id_semestre', 'tipo_semestre.id')
+            ->select('tipo_tratamento.id as id', 'id_semestre', 'tipo_tratamento.sigla as sigla', 'tipo_semestre.sigla as semestre_sigla')
             ->where('id_tipo_grupo', '2')
+            ->orderBy('descricao', 'asc')
+            ->orderBy('id_semestre', 'asc')
             ->get();
         $pessoas = DB::table('pessoas')->select('id', 'nome_completo')->orderBy('nome_completo')->get();
         $instituicoes = DB::table('instituicao')->select('id', 'nome_fantasia', 'razao_social')->get();
