@@ -53,6 +53,13 @@ class GerenciarInstituicaoController extends Controller
     }
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'cnpj' => 'required|cnpj|unique:instituicao,cnpj',
+        ], [
+            'cnpj.cnpj' => 'CNPJ inválido.',
+            'cnpj.unique' => 'Já existe uma instituição com esse CNPJ.',
+        ]);
+
         $cnpj = preg_replace('/\D/', '', $request->cnpj);
         $cep = preg_replace('/\D/', '', $request->cep);
         //dd($request->all(), $cnpj);
