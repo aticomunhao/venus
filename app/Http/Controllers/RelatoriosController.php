@@ -1108,10 +1108,7 @@ class RelatoriosController extends Controller
 
                 $grupos = $buffer;
             }
-
-            // Retornar a view com os dados
         }
-        //  }
 
 
 
@@ -1119,48 +1116,89 @@ class RelatoriosController extends Controller
         return view('relatorios.gerenciar-relatorio-tratamento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
     }
 
-   public function EncaminhamentosRel(Request $request)
-{
-    $dt_inicio = $request->dt_inicio ?? Carbon::now()->firstOfMonth()->format('Y-m-d');
-    $dt_fim    = $request->dt_fim ?? Carbon::now()->lastOfMonth()->format('Y-m-d');
 
-    $encaminhamento = DB::table('encaminhamento as enc')
-        ->select(
-            'assistido.nome_completo as nome_assistido',
-            'at.dh_inicio',
-            'at.dh_fim',
-            'atendente.nome_completo as nome_atendente',
-            'tse.descricao',
-            'tt.descricao as des_trata',
-            'enc.dh_enc',
-            'tm.tipo',
-            DB::raw("ROUND(EXTRACT(EPOCH FROM (at.dh_fim - at.dh_inicio))/60) as tempo_atendimento")
-        )
-        ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-        ->leftJoin('pessoas as assistido', 'at.id_assistido', 'assistido.id')
-        ->leftJoin('pessoas as atendente', 'at.id_atendente', 'atendente.id')
-        ->leftJoin('tipo_encaminhamento as te', 'enc.id_tipo_encaminhamento', 'te.id')
-        ->leftJoin('tipo_status_encaminhamento as tse', 'enc.status_encaminhamento', 'tse.id')
-        ->leftJoin('tipo_tratamento as tt', 'enc.id_tipo_tratamento', 'tt.id')
-        ->leftJoin('tipo_motivo as tm', 'enc.motivo', 'tm.id')
-        ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim]);
+    public function EncaminhamentosRel(Request $request)
+    {
+        // $dt_inicio = $request->dt_inicio ?? Carbon::now()->firstOfMonth()->format('Y-m-d');
+        // $dt_fim    = $request->dt_fim ?? Carbon::now()->lastOfMonth()->format('Y-m-d');
 
-    // Filtro de pesquisa pelo backend
-    if ($request->filled('search')) {
-        $search = $request->search;
-        $encaminhamento->where(function($q) use ($search) {
-            $q->where('assistido.nome_completo', 'ilike', "%$search%")
-              ->orWhere('atendente.nome_completo', 'ilike', "%$search%")
-              ->orWhere('tt.descricao', 'ilike', "%$search%")
-              ->orWhere('tse.descricao', 'ilike', "%$search%")
-              ->orWhere('tm.tipo', 'ilike', "%$search%");
-        });
+        // Encaminhamentos (assistidos)
+        $encaminhamento = DB::table('encaminhamento as enc')
+            ->select(
+                'enc.id as id_encaminhamento',
+                'p.nome_completo as nome_assistido',
+                'at.dh_inicio',
+                'at.dh_fim',
+                'tse.descricao as status',
+                'tt.descricao as des_trata',
+                'enc.dh_enc',
+                'tm.tipo as motivo',
+                DB::raw("ROUND(EXTRACT(EPOCH FROM (at.dh_fim - at.dh_inicio))/60) as tempo_atendimento")
+            )
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+            ->leftJoin('tipo_status_encaminhamento as tse', 'enc.status_encaminhamento', 'tse.id')
+            ->leftJoin('tipo_tratamento as tt', 'enc.id_tipo_tratamento', 'tt.id')
+            ->leftJoin('tipo_motivo as tm', 'enc.motivo', 'tm.id')
+            // ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim])
+            ->get();
+
+        // Atendentes (somente associados)
+        $atendente = DB::table('encaminhamento as enc')
+            ->select(
+                'enc.id as id_encaminhamento',
+                'p.nome_completo as nome_atendente'
+            )
+            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+            ->leftJoin('associado as a', 'at.id_atendente', 'a.id') // só associados
+            ->leftJoin('pessoas as p', 'a.id_pessoa', 'p.id')
+            // ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim])
+            // ->whereNotNull('a.id')
+            ->get()
+            ->keyBy('id_encaminhamento');
+
+
+        // Filtro de pesquisa
+        if ($request->filled('search')) {
+            $search = mb_strtolower($request->search);
+
+            $encaminhamento = $encaminhamento->filter(function ($item) use ($atendente, $search) {
+                // Pega o nome do atendente, se existir no array/collection
+                $nomeAtendente = '';
+                if (is_array($atendente) && isset($atendente[$item->id_encaminhamento])) {
+                    $nomeAtendente = mb_strtolower($atendente[$item->id_encaminhamento]->nome_atendente ?? '');
+                } elseif ($atendente instanceof \Illuminate\Support\Collection) {
+                    $nomeAtendente = mb_strtolower(optional($atendente->get($item->id_encaminhamento))->nome_atendente ?? '');
+                }
+
+                return str_contains(mb_strtolower($item->nome_assistido ?? ''), $search) ||
+                    str_contains($nomeAtendente, $search) ||
+                    str_contains(mb_strtolower($item->des_trata ?? ''), $search) ||
+                    str_contains(mb_strtolower($item->status ?? ''), $search) ||
+                    str_contains(mb_strtolower($item->motivo ?? ''), $search);
+            });
+        }
+
+
+        // Paginação manual para coleção
+        $page = $request->get('page', 1);
+        $perPage = 50;
+        $paginated = new \Illuminate\Pagination\LengthAwarePaginator(
+            $encaminhamento->forPage($page, $perPage),
+            $encaminhamento->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return view('relatorios.gerenciar-relatorio-encaminhamento', [
+            'encaminhamento' => $paginated,
+            'atendente' => $atendente
+        ]);
     }
 
-    $encaminhamento = $encaminhamento->paginate(50)->appends(request()->query());
 
-    return view('relatorios.gerenciar-relatorio-encaminhamento', compact('encaminhamento'));
-}
+
 
     public function Atendimentos(Request $request)
     {
