@@ -9,8 +9,10 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12">
-                <form class="form-horizontal" method="post" action="/salvar-estudos-externos" enctype="multipart/form-data">
+                <form method="post" action="{{ route('atualizar.estudosExternos', $lista->id) }}"
+                    enctype="multipart/form-data">
                     @csrf
+                    @method('PUT')
                     <!-- Card principal -->
                     <div class="card">
                         <div class="card-header">

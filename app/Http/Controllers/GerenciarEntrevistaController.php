@@ -187,7 +187,7 @@ class GerenciarEntrevistaController extends Controller
             $informacoes = $info; // Repopula a Variavel inicial com o array "pesquisado"
             $pesquisaValue = 8; // Envia para a view qual item foi selecionado anteriormente
         }
-        // Caso seja pesquisado Aguardando Manutenção
+        // Caso seja pesquisado Aguardando Nutres
         if ($request->status == 9) {
             $info = [];
             foreach ($informacoes as $dia) {

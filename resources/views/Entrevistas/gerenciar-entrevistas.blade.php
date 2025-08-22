@@ -136,7 +136,7 @@
                                     @elseif ($informacao->status_encaminhamento_id == 5 and $informacao->id_tipo_entrevista == 6)
                                         Aguardando Requisitos
                                     @elseif ($informacao->status_encaminhamento_id == 6)
-                                        Aguardando Manutenção
+                                        Aguardando NUTRES
                                     @elseif ($informacao->status === 1)
                                         Aguardando Agendamento
                                     @else
