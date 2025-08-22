@@ -69,7 +69,7 @@
                         <td>{{ $listas->sigla }} {{ $listas->id_semestre }} - {{ $listas->descricao }}</td>
                         <td>{{ $listas->data_fim ? \Carbon\Carbon::parse($listas->data_fim)->format('d/m/Y') : '' }}</td>
                         <td>{{ $listas->instituicao_nome }}</td>
-                        <td>{{ $listas->status }}</td>
+                        <td>{{ $listas->status_descricao }}</td>
                         <td>
                             <a href="/visualizar-estudos-externos/{{ $listas->id }}"
                                 class="btn btn-sm btn-outline-primary" data-tt="tooltip"

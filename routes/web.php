@@ -576,7 +576,7 @@ Route::middleware('rotas:58')->group(function () {
     Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
     Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
     Route::get('/editar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'edit']);
-    Route::post('/atualizar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'update']);
+    Route::put('/atualizar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'update'])->name('atualizar.estudosExternos');
     Route::delete('/deletar-estudo-externo/{id}', [GerenciarEstudosExternosController::class, 'destroy']);
     Route::get('/visualizar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'show']);
     Route::get('/aprovar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'aprovar']);
