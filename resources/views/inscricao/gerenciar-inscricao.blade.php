@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-lg-1 col-6 d-flex justify-content-center align-items-center">
                     <a href="/formar-inscricao" class="btn btn-success btn-sm w-100"
-                            style="box-shadow: 1px 2px 5px #000000; margin:5px;" autofocus>Nova Inscrição+
+                            style="box-shadow: 1px 2px 5px #000000; margin:5px;" autofocus>Nova +
                     </a>                
                 </div>
                   <!-- Modal -->
@@ -174,12 +174,93 @@
                             <td><i class="bi bi-info-circle-fill" style="color: #0d6efd; cursor: pointer; font-size: 1.4rem;" data-bs-toggle="tooltip" title=" CPF: {{ $insc->cpf }} | Grupo: {{ $insc->nomeg }} | Atividade: {{ $insc->trsigla }} - {{ $insc->trnome }} | Observação:{{ $insc->descricao}} | Sala: {{ $insc->numero }} | Hora fim:{{ date('H:i', strtotime($insc->h_fim)) }} | Data fim:{{ $insc->data_fim ? date('d-m-Y', strtotime($reuni->data_fim)) : '-' }}"></i> 
                             </td>
                             <td>
-                                <a href="/altera-turma/{{ $insc->idi }}"><button type="button" class="btn btn-outline-warning btn-sm tooltips">
-                                    <span class="tooltiptext">Trocar    </span>
+                                @if ($insc->statusid == 3)
+                                <button type="button" class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Ativar</span>
+                                    <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button>
+                                <button type="button" class="btn btn-outline-warning btn-sm tooltips" disabled>
+                                    <span class="tooltiptext">Trocar</span>
+                                    <i class="bi bi-arrow-left-right" style="font-size: 1rem; color:#000;"></i></button>
+                                 <button type="button" class="btn btn-outline-danger btn-sm tooltips" disabled>
+                                    <span class="tooltiptext">Inativar</span>
+                                    <i class="bi bi-ban" style="font-size: 1rem; color:#000;"></i></button>
+                                <button type="button" class="btn btn-outline-danger btn-sm tooltips" disabled>
+                                    <span class="tooltiptext">Excluir</span>
+                                    <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i></button>
+                                @else
+                                <button type="button" class="btn btn-outline-warning btn-sm tooltips"  disabled>
+                                    <span class="tooltiptext" >Ativar</span>
+                                    <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button>
+                                 <a href="/altera-turma/{{ $insc->idi }}"><button type="button" class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Trocar</span>
                                     <i class="bi bi-arrow-left-right" style="font-size: 1rem; color:#000;"></i></button></a>
+                                <a href="#" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modali{{ $insc->idi }}"  data-tt="tooltip" data-placement="top"><span class="tooltiptext">Inativar</span>
+                                <i class="bi bi-ban" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                               {{--inicio modal inativação --}}
+                                <div class="modal fade" id="modali{{ $insc->idi }}" tabindex="-1"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header" style="background-color:#DC4C64">
+                                                <h5 class="modal-title" id="exampleModalLabel" style="color:white">Inativar a inscrição</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>                                             
+                                            <div class="modal-body" style="text-align: center; ">
+                                                Tem certeza que deseja inativar a inscrição de<br /><span style="color:#DC4C64; font-weight: bold;">{{ $insc->nome_completo }}</span>&#63;
+                                            </div>
+                                            <center>
+                                            <form action="/inativar-inscricao/{{ $insc->idi }}" method="POST">
+                                                @csrf
+                                                <div class="mb-2 col-10">
+                                                    <label class="col-form-label">Insira o motivo da
+                                                        <span style="color:#DC4C64">inativação:</span></label>
+                                                    <select class="form-select teste1"
+                                                        name="motivo_inat" required>
+                                                        @foreach ($motivo as $motivos)
+                                                            <option value="{{ $motivos->id }}">
+                                                                {{ $motivos->motivo }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </center>
+                                            <div class="modal-footer mt-3">
+                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-primary">Confirmar</button>
+                                            </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{--fim modal inativação --}}
+                                
+                                 <a href="#" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modale{{ $insc->idi }}"  data-tt="tooltip" data-placement="top"><span class="tooltiptext">Excluir</span>
+                                <i class="bi bi-trash" style="font-size: 1rem; color:#000;"></i>
+                                </a>
+                                 {{--inicio modal exclusão --}}
+                                <div class="modal fade" id="modale{{ $insc->idi }}" tabindex="-1"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header" style="background-color:#DC4C64">
+                                                <h5 class="modal-title" id="exampleModalLabel" style="color:white">Excluir a inscrição</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body" style="text-align: center; ">
+                                                Tem certeza que deseja excluir a inscrição de<br /><span style="color:#DC4C64; font-weight: bold;">{{ $insc->nome_completo }}</span>&#63;
+                                            </div>
+                                            <div class="modal-footer mt-3">
+                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                                <a type="button" class="btn btn-primary" href="/excluir-inscricao/{{ $insc->idi }}">Confirmar</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                             {{--fim modal exclusão --}}
+                                @endif                               
                                 <a href="/visualizar-inscricao/{{ $insc->idi }}"><button type="button" class="btn btn-outline-info btn-sm tooltips">
                                     <span class="tooltiptext">Visualizar</span>
-                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>                                
+                                    <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i></button></a>                                                          
                             </td>
                         </tr>
                     @endforeach

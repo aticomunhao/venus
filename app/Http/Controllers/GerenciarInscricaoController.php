@@ -42,10 +42,12 @@ class GerenciarInscricaoController extends Controller
                 'tt.id as idt',
                 'tt.id_tipo_grupo',
                 'tsi.tipo',
+                'tsi.id AS statusid',
                 DB::raw("(CASE WHEN cro.data_fim is not null THEN 'Inativo' ELSE 'Ativo' END) as status")
             )
             ->leftJoin('pessoas AS p', 'i.id_pessoa', 'p.id' )
-            ->leftJoin('cronograma AS cro', 'i.id_cronograma', 'cro.id' )
+            ->leftJoin('historico_inscricao AS hi', 'i.id', 'hi.id_inscricao')
+            ->leftJoin('cronograma AS cro', 'hi.id_cronograma_novo', 'cro.id' )
             ->leftJoin('tipo_tratamento AS tt', 'cro.id_tipo_tratamento', 'tt.id')
             ->leftJoin('tipo_observacao_reuniao AS t', 'cro.observacao', 't.id')
             ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
@@ -147,7 +149,7 @@ class GerenciarInscricaoController extends Controller
             ->orderBy('status', 'ASC')
             ->orderBy('cro.id_tipo_tratamento', 'ASC')
             ->orderBy('nomeg', 'ASC')
-            ->groupBy('idt','i.id', 'idr', 'p.nome_completo', 'gr.nome', 'tt.id', 'tt.sigla', 'td.nome', 'tse.sigla', 't.descricao', 'gr.status_grupo', 'tt.descricao', 's.sigla', 'sa.numero', 'tm.nome', 'ts.nome', 'p.cpf', 'tsi.tipo')
+            ->groupBy('idt', 'tsi.id', 'i.id', 'idr', 'p.nome_completo', 'gr.nome', 'tt.id', 'tt.sigla', 'td.nome', 'tse.sigla', 't.descricao', 'gr.status_grupo', 'tt.descricao', 's.sigla', 'sa.numero', 'tm.nome', 'ts.nome', 'p.cpf', 'tsi.tipo')
             ->paginate(50)
             ->appends([
                 'status' => $status,
@@ -207,14 +209,17 @@ class GerenciarInscricaoController extends Controller
         // Carregar a lista de setores para o Select2
         $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
 
-         return view('/inscricao/gerenciar-inscricao', compact('tipo_semestre', 'cpf', 'pessoa', 'inscricao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores', 'tmodalidade', 'modalidade', 'tipo_tratamento'));
+        $motivo = DB::table('tipo_motivo_status_pessoa')->select('id', 'motivo')->orderBy('motivo')->get();
+
+         return view('/inscricao/gerenciar-inscricao', compact('tipo_semestre', 'motivo', 'cpf', 'pessoa', 'inscricao', 'tpdia', 'situacao', 'status', 'contar', 'semana', 'grupos', 'setores', 'tmodalidade', 'modalidade', 'tipo_tratamento'));
     }
 
     public function formar(Request $request)
     {
 
-        $turma = DB::table('cronograma as c')
-                    ->leftJoin('inscricao AS i', 'c.id', 'i.id_cronograma')
+        $turma = DB::table('cronograma as c')     
+                    ->leftJoin('historico_inscricao AS hi', 'c.id', 'hi.id_cronograma_novo') 
+                    ->leftJoin('inscricao AS i', 'hi.id_inscricao', 'i.id')
                     ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
                     ->leftJoin('setor AS s', 'g.id_setor', 's.id')
                     ->leftJoin('tipo_dia AS td', 'c.dia_semana', 'td.id')
@@ -239,7 +244,7 @@ class GerenciarInscricaoController extends Controller
                         'tt.sigla AS siglat',
                         'ts.sigla AS siglas',
                         'tm.nome AS nomem',
-                        DB::raw('c.max_atend - count(i.id_cronograma) AS vaga')                        
+                        DB::raw('c.max_atend - count(hi.id_cronograma_novo) AS vaga')                        
                     )
                     ->where('g.id_tipo_grupo', 2)
                     ->groupBy('c.id', 'td.id', 'g.id', 's.sigla', 'td.nome', 'tt.descricao', 'tt.sigla', 'ts.sigla', 'tm.nome', 'obs.descricao', 'sa.numero')
@@ -284,29 +289,97 @@ class GerenciarInscricaoController extends Controller
     {
 
         $now = Carbon::now()->format('Y-m-d');
-
         $id_pessoa = $request->input('id_pessoa'); 
-        $curso = $request->input('curso');
-      
+        $crono = $request->input('curso');
+
+        //dd($id_pessoa, $crono);
+
+        $novoCurso = DB::table('cronograma AS c')
+                    // ->leftJoin('tipo_tratamento AS tt', 'c.id_tipo_tratamento', 'tt.id')
+                    ->where('c.id', $crono)
+                    ->select('c.dia_semana', 'c.h_inicio', 'c.h_fim')
+                    ->first();
+        //dd($novoCurso);
+
+        $EmCurso = DB::table('cronograma AS c')
+                    ->leftJoin('tipo_tratamento AS tt', 'c.id_tipo_tratamento', 'tt.id')
+                    ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
+                    ->leftJoin('historico_inscricao AS hi', 'c.id', 'hi.id_cronograma_novo' )
+                    ->leftJoin('inscricao AS i', 'hi.id_inscricao', 'i.id')
+                    ->leftJoin('pessoas AS p', 'i.id_pessoa', 'p.id')
+                    ->where('p.id', $id_pessoa)
+                    ->where('tt.id_tipo_grupo', 2)
+                    ->select('c.id_tipo_tratamento', 'c.dia_semana', 'c.h_inicio', 'c.h_fim')
+                    ->count();
+
+  //dd($EmCurso);
+
+        if (!$novoCurso) {
+               
+                app('flasher')->addError('Esse curso não existe');
+                return redirect()->back();
+        }
+
+        if ($EmCurso > 0) {
+               
+                app('flasher')->addError('Não são permitidas duas inscrições no mesmo semestre!!!');
+                return redirect()->back();               
+        }
+
+           
+       // Busca todos os cronogramas ativos ligados à pessoa
+        $ligados = DB::table('cronograma AS c')
+            ->leftJoin('membro AS m', 'c.id', 'm.id_cronograma')
+            ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
+            ->leftJoin('associado AS a', 'm.id_associado', 'a.id')
+            ->leftJoin('pessoas AS p', 'a.id_pessoa', 'p.id')
+            // ->leftJoin('tipo_tratamento AS tt', 'c.id_tipo_tratamento', 'tt.id')
+            ->where('p.id', $id_pessoa)
+            ->whereNull('c.data_fim')
+            ->select('g.nome', 'c.id', 'c.dia_semana', 'c.h_inicio', 'c.h_fim')
+            ->get();
+
+        //dd($ligados);
+
+        // Verifica sobreposição
+        $conflito = $ligados->first(function ($existente) use ($novoCurso) {
+            $existenteInicio = Carbon::parse($existente->h_inicio);
+            $existenteFim = Carbon::parse($existente->h_fim);
+            $novoInicio = Carbon::parse($novoCurso->h_inicio);
+            $novoFim = Carbon::parse($novoCurso->h_fim);
+
+            return $existente->dia_semana == $novoCurso->dia_semana &&
+                $existenteInicio->lt($novoFim) &&
+                $existenteFim->gt($novoInicio);
+        });
+
+        if ($conflito) {
+            
+            app('flasher')->addError("O aluno trabalha ou estuda no grupo '{$conflito->nome}' no mesmo dia e horário.");
+            return redirect()->back();
+        }
+
 
         DB::table('inscricao AS i')
                 ->insert([
                     'id_pessoa' => $id_pessoa,
-                    'id_cronograma' => $curso,
                     'data_inscricao' => $now,
                     'status' => 1
                 ]);
 
+        // Pega o último ID gerado pela sequence inscricao_id_seq
+        $idInscricao = DB::getPdo()->lastInsertId('inscricao_id_seq');
 
-        DB::table('historico_venus')
-                ->insert([
-                    'id_usuario' => session()->get('usuario.id_usuario'),
-                    'data' => $now,
-                    'fato' => 33,
-                    'pessoa' => $id_pessoa
-                ]);
+        // Inserir no historico_inscricao
+        DB::table('historico_inscricao')->insert([
+            'id_inscricao'          => $idInscricao,
+            'id_cronograma_anterior'=> $crono,
+            'id_cronograma_novo'    => $crono,
+            'data_alteracao'        => Carbon::now(),
+            'motivo'                => null,
+        ]);
 
-        app('flasher')->addSuccess('Inscrição realizada com sucesso realizado com sucesso');
+        app('flasher')->addSuccess("A inscrição foi incluida com sucesso!!!");
 
         return redirect('/gerenciar-inscricao');
 
@@ -316,8 +389,9 @@ class GerenciarInscricaoController extends Controller
     {
 
         $aluno = DB::table('inscricao AS i')
-                    ->leftJoin('pessoas AS p', 'i.id_pessoa', 'p.id')
-                    ->leftJoin('cronograma AS c', 'i.id_cronograma', 'c.id' )
+                    ->leftJoin('pessoas AS p', 'i.id_pessoa', 'p.id')                    
+                    ->leftJoin('historico_inscricao AS hi', 'i.id', 'hi.id_inscricao')
+                    ->leftJoin('cronograma AS c', 'hi.id_cronograma_novo', 'c.id' )
                     ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
                     ->leftJoin('tipo_tratamento AS tt', 'c.id_tipo_tratamento', 'tt.id')
                     ->leftJoin('tipo_semestre AS ts', 'tt.id_semestre', 'ts.id')
@@ -338,7 +412,8 @@ class GerenciarInscricaoController extends Controller
                     ->get();
 
         $turma = DB::table('cronograma as c')
-                    ->leftJoin('inscricao AS i', 'c.id', 'i.id_cronograma')
+                    ->leftJoin('historico_inscricao AS hi', 'c.id', 'hi.id_cronograma_novo')
+                    ->leftJoin('inscricao AS i', 'hi.id_inscricao', 'i.id')
                     ->leftJoin('pessoas AS p', 'i.id_pessoa', 'p.id' )
                     ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
                     ->leftJoin('setor AS s', 'g.id_setor', 's.id')
@@ -365,7 +440,7 @@ class GerenciarInscricaoController extends Controller
                         'ts.sigla AS siglas',
                         'tm.nome AS nomem',
                         'p.nome_completo',
-                        DB::raw('c.max_atend - count(i.id_cronograma) AS vaga')                        
+                        DB::raw('c.max_atend - count(hi.id_cronograma_novo) AS vaga')                        
                     )
                     ->where('g.id_tipo_grupo', 2)
                     ->groupBy('c.id', 'td.id', 'g.id', 's.sigla', 'td.nome', 'tt.descricao', 'tt.sigla', 'ts.sigla', 'tm.nome', 'obs.descricao', 'sa.numero', 'p.nome_completo')
@@ -390,10 +465,24 @@ class GerenciarInscricaoController extends Controller
     }
 
 
+     public function update(Request $request, $idi, $idc)
+    {
+
+        DB::table('historico_inscricao AS hi')
+            ->insert([
+                'id_cronograma_novo'     => $request->input('curso'),
+                'id_cronograma_anterior' => $idc,
+                'id_inscricao'           => $idi,
+                'data_alteracao'         => Carbon::now(),
+                'motivo'                 => null,
+            ]);
+
+        app('flasher')->addSuccess('Alteração de turma realizada com sucesso');
+
+        return redirect('/gerenciar-inscricao');
 
 
-
-
+    }
 
     public function visualizar($idi)
     {
@@ -429,11 +518,13 @@ class GerenciarInscricaoController extends Controller
                 'tt.descricao as tipo',
                 'tt.id as idt',
                 'tt.id_tipo_grupo',
-                'tsi.tipo',
+                'tsi.tipo AS tp_si',
+                'tmsp.motivo AS tp_msi',
                 DB::raw("(CASE WHEN cro.data_fim is not null THEN 'Inativo' ELSE 'Ativo' END) as status")
             )
             ->leftJoin('pessoas AS p', 'i.id_pessoa', 'p.id' )
-            ->leftJoin('cronograma AS cro', 'i.id_cronograma', 'cro.id' )
+            ->leftJoin('historico_inscricao AS hi', 'i.id', 'hi.id_inscricao')
+            ->leftJoin('cronograma AS cro', 'hi.id_cronograma_novo', 'cro.id' )
             ->leftJoin('tipo_tratamento AS tt', 'cro.id_tipo_tratamento', 'tt.id')
             ->leftJoin('tipo_observacao_reuniao AS t', 'cro.observacao', 't.id')
             ->leftJoin('grupo AS gr', 'cro.id_grupo', 'gr.id')
@@ -445,10 +536,51 @@ class GerenciarInscricaoController extends Controller
             ->leftJoin('tipo_semestre AS tse', 'tt.id_semestre', 'tse.id')
             ->leftJoin('tipo_status_inscricao AS tsi', 'i.status', 'tsi.id')
             ->leftJoin('tipo_localizacao AS tl', 'sa.id_localizacao', 'tl.id')
+            ->leftJoin('tipo_motivo_status_pessoa AS tmsp', 'i.motivo', 'tmsp.id')
             ->where('i.id', $idi)
             ->get();
 
             return view('/inscricao.visualizar', compact('inscricao'));
+
+    }
+
+    public function inativar(Request $request, $idi)
+    {
+    
+        $mot_inativa = $request->input('motivo_inat');
+
+        DB::table('inscricao')
+            ->where('id', $idi)
+            ->update([
+                'status' => 3,
+                'motivo' => $mot_inativa
+            ]);
+
+        app('flasher')->addSuccess("A inscrição foi inativada!");
+
+        return redirect('/gerenciar-inscricao');
+
+    }
+
+
+    public function destroy($idi)
+    {
+
+        $presenca = DB::table('presenca_aula AS pa')->where('pa.id_inscricao', $idi)->count();
+
+        if ($presenca > 0)
+        {
+            app('flasher')->addError('Exclusão não permitida: existe uma presença registrada!');
+
+            return redirect('/gerenciar-inscricao');
+        }else{
+
+        DB::table('inscricao')->where('id', $idi)->delete();
+
+        app('flasher')->addSuccess('A inscrição foi excluida!');
+
+        return redirect('/gerenciar-inscricao');
+        }
 
     }
 
