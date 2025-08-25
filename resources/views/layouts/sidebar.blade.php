@@ -18,7 +18,7 @@ $idAcessoAgendamentos = [16, 22, 23, 40, 9, 8]; // IDs de acesso para Agendament
 $idAcessoTratamentos = [25, 24, 39, 41, 16, 18]; // IDs de acesso para Tratamentos
 $idAcessoMembros = [14, 20, 15, 30, 21]; // IDs de acesso para Membros
 $idAcessoRelatorios = [35, 57, 34, 35, 48, 46, 31, 32, 51, 47, 52, 33]; // IDs de acesso para relatórios
-$idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
+$idAcessoEstudos = [1, 58, 54]; // IDs de acesso para Estudos
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light shadow-sm"
@@ -236,6 +236,9 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
                             @endif
                              @if (in_array(1, $acesso))
                                 <li><a class="dropdown-item" href='/gerenciar-inscricao'>Gerenciar inscrição</a></li>
+                            @endif
+                            @if (in_array(54, $acesso))
+                                <li><a class="dropdown-item" href='/gerenciar-inscricao'>Gerenciar Questionários</a></li>
                             @endif
                         </ul>
                     </li>
