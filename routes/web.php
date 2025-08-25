@@ -517,6 +517,7 @@ Route::middleware('rotas:48')->group(function () {
 //Relatório de Tratamentos
 Route::middleware('rotas:36')->group(function () {
     Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
+    Route::any('/gerenciar-relatorio-encaminhamento', [RelatoriosController::class, 'EncaminhamentosRel']);
 });
 
 // Log de Atendimentos
@@ -550,7 +551,10 @@ Route::middleware('rotas:55')->group(function () {
     Route::get('/gerenciar-inscricao', [GerenciarInscricaoController::class, 'index'])->name('index.insc');
     Route::get('/formar-inscricao', [GerenciarInscricaoController::class, 'formar']);
     Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'criar']);
-    Route::get('/altera-turma/{idi}', [GerenciarInscricaoController::class, 'trocar']);
+    Route::get('/altera-turma/{idi}/{idc}', [GerenciarInscricaoController::class, 'trocar']);
+    Route::post('/trocar-turma/{idi}/{idc}', [GerenciarInscricaoController::class, 'update']);
+    Route::post('/inativar-inscricao/{idi}', [GerenciarInscricaoController::class, 'inativar']);
+    Route::get('/excluir-inscricao/{idi}', [GerenciarInscricaoController::class, 'destroy']);
     Route::get('/visualizar-inscricao/{idi}', [GerenciarInscricaoController::class, 'visualizar']);
 });
 //Gerenciar Tipo Criterios Atividades
