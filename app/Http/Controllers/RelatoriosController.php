@@ -1029,7 +1029,7 @@ class RelatoriosController extends Controller
             )->get()
             ->toArray();
 
-           // dd($passes);
+        // dd($passes);
 
 
         // if ($request->tipo_visualizacao == 2) {
@@ -1118,6 +1118,49 @@ class RelatoriosController extends Controller
 
         return view('relatorios.gerenciar-relatorio-tratamento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
     }
+
+   public function EncaminhamentosRel(Request $request)
+{
+    $dt_inicio = $request->dt_inicio ?? Carbon::now()->firstOfMonth()->format('Y-m-d');
+    $dt_fim    = $request->dt_fim ?? Carbon::now()->lastOfMonth()->format('Y-m-d');
+
+    $encaminhamento = DB::table('encaminhamento as enc')
+        ->select(
+            'assistido.nome_completo as nome_assistido',
+            'at.dh_inicio',
+            'at.dh_fim',
+            'atendente.nome_completo as nome_atendente',
+            'tse.descricao',
+            'tt.descricao as des_trata',
+            'enc.dh_enc',
+            'tm.tipo',
+            DB::raw("ROUND(EXTRACT(EPOCH FROM (at.dh_fim - at.dh_inicio))/60) as tempo_atendimento")
+        )
+        ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+        ->leftJoin('pessoas as assistido', 'at.id_assistido', 'assistido.id')
+        ->leftJoin('pessoas as atendente', 'at.id_atendente', 'atendente.id')
+        ->leftJoin('tipo_encaminhamento as te', 'enc.id_tipo_encaminhamento', 'te.id')
+        ->leftJoin('tipo_status_encaminhamento as tse', 'enc.status_encaminhamento', 'tse.id')
+        ->leftJoin('tipo_tratamento as tt', 'enc.id_tipo_tratamento', 'tt.id')
+        ->leftJoin('tipo_motivo as tm', 'enc.motivo', 'tm.id')
+        ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim]);
+
+    // Filtro de pesquisa pelo backend
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $encaminhamento->where(function($q) use ($search) {
+            $q->where('assistido.nome_completo', 'ilike', "%$search%")
+              ->orWhere('atendente.nome_completo', 'ilike', "%$search%")
+              ->orWhere('tt.descricao', 'ilike', "%$search%")
+              ->orWhere('tse.descricao', 'ilike', "%$search%")
+              ->orWhere('tm.tipo', 'ilike', "%$search%");
+        });
+    }
+
+    $encaminhamento = $encaminhamento->paginate(50)->appends(request()->query());
+
+    return view('relatorios.gerenciar-relatorio-encaminhamento', compact('encaminhamento'));
+}
 
     public function Atendimentos(Request $request)
     {
@@ -1752,5 +1795,180 @@ class RelatoriosController extends Controller
             'trata' => $trata,
             'totalGeralAssistidos' => $totalGeralAssistidos, // Adicionando o total geral
         ]);
+    }
+    public function AtendimentosGeral(Request $request)
+    {
+        $now = Carbon::now()->format('Y-m-d');
+        $dt_inicio = $request->dt_inicio == null ? Carbon::now()->subMonth()->firstOfMonth() : Carbon::parse($request->dt_inicio);
+        $dt_fim = $request->dt_fim == null ? Carbon::today() : Carbon::parse($request->dt_fim);
+        $multiplicador = ceil(($dt_fim->diffInDays($dt_inicio) + 1) / 7);
+
+        // Presenças, Faltas,Total, Max_vagas
+
+        // Mês, ano, normal
+
+        $tipo_tratamento = $request->tipo_tratamento;
+        $presencas = DB::table('presenca_cronograma as pc')
+            ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<=', $dt_fim)
+            ->when($request->tipo_tratamento and $request->tipo_tratamento != 5, function ($query) use ($tipo_tratamento) {
+                $query->where('enc.id_tipo_tratamento', $tipo_tratamento);
+            });
+
+        $maxAtend = DB::table('cronograma')
+            ->where(function ($query) use ($dt_fim) {
+                $query->where('data_fim', '>=', $dt_fim);
+                $query->orWhereNull('data_fim');
+            })
+            ->whereIn('id_tipo_tratamento', [1, 2, 4, 6])
+            ->when($request->tipo_tratamento and $request->tipo_tratamento != 5, function ($query) use ($tipo_tratamento) {
+                $query->where('id_tipo_tratamento', $tipo_tratamento);
+            });
+
+
+        if ($request->tipo_visualizacao == 2) {
+
+            Carbon::setlocale(config('app.locale'));
+            $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
+
+            foreach ($meses as $mes) {
+
+                $dadosChart[ucfirst($mes->locale('pt-br')->translatedFormat('F')) . ' - ' . $mes->format('Y')] = [
+                    'Presenças' => (clone $presencas)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->where('pc.presenca', true)->count(),
+                    'Faltas' => (clone $presencas)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->where('pc.presenca', false)->count(),
+                    'Vagas Disponibilizadas' => (clone $presencas)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->count(),
+                    'Capacidade Máxima' => ($maxAtend->sum('max_atend') * round($multiplicador / count($meses))),
+                ];
+            }
+        } elseif ($request->tipo_visualizacao == 3) {
+
+
+            $meses = collect(range($dt_inicio->year, $dt_fim->year))
+                ->map(fn($ano) => Carbon::create($ano, 1, 1))
+                ->toArray();
+
+            foreach ($meses as $mes) {
+
+                $dadosChart[$mes->format('Y')] = [
+                    'Presenças' => (clone $presencas)->whereYear('dc.data', $mes->year)->where('pc.presenca', true)->count(),
+                    'Faltas' => (clone $presencas)->whereYear('dc.data', $mes->year)->where('pc.presenca', false)->count(),
+                    'Vagas Disponibilizadas' => (clone $presencas)->whereYear('dc.data', $mes->year)->count(),
+                    'Capacidade Máxima' => ($maxAtend->sum('max_atend') * round($multiplicador / count($meses))),
+                ];
+            }
+        } else {
+            $dadosChart = [
+                'Presenças' => (clone $presencas)->where('pc.presenca', true)->count(),
+                'Faltas' => (clone $presencas)->where('pc.presenca', false)->count(),
+                'Vagas Disponibilizadas' => (clone $presencas)->count(),
+                'Capacidade Máxima' => ($maxAtend->sum('max_atend') * $multiplicador),
+            ];
+        }
+
+
+        return view('relatorios.relatorio-geral-atendimento', compact('dt_inicio', 'dt_fim', 'dadosChart'));
+    }
+
+    public function AtendimentosGeral2(Request $request)
+    {
+        $now = Carbon::now()->format('Y-m-d');
+        $ano = $request->input('ano', date('Y'));
+
+        $dt_inicio = date("{$ano}-01-01 00:00:00");
+        $dt_fim = date("{$ano}-12-31 23:59:59");
+
+
+        // Presenças, Faltas, Total, Alta, Transferido, Desistência
+
+        // Mês, ano, normal
+
+        $tipo_tratamento = $request->tipo_tratamento;
+        $presencas = DB::table('presenca_cronograma as pc')
+            ->leftJoin('dias_cronograma as dc', 'pc.id_dias_cronograma', 'dc.id')
+            ->leftJoin('tratamento as tr', 'pc.id_tratamento', 'tr.id')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<=', $dt_fim)
+            ->whereNot('enc.id_tipo_tratamento', 3)
+            ->when($request->tipo_tratamento and !in_array(3, $request->tipo_tratamento) and !in_array(5, $request->tipo_tratamento), function ($query) use ($tipo_tratamento) {
+                $query->whereIn('enc.id_tipo_tratamento', $tipo_tratamento);
+            });
+
+        $harmonizacao = DB::table('dias_cronograma as dc')
+            ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
+            ->where('dc.data', '>=', $dt_inicio)
+            ->where('dc.data', '<=', $dt_fim)
+            ->where('cro.id_tipo_tratamento', 3);
+
+        $alta = DB::table('tratamento as tr')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->where('tr.dt_fim', '>=', $dt_inicio)
+            ->where('tr.dt_fim', '<=', $dt_fim)
+            ->when($request->tipo_tratamento and !in_array(5, $request->tipo_tratamento), function ($query) use ($tipo_tratamento) {
+                $query->whereIn('enc.id_tipo_tratamento', $tipo_tratamento);
+            });
+
+
+        $transferidos = DB::table('tratamento_grupos as tg')
+            ->leftJoin('tratamento as tr', 'tg.id_tratamento', '=', 'tr.id')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->where('tg.dt_fim', '>=', $dt_inicio)
+            ->where('tg.dt_fim', '<=', $dt_fim)
+            ->when($request->tipo_tratamento and !in_array(5, $request->tipo_tratamento), function ($query) use ($tipo_tratamento) {
+                $query->whereIn('enc.id_tipo_tratamento', $tipo_tratamento);
+            });
+
+        $tratamentos = DB::table('tratamento as tr')
+            ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
+            ->where('tr.dt_inicio', '>=', $dt_inicio)
+            ->where('tr.dt_inicio', '<=', $dt_fim)
+            ->when($request->tipo_tratamento and !in_array(5, $request->tipo_tratamento), function ($query) use ($tipo_tratamento) {
+                $query->whereIn('enc.id_tipo_tratamento', $tipo_tratamento);
+            });
+
+        $maxAtend = DB::table('cronograma')
+            ->where(function ($query) use ($dt_fim) {
+                $query->where('data_fim', '>=', $dt_fim);
+                $query->orWhereNull('data_fim');
+            })
+            ->when($request->tipo_tratamento and !in_array(5, $request->tipo_tratamento), function ($query) use ($tipo_tratamento) {
+                $query->whereIn('id_tipo_tratamento', $tipo_tratamento);
+            }, function ($query) {
+                $query->whereIn('id_tipo_tratamento', [1, 2, 3, 6]);
+            })
+            ->select(DB::raw('SUM(max_atend) as max_atend'), DB::raw('SUM(max_trab) as max_trab'))->first();
+        Carbon::setlocale(config('app.locale'));
+        $meses = CarbonPeriod::create($dt_inicio, $dt_fim)->month()->toArray();
+
+
+
+        foreach ($meses as $mes) {
+
+            $pre = (clone $presencas)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->where('pc.presenca', true)->count();
+            $aus =  (clone $presencas)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->where('pc.presenca', false)->count();
+            $trat = (clone $tratamentos)->whereMonth('tr.dt_inicio', $mes->month)->whereYear('tr.dt_inicio', $mes->year)->count();
+
+            $dadosFreq[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                'Total' => (clone $presencas)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->count(),
+                'Harmonização' => (clone $harmonizacao)->whereMonth('dc.data', $mes->month)->whereYear('dc.data', $mes->year)->sum('dc.nr_acompanhantes'),
+                'Presenças' => $pre,
+                'PCT Presenças' => $pre ? round(($pre * 100) / ($pre + $aus), 2)  : 0,
+                'Ausentes' => $aus,
+                'PCT Ausentes' => $aus ? round(($aus * 100) / ($pre + $aus), 2)  : 0,
+            ];
+            $dadosTrat[ucfirst($mes->locale('pt-br')->translatedFormat('F'))] = [
+                'Tratamentos' => $trat,
+                'Alta' => (clone $alta)->whereMonth('dt_fim', $mes->month)->whereYear('dt_fim', $mes->year)->where('status', 4)->count(),
+                'PCT Alta' => $trat ? round(((clone $alta)->whereMonth('dt_fim', $mes->month)->whereYear('dt_fim', $mes->year)->where('status', 4)->count() * 100) / $trat, 2)  : 0,
+                'Transferidos' => (clone $transferidos)->whereMonth('tg.dt_fim', $mes->month)->whereYear('tg.dt_fim', $mes->year)->count(),
+                'PCT Transferidos' => $trat ? round(((clone $transferidos)->whereMonth('tg.dt_fim', $mes->month)->whereYear('tg.dt_fim', $mes->year)->count() * 100) / $trat, 2)  : 0,
+                'Desistência' => (clone $alta)->whereMonth('tr.dt_fim', $mes->month)->whereYear('tr.dt_fim', $mes->year)->where('status', 5)->count(),
+                'PCT Desistência' => $trat ? round(((clone $alta)->whereMonth('tr.dt_fim', $mes->month)->whereYear('tr.dt_fim', $mes->year)->where('status', 5)->count() * 100) / $trat, 2)  : 0,
+            ];
+        }
+        return view('relatorios.relatorio-geral-atendimento2', compact('dt_inicio', 'dt_fim', 'dadosFreq', 'dadosTrat', 'maxAtend'));
     }
 }

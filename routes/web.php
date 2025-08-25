@@ -40,9 +40,17 @@ use App\Http\Controllers\PresencaDirigenteController;
 use App\Http\Controllers\GerenciarVersoesControllerController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\GerenciarPassesController;
-use App\Http\Controllers\GerenciarQuestoesControler;
-use App\Http\Controllers\GerenciarRequisitoAtividadeController;
+use App\Http\Controllers\GerenciarCriterioAtividadeController;
+use App\Http\Controllers\GerenciarEmailController;
+use App\Http\Controllers\GerenciarFichaVoluntariosController;
 use App\Http\Controllers\LogAtendimentosController;
+use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\GerenciarTipoCriterioController;
+use App\Http\Controllers\GerenciarEstudosExternosController;
+use App\Http\Controllers\GerenciarInstituicaoController;
+use App\Mail\EnviarEmail;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\URL;
 
 /*
 |--------------------------------------------------------------------------
@@ -246,6 +254,16 @@ Route::middleware('rotas:13')->group(function () {
     Route::post('/deletar-membro/{idcro}/{id}', [MembroController::class, 'destroy'])->name('membro.destroy');
     Route::post('/inativar-membro/{idcro}/{id}', [MembroController::class, 'inactivate'])->name('membro.inactivate');
     Route::get('/ferias-reuniao/{id}/{tp}', [MembroController::class, 'ferias']);
+
+    //Email comunicado voluntario novo
+    Route::get('/editar-email/{idm}/{id_cronograma}', [GerenciarEmailController::class, 'edit'])->name('rev.mail');
+    Route::post('/enviar-email/{id_cronograma}', [GerenciarEmailController::class, 'send'])->name('send.mail');
+});
+
+// Editar Limite Cronograma Membro
+Route::middleware('rotas:13')->group(function () {
+    Route::get('/editar-limite-cronograma/{id}', [MembroController::class, 'editLimiteCronograma'])->name('');
+    Route::any('/atualizar-limite-cronograma/{id}', [MembroController::class, 'updateLimiteCronograma'])->name('');
 });
 
 // Gerenciar Membros
@@ -320,13 +338,14 @@ Route::middleware('rotas:18')->group(function () {
     Route::get('/visualizar-tratamento/{idtr}', [GerenciarTratamentosController::class, 'visualizar'])->name('gecvis');
     Route::get('/registrar-falta', [GerenciarTratamentosController::class, 'falta'])->name('gtcfal');
     Route::any('/incluir-avulso', [GerenciarTratamentosController::class, 'createAvulso']);
+    Route::any('/ajax-avulso', [GerenciarTratamentosController::class, 'ajax']);
     Route::any('/armazenar-avulso', [GerenciarTratamentosController::class, 'storeAvulso']);
     Route::any('/inativar-tratamento/{id}', [GerenciarTratamentosController::class, 'destroy']);
 });
 
 // Visualizar Proamo(Recepção Integrada)
 Route::middleware('rotas:51')->group(function () {
-Route::get('/visualizarRI-tratamento', [GerenciarTratamentosController::class, 'visualizarRI'])->name('RI');
+    Route::get('/visualizarRI-tratamento', [GerenciarTratamentosController::class, 'visualizarRI'])->name('RI');
 });
 // Botão de Presença
 Route::middleware('rotas:43')->group(function () {
@@ -371,7 +390,10 @@ Route::middleware('rotas:24')->group(function () {
     Route::get('/alta-pti/{id}', [GerenciarPTIController::class, 'update']);
     Route::get('/alta-nutres/{id}', [GerenciarPTIController::class, 'nutres']);
     Route::get('/visualizar-pti/{id}', [GerenciarPTIController::class, 'show']);
+    Route::any('/incluir-avulso-pti', [GerenciarPTIController::class, 'createAvulsopti']);
+    Route::any('/armazenar-avulsopti', [GerenciarPTIController::class, 'storeAvulsopti']);
 });
+
 
 // Gerenciar Assistido Integral
 Route::middleware('rotas:25')->group(function () {
@@ -460,7 +482,7 @@ Route::middleware('rotas:34')->group(function () {
 
 //Relatório Setores trabalhadores
 Route::middleware('rotas:34')->group(function () {
-Route::get('/relatorio-setor-trabalhador', [RelatoriosController::class, 'trabalhadores'])->name('form.trab');
+    Route::get('/relatorio-setor-trabalhador', [RelatoriosController::class, 'trabalhadores'])->name('form.trab');
 });
 
 //Relatório de Reuniões
@@ -472,6 +494,13 @@ Route::middleware('rotas:35')->group(function () {
 //Relatório de Atendimentos
 Route::middleware('rotas:46')->group(function () {
     Route::any('/gerenciar-relatorio-atendimento', [RelatoriosController::class, 'Atendimentos']);
+});
+
+
+//Relatório de Geral de  Atendimentos
+Route::middleware('rotas:57')->group(function () {
+    Route::any('/relatorio-geral-atendimento', [RelatoriosController::class, 'AtendimentosGeral']);
+    Route::any('/relatorio-geral-atendimento2', [RelatoriosController::class, 'AtendimentosGeral2']);
 });
 
 //Relatório de Balanço de Voluntários
@@ -488,6 +517,7 @@ Route::middleware('rotas:48')->group(function () {
 //Relatório de Tratamentos
 Route::middleware('rotas:36')->group(function () {
     Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
+    Route::any('/gerenciar-relatorio-encaminhamento', [RelatoriosController::class, 'EncaminhamentosRel']);
 });
 
 // Log de Atendimentos
@@ -497,27 +527,78 @@ Route::middleware('rotas:53')->group(function () {
     Route::any('/placeholder-log-atendimentos', [LogAtendimentosController::class, 'placeholder']);
 });
 
-// Log de Atendimentos
-Route::middleware('rotas:54')->group(function () {
-    Route::any('/gerenciar-questoes', [GerenciarQuestoesControler::class, 'index']);
-    Route::any('/criar-questoes', [GerenciarQuestoesControler::class, 'create']);
-    Route::any('/armazenar-questoes', [GerenciarQuestoesControler::class, 'store']);
+// Ficha de Voluntários
+Route::middleware('rotas:55')->group(function () {
+    Route::any('/ficha-voluntario/{id}', [GerenciarFichaVoluntariosController::class, 'edit']);
+    Route::any('/atualizar-ficha-voluntario/{ida}/{idp}', [GerenciarFichaVoluntariosController::class, 'update']);
+    Route::any('/retorna-cidades/{id}', [GerenciarFichaVoluntariosController::class, 'retornaCidades']);
+    Route::any('/salvar-foto', [GerenciarFichaVoluntariosController::class, 'salvarFoto']);
+    Route::any('/retorna-foto', [GerenciarFichaVoluntariosController::class, 'retornaFoto']);
 });
 
 
-//Gerenciar requisitos
+//Gerenciar critérios
 Route::middleware('rotas:54')->group(function () {
-    Route::get('/gerenciar-requisito', [GerenciarRequisitoAtividadeController::class, 'index'])->name('index.req');
-    Route::get('/criar-requisito', [GerenciarRequisitoAtividadeController::class, 'create']);
-    Route::post('/incluir-requisito', [GerenciarRequisitoAtividadeController::class, 'include']);
-    Route::get('/equivalencia-requisito/{id}', [GerenciarRequisitoAtividadeController::class, 'equivale']);
-    Route::post('/incluir-equivalencia-requisito/{idatv}', [GerenciarRequisitoAtividadeController::class, 'vincular']);
-    
+    Route::get('/gerenciar-criterio', [GerenciarCriterioAtividadeController::class, 'index'])->name('index.req');
+    Route::get('/criar-criterio', [GerenciarCriterioAtividadeController::class, 'create']);
+    Route::post('/incluir-criterio', [GerenciarCriterioAtividadeController::class, 'include']);
+    Route::get('/equivalencia-criterio/{id}', [GerenciarCriterioAtividadeController::class, 'equivale']);
+    Route::post('/incluir-equivalencia-criterio/{idatv}', [GerenciarCriterioAtividadeController::class, 'vincular']);
 });
 
 //Gerenciar inscrições
-Route::middleware('rotas:54')->group(function () {
+Route::middleware('rotas:55')->group(function () {
     Route::get('/gerenciar-inscricao', [GerenciarInscricaoController::class, 'index'])->name('index.insc');
-    Route::get('/criar-inscricao', [GerenciarInscricaoController::class, 'create']);
-    Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'include']);
+    Route::get('/formar-inscricao', [GerenciarInscricaoController::class, 'formar']);
+    Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'criar']);
+    Route::get('/altera-turma/{idi}/{idc}', [GerenciarInscricaoController::class, 'trocar']);
+    Route::post('/trocar-turma/{idi}/{idc}', [GerenciarInscricaoController::class, 'update']);
+    Route::post('/inativar-inscricao/{idi}', [GerenciarInscricaoController::class, 'inativar']);
+    Route::get('/excluir-inscricao/{idi}', [GerenciarInscricaoController::class, 'destroy']);
+    Route::get('/visualizar-inscricao/{idi}', [GerenciarInscricaoController::class, 'visualizar']);
 });
+//Gerenciar Tipo Criterios Atividades
+
+Route::get('/gerenciar-tipo-criterio', [GerenciarTipoCriterioController::class, 'index'])->name('index.tipo_criterio_controller');
+Route::get('/criar-tipo-criterio', [GerenciarTipoCriterioController::class, 'create'])->name('criar.tipo_criterio_controller');
+Route::post('/incluir-tipo-criterio', [GerenciarTipoCriterioController::class, 'store'])->name('incluir.tipo_criterio_controller');
+Route::get('/editar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'edit'])->name('editar.tipo_criterio_controller');
+Route::post('/atualizar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'update'])->name('atualizar.tipo_criterio_controller');
+Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::class, 'destroy'])->name('deletar.tipo_criterio_controller');
+
+
+
+/*Ajax Controller */
+Route::get('/retorna-cidades/{id}', [AjaxController::class, 'retornaCidades']);
+Route::get('/retorna-dados-endereco/{id}', [AjaxController::class, 'getAddressByCep']);
+// if (!App::environment('local')) {
+//     URL::forceScheme('https');
+// }
+
+Route::middleware('rotas:58')->group(function () {
+    Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
+    Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
+    Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
+    Route::get('/editar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'edit']);
+    Route::put('/atualizar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'update'])->name('atualizar.estudosExternos');
+    Route::delete('/deletar-estudo-externo/{id}', [GerenciarEstudosExternosController::class, 'destroy']);
+    Route::get('/visualizar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'show']);
+    Route::get('/aprovar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'aprovar']);
+    Route::post('/salva-aprova-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'aprovarStore']);
+});
+
+Route::middleware('rotas:59')->group(function () {
+    Route::get('/gerenciar-instituicao', [GerenciarInstituicaoController::class, 'index'])->name('index.instituicao');
+    Route::get('/incluir-instituicao', [GerenciarInstituicaoController::class, 'create']);
+    Route::post('/salvar-instituicao', [GerenciarInstituicaoController::class, 'store']);
+    Route::get('/editar-instituicao/{id}', [GerenciarInstituicaoController::class, 'edit']);
+    Route::post('/atualizar-instituicao/{id}', [GerenciarInstituicaoController::class, 'update']);
+    Route::delete('/excluir-instituicao/{id}', [GerenciarInstituicaoController::class, 'destroy'])->name('instituicao.destroy');
+    Route::get('/visualizar-instituicao/{id}', [GerenciarInstituicaoController::class, 'show']);
+    Route::get('/retorna-cidade-dados-residenciais/{id}', [GerenciarInstituicaoController::class, 'retornaCidadeDadosResidenciais']);
+    Route::patch('/instituicao/{id}/status', [GerenciarInstituicaoController::class, 'toggleStatus'])->name('instituicao.toggleStatus');
+});
+
+if (!App::environment('local')) {
+    URL::forceScheme('https');
+}

@@ -1,0 +1,241 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
+
+
+class GerenciarInstituicaoController extends Controller
+{
+    public function index(Request $request)
+    {
+        $lista = DB::table('instituicao')
+            ->leftJoin('tipo_status', 'instituicao.status', 'tipo_status.id')
+            ->select('instituicao.id', 'nome_fantasia', 'razao_social', 'cnpj', 'email_contato', 'site', 'tipo_status.descricao as status', 'instituicao.status as status_id')
+            ->when($request->nome_fantasia, function ($query, $value) {
+                return $query->where('nome_fantasia', $value);
+            })
+            ->when($request->razao_social, function ($query, $value) {
+                return $query->where('razao_social', $value);
+            })
+            ->when($request->email_contato, function ($query, $value) {
+                return $query->where('email_contato', $value);
+            })
+            ->when($request->cnpj, function ($query, $value) {
+                return $query->where('cnpj', 'like', '%' . $value . '%');
+            })
+            ->when($request->site, function ($query, $value) {
+                return $query->where('site', $value);
+            })
+            ->when($request->status, function ($query, $value) {
+                return $query->where('status', $value);
+            })
+            ->orderBy('nome_fantasia')
+            ->get();
+
+        // Para popular os selects
+        $pesquisa = DB::table('instituicao')
+            ->select('nome_fantasia', 'razao_social', 'cnpj', 'email_contato', 'site', 'status')
+            ->get();
+
+        return view('/instituicao/gerenciar-instituicao', compact('lista', 'pesquisa'));
+    }
+    public function create()
+    {
+        $uf = DB::table('tp_uf')->get();
+        $instituicoes = DB::table('instituicao')
+            ->leftJoin('tp_uf', 'instituicao.uf', 'tp_uf.id')
+            ->get();
+
+        return view('/instituicao/incluir-instituicao', compact('instituicoes', 'uf'));
+    }
+    public function store(Request $request)
+    {
+        try {
+            $request->validate([
+                'cnpj' => 'required|cnpj|unique:instituicao,cnpj',
+            ], [
+                'cnpj.cnpj' => 'CNPJ inválido.',
+                'cnpj.unique' => 'Já existe uma instituição com esse CNPJ.',
+            ]);
+
+            $cnpj = preg_replace('/\D/', '', $request->cnpj);
+            $cep = preg_replace('/\D/', '', $request->cep);
+            //dd($request->all(), $cnpj);
+            // Inserção dos dados na tabela instituicao
+            DB::table('instituicao')->insert([
+                'nome_fantasia' => $request->input('nome_fantasia'),
+                'razao_social' => $request->input('razao_social'),
+                'inscricao_estadual' => $request->input('insc_est'),
+                'nome_contato' => $request->input('nome_cont'),
+                'ibge' => $request->input('ibge'),
+                'cep' => $cep,
+                'logradouro' => $request->input('logradouro'),
+                'bairro' => $request->input('bairro'),
+                'uf' => $request->input('uf'),
+                'cidade' => $request->input('cidade'),
+                'complemento' => $request->input('complemento'),
+                'unidade' => $request->input('unidade'),
+                'gia' => $request->input('gia'),
+                'numero' => $request->input('numero'),
+                'cnpj' => $cnpj,
+                'email_contato' => $request->input('email_contato'),
+                'site' => $request->input('site'),
+                'status' => '1',
+            ]);
+            // Redirecionamento com mensagem de sucesso
+            app('flasher')->addSuccess('Instituição incluída com sucesso!');
+            return redirect('/gerenciar-instituicao');
+        } catch (\Exception $e) {
+            app('flasher')->addError("Erro ao criar instituição: " . $e->getMessage());
+            return back()->withInput();
+        }
+    }
+    public function edit($id)
+    {
+        $uf = DB::table('tp_uf')->get();
+        $instituicao = DB::table('instituicao')
+            ->leftJoin('tp_uf', 'instituicao.uf', 'tp_uf.id')
+            ->leftJoin('tp_cidade', 'tp_cidade.id_cidade', 'instituicao.cidade')
+            ->select(
+                'instituicao.id as id',
+                'instituicao.nome_fantasia',
+                'instituicao.razao_social',
+                'instituicao.inscricao_estadual',
+                'instituicao.nome_contato',
+                'instituicao.ibge',
+                'instituicao.cep',
+                'instituicao.logradouro',
+                'instituicao.bairro',
+                'tp_uf.id as uf',
+                'tp_uf.sigla as sigla',
+                'instituicao.cidade as cidade_id',
+                'tp_cidade.descricao as cidade',
+                'instituicao.complemento',
+                'instituicao.unidade',
+                'instituicao.gia',
+                'instituicao.numero',
+                'instituicao.cnpj',
+                'instituicao.email_contato',
+                'instituicao.site'
+            )
+            ->where('instituicao.id', $id)
+            ->first();
+
+        if (!$instituicao) {
+            app('flasher')->addError('Instituição não encontrada!');
+            return redirect('/gerenciar-instituicao');
+        }
+
+        return view('/instituicao/editar-instituicao', compact('instituicao', 'uf'));
+    }
+    public function update(Request $request, $id)
+    {
+        $cnpj = preg_replace('/\D/', '', $request->cnpj);
+        $cep = preg_replace('/\D/', '', $request->cep);
+
+        DB::table('instituicao')->where('id', $id)->update([
+            'nome_fantasia' => $request->input('nome_fantasia'),
+            'razao_social' => $request->input('razao_social'),
+            'inscricao_estadual' => $request->input('insc_est'),
+            'nome_contato' => $request->input('nome_cont'),
+            'ibge' => $request->input('ibge'),
+            'cep' => $cep,
+            'logradouro' => $request->input('logradouro'),
+            'bairro' => $request->input('bairro'),
+            'uf' => $request->input('uf'),
+            'cidade' => $request->input('cidade'),
+            'complemento' => $request->input('complemento'),
+            'unidade' => $request->input('unidade'),
+            'gia' => $request->input('gia'),
+            'numero' => $request->input('numero'),
+            'cnpj' => $cnpj,
+            'email_contato' => $request->input('email_contato'),
+            'site' => $request->input('site'),
+            'status' => '1',
+        ]);
+
+        app('flasher')->addSuccess('Instituição atualizada com sucesso!');
+        return redirect('/gerenciar-instituicao');
+    }
+    public function destroy($id)
+    {
+        // Verifica se a instituição está sendo usada na tabela cursos_externos
+        $emUso = DB::table('cursos_externos')->where('instituicao', $id)->exists();
+
+        if ($emUso) {
+            app('flasher')->addError('Não é possível excluir esta instituição, pois ela está vinculada a cursos externos.');
+            return redirect()->back();
+        }
+
+        // Caso não esteja em uso, pode excluir
+        DB::table('instituicao')->where('id', $id)->delete();
+
+        app('flasher')->addSuccess('Instituição excluída com sucesso!');
+        return redirect()->back();
+    }
+    public function show($id)
+    {
+        $instituicao = DB::table('instituicao')
+            ->leftJoin('tp_uf', 'instituicao.uf', 'tp_uf.id')
+            ->leftJoin('tp_cidade', 'tp_cidade.id_cidade', 'instituicao.cidade')
+            ->select(
+                'instituicao.id as id',
+                'instituicao.nome_fantasia',
+                'instituicao.razao_social',
+                'instituicao.inscricao_estadual',
+                'instituicao.nome_contato',
+                'instituicao.ibge',
+                'instituicao.cep',
+                'instituicao.logradouro',
+                'instituicao.bairro',
+                'tp_uf.id as uf',
+                'tp_uf.sigla as sigla',
+                'instituicao.cidade as cidade_id',
+                'tp_cidade.descricao as cidade',
+                'instituicao.complemento',
+                'instituicao.unidade',
+                'instituicao.gia',
+                'instituicao.numero',
+                'instituicao.cnpj',
+                'instituicao.email_contato',
+                'instituicao.site'
+            )
+            ->where('instituicao.id', $id)
+            ->first();
+
+        if (!$instituicao) {
+            app('flasher')->addError('Instituição não encontrada!');
+            return redirect('/gerenciar-instituicao');
+        }
+
+        return view('/instituicao/visualizar-instituicao', compact('instituicao'));
+    }
+    public function retornaCidadeDadosResidenciais($id)
+    {
+        $cidadeDadosResidenciais = DB::table('tp_cidade')
+            ->where('id_uf', $id)
+            ->get();
+
+        return response()->json($cidadeDadosResidenciais);
+    }
+    public function toggleStatus(Request $request, $id)
+    {
+        $instituicao = DB::table('instituicao')->where('id', $id)->first();
+        if (!$instituicao) {
+            app('flasher')->addError('Instituição não encontrada!');
+            return redirect()->back();
+        }
+
+        $novoStatus = $instituicao->status == '1' ? '2' : '1';
+
+        DB::table('instituicao')->where('id', $id)->update(['status' => $novoStatus]);
+
+        $msg = $novoStatus == '1' ? 'Instituição ativada com sucesso!' : 'Instituição inativada com sucesso!';
+        app('flasher')->addSuccess($msg);
+
+        return redirect()->back();
+    }
+}

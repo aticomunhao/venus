@@ -67,7 +67,6 @@ class GerenciarEntrevistaController extends Controller
             ->leftJoin('pessoas as pessoa_entrevistador', 'associado.id_pessoa', 'pessoa_entrevistador.id')
             ->leftJoin('tipo_status_entrevista as tse', 'entrevistas.status', 'tse.id')
             ->where('encaminhamento.id_tipo_encaminhamento', 1) // Tipo Entrevista
-            ->whereNot('tipo_entrevista.id', 8) // Exclui o tipo de entrevista 8 (Evangelho no Lar)
             ->whereIn('tipo_entrevista.id_setor', $setores);
 
         $i = 0;
@@ -111,7 +110,6 @@ class GerenciarEntrevistaController extends Controller
             ->orderBy('atendimentos.dh_inicio')
             ->get()->toArray();
 
-
         // Confere se a pessoa tem um tratamento PTD ativo
         $ptdAtivos = DB::table('tratamento as tr')
             ->leftJoin('encaminhamento as enc', 'tr.id_encaminhamento', 'enc.id')
@@ -122,9 +120,10 @@ class GerenciarEntrevistaController extends Controller
             ->pluck('id_assistido')->toArray();
 
 
-
         foreach ($ptdAtivos as $ptd) {
-            $informacoes[array_search($ptd, array_column($informacoes, 'id_pessoa'))]->ptd = true;
+            foreach (array_keys(array_column($informacoes, 'id_pessoa'), $ptd) as $info) {
+                $informacoes[$info]->ptd = true;
+            }
         }
 
 
@@ -188,7 +187,7 @@ class GerenciarEntrevistaController extends Controller
             $informacoes = $info; // Repopula a Variavel inicial com o array "pesquisado"
             $pesquisaValue = 8; // Envia para a view qual item foi selecionado anteriormente
         }
-        // Caso seja pesquisado Aguardando Manutenção
+        // Caso seja pesquisado Aguardando Nutres
         if ($request->status == 9) {
             $info = [];
             foreach ($informacoes as $dia) {
@@ -212,7 +211,7 @@ class GerenciarEntrevistaController extends Controller
 
         // Traz as entrevistar para o Select de Pesquisa de Status
         $tipo_entrevista = DB::table('tipo_entrevista')
-            ->whereIn('id', [3, 4, 5, 6]) // AME, AFE, DIAMO, NUTRES
+            ->whereIn('id', [3, 4, 5, 6, 8]) // AME, AFE, DIAMO, NUTRES,GEL
             ->select('id as id_ent', 'sigla as ent_desc')
             ->orderby('descricao', 'asc')
             ->get();
@@ -453,6 +452,43 @@ class GerenciarEntrevistaController extends Controller
             ->where('enc.id', $id)
             ->first();
 
+        // XXX Uma gambiarra pra resolver tradução entre tratamentos e entrevistas
+        $tradutor = [
+            2 => 4,
+            5 => 6,
+            6 => 4
+        ];
+
+        $tradutor = isset($tradutor[$entrevistas->id_tipo_entrevista]) ?  $tradutor[$entrevistas->id_tipo_entrevista] : 0;
+
+
+        $tratamento = DB::table('encaminhamento as enc')
+            ->select(
+                'enc.id as ide',
+                'gr.nome',
+                'rm.h_inicio',
+                'td.nome as dia',
+                'tr.id as idt',
+                'tr.dt_inicio',
+                'tr.dt_fim',
+                'tt.descricao',
+                'tse.nome as status',
+                'enc.id_tipo_tratamento',
+                'at.id_assistido'
+            )
+            ->leftJoin('tipo_tratamento AS tt', 'enc.id_tipo_tratamento', 'tt.id')
+            ->leftJoin('atendimentos AS at', 'enc.id_atendimento', 'at.id')
+            ->leftjoin('tratamento AS tr', 'enc.id', 'tr.id_encaminhamento')
+            ->leftJoin('tipo_status_tratamento AS tse', 'tr.status', 'tse.id')
+            ->leftjoin('cronograma AS rm', 'tr.id_reuniao', 'rm.id')
+            ->leftjoin('grupo AS gr', 'rm.id_grupo', 'gr.id')
+            ->leftJoin('tipo_dia as td', 'rm.dia_semana', 'td.id')
+            ->where('at.id_assistido', $entrevistas->id_assistido) // Todos daquele assistido
+            ->where('enc.id_tipo_encaminhamento', 2) // Encaminhamento de Tratamento
+            ->where('enc.id_tipo_tratamento', $tradutor)
+            ->orderBy('tr.dt_fim', 'DESC')
+            ->orderBy('tr.dt_inicio', 'DESC')
+            ->first();
 
         $presencas = DB::table('presenca_cronograma as pc')
             ->select('enc.id_tipo_tratamento', 'dc.data', 'pc.presenca', 'gr.nome')
@@ -469,7 +505,7 @@ class GerenciarEntrevistaController extends Controller
             ->get();
 
 
-        return view('Entrevistas.visualizar-entrevista', compact('entrevistas', 'id', 'presencas'));
+        return view('Entrevistas.visualizar-entrevista', compact('entrevistas', 'id', 'presencas', 'tratamento'));
         // } catch (\Exception $e) {
 
         //     app('flasher')->addError("Houve um erro inesperado: #" . $e->getCode());
@@ -572,7 +608,7 @@ class GerenciarEntrevistaController extends Controller
 
         // Traz os dados da entrevista gerada
         $entrevista = DB::table('entrevistas as ent')->where('id_encaminhamento', $id)
-            ->select('at.id_assistido', 'ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id','ent.id as ide', 'ent.id_sala', 'ent.id_entrevistador', 'ent.status')
+            ->select('at.id_assistido', 'ent.data', 'ent.hora', 'enc.id_tipo_entrevista', 'enc.id', 'ent.id as ide', 'ent.id_sala', 'ent.id_entrevistador', 'ent.status')
             ->leftJoin('encaminhamento as enc', 'ent.id_encaminhamento', 'enc.id')
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id');
 
@@ -647,8 +683,13 @@ class GerenciarEntrevistaController extends Controller
             ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
             ->first();
 
-        // Força uma variável DATE e uma TIME a forçarem uma única DATETIME
-        $dt = Carbon::createFromFormat('Y-m-d H:i:s', $entrevista->data . ' ' . $entrevista->hora);
+        if (!empty($entrevista->hora)) {
+            $dt = Carbon::createFromFormat('Y-m-d H:i:s', $entrevista->data . ' ' . $entrevista->hora);
+        } else {
+            // Se não tiver hora, você pode usar só a data com hora 00:00:00
+            $dt = Carbon::createFromFormat('Y-m-d H:i:s', $entrevista->data . ' 00:00:00');
+        }
+
 
         // A tabela Atendimentos pede o ID associado, logo, é necessária busca em banco desse dado
         $id_entrevistador = DB::table('membro')->where('id_associado', $entrevista->id_entrevistador)->select('id_associado')->first();

@@ -99,6 +99,7 @@
                                     <td class="col">TRATAMENTO</td>
                                     <td class="col">GRUPO</td>
                                     <td class="col">DIA</td>
+                                    <td class="col">SALA</td>
                                     <td class="col">HORÁRIO</td>
                                     <td class="col">STATUS</td>
                                     <td class="col">MOTIVO</td>
@@ -114,6 +115,7 @@
                                     <td>{{ $result->desctrat }}</td>
                                     <td>{{ $result->nomeg }}</td>
                                     <td>{{ $result->nomedia }}</td>
+                                    <td>{{ $result->sala }}</td>
                                     <td>{{ $result->rm_inicio }}</td>
                                     <td>{{ $result->tsenc }}</td>
                                     <td>{{ $result->tpmotivo }}</td>
