@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 
 class GerenciarQuestoesControler extends Controller
 {
@@ -12,7 +13,7 @@ class GerenciarQuestoesControler extends Controller
      */
     public function index()
     {
-        
+
         return view('questoes.gerenciar-questoes');
     }
 
@@ -23,8 +24,12 @@ class GerenciarQuestoesControler extends Controller
     {
 
         $tipoAtividade = DB::table('tipo_tratamento')
-       // ->where('id_tipo_grupo', 2)
-        ->get();
+            ->leftJoin('tipo_semestre', 'tipo_tratamento.id_semestre', 'tipo_semestre.id')
+            ->select('tipo_tratamento.id as id', 'id_semestre', 'tipo_tratamento.sigla as sigla', 'tipo_semestre.sigla as semestre_sigla', 'tipo_tratamento.descricao as descricao')
+            ->where('id_tipo_grupo', '2')
+            ->orderBy('descricao', 'asc')
+            ->orderBy('id_semestre', 'asc')
+            ->get();
 
         return view('questoes.incluir-questoes', compact('tipoAtividade'));
     }
@@ -34,9 +39,35 @@ class GerenciarQuestoesControler extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
-    }
+        $perguntas = $request->input('perguntas');
 
+        DB::beginTransaction();
+        try {
+            foreach ($perguntas as $pergunta) {
+                // Salva a pergunta
+                $perguntaId = DB::table('perguntas')->insertGetId([
+                    'enunciado' => $pergunta['enunciado'] ?? '',
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+                // Salva as respostas
+                foreach ($pergunta['respostas'] as $index => $resposta) {
+                    DB::table('respostas')->insert([
+                        'pergunta_id' => $perguntaId,
+                        'resposta' => $resposta,
+                        'correta' => (isset($pergunta['correta']) && $pergunta['correta'] == $index) ? 1 : 0,
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Perguntas e respostas salvas com sucesso!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Erro ao salvar: ' . $e->getMessage());
+        }
+    }
     /**
      * Display the specified resource.
      */
