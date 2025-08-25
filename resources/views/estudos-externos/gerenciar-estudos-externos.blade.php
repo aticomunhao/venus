@@ -71,33 +71,38 @@
                         <td>{{ $listas->instituicao_nome }}</td>
                         <td>{{ $listas->status_descricao }}</td>
                         <td>
-                            <a href="/visualizar-estudos-externos/{{ $listas->id }}"
-                                class="btn btn-sm btn-outline-primary" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Visualizar">
-                                <i class="bi bi-search"></i>
-                            </a>
-                            <a href="/editar-estudos-externos/{{ $listas->id }}" class="btn btn-sm btn-outline-warning"
+                            <a href="/editar-estudos-externos/{{ $listas->id }}" class="btn btn-sm btn-outline-warning tooltips"
                                 data-tt="tooltip" style="font-size: 1rem; color:#303030" data-placement="top"
-                                title="Editar">
+                                >
+                                <span class="tooltiptext">Editar</span>
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <a href="/aprovar-estudos-externos/{{ $listas->id }}" class="btn btn-sm btn-outline-info"
+                            <a href="/aprovar-estudos-externos/{{ $listas->id }}" class="btn btn-sm btn-outline-warning tooltips"
                                 data-tt="tooltip" style="font-size: 1rem; color:#303030" data-placement="top"
-                                title="Aprovar">
+                                >
+                                <span class="tooltiptext">Aprovar</span>
                                 <i class="bi bi-hand-thumbs-up"></i>
                             </a>
                             {{-- Link para arquivo atual --}}
                             @if (!empty($listas->documento_comprovante))
                                 <a href="{{ asset('storage/' . $listas->documento_comprovante) }}"
-                                    style="font-size: 1rem; color:#303030" target="_blank" title="Arquivo Anexo"
-                                    class="btn btn-outline-primary btn-sm">
+                                    style="font-size: 1rem; color:#303030" target="_blank"
+                                    class="btn btn-outline-warning btn-sm tooltips">
+                                    <span class="tooltiptext">Arquivo Anexo</span>
                                     <i class="bi bi-archive"></i>
                                 </a>
                             @endif
-                            <a href="#" class="btn btn-sm btn-outline-danger excluirEstudoExterno" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Excluir"
+                            <a href="/visualizar-estudos-externos/{{ $listas->id }}"
+                                class="btn btn-sm btn-outline-info tooltips" data-tt="tooltip"
+                                style="font-size: 1rem; color:#303030" data-placement="top">
+                                <span class="tooltiptext">Visualizar</span>
+                                <i class="bi bi-search"></i>
+                            </a>
+                            <a href="#" class="btn btn-sm btn-outline-danger excluirEstudoExterno tooltips" data-tt="tooltip"
+                                style="font-size: 1rem; color:#303030" data-placement="top"
                                 data-bs-toggle="modal" data-bs-target="#modalExcluirEstudoExterno"
                                 data-id="{{ $listas->id }}">
+                                <span class="tooltiptext">Excluir</span>
                                 <i class="bi bi-trash"></i>
                             </a>
                         </td>

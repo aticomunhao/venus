@@ -48,6 +48,7 @@ use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\GerenciarTipoCriterioController;
 use App\Http\Controllers\GerenciarEstudosExternosController;
 use App\Http\Controllers\GerenciarInstituicaoController;
+use App\Http\Controllers\GerenciarQuestoesControler;
 use App\Mail\EnviarEmail;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
