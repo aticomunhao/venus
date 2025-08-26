@@ -1117,85 +1117,101 @@ class RelatoriosController extends Controller
     }
 
 
+
     public function EncaminhamentosRel(Request $request)
-    {
-        // $dt_inicio = $request->dt_inicio ?? Carbon::now()->firstOfMonth()->format('Y-m-d');
-        // $dt_fim    = $request->dt_fim ?? Carbon::now()->lastOfMonth()->format('Y-m-d');
-
-        // Encaminhamentos (assistidos)
-        $encaminhamento = DB::table('encaminhamento as enc')
-            ->select(
-                'enc.id as id_encaminhamento',
-                'p.nome_completo as nome_assistido',
-                'at.dh_inicio',
-                'at.dh_fim',
-                'tse.descricao as status',
-                'tt.descricao as des_trata',
-                'enc.dh_enc',
-                'tm.tipo as motivo',
-                DB::raw("ROUND(EXTRACT(EPOCH FROM (at.dh_fim - at.dh_inicio))/60) as tempo_atendimento")
-            )
-            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
-            ->leftJoin('tipo_status_encaminhamento as tse', 'enc.status_encaminhamento', 'tse.id')
-            ->leftJoin('tipo_tratamento as tt', 'enc.id_tipo_tratamento', 'tt.id')
-            ->leftJoin('tipo_motivo as tm', 'enc.motivo', 'tm.id')
-            // ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim])
-            ->get();
-
-        // Atendentes (somente associados)
-        $atendente = DB::table('encaminhamento as enc')
-            ->select(
-                'enc.id as id_encaminhamento',
-                'p.nome_completo as nome_atendente'
-            )
-            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-            ->leftJoin('associado as a', 'at.id_atendente', 'a.id') // só associados
-            ->leftJoin('pessoas as p', 'a.id_pessoa', 'p.id')
-            // ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim])
-            // ->whereNotNull('a.id')
-            ->get()
-            ->keyBy('id_encaminhamento');
-
-
-        // Filtro de pesquisa
-        if ($request->filled('search')) {
-            $search = mb_strtolower($request->search);
-
-            $encaminhamento = $encaminhamento->filter(function ($item) use ($atendente, $search) {
-                // Pega o nome do atendente, se existir no array/collection
-                $nomeAtendente = '';
-                if (is_array($atendente) && isset($atendente[$item->id_encaminhamento])) {
-                    $nomeAtendente = mb_strtolower($atendente[$item->id_encaminhamento]->nome_atendente ?? '');
-                } elseif ($atendente instanceof \Illuminate\Support\Collection) {
-                    $nomeAtendente = mb_strtolower(optional($atendente->get($item->id_encaminhamento))->nome_atendente ?? '');
-                }
-
-                return str_contains(mb_strtolower($item->nome_assistido ?? ''), $search) ||
-                    str_contains($nomeAtendente, $search) ||
-                    str_contains(mb_strtolower($item->des_trata ?? ''), $search) ||
-                    str_contains(mb_strtolower($item->status ?? ''), $search) ||
-                    str_contains(mb_strtolower($item->motivo ?? ''), $search);
-            });
-        }
-
-
-        // Paginação manual para coleção
-        $page = $request->get('page', 1);
-        $perPage = 50;
-        $paginated = new \Illuminate\Pagination\LengthAwarePaginator(
-            $encaminhamento->forPage($page, $perPage),
-            $encaminhamento->count(),
-            $perPage,
-            $page,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
-
-        return view('relatorios.gerenciar-relatorio-encaminhamento', [
-            'encaminhamento' => $paginated,
-            'atendente' => $atendente
-        ]);
+{
+    // Definir o intervalo de datas
+    if ($request->filled('dt_inicio') && $request->filled('dt_fim')) {
+        $dt_inicio = Carbon::parse($request->dt_inicio)->startOfDay();
+        $dt_fim = Carbon::parse($request->dt_fim)->endOfDay();
+    } elseif ($request->filled('dt_inicio')) {
+        $dia = Carbon::parse($request->dt_inicio);
+        $dt_inicio = $dia->startOfDay();
+        $dt_fim = $dia->endOfDay();
+    } else {
+        $dt_inicio = Carbon::now()->startOfMonth();
+        $dt_fim = Carbon::now()->endOfMonth();
     }
+
+    // Tipos de tratamento usados dentro do período (id 1 a 11)
+    $tipos_tratamento = DB::table('encaminhamento as enc')
+        ->join('tipo_tratamento as tt', 'enc.id_tipo_tratamento', 'tt.id')
+        ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim])
+        ->whereBetween('tt.id', [1, 11])
+        ->select('tt.id', 'tt.descricao')
+        ->distinct()
+        ->get();
+
+    $encaminhamentoQuery = DB::table('encaminhamento as enc')
+        ->select(
+            'enc.id as id_encaminhamento',
+            'p.nome_completo as nome_assistido',
+            'at.dh_inicio',
+            'at.dh_fim',
+            'tse.descricao as status',
+            'tt.descricao as des_trata',
+            'enc.dh_enc',
+            'tm.tipo as motivo',
+            DB::raw("ROUND(EXTRACT(EPOCH FROM (at.dh_fim - at.dh_inicio))/60) as tempo_atendimento"),
+            'pat.nome_completo as nome_atendente'
+        )
+        ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+        ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
+        ->leftJoin('tipo_status_encaminhamento as tse', 'enc.status_encaminhamento', 'tse.id')
+        ->leftJoin('tipo_tratamento as tt', 'enc.id_tipo_tratamento', 'tt.id')
+        ->leftJoin('tipo_motivo as tm', 'enc.motivo', 'tm.id')
+        ->leftJoin('associado as a', 'at.id_atendente', 'a.id')
+        ->leftJoin('pessoas as pat', 'a.id_pessoa', 'pat.id')
+        ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim]);
+
+    // Filtro atendente
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $encaminhamentoQuery->whereRaw(
+            "unaccent(lower(pat.nome_completo)) like unaccent(lower(?))",
+            ["%{$search}%"]
+        );
+    }
+
+    // Filtro tipo de tratamento
+    if ($request->filled('tipo_tratamento')) {
+        $encaminhamentoQuery->where('enc.id_tipo_tratamento', $request->tipo_tratamento);
+    }
+
+    $encaminhamento = $encaminhamentoQuery->orderBy('enc.dh_enc', 'desc')
+        ->paginate(50)
+        ->appends(request()->query());
+
+    return view('relatorios.gerenciar-relatorio-encaminhamento', compact('encaminhamento', 'tipos_tratamento'));
+}
+
+
+
+  public function Graficoencaminhamentos(Request $request)
+{
+
+    // Intervalo de datas: mês atual por padrão
+    $dt_inicio = $request->filled('dt_inicio') ? Carbon::parse($request->dt_inicio)->startOfMonth() : Carbon::now()->startOfMonth();
+    $dt_fim = $request->filled('dt_fim') ? Carbon::parse($request->dt_fim)->endOfMonth() : Carbon::now()->endOfMonth();
+
+    // Tipos de tratamento com id 1 a 11
+    $tipos_tratamento = DB::table('tipo_tratamento')
+        ->whereBetween('id', [1, 11])
+        ->get();
+
+    // Quantidade de encaminhamentos por tipo no período
+    $quantidadePorTipo = DB::table('encaminhamento as enc')
+        ->join('tipo_tratamento as tt', 'enc.id_tipo_tratamento', 'tt.id')
+        ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim])
+        ->whereBetween('tt.id', [1, 11])
+        ->select('tt.descricao', DB::raw('count(enc.id) as total'))
+        ->groupBy('tt.descricao')
+        ->orderBy('tt.id')
+        ->get();
+
+    return view('relatorios.grafico-relatorio-encaminhamento', compact('tipos_tratamento', 'quantidadePorTipo', 'dt_inicio', 'dt_fim'));
+}
+
 
 
 
