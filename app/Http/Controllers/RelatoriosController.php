@@ -1118,84 +1118,49 @@ class RelatoriosController extends Controller
 
 
     public function EncaminhamentosRel(Request $request)
-    {
-        // $dt_inicio = $request->dt_inicio ?? Carbon::now()->firstOfMonth()->format('Y-m-d');
-        // $dt_fim    = $request->dt_fim ?? Carbon::now()->lastOfMonth()->format('Y-m-d');
+{
+    $dt_inicio = $request->dt_inicio ?? Carbon::now()->firstOfMonth()->format('Y-m-d');
+    $dt_fim    = $request->dt_fim ?? Carbon::now()->lastOfMonth()->format('Y-m-d');
 
-        // Encaminhamentos (assistidos)
-        $encaminhamento = DB::table('encaminhamento as enc')
-            ->select(
-                'enc.id as id_encaminhamento',
-                'p.nome_completo as nome_assistido',
-                'at.dh_inicio',
-                'at.dh_fim',
-                'tse.descricao as status',
-                'tt.descricao as des_trata',
-                'enc.dh_enc',
-                'tm.tipo as motivo',
-                DB::raw("ROUND(EXTRACT(EPOCH FROM (at.dh_fim - at.dh_inicio))/60) as tempo_atendimento")
-            )
-            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-            ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id')
-            ->leftJoin('tipo_status_encaminhamento as tse', 'enc.status_encaminhamento', 'tse.id')
-            ->leftJoin('tipo_tratamento as tt', 'enc.id_tipo_tratamento', 'tt.id')
-            ->leftJoin('tipo_motivo as tm', 'enc.motivo', 'tm.id')
-            // ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim])
-            ->get();
+    $encaminhamentoQuery = DB::table('encaminhamento as enc')
+        ->select(
+            'enc.id as id_encaminhamento',
+            'p.nome_completo as nome_assistido',
+            'at.dh_inicio',
+            'at.dh_fim',
+            'tse.descricao as status',
+            'tt.descricao as des_trata',
+            'enc.dh_enc',
+            'tm.tipo as motivo',
+            DB::raw("ROUND(EXTRACT(EPOCH FROM (at.dh_fim - at.dh_inicio))/60) as tempo_atendimento"),
+            'pat.nome_completo as nome_atendente'
+        )
+        ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+        ->leftJoin('pessoas as p', 'at.id_assistido', 'p.id') // assistido
+        ->leftJoin('tipo_status_encaminhamento as tse', 'enc.status_encaminhamento', 'tse.id')
+        ->leftJoin('tipo_tratamento as tt', 'enc.id_tipo_tratamento', 'tt.id')
+        ->leftJoin('tipo_motivo as tm', 'enc.motivo', 'tm.id')
+        ->leftJoin('associado as a', 'at.id_atendente', 'a.id')
+        ->leftJoin('pessoas as pat', 'a.id_pessoa', 'pat.id') // atendente
+        ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim]);
 
-        // Atendentes (somente associados)
-        $atendente = DB::table('encaminhamento as enc')
-            ->select(
-                'enc.id as id_encaminhamento',
-                'p.nome_completo as nome_atendente'
-            )
-            ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
-            ->leftJoin('associado as a', 'at.id_atendente', 'a.id') // só associados
-            ->leftJoin('pessoas as p', 'a.id_pessoa', 'p.id')
-            // ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim])
-            // ->whereNotNull('a.id')
-            ->get()
-            ->keyBy('id_encaminhamento');
-
-
-        // Filtro de pesquisa
-        if ($request->filled('search')) {
-            $search = mb_strtolower($request->search);
-
-            $encaminhamento = $encaminhamento->filter(function ($item) use ($atendente, $search) {
-                // Pega o nome do atendente, se existir no array/collection
-                $nomeAtendente = '';
-                if (is_array($atendente) && isset($atendente[$item->id_encaminhamento])) {
-                    $nomeAtendente = mb_strtolower($atendente[$item->id_encaminhamento]->nome_atendente ?? '');
-                } elseif ($atendente instanceof \Illuminate\Support\Collection) {
-                    $nomeAtendente = mb_strtolower(optional($atendente->get($item->id_encaminhamento))->nome_atendente ?? '');
-                }
-
-                return str_contains(mb_strtolower($item->nome_assistido ?? ''), $search) ||
-                    str_contains($nomeAtendente, $search) ||
-                    str_contains(mb_strtolower($item->des_trata ?? ''), $search) ||
-                    str_contains(mb_strtolower($item->status ?? ''), $search) ||
-                    str_contains(mb_strtolower($item->motivo ?? ''), $search);
-            });
-        }
-
-
-        // Paginação manual para coleção
-        $page = $request->get('page', 1);
-        $perPage = 50;
-        $paginated = new \Illuminate\Pagination\LengthAwarePaginator(
-            $encaminhamento->forPage($page, $perPage),
-            $encaminhamento->count(),
-            $perPage,
-            $page,
-            ['path' => $request->url(), 'query' => $request->query()]
+    // Pesquisa SOMENTE pelo nome do atendente
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $encaminhamentoQuery->whereRaw(
+            "unaccent(lower(pat.nome_completo)) like unaccent(lower(?))",
+            ["%{$search}%"]
         );
-
-        return view('relatorios.gerenciar-relatorio-encaminhamento', [
-            'encaminhamento' => $paginated,
-            'atendente' => $atendente
-        ]);
     }
+
+    $encaminhamento = $encaminhamentoQuery->orderBy('enc.dh_enc', 'desc')
+        ->paginate(50)
+        ->appends(request()->query());
+
+    return view('relatorios.gerenciar-relatorio-encaminhamento', compact('encaminhamento'));
+}
+
+
 
 
 
