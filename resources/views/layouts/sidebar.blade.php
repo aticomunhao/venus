@@ -1,19 +1,23 @@
 <?php $acesso = session()->get('usuario.acesso');
 
+
 $setores = [];
 foreach (session()->get('acessoInterno') as $perfil) {
     $setores = array_merge($setores, array_column($perfil, 'id_setor'));
 }
 
-$setores = DB::table('setor as st')->leftJoin('setor as stp', 'st.setor_pai', 'stp.id')->leftJoin('setor as sta', 'stp.setor_pai', 'sta.id')->select('st.id as ids', 'stp.id as idp', 'sta.id as ida')->whereIn('st.id', $setores)->get()->toArray();
+$setores = DB::table('setor as st')
+->leftJoin('setor as stp', 'st.setor_pai', 'stp.id')
+->leftJoin('setor as sta', 'stp.setor_pai', 'sta.id')
+->whereIn('st.id', $setores)->get()->toArray();
 
 $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column($setores, 'idp'), array_column($setores, 'ida')));
 
-$idAcessoRelatorios = [35, 57, 34, 35, 48, 46, 31, 32, 51, 47, 52, 33]; // IDs de acesso para relatórios
-$idAcessoMembros = [14, 20, 15, 21]; // IDs de acesso para Membros
-$idAcessoTratamentos = [25, 24, 39, 41]; // IDs de acesso para Tratamentos
-$idAcessoAgendamentos = [16, 22, 23, 40, 9, 18, 30, 8]; // IDs de acesso para Agendamentos
 $idAcessoAtendimentos = [6, 5, 3, 4]; // IDs de acesso para Atendimentos
+$idAcessoAgendamentos = [16, 22, 23, 40, 9, 8]; // IDs de acesso para Agendamentos
+$idAcessoTratamentos = [25, 24, 39, 41, 16, 18]; // IDs de acesso para Tratamentos
+$idAcessoMembros = [14, 20, 15, 30, 21]; // IDs de acesso para Membros
+$idAcessoRelatorios = [35, 57, 34, 35, 48, 46, 31, 32, 51, 47, 52, 33]; // IDs de acesso para relatórios
 $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
 ?>
 
@@ -66,17 +70,9 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
                                 <li><a class="dropdown-item" href="/gerenciar-entrevistas">Entrevistas</a>
                                 </li>
                             @endif
-                            @if (in_array(18, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-tratamentos">Presença Assistido</a>
-                                </li>
-                            @endif
                             @if (in_array(8, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-presenca">Presença
                                         Entrevistado</a></li>
-                            @endif
-                            @if (in_array(30, $acesso))
-                                <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença
-                                        Trabalhador</a></li>
                             @endif
                         </ul>
                     </li>
@@ -91,6 +87,11 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
 
                             @if (in_array(39, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-passe">Passes</a></li>
+                            @endif
+                             {{-- Gambiarra para funcionar. o id correto do tratamento é o 18, mas por algum motivo quando colocado ele dá acesso aos dirigentes. --}}
+                            @if (in_array(16, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-tratamentos">Presença Assistido</a>
+                                </li>
                             @endif
                             @if (in_array(25, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-integral">Tratamento
@@ -128,6 +129,10 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
                             @if (in_array(21, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-atendentes-plantonistas">Plantonistas</a>
                                 </li>
+                            @endif
+                             @if (in_array(30, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença
+                                        Trabalhador</a></li>
                             @endif
                         </ul>
                     </li>

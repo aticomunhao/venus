@@ -54,6 +54,7 @@ class ReuniaoMediunicaController extends Controller
             'ts.nome as nsemana',
             'tst.descricao as tipo',
             'tst.id as idt',
+            'tg.nm_tipo_grupo',
             DB::raw("
                 CASE
                     WHEN cro.modificador = 3 THEN 'Experimental'
@@ -72,7 +73,8 @@ class ReuniaoMediunicaController extends Controller
         ->leftJoin('tipo_dia AS td', 'cro.dia_semana', 'td.id')
         ->leftJoin('tipo_modalidade AS tm', 'cro.id_tipo_modalidade', 'tm.id')
         ->leftJoin('tipo_semana AS ts', 'cro.id_tipo_semana', 'ts.id')
-        ->leftJoin('tipo_semestre as tse', 'tst.id_semestre', 'tse.id');
+        ->leftJoin('tipo_semestre as tse', 'tst.id_semestre', 'tse.id')
+        ->leftJoin('tipo_grupo as tg', 'gr.id_tipo_grupo', 'tg.id');
 
     // Filtros
     $semana = $request->input('semana');
@@ -82,6 +84,7 @@ class ReuniaoMediunicaController extends Controller
     $setor = $request->input('setor');
     $status = $request->input('status');
     $modalidade = $request->input('modalidade');
+    $tpgr = $request->input('tpgrupo');
 
     if ($semana !== null && $semana !== '') {
         $reuniao->where('cro.dia_semana', '=', $semana);
@@ -89,6 +92,10 @@ class ReuniaoMediunicaController extends Controller
 
     if ($grupo) {
         $reuniao->where('cro.id_grupo', $grupo);
+    }
+
+    if ($tpgr) {
+        $reuniao->where('gr.id_tipo_grupo', $tpgr);
     }
 
     if ($request->filled('tipo_tratamento')) {
@@ -104,7 +111,7 @@ class ReuniaoMediunicaController extends Controller
     }
 
     if ($semestre) {
-        $reuniao->where('id_tipo_semestre', $semestre);
+        $reuniao->where('tst.id_semestre', $semestre);
     }
 
     if ($setor) {
@@ -139,6 +146,17 @@ class ReuniaoMediunicaController extends Controller
         ->unique('idg')
         ->values();
 
+        // Carregar a lista de tipo grupos para o Select2
+    $tpgrupo = DB::table('tipo_grupo AS tg')
+                ->select(
+                    'tg.id AS idtg',
+                    'tg.nm_tipo_grupo AS nometg'
+                )
+                ->orderBy('tg.nm_tipo_grupo', 'asc')
+                ->get();     // reindexa os itens do array
+
+
+
     // Conta o total
     $contar = $reuniao->distinct()->count('cro.id');
 
@@ -148,7 +166,7 @@ class ReuniaoMediunicaController extends Controller
         ->orderBy('cro.id_tipo_tratamento', 'ASC')
         ->orderBy('nomeg', 'ASC')
         ->groupBy(
-            'idt', 'idr', 'gr.nome', 'td.nome', 'tse.sigla', 't.descricao',
+            'idt', 'idr', 'gr.nome', 'td.nome', 'tse.sigla', 't.descricao', 'tg.nm_tipo_grupo',
             'gr.status_grupo', 'tst.descricao', 's.sigla', 'sa.numero', 'tm.nome', 'ts.nome'
         )
         ->paginate(50)
@@ -163,9 +181,7 @@ class ReuniaoMediunicaController extends Controller
         ->distinct('tt.sigla')
         ->get();
 
-    $tipo_semestre = DB::table('tipo_tratamento AS tt')
-        ->leftJoin('tipo_semestre AS ts', 'tt.id_semestre', 'ts.id')
-        ->whereNotNull('tt.id_semestre')
+    $tipo_semestre = DB::table('tipo_semestre AS ts')
         ->select('ts.id AS ids', 'ts.sigla')
         ->orderBy('ts.id')
         ->get();
@@ -178,7 +194,7 @@ class ReuniaoMediunicaController extends Controller
     $setores = DB::table('setor')->orderBy('nome', 'asc')->get();
 
     return view('/reuniao-mediunica/gerenciar-reunioes', compact(
-        'tipo_semestre', 'tipo_motivo', 'reuniao', 'tpdia', 'situacao', 'status',
+        'tipo_semestre', 'tipo_motivo', 'reuniao', 'tpdia', 'situacao', 'status', 'tpgrupo', 
         'contar', 'semana', 'grupos', 'setores', 'tmodalidade', 'modalidade', 'tipo_tratamento'
     ));
 }

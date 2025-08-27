@@ -22,19 +22,8 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-2">Grupo
-                    <select class="form-select select2" id="" name="grupo" type="number">
-                        <option value="">Selecione</option>
-                        Todos</option>
-                        @foreach ($grupos as $gruposs)
-                            <option value="{{ $gruposs->idg }}"
-                                {{ request('grupo') == $gruposs->idg ? 'selected' : '' }}>
-                                {{ $gruposs->nomeg }} - {{ $gruposs->sigla }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-3">Atividade
-                    <select class="form-select select2" id="tipo_tratamento" name="tipo_tratamento">
+                <div class="col">Atividade
+                    <select class="form-select select2" id="" name="tipo_tratamento">
                         <option value="">Selecione</option>
                         @foreach ($tipo_tratamento as $tipot)
                             <option value="{{ $tipot->idt }}" {{ request('tipo_tratamento') == $tipot->idt ? 'selected' : '' }}>
@@ -44,7 +33,7 @@
                     </select>
                 </div>
                 <div class="col">Semestre
-                    <select class="form-select select2" id="semestre" name="semestre">
+                    <select class="form-select select2" id="" name="semestre">
                         <option value="">Selecione</option>
                         @foreach ($tipo_semestre as $tipos)
                             <option value="{{ $tipos->ids }}" {{ request('semestre') == $tipos->ids ? 'selected' : '' }}>
@@ -53,41 +42,91 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col">Setor
-                    <select class="form-select select2" id="" name="setor" type="number">
-                        <option value="">Selecione</option>
-                        Todos</option>
-                        @foreach ($setores as $setoress)
-                            <option value="{{ $setoress->id }}"
-                                {{ request('setor') == $setoress->id ? 'selected' : '' }}>
-                                {{ $setoress->sigla }}</option>
-                        @endforeach
-                    </select>
+
+                 <div class="col-lg-1 col-6 d-flex justify-content-center align-items-center">                    
+                <button type="button" class="btn btn-info btn-sm w-100" style="box-shadow: 1px 2px 5px #000000; margin:5px;" data-bs-toggle="modal" data-bs-target="#maisfiltros" style="margin:5px;">
+                    Mais filtros
+                </button>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="maisfiltros" tabindex="-1" aria-labelledby="filtrosPopupLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="filtrosPopupLabel">Filtros Avançados</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body">                
+                            <div class="row mt-3" style="margin-left: 10px; margin-right:10px;">
+                                <div class="col">Setor
+                                    <select class="form-select select2" id="" name="setor" type="number">
+                                        <option value="">Selecione</option>
+                                        Todos</option>
+                                        @foreach ($setores as $setoress)
+                                            <option value="{{ $setoress->id }}"
+                                                {{ request('setor') == $setoress->id ? 'selected' : '' }}>
+                                                {{ $setoress->sigla }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col">Modalidade
+                                    <select class="form-select status" id="" name="modalidade" type="number">
+                                        <option value="" {{ $tmodalidade[0]->id == $modalidade ? 'selected' : '' }}>
+                                            Todos</option>
+                                        @foreach ($tmodalidade as $modal)
+                                            <option value="{{ $modal->id }}" {{ $modal->id == $modalidade ? 'selected' : '' }}>
+                                                {{ $modal->nome }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>                                                        
+                                <div class="col">Status
+                                    <select name="status" class="form-select">
+                                        <option value="">Todos</option>
+                                        <option value="1" {{ $status == 1 ? 'selected' : '' }}>Ativo</option>
+                                        <option value="2" {{ $status == 2 ? 'selected' : '' }}>Inativo</option>
+                                        <option value="3" {{ $status == 3 ? 'selected' : '' }}>Experimental</option>
+                                        <option value="4" {{ $status == 4 ? 'selected' : '' }}>Em Férias</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-3" style="margin-left: 10px; margin-right:10px;">                               
+                                <div class="col-4">Tipo Grupo
+                                    <select class="form-select" id="" name="tpgrupo" type="number">
+                                        <option value="">Selecione</option>
+                                        Todos</option>
+                                        @foreach ($tpgrupo as $tgs)
+                                            <option value="{{ $tgs->idtg }}"
+                                                {{ request('grupo') == $tgs->idtg ? 'selected' : '' }}>
+                                                {{ $tgs->nometg }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-8">Grupo
+                                    <select class="form-select select2" id="" name="grupo" type="number">
+                                        <option value="">Selecione</option>
+                                        Todos</option>
+                                        @foreach ($grupos as $gruposs)
+                                            <option value="{{ $gruposs->idg }}"
+                                                {{ request('grupo') == $gruposs->idg ? 'selected' : '' }}>
+                                                {{ $gruposs->nomeg }} - {{ $gruposs->sigla }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>             
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="col">Modalidade
-                    <select class="form-select status" id="" name="modalidade" type="number">
-                        <option value="" {{ $tmodalidade[0]->id == $modalidade ? 'selected' : '' }}>
-                            Todos</option>
-                        @foreach ($tmodalidade as $modal)
-                            <option value="{{ $modal->id }}" {{ $modal->id == $modalidade ? 'selected' : '' }}>
-                                {{ $modal->nome }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col">Status
-                    <select name="status" class="form-select">
-                            <option value="">Todos</option>
-                            <option value="1" {{ $status == 1 ? 'selected' : '' }}>Ativo</option>
-                            <option value="2" {{ $status == 2 ? 'selected' : '' }}>Inativo</option>
-                            <option value="3" {{ $status == 3 ? 'selected' : '' }}>Experimental</option>
-                            <option value="4" {{ $status == 4 ? 'selected' : '' }}>Em Férias</option>
-                        </select>
-                </div>
+            </div>
+            <!-- Fim Modal -->
                 <div class="col-auto d-flex align-items-center justify-content-end">
                     <input class="btn btn-light btn-sm me-md-2"
-                        style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit" value="Pesquisar">
+                        style="box-shadow: 1px 2px 5px #000000; margin:5px; font-size:15px;" type="submit" value="Pesquisar">
                     <a href="/gerenciar-reunioes"><input class="btn btn-light btn-sm me-md-2"
-                            style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
+                            style="box-shadow: 1px 2px 5px #000000; margin:5px; font-size:15px;" type="button"
                             value="Limpar"></a>
                     <a href="/criar-reuniao"><input class="btn btn-success btn-md me-md-2"
                             style="box-shadow: 1px 2px 5px #000000; margin:5px;" type="button" autofocus
@@ -103,46 +142,40 @@
         <div class="row">
             <table class="table table-sm table-striped table-bordered border-secondary table-hover align-middle">
                 <thead style="text-align: center;">
-                    <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">
-                        <th class="col">Nr</th>
+                    <tr style="background-color: #d6e3ff; font-size:14px; color:#000000">                       
                         <th class="col-2">GRUPO</th>
-                        <th class="col">DIA</th>
-                        <th class="col">SEMANAS</th>
+                        <th class="col">TIPO</th>
+                        <th class="col">DIA</th>                       
                         <th class="col">SALA</th>
                         <th class="col">SETOR</th>
                         <th class="col-2">TIPO DE ATIVIDADE</th>
-                        <th class="col">SEMESTRE</th>
-                        <th class="col">OBSERVAÇÃO</th>
+                        <th class="col">SEMESTRE</th>                       
                         <th class="col">H INÍCIO</th>
                         <th class="col">H FIM</th>
-                         <th class="col">DT INÍCIO</th>
-                        <th class="col">DT FIM</th>
-                        <th class="col">MAX A</th>
-                        <th class="col">MAX T</th>
+                        <th class="col">DT INÍCIO</th>
+                        <th class="col">DT FIM</th>                   
                         <th class="col">MODALIDADE</th>
+                        <th class="col">INFO</th>
                         <th class="col">STATUS</th>
                         <th class="col">AÇÕES</th>
                     </tr>
                 </thead>
                 <tbody style="font-size: 14px; color:#000000; text-align: center;">
                     <tr>
-                        @foreach ($reuniao as $reuni)
-                            <td>{{ $reuni->idr }}</td>
+                        @foreach ($reuniao as $reuni)                           
                             <td>{{ $reuni->nomeg }}</td>
-                            <td>{{ $reuni->nomed }}</td>
-                            <td>{{ $reuni->nsemana }}</td>
+                            <td>{{ $reuni->nm_tipo_grupo }}</td> 
+                            <td>{{ $reuni->nomed }}</td>                           
                             <td>{{ $reuni->numero }}</td>
                             <td>{{ $reuni->stsigla }}</td>
                             <td>{{ $reuni->trsigla }}-{{ $reuni->trnome }}</td>
-                            <td>{{ $reuni->sesigla }}</td>
-                            <td>{{ $reuni->descricao}}</td>
+                            <td>{{ $reuni->sesigla }}</td>                          
                             <td>{{ date('H:i', strtotime($reuni->h_inicio)) }}</td>
                             <td>{{ date('H:i', strtotime($reuni->h_fim)) }}</td>
                             <td>{{ date('d-m-Y', strtotime($reuni->data_inicio)) }}</td>
-                            <td>{{ $reuni->data_fim ? date('d-m-Y', strtotime($reuni->data_fim)) : '-' }}</td>
-                            <td>{{ $reuni->max_atend }}</td>
-                            <td>{{ $reuni->max_trab }}</td>
+                            <td>{{ $reuni->data_fim ? date('d-m-Y', strtotime($reuni->data_fim)) : '-' }}</td>                
                             <td>{{ $reuni->nmodal }}</td>
+                            <td><i class="bi bi-info-circle-fill" style="color: #0d6efd; cursor: pointer; font-size: 1.4rem;" data-bs-toggle="tooltip" title=" ID: {{ $reuni->idr }} | Semana: {{ $reuni->nsemana }} | Observação: {{ $reuni->descricao}} | Max Atendimentos:{{ $reuni->max_atend }} | Max Trabalhadores{{ $reuni->max_trab }}"></i> 
                             <td>{{ $reuni->status }}</td>
                             <td>
                                 <a href="/editar-reuniao/{{ $reuni->idr }}"><button type="button"
@@ -159,7 +192,7 @@
                                     data-bs-target="#inativa{{ $reuni->idr }}">
                                     <!-- Altere o data-bs-target para o ID correto -->
                                     <span class="tooltiptext">Inativar</span>
-                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                                    <i class="bi bi-ban" style="font-size: 1rem; color:#000;"></i>
                                 </button>
                                  <!-- Botão que aciona o modal -->
                                 <button type="button" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
@@ -254,7 +287,7 @@
                 </tbody>
             </table>
         </div class="d-flex justify-content-center">
-        {{ $reuniao->links('pagination::bootstrap-5') }}
+        {{ $reuniao->appends(request()->except('page'))->links('pagination::bootstrap-5') }}
     </div>
 
 
@@ -270,4 +303,18 @@
             }
         })
     </script>
+
+     <script>
+        // Quando QUALQUER modal abrir
+        $(document).on('shown.bs.modal', function (e) {
+            let modal = $(e.target); // modal que foi aberto
+
+            modal.find('select.select2').select2({
+                theme: 'bootstrap-5',
+                dropdownParent: modal, // garante que o dropdown fique dentro do modal aberto
+                width: '100%'
+            });
+        });
+    </script>
+
 @endsection

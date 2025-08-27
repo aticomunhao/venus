@@ -142,13 +142,13 @@
                                     @if ($listas->status_encaminhamento < 3)
                                         <button class="btn btn-outline-danger btn-sm tooltips" type="button" id=""
                                             data-bs-toggle="modal" data-bs-target="#inativar{{ $listas->ide }}"><span
-                                                class="tooltiptext">Inativar</span><i class="bi bi-x-circle"
+                                                class="tooltiptext">Inativar</span><i class="bi bi-ban"
                                                 style="font-size: 1rem; color:#000;"></i></button>
                                     @else
                                         <button class="btn btn-outline-danger btn-sm" type="button" id=""
                                             data-bs-toggle="modal" data-bs-target="#inativar{{ $listas->ide }}"
                                             data-tt="tooltip" data-placement="top" title="Inativar" disabled><i
-                                                class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></button>
+                                                class="bi bi-ban" style="font-size: 1rem; color:#000;"></i></button>
                                     @endif
                                     @endif
                             </td>

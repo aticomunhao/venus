@@ -54,7 +54,7 @@
                             </a>
                             <a href="#" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modal{{ $perfil->id }}">
                                 <span class="tooltiptext">Deletar</span>
-                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                                <i class="bi bi-ban" style="font-size: 1rem; color:#000;"></i>
                             </a>
                             {{--  Modal de Exclusao --}}
                             <div class="modal fade" id="modal{{ $perfil->id }}" tabindex="-1"

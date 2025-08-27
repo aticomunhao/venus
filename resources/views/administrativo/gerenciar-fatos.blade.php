@@ -49,7 +49,7 @@
 
                         <a href="/deletar-fatos" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao" onclick="confirmarExclusao('{{ $listas->id }}')" >
                             <span class="tooltiptext">Deletar</span>
-                            <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                            <i class="bi bi-ban" style="font-size: 1rem; color:#000;"></i>
                         </a>
                     </td>
                 </tr>

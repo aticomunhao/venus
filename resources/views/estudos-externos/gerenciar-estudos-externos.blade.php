@@ -69,32 +69,35 @@
                         <td>{{ $listas->sigla }} {{ $listas->id_semestre }} - {{ $listas->descricao }}</td>
                         <td>{{ $listas->data_fim ? \Carbon\Carbon::parse($listas->data_fim)->format('d/m/Y') : '' }}</td>
                         <td>{{ $listas->instituicao_nome }}</td>
-                        <td>{{ $listas->status }}</td>
+                        <td>{{ $listas->status_descricao }}</td>
                         <td>
-                            <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
+                            <a href="/visualizar-estudos-externos/{{ $listas->id }}"
+                                class="btn btn-sm btn-outline-primary" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Visualizar">
                                 <i class="bi bi-search"></i>
                             </a>
-                            <a href="" class="btn btn-sm btn-outline-warning" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Editar">
+                            <a href="/editar-estudos-externos/{{ $listas->id }}" class="btn btn-sm btn-outline-warning"
+                                data-tt="tooltip" style="font-size: 1rem; color:#303030" data-placement="top"
+                                title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Enviar">
-                                <i class="bi bi-fast-forward"></i>
-                            </a>
-
-                            <a href="" class="btn btn-sm btn-outline-info" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Aprovar">
+                            <a href="/aprovar-estudos-externos/{{ $listas->id }}" class="btn btn-sm btn-outline-info"
+                                data-tt="tooltip" style="font-size: 1rem; color:#303030" data-placement="top"
+                                title="Aprovar">
                                 <i class="bi bi-hand-thumbs-up"></i>
                             </a>
-                            <a href="" class="btn btn-sm btn-outline-primary" data-tt="tooltip"
-                                style="font-size: 1rem; color:#303030" data-placement="top" title="Anexar">
-                                <i class="bi bi-archive"></i>
-                            </a>
+                            {{-- Link para arquivo atual --}}
+                            @if (!empty($listas->documento_comprovante))
+                                <a href="{{ asset('storage/' . $listas->documento_comprovante) }}"
+                                    style="font-size: 1rem; color:#303030" target="_blank" title="Arquivo Anexo"
+                                    class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-archive"></i>
+                                </a>
+                            @endif
                             <a href="#" class="btn btn-sm btn-outline-danger excluirEstudoExterno" data-tt="tooltip"
                                 style="font-size: 1rem; color:#303030" data-placement="top" title="Excluir"
-                                data-bs-toggle="modal" data-bs-target="#modalExcluirEstudoExterno" data-id="{{ $listas->id }}">
+                                data-bs-toggle="modal" data-bs-target="#modalExcluirEstudoExterno"
+                                data-id="{{ $listas->id }}">
                                 <i class="bi bi-trash"></i>
                             </a>
                         </td>
@@ -156,8 +159,8 @@
         </div>
     </form>
     <!-- Modal Excluir Solicitação -->
-    <div class="modal fade" id="modalExcluirEstudoExterno" tabindex="-1" aria-labelledby="modalExcluirEstudoExternoLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="modalExcluirEstudoExterno" tabindex="-1"
+        aria-labelledby="modalExcluirEstudoExternoLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <form id="formExcluirEstudoExterno" class="form-horizontal" method="post">
                 @csrf
@@ -279,8 +282,4 @@
             });
         });
     </script>
-@endsection
-
-@section('footerScript')
-
 @endsection

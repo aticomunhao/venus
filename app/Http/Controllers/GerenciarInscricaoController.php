@@ -8,8 +8,24 @@ use Illuminate\Http\Request;
 
 class GerenciarInscricaoController extends Controller
 {
-     public function index(Request $request)
+
+    protected $setaut;
+
+    public function __construct()
     {
+        $this->middleware(function ($request, $next) {
+            $this->setaut = collect(session('acessoInterno'))
+                ->flatten(1)
+                ->pluck('id_setor')
+                ->unique()
+                ->toArray();
+
+            return $next($request);
+        });
+    }
+
+     public function index(Request $request)
+    {       
 
        $inscricao = DB::table('inscricao AS i')
             ->select(
@@ -58,7 +74,8 @@ class GerenciarInscricaoController extends Controller
             ->leftJoin('tipo_semana AS ts', 'cro.id_tipo_semana', 'ts.id')
             ->leftJoin('tipo_semestre AS tse', 'tt.id_semestre', 'tse.id')
             ->leftJoin('tipo_status_inscricao AS tsi', 'i.status', 'tsi.id')
-            ->where('gr.id_tipo_grupo', 2);
+            ->where('gr.id_tipo_grupo', 2)
+            ->whereIn('gr.id_setor', $this->setaut);
 
 
 
@@ -100,7 +117,7 @@ class GerenciarInscricaoController extends Controller
 
         if ($semestre) {
             $inscricao->when($semestre, function ($query, $semestre) {
-            return $query->where('id_tipo_semestre', $semestre);
+            return $query->where('tt.id_semestre', $semestre);
             });
         }
 
@@ -150,7 +167,7 @@ class GerenciarInscricaoController extends Controller
             ->orderBy('cro.id_tipo_tratamento', 'ASC')
             ->orderBy('nomeg', 'ASC')
             ->groupBy('idt', 'tsi.id', 'i.id', 'idr', 'p.nome_completo', 'gr.nome', 'tt.id', 'tt.sigla', 'td.nome', 'tse.sigla', 't.descricao', 'gr.status_grupo', 'tt.descricao', 's.sigla', 'sa.numero', 'tm.nome', 'ts.nome', 'p.cpf', 'tsi.tipo')
-            ->paginate(50)
+            ->paginate(10)
             ->appends([
                 'status' => $status,
                 'semana' => $semana,
@@ -160,28 +177,27 @@ class GerenciarInscricaoController extends Controller
                 'modalidade' => $modalidade
             ]);
         
-            //dd($teste=$reuniao);
+            //dd($inscricao->statusid);
 
 
 
-          // Carregar a lista de grupos para o Select2
-          $grupos = DB::table('cronograma as c')
-          ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
-          ->leftJoin('setor AS s', 'g.id_setor', 's.id')
-          ->select(
-              'g.id AS idg',
-              'g.nome AS nomeg',
-              's.sigla'
-          )
-          ->where('g.id_tipo_grupo', 2)
-          ->orderBy('g.nome', 'asc')
-          ->get()
-          ->unique('idg') // aqui garantimos que o ID do grupo seja único
-          ->values();     // reindexa os itens do array
+        // Carregar a lista de grupos para o Select2
+        $grupos = DB::table('cronograma as c')
+        ->leftJoin('grupo AS g', 'c.id_grupo', 'g.id')
+        ->leftJoin('setor AS s', 'g.id_setor', 's.id')
+        ->select(
+            'g.id AS idg',
+            'g.nome AS nomeg',
+            's.sigla'
+        )
+        ->where('g.id_tipo_grupo', 2)
+        ->orderBy('g.nome', 'asc')
+        ->get()
+        ->unique('idg') // aqui garantimos que o ID do grupo seja único
+        ->values();     // reindexa os itens do array
 
-
-        // Obtém os dados para os filtros
-        $situacao = DB::table('tipo_status_grupo')->select('id AS ids', 'descricao AS descs')->get();
+               // Obtém os dados para os filtros
+        $situacao = DB::table('tipo_status_inscricao')->select('id AS ids', 'tipo AS descs')->get();
 
         $tipo_tratamento = DB::table('tipo_tratamento AS tt')
         ->select('tt.id AS idt','tt.descricao', 'tt.sigla AS tipo')
@@ -189,7 +205,7 @@ class GerenciarInscricaoController extends Controller
         ->distinct('tt.sigla')
         ->get();
 
-         $tipo_semestre = DB::table('tipo_tratamento AS tt')
+        $tipo_semestre = DB::table('tipo_tratamento AS tt')
         ->leftJoin('tipo_semestre AS ts', 'tt.id_semestre', 'ts.id')
         ->whereNotNull('tt.id_semestre')
         ->select('ts.id AS ids', 'ts.sigla')
@@ -247,6 +263,7 @@ class GerenciarInscricaoController extends Controller
                         DB::raw('c.max_atend - count(hi.id_cronograma_novo) AS vaga')                        
                     )
                     ->where('g.id_tipo_grupo', 2)
+                    ->whereIn('g.id_setor', $this->setaut)
                     ->groupBy('c.id', 'td.id', 'g.id', 's.sigla', 'td.nome', 'tt.descricao', 'tt.sigla', 'ts.sigla', 'tm.nome', 'obs.descricao', 'sa.numero')
                     ->orderBy('td.id', 'asc')
                     ->get()
