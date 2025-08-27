@@ -547,7 +547,7 @@ Route::middleware('rotas:54')->group(function () {
 });
 
 //Gerenciar inscrições
-Route::middleware('rotas:55')->group(function () {
+Route::middleware('rotas:61')->group(function () {
     Route::get('/gerenciar-inscricao', [GerenciarInscricaoController::class, 'index'])->name('index.insc');
     Route::get('/formar-inscricao', [GerenciarInscricaoController::class, 'formar']);
     Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'criar']);
