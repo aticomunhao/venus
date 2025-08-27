@@ -48,6 +48,7 @@ use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\GerenciarTipoCriterioController;
 use App\Http\Controllers\GerenciarEstudosExternosController;
 use App\Http\Controllers\GerenciarInstituicaoController;
+use App\Http\Controllers\GerenciarQuestoesControler;
 use App\Mail\EnviarEmail;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
@@ -551,7 +552,10 @@ Route::middleware('rotas:55')->group(function () {
     Route::get('/gerenciar-inscricao', [GerenciarInscricaoController::class, 'index'])->name('index.insc');
     Route::get('/formar-inscricao', [GerenciarInscricaoController::class, 'formar']);
     Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'criar']);
-    Route::get('/altera-turma/{idi}', [GerenciarInscricaoController::class, 'trocar']);
+    Route::get('/altera-turma/{idi}/{idc}', [GerenciarInscricaoController::class, 'trocar']);
+    Route::post('/trocar-turma/{idi}/{idc}', [GerenciarInscricaoController::class, 'update']);
+    Route::post('/inativar-inscricao/{idi}', [GerenciarInscricaoController::class, 'inativar']);
+    Route::get('/excluir-inscricao/{idi}', [GerenciarInscricaoController::class, 'destroy']);
     Route::get('/visualizar-inscricao/{idi}', [GerenciarInscricaoController::class, 'visualizar']);
 });
 //Gerenciar Tipo Criterios Atividades
@@ -595,6 +599,11 @@ Route::middleware('rotas:59')->group(function () {
     Route::get('/retorna-cidade-dados-residenciais/{id}', [GerenciarInstituicaoController::class, 'retornaCidadeDadosResidenciais']);
     Route::patch('/instituicao/{id}/status', [GerenciarInstituicaoController::class, 'toggleStatus'])->name('instituicao.toggleStatus');
 });
+
+// Route::middleware('rotas:60')->group(function () {
+    Route::get('/gerenciar-questoes', [GerenciarQuestoesControler::class, 'index'])->name('index.questoes');
+        Route::get('/incluir-questoes', [GerenciarQuestoesControler::class, 'create']);
+// });
 
 if (!App::environment('local')) {
     URL::forceScheme('https');
