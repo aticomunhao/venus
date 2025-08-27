@@ -1,12 +1,12 @@
 @extends('layouts.app')
 @section('title')
-    Gerenciar Questões
+    Gerenciar QUESTIONÁRIOS
 @endsection
 @section('content')
     <div class="container">
 
         <h4 class="card-title" class="card-title" style="font-size:20px; text-align: left; color: gray; font-family:calibri">
-            GERENCIAR QUESTÕES</h4>
+            GERENCIAR QUESTIONÁRIOS</h4>
         <div class="col-12">
             <div class="row justify-content-center">
                 <form action="" class="form-horizontal mt-4" method="GET">
@@ -21,12 +21,12 @@
                             <input class="btn btn-light btn-sm me-md-2"
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="submit"
                                 value="Pesquisar">
-                            <a href="/gerenciar-atendentes-apoio"><input class="btn btn-light btn-sm me-md-2"
+                            <a href="/gerenciar-questoes"><input class="btn btn-light btn-sm me-md-2"
                                     style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000; margin:5px;" type="button"
                                     value="Limpar"></a>
                 </form>
-                <a href="/criar-questoes"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
-                        type="button" value="Nova Questão +"></a>
+                <a href="/incluir-questoes"><input class="btn btn-success btn-sm me-md-2" style="font-size: 0.9rem;"
+                        type="button" value="Novo Questionário +"></a>
             </div>
         </div>
     </div>

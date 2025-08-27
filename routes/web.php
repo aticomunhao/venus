@@ -600,6 +600,11 @@ Route::middleware('rotas:59')->group(function () {
     Route::patch('/instituicao/{id}/status', [GerenciarInstituicaoController::class, 'toggleStatus'])->name('instituicao.toggleStatus');
 });
 
+// Route::middleware('rotas:60')->group(function () {
+    Route::get('/gerenciar-questoes', [GerenciarQuestoesControler::class, 'index'])->name('index.questoes');
+        Route::get('/incluir-questoes', [GerenciarQuestoesControler::class, 'create']);
+// });
+
 if (!App::environment('local')) {
     URL::forceScheme('https');
 }
