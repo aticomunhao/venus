@@ -519,6 +519,7 @@ Route::middleware('rotas:48')->group(function () {
 Route::middleware('rotas:36')->group(function () {
     Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
     Route::any('/gerenciar-relatorio-encaminhamento', [RelatoriosController::class, 'EncaminhamentosRel']);
+    Route::any('/grafico-relatorio-encaminhamento', [RelatoriosController::class, 'Graficoencaminhamentos']);
 });
 
 // Log de Atendimentos
