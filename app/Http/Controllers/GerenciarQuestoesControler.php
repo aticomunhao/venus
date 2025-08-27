@@ -47,8 +47,6 @@ class GerenciarQuestoesControler extends Controller
                 // Salva a pergunta
                 $perguntaId = DB::table('perguntas')->insertGetId([
                     'enunciado' => $pergunta['enunciado'] ?? '',
-                    'created_at' => now(),
-                    'updated_at' => now()
                 ]);
 
                 // Salva as respostas
