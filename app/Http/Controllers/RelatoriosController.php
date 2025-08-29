@@ -1119,6 +1119,49 @@ class RelatoriosController extends Controller
         return view('relatorios.gerenciar-relatorio-tratamento', compact('setores', 'grupos', 'grupo2', 'tratamento', 'dt_inicio', 'dt_fim'));
     }
 
+   public function EncaminhamentosRel(Request $request)
+{
+    $dt_inicio = $request->dt_inicio ?? Carbon::now()->firstOfMonth()->format('Y-m-d');
+    $dt_fim    = $request->dt_fim ?? Carbon::now()->lastOfMonth()->format('Y-m-d');
+
+    $encaminhamento = DB::table('encaminhamento as enc')
+        ->select(
+            'assistido.nome_completo as nome_assistido',
+            'at.dh_inicio',
+            'at.dh_fim',
+            'atendente.nome_completo as nome_atendente',
+            'tse.descricao',
+            'tt.descricao as des_trata',
+            'enc.dh_enc',
+            'tm.tipo',
+            DB::raw("ROUND(EXTRACT(EPOCH FROM (at.dh_fim - at.dh_inicio))/60) as tempo_atendimento")
+        )
+        ->leftJoin('atendimentos as at', 'enc.id_atendimento', 'at.id')
+        ->leftJoin('pessoas as assistido', 'at.id_assistido', 'assistido.id')
+        ->leftJoin('pessoas as atendente', 'at.id_atendente', 'atendente.id')
+        ->leftJoin('tipo_encaminhamento as te', 'enc.id_tipo_encaminhamento', 'te.id')
+        ->leftJoin('tipo_status_encaminhamento as tse', 'enc.status_encaminhamento', 'tse.id')
+        ->leftJoin('tipo_tratamento as tt', 'enc.id_tipo_tratamento', 'tt.id')
+        ->leftJoin('tipo_motivo as tm', 'enc.motivo', 'tm.id')
+        ->whereBetween('enc.dh_enc', [$dt_inicio, $dt_fim]);
+
+    // Filtro de pesquisa pelo backend
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $encaminhamento->where(function($q) use ($search) {
+            $q->where('assistido.nome_completo', 'ilike', "%$search%")
+              ->orWhere('atendente.nome_completo', 'ilike', "%$search%")
+              ->orWhere('tt.descricao', 'ilike', "%$search%")
+              ->orWhere('tse.descricao', 'ilike', "%$search%")
+              ->orWhere('tm.tipo', 'ilike', "%$search%");
+        });
+    }
+
+    $encaminhamento = $encaminhamento->paginate(50)->appends(request()->query());
+
+    return view('relatorios.gerenciar-relatorio-encaminhamento', compact('encaminhamento'));
+}
+
     public function Atendimentos(Request $request)
     {
         $now = Carbon::now()->format('Y-m-d');
@@ -1855,7 +1898,7 @@ class RelatoriosController extends Controller
             });
 
         $harmonizacao = DB::table('dias_cronograma as dc')
-        ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
+            ->leftJoin('cronograma as cro', 'dc.id_cronograma', 'cro.id')
             ->where('dc.data', '>=', $dt_inicio)
             ->where('dc.data', '<=', $dt_fim)
             ->where('cro.id_tipo_tratamento', 3);

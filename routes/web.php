@@ -517,8 +517,6 @@ Route::middleware('rotas:48')->group(function () {
 //Relatório de Tratamentos
 Route::middleware('rotas:36')->group(function () {
     Route::any('/gerenciar-relatorio-tratamento', [RelatoriosController::class, 'AtendimentosRel']);
-    Route::any('/gerenciar-relatorio-encaminhamento', [RelatoriosController::class, 'EncaminhamentosRel']);
-    Route::any('/grafico-relatorio-encaminhamento', [RelatoriosController::class, 'Graficoencaminhamentos']);
 });
 
 // Log de Atendimentos
@@ -552,7 +550,10 @@ Route::middleware('rotas:55')->group(function () {
     Route::get('/gerenciar-inscricao', [GerenciarInscricaoController::class, 'index'])->name('index.insc');
     Route::get('/formar-inscricao', [GerenciarInscricaoController::class, 'formar']);
     Route::post('/incluir-inscricao', [GerenciarInscricaoController::class, 'criar']);
-    Route::get('/altera-turma/{idi}', [GerenciarInscricaoController::class, 'trocar']);
+    Route::get('/altera-turma/{idi}/{idc}', [GerenciarInscricaoController::class, 'trocar']);
+    Route::post('/trocar-turma/{idi}/{idc}', [GerenciarInscricaoController::class, 'update']);
+    Route::post('/inativar-inscricao/{idi}', [GerenciarInscricaoController::class, 'inativar']);
+    Route::get('/excluir-inscricao/{idi}', [GerenciarInscricaoController::class, 'destroy']);
     Route::get('/visualizar-inscricao/{idi}', [GerenciarInscricaoController::class, 'visualizar']);
 });
 //Gerenciar Tipo Criterios Atividades
@@ -578,7 +579,7 @@ Route::middleware('rotas:58')->group(function () {
     Route::get('/incluir-estudos-externos', [GerenciarEstudosExternosController::class, 'create']);
     Route::post('/salvar-estudos-externos', [GerenciarEstudosExternosController::class, 'store']);
     Route::get('/editar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'edit']);
-    Route::post('/atualizar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'update']);
+    Route::put('/atualizar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'update'])->name('atualizar.estudosExternos');
     Route::delete('/deletar-estudo-externo/{id}', [GerenciarEstudosExternosController::class, 'destroy']);
     Route::get('/visualizar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'show']);
     Route::get('/aprovar-estudos-externos/{id}', [GerenciarEstudosExternosController::class, 'aprovar']);
