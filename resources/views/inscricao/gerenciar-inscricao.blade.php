@@ -154,8 +154,7 @@
                         <th class="col-2">NOME</th>
                         <th class="col">SETOR</th>
                         <th class="d-none d-lg-table-cell">MODALIDADE</th>
-                        <th class="col">DIA</th>
-                                               
+                        <th class="col">DIA</th>                                              
                         <th class="col-2 d-none d-lg-table-cell">TIPO DE ATIVIDADE</th>
                         <th class="col d-none d-lg-table-cell">SEMESTRE</th>                    
                         <th class="col d-none d-lg-table-cell">H INÍCIO</th>                        
@@ -199,7 +198,7 @@
                                 <button type="button" class="btn btn-outline-warning btn-sm tooltips"  disabled>
                                     <span class="tooltiptext" >Ativar</span>
                                     <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button>
-                                 <a href="/altera-turma/{{ $insc->idi }}"><button type="button" class="btn btn-outline-warning btn-sm tooltips">
+                                 <a href="/altera-turma/{{ $insc->idi }}/{{ $insc->idc }}"><button type="button" class="btn btn-outline-warning btn-sm tooltips">
                                     <span class="tooltiptext">Trocar</span>
                                     <i class="bi bi-arrow-left-right" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <a href="#" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#modali{{ $insc->idi }}"  data-tt="tooltip" data-placement="top"><span class="tooltiptext">Inativar</span>
