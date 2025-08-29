@@ -32,7 +32,7 @@ class GerenciarInscricaoController extends Controller
                 'i.id AS idi',
                 'p.nome_completo',
                 'p.cpf',
-                'cro.id AS idr',
+                'cro.id AS idc',
                 'gr.nome AS nomeg',
                 'cro.dia_semana AS idd',
                 'cro.id_sala',
@@ -75,7 +75,12 @@ class GerenciarInscricaoController extends Controller
             ->leftJoin('tipo_semestre AS tse', 'tt.id_semestre', 'tse.id')
             ->leftJoin('tipo_status_inscricao AS tsi', 'i.status', 'tsi.id')
             ->where('gr.id_tipo_grupo', 2)
-            ->whereIn('gr.id_setor', $this->setaut);
+            ->whereIn('gr.id_setor', $this->setaut)
+            ->whereIn('hi.id', function($query) {
+                $query->selectRaw('MAX(id)')
+                    ->from('historico_inscricao')
+                    ->groupBy('id_inscricao');
+            });
 
 
 
@@ -159,14 +164,14 @@ class GerenciarInscricaoController extends Controller
             $inscricao->where('p.cpf', $cpf);
         }
         // Conta o número de registros
-        $contar = $inscricao->distinct()->count('cro.id');
+        $contar = $inscricao->distinct()->count('i.id');
 
         // Aplica a paginação e mantém os parâmetros de busca na URL
         $inscricao = $inscricao            
             ->orderBy('status', 'ASC')
             ->orderBy('cro.id_tipo_tratamento', 'ASC')
             ->orderBy('nomeg', 'ASC')
-            ->groupBy('idt', 'tsi.id', 'i.id', 'idr', 'p.nome_completo', 'gr.nome', 'tt.id', 'tt.sigla', 'td.nome', 'tse.sigla', 't.descricao', 'gr.status_grupo', 'tt.descricao', 's.sigla', 'sa.numero', 'tm.nome', 'ts.nome', 'p.cpf', 'tsi.tipo')
+            ->groupBy('tt.id', 'tsi.id', 'i.id', 'cro.id', 'p.nome_completo', 'gr.nome', 'tt.id', 'tt.sigla', 'td.nome', 'tse.sigla', 't.descricao', 'gr.status_grupo', 'tt.descricao', 's.sigla', 'sa.numero', 'tm.nome', 'ts.nome', 'p.cpf', 'tsi.tipo')
             ->paginate(10)
             ->appends([
                 'status' => $status,
@@ -245,8 +250,9 @@ class GerenciarInscricaoController extends Controller
                     ->leftJoin('tipo_observacao_reuniao AS obs', 'c.observacao', 'obs.id')
                     ->leftJoin('salas AS sa', 'c.id_sala', 'sa.id')
                     ->select(
-                        'c.id AS idt',
+                        'c.id AS idc',
                         'g.id AS idg',
+                        'tt.id AS idt',
                         'g.nome AS nomeg',
                         'sa.numero AS sala',
                         'c.id_tipo_tratamento AS id_tratamento',
@@ -264,7 +270,7 @@ class GerenciarInscricaoController extends Controller
                     )
                     ->where('g.id_tipo_grupo', 2)
                     ->whereIn('g.id_setor', $this->setaut)
-                    ->groupBy('c.id', 'td.id', 'g.id', 's.sigla', 'td.nome', 'tt.descricao', 'tt.sigla', 'ts.sigla', 'tm.nome', 'obs.descricao', 'sa.numero')
+                    ->groupBy('c.id', 'tt.id', 'td.id', 'g.id', 's.sigla', 'td.nome', 'tt.descricao', 'tt.sigla', 'ts.sigla', 'tm.nome', 'obs.descricao', 'sa.numero')
                     ->orderBy('td.id', 'asc')
                     ->get()
                     ->values();     // reindexa os itens do array
@@ -304,7 +310,7 @@ class GerenciarInscricaoController extends Controller
 
     public function criar(Request $request)
     {
-
+         //dd($request->input('curso'));
         $now = Carbon::now()->format('Y-m-d');
         $id_pessoa = $request->input('id_pessoa'); 
         $crono = $request->input('curso');
@@ -402,7 +408,7 @@ class GerenciarInscricaoController extends Controller
 
     }
 
-    public function trocar($idi)
+    public function trocar($idi, $idc)
     {
 
         $aluno = DB::table('inscricao AS i')
@@ -414,7 +420,8 @@ class GerenciarInscricaoController extends Controller
                     ->leftJoin('tipo_semestre AS ts', 'tt.id_semestre', 'ts.id')
                     ->leftJoin('tipo_modalidade AS tm', 'c.id_tipo_modalidade', 'tm.id')
                     ->select(
-                        'c.id AS idi',
+                        'i.id AS idi',
+                        'c.id AS idc',
                         'c.id_tipo_tratamento AS id_tratamento',
                         'c.h_inicio',
                         'c.h_fim',
@@ -426,6 +433,7 @@ class GerenciarInscricaoController extends Controller
                     )
                     ->where('g.id_tipo_grupo', 2)
                     ->where('i.id', $idi)
+                    ->where('hi.id_cronograma_novo', $idc)
                     ->get();
 
         $turma = DB::table('cronograma as c')
@@ -441,7 +449,8 @@ class GerenciarInscricaoController extends Controller
                     ->leftJoin('tipo_observacao_reuniao AS obs', 'c.observacao', 'obs.id')
                     ->leftJoin('salas AS sa', 'c.id_sala', 'sa.id')
                     ->select(
-                        'c.id AS idi',
+                        'c.id AS idc',
+                        'i.id AS idi',
                         'g.id AS idg',
                         'g.nome AS nomeg',
                         'sa.numero AS sala',
@@ -460,7 +469,7 @@ class GerenciarInscricaoController extends Controller
                         DB::raw('c.max_atend - count(hi.id_cronograma_novo) AS vaga')                        
                     )
                     ->where('g.id_tipo_grupo', 2)
-                    ->groupBy('c.id', 'td.id', 'g.id', 's.sigla', 'td.nome', 'tt.descricao', 'tt.sigla', 'ts.sigla', 'tm.nome', 'obs.descricao', 'sa.numero', 'p.nome_completo')
+                    ->groupBy('c.id', 'i.id', 'td.id', 'g.id', 's.sigla', 'td.nome', 'tt.descricao', 'tt.sigla', 'ts.sigla', 'tm.nome', 'obs.descricao', 'sa.numero', 'p.nome_completo')
                     ->orderBy('td.id', 'asc')
                     ->get()
                     ->values();     // reindexa os itens do array
@@ -474,7 +483,7 @@ class GerenciarInscricaoController extends Controller
                 
             });
         });
-
+        
 
         return view('/inscricao.trocar-inscricao', compact('turmasAgrupadas', 'turma', 'aluno')); 
 
@@ -484,7 +493,7 @@ class GerenciarInscricaoController extends Controller
 
      public function update(Request $request, $idi, $idc)
     {
-
+        //dd($request->input('curso'), $idi, $idc);
         DB::table('historico_inscricao AS hi')
             ->insert([
                 'id_cronograma_novo'     => $request->input('curso'),
