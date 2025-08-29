@@ -1,15 +1,11 @@
 <?php $acesso = session()->get('usuario.acesso');
 
-
 $setores = [];
 foreach (session()->get('acessoInterno') as $perfil) {
     $setores = array_merge($setores, array_column($perfil, 'id_setor'));
 }
 
-$setores = DB::table('setor as st')
-->leftJoin('setor as stp', 'st.setor_pai', 'stp.id')
-->leftJoin('setor as sta', 'stp.setor_pai', 'sta.id')
-->whereIn('st.id', $setores)->get()->toArray();
+$setores = DB::table('setor as st')->leftJoin('setor as stp', 'st.setor_pai', 'stp.id')->leftJoin('setor as sta', 'stp.setor_pai', 'sta.id')->whereIn('st.id', $setores)->get()->toArray();
 
 $setores = array_unique(array_merge(array_column($setores, 'ids'), array_column($setores, 'idp'), array_column($setores, 'ida')));
 
@@ -17,7 +13,7 @@ $idAcessoAtendimentos = [6, 5, 3, 4]; // IDs de acesso para Atendimentos
 $idAcessoAgendamentos = [16, 22, 23, 40, 9, 8]; // IDs de acesso para Agendamentos
 $idAcessoTratamentos = [25, 24, 39, 41, 16, 18]; // IDs de acesso para Tratamentos
 $idAcessoMembros = [14, 20, 15, 30, 21]; // IDs de acesso para Membros
-$idAcessoRelatorios = [35, 57, 34, 35, 48, 46, 31, 32, 51, 47, 52, 33]; // IDs de acesso para relatórios
+$idAcessoRelatorios = [35, 57, 34, 35, 48, 46, 31, 32, 51, 47, 52, 33, 60, 61]; // IDs de acesso para relatórios
 $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
 ?>
 
@@ -37,7 +33,7 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
                         <a class="nav-link dropdown-toggle" href="#" id="1" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">Atendimentos</a>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                             @if (in_array(4, $acesso))
+                            @if (in_array(4, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-atendente-dia">Atendentes do
                                         dia</a>
                                 </li>
@@ -57,7 +53,7 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
                     </li>
                 </ul>
             @endif
-             @if (array_intersect($idAcessoAgendamentos, $acesso))
+            @if (array_intersect($idAcessoAgendamentos, $acesso))
                 <ul class="navbar-nav" id="tratamentos">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="1" role="button"
@@ -88,7 +84,7 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
                             @if (in_array(39, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-passe">Passes</a></li>
                             @endif
-                             {{-- Gambiarra para funcionar. o id correto do tratamento é o 18, mas por algum motivo quando colocado ele dá acesso aos dirigentes. --}}
+                            {{-- Gambiarra para funcionar. o id correto do tratamento é o 18, mas por algum motivo quando colocado ele dá acesso aos dirigentes. --}}
                             @if (in_array(16, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-tratamentos">Presença Assistido</a>
                                 </li>
@@ -130,7 +126,7 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
                                 <li><a class="dropdown-item" href="/gerenciar-atendentes-plantonistas">Plantonistas</a>
                                 </li>
                             @endif
-                             @if (in_array(30, $acesso))
+                            @if (in_array(30, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-presenca-dirigente">Presença
                                         Trabalhador</a></li>
                             @endif
@@ -158,6 +154,11 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
                                         Vagas</a>
                                 </li>
                             @endif
+                              @if (in_array(60, $acesso))
+                                <li><a class="dropdown-item" href="/grafico-relatorio-encaminhamento">Histórico de
+                                        Encaminhamento</a>
+                                </li>
+                            @endif
                             @if (in_array(34, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-pessoas-grupo">Histórico de
                                         Membros</a>
@@ -171,6 +172,11 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
                             @if (in_array(46, $acesso))
                                 <li><a class="dropdown-item" href="/gerenciar-relatorio-atendimento">Relatório de
                                         Atendimentos</a>
+                                </li>
+                            @endif
+                            @if (in_array(60, $acesso))
+                                <li><a class="dropdown-item" href="/gerenciar-relatorio-encaminhamento">Relatório
+                                        Encaminhamento</a>
                                 </li>
                             @endif
                             @if (in_array(34, $acesso))
@@ -234,7 +240,7 @@ $idAcessoEstudos = [1, 58]; // IDs de acesso para Estudos
                                 <li><a class="dropdown-item" href="/gerenciar-estudos-externos">Gerenciar Estudos
                                         Externos</a></li>
                             @endif
-                             @if (in_array(1, $acesso))
+                            @if (in_array(1, $acesso))
                                 <li><a class="dropdown-item" href='/gerenciar-inscricao'>Gerenciar inscrição</a></li>
                             @endif
                         </ul>

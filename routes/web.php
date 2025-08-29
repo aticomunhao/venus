@@ -570,9 +570,7 @@ Route::any('/deletar-tipo-criterio/{id}', [GerenciarTipoCriterioController::clas
 /*Ajax Controller */
 Route::get('/retorna-cidades/{id}', [AjaxController::class, 'retornaCidades']);
 Route::get('/retorna-dados-endereco/{id}', [AjaxController::class, 'getAddressByCep']);
-// if (!App::environment('local')) {
-//     URL::forceScheme('https');
-// }
+
 
 Route::middleware('rotas:58')->group(function () {
     Route::get('/gerenciar-estudos-externos', [GerenciarEstudosExternosController::class, 'index'])->name('index.estExt');
@@ -596,6 +594,15 @@ Route::middleware('rotas:59')->group(function () {
     Route::get('/visualizar-instituicao/{id}', [GerenciarInstituicaoController::class, 'show']);
     Route::get('/retorna-cidade-dados-residenciais/{id}', [GerenciarInstituicaoController::class, 'retornaCidadeDadosResidenciais']);
     Route::patch('/instituicao/{id}/status', [GerenciarInstituicaoController::class, 'toggleStatus'])->name('instituicao.toggleStatus');
+});
+//Relatório de Encaminhamentos
+Route::middleware('rotas:60')->group(function () {
+    Route::any('/gerenciar-relatorio-encaminhamento', [RelatoriosController::class, 'EncaminhamentosRel']);
+});
+
+//Relatório de Tratamentos
+Route::middleware('rotas:61')->group(function () {
+    Route::any('/grafico-relatorio-encaminhamento', [RelatoriosController::class, 'Graficoencaminhamentos']);
 });
 
 if (!App::environment('local')) {
