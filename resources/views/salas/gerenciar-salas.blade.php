@@ -65,7 +65,7 @@
                             </a>
                             <a href="/deletar-salas/{{ $salas->ids }}" class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal" data-bs-target="#confirmacaoDelecao" onclick="confirmarExclusao('{{ $salas->ids }}', '{{ $salas->nome1 }}')">
                                 <span class="tooltiptext">Inativar</span>
-                                <i class="bi bi-x-circle" style="font-size: 1.1rem; color:#000;"></i>
+                                <i class="bi bi-ban" style="font-size: 1.1rem; color:#000;"></i>
                             </a>
                         </td>
                     </tr>

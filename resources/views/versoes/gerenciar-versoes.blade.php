@@ -67,7 +67,7 @@
                             <a type="button" class="btn btn-outline-danger btn-sm tooltips"
                                 data-bs-target="#inativa{{ $versao->id }}" data-bs-toggle="modal">
                                 <span class="tooltiptext">Excluir</span>
-                                <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i></a>
+                                <i class="bi bi-ban" style="font-size: 1rem; color:#000;"></i></a>
 
                             {{-- modal de inativação --}}
                             <div class="modal fade" id="inativa{{ $versao->id }}" data-bs-keyboard="false" tabindex="-1"

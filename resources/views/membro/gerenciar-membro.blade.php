@@ -45,16 +45,16 @@
                             type="button">Limpar</a>
                     </div>
                     <div class="col-xxl-1 col-lg-4">
-                        <a href="/gerenciar-grupos-membro" class="btn btn-primary col-12 btn-sm mt-4"
+                        <a href="/gerenciar-grupos-membro" class="btn btn-danger col-12 btn-sm mt-4"
                             style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;" type="button">Retornar</a>
                     </div>
                     <!-- Botão para abrir o modal -->
                     @if (in_array(13, session()->get('usuario.acesso')))
                         <div class="col-xxl-1 col-lg-4">
-                            <button type="button" class="btn btn-success col-12 btn-sm mt-4"
+                            <button type="button" class="btn btn-warning col-12 btn-sm mt-4"
                                 style="font-size: 0.9rem; box-shadow: 1px 2px 5px #000000;"data-bs-toggle="modal"
                                 data-bs-target="#meuModal">
-                                OPÇÕES
+                                Opções
                             </button>
                     @endif
                 </div>
@@ -81,14 +81,10 @@
                     <td>{{ $membros->nome_funcao }}</td>
                     <td>{{ $membros->status }}</td>
                     <td>
-                        <a href="/visualizar-membro/{{ $membros->idm }}" class="btn btn-outline-primary btn-sm tooltips">
-                            <span class="tooltiptext">Visualizar</span>
-                            <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
-                        </a>
-
+                       
                         @if (in_array(48, session()->get('usuario.acesso')))
                             <a href="/curriculo-medium/{{ $membros->idm }}"
-                                class="btn btn-outline-primary btn-sm tooltips">
+                                class="btn btn-outline-warning btn-sm tooltips">
                                 <span class="tooltiptext">Currículo</span>
                                 <i class="bi bi-newspaper" style="font-size: 1rem; color:#000;"></i>
                             </a>
@@ -136,18 +132,23 @@
                             </a>
                             @endif
 
+                             <a href="/visualizar-membro/{{ $membros->idm }}" class="btn btn-outline-primary btn-sm tooltips">
+                                <span class="tooltiptext">Visualizar</span>
+                                <i class="bi bi-search" style="font-size: 1rem; color:#000;"></i>
+                            </a>
+
                             <!-- Botão para inativar -->
                             @if ($membros->status == 'Ativo')
                                 <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
                                     data-bs-target="#confirmInactivate{{ $membros->idm }}">
                                     <span class="tooltiptext">Inativar</span>
-                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                                    <i class="bi bi-ban" style="font-size: 1rem; color:#000;"></i>
                                 </button>
                             @else
                                 <button class="btn btn-outline-danger btn-sm tooltips" data-bs-toggle="modal"
                                     data-bs-target="#confirmInactivate{{ $membros->idm }}" disabled>
                                     <span class="tooltiptext">Inativar</span>
-                                    <i class="bi bi-x-circle" style="font-size: 1rem; color:#000;"></i>
+                                    <i class="bi bi-ban" style="font-size: 1rem; color:#000;"></i>
                                 </button>
                             @endif
                            

@@ -12,8 +12,7 @@
                 <h4 class="card-title" style="font-size:20px; text-align:left; color:gray; font-family:calibri">
                 TROCAR INSCRIÇÃO
                 </h4>
-                <form autocomplete="on" class="form-horizontal mt-4" method="POST" action="/trocar-inscricao/{{$turma[0]->idi}}">
-                    @csrf
+                
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
@@ -122,6 +121,7 @@
                                                                                             <table class="table table-sm table-bordered table-striped mb-2">
                                                                                                 <thead style="text-align:center; background: #daffe0;">
                                                                                                     <tr style="font-weight: bold; font-size:13px">
+                                                                                                        <th class="d-none d-lg-table-cell">ID</th>
                                                                                                         <th class="d-none d-lg-table-cell">GRUPO</th>
                                                                                                         <th>SALA</th>
                                                                                                         <th class="d-none d-lg-table-cell">ATIVIDADE</th>
@@ -133,7 +133,10 @@
                                                                                                     </tr>
                                                                                                 </thead>
                                                                                                 <tbody>
+                                                                                                <form class="form-horizontal mt-4" method="POST" action="/trocar-turma/{{$aluno[0]->idi}}/{{$aluno[0]->idc}}">
+                                                                                                    @csrf
                                                                                                     <tr style="text-align:center; font-size:14px">
+                                                                                                        <td class="d-none d-lg-table-cell">{{ $linha->idc }}</td>
                                                                                                         <td class="d-none d-lg-table-cell">{{ $linha->nomeg }}</td>
                                                                                                         <td>{{ $linha->sala }}</td>
                                                                                                         <td class="d-none d-lg-table-cell">{{ $linha->desct }} - {{ $linha->siglas }}</td>
@@ -143,7 +146,7 @@
                                                                                                         <td>{{ $linha->vaga }}</td>
                                                                                                         <td>
                                                                                                             <center>
-                                                                                                                <input type="radio" class="form-check" name="curso" value="{{ $linha->idi }}" required>
+                                                                                                                <input type="radio" class="form-check" name="curso" value="{{ $linha->idc }}" required>
                                                                                                             </center>
                                                                                                         </td>
                                                                                                     </tr>

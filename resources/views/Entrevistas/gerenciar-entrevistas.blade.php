@@ -243,13 +243,13 @@
                                         <button data-bs-toggle="modal" data-bs-target="#inativar{{ $informacao->ide }}"
                                             type="button" class="btn btn-outline-danger btn-sm tooltips">
                                             <span class="tooltiptext">Inativar</span>
-                                            <i class="bi bi-slash-circle" style="font-size: 1rem; color:#000;"></i>
+                                            <i class="bi bi-ban" style="font-size: 1rem; color:#000;"></i>
                                         </button>
                                     @else
                                         <button data-bs-toggle="modal" data-bs-target="#inativar{{ $informacao->ide }}"
                                             type="button" class="btn btn-outline-danger btn-sm tooltips" disabled>
                                             <span class="tooltiptext">Inativar</span>
-                                            <i class="bi bi-slash-circle" style="font-size: 1rem; color:#000;"></i>
+                                            <i class="bi bi-ban" style="font-size: 1rem; color:#000;"></i>
                                         </button>
                                     @endif
                                     <form action="{{ route('cancelar', ['id' => $informacao->ide]) }}" method="POST">

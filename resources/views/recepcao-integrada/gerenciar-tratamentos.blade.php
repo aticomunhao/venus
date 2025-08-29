@@ -296,12 +296,12 @@
                             {{-- botao de inativar --}}
                             <a type="button" class="btn btn-outline-danger btn-sm tooltips"
                                 data-bs-target="#inativa{{ $listas->idtr }}" data-bs-toggle="modal"><span
-                                    class="tooltiptext">Inativar</span><i class="bi bi-x-circle"
+                                    class="tooltiptext">Inativar</span><i class="bi bi-ban"
                                     style="font-size: 1rem; color:#000;"></i></a>
                         @else
                             <button type="button" class="btn btn-outline-danger btn-sm" data-tt="tooltip"
                                 data-placement="top" data-bs-target="#inativa{{ $listas->idtr }}" data-bs-toggle="modal"
-                                title="Inativar" disabled><i class="bi bi-x-circle"
+                                title="Inativar" disabled><i class="bi bi-ban"
                                     style="font-size: 1rem; color:#000;"></i></button>
                         @endif
                         @endif
