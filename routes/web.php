@@ -556,6 +556,7 @@ Route::middleware('rotas:61')->group(function () {
     Route::post('/inativar-inscricao/{idi}', [GerenciarInscricaoController::class, 'inativar']);
     Route::get('/excluir-inscricao/{idi}', [GerenciarInscricaoController::class, 'destroy']);
     Route::get('/visualizar-inscricao/{idi}', [GerenciarInscricaoController::class, 'visualizar']);
+    Route::get('/ativar-inscricao/{idi}', [GerenciarInscricaoController::class, 'ativar']);
 });
 //Gerenciar Tipo Criterios Atividades
 

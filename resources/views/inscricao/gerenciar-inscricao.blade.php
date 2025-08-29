@@ -182,9 +182,10 @@
                             </td>
                             <td >
                                 @if ($insc->statusid == 3)
-                                <button type="button" class="btn btn-outline-warning btn-sm tooltips">
+                                
+                                <a href="/ativar-inscricao/{{ $insc->idi }}"><button type="button" class="btn btn-outline-warning btn-sm tooltips">
                                     <span class="tooltiptext">Ativar</span>
-                                    <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button>
+                                    <i class="bi bi-check-circle" style="font-size: 1rem; color:#000;"></i></button></a>
                                 <button type="button" class="btn btn-outline-warning btn-sm tooltips" disabled>
                                     <span class="tooltiptext">Trocar</span>
                                     <i class="bi bi-arrow-left-right" style="font-size: 1rem; color:#000;"></i></button>

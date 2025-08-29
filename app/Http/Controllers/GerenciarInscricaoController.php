@@ -610,5 +610,20 @@ class GerenciarInscricaoController extends Controller
 
     }
 
+      public function ativar($idi)
+    {
+
+        DB::table('inscricao')
+            ->where('id', $idi)
+            ->update([
+                'status' => 1                
+            ]);
+
+        app('flasher')->addSuccess("A inscrição foi ativada!");
+
+        return redirect('/gerenciar-inscricao');
+
+    }
+
 
 }
