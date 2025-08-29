@@ -63,7 +63,7 @@
                 <tbody style="font-size:14px; color:#000000; text-align:center;">
                     @foreach ($encaminhamento as $enc)
                         <tr>
-                            <td>{{ \Carbon\Carbon::parse($enc->dh_enc)->format('d/m/Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($enc->dh_inicio)->format('d/m/Y') }}</td>
                             <td>{{ $enc->nome_assistido }}</td>
                             <td class="{{ request('search') ? '' : 'd-none' }}">{{ $enc->nome_atendente ?? '-' }}</td>
                             <td>{{ $enc->des_trata ?? '-' }}</td>
@@ -75,10 +75,8 @@
                 </tbody>
             </table>
 
-            <div class="mt-3 d-flex justify-content-center"
-                {{ $encaminhamento->links('pagination::bootstrap-5') }}
+            <div class="mt-3 d-flex justify-content-center" {{ $encaminhamento->links('pagination::bootstrap-5') }} </div>
             </div>
-        </div>
 
-    </div>
-@endsection
+        </div>
+    @endsection
